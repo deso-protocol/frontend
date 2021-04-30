@@ -494,7 +494,7 @@ export class GlobalVarsService {
     });
   }
 
-  celebrate() {
+  celebrate(dropDiamonds: boolean) {
     const canvasID = "my-canvas-" + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
@@ -507,6 +507,9 @@ export class GlobalVarsService {
       rotate: true,
       clock: 100,
     };
+    if (dropDiamonds) {
+      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg" }];
+    }
     this.confetti = new ConfettiGenerator(confettiSettings);
     this.confetti.render();
   }
