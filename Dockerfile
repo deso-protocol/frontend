@@ -2,6 +2,9 @@ FROM node:14.15.5-alpine3.13 AS frontend
 
 WORKDIR /frontend
 
+# install git
+RUN apk add --no-cache git
+
 COPY ./package.json .
 COPY ./package-lock.json .
 
