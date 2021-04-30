@@ -494,7 +494,7 @@ export class GlobalVarsService {
     });
   }
 
-  celebrate(dropDiamonds: boolean) {
+  celebrate(dropDiamonds: boolean = false) {
     const canvasID = "my-canvas-" + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
