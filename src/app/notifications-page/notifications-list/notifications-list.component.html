@@ -1,0 +1,43 @@
+<!-- Top Bar -->
+<div
+  class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+>
+  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+
+  Notifications
+</div>
+<div *ngIf="isLoading">
+  <simple-center-loader></simple-center-loader>
+</div>
+<div *ngIf="(!totalItems || totalItems === 0) && !isLoading" class="d-flex justify-content-center mt-30px">
+  <span>You don't have any notifications</span>
+</div>
+
+<div #uiScroll *uiScroll="let item of datasource" class="border-bottom border-color-grey">
+  <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
+    <div class="d-flex flex-row align-items-center">
+      <div *ngIf="item.icon" class="notifications__icon">
+        <i class="{{ item.icon }}"></i>
+      </div>
+      <img
+        class="notifications__avatar"
+        src="{{ item.actor.ProfilePic }}"
+        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor.Username]"
+      />
+      <div class="notifications__action" [innerHtml]="item.action"></div>
+    </div>
+  </div>
+  <div class="cursor-pointer" *ngIf="item.post">
+    <feed-post
+      [post]="item.post"
+      [includePaddingOnPost]="true"
+      [showReplyingToContent]="!!item.parentPost"
+      [parentPost]="item.parentPost"
+      [contentShouldLinkToThread]="true"
+      [showFollowLink]="true"
+    ></feed-post>
+  </div>
+</div>
+<simple-center-loader *ngIf="loadingMoreNotifications && !isLoading" [height]="200"></simple-center-loader>
+<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+<div class="global__bottom-bar-mobile-height"></div>

@@ -1,0 +1,56 @@
+<div
+  class="fs-15px fc-default px-5px cursor-pointer change-account-selector br-12px"
+  [ngClass]="{ 'change-account-selector__shadow': selectorOpen }"
+  #changeAccountSelectorRoot
+  id="changeAccountSelectorRoot"
+>
+  <!-- Selector (unopened state) -->
+  <div class="d-flex align-items-center justify-content-between pl-10px pr-10px change-account-selector__hover">
+    <div *ngIf="globalVars.loggedInUser" class="change-account-selector__ellipsis-restriction cursor-pointer">
+      {{
+        globalVars.loggedInUser.ProfileEntryResponse?.Username
+          ? globalVars.loggedInUser.ProfileEntryResponse.Username
+          : globalVars.loggedInUser.PublicKeyBase58Check
+      }}
+    </div>
+    <div
+      *ngIf="!globalVars.loggedInUser"
+      class="font-italic change-account-selector__ellipsis-restriction cursor-pointer"
+    >
+      Logged out
+    </div>
+    <i class="fas fa-angle-down text-grey5 change-account-selector__down-arrow"></i>
+  </div>
+
+  <!-- Drop-down (open state) -->
+  <div *ngIf="selectorOpen">
+    <div *ngFor="let user of globalVars.userList; let rowNum = index">
+      <div
+        *ngIf="!globalVars.loggedInUser || user.PublicKeyBase58Check != globalVars.loggedInUser.PublicKeyBase58Check"
+        (mouseover)="hoverRow = rowNum"
+        class="pt-5px pb-5px d-flex align-items-center change-account-selector__hover"
+      >
+        <div
+          (click)="_switchToUser(user)"
+          class="pl-10px pr-10px change-account-selector__ellipsis-restriction"
+          style="flex-grow: 1"
+        >
+          {{ user.ProfileEntryResponse?.Username ? user.ProfileEntryResponse.Username : user.PublicKeyBase58Check }}
+        </div>
+      </div>
+    </div>
+    <div
+      (click)="globalVars.launchLoginFlow()"
+      class="pl-10px pr-10px pt-10px font-weight-bold change-account-selector__hover"
+    >
+      Add account
+    </div>
+    <div
+      *ngIf="globalVars.loggedInUser"
+      class="pl-10px pr-10px pt-10px font-weight-bold change-account-selector__hover"
+      (click)="launchLogoutFlow()"
+    >
+      Logout
+    </div>
+  </div>
+</div>

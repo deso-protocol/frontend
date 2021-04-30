@@ -1,0 +1,46 @@
+<!-- Posts -->
+<simple-center-loader [height]="200" *ngIf="loadingFirstPage && datasource.adapter.isLoading"></simple-center-loader>
+<div
+  *ngIf="
+    !showProfileAsReserved && !loadingFirstPage && !datasource.adapter.isLoading && datasource.adapter.itemsCount === 0
+  "
+  class="p-15px"
+>
+  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">Create your first post.</span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} is on the platform but hasn't posted yet.</span>
+    </ng-template>
+  </div>
+</div>
+<ng-container *ngIf="!showProfileAsReserved">
+  <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
+    <div #uiScroll *uiScroll="let post of datasource" class="border-bottom border-color-grey">
+      <feed-post
+        *ngIf="post.ProfileEntryResponse"
+        [contentShouldLinkToThread]="true"
+        [includePaddingOnPost]="true"
+        [post]="post"
+        [afterCommentCreatedCallback]="_prependComment.bind(this, post)"
+        [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+        (userBlocked)="userBlocked()"
+      ></feed-post>
+      <div *ngFor="let comment of post.Comments">
+        <div class="px-15px pb-15px post-thread__subcomment-container">
+          <feed-post
+            [includePaddingOnPost]="false"
+            [post]="comment"
+            [parentPost]="post"
+            [contentShouldLinkToThread]="true"
+            [showIconRow]="false"
+            [showDropdown]="false"
+            [showReplyToContent]="false"
+            [isSubcomment]="true"
+            [afterCommentCallback]="_prependComment.bind(this.post)"
+          ></feed-post>
+        </div>
+      </div>
+    </div>
+    <simple-center-loader [height]="200" *ngIf="loadingNextPage && !loadingFirstPage"></simple-center-loader>
+  </div>
+</ng-container>

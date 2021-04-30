@@ -1,0 +1,55 @@
+<!--
+  DESKTOP
+  -->
+<div *ngIf="!mobile" class="global__desktop">
+  <left-bar></left-bar>
+  <div class="global__content__flex">
+    <div class="global__center__width">
+      <div class="global__center__inner">
+        <feed></feed>
+      </div>
+    </div>
+    <div class="global__sidebar__width">
+      <right-bar-creators class="global__sidebar__fixed"></right-bar-creators>
+    </div>
+  </div>
+</div>
+
+<!--
+  MOBILE
+  -->
+<div *ngIf="mobile" class="d-lg-none d-flex flex-column h-100">
+  <left-bar-mobile></left-bar-mobile>
+
+  <!-- The staked posts have a z-index > 0 so we have to put the top bar above them. -->
+  <div class="w-100 position-fixed background-color-white" style="z-index: 10">
+    <div
+      class="global__top-bar__height d-flex align-items-center w-100 px-15px mr-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
+    >
+      <div class="d-flex align-items-center">
+        <top-bar-mobile-navigation-control class="mr-15px d-inline-block"></top-bar-mobile-navigation-control>
+        Home
+      </div>
+
+      <search-bar class="pl-15px d-lg-none"></search-bar>
+    </div>
+
+    <!-- Mobile login row-->
+    <div
+      *ngIf="!this.globalVars.loggedInUser"
+      class="d-lg-none px-15px pt-5px background-color-light-grey border-color-grey font-weight-bold"
+    >
+      <a class="pr-30px" (click)="globalVars.launchLoginFlow()">Log in</a>
+      <a (click)="globalVars.launchSignupFlow()">Sign up</a>
+    </div>
+  </div>
+
+  <div style="flex-grow: 1">
+    <div *ngIf="!globalVars.loggedInUser" style="height: 30px"></div>
+    <feed [isMobile]="true"></feed>
+    <div class="global__bottom-bar-mobile-height">&nbsp;</div>
+  </div>
+
+  <!-- The staked posts have a z-index > 0 so we have to put the bottom bar above them. -->
+  <bottom-bar-mobile class="global__bottom-bar-mobile" style="z-index: 10" [showPostButton]="true"></bottom-bar-mobile>
+</div>

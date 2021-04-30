@@ -1,0 +1,26 @@
+<!--Header-->
+<div
+  class="d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold border-bottom border-color-grey"
+  style="min-height: 80px"
+>
+  <div class="d-flex align-items-center">
+    <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+
+    <div class="font-weight-bold fs-18px">
+      {{ creatorCoinTrade.tradeVerbString() }} {{ creatorCoinTrade.creatorProfile.Username }} coin
+    </div>
+  </div>
+
+  <top-bar-mobile-log-in-or-sign-up></top-bar-mobile-log-in-or-sign-up>
+</div>
+
+<!--CTA-->
+<div class="text-center px-20px not-found__content-container">
+  To {{ creatorCoinTrade.tradeVerbString().toLowerCase() }} {{ creatorCoinTrade.creatorProfile.Username }} coin,
+
+  <a (click)="globalVars.launchSignupFlow()">create an account</a>
+
+  or
+
+  <a (click)="globalVars.launchLoginFlow()">log in.</a>
+</div>

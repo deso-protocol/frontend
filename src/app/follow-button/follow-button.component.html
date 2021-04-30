@@ -1,0 +1,30 @@
+<div *ngIf="canLoggedInUserFollowTargetPublicKey()">
+  <div *ngIf="displayAsLink; else displayAsLinkElseBlock">
+    <!-- Display as link-->
+
+    <div *ngIf="createFollowTxnBeingCalled; else beingCalledElseBlock">
+      <!-- Loading-->
+      <div class="spinner-border text-secondary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <ng-template #beingCalledElseBlock>
+      <!-- Actual link-->
+      <div *ngIf="isFollowing; else isFollowingElseBlock">
+        <a class="" [ngClass]="followLinkClass" (click)="unfollow($event)">Unfollow</a>
+      </div>
+      <ng-template #isFollowingElseBlock>
+        <a class="" [ngClass]="followLinkClass" (click)="follow($event)">Follow</a>
+      </ng-template>
+    </ng-template>
+  </div>
+  <ng-template #displayAsLinkElseBlock>
+    <!-- Display as button -->
+    <div *ngIf="isFollowing; else elseBlock">
+      <button [ngClass]="getUnfollowButtonClasses()" (click)="unfollow($event)">Unfollow</button>
+    </div>
+    <ng-template #elseBlock>
+      <button [ngClass]="getFollowButtonClasses()" (click)="follow($event)">Follow</button>
+    </ng-template>
+  </ng-template>
+</div>

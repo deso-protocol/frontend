@@ -1,0 +1,84 @@
+<!--                                         -->
+<!-- LOGGED-IN USER *IS* THE MESSAGE SENDER. -->
+<!--                                         -->
+<div *ngIf="message.IsSender" class="d-flex justify-content-end align-items-end">
+  <!--"Pre-wrap" allows us to render new lines properly-->
+  <!-- The messages are received from the backend encrypted. If we have the unencrypted
+       text stored we use that instead. -->
+  <div
+    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
+    style="white-space: pre-wrap"
+  >
+    {{
+      globalVars.messageMeta.decryptedMessgesMap[
+        globalVars.loggedInUser.PublicKeyBase58Check + "" + message.TstampNanos
+      ]
+        ? globalVars.messageMeta.decryptedMessgesMap[
+            globalVars.loggedInUser.PublicKeyBase58Check + "" + message.TstampNanos
+          ].DecryptedText
+        : "&#60;Message is not decryptable on this device&#62;"
+    }}
+  </div>
+  <div
+    *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+    class="message__avatar ml-15px"
+    [style.background-image]="
+      'url(' +
+      (globalVars.loggedInUser &&
+      globalVars.loggedInUser.ProfileEntryResponse &&
+      globalVars.loggedInUser.ProfileEntryResponse.ProfilePic
+        ? globalVars.loggedInUser.ProfileEntryResponse.ProfilePic
+        : '/assets/img/default_profile_pic.png') +
+      ')'
+    "
+  ></div>
+
+  <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
+  <div
+    *ngIf="nextMessage ? message.IsSender == nextMessage.IsSender : false"
+    class="message__avatar-placeholder ml-15px"
+  ></div>
+</div>
+<!-- Consider whether or not to show the timestamp. -->
+<div *ngIf="message.IsSender" class="d-flex justify-content-end align-items-end mt-5px">
+  <div *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true" class="fs-12px fc-muted">
+    <span *ngIf="message.TstampNanos">{{ globalVars.convertTstampToDateOrTime(message.TstampNanos) }}</span>
+    <span *ngIf="!message.TstampNanos">Sending...</span>
+  </div>
+  <div class="message__avatar-placeholder ml-15px"></div>
+</div>
+
+<!--                                             -->
+<!-- LOGGED-IN USER *IS NOT* THE MESSAGE SENDER. -->
+<!--                                             -->
+<div *ngIf="!message.IsSender" class="d-flex align-items-end">
+  <div
+    *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+    class="message__avatar mr-15px"
+    [style.background-image]="
+      'url(' + (profile && profile.ProfilePic ? profile.ProfilePic : '/assets/img/default_profile_pic.png') + ')'
+    "
+  ></div>
+  <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
+  <div
+    *ngIf="nextMessage ? message.IsSender == nextMessage.IsSender : false"
+    class="message__avatar-placeholder ml-15px"
+  ></div>
+  <!--"Pre-wrap" allows us to render new lines properly-->
+  <!-- Messages that the user receives can be returned from the backend unencrypted. -->
+  <div
+    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height background-color-light-grey"
+    style="white-space: pre-wrap"
+  >
+    {{ message.DecryptedText }}
+  </div>
+</div>
+<!-- Consider whether or not to show the timestamp. -->
+<div *ngIf="!message.IsSender" class="d-flex align-items-end">
+  <div class="message__avatar-placeholder ml-15px"></div>
+  <div *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true" class="fs-12px fc-muted">
+    {{ globalVars.convertTstampToDateOrTime(message.TstampNanos) }}
+  </div>
+</div>
+
+<div class="mt-10px"></div>

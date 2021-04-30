@@ -1,0 +1,1819 @@
+$primary: #0059F7;
+$danger: #E63946;
+$secondary: #ecf0f1;
+$success: #32ED4B;
+$info: #689eff;
+$feed-border-radius: 12px;
+
+@import 'variables.scss';
+@import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+
+// regular style toast
+@import '~ngx-toastr/toastr';
+
+html {
+  overflow-y: scroll;
+  overscroll-behavior-y: none;
+
+   // removes 300ms click delay on mobile browsers
+   touch-action: manipulation;
+}
+
+html, body {
+  font-family: 'Roboto Mono';
+  min-height: 100%; // allows for scrolling
+}
+
+// Fix any random overflow from causing weird
+// white bars at the bottom of pages by hiding bars.
+//
+// This works because body has a min-height not a fixed height
+body {
+  overflow: hidden;
+}
+
+h1 {
+  color: $light-color;
+  margin: 0;
+  color: #333333;
+}
+
+h2,h3,h4,h5,h6,p {
+  margin: 0;
+  color: #333333;
+  font-family: 'Roboto Mono';
+  font-weight: normal;
+}
+
+a {
+  cursor: pointer; // for anchors without hrefs
+  &:hover, &:active, &:focus {
+    text-decoration: inherit; // I prefer no underline when you hover over links
+  }
+}
+
+.link--unstyled {
+  color: inherit;
+  text-decoration: inherit;
+  &:hover, &:active, &:focus {
+    text-decoration: inherit;
+    color: inherit;
+    outline: none;
+  }
+}
+
+pre, code{
+    white-space:normal;
+}
+
+//
+// v0 styles (start)
+//
+
+$global__top-bar__height: 60px;
+$global__top-bar__desktop-height: 80px;
+$global__nav__width: 245px;
+$global__center__width: 600px;
+$global__sidebar__width: 375px;
+$global__content__width: $global__center__width + $global__sidebar__width;
+
+$border-grey: #E5E5E5;
+$staking-grey: #F0F0F0;
+$light-grey-for-divider: #F8F8F8;
+$light-grey-for-divider-2: #FAFAFA;
+$buy-button-blue: #0058F7;
+// Font colors.
+$light-font-color: #777777;
+$normal-font-color: #222222;
+$red-font-color: #fe3537;
+$green-font-color: #19B028;
+
+// For when you want a finger instead of an arrow.
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-auto {
+  cursor: auto;
+}
+
+.cursor-inherit {
+  cursor: inherit;
+}
+
+.center-col-width {
+  width: 600px;
+}
+
+// Grey text colors
+.text-black { color: #000000 }
+.text-grey1 { color: #111111 }
+.text-grey2 { color: #222222 } // mocks call this G0
+.text-grey3 { color: #333333 }
+.text-grey4 { color: #444444 }
+.text-grey5 { color: #555555 } // mocks call this G1
+.text-grey6 { color: #666666 }
+.text-grey7 { color: #777777 }
+.text-grey8 { color: #888888 }
+.text-grey9 { color: #999999 }
+.text-greyA { color: #AAAAAA }
+.text-greyB { color: #BBBBBB }
+.text-greyC { color: #CCCCCC }
+.text-greyD { color: #DDDDDD }
+.text-greyE { color: #EEEEEE }
+.text-greyF { color: #FFFFFF }
+
+.text-grey8A { color: #8A8A8A } // mocks call this G2
+.text-greyE5 { color: #E5E5E5 } // mocks call this G3
+.text-greyF5 { color: #F5F5F5 } // mocks call this G4
+
+// Set toast-info to use system blue
+.toast-info { background-color: $buy-button-blue}
+
+// font weights
+// font-weight-light: 300
+// font-weight-normal: 400
+.font-weight-semibold { font-weight: 500 }
+// font-weight-bold: 700
+
+
+// Widths
+.w-10 { width: 10% }
+.w-20 { width: 20% }
+.w-30 { width: 10% }
+.w-40 { width: 40% }
+.w-50 { width: 50% }
+.w-60 { width: 60% }
+.w-70 { width: 70% }
+.w-80 { width: 80% }
+.w-90 { width: 90% }
+.w-100 { width: 100% }
+
+// Custom font classes.
+.fc-default { color: $normal-font-color; }
+.fc-muted { color: $light-font-color; }
+.fc-blue { color: $buy-button-blue; }
+.fc-red { color: $red-font-color; }
+.fc-green { color: $green-font-color; }
+
+.fs-1 { font-size: 2.5rem }
+.fs-2 { font-size: 2rem }
+.fs-3 { font-size: 1.75rem }
+
+.fs-25px { font-size: 25px; }
+.fs-24px { font-size: 24px; }
+.fs-20px { font-size: 20px; }
+.fs-18px { font-size: 18px; }
+.fs-16px { font-size: 16px; }
+.fs-15px { font-size: 15px; }
+.fs-15px-important { font-size: 15px !important; }
+.fs-14px { font-size: 14px; }
+.fs-13px { font-size: 13px; }
+.fs-12px { font-size: 12px !important; }
+// line heights
+.lh-24px { line-height: 24px; }
+.lh-18px { line-height: 18px; }
+.lh-16px { line-height: 16px; }
+.lh-15px { line-height: 15px; }
+.lh-14px { line-height: 14px; }
+.lh-13px { line-height: 13px; }
+.lh-12px { line-height: 12px; }
+.roboto-regular { font-family: 'Roboto' }
+.roboto-mono { font-family: 'Roboto Mono' }
+
+// Custom border classes.
+.border-color-grey { border-color: $border-grey; }
+.border-color-blue { border-color: $buy-button-blue; }
+.tab-underline-active { border-bottom: solid $buy-button-blue 3px; }
+.tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
+
+.background-color-grey { background-color: #F5F5F5; } // mocks call this G4
+.background-color-light-grey { background-color: $light-grey-for-divider; }
+.background-color-light-pink { background-color: lightpink; }
+
+// Custom padding classes.
+.p-35px { padding: 35px; }
+.pt-35px { padding-top: 35px; }
+.pr-35px { padding-right: 35px; }
+.pb-35px { padding-bottom: 35px; }
+.pl-35px { padding-left: 35px; }
+.py-35px { padding-top: 35px; padding-bottom: 35px;}
+.px-35px { padding-left: 35px; padding-right: 35px;}
+
+.p-30px { padding: 30px; }
+.pt-30px { padding-top: 30px; }
+.pr-30px { padding-right: 30px; }
+.pb-30px { padding-bottom: 30px; }
+.pl-30px { padding-left: 30px; }
+.py-30px { padding-top: 30px; padding-bottom: 30px;}
+.px-30px { padding-left: 30px; padding-right: 30px;}
+
+.p-30px { padding: 30px; }
+.pt-30px { padding-top: 30px; }
+.pr-30px { padding-right: 30px; }
+.pb-30px { padding-bottom: 30px; }
+.pl-30px { padding-left: 30px; }
+.py-30px { padding-top: 30px; padding-bottom: 30px;}
+.px-30px { padding-left: 30px; padding-right: 30px;}
+
+.p-25px { padding: 25px; }
+.pt-25px { padding-top: 25px; }
+.pr-25px { padding-right: 25px; }
+.pb-25px { padding-bottom: 25px; }
+.pl-25px { padding-left: 25px; }
+.py-25px { padding-top: 25px; padding-bottom: 25px;}
+.px-25px { padding-left: 25px; padding-right: 25px;}
+
+.p-20px { padding: 20px; }
+.pt-20px { padding-top: 20px; }
+.pr-20px { padding-right: 20px; }
+.pb-20px { padding-bottom: 20px; }
+.pl-20px { padding-left: 20px; }
+.py-20px { padding-top: 20px; padding-bottom: 20px;}
+.px-20px { padding-left: 20px; padding-right: 20px;}
+
+.p-15px { padding: 15px; }
+.pt-15px { padding-top: 15px; }
+.pr-15px { padding-right: 15px; }
+.pb-15px { padding-bottom: 15px; }
+.pl-15px { padding-left: 15px; }
+.py-15px { padding-top: 15px; padding-bottom: 15px;}
+.px-15px { padding-left: 15px; padding-right: 15px;}
+
+.p-10px { padding: 10px; }
+.pt-10px { padding-top: 10px; }
+.pr-10px { padding-right: 10px; }
+.pb-10px { padding-bottom: 10px; }
+.pl-10px { padding-left: 10px; }
+.py-10px { padding-top: 10px; padding-bottom: 10px;}
+.px-10px { padding-left: 10px; padding-right: 10px;}
+
+.p-5px { padding: 5px; }
+.pt-5px { padding-top: 5px; }
+.pr-5px { padding-right: 5px; }
+.pb-5px { padding-bottom: 5px; }
+.pl-5px { padding-left: 5px; }
+.py-5px { padding-top: 5px; padding-bottom: 5px;}
+.px-5px { padding-left: 5px; padding-right: 5px;}
+
+.p-2px { padding: 2px; }
+.pt-2px { padding-top: 2px; }
+.pr-2px { padding-right: 2px; }
+.pb-2px { padding-bottom: 2px; }
+.pl-2px { padding-left: 5px; }
+.py-2px { padding-top: 2px; padding-bottom: 2px;}
+.px-2px { padding-left: 2px; padding-right: 2px;}
+
+// Zero padding classes are useful for things like bootstrap columns that have padding added.
+.p-0px { padding: 0px; }
+.pt-0px { padding-top: 0px; }
+.pr-0px { padding-right: 0px; }
+.pb-0px { padding-bottom: 0px; }
+.pl-0px { padding-left: 0px; }
+.py-0px { padding-top: 0px; padding-bottom: 0px;}
+.px-0px { padding-left: 0px; padding-right: 0px;}
+
+// Custom margin classes.
+.mt-2px { margin-top: 2px; }
+
+.m-5px { margin: 5px; }
+.mt-5px { margin-top: 5px; }
+.mr-5px { margin-right: 5px; }
+.mb-5px { margin-bottom: 5px; }
+.ml-5px { margin-left: 5px; }
+
+.m-10px { margin: 10px; }
+.mt-10px { margin-top: 10px; }
+.mr-10px { margin-right: 10px; }
+.mb-10px { margin-bottom: 10px; }
+.ml-10px { margin-left: 10px; }
+
+.m-15px { margin: 15px; }
+.mt-15px { margin-top: 15px; }
+.mr-15px { margin-right: 15px; }
+.mb-15px { margin-bottom: 15px; }
+.ml-15px { margin-left: 15px; }
+
+.m-20px { margin: 20px; }
+.mt-20px { margin-top: 20px; }
+.mr-20px { margin-right: 20px; }
+.mb-20px { margin-bottom: 20px; }
+.ml-20px { margin-left: 20px; }
+.mx-20px { margin-left: 20px; margin-right: 20px; }
+.my-20px { margin-top: 20px; margin-bottom: 20px; }
+
+.m-25px { margin: 25px; }
+.mt-25px { margin-top: 25px; }
+.mr-25px { margin-right: 25px; }
+.mb-25px { margin-bottom: 25px; }
+.ml-25px { margin-left: 25px; }
+.mx-25px { margin-left: 25px; margin-right: 25px; }
+.my-25px { margin-top: 25px; margin-bottom: 25px; }
+
+.m-30px { margin: 30px; }
+.mt-30px { margin-top: 30px; }
+.mr-30px { margin-right: 30px; }
+.mb-30px { margin-bottom: 30px; }
+.ml-30px { margin-left: 30px; }
+.mx-30px { margin-left: 30px; margin-right: 30px; }
+.my-30px { margin-top: 30px; margin-bottom: 30px; }
+
+.br-3px { border-radius: 3px; }
+.br-12px { border-radius: $feed-border-radius; }
+
+.vh-100 { height: 100vh !important; }
+
+.position-fixed { position: fixed; }
+.background-color-white { background-color: white; }
+
+.global__container {
+  height: 100%;
+  display: flex;
+}
+
+.global__import {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.global__iframe {
+  height: 100vh;
+  width: 100vw;
+}
+
+// first child is router-outlet
+// last child is a Page component
+.global__container > *:last-child {
+  width: 100%;
+}
+
+.global__desktop {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 992px) {
+  .global__desktop {
+      display: flex;
+  }
+
+  .global__mobile {
+      display: none !important;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .global__desktop {
+      display: none !important;
+  }
+
+  .global__mobile {
+      display: flex;
+  }
+}
+
+.fixed-top-bar {
+  position: fixed;
+  background-color: white;
+  z-index: 10
+}
+
+.global__mobile-scrollable-section {
+  height: -webkit-fill-available;
+  flex-grow: 1;
+  overflow-y: scroll;
+}
+
+// For the space covered by the bottom bar
+.global__bottom-bar-mobile-height {
+  height: 60px; // current height of the bottom bar
+}
+
+.global__bottom-bar-mobile {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  height: 60px;
+}
+
+.global__tooltip-icon {
+  cursor: pointer;
+}
+
+.global__mat-tooltip {
+  cursor: pointer;
+  background-color: #343a40 !important;
+  white-space: pre-line;
+}
+
+.global__mat-tooltip-font-size {
+  font-size: 15px !important;
+}
+
+//
+// Top-level css for the feed.
+//
+
+// This removes the scrollbar on the feed.
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+.light-grey-divider {
+  background-color: $light-grey-for-divider;
+}
+
+.top-bar-mobile__avatar {
+  height: 40px;
+  width: 40px;
+  border-radius: 3px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.top-bar-mobile-navigation-control__dark-color {
+  color: #8A8A8A;
+}
+
+.top-bar-mobile-navigation-control__light-color {
+  color: white;
+}
+
+.bottom-bar-mobile__holder-div {
+  width: 100%;
+  height: 100%;
+}
+
+.bottom-bar__message-notifications-bubble {
+  position:absolute;
+  top: 5px;
+  font-style: normal;
+  margin-left: 15px;
+  font-size: 14px;
+  padding: 1px 7px;
+  border-radius: 100%;
+  color: white;
+  background-color: $buy-button-blue;
+}
+
+// flex -> width -> fixed -> inner
+// content can fit center + sidebar
+
+.global__nav__flex {
+  flex-grow: 1;
+  align-items: flex-end;
+  flex-direction: column;
+  display: flex;
+}
+
+.global__nav__width {
+  width: $global__nav__width;
+}
+
+.global__nav__fixed {
+  top: 0;
+  height: 100%;
+  position: fixed;
+}
+
+.global__nav__inner {
+  width: $global__nav__width;
+  overflow-y: auto;
+  height: 100%;
+  padding: 0 10px;
+}
+
+.global__content__flex {
+  flex-grow: 1;
+  align-items: flex-start;
+  flex-shrink: 1;
+  display: flex;
+}
+
+// Set a fixed width on desktop
+.global__desktop .global__content__width {
+  width: $global__content__width;
+}
+
+// Set a relative width on mobile
+.global__mobile .global__content__width {
+  width: 100%;
+}
+
+// Set a width, height, and border on desktop
+.global__desktop .global__content__inner {
+  min-height: 100vh;
+  width: $global__content__width;
+  border-left: $border-grey solid 1px;
+  border-right: $border-grey solid 1px;
+}
+
+.global__sidebar__width {
+  width: $global__sidebar__width;
+}
+
+.global__sidebar__fixed {
+  top: 0;
+  height: 100%;
+  position: fixed;
+}
+
+.global__sidebar__inner {
+  width: $global__sidebar__width;
+  overflow-y: auto;
+  height: 100%;
+  padding-left: 25px;
+}
+
+.global__center__width {
+  width: $global__center__width;
+}
+
+.global__center__inner {
+  min-height: 100vh;
+  width: $global__center__width;
+  border-left: $border-grey solid 1px;
+  border-right: $border-grey solid 1px;
+}
+
+.global__top-bar {
+  position: fixed;
+  background: #fff;
+  z-index: 30;
+  width: $global__center__width - 2; // subtract 2 for borders
+
+  @media (min-width: 992px) {
+    height: $global__top-bar__desktop-height;
+  }
+
+  @media (max-width: 991.98px) {
+    height: $global__top-bar__height;
+  }
+}
+
+.feed-create-post__character-counter {
+  margin-top: 2px;
+}
+
+.feed-create-post__image-icon {
+  margin-top: 2px;
+}
+
+.global__top-bar__height {
+  @media (min-width: 992px) {
+    height: $global__top-bar__desktop-height;
+  }
+
+  @media (max-width: 991.98px) {
+    height: $global__top-bar__height;
+  }
+}
+
+.left-bar-mobile__translucent-background {
+  z-index: 99 !important; // Needs to be higher than the bottom bar and staked posts.
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.left-bar-mobile__flyout-div {
+  z-index: 100; // Needs to be higher than the bottom bar and staked posts.
+  position: fixed;
+  top: 0;
+  width: 75vw;
+  max-width: 280px;
+  min-width: 245px;
+  height: 100vh;
+  background-color: white;
+}
+
+.update-profile__image {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  height: 100px;
+  width: 100px;
+  border: 1px solid $light-color;
+  background-color: transparent;
+  position: relative;
+  border-radius: 100%;
+
+  .update-profile__image-delete {
+    width: 2rem;
+    height: 2rem;
+    position: absolute;
+    right: -1rem;
+    top: -1rem;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $light-color;
+    border: 2px solid $light-color;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.25rem;
+    vertical-align: middle;
+    padding-bottom: .15rem;
+    background-color: $x-color;
+  }
+}
+
+.holdings__creator-coin-name {
+  @media (max-width: 992px) {
+    padding-top: 15px;
+  }
+
+  @media (min-width: 993px) {
+    padding-top: 0px;
+  }
+}
+
+.holdings__creator-coin-total {
+  @media (max-width: 992px) {
+    padding-top: 15px;
+  }
+
+  @media (min-width: 993px) {
+    padding-top: 20px;
+  }
+}
+
+.holdings__divider {
+  height: 66px;
+  background-color: $light-grey-for-divider;
+}
+
+.holdings__avatar {
+  height: 28px;
+  width: 28px;
+  min-width: 28px;
+  margin-right: 15px;
+  border-radius: 3px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.holdings__name {
+  max-width: 200px;
+}
+
+.holdings__pub-key {
+  overflow: hidden;
+
+  overflow-wrap: anywhere;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  word-break: break-word;
+
+  cursor: pointer;
+}
+
+.holdings__copy:active {
+  color: $buy-button-blue;
+}
+
+.update-profile__pub-key {
+  padding-left: 0;
+  overflow: hidden;
+  cursor: pointer;
+
+  overflow-wrap: anywhere;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  word-break: break-word;
+}
+
+.update-profile__copy:active {
+  color: $buy-button-blue;
+}
+
+.sign-up__grey-background {
+  background-color: $light-grey-for-divider;
+}
+
+.sign-up__cp-button-override {
+  background-color: white;
+}
+
+.sign-up__advanced {
+  cursor: pointer;
+}
+
+.sign-up__advanced:hover {
+  font-weight: bold;
+}
+
+.sign-up__phone-input {
+  font-size: 15px !important;
+}
+
+// Overrides for phone number input defaults.
+.iti {
+	width: 100% !important;
+}
+
+.iti__country {
+  font-size: 15px;
+}
+
+#country-search-box {
+  font-size: 15px !important;
+}
+
+.change-account-selector {
+  margin-left: -10px;
+  position: relative;
+  z-index: 30;
+  background-color: $light-grey-for-divider;
+  width: 185px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.change-account-selector__down-arrow {
+  margin-top: 2px;
+  margin-left: 2px;
+}
+
+.change-account-selector__hover:hover {
+  background-color: whitesmoke;
+}
+
+.change-account-selector__shadow {
+  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+}
+
+.change-account-selector__ellipsis-restriction {
+  max-width: 150px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.change-account-selector__trash {
+  opacity: 0;
+}
+
+.search-bar__icon {
+  padding: 2px;
+  padding-left: 5px;
+  font-size: 19px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  background-color: rgba(0,0,0,0);
+  border-color: #ced4da;
+  border-right-color: rgba(0,0,0,0)
+}
+
+.search-bar__results-dropdown {
+  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+  border-radius: 0px 0px 3px 3px;
+  cursor: pointer;
+  background-color: white;
+  position: relative;
+  top: -22px;
+  border: solid 1px $border-grey;
+  z-index: 5; // the input has a z-index of 3 at one point.
+}
+
+.search-bar__avatar {
+  height: 35px;
+  width: 35px;
+  border-radius: 3px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.search-bar__selected-color {
+  background-color: $border-grey;
+}
+
+.search-bar__fix-active:active, .search-bar__fix-active:focus {
+  border-color: #ced4da;
+}
+
+.post-thread__comment-container {
+  border-top: 4px solid $border-grey;
+  overflow-y: scroll;
+  flex-grow: 1;
+}
+
+.post-thread__subcomment-container {
+  margin-left: 65px;
+}
+
+.post-thread__container {
+  display: flex;
+  flex-flow: column;
+}
+
+.feed-create-comment-form__reply-container {
+  margin-left: 80px
+}
+
+.feed-create-comment-form__avatar {
+  height: 50px;
+  width: 56px; // TODO: figure out why chrome doesn't render this as 50px
+  margin-right: 15px;
+  border-radius: $feed-border-radius;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+
+.feed-create-post__avatar {
+  height: 50px;
+  width: 50px;
+  margin-right: 15px;
+  border-radius: $feed-border-radius;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.modal-header .feed-create-comment-form__close {
+  margin: 0;
+  padding: 0;
+  float: none
+}
+
+.feed-create-post__avatar_default {
+  background-image: url('/assets/img/default_profile_pic.png');
+}
+
+.feed-create-post__textarea:focus {
+  border: none;
+  box-shadow: none;
+}
+
+.js-feed-post-hover:hover {
+  background-color: $light-grey-for-divider-2;
+}
+
+.feed-post__quoted-content:hover {
+  background-color: $staking-grey !important;
+}
+
+.feed-post__dropdown-menu-item {
+  &:hover {
+    background-color: $light-grey-for-divider
+  }
+}
+
+.feed-post__image-container {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  max-height: 450px;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.feed-post__image {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.feed-post__blue-border {
+  border-left: 5px solid $buy-button-blue;
+}
+
+.feed-post__image-delete {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  cursor: pointer;
+  color: white;
+  font-size: 19px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 20px;
+}
+
+.feed-post-icon-row__icon {
+  font-size: 25px;
+  border-radius: 50%;
+  margin-right: 2px;
+  &:hover {
+    background-color: #CAE4F1;
+  }
+}
+
+.feed-post-icon-row__icon.icon-reply {
+  margin-left: -6px;
+}
+
+.feed-post__icon-row-holder {
+}
+
+.feed-post__container {
+  font-size: 15px
+}
+
+.feed-post__container.feed-post__parent-post-font-size {
+  font-size: 17px !important;
+}
+
+.feed-post__coin-price-holder {
+  background-color: #F5F5F5;
+}
+
+.feed-post__avatar {
+  display: block;
+  height: 50px;
+  width: 50px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.feed-post__avatar-container {
+  width: 56px; // TODO: figure out why chrome doesn't render this as 50px
+  margin-right: 15px;
+}
+
+.feed-post__parent-thread-connector {
+  height: 100%;
+  margin-top: 15px;
+  border-right: 2px solid;
+  border-color: $border-grey;
+  width: 55%;
+}
+
+.left-bar__dot-active {
+  font-size: 50px;
+  line-height: 18px;
+  color: $buy-button-blue !important;
+}
+
+.left-bar__dot-unread {
+  font-size: 50px;
+  line-height: 18px;
+  color: $red-font-color !important;
+}
+
+.left-bar__dot-inactive {
+  font-size: 50px;
+  line-height: 18px;
+  color: rgba(0,0,0,0);
+}
+
+.right-bar-creators-leaderboard__creator-avatar {
+  height: 28px;
+  width: 28px;
+  margin-right: 10px;
+  border-radius: 3px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.right-bar-creators__balance-box {
+  background-color: $light-grey-for-divider;
+}
+
+.creator-leaderboard__load-more:hover {
+  background-color: whitesmoke;
+}
+
+.feed__light-grey-divider {
+  width: 100%;
+  min-height: 10px;
+  border-bottom: $border-grey 1px solid;
+  background-color: $light-grey-for-divider;
+}
+
+.creator-profile__top-bar {
+  background-color: #2E2E2E;
+  @media (max-width: 992px) {
+    height: 100px;
+    min-height: 100px;
+  }
+
+  @media (min-width: 993px) {
+    height: 80px;
+    min-height: 80px;
+  }
+}
+
+.creator-profile__avatar {
+  // mobile
+  @media (max-width: 992px) {
+    top: 62px;
+  }
+  // desktop
+  @media (min-width: 993px) {
+    top: 37px;
+  }
+
+  position: absolute;
+  height: 86px;
+  width: 86px;
+  border-radius: 3px;
+  border: 3px solid white;
+  margin-left: 15px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.creator-profile-details__hodler-avatar {
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+  padding-right: 5px;
+  border-radius: 5px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.creator-profile__reserved-tag {
+  font-weight: normal;
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  height: fit-content;
+}
+
+.creator-profile__ellipsis-restriction {
+  max-width: 150px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.buy-bitclout__copy-button {
+  display: flex;
+  align-items: center;
+  justify-content: middle;
+  border: solid 1px $buy-button-blue;
+  color: $buy-button-blue;
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 5px;
+}
+
+.buy-bitclout__copy-button:hover {
+  background-color: $buy-button-blue;
+  color: white;
+}
+
+.buy-bitclout__title-holder {
+  position: relative;
+  top: 20px;
+}
+
+.buy-bitclout__amount-background {
+  background-color: $light-grey-for-divider-2;
+}
+
+.buy-bitclout__box-label-adjustment {
+  position: relative;
+  width: fit-content;
+  background-color: white;
+  top: -13px;
+}
+
+.messages-inbox__desktop-column {
+  width: 100%;
+  max-width: 380px;
+  border-left: solid 1px $border-grey;
+  border-right: solid 1px $border-grey;
+
+}
+
+.messages-inbox__selected-thread {
+  border-right: solid 3px $buy-button-blue;
+}
+
+.messages-inbox__threads {
+  overflow-y: scroll;
+  // Subtract the height of the search and header
+  height: calc(100% - 160px);
+}
+
+.messages-thread__avatar {
+  height: 45px;
+  width: 45px;
+  min-width: 45px;
+  border-radius: 12px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.messages-thread__desktop-column {
+  width: 100%;
+  max-width: 600px;
+  border-right: solid 1px $border-grey;
+}
+
+.messages-thread__border-radius {
+  border-radius: 12px;
+}
+
+.messages-thread__ellipsis-restriction {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.message__min-height {
+  min-height: 40px;
+}
+
+.message__avatar {
+  height: 40px;
+  width: 40px;
+  min-width: 40px;
+  border-radius: 12px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.message__avatar-placeholder {
+  width: 40px;
+  min-width: 40px;
+  border-radius: 12px;
+}
+
+.message__sender-bubble-color {
+  background-color: #005BFF;
+  color: white;
+}
+
+.message__non-sender-bubble-color {
+  background-color: #F8F8F8;
+}
+
+.message-thread__unread-light-blue {
+  background-color: #e7effe;
+}
+
+.admin__add-to-feed-button {
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+  width: fit-conteNt;
+  cursor: pointer;
+}
+
+.admin__add-to-feed-button:hover {
+  color: green;
+  border-color: green;
+}
+
+.admin__remove-from-feed-button {
+  color: green;
+  border: 1px solid green;
+  border-radius: 3px;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.admin__remove-from-feed-button:hover {
+  color: red;
+  border-color: red;
+}
+
+//
+// Bottom bar (mobile)
+//
+.bottom-bar-mobile__create-post-circle {
+  position: absolute;
+  top: -70px;
+  right: 22px;
+  font-size: 44px;
+  padding-top: 10px;
+  height: 55px;
+  width: 58px;
+  text-align: center;
+  border: 2px solid #3498db;
+  color: white;
+  line-height: 0.65;
+}
+
+
+//
+// Creators leaderboard
+//
+
+.creators-leaderboard__avatar {
+  height: 2.5rem;
+  width: 2.5rem;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.creators-leaderboard__width {
+  width: 100%;
+  max-width: 980px;
+}
+
+.creators-leaderboard__controls-column {
+  min-width: 185px;
+  max-width: 185px;
+}
+
+//
+// Buy creator coin
+//
+.trade-creator-form__currency-select {
+  background-color: #fafafa;
+  border: none;
+  font-size: 14px;
+  width: 110px;
+}
+
+.trade-creator-form__buy-sell-toggle {
+  margin-top: 3px;
+}
+
+.trade-creator__avatar {
+  height: 45px;
+  width: 45px;
+  min-width: 45px;
+  border-radius: 5px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+//
+// Not found page
+//
+.not-found__content-container {
+  margin-top: 100px
+}
+
+// Notifications
+.notifications__avatar {
+   height: 28px;
+   width: 28px;
+   border-radius: 3px;
+}
+
+.notifications__action {
+  margin-left: 14px;
+  font-size: 14px;
+}
+
+.notifications__icon {
+   margin-right: 14px;
+   width: 20px;
+   text-align: center;
+}
+
+// Landing page
+.landing__ticker {
+  padding: 20px;
+  background-color: #EEE;
+}
+
+.landing__header {
+  padding: 30px 20px;
+}
+
+.landing__logo {
+  height: 28px;
+  flex: 0 0 130px;
+  background: url("/assets/img/camelcase_logo.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  text-indent: -9999px;
+}
+
+.landing__nav-link {
+  color: #222222;
+  margin-left: 25px;
+  font-size: 13px;
+}
+
+.landing__nav-link:first-child {
+  margin-left: 0;
+}
+
+.landing__nav-link.btn {
+  color: #FFF;
+}
+
+.landing__nav-buy {
+  height: 30px;
+  font-size: 13px;
+  border-radius: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.landing__hero {
+  padding: 100px 0;
+}
+
+.landing__sign-up {
+  margin-top: 30px;
+  width: 225px;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.landing__log-in {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #777;
+}
+
+.landing__buy {
+  padding: 7px 20px;
+  border-radius: 10px;
+}
+
+.landing__prop {
+  margin-top: 100px;
+  background: #C4C4C426;
+  border-radius: 25px;
+  padding-top: 50px;
+}
+
+.landing__prop-header {
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.landing__prop-desc {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 30px;
+  padding: 0 20px;
+  font-family: Roboto;
+}
+
+.landing__example {
+  padding: 30px 50px;
+  padding-bottom: 0px;
+  background-color: #FFF;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}
+
+// fade to white
+.landing__example:after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1) 90%);
+  width: 100%;
+  height: 4em;
+}
+
+.landing__btn-cta {
+  margin-top: 30px;
+  padding: 7px 30px;
+  border-radius: 10px;
+}
+
+.landing__platform {
+  padding: 100px 0;
+}
+
+.landing__platform-header {
+  font-weight: bold;
+  font-size: 35px;
+  color: #000;
+  padding: 0 20px;
+}
+
+.landing__platform-desc {
+  font-size: 18px;
+  margin-top: 30px;
+  padding: 0 20px;
+}
+
+.landing__echo {
+  background-color: #F5F5F5;
+  padding: 50px 0;
+}
+
+.landing__footer {
+  padding: 50px 80px;
+}
+
+.landing__footer-links {
+  display: flex;
+  flex-direction: column;
+}
+
+.landing__footer-links a {
+  font-size: 12px;
+  color: #222;
+  margin-bottom: 7px;
+}
+
+.landing__footer-links hr {
+    border-top: 1px solid black;
+    width: 200px;
+    padding: 0;
+    margin-left: 0;
+}
+
+.landing__board {
+  margin-bottom: 0;
+}
+
+.landing__board img {
+  height: 50px;
+  width: 50px;
+  border-radius: 5px;
+}
+
+.landing__board th {
+  padding: 10px 0;
+}
+
+.landing__board td {
+  vertical-align: middle;
+  padding: 10px 0;
+}
+
+.landing__board tr {
+  border-bottom: 1px solid #DDD;
+}
+
+.landing__post-img {
+  height: 50px;
+  width: 50px;
+  border-radius: 5px;
+}
+
+
+//
+// Manage follows page
+//
+
+.manage-follows__avatar {
+  display: block;
+  height: 50px;
+  width: 50px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.manage-follows__avatar-container {
+  width: 56px; // TODO: figure out why chrome doesn't render this as 50px
+  margin-right: 15px;
+}
+
+
+//
+// (end) v0 styles
+//
+
+@media (min-width: 992px) {
+  .info-tooltip {
+    position: relative;
+    cursor: pointer;
+  }
+}
+@media (max-width: 992px) {
+  // TODO: Fix tooltips on mobile. Consider just
+  // making them all use sweetalert2 with "question."
+  .info-tooltip {
+    display: none !important;
+    //position: relative;
+    //cursor: pointer;
+    //color: $tooltip-color;
+    //font-weight: bold;
+  }
+}
+/* Apply only to screen sizes >= sm */
+.info-tooltip-contents {
+  position: absolute;
+  text-align: left;
+  top: -.5rem;
+  left: 1.5rem;
+  background-color: $light-color;
+  cursor: pointer;
+  border: 1px solid $dark-in-between-color;
+  padding: .5rem;
+  color: $dark-color;
+  width: 15rem;
+  z-index: 1;
+  font-size: 1rem;
+  font-weight: bold;;
+}
+
+
+.btn.disabled {
+  // I don't think bootstrap's button opacity makes buttons look sufficiently disabled,
+  // so I'm overriding bootstrap here.
+  opacity: 0.4
+}
+
+.btn.btn-light {
+  cursor: pointer;
+  font-size: $button-font-size;
+  min-height: $button-height;
+
+  transition: 0s;
+  background-color: $button-color-default;
+  color: $button-text-color-default !important;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 3px 3px 8px 0 rgba(0, 0, 0, 0.1);
+  font-weight: 700;
+
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: $button-hover-color-default;
+  }
+  &:active {
+    background-color: $button-color-pressed-default !important;
+  }
+}
+
+.btn-default {
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 400;
+  color: #212529;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.divtext {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.separating-line {
+  height: 1px;
+  width: 100%;
+  background-color: $border-color;
+}
+.title {
+  display: inline-block;
+  color: $important-text-color;
+  font-size: $big-text-size;
+  font-weight: bold;
+}
+.subtitle {
+  display: inline-block;
+  color: $light-color;
+  text-decoration: underline;
+  font-size: $big-text-size;
+}
+.form-label {
+  color: $important-text-color;
+  font-size: $normal-text-size;
+}
+.normal-text {
+  color: $text-color;
+  font-size: $normal-text-size;
+}
+.warning-text {
+  color: $error-color;
+  font-weight: bold;
+  font-size: $normal-text-size;
+}
+input {
+  background-color: transparent;
+  border: 1px solid $border-color;
+  color: $important-text-color;
+  padding-left: .5rem;
+  padding-right: .5rem;
+  &:focus {
+    outline: none;
+  }
+}
+::placeholder {
+  color: $placeholder-color;
+}
+textarea {
+  background-color: transparent;
+  border: 1px solid $border-color;
+  color: $important-text-color;
+  padding-left: .5rem;
+  padding-right: .5rem;
+  max-width: 100%;
+  &:focus {
+    outline: none;
+  }
+}
+.emph {
+  color: $important-text-color;
+  display: contents;
+}
+.btn.btn-light.yes {
+  color: $good-color;
+  border-color: $good-color;
+  font-weight: bold;
+  background-color: $separating-line-color;
+}
+.btn.btn-light.no {
+  color: $bad-color;
+  border-color: $bad-color;
+  font-weight: bold;
+  background-color: $separating-line-color;
+}
+em {
+  color: $important-text-color;
+  font-style: normal;
+}
+.needs-basic-form {
+  .subtitle {
+    margin-top: 1rem;
+  }
+  .form-label {
+    display: inline-block;
+    width: 12rem;
+    vertical-align: top;
+  }
+  .input-container {
+    margin-top: 1rem;
+    .random-username {
+      margin-left: 1rem;
+    }
+  }
+}
+.next-back-container {
+  margin-top: 1rem;
+  .btn.btn-light {
+    width: 7.5rem;
+    margin-right: 1rem;
+  }
+}
+.help-text {
+  margin-top: 1rem;
+}
+.action-items-badge {
+ width: auto;
+ padding-left: .5rem;
+ padding-right: .5rem;
+ background-color: $error-color;
+ border-radius: 1rem;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ color: $button-text-color-default;
+ font-weight: bold;
+}
+.minus {
+  color: $light-color;
+  display: inline-block;
+  margin-right: .5rem;
+  cursor: pointer;
+}
+.link {
+    color: $light-color;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline;
+}
+.file-upload-button::-webkit-file-upload-button { cursor:pointer; }
+
+@media (min-width: 992px) {
+  /* Apply only to screen sizes >= sm */
+  div.hide-on-desktop {
+    display: none !important;
+  }
+}
+
+@media (max-width: 992px) {
+  /* Apply only to screen sizes >= sm */
+  div.hide-on-mobile {
+    display: none !important;
+  }
+  .reverse-columns-on-mobile {
+    flex-direction: column-reverse;
+  }
+  [class*="col-"] {
+      margin-bottom: 15px;
+  }
+}
+
+/*Begin BitClout config*/
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+input {
+  width: 100%;
+}
+.red {
+  color: $error-color;
+}
+.btn.green {
+  background-color: $important-button;
+}
+.btn.orange {
+  background-color: $profile-button;
+}
+.btn-primary {
+  background-color: #005BFF;
+  border-color: #005BFF;
+}
+#foobarxyz p {
+  margin: 0;
+}
+#foobarabc p {
+  margin: 0;
+}
+.post-submitted p {
+  margin: 0
+}
+.grey {
+  color: $grey;
+}
+
+// Animations
+.slide-up,
+.slide-up-1,
+.slide-up-2,
+.slide-up-3 {
+  animation: slide-up 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  visibility: visible !important;
+}
+
+.slide-up-1 {
+  animation-delay: 0.1s;
+}
+
+.slide-up-2 {
+  animation-delay: 0.2s;
+}
+
+.slide-up-3 {
+  animation-delay: 0.3s;
+}
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

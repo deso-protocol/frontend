@@ -1,0 +1,162 @@
+<!-- Available Bitclout Box -->
+<div class="w-100 bg-light text-grey6">
+  <div class="p-3 fs-14px d-flex justify-content-between flex-wrap">
+    <div class="d-flex flex-wrap">
+      {{ creatorCoinTrade.assetToSellBalance() }} {{ creatorCoinTrade.assetToSellString() }} available&nbsp;
+
+      <span *ngIf="creatorCoinTrade.assetToSellBalanceInUsd()">
+        ≈ {{ creatorCoinTrade.assetToSellBalanceInUsd() | currency }} USD
+      </span>
+    </div>
+
+    <a
+      *ngIf="creatorCoinTrade.isBuyingCreatorCoin"
+      [routerLink]="['/' + this.globalVars.RouteNames.BUY_BITCLOUT]"
+      queryParamsHandling="merge"
+      class="text-grey6"
+    >
+      <u>Buy BitClout</u>
+    </a>
+  </div>
+</div>
+
+<!-- Slippage error box -->
+<div *ngIf="creatorCoinTrade.showSlippageError" class="px-3 mt-3">
+  <div class="w-100 border border-color-grey bg-light text-danger">
+    <div class="p-3 fs-14px">The price changed while you were waiting to buy. Please reconfirm your purchase.</div>
+  </div>
+</div>
+
+<!-- Transfer Recipient Box -->
+<div *ngIf="creatorCoinTrade.isCreatorCoinTransfer()" class="px-3 pt-3 border-color-grey">
+  <div class="fs-15px">
+    <span class="font-weight-bold">Recipient</span>
+  </div>
+
+  <div *ngIf="creatorCoinTrade.amount">
+    <div class="mt-15px">
+      <input
+        class="form-control w-100 fs-15px text-left d-inline-block"
+        [formControl]="creatorCoinTrade.transferRecipient"
+        placeholder="Enter a bitclout public key or recipient"
+      />
+    </div>
+  </div>
+
+  <div class="text-danger text-left fs-14px mt-2">
+    <div *ngIf="creatorCoinTrade.showUsernameError" class="mt-10px">
+      Username "{{ creatorCoinTrade.transferRecipient.value }}" could not be found.
+    </div>
+    <div *ngIf="creatorCoinTrade.showPubKeyError" class="mt-10px">Please enter a valid username or public key.</div>
+    <div *ngIf="creatorCoinTrade.showCannotSendToSelfError" class="mt-10px">
+      Please enter a recipient that is not the logged in user.
+    </div>
+  </div>
+</div>
+
+<!-- Purchase Box -->
+<div class="px-3 pt-3 border-color-grey">
+  <!-- Amount input-->
+  <div class="fs-15px">
+    <span class="font-weight-bold">
+      Amount
+      <span *ngIf="creatorCoinTrade.isCreatorCoinTransfer()">&nbsp;to send</span>
+    </span>
+    <span *ngIf="this._maxAmount()">
+      &middot;
+      <a class="text-grey7" (click)="_maxButtonClicked()">
+        <u>Max</u>
+      </a>
+    </span>
+  </div>
+
+  <!-- User-specified amount -->
+  <div *ngIf="creatorCoinTrade.amount">
+    <div class="mt-15px">
+      <input
+        class="form-control fs-15px text-right d-inline-block"
+        [ngClass]="{ 'w-50': !creatorCoinTrade.isCreatorCoinTransfer() }"
+        name="creatorCoinTrade.amount"
+        [formControl]="creatorCoinTrade.amount"
+        placeholder="0"
+      />
+
+      <!-- Currency select -->
+      <div *ngIf="!creatorCoinTrade.isCreatorCoinTransfer()" class="d-inline-block pl-3 w-50">
+        <div *ngIf="creatorCoinTrade.canUserSpecifiyMultipleCurrencies(); else elseBlock">
+          <select
+            *ngIf="this.creatorCoinTrade.currencyConstantsToHumanLabel()"
+            [(ngModel)]="this.creatorCoinTrade.selectedCurrency"
+            (change)="_invalidateAndUpdateAmounts()"
+            class="form-control w-100 trade-creator-form__currency-select"
+          >
+            <option
+              *ngFor="let item of this.creatorCoinTrade.currencyConstantsToHumanLabel() | keyvalue"
+              [value]="item.key"
+            >
+              {{ item.value }}
+            </option>
+          </select>
+        </div>
+        <ng-template #elseBlock>
+          <span class="fc-muted fs-15px">
+            {{ creatorCoinTrade.currencyConstantsToHumanLabel()[creatorCoinTrade.defaultCurrency()] }}
+          </span>
+        </ng-template>
+      </div>
+
+      <!-- Errors-->
+      <div
+        *ngIf="creatorCoinTrade.amount.invalid && (creatorCoinTrade.amount.dirty || creatorCoinTrade.amount.touched)"
+        class="text-danger text-left fs-14px mt-2"
+      >
+        <div *ngIf="creatorCoinTrade.amount.errors.required" class="mt-10px">Amount is required</div>
+
+        <div *ngIf="creatorCoinTrade.amount.errors.exclusiveMin" class="mt-10px">
+          Amount must be greater than {{ this._minAmount() | number: "0.0-9" }}
+          (to cover fees)
+        </div>
+
+        <div *ngIf="creatorCoinTrade.amount.errors.dynamicMax" class="mt-10px">
+          <div *ngIf="this._maxAmount() && this._maxAmount() > 0; else elseBlock">
+            Amount must be less than
+            {{ this._maxAmount() | number: "0.0-9" }}
+            (your balance net of fees)
+          </div>
+          <ng-template #elseBlock>Amount must be less than your balance plus fees</ng-template>
+        </div>
+
+        <div *ngIf="creatorCoinTrade.amount.errors.pattern" class="mt-10px">
+          Amount must be numbers and decimals only
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isUpdatingAmounts; else isUpdatingAmountsElseBlock">
+    <!-- Loading spinner-->
+    <div class="mt-3 spinner-border text-secondary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  <ng-template #isUpdatingAmountsElseBlock>
+    <div class="fs-14px mt-10px text-grey6">
+      <trade-creator-table [displayForCreatorForm]="true" [creatorCoinTrade]="creatorCoinTrade"></trade-creator-table>
+    </div>
+  </ng-template>
+
+  <!-- Review button -->
+  <div class="pb-3 pt-3">
+    <a
+      class="btn btn-primary font-weight-bold w-60"
+      style="font-size: 14px"
+      [ngClass]="{ disabled: !_allowPreviewClick() }"
+      (click)="_onPreviewClicked()"
+    >
+      Review
+    </a>
+  </div>
+</div>
+
+<!-- Spacer (for mobile) -->
+<div style="height: 60px"></div>

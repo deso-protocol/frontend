@@ -1,0 +1,70 @@
+<div dropdown (click)="$event.stopPropagation()" container="body">
+  <a class="js-feed-post__dropdown-toggle link--unstyled text-grey9" role="button" dropdownToggle>
+    <i class="fas fa-ellipsis-h"></i>
+  </a>
+  <div class="dropdown-menu dropdown-menu-right p-0" *dropdownMenu>
+    <a
+      *ngIf="post.InMempool"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-dark"
+      style="cursor: default"
+    >
+      <i class="fas fa-spinner"></i>
+      Status: Mining...
+    </a>
+    <a
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger"
+      (click)="reportPost()"
+    >
+      <i class="fas fa-flag"></i>
+      Report Content
+    </a>
+    <a
+      *ngIf="showHidePostDropdownItem()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger"
+      (click)="hidePost()"
+    >
+      <i class="fas fa-trash"></i>
+      Hide
+    </a>
+    <a
+      *ngIf="showBlockUserDropdownItem()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger"
+      (click)="blockUser()"
+    >
+      <i class="fas fa-ban"></i>
+      Block User
+    </a>
+    <a
+      *ngIf="showAddToGlobalFeedDropdownItem()"
+      class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success fs-12px"
+      (click)="_addPostToGlobalFeed($event)"
+    >
+      <i class="fas fa-folder-plus"></i>
+      Add To Feed
+    </a>
+    <a
+      *ngIf="showRemoveFromGlobalFeedDropdownItem()"
+      class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger fs-12px"
+      (click)="_addPostToGlobalFeed($event)"
+    >
+      <i class="fas fa-folder-minus"></i>
+      Remove From Feed
+    </a>
+    <a
+      *ngIf="showPinPostToGlobalFeedDropdownItem()"
+      class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success fs-12px"
+      (click)="_pinPostToGlobalFeed($event)"
+    >
+      <i class="fas fa-thumbtack"></i>
+      Pin To Feed
+    </a>
+    <a
+      *ngIf="showUnpinPostFromGlobalFeedDropdownItem()"
+      class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger fs-12px"
+      (click)="_pinPostToGlobalFeed($event)"
+    >
+      <i class="fas fa-undo"></i>
+      Unpin From Feed
+    </a>
+  </div>
+</div>

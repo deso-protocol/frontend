@@ -1,0 +1,97 @@
+<div class="d-flex flex-column h-100">
+  <!-- Top Bar -->
+  <div
+    *ngIf="!isMobile"
+    class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-15px font-weight-bold border-bottom border-color-grey"
+  >
+    <!-- Avatar -->
+    <!-- This should only link if the user has a profile (i.e. if it's just a pubkey, no link) -->
+    <a
+      *ngIf="messageThread"
+      class="messages-thread__avatar mr-15px"
+      [ngClass]="{ 'cursor-auto': !counterpartyUsername() }"
+      [routerLink]="counterpartyUsername() ? AppRoutingModule.profilePath(counterpartyUsername()) : []"
+      queryParamsHandling="merge"
+      [style.background-image]="
+        'url(' +
+        (messageThread.ProfileEntryResponse && messageThread.ProfileEntryResponse.ProfilePic
+          ? messageThread.ProfileEntryResponse.ProfilePic
+          : '/assets/img/default_profile_pic.png') +
+        ')'
+      "
+    ></a>
+
+    <div *ngIf="messageThread">
+      <!-- Show username if avaialble-->
+      <div *ngIf="counterpartyUsername(); else elseBlock">
+        <a
+          class="link--unstyled"
+          [routerLink]="AppRoutingModule.profilePath(counterpartyUsername())"
+          queryParamsHandling="merge"
+        >
+          <span>{{ counterpartyUsername() }}</span>
+          <span *ngIf="messageThread.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
+            <i class="fas fa-check-circle fa-md align-middle"></i>
+          </span>
+        </a>
+      </div>
+      <!-- Otherwise show public key-->
+      <ng-template #elseBlock>
+        {{ messageThread.PublicKeyBase58Check }}
+      </ng-template>
+
+      <!-- Coin price-->
+      <div class="mt-5px">
+        <a
+          *ngIf="messageThread.ProfileEntryResponse"
+          [routerLink]="AppRoutingModule.buyCreatorPath(messageThread.ProfileEntryResponse.Username)"
+          queryParamsHandling="merge"
+          class="messages-thread__border-radius link--unstyled font-weight-normal px-10px py-2px background-color-light-grey border border-color-grey"
+          style="width: fit-content"
+        >
+          {{
+            globalVars.nanosToUSD(globalVars._parseFloat(messageThread.ProfileEntryResponse.CoinPriceBitCloutNanos), 2)
+          }}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages Container -->
+  <div class="flex-grow-1" style="overflow: hidden">
+    <div
+      *ngIf="messageThread"
+      class="h-100 w-100 p-15px"
+      style="overflow-y: scroll"
+      id="messagesContainer"
+      #messagesContainer
+    >
+      <message
+        *ngFor="let message of messageThread.Messages; let ii = index"
+        [nextMessage]="ii < messageThread.Messages.length - 1 ? messageThread.Messages[ii + 1] : null"
+        [message]="message"
+        [profile]="messageThread.ProfileEntryResponse"
+      ></message>
+    </div>
+  </div>
+
+  <!-- Create Message Input -->
+  <div class="global__top-bar__height d-flex align-items-center py-15px px-15px border-top border-color-grey">
+    <textarea
+      (keypress)="_messageTextChanged($event)"
+      [(ngModel)]="messageText"
+      class="py-5px fs-15px messages-thread__border-radius flex-grow-1"
+      style="height: 50px"
+    ></textarea>
+    <button
+      *ngIf="!sendMessageBeingCalled"
+      (click)="_sendMessage()"
+      class="btn btn-primary fs-15px ml-15px messages-thread__border-radius"
+    >
+      Send
+    </button>
+    <button *ngIf="sendMessageBeingCalled" class="btn btn-primary fs-15px ml-15px messages-thread__border-radius">
+      Sending...
+    </button>
+  </div>
+</div>

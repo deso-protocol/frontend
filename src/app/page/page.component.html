@@ -1,0 +1,24 @@
+<!--
+  Almost all pages should use this component to support both mobile and desktop views
+  -->
+<div [class]="mobile ? 'global__mobile' : 'global__desktop'">
+  <left-bar *ngIf="!mobile"></left-bar>
+  <left-bar-mobile *ngIf="mobile"></left-bar-mobile>
+
+  <div class="global__content__flex">
+    <div [class]="mobile || hideSidebar ? 'global__content__width' : 'global__center__width'">
+      <div [class]="mobile || hideSidebar ? 'global__content__inner' : 'global__center__inner'">
+        <ng-content></ng-content>
+      </div>
+    </div>
+    <div class="global__sidebar__width" *ngIf="!mobile && !hideSidebar">
+      <right-bar-creators class="global__sidebar__fixed"></right-bar-creators>
+    </div>
+
+    <bottom-bar-mobile
+      *ngIf="mobile"
+      class="global__bottom-bar-mobile"
+      [hidePostButton]="!showPostButton"
+    ></bottom-bar-mobile>
+  </div>
+</div>

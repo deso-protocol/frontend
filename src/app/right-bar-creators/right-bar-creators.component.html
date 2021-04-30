@@ -1,0 +1,50 @@
+<div class="global__sidebar__inner">
+  <!-- Search Bar -->
+  <search-bar></search-bar>
+
+  <div class="pt-10px"></div>
+
+  <!-- BitClout Price / Balance -->
+  <div class="right-bar-creators__balance-box br-12px p-15px mb-30px fs-13px text-grey5 font-weight-bold">
+    <div class="d-flex justify-content-between">
+      <div>$BitClout Price</div>
+      <div>
+        ~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}
+        <span class="text-muted">USD per coin</span>
+      </div>
+    </div>
+    <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
+      <div class="d-flex" style="min-width: 150px">Your $BitClout</div>
+      <div class="d-flex align-items-center justify-content-end flex-wrap">
+        <div>
+          <!-- Amount in BitClout-->
+          {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }}
+        </div>
+
+        <div class="d-flex text-muted">
+          <!-- Amount in USD-->
+          <div class="ml-10px mr-10px">≈</div>
+          <div *ngIf="!globalVars.satoshisPerBitCloutExchangeRate">Fetching... USD</div>
+          <div *ngIf="globalVars.satoshisPerBitCloutExchangeRate">
+            {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }} USD
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign Up Flow -->
+  <div *ngIf="globalVars.loggedInUser == null" class="mb-30px">
+    <right-bar-signup></right-bar-signup>
+  </div>
+
+  <!-- Title -->
+  <div class="fs-15px text-grey5 font-weight-bold mb-15px">
+    <a class="link--unstyled" [routerLink]="'/' + globalVars.RouteNames.CREATORS" queryParamsHandling="merge">
+      Top Weekly Creators
+    </a>
+  </div>
+
+  <!-- Creators -->
+  <right-bar-creators-leaderboard></right-bar-creators-leaderboard>
+</div>

@@ -1,0 +1,207 @@
+<app-page>
+  <!-- Top Bar -->
+  <div
+    class="global__top-bar global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+  >
+    <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+    Wallet
+  </div>
+
+  <div class="global__top-bar__height"></div>
+
+  <div class="d-flex flex-column" *ngIf="globalVars.loggedInUser">
+    <div style="flex-grow: 1">
+      <div class="global__mobile-scrollable-section">
+        <!-- $BitClout Divider Bar -->
+        <div
+          class="d-flex align-items-center justify-content-between fs-18px font-weight-bold p-15px holdings__divider border-bottom border-color-grey"
+        >
+          <div>$BitClout</div>
+          <div class="fs-15px" style="margin-top: 2px">
+            <a
+              *ngIf="globalVars.loggedInUser"
+              href="{{ 'https://explorer.bitclout.com/?public-key=' + globalVars.loggedInUser.PublicKeyBase58Check }}"
+              class="fc-blue"
+            >
+              Transactions
+            </a>
+            <span class="px-5px">·</span>
+            <a [routerLink]="'/' + globalVars.RouteNames.SEND_BITCLOUT" queryParamsHandling="merge" class="fc-blue">
+              Send
+            </a>
+          </div>
+        </div>
+
+        <!-- $BitClout Holdings -->
+        <!-- Override .container's max-width property with max-width: inherit-->
+        <div class="container fs-15px p-15px border-bottom border-color-grey" style="max-width: inherit">
+          <div class="row pt-5px">
+            <div class="col-3 font-weight-bold">Balance</div>
+            <div class="col-9">
+              <div>
+                {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos, 9) }}
+                <i
+                  *ngIf="globalVars.loggedInUser.UnminedBalanceNanos != 0 && globalVars.showProcessingSpinners"
+                  class="fa fa-spinner fc-muted"
+                  matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                  [matTooltip]="unminedBitCloutToolTip()"
+                  #tooltip="matTooltip"
+                  (click)="tooltip.toggle()"
+                ></i>
+              </div>
+              <div class="fc-muted">≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }} USD</div>
+            </div>
+          </div>
+          <div class="row pt-15px pb-15px">
+            <div class="col-3 font-weight-bold mb-0">Public Key</div>
+            <div class="col-9 d-flex align-items-center holdings__pub-key mb-0">
+              {{ globalVars.loggedInUser.PublicKeyBase58Check }}
+              <i
+                class="far fa-copy ml-15px holdings__copy"
+                (click)="globalVars._copyText(globalVars.loggedInUser.PublicKeyBase58Check)"
+              ></i>
+            </div>
+          </div>
+          <div class="row"></div>
+        </div>
+
+        <!-- Creator Coins Divider Bar -->
+        <div
+          class="d-flex align-items-center justify-content-between fs-18px p-15px holdings__divider border-bottom border-color-grey"
+        >
+          <div class="font-weight-bold">Creator Coins</div>
+          <div class="fs-14px">
+            <span class="font-weight-bold">≈ {{ globalVars.nanosToUSD(totalValue(), 2) }}</span>
+            USD Value
+          </div>
+        </div>
+
+        <div class="fs-15px">
+          <div
+            class="row no-gutters d-flex align-items-center fc-muted border-bottom border-color-grey pl-15px py-15px"
+          >
+            <div class="col mb-0">Name</div>
+            <div class="col-2 d-lg-block d-none mb-0" style="text-align: end">Price</div>
+            <div class="col-4 mb-0" style="text-align: end">
+              USD Value
+              <i
+                class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                [matTooltip]="'This is the amount you would get if you sold your holdings.'"
+                #tooltip="matTooltip"
+                (click)="tooltip.toggle()"
+              ></i>
+            </div>
+            <div class="col-lg-1 col-2 d-block mb-0"></div>
+          </div>
+          <div *ngFor="let creator of usersYouHODL()">
+            <!-- Screen out zero balances -->
+            <div
+              *ngIf="
+                creator &&
+                (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
+              "
+              class="row no-gutters fc-default pt-15px pl-15px"
+            >
+              <!-- Name-->
+              <a
+                class="col d-flex align-items-center link--unstyled holdings__creator-coin-name"
+                [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
+                queryParamsHandling="merge"
+              >
+                <div
+                  class="holdings__avatar"
+                  [style.background-image]="'url(' + creator.ProfileEntryResponse.ProfilePic + ')'"
+                ></div>
+                <div class="text-truncate holdings__name">
+                  <span>{{ creator.ProfileEntryResponse.Username }}</span>
+
+                  <span
+                    *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
+                    class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                    [matTooltip]="'This profile is reserved. The owner has not yet claimed it.'"
+                  >
+                    <i class="far fa-clock fa-md align-middle"></i>
+                  </span>
+                  <span
+                    *ngIf="creator.ProfileEntryResponse.IsVerified"
+                    (click)="tooltip.toggle()"
+                    class="ml-1 cursor-pointer text-primary"
+                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                    [matTooltip]="'This account is verified'"
+                    #tooltip="matTooltip"
+                  >
+                    <i class="fas fa-check-circle fa-md align-middle"></i>
+                  </span>
+
+                  <div class="text-grey9 fs-12px d-lg-none">
+                    {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+                  </div>
+                </div>
+              </a>
+
+              <!-- Price-->
+              <div class="col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
+                <div class="d-flex align-items-center justify-content-end">
+                  {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+                </div>
+              </div>
+
+              <!-- Balance -->
+              <div class="col-4 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
+                <div>
+                  <div>
+                    <i
+                      *ngIf="creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners"
+                      class="fa fa-spinner fc-muted"
+                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                      [matTooltip]="unminedCreatorCoinToolTip(creator)"
+                      #tooltip="matTooltip"
+                      (click)="tooltip.toggle()"
+                    ></i>
+                    ~{{
+                      globalVars.usdYouWouldGetIfYouSoldDisplay(
+                        creator.BalanceNanos,
+                        creator.ProfileEntryResponse.CoinEntry
+                      )
+                    }}
+                  </div>
+                  <div class="text-grey8A fs-12px text-right">
+                    {{ globalVars.nanosToBitClout(creator.BalanceNanos, 4) }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Buy / Sell / Transfer Dropdown -->
+              <div
+                class="wallet__dropdown-parent col-lg-1 col-2 d-flex align-items-center justify-content-center text-grey8A pl-30px"
+              >
+                <wallet-actions-dropdown
+                  [hodlingUsername]="creator.ProfileEntryResponse.Username"
+                ></wallet-actions-dropdown>
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="globalVars.loggedInUser.UsersYouHODL.length == 0"
+            class="d-flex justify-content-center fs-15px fc-muted w-100 mt-30px"
+          >
+            You don't hold any creator coins yet.
+          </div>
+        </div>
+
+        <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+        <div class="global__bottom-bar-mobile-height"></div>
+        <div class="global__bottom-bar-mobile-height"></div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!globalVars.loggedInUser">
+    <simple-center-loader></simple-center-loader>
+  </div>
+
+  <!--Spacer (for mobile)-->
+  <!--Need this so the blue circle doesn't cover the content-->
+  <div style="padding-bottom: 65px"></div>
+</app-page>

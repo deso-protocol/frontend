@@ -1,0 +1,50 @@
+<div class="w-100 d-flex pt-15px pl-15px">
+  <!-- I couldn't get "open in new tab" to work without the "; true" in (click) -->
+  <a
+    (click)="globalVars.isLeftBarMobileOpen = false; (true)"
+    [routerLink]="[link]"
+    [queryParams]="{ stepNum: null, adminTab: null, feedTab: null }"
+    queryParamsHandling="merge"
+    routerLinkActive
+    #rla="routerLinkActive"
+    [routerLinkActiveOptions]="{ exact: true }"
+    [ngClass]="{
+      'left-bar__dot-unread': isUnread,
+      'left-bar__dot-inactive': !rla.isActive,
+      'left-bar__dot-active': rla.isActive
+    }"
+  >
+    ·
+  </a>
+
+  <div class="d-flex justify-content-center align-items-center">
+    <!-- I couldn't get "open in new tab" to work without the "; true" in (click) -->
+    <a
+      class="cursor-pointer fs-15px text-grey5"
+      (click)="globalVars.isLeftBarMobileOpen = false; (true)"
+      [routerLink]="[link]"
+      [queryParams]="{ stepNum: null, adminTab: null, feedTab: null }"
+      [routerLinkActive]="['font-weight-bold', 'fc-default']"
+      [routerLinkActiveOptions]="{ exact: true }"
+      queryParamsHandling="merge"
+    >
+      {{ buttonLabel }}
+    </a>
+    <div
+      *ngIf="hasNotifications && globalVars.messageNotificationCount != 0"
+      class="ml-5px p-5x fs-15px"
+      style="
+        border-radius: 3px;
+        background-color: white;
+        color: #fe3537;
+        border: 1px #fe3537 solid;
+        text-align: center;
+        line-height: 18px;
+        height: 20px;
+        width: 20px;
+      "
+    >
+      {{ globalVars.messageNotificationCount }}
+    </div>
+  </div>
+</div>

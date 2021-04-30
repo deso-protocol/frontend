@@ -1,0 +1,13 @@
+<app-page>
+  <admin
+    *ngIf="globalVars.showAdminTools()"
+    class="h-100 center-col-width border-left border-right border-color-grey"
+  ></admin>
+  <div
+    *ngIf="!globalVars.showAdminTools()"
+    class="fs-15px d-flex flex-column align-items-center border border-color-grey global__center__inner"
+  >
+    <div class="w-100" style="height: 200px"></div>
+    You don't have access to this node's admin panel.
+  </div>
+</app-page>

@@ -1,0 +1,8 @@
+<app-page>
+  <div *ngIf="globalVars.loggedInUser; else elseBlock">
+    <buy-bitclout></buy-bitclout>
+  </div>
+  <ng-template #elseBlock>
+    <buy-bitclout-logged-out></buy-bitclout-logged-out>
+  </ng-template>
+</app-page>

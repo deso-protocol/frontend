@@ -1,0 +1,692 @@
+<div *ngIf="globalVars.nodeInfo != null">
+  <!-- Top Bar -->
+  <div
+    *ngIf="!isMobile"
+    class="global__top-bar__height d-flex align-items-center w-100 px-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
+  >
+    <div class="d-flex align-items-center">
+      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+      Admin
+    </div>
+  </div>
+
+  <!-- Feed Selector -->
+  <tab-selector [tabs]="adminTabs" [activeTab]="activeTab" (tabClick)="_tabClicked($event)"></tab-selector>
+
+  <!-- Post Whitelist Selector -->
+  <div style="overflow-y: scroll" *ngIf="activeTab == 'Posts' && adminPosts.length != 0 && !loadingPosts">
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
+      Select posts below to show them in the featured feed.
+    </div>
+    <tab-selector
+      [tabs]="adminPostTabs"
+      [activeTab]="activePostTab"
+      (tabClick)="_postTabClicked($event)"
+    ></tab-selector>
+    <div
+      *ngIf="activePostTab == POSTS_BY_CLOUT_TAB"
+      class="w-100 justify-content-sm-around px-15px py-5px fs-15px border-bottom border-color-grey d-block"
+    >
+      <mat-form-field appearance="fill" class="pb-0">
+        <mat-label for="time-window" class="pr-10px mb-0" style="height: auto; vertical-align: middle">
+          Time Window:
+        </mat-label>
+        <mat-select id="time-window" style="height: auto; vertical-align: middle" [(value)]="selectedTimeWindow">
+          <mat-option *ngFor="let timeWindow of timeWindowOptions | keyvalue" [value]="timeWindow.value">
+            {{ timeWindow.key }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <a
+        class="btn btn-primary"
+        style="vertical-align: middle; float: right; text-align: center"
+        (click)="_searchPostsByClout()"
+      >
+        Search
+      </a>
+    </div>
+    <simple-center-loader *ngIf="searchingForPostsByClout; else showPosts"></simple-center-loader>
+    <ng-template #showPosts>
+      <div *ngFor="let post of activePosts; let ii = index">
+        <div *ngIf="post.ProfileEntryResponse" class="p-15px border-bottom border-color-grey">
+          <!--
+            The post.parentPost stuff is a hack to make it so that a new comment shows up
+            in the feed with the "replying to @[parentPost.Username]" content diplayed.
+            post.parentPost is set in appendCommentAfterParentPost
+          -->
+          <feed-post
+            *ngIf="post.ProfileEntryResponse"
+            [includePaddingOnPost]="true"
+            [post]="post"
+            [showIconRow]="true"
+            [showAdminRow]="true"
+            [showReplyingToContent]="!!post.parentPost"
+            [parentPost]="post.parentPost"
+            [contentShouldLinkToThread]="false"
+            (addToGlobalFeed)="addToGlobalFeed(ii)"
+          ></feed-post>
+        </div>
+      </div>
+    </ng-template>
+    <div
+      *ngIf="!loadingPosts && activePostTab == 'Posts'"
+      class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
+      (click)="_loadPosts()"
+    >
+      <div *ngIf="!loadingMore" class="fs-15px">Load More</div>
+      <div *ngIf="loadingMore" class="fs-15px">Loading...</div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="activeTab == 'Posts' && adminPosts.length == 0 && !loadingPosts"
+    class="d-flex flex-column align-items-center justify-content-center"
+    style="height: 400px"
+  >
+    <div class="fc-muted fs-15px">No posts found.</div>
+  </div>
+
+  <simple-center-loader *ngIf="activeTab == 'Posts' && loadingPosts"></simple-center-loader>
+
+  <!-- Profile Blacklisting -->
+  <div *ngIf="activeTab == 'Profiles'" class="w-100 d-flex flex-column">
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
+      ☠️ Use the controls below to remove profiles from the UI. Profiles that are "Blacklisted" will be removed
+      everywhere. Profiles that are "Greylisted" will be selectively removed.
+    </div>
+
+    <!-- BLACKLIST -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Remove everywhere:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="blacklistPubKeyOrUsername"
+          (keydown.enter)="updateProfileModerationLevel('blacklist')"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key."
+        />
+        <button
+          *ngIf="!submittingBlacklistUpdate"
+          (click)="updateProfileModerationLevel('blacklist')"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: 150px"
+        >
+          Blacklist
+        </button>
+        <button *ngIf="submittingBlacklistUpdate" class="btn btn-dark fs-15px ml-5px" disabled>Working...</button>
+      </div>
+      <div *ngIf="updateProfileSuccessType === 'blacklist'" class="font-weight-normal fs-12px" style="color: green">
+        <i class="far fa-check-circle"></i>
+        Successfully added user to blacklist.
+      </div>
+    </div>
+
+    <!-- GRAYLIST -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Remove from leaderboards:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="graylistPubKeyOrUsername"
+          (keydown.enter)="updateProfileModerationLevel('graylist')"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key."
+        />
+        <button
+          *ngIf="!submittingGraylistUpdate"
+          (click)="updateProfileModerationLevel('graylist')"
+          class="btn btn-secondary fs-15px ml-5px"
+          style="width: 150px"
+        >
+          Graylist&nbsp;
+        </button>
+        <button *ngIf="submittingGraylistUpdate" class="btn btn-secondary fs-15px ml-5px" disabled>Working...</button>
+      </div>
+      <div *ngIf="updateProfileSuccessType === 'graylist'" class="font-weight-normal fs-12px" style="color: green">
+        <i class="far fa-check-circle"></i>
+        Successfully added user to graylist.
+      </div>
+    </div>
+
+    <!-- REMOVE FROM BLACKLISTS -->
+    <div class="fs-15px font-weight-bold mt-15px px-15px pb-30px border-bottom border-color-grey">
+      Remove from blacklist and graylist:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="unrestrictPubKeyOrUsername"
+          (keydown.enter)="updateProfileModerationLevel('unrestrict')"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key."
+        />
+        <button
+          *ngIf="!submittingUnrestrictUpdate"
+          (click)="updateProfileModerationLevel('unrestrict')"
+          class="btn btn-danger fs-15px ml-5px border border-color-grey"
+          style="width: 150px"
+        >
+          Unrestrict
+        </button>
+        <button
+          *ngIf="submittingUnrestrictUpdate"
+          class="btn btn-danger fs-15px ml-5px border border-color-grey"
+          disabled
+        >
+          Working...
+        </button>
+      </div>
+      <div *ngIf="updateProfileSuccessType === 'restrict'" class="font-weight-normal fs-12px" style="color: green">
+        <i class="far fa-check-circle"></i>
+        Successfully removed user from blacklist and graylist.
+      </div>
+    </div>
+
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
+      ⭐ Use the controls below to Whitelist profiles. Profiles that are Whitelisted will automatically have up to five
+      of their posts added to the global feed per day.
+    </div>
+
+    <!-- WHITELIST -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Whitelist user:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="whitelistPubKeyOrUsername"
+          (keydown.enter)="whitelistClicked()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key."
+        />
+        <button
+          *ngIf="!submittingWhitelistUpdate"
+          (click)="whitelistClicked()"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+          style="width: 150px"
+        >
+          Whitelist
+        </button>
+        <button
+          *ngIf="submittingWhitelistUpdate"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+          disabled
+        >
+          Working...
+        </button>
+      </div>
+      <div *ngIf="whitelistUpdateSuccess" class="font-weight-normal fs-12px" style="color: green">
+        <i class="far fa-check-circle"></i>
+        Successfully added user to whitelist.
+      </div>
+    </div>
+
+    <!-- REMOVE FROM WHITELIST -->
+    <div class="fs-15px font-weight-bold mt-15px px-15px pb-30px border-bottom border-color-grey">
+      Remove user from whitelist:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="unwhitelistPubKeyOrUsername"
+          (keydown.enter)="unwhitelistClicked()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key."
+        />
+        <button
+          *ngIf="!submittingUnwhitelistUpdate"
+          (click)="unwhitelistClicked()"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+          style="width: 150px"
+        >
+          <i class="far fa-times-circle"></i>
+          Remove
+        </button>
+        <button
+          *ngIf="submittingUnwhitelistUpdate"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+          disabled
+        >
+          Working...
+        </button>
+      </div>
+      <div *ngIf="unwhitelistUpdateSuccess" class="font-weight-normal fs-12px" style="color: green">
+        <i class="far fa-check-circle"></i>
+        Successfully removed user from whitelist.
+      </div>
+    </div>
+
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
+      📞 Enter a username or public key below to wipe their phone registration.
+    </div>
+
+    <!-- Allow phone number re-registration -->
+    <div class="fs-15px font-weight-bold mt-15px pb-30px px-15px border-bottom border-color-grey">
+      Allow phone number re-registration:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="removePhonePubKeyorUsername"
+          (keydown.enter)="(submitRemovePhoneNumber)"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key."
+        />
+        <button
+          *ngIf="!submittingRemovePhone"
+          (click)="submitRemovePhoneNumber()"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+        >
+          Allow
+        </button>
+        <button
+          *ngIf="submittingRemovePhone"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+          disabled
+        >
+          Working...
+        </button>
+      </div>
+      <div *ngIf="updateProfileSuccessType === 'phone'" class="font-weight-normal fs-12px" style="color: green">
+        <i class="far fa-check-circle"></i>
+        Success.
+      </div>
+    </div>
+
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
+      🖥️ Dump blacklist / whitelist data.
+    </div>
+
+    <!-- PUBLIC KEYS IN THE DB -->
+    <div (click)="_toggleDbDetails()" class="fs-15px px-15px pt-15px cursor-pointer">
+      <i *ngIf="!dbDetailsOpen" class="fas fa-caret-right"></i>
+      <i *ngIf="dbDetailsOpen" class="fas fa-caret-down"></i>
+      <span class="ml-15px">
+        <span *ngIf="!dbDetailsLoading">See what's in global state</span>
+        <span *ngIf="dbDetailsLoading">Loading...</span>
+      </span>
+      <div *ngIf="dbDetailsOpen && !dbDetailsLoading">
+        <div class="mt-15px mb-15px">
+          --- Returned
+          <span class="fc-blue">{{ userMetadataMapLength }}</span>
+          UserMetadata entries ---
+        </div>
+        <div *ngFor="let item of userMetadataMap | keyvalue: descOrder">
+          <ul class="mb-5px">
+            <li>
+              <span *ngIf="usernameMap[item.key]" class="font-weight-bold fc-blue">{{ usernameMap[item.key] }}:</span>
+              {{ item.key.slice(0, 15) }}...
+              <ul>
+                <li>
+                  RemoveEverywhere:
+                  <span class="fc-blue">{{ item.value.RemoveEverywhere }}</span>
+                </li>
+                <li>
+                  RemoveFromLeaderboard:
+                  <span class="fc-blue">{{ item.value.RemoveFromLeaderboard }}</span>
+                </li>
+                <li>
+                  WhitelistPosts:
+                  <span class="fc-blue">{{ item.value.WhitelistPosts }}</span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Network Info -->
+  <div *ngIf="activeTab == 'Network'">
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
+      See the state of your bitclout node below.
+    </div>
+    <network-info class="w-100"></network-info>
+  </div>
+
+  <!-- Mempool Info -->
+  <div *ngIf="activeTab == 'Mempool'" class="w-100 d-flex flex-column" style="overflow-y: scroll">
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
+      See the state of your node's mempool below.
+    </div>
+    <div class="px-15px py-30px border-bottom border-color-grey">
+      <div class="container fs-15px">
+        <div class="row no-gutters font-weight-bold border-bottom border-color-grey">
+          <div class="col">Txn Type</div>
+          <div class="col">Txn Count</div>
+          <div class="col">Total Bytes</div>
+        </div>
+        <div *ngFor="let row of mempoolSummaryStats | keyvalue" class="row no-gutters pt-5px">
+          <div class="col">
+            {{ row.key }}
+          </div>
+          <div class="col">
+            {{ row.value.Count }}
+          </div>
+          <div class="col">
+            {{ row.value.TotalBytes }}
+          </div>
+        </div>
+        <div *ngIf="mempoolTxnCount === 0" class="d-flex py-15px font-italic fc-muted">
+          Couldn't find any mempool transactions right now.
+        </div>
+        <div class="row no-gutters font-weight-bold border-top border-color-grey mt-5px">
+          <div class="col">Total</div>
+          <div class="col">
+            {{ mempoolTxnCount }}
+          </div>
+          <div class="col">
+            {{ mempoolTotalBytes }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!loadingNextBlockStats && nextBlockStats" class="w-100 p-30px fs-15px">
+      <div class="font-weight-bold border-bottom border-color-grey">Next block template</div>
+      <div class="pt-5px">
+        {{ nextBlockStats.TxnCount }} transaction
+        <span *ngIf="nextBlockStats.TxnCount > 1">s</span>
+        expected to mine in the next block.
+      </div>
+
+      <div class="pt-15px font-weight-bold border-bottom border-color-grey">
+        Next failing txn
+        <span *ngIf="nextBlockStats.FailingTxnMinutesSinceAdded" class="font-weight-normal">
+          (first seen {{ globalVars.abbreviateNumber(nextBlockStats.FailingTxnMinutesSinceAdded, 2) }} minutes ago)
+        </span>
+      </div>
+      <div class="mt-5px p-5px br-3px background-color-grey" style="overflow-wrap: anywhere">
+        {{ nextBlockStats.FailingTxnHash }}
+      </div>
+
+      <div class="pt-15px font-weight-bold border-bottom border-color-grey">Next failing txn error</div>
+      <div class="mt-5px p-5px br-3px background-color-grey" style="overflow-wrap: anywhere">
+        "{{ nextBlockStats.FailingTxnError }}"
+      </div>
+    </div>
+    <div *ngIf="!loadingNextBlockStats && !nextBlockStats">Next block stats not available. Try refreshing.</div>
+    <div *ngIf="loadingNextBlockStats">Loading...</div>
+  </div>
+
+  <!-- Mempool Info -->
+  <div *ngIf="activeTab == 'Super'" class="w-100 d-flex flex-column" style="overflow-y: scroll">
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
+      Are you a super user? Welcome.
+    </div>
+
+    <!-- Swap Identities-->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Swap Identity (BE CAREFUL):
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="swapIdentityFromUsernameOrPublicKey"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key to transfer *FROM*"
+        />
+      </div>
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="swapIdentityToUsernameOrPublicKey"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key to transfer *TO*"
+        />
+      </div>
+      <div class="d-flex mt-5px">
+        <button *ngIf="!submittingSwapIdentity" (click)="swapIdentity()" class="btn btn-outline-primary fs-15px">
+          Swap Identities
+        </button>
+        <button *ngIf="submittingSwapIdentity" class="btn btn-primary fs-15px" disabled>Working...</button>
+      </div>
+    </div>
+    <!-- Change Username -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Change Username (BE CAREFUL):
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="changeUsernamePublicKey"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a public key"
+          (change)="searchedForPubKey = false; userMetadataToUpdate = null; userProfileEntryResponseToUpdate = null"
+        />
+        <button (click)="getUserMetadata()" class="btn btn-outline-primary fs-15px ml-5px">Get User</button>
+      </div>
+      <div class="d-flex mt-5px fs-12px fc-muted" *ngIf="userMetadataToUpdate">
+        <span>User Global Metadata</span>
+        <ul>
+          <li *ngFor="let item of userMetadataToUpdate | keyvalue">{{ item.key }}: {{ item.value }}</li>
+        </ul>
+      </div>
+      <div class="d-flex mt-5px fs-12px fc-muted" *ngIf="userProfileEntryResponseToUpdate">
+        <span>User Profile Entry</span>
+        <ul>
+          <li *ngFor="let item of userProfileEntryResponseToUpdate | keyvalue">{{ item.key }}: {{ item.value }}</li>
+        </ul>
+      </div>
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="usernameTarget"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter the username to which you want to assign the username of this public key"
+        />
+      </div>
+      <div class="d-flex mt-5px">
+        <button *ngIf="!submittingUpdateUsername" (click)="updateUsername()" class="btn btn-outline-primary fs-15px">
+          Update Username
+        </button>
+        <button *ngIf="submittingUpdateUsername" class="btn btn-primary fs-15px" disabled>Working...</button>
+      </div>
+    </div>
+    <!-- Reprocess Bitcoin Block -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Reprocess Bitcoin Block:
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="bitcoinBlockHashOrHeight"
+          (keydown.enter)="reprocessBitcoinBlock()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a Bitcoin block hash or block height."
+        />
+        <button
+          *ngIf="!submittingReprocessRequest"
+          (click)="reprocessBitcoinBlock()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
+          Reprocess Block
+        </button>
+        <button *ngIf="submittingReprocessRequest" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+      </div>
+    </div>
+
+    <!-- Update Global Params -->
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Update Bitcoin to USD Price
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="updateGlobalParamsValues.USDPerBitcoin"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Enter current BTC price in USD."
+        />
+        <button
+          *ngIf="!updatingUSDToBitcoin"
+          (click)="updateGlobalParamUSDPerBitcoin()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+          [ngStyle]="{ disabled: updatingGlobalParams }"
+        >
+          Update
+        </button>
+        <button *ngIf="updatingUSDToBitcoin" class="btn btn-dark fs-15px ml-5px" style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Create Profile Fee In BitClout
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="updateGlobalParamsValues.CreateProfileFeeNanos"
+          type="number"
+          class="form-control fs-15px lh-15px w-100"
+          style="width: 250px"
+          min="0"
+          placeholder="Set fee to create a profile"
+        />
+        <button
+          *ngIf="!updatingCreateProfileFee"
+          (click)="updateGlobalParamCreateProfileFee()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+          [ngStyle]="{ disabled: updatingGlobalParams }"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingCreateProfileFee"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content"
+          disabled
+        >
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Min. Network Fee Rate (nanos / kb)
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="updateGlobalParamsValues.MinimumNetworkFeeNanosPerKB"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          style="width: 250px"
+          placeholder="Set minimum network fee per kb"
+        />
+        <button
+          *ngIf="!updatingMinimumNetworkFee"
+          (click)="updateGlobalParamMinimumNetworkFee()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+          [ngStyle]="{ disabled: updatingGlobalParams }"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingMinimumNetworkFee"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content"
+          disabled
+        >
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Verify User -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Grant Verification Badge:
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="usernameToVerify"
+          (keydown.enter)="grantVerificationBadge()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username to verify."
+        />
+        <button
+          *ngIf="!submittingVerifyRequest"
+          (click)="grantVerificationBadge()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
+          Verify
+        </button>
+        <button *ngIf="submittingVerifyRequest" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+      </div>
+    </div>
+
+    <!-- Remove Verification Badge -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Remove Verification Badge:
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="usernameForWhomToRemoveVerification"
+          (keydown.enter)="RemoveVerificationBadge()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username from whom to remove verification."
+        />
+        <button
+          *ngIf="!submittingRemovalRequest"
+          (click)="RemoveVerification()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
+          Remove
+        </button>
+        <button *ngIf="submittingRemovalRequest" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+      </div>
+    </div>
+
+    <div class="fs-15px mt-15px mb-15px px-15px">
+      <button *ngIf="!loadingVerifiedUsers" (click)="_loadVerifiedUsers()" class="btn btn-outline-dark fs-15px">
+        (Load Verified Users)
+      </button>
+      <button *ngIf="loadingVerifiedUsers" class="btn btn-dark fs-15px" disabled>Loading...</button>
+    </div>
+    <div class="fs-15px mb-15px px-15px" style="overflow-wrap: break-word">{{ verifiedUsers }}</div>
+    <!-- Username Verification Audit Logs -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Get Username Verification Logs:
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="usernameToFetchVerificationAuditLogs"
+          (keydown.enter)="_loadVerifiedUsersAuditLog()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username."
+        />
+        <button
+          *ngIf="!loadingVerifiedUsersAuditLog"
+          (click)="_loadVerifiedUsersAuditLog()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
+          Fetch
+        </button>
+        <button *ngIf="loadingVerifiedUsersAuditLog" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+      </div>
+    </div>
+    <ul *ngFor="let auditLog of usernameVerificationAuditLogs">
+      <li class="fs-12px">Time: {{ globalVars.convertTstampToDateOrTime(auditLog.TimestampNanos) }}</li>
+      <ul>
+        <li class="fs-12px">VerifierPubKey: {{ auditLog.VerifierPublicKeyBase58Check }}</li>
+        <li class="fs-12px">VerifierUsername: {{ auditLog.VerifierUsername }}</li>
+        <li class="fs-12px">VerificationRemoved: {{ auditLog.IsRemoval }}</li>
+      </ul>
+    </ul>
+
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Remove nil posts from global feed:
+      <div class="d-flex mt-5px">
+        <button *ngIf="!removingNilPosts" (click)="_removeNilPosts()" class="btn btn-outline-primary fs-15px ml-5px">
+          Clean up!
+        </button>
+        <button *ngIf="removingNilPosts" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="!globalVars.showAdminTools()"
+  class="d-flex flex-column align-items-center justify-content-center p-15px font-italic"
+  style="height: 600px"
+>
+  Access denied.
+</div>

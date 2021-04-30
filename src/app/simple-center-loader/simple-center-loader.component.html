@@ -1,0 +1,36 @@
+<div class="d-flex flex-column align-items-center justify-content-center" [ngStyle]="{ height: getHeight() }">
+  <div
+    [ngClass]="{
+      gray: spinnerColor === 'gray',
+      black: spinnerColor === 'black',
+      white: spinnerColor === 'white',
+      'lds-default': true
+    }"
+  >
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <div
+    [ngClass]="{
+      'text-gray': textColor === 'gray',
+      'text-black': textColor === 'black',
+      'text-white': textColor === 'white',
+      'text-center': true
+    }"
+  >
+    <div class="fc-muted fs-24px">{{ titleLoadingText }}</div>
+    <div *ngIf="subtitleLoadingText">
+      <div class="fc-muted fs-15px text-center">{{ subtitleLoadingText }}</div>
+    </div>
+  </div>
+</div>

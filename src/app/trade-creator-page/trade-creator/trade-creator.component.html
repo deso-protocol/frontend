@@ -1,0 +1,80 @@
+<div *ngIf="readyForDisplay(); else loadingElseBlock">
+  <div *ngIf="this.appData.loggedInUser; else elseBlock">
+    <!-- Top Bar -->
+    <div
+      class="d-flex align-items-center justify-content-between w-100 pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+      style="min-height: 80px"
+    >
+      <div class="d-flex align-items-center">
+        <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
+
+        <a
+          class="d-none d-lg-block trade-creator__avatar mr-15px"
+          [style.background-image]="
+            'url(' +
+            (creatorCoinTrade.creatorProfile && creatorCoinTrade.creatorProfile.ProfilePic
+              ? creatorCoinTrade.creatorProfile.ProfilePic
+              : '/assets/img/default_profile_pic.png') +
+            ')'
+          "
+        ></a>
+
+        <div *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN" class="font-weight-bold fs-18px">
+          {{ creatorCoinTrade.tradeVerbString() }} {{ creatorCoinTrade.creatorProfile.Username }} coin
+        </div>
+
+        <span *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
+          Confirm Coin
+          {{ creatorCoinTrade.tradeVerbString() }}
+        </span>
+
+        <span *ngIf="screenToShow == this.TRADE_CREATOR_COMPLETE_SCREEN">
+          <i class="far fa-check-circle text-primary"></i>
+          <span class="ml-10px text-primary">
+            Success!
+            {{ creatorCoinTrade.tradeVerbString() }}
+            Complete
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <tab-selector
+      [tabs]="tabList"
+      [activeTab]="creatorCoinTrade.tradeType"
+      (tabClick)="_handleTabClick($event)"
+    ></tab-selector>
+
+    <!-- Content -->
+    <div *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN">
+      <trade-creator-form
+        [creatorCoinTrade]="creatorCoinTrade"
+        (previewClicked)="_onPreviewClicked()"
+      ></trade-creator-form>
+    </div>
+
+    <div *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
+      <trade-creator-preview
+        [creatorCoinTrade]="creatorCoinTrade"
+        (slippageError)="_onSlippageError()"
+        (backButtonClicked)="_onBackButtonClicked()"
+        (tradeExecuted)="_onTradeExecuted()"
+      ></trade-creator-preview>
+    </div>
+
+    <div *ngIf="screenToShow == this.TRADE_CREATOR_COMPLETE_SCREEN">
+      <trade-creator-complete
+        [creatorCoinTrade]="creatorCoinTrade"
+        (tradeAgainButtonClicked)="_onBackButtonClicked()"
+      ></trade-creator-complete>
+    </div>
+  </div>
+
+  <ng-template #elseBlock>
+    <trade-creator-logged-out [creatorCoinTrade]="creatorCoinTrade"></trade-creator-logged-out>
+  </ng-template>
+</div>
+<ng-template #loadingElseBlock>
+  <simple-center-loader></simple-center-loader>
+</ng-template>

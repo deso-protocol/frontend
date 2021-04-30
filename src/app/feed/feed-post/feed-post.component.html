@@ -1,0 +1,324 @@
+<!-- PLEASE READ: this component is used in multiple places. Plese be careful about
+     adding padding to the outer div that will break other UIs.
+
+     Be careful when modifying this. It's used in multiple places. You should prob QA all
+     of them if you modify. Some places it's used:
+
+     - feed
+
+     - post-thread component (i.e. single post thread view... note that there's a different
+       treatment for parents vs comments, based on the isParentPostInThread variable)
+
+     - feed-create-comment-form component (i.e. create comment view)
+
+     - market-feed component -->
+
+<div
+  *ngIf="post.IsHidden"
+  class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px"
+>
+  <a
+    (click)="onPostClicked($event)"
+    class="link--unstyled"
+    [routerLink]="['/' + globalVars.RouteNames.POSTS, post.PostHashHex]"
+    queryParamsHandling="merge"
+  >
+    This post was removed by the author.
+  </a>
+</div>
+
+<div
+  *ngIf="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+  class="p-15px background-color-grey d-flex align-items-center justify-content-center fs-15px"
+>
+  <a
+    class="link--unstyled"
+    style="text-align: center"
+    [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, post.ProfileEntryResponse.Username]"
+    queryParamsHandling="merge"
+  >
+    This is a post from {{ post.ProfileEntryResponse.Username }} who you have blocked. Click here to visit their profile
+    to unblock them.
+  </a>
+</div>
+
+<div
+  *ngIf="!post.IsHidden && !hidingPost && !globalVars.hasUserBlockedCreator(postContent.PosterPublicKeyBase58Check)"
+  class="d-flex flex-column js-feed-post"
+  style="overflow: hidden"
+  [ngClass]="{ 'js-feed-post-hover': hoverable }"
+>
+  <a
+    (click)="onPostClicked($event)"
+    Class="link--unstyled"
+    [ngClass]="{
+      'cursor-inherit': !contentShouldLinkToThread
+    }"
+  >
+    <div
+      *ngIf="reclouterProfile"
+      class="feed-post__container d-flex justify-content-left w-100 pb-5px"
+      [ngClass]="{
+        'feed-post__blue-border': showLeftSelectedBorder,
+        'feed-post__parent-post-font-size': isParentPostInThread,
+        'px-15px': includePaddingOnPost,
+        'pt-10px': includePaddingOnPost
+      }"
+    >
+      <a
+        class="fc-muted font-weight-semibold align-items-center"
+        queryParamsHandling="merge"
+        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, reclouterProfile.Username]"
+      >
+        <i class="icon-repost fs-20px" style="vertical-align: middle"></i>
+        <span style="vertical-align: middle" class="fs-15px">@{{ reclouterProfile.Username }} reclouted</span>
+      </a>
+      <feed-post-dropdown
+        *ngIf="showDropdown"
+        class="ml-auto"
+        [post]="post"
+        (postHidden)="hidePost()"
+        (userBlocked)="blockUser()"
+        (toggleGlobalFeed)="_addPostToGlobalFeed()"
+      ></feed-post-dropdown>
+    </div>
+
+    <div
+      *ngIf="postContent.IsHidden"
+      class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px"
+      [ngClass]="{
+        'px-15px': includePaddingOnPost,
+        'pb-15px': includePaddingOnPost,
+        'pt-15px': includePaddingOnPost && !reclouterProfile,
+        'feed-post__blue-border': showLeftSelectedBorder,
+        'feed-post__parent-post-font-size': isParentPostInThread
+      }"
+    >
+      <a
+        (click)="onPostClicked($event)"
+        class="link--unstyled"
+        [routerLink]="['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex]"
+        queryParamsHandling="merge"
+      >
+        The original post was removed by its author.
+      </a>
+    </div>
+
+    <div
+      class="feed-post__container d-flex justify-content-left w-100"
+      [ngClass]="{
+        'px-15px': includePaddingOnPost,
+        'pb-15px': includePaddingOnPost,
+        'pt-15px': includePaddingOnPost && !reclouterProfile,
+        'feed-post__blue-border': showLeftSelectedBorder,
+        'feed-post__parent-post-font-size': isParentPostInThread
+      }"
+      *ngIf="!postContent.IsHidden"
+    >
+      <!--         'p-5px': includePaddingOnPost && reclouterProfile,-->
+
+      <!-- Avatar -->
+      <div class="feed-post__avatar-container">
+        <a
+          class="feed-post__avatar br-12px"
+          [style.background-image]="'url(' + postContent.ProfileEntryResponse.ProfilePic + ')'"
+          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
+          queryParamsHandling="merge"
+        ></a>
+        <div *ngIf="showThreadConnectionLine" class="feed-post__parent-thread-connector"></div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="w-100">
+        <div class="d-flex align-items-center">
+          <!-- Username-->
+          <a
+            class="fc-default font-weight-bold"
+            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
+            queryParamsHandling="merge"
+          >
+            {{ postContent.ProfileEntryResponse.Username }}
+          </a>
+
+          <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
+            <i class="fas fa-check-circle fa-md align-middle"></i>
+          </span>
+
+          <!-- Coin price-->
+          <a
+            style="padding: 3px"
+            class="ml-2 fs-12px font-weight-bold px-2 feed-post__coin-price-holder br-12px"
+            [routerLink]="AppRoutingModule.buyCreatorPath(postContent.ProfileEntryResponse.Username)"
+            queryParamsHandling="merge"
+          >
+            <span class="text-grey5">
+              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+            </span>
+
+            <!-- Buy link -->
+            Buy
+          </a>
+
+          <!-- Desktop follow button-->
+          <follow-button
+            *ngIf="showFollowLink"
+            class="ml-10px fs-12px d-lg-block d-none text-grey5"
+            [displayAsLink]="true"
+            [followLinkClass]="'link--unstyled'"
+            [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+          ></follow-button>
+
+          <feed-post-dropdown
+            *ngIf="showDropdown && !reclouterProfile"
+            class="ml-auto"
+            [post]="post"
+            (postHidden)="hidePost()"
+            (userBlocked)="blockUser()"
+            (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
+            (togglePostPin)="_pinPostToGlobalFeed($event)"
+          ></feed-post-dropdown>
+        </div>
+
+        <!-- Mobile follow button-->
+        <div class="mt-5px d-lg-none text-grey5">
+          <follow-button
+            *ngIf="showFollowLink"
+            class="fs-12px"
+            [displayAsLink]="true"
+            [followLinkClass]="'link--unstyled'"
+            [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+          ></follow-button>
+        </div>
+
+        <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
+          replying to
+          <a
+            [routerLink]="['/' + this.globalVars.RouteNames.USER_PREFIX, parentPost.ProfileEntryResponse.Username]"
+            queryParamsHandling="merge"
+          >
+            @{{ parentPost.ProfileEntryResponse.Username }}
+          </a>
+        </div>
+
+        <!-- Content -->
+        <div
+          class="roboto-regular mt-1"
+          [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
+          style="
+            overflow-wrap: anywhere;
+            -ms-word-break: break-all;
+            word-break: break-all;
+            word-break: break-word;
+            outline: none;
+          "
+          [innerHTML]="postContent.Body | sanitizeAndAutoLink"
+          [routerLink]="['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex]"
+          queryParamsHandling="merge"
+        ></div>
+        <div
+          *ngIf="quotedContent && showQuotedContent"
+          class="border border-color-grey p-15px br-12px"
+          [ngClass]="{ 'feed-post__quoted-content': hoverable }"
+        >
+          <feed-post
+            *ngIf="quotedContent && showQuotedContent"
+            [post]="quotedContent"
+            [includePaddingOnPost]="false"
+            [showIconRow]="false"
+            [showDropdown]="false"
+            [showQuotedContent]="false"
+            [contentShouldLinkToThread]="contentShouldLinkToThread"
+            [hoverable]="false"
+          ></feed-post>
+        </div>
+
+        <!-- Media -->
+        <div *ngIf="postContent.ImageURLs && postContent.ImageURLs[0]" class="feed-post__image-container">
+          <img
+            (click)="openImgModal($event, postContent.ImageURLs[0])"
+            data-toggle="modal"
+            class="feed-post__image"
+            src="{{ postContent.ImageURLs[0] }}"
+          />
+        </div>
+
+        <!-- Embedded Videos -->
+        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__image-container">
+          <iframe
+            height="315"
+            class="feed-post__image"
+            [ngStyle]="{
+              'margin-top': setNegativeMargins(getEmbedVideoURLForPostContent(), globalVars) ? '-65px' : '',
+              'margin-bottom': setNegativeMargins(getEmbedVideoURLForPostContent(), globalVars) ? '-65px' : ''
+            }"
+            [src]="getEmbedVideoURLForPostContent() | sanitizeVideoEmbed"
+            frameborder="0"
+            allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
+            allowfullscreen
+          ></iframe>
+        </div>
+
+        <!-- Bottom Buttons -->
+        <div class="feed-post__icon-row-holder">
+          <!-- Like, Comment, Reclout, Share Buttons -->
+          <feed-post-icon-row
+            *ngIf="showIconRow"
+            [post]="post"
+            [postContent]="postContent"
+            [parentPost]="parentPost"
+            [afterCommentCreatedCallback]="afterCommentCreatedCallback"
+            [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+          ></feed-post-icon-row>
+
+          <!-- Admin Buttons -->
+          <div *ngIf="showAdminRow" class="pt-10px fs-15px d-flex align-items-center">
+            <div
+              *ngIf="!postContent.InGlobalFeed && !addingPostToGlobalFeed"
+              (click)="_addPostToGlobalFeed($event)"
+              class="py-5px px-10px admin__add-to-feed-button"
+            >
+              <i class="fas fa-folder-plus"></i>
+              Add to global feed
+            </div>
+            <div
+              *ngIf="!postContent.InGlobalFeed && addingPostToGlobalFeed"
+              class="py-5px px-10px admin__add-to-feed-button"
+            >
+              <i class="fas fa-folder-plus"></i>
+              Adding...
+            </div>
+            <div
+              *ngIf="postContent.InGlobalFeed && !addingPostToGlobalFeed"
+              (click)="_addPostToGlobalFeed($event)"
+              class="py-5px px-10px admin__remove-from-feed-button"
+            >
+              <i class="fas fa-check"></i>
+              On global feed
+            </div>
+            <div
+              *ngIf="postContent.InGlobalFeed && addingPostToGlobalFeed"
+              class="py-5px px-10px admin__remove-from-feed-button"
+            >
+              <i class="fas fa-check"></i>
+              Removing...
+            </div>
+
+            <div>
+              &nbsp;&middot;
+              <a
+                [routerLink]="['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex]"
+                queryParamsHandling="merge"
+              >
+                View
+              </a>
+            </div>
+
+            <div class="text-grey8A">
+              &nbsp;&middot;&nbsp;{{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>

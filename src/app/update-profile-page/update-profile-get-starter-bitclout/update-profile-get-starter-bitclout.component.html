@@ -1,0 +1,29 @@
+<div class="fs-18px font-weight-bold">Create a Profile</div>
+
+<div class="fs-15px mt-15px">
+  {{ getCreateProfileMessage() }}
+  <br />
+  <br />
+  <span *ngIf="globalVars.createProfileFeeNanos > 0">
+    Creating a profile currently costs
+    <b>{{ globalVars.createProfileFeeInBitClout() }} BitClout (≈ {{ globalVars.createProfileFeeInUsd() }} USD)</b>
+  </span>
+</div>
+
+<a
+  class="mt-15px btn btn-primary br-12px"
+  href=""
+  [routerLink]="'/' + RouteNames.GET_STARTER_BITCLOUT"
+  [queryParamsHandling]="'merge'"
+  *ngIf="globalVars.showPhoneNumberVerification"
+>
+  Get Starter BitClout
+</a>
+
+<div class="fs-15px mt-15px" *ngIf="globalVars.showPhoneNumberVerification">Or</div>
+
+<div class="fs-15px mt-15px">
+  <a href="" [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT" queryParamsHandling="merge">
+    Purchase {{ globalVars.createProfileFeeInUsd() }} USD of BitClout
+  </a>
+</div>

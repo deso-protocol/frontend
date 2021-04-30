@@ -1,0 +1,33 @@
+<!-- Top Bar -->
+<div
+  *ngIf="!isMobile"
+  class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+>
+  Messages
+</div>
+
+<search-bar
+  [isSearchForUsersToMessage]="true"
+  (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+  class="pb-15px border-bottom border-color-grey"
+></search-bar>
+
+<div *ngIf="messageThreads" class="messages-inbox__threads">
+  <!-- NOTE: We add any newMessageThread to the front of our messageThread array. -->
+  <!-- This is used to handle the creation of new message threads. -->
+  <div *ngFor="let thread of messageThreads; let ii = index">
+    <messages-thread
+      (click)="_handleMessagesThreadClick(thread)"
+      [isSelected]="
+        (selectedThread &&
+          selectedThread.PublicKeyBase58Check &&
+          thread.PublicKeyBase58Check == selectedThread.PublicKeyBase58Check) ||
+        (selectedThread === undefined && ii === 0)
+      "
+      [thread]="thread"
+    ></messages-thread>
+  </div>
+</div>
+
+<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+<div class="global__bottom-bar-mobile-height"></div>

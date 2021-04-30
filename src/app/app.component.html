@@ -1,0 +1,28 @@
+<!--Desktop menu-->
+<canvas id="my-canvas-0"></canvas>
+<canvas id="my-canvas-1"></canvas>
+<canvas id="my-canvas-2"></canvas>
+<canvas id="my-canvas-3"></canvas>
+<canvas id="my-canvas-4"></canvas>
+
+<!-- Account import service -->
+<div *ngIf="globalVars.importingIdentities" class="global__import" (click)="launchIdentityImportFlow()">
+  <img src="/assets/img/camelcase_logo.svg" class="mb-20px" />
+  <p class="mb-20px">BitClout is upgrading in-browser signing.</p>
+  <p>Tap anywhere to import your accounts.</p>
+</div>
+
+<!-- Identity service / storage access request -->
+<iframe
+  id="identity"
+  [src]="identityService.sanitizedIdentityServiceURL"
+  frameborder="0"
+  class="global__iframe"
+  [style.display]="globalVars.requestingStorageAccess ? 'block' : 'none'"
+></iframe>
+
+<!--p-0 is important here. Mobile UIs expect that there's no side padding.-->
+<div class="global__container" *ngIf="!globalVars.importingIdentities && !globalVars.requestingStorageAccess">
+  <router-outlet *ngIf="!globalVars.loadingInitialAppState"></router-outlet>
+  <simple-center-loader *ngIf="globalVars.loadingInitialAppState"></simple-center-loader>
+</div>

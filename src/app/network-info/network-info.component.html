@@ -1,0 +1,371 @@
+<div class="fs-15px font-weight-bold mt-15px px-15px">
+  Node Sync State
+  <div>
+    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_BITCOIN'" style="color: goldenrod">
+      Syncing Bitcoin Headers
+    </span>
+    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_HEADERS'" style="color: goldenrod">
+      Syncing BitClout Headers
+    </span>
+    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_BLOCKS'" style="color: goldenrod">
+      Syncing BitClout Blocks
+    </span>
+    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'NEED_BLOCKS'" style="color: goldenrod">
+      Syncing Last BitClout Blocks
+    </span>
+    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'FULLY_CURRENT'" style="color: green">Fully Synced</span>
+  </div>
+</div>
+
+<div class="fs-15px mt-15px px-15px">
+  <span (click)="isOpen.detailedSyncInfo = !isOpen.detailedSyncInfo" class="font-weight-bold cursor-pointer">
+    <i *ngIf="!isOpen.detailedSyncInfo" class="fas fa-caret-right"></i>
+    <i *ngIf="isOpen.detailedSyncInfo" class="fas fa-caret-down"></i>
+    Detailed Sync Info
+  </span>
+  <div *ngIf="isOpen.detailedSyncInfo" class="ml-15px">
+    <div *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_BITCOIN'">
+      Bitcoin Headers Left:
+      <div class="fc-blue">
+        {{ globalVars.nodeInfo.BitcoinStatus.HeadersRemaining }}
+      </div>
+    </div>
+    <div *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_HEADERS'">
+      BitClout Headers Left:
+      <div class="fc-blue">
+        {{ globalVars.nodeInfo.BitCloutStatus.HeadersRemaining }}
+      </div>
+    </div>
+    <div
+      *ngIf="
+        globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_BLOCKS' ||
+        globalVars.nodeInfo.BitCloutStatus.State === 'NEED_BLOCKS'
+      "
+    >
+      <div>BitClout Blocks Left:</div>
+      <div class="fc-blue">
+        {{ globalVars.nodeInfo.BitCloutStatus.BlocksRemaining }}
+      </div>
+    </div>
+
+    Last Block Height:
+    <div class="fc-blue d-flex align-items-center">
+      <span>
+        {{ globalVars.nodeInfo.BitCloutStatus.LatestHeaderHeight }}
+      </span>
+      <div
+        (click)="_copyNetworkInfo('lastBlockHeight')"
+        class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+      >
+        <i class="far fa-copy fa-xs"></i>
+      </div>
+      <div *ngIf="isCopied.lastBlockHeight" class="fs-15px px-5px py-0px">
+        <i class="far fa-check-circle fa-xs"></i>
+      </div>
+    </div>
+    Last Block Hash:
+    <div class="fc-blue d-flex align-items-center">
+      {{ globalVars.nodeInfo.BitCloutStatus.LatestHeaderHash.slice(0, 15) }}...
+      <div (click)="_copyNetworkInfo('lastBlockHash')" class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px">
+        <i class="far fa-copy fa-xs"></i>
+      </div>
+      <div *ngIf="isCopied.lastBlockHash" class="fs-15px px-5px py-0px">
+        <i class="far fa-check-circle fa-xs"></i>
+      </div>
+    </div>
+    Last Block Time:
+    <div class="fc-blue">
+      {{ _tstampToDate(globalVars.nodeInfo.BitCloutStatus.LatestHeaderTstampSecs) }}
+    </div>
+    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.LatestTxIndexHeight">
+      Last TxIndex Block Height:
+      <div class="fc-blue">
+        {{ globalVars.nodeInfo.BitCloutStatus.LatestTxIndexHeight }}
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="fs-15px mt-15px px-15px">
+  <span (click)="isOpen.minerInfo = !isOpen.minerInfo" class="font-weight-bold cursor-pointer">
+    <i *ngIf="!isOpen.minerInfo" class="fas fa-caret-right"></i>
+    <i *ngIf="isOpen.minerInfo" class="fas fa-caret-down"></i>
+    Miner Info
+  </span>
+  <div *ngIf="isOpen.minerInfo" class="ml-15px">
+    Miner Status:
+    <div
+      *ngIf="globalVars.nodeInfo.MinerPublicKeys != null && globalVars.nodeInfo.MinerPublicKeys.length > 0"
+      class="font-weight-bold"
+      style="color: green"
+    >
+      Currently Mining
+    </div>
+    <div
+      *ngIf="globalVars.nodeInfo.MinerPublicKeys == null || globalVars.nodeInfo.MinerPublicKeys.length == 0"
+      class="font-weight-bold"
+      style="color: red"
+    >
+      Not Mining
+    </div>
+    Miner Public Keys:
+    <div *ngIf="globalVars.nodeInfo.MinerPublicKeys != null && globalVars.nodeInfo.MinerPublicKeys.length > 0">
+      <div *ngFor="let key of globalVars.nodeInfo.MinerPublicKeys; let ii = index" class="fc-blue d-flex">
+        {{ key.slice(0, 15) }}...
+        <div
+          (click)="_copyNetworkInfo('minerPublicKey', ii)"
+          class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+        >
+          <i class="far fa-copy fa-xs"></i>
+        </div>
+        <div *ngIf="isCopied.minerPublicKeys[ii]" class="fs-15px px-5px py-0px">
+          <i class="far fa-check-circle fa-xs"></i>
+        </div>
+      </div>
+    </div>
+    <div
+      *ngIf="globalVars.nodeInfo.MinerPublicKeys == null || globalVars.nodeInfo.MinerPublicKeys.length == 0"
+      class="fc-blue"
+    >
+      No miner public keys found.
+    </div>
+    Update Miner Public Key List:
+    <div class="fc-blue d-flex align-items-center">
+      <input
+        [(ngModel)]="updatedMinerPubKeys"
+        placeholder="Enter a new pub key."
+        style="width: 200px; border-radius: 3px"
+      />
+      <div
+        *ngIf="!updatingMiners"
+        (click)="updateMiners()"
+        class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+      >
+        Update
+      </div>
+      <div *ngIf="updatingMiners" class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px">Updating</div>
+    </div>
+    <div
+      *ngIf="!stoppingMiners"
+      (click)="stopMining()"
+      class="btn btn-secondary fs-15px lh-15px fc-muted p-5px mt-10px"
+    >
+      Stop Mining
+    </div>
+    <div *ngIf="stoppingMiners" class="btn btn-secondary fs-15px lh-15px fc-muted p-5px mt-10px">Stopping</div>
+  </div>
+</div>
+
+<div class="fs-15px mt-15px px-15px">
+  <span (click)="isOpen.bitcloutNode = !isOpen.bitcloutNode" class="font-weight-bold cursor-pointer">
+    <i *ngIf="!isOpen.bitcloutNode" class="fas fa-caret-right"></i>
+    <i *ngIf="isOpen.bitcloutNode" class="fas fa-caret-down"></i>
+    BitClout Node Info
+  </span>
+  <div *ngIf="isOpen.bitcloutNode && updatingBitCloutPeer" class="ml-15px fc-muted">Updating BitClout peers...</div>
+  <div *ngIf="isOpen.bitcloutNode && !updatingBitCloutPeer" class="ml-15px">
+    Outbound Peers ({{ globalVars.nodeInfo.BitCloutOutboundPeers.length }}):
+    <div
+      class="fc-blue border border-color-grey px-5px pt-5px"
+      style="max-height: 150px; overflow-y: scroll; width: fit-content"
+    >
+      <div
+        *ngIf="
+          globalVars.nodeInfo.BitCloutOutboundPeers == null || globalVars.nodeInfo.BitCloutOutboundPeers.length === 0
+        "
+      >
+        Not connected to any outbound peers.
+      </div>
+      <div *ngFor="let peer of globalVars.nodeInfo.BitCloutOutboundPeers; index as peerIndex">
+        <div class="d-flex align-items-center justify-content-between pb-5px">
+          <div style="display: inline-block">
+            {{ peer.IP + ":" + peer.ProtocolPort }}
+          </div>
+          <div class="d-flex">
+            <div
+              *ngIf="peer.isCopied !== true"
+              (click)="copyPeer(peer)"
+              class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+            >
+              <i class="far fa-copy fa-xs"></i>
+            </div>
+            <div *ngIf="peer.isCopied === true" class="fs-15px p-5px ml-10px">
+              <i class="far fa-check-circle fa-xs"></i>
+            </div>
+            <div
+              (click)="disconnectBitCloutPeer(peer.IP + ':' + peer.ProtocolPort)"
+              class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+            >
+              Disconnect
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    Inbound Peers ({{ globalVars.nodeInfo.BitCloutInboundPeers.length }}):
+    <div
+      class="fc-blue border border-color-grey px-5px pt-5px"
+      style="max-height: 150px; overflow-y: scroll; width: fit-content"
+    >
+      <div
+        *ngIf="
+          globalVars.nodeInfo.BitCloutInboundPeers == null || globalVars.nodeInfo.BitCloutInboundPeers.length === 0
+        "
+      >
+        Not connected to any inbound peers.
+      </div>
+      <div *ngFor="let peer of globalVars.nodeInfo.BitCloutInboundPeers; index as peerIndex">
+        <div class="d-flex align-items-center justify-content-between pb-5px">
+          <div style="display: inline-block">
+            {{ peer.IP + ":" + peer.ProtocolPort }}
+          </div>
+          <div class="d-flex">
+            <div
+              *ngIf="peer.isCopied !== true"
+              (click)="copyPeer(peer)"
+              class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+            >
+              <i class="far fa-copy fa-xs"></i>
+            </div>
+            <div *ngIf="peer.isCopied === true" class="fs-15px p-5px ml-10px">
+              <i class="far fa-check-circle fa-xs"></i>
+            </div>
+            <div
+              (click)="disconnectBitCloutPeer(peer.IP + ':' + peer.ProtocolPort)"
+              class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+            >
+              Disconnect
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    Unconnected Peers ({{ globalVars.nodeInfo.BitCloutUnconnectedPeers.length }}):
+    <div
+      class="fc-blue border border-color-grey px-5px pt-5px"
+      style="max-height: 150px; overflow-y: scroll; width: fit-content"
+    >
+      <div
+        *ngIf="
+          globalVars.nodeInfo.BitCloutUnconnectedPeers == null ||
+          globalVars.nodeInfo.BitCloutUnconnectedPeers.length === 0
+        "
+      >
+        No other peers available.
+      </div>
+      <div *ngFor="let peer of globalVars.nodeInfo.BitCloutUnconnectedPeers; index as peerIndex">
+        <div class="d-flex align-items-center justify-content-between pb-5px">
+          <div style="display: inline-block">
+            {{ peer.IP + ":" + peer.ProtocolPort }}
+          </div>
+          <div class="d-flex">
+            <div
+              *ngIf="peer.isCopied !== true"
+              (click)="copyPeer(peer)"
+              class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+            >
+              <i class="far fa-copy fa-xs"></i>
+            </div>
+            <div *ngIf="peer.isCopied === true" class="fs-15px p-5px ml-10px">
+              <i class="far fa-check-circle fa-xs"></i>
+            </div>
+            <div
+              (click)="connectBitCloutPeer(peer.IP + ':' + peer.ProtocolPort)"
+              class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+            >
+              Connect
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    Manual Connection:
+    <div class="fc-blue d-flex align-items-center">
+      <input
+        [(ngModel)]="manualBitcloutPeer"
+        placeholder="Enter an address."
+        style="width: 200px; border-radius: 3px"
+      />
+      <div
+        (click)="connectBitCloutPeer(manualBitcloutPeer)"
+        class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+      >
+        Connect
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fs-15px mt-15px px-15px">
+  <span (click)="isOpen.bitcoinNode = !isOpen.bitcoinNode" class="font-weight-bold cursor-pointer">
+    <i *ngIf="!isOpen.bitcoinNode" class="fas fa-caret-right"></i>
+    <i *ngIf="isOpen.bitcoinNode" class="fas fa-caret-down"></i>
+    Bitcoin Node Info
+  </span>
+  <div *ngIf="isOpen.bitcoinNode && updatingBitcoinPeer" class="ml-15px fc-muted">Updating Bitcoin peer...</div>
+  <div *ngIf="isOpen.bitcoinNode && !updatingBitcoinPeer" class="ml-15px">
+    Sync Peer:
+    <div class="fc-blue">
+      <div *ngIf="globalVars.nodeInfo.BitcoinSyncPeer == null">No sync peer currently set.</div>
+      <div *ngIf="globalVars.nodeInfo.BitcoinSyncPeer != null">
+        <div style="display: flex; align-items: center">
+          <div style="display: inline-block">
+            {{ globalVars.nodeInfo.BitcoinSyncPeer.IP + ":" + globalVars.nodeInfo.BitcoinSyncPeer.ProtocolPort }}
+          </div>
+        </div>
+      </div>
+    </div>
+    Unconnected Peers ({{ globalVars.nodeInfo.BitcoinUnconnectedPeers.length }}):
+    <div
+      class="fc-blue border border-color-grey px-5px pt-5px"
+      style="max-height: 150px; overflow-y: scroll; width: fit-content"
+    >
+      <div
+        *ngIf="
+          globalVars.nodeInfo.BitcoinUnconnectedPeers == null ||
+          globalVars.nodeInfo.BitcoinUnconnectedPeers.length === 0
+        "
+      >
+        No other peers available.
+      </div>
+      <div *ngFor="let peer of globalVars.nodeInfo.BitcoinUnconnectedPeers; index as peerIndex">
+        <div class="d-flex align-items-center justify-content-between pb-5px">
+          <div style="display: inline-block">
+            {{ peer.IP + ":" + peer.ProtocolPort }}
+          </div>
+          <div class="d-flex">
+            <div
+              *ngIf="peer.isCopied !== true"
+              (click)="copyPeer(peer)"
+              class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+            >
+              <i class="far fa-copy fa-xs"></i>
+            </div>
+            <div *ngIf="peer.isCopied === true" class="fs-15px px-5px py-0px">
+              <i class="far fa-check-circle fa-xs"></i>
+            </div>
+            <div
+              (click)="connectBitcoinPeer(peer.IP + ':' + peer.ProtocolPort)"
+              class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+            >
+              Connect
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    Manual Connection:
+    <div class="fc-blue d-flex align-items-center">
+      <input [(ngModel)]="manualBitcoinPeer" placeholder="Enter an address." style="width: 200px; border-radius: 3px" />
+      <div
+        (click)="connectBitcoinPeer(manualBitcoinPeer)"
+        class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+      >
+        Connect
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Spacer for scrolling past the bottom. -->
+<div style="height: 100px; width: 100%"></div>

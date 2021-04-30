@@ -1,0 +1,132 @@
+<div class="position-relative">
+  <div class="creator-profile__top-bar d-flex align-items-top w-100 px-15px py-15px">
+    <top-bar-mobile-navigation-control
+      [isLightColor]="true"
+      class="mr-15px d-lg-none d-inline-block"
+    ></top-bar-mobile-navigation-control>
+  </div>
+
+  <div class="creator-profile__avatar" [style.background-image]="'url(' + profile.ProfilePic + ')'"></div>
+  <div class="d-flex align-items-center justify-content-end pt-15px mr-15px js-creator-profile-top-card-container">
+    <div *ngIf="!profileBelongsToLoggedInUser()" class="fs-15px pr-15px" dropdown container="body">
+      <a class="link--unstyled text-grey9 link--unstyled text-grey9" dropdownToggle>
+        <i class="fas fa-ellipsis-h"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right text-danger p-0" *dropdownMenu>
+        <a
+          class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+          (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
+        >
+          <i class="fas fa-ban"></i>
+          {{ globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? "Unblock" : "Block" }} User
+        </a>
+      </div>
+    </div>
+
+    <div *ngIf="globalVars.loggedInUser" class="d-inline-block fs-15px">
+      <div *ngIf="profileBelongsToLoggedInUser(); else elseBlock">
+        <!-- Show update profile link -->
+        <a
+          [routerLink]="'/' + this.globalVars.RouteNames.UPDATE_PROFILE"
+          [queryParams]="{ stepNum: null }"
+          queryParamsHandling="merge"
+        >
+          Update profile
+        </a>
+      </div>
+      <ng-template #elseBlock>
+        <!-- Show follow button-->
+        <follow-button
+          *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+          [displayAsLink]="true"
+          [followedPubKeyBase58Check]="profile.PublicKeyBase58Check"
+        ></follow-button>
+      </ng-template>
+    </div>
+
+    <a
+      class="btn btn-primary font-weight-bold ml-15px fs-14px"
+      style="height: 36px; width: 75px"
+      [routerLink]="AppRoutingModule.buyCreatorPath(profile.Username)"
+      queryParamsHandling="merge"
+    >
+      Buy
+    </a>
+    <a
+      class="btn btn-danger font-weight-bold ml-15px fs-14px creator-profile-top-card__block-btn"
+      *ngIf="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+      (click)="unblock()"
+    >
+      <span>Unblock</span>
+    </a>
+  </div>
+
+  <div class="d-flex flex-column pl-15px pr-15px">
+    <div class="fs-24px font-weight-bold d-flex align-items-center">
+      @{{ profile.Username }}
+
+      <div
+        *ngIf="profile.IsReserved && !profile.IsVerified"
+        (click)="tooltip.toggle()"
+        class="ml-10px cursor-pointer fs-18px lh-12px fc-muted"
+        matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+        [matTooltip]="'This profile is reserved'"
+        #tooltip="matTooltip"
+      >
+        <i class="far fa-clock fa-md align-middle"></i>
+      </div>
+
+      <div
+        *ngIf="profile.IsVerified"
+        (click)="tooltip.toggle()"
+        class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
+        matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+        [matTooltip]="'This account is verified'"
+        #tooltip="matTooltip"
+      >
+        <i class="fas fa-check-circle fa-md align-middle"></i>
+      </div>
+    </div>
+    <div class="fs-15px pt-5px text-break" [innerHTML]="profile.Description | sanitizeAndAutoLink"></div>
+    <div class="fs-15px pt-5px d-flex flex-wrap">
+      <a
+        class="link--unstyled"
+        *ngIf="followerCount != null"
+        [routerLink]="AppRoutingModule.userFollowersPath(profile.Username)"
+        queryParamsHandling="merge"
+      >
+        <span class="font-weight-bold">{{ followerCount }}&nbsp;</span>
+        <span class="fc-muted">Followers&nbsp;&nbsp;</span>
+      </a>
+
+      <div style="whitespace: nowrap">
+        <div class="font-weight-bold" style="display: inline">
+          ~{{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}
+        </div>
+        <div class="fc-muted" style="display: inline">Coin Price&nbsp;&nbsp;</div>
+      </div>
+      <span (click)="_copyPublicKey()" class="fs-15px cursor-pointer creator-profile__ellipsis-restriction">
+        <i *ngIf="!publicKeyIsCopied" class="fas fa-key"></i>
+        <i *ngIf="publicKeyIsCopied" class="far fa-check-circle fc-blue"></i>
+        {{ profile.PublicKeyBase58Check }}
+      </span>
+    </div>
+  </div>
+
+  <div
+    class="fs-12px mt-10px pt-15px pb-15px flex-wrap container border-top border-bottom border-color-grey light-grey-divider"
+  >
+    <div class="fs-12x d-inline-block col-4 mb-0" style="text-align: center">
+      <span class="font-weight-bold d-block">≈ {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}</span>
+      <span class="fc-muted d-block">Coins In Circulation</span>
+    </div>
+    <div class="fs-12px d-inline-block col-4 align-items-center mb-0" style="text-align: center">
+      <span class="font-weight-bold d-block">≈ {{ totalUSDLocked() }}</span>
+      <span class="fc-muted d-block">Total USD Locked</span>
+    </div>
+    <div class="fs-12px d-inline-block col-4 align-items-center mb-0" style="text-align: center">
+      <span class="font-weight-bold d-block">≈ {{ usdMarketCap() }}</span>
+      <span class="fc-muted d-block">USD Market Cap</span>
+    </div>
+  </div>
+</div>

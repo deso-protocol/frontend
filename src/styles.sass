@@ -1,0 +1,26 @@
+// Adding a SASS file since I don't know how to write the code below in SCSS
+
+$loading-icon-url: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjZjBmMGYwIj4KICA8cGF0aCBvcGFjaXR5PSIuMjUiIGQ9Ik0xNiAwIEExNiAxNiAwIDAgMCAxNiAzMiBBMTYgMTYgMCAwIDAgMTYgMCBNMTYgNCBBMTIgMTIgMCAwIDEgMTYgMjggQTEyIDEyIDAgMCAxIDE2IDQiLz4KICA8cGF0aCBkPSJNMTYgMCBBMTYgMTYgMCAwIDEgMzIgMTYgTDI4IDE2IEExMiAxMiAwIDAgMCAxNiA0eiI+CiAgICA8YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIHR5cGU9InJvdGF0ZSIgZnJvbT0iMCAxNiAxNiIgdG89IjM2MCAxNiAxNiIgZHVyPSIwLjhzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4KICA8L3BhdGg+Cjwvc3ZnPgo=)
+//$button-gradient: linear-gradient(180deg, $color 14.13%, lighten(saturate($color, 20), 5) 97.78%)
+
+.btn-loading
+  position: relative
+  color: transparent !important
+  pointer-events: none
+  cursor: default
+  background-repeat: no-repeat
+  background-position: center
+  background-size: auto 40%, auto
+  background-image: $loading-icon-url //, $button-gradient
+  opacity: 0.4
+
+.follow-button__link-loading
+  position: relative
+  color: transparent !important
+  pointer-events: none
+  cursor: default
+  background-repeat: no-repeat
+  background-position: center
+  background-size: auto 40%, auto
+  background-image: $loading-icon-url //, $button-gradient
+  opacity: 0.4

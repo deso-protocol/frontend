@@ -1,0 +1,124 @@
+<!--TODO: need loading skeleton ?-->
+<div class="flex-grow-1">
+  <!--Header Mobile-->
+  <div class="fixed-top-bar w-100">
+    <div
+      class="global__top-bar__height d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey"
+    >
+      <div class="d-flex align-items-center">
+        <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+
+        {{ this.targetUsername }}
+      </div>
+
+      <top-bar-mobile-log-in-or-sign-up></top-bar-mobile-log-in-or-sign-up>
+    </div>
+
+    <!-- Tabs -->
+    <tab-selector
+      [tabs]="[ManageFollowsComponent.FOLLOWERS, ManageFollowsComponent.FOLLOWING]"
+      [activeTab]="activeTab"
+      (tabClick)="_handleTabClick($event)"
+    ></tab-selector>
+  </div>
+
+  <!--Header Desktop-->
+  <div class="d-lg-block">
+    <div
+      class="d-flex w-100 px-15px global__top-bar__height align-items-center justify-content-between fs-18px font-weight-bold fc-default border-bottom border-color-grey"
+    >
+      <div>
+        {{ this.targetUsername }}
+      </div>
+      <top-bar-mobile-log-in-or-sign-up></top-bar-mobile-log-in-or-sign-up>
+    </div>
+
+    <!-- Tabs -->
+    <tab-selector
+      [tabs]="[ManageFollowsComponent.FOLLOWERS, ManageFollowsComponent.FOLLOWING]"
+      [activeTab]="activeTab"
+      (tabClick)="_handleTabClick($event)"
+    ></tab-selector>
+  </div>
+
+  <simple-center-loader *ngIf="loadingFirstPage"></simple-center-loader>
+
+  <div
+    *ngIf="totalFollowerCount == 0 && !datasource.adapter.isLoading"
+    class="fs-15px d-flex justify-content-left w-100 p-15px"
+  >
+    Nobody yet
+  </div>
+  <div
+    #uiScroll
+    *uiScroll="let profileEntry of datasource"
+    class="row no-gutters px-15px border-bottom fs-15px"
+    style="height: 100%"
+  >
+    <a
+      (click)="onRowClicked($event, profileEntry.Username)"
+      class="fs-15px d-flex justify-content-left w-100 link--unstyled border-color-grey border-bottom p-15px"
+    >
+      <!-- Avatar -->
+      <div class="manage-follows__avatar-container">
+        <a
+          class="manage-follows__avatar br-12px"
+          [style.background-image]="'url(' + profileEntry.ProfilePic + ')'"
+          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntry.Username]"
+          queryParamsHandling="merge"
+        ></a>
+      </div>
+
+      <!-- Main Content -->
+      <div class="w-100">
+        <div class="d-flex align-items-center">
+          <!-- Username-->
+          <a
+            class="fc-default font-weight-bold"
+            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntry.Username]"
+            queryParamsHandling="merge"
+          >
+            {{ profileEntry.Username }}
+          </a>
+
+          <!-- Coin price-->
+          <!-- Hidden on mobile, UI gets too crowded otherwise -->
+          <a
+            style="padding: 3px"
+            class="ml-2 fs-13px font-weight-bold px-2 feed-post__coin-price-holder d-lg-block d-none br-12px"
+            [routerLink]="AppRoutingModule.buyCreatorPath(profileEntry.Username)"
+            queryParamsHandling="merge"
+          >
+            <span class="fc-default">~{{ globalVars.nanosToUSD(profileEntry.CoinPriceBitCloutNanos, 2) }}</span>
+
+            <!-- Buy link -->
+            Buy
+          </a>
+
+          <!-- Follow button -->
+          <div *ngIf="canLoggedInUserFollowTargetPublicKey(profileEntry.PublicKeyBase58Check)" class="ml-auto">
+            <follow-button
+              [followButtonClasses]="['js-manage-follows__follow-button', 'btn', 'btn-sm', 'btn-outline-primary']"
+              [unfollowButtonClasses]="['js-manage-follows__follow-button', 'btn', 'btn-sm', 'btn-primary']"
+              [followedPubKeyBase58Check]="profileEntry.PublicKeyBase58Check"
+            ></follow-button>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div
+          class="roboto-regular mt-1"
+          style="overflow-wrap: anywhere; -ms-word-break: break-all; word-break: break-all; word-break: break-word"
+          [innerHTML]="profileEntry.Description | sanitizeAndAutoLink"
+        ></div>
+      </div>
+    </a>
+  </div>
+  <simple-center-loader *ngIf="loadingNextPage" [height]="200"></simple-center-loader>
+  <!-- Num anonymous followers-->
+  <div *ngIf="anonymousFollowerCount > 0" class="fs-15px d-flex justify-content-left w-100 p-15px">
+    <!--TODO: pluralize-->
+    ... Plus {{ anonymousFollowerCount }} anonymous {{ this.activeTab.toLowerCase() }}
+  </div>
+  <div class="global__bottom-bar-mobile-height"></div>
+</div>

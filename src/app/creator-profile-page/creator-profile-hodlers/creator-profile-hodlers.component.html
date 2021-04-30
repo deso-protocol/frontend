@@ -1,0 +1,55 @@
+<div *ngIf="!datasource.adapter.isLoading && datasource.adapter.itemsCount === 0" class="row no-gutters pt-10px">
+  <div class="d-flex align-items-center" style="margin-bottom: 0">
+    No one owns ${{ profile.Username }} coin yet.&nbsp;
+    <a [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username, 'buy']">Be the first!</a>
+  </div>
+</div>
+<simple-center-loader *ngIf="datasource.adapter.isLoading && loadingFirstPage"></simple-center-loader>
+<div #uiScroll *uiScroll="let row of datasource">
+  <div class="row no-gutters p-10px border-bottom mb-0" *ngIf="!row.totalRow">
+    <div class="col-6 d-flex align-items-center mb-0">
+      <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
+        <div
+          class="creator-profile-details__hodler-avatar mr-10px"
+          style="background-image: url('/assets/img/default_profile_pic.png')"
+        ></div>
+        {{ globalVars.truncate(row.HODLerPublicKeyBase58Check, 15) }}
+      </div>
+      <a
+        *ngIf="row.ProfileEntryResponse"
+        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, row.ProfileEntryResponse.Username]"
+        class="d-flex align-items-center link--unstyled"
+      >
+        <div
+          class="creator-profile-details__hodler-avatar mr-10px"
+          [style.background-image]="'url(' + row.ProfileEntryResponse.ProfilePic + ')'"
+        ></div>
+        {{ globalVars.truncate(row.ProfileEntryResponse.Username, 15) }}
+      </a>
+    </div>
+    <div class="col-3 d-flex align-items-center mb-0">
+      {{ (row.BalanceNanos / 1e9).toFixed(4) }}
+    </div>
+    <div class="col-3 d-flex align-items-center mb-0">
+      ≈ {{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceBitCloutNanos, true) }}
+    </div>
+  </div>
+
+  <div class="row no-gutters font-weight-bold" *ngIf="row.totalRow">
+    <div class="col-6 py-15px mb-0">Total</div>
+    <div class="col-3 py-15px mb-0">
+      {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}
+    </div>
+    <div class="col-3 py-15px mb-0">
+      ≈
+      {{
+        globalVars.creatorCoinNanosToUSDNaive(
+          profile.CoinEntry.CoinsInCirculationNanos,
+          profile.CoinPriceBitCloutNanos,
+          true
+        )
+      }}
+    </div>
+  </div>
+</div>
+<simple-center-loader *ngIf="!loadingFirstPage && loadingNextPage" [height]="200"></simple-center-loader>

@@ -1,0 +1,96 @@
+<!--
+  DESKTOP
+  -->
+<div class="global__desktop">
+  <left-bar></left-bar>
+
+  <div class="global__content__flex">
+    <div class="global__content__width d-flex vh-100">
+      <messages-inbox
+        class="messages-inbox__desktop-column"
+        (selectedThreadEmitter)="selectedThread = $event"
+        [messageThreads]="globalVars.messageResponse ? globalVars.messageResponse.OrderedContactsWithMessages : null"
+      ></messages-inbox>
+      <messages-thread-view
+        class="messages-thread__desktop-column"
+        [messageThread]="
+          globalVars.messageResponse
+            ? selectedThread
+              ? selectedThread
+              : globalVars.messageResponse.OrderedContactsWithMessages[0]
+            : null
+        "
+      ></messages-thread-view>
+    </div>
+  </div>
+</div>
+
+<!--
+  MOBILE
+  -->
+<div class="global__mobile flex-column">
+  <left-bar-mobile></left-bar-mobile>
+
+  <div class="d-flex flex-column flex-grow-1 vh-100">
+    <!-- Inbox Header -->
+    <div
+      *ngIf="!showThreadView"
+      class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+    >
+      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+
+      Messages
+    </div>
+
+    <!-- Thread View Header -->
+    <div
+      *ngIf="showThreadView"
+      class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+    >
+      <div class="cursor-pointer color-grey7 mr-15px">
+        <a
+          class="link--unstyled"
+          style="text-align: center"
+          [routerLink]="['/' + globalVars.RouteNames.INBOX_PREFIX]"
+          queryParamsHandling="merge"
+        >
+          <i class="fa fa-angle-left"></i>
+        </a>
+      </div>
+
+      <div
+        class="messages-thread__avatar mr-15px"
+        [style.background-image]="'url(' + selectedThreadProfilePic + ')'"
+      ></div>
+      {{ selectedThreadDisplayName }}
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="global__mobile-scrollable-section">
+      <messages-inbox
+        *ngIf="!showThreadView"
+        class="global__mobile-scrollable-section"
+        (selectedThreadEmitter)="_handleMessageThreadSelectedMobile($event)"
+        [isMobile]="true"
+        [messageThreads]="globalVars.messageResponse ? globalVars.messageResponse.OrderedContactsWithMessages : null"
+      ></messages-inbox>
+      <messages-thread-view
+        *ngIf="showThreadView"
+        class="messages-thread__desktop-column"
+        [isMobile]="true"
+        [messageThread]="
+          globalVars.messageResponse
+            ? selectedThread
+              ? selectedThread
+              : globalVars.messageResponse.OrderedContactsWithMessages[0]
+            : null
+        "
+      ></messages-thread-view>
+    </div>
+  </div>
+  <bottom-bar-mobile
+    *ngIf="!showThreadView"
+    class="global__bottom-bar-mobile"
+    [hidePostButton]="true"
+  ></bottom-bar-mobile>
+</div>

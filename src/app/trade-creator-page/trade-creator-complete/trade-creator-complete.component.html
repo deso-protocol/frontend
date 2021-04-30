@@ -1,0 +1,26 @@
+<!-- Override .container's max-width property with max-width: inherit-->
+<div class="container fs-15px" style="max-width: inherit">
+  <trade-creator-table [creatorCoinTrade]="creatorCoinTrade"></trade-creator-table>
+
+  <!-- Buttons -->
+  <div class="row no-gutters pt-3">
+    <div class="col-3 mb-0" style="min-width: 100px">
+      <div class="pr-3">
+        <button class="w-100 btn btn-outline-primary fs-18px" (click)="this._buyMoreClicked()">Back</button>
+      </div>
+    </div>
+
+    <div class="col">
+      <button
+        class="w-100 btn btn-primary fs-18px"
+        [routerLink]="'/' + this.appData.RouteNames.WALLET"
+        queryParamsHandling="merge"
+      >
+        View Wallet
+      </button>
+    </div>
+  </div>
+
+  <!--Spacer (for mobile)-->
+  <div class="pb-25px"></div>
+</div>

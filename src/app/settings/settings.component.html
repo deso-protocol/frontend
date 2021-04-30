@@ -1,0 +1,60 @@
+<!-- Top Bar -->
+<div
+  class="global__top-bar global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+>
+  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+  Settings
+</div>
+
+<div class="global__top-bar__height"></div>
+
+<div class="d-flex flex-column">
+  <div style="flex-grow: 1">
+    <simple-center-loader *ngIf="!globalVars.loggedInUser || loading"></simple-center-loader>
+
+    <!-- Form Inputs -->
+    <div *ngIf="globalVars.loggedInUser && !loading" class="fs-18px px-15px global__mobile-scrollable-section">
+      <div class="fs-15px pt-30px">E-mail</div>
+      <div class="form-group pt-10px">
+        <input
+          type="email"
+          class="form-control fs-15px"
+          placeholder="Enter an email address."
+          [(ngModel)]="emailAddress"
+          (ngModelChange)="_validateEmail($event)"
+        />
+        <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+      </div>
+
+      <div class="w-100 my-30px d-flex align-items-center">
+        <button
+          *ngIf="
+            !updatingSettings && !(invalidEmailEntered || (f && f.form.value.phone && f.form.controls['phone'].invalid))
+          "
+          (click)="_updateSettings()"
+          class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
+        >
+          Update Settings
+        </button>
+        <button
+          *ngIf="
+            !updatingSettings && (invalidEmailEntered || (f && f.form.value.phone && f.form.controls['phone'].invalid))
+          "
+          (click)="_updateSettings()"
+          class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
+          disabled
+        >
+          Update Settings
+        </button>
+        <button *ngIf="updatingSettings" class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px" disabled>
+          Updating...
+        </button>
+        <div *ngIf="showSuccessMessage" style="color: green" class="fs-15px ml-10px">Success!</div>
+      </div>
+
+      <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+      <div class="global__bottom-bar-mobile-height"></div>
+      <div class="global__bottom-bar-mobile-height"></div>
+    </div>
+  </div>
+</div>

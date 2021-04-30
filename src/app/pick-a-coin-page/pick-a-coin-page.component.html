@@ -1,0 +1,111 @@
+<app-page>
+  <!-- Top Bar -->
+  <div
+    class="global__top-bar global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+  >
+    <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+    Send Creator Coins
+  </div>
+
+  <div class="global__top-bar__height"></div>
+
+  <!-- Creator Coins Divider Bar -->
+  <div
+    class="d-flex align-items-center justify-content-between fs-15px p-15px background-color-light-grey border-bottom border-color-grey"
+  >
+    <div>Pick one of your creator coins to send below.</div>
+  </div>
+
+  <div class="fs-15px">
+    <div class="row no-gutters d-flex align-items-center fc-muted border-bottom border-color-grey p-15px">
+      <div class="col mb-0">Name</div>
+      <div class="col-2 d-lg-block d-none mb-0" style="text-align: end">Price</div>
+      <div class="col-4 mb-0" style="text-align: end">
+        USD Value
+        <i
+          class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="'This is the amount you would get if you sold your holdings.'"
+          #tooltip="matTooltip"
+          (click)="tooltip.toggle()"
+        ></i>
+      </div>
+    </div>
+    <div *ngFor="let creator of usersYouHODL()">
+      <!-- Screen out zero balances -->
+      <div
+        *ngIf="creator && (creator.BalanceNanos || creator.NetBalanceInMempool != 0)"
+        class="row no-gutters fc-default px-15px pt-15px"
+      >
+        <!-- Name-->
+        <a
+          class="col d-flex align-items-center link--unstyled holdings__creator-coin-name"
+          [routerLink]="[AppRoutingModule.transferCreatorPath(creator.ProfileEntryResponse.Username)]"
+          queryParamsHandling="merge"
+        >
+          <div
+            class="holdings__avatar"
+            [style.background-image]="'url(' + creator.ProfileEntryResponse.ProfilePic + ')'"
+          ></div>
+          <div class="text-truncate holdings__name">
+            <span>{{ creator.ProfileEntryResponse.Username }}</span>
+
+            <span
+              *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
+              class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This profile is reserved. The owner has not yet claimed it.'"
+            >
+              <i class="far fa-clock fa-md align-middle"></i>
+            </span>
+            <span
+              *ngIf="creator.ProfileEntryResponse.IsVerified"
+              (click)="tooltip.toggle()"
+              class="ml-1 cursor-pointer text-primary"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This account is verified'"
+              #tooltip="matTooltip"
+            >
+              <i class="fas fa-check-circle fa-md align-middle"></i>
+            </span>
+
+            <div class="text-grey9 fs-12px d-lg-none">
+              {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+            </div>
+          </div>
+        </a>
+
+        <!-- Price-->
+        <div class="col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
+          <div class="d-flex align-items-center justify-content-end">
+            {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+          </div>
+        </div>
+
+        <!-- Balance -->
+        <div class="col-4 mb-0 d-flex align-items-center justify-content-end text-right">
+          <div>
+            <div>
+              ~{{
+                globalVars.usdYouWouldGetIfYouSoldDisplay(creator.BalanceNanos, creator.ProfileEntryResponse.CoinEntry)
+              }}
+            </div>
+            <div class="text-grey8A fs-12px text-right">
+              {{ globalVars.nanosToBitClout(creator.BalanceNanos, 4) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      *ngIf="globalVars.loggedInUser.UsersYouHODL.length == 0"
+      class="d-flex justify-content-center fs-15px fc-muted w-100 mt-30px"
+    >
+      You don't hold any creator coins yet.
+    </div>
+  </div>
+
+  <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+  <div class="global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
+</app-page>

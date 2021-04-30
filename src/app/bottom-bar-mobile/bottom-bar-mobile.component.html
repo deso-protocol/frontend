@@ -1,0 +1,52 @@
+<div class="w-100 h-100 d-flex">
+  <div class="w-100 d-flex justify-content-between align-items-center border-top border-color-grey">
+    <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.BROWSE">
+      <i class="icon-home fs-25px"></i>
+    </bottom-bar-mobile-tab>
+
+    <bottom-bar-mobile-tab
+      *ngIf="globalVars.loggedInUser"
+      class="w-100 h-100 text-center"
+      [link]="'/' + globalVars.RouteNames.WALLET"
+    >
+      <i class="icon-wallet fs-25px"></i>
+    </bottom-bar-mobile-tab>
+
+    <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.CREATORS">
+      <i class="icon-up-arrow fs-25px"></i>
+    </bottom-bar-mobile-tab>
+
+    <bottom-bar-mobile-tab
+      *ngIf="globalVars.loggedInUser"
+      class="w-100 h-100 text-center"
+      [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
+    >
+      <i class="icon-notifications fs-25px"></i>
+    </bottom-bar-mobile-tab>
+
+    <bottom-bar-mobile-tab
+      *ngIf="globalVars.loggedInUser"
+      class="w-100 h-100 text-center"
+      [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
+    >
+      <i class="icon-messages fs-25px">
+        <div
+          *ngIf="globalVars.messageNotificationCount > 0"
+          class="bottom-bar__message-notifications-bubble roboto-mono"
+        >
+          {{ globalVars.messageNotificationCount }}
+        </div>
+      </i>
+    </bottom-bar-mobile-tab>
+  </div>
+
+  <!-- TODO: on mobile, if you click this, should it prompt you to log in?-->
+  <a
+    *ngIf="globalVars.loggedInUser && showPostButton"
+    class="bottom-bar-mobile__create-post-circle rounded-circle link--unstyled bg-primary text-white"
+    [routerLink]="'/' + globalVars.RouteNames.CREATE_POST"
+    queryParamsHandling="merge"
+  >
+    +
+  </a>
+</div>

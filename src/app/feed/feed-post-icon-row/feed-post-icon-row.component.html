@@ -1,0 +1,86 @@
+<div
+  class="js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between"
+  style="margin-top: 8px; max-width: 420px"
+>
+  <!-- TODO: post threads: needs hover treatment-->
+  <!--     [routerLink]="router.url"-->
+  <div
+    class="cursor-pointer d-flex align-items-center"
+    (click)="openModal($event)"
+    data-toggle="modal"
+    data-target=".js-feed-post-icon-row__comment-modal"
+  >
+    <i class="icon-reply feed-post-icon-row__icon"></i>
+    <span>{{ postContent.CommentCount }}</span>
+  </div>
+
+  <div
+    class="cursor-pointer d-flex align-items-center"
+    dropdown
+    [ngClass]="{
+      'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RecloutedByReader : false
+    }"
+  >
+    <a class="link--unstyled" dropdownToggle>
+      <i class="icon-repost feed-post-icon-row__icon"></i>
+    </a>
+    <div class="dropdown-menu p-0 fs-12px" style="min-width: 5rem" *dropdownMenu>
+      <a
+        *ngIf="sendingRecloutRequest; else recloutOptions"
+        class="dropdown-menu-item d-block p-5px feed-post__dropdown-menu-item"
+      >
+        <div class="fc-muted">Loading...</div>
+      </a>
+      <ng-template #recloutOptions>
+        <a
+          *ngIf="userHasReclouted(); else recloutElseBlock"
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+          (click)="_undoReclout($event)"
+        >
+          <i class="icon-repost"></i>
+          Hide Reclout
+        </a>
+        <ng-template #recloutElseBlock>
+          <a
+            class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+            (click)="_reclout($event)"
+          >
+            <i class="icon-repost"></i>
+            Reclout
+          </a>
+        </ng-template>
+        <a
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+          (click)="openModal($event, true)"
+        >
+          <i class="fas fa-pencil-alt px-5px" style="font-size: 10px"></i>
+          Quote
+        </a>
+      </ng-template>
+    </div>
+    {{ postContent.RecloutCount }}
+  </div>
+
+  <div
+    (click)="toggleLike($event)"
+    [ngClass]="{ 'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false }"
+    class="cursor-pointer d-flex align-items-center"
+  >
+    <i
+      [ngClass]="{
+        'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+        'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
+      }"
+      class="feed-post-icon-row__icon"
+    ></i>
+    {{ postContent.LikeCount }}
+  </div>
+
+  <div class="cursor-pointer d-flex align-items-center">
+    <i
+      class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon"
+      (click)="copyPostLinkToClipboard($event)"
+    ></i>
+    {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+  </div>
+</div>
