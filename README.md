@@ -1,11 +1,6 @@
-![BitClout Logo](https://bitclout.com/assets/img/camelcase_logo.svg)
-
 # BitClout Frontend
 This is the repository for the reference BitClout Angular app. It serves as an
 interface that allows users to interact with the data on the BitClout blockchain.
-
-Please refer to [the README for the core repo](https://github.com/bitclout/core) for
-more info.
 
 ## Development server
 
