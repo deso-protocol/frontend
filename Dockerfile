@@ -3,7 +3,8 @@ FROM node:14.15.5-alpine3.13 AS frontend
 WORKDIR /frontend
 
 # install git
-RUN apk add --no-cache git
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git openssh
 
 COPY ./package.json .
 COPY ./package-lock.json .
