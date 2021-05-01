@@ -9,7 +9,7 @@ On MacOs  and Unbuntu, the most reliable way to install Node is to use the [Node
 To install NVM for OSX/Linux, add the following command in your terminal:
 
 ```
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.38.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 nvm install v14
 nvm use v14
 ```
