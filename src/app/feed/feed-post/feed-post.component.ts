@@ -113,7 +113,7 @@ export class FeedPostComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (!this.enableChangeDetection) {
-      this.ref.detach();
+      // this.ref.detach();
     }
   }
 
