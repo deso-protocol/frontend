@@ -13,6 +13,9 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.38.0/install.sh | b
 nvm install v14
 nvm use v14
 ```
+Note: If nvm fails to install due to: " Command 'nvm' not found." 
+Restart your terminal OR use command ```source ~/.nvm/nvm.sh``` (this will refresh the available commands in your system path).
+
 After installing node, you can clone the repo:
 
 ```
