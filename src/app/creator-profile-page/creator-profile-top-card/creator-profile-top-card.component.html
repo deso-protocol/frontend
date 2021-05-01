@@ -15,10 +15,10 @@
       <div class="dropdown-menu dropdown-menu-right text-danger p-0" *dropdownMenu>
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-          (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
+          (click)="profile.IsBlockedByReader ? unblock() : block()"
         >
           <i class="fas fa-ban"></i>
-          {{ globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? "Unblock" : "Block" }} User
+          {{ profile.IsBlockedByReader ? "Unblock" : "Block" }} User
         </a>
       </div>
     </div>
@@ -37,7 +37,7 @@
       <ng-template #elseBlock>
         <!-- Show follow button-->
         <follow-button
-          *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+          *ngIf="!profile.IsBlockedByReader"
           [displayAsLink]="true"
           [followedPubKeyBase58Check]="profile.PublicKeyBase58Check"
         ></follow-button>
@@ -54,7 +54,7 @@
     </a>
     <a
       class="btn btn-danger font-weight-bold ml-15px fs-14px creator-profile-top-card__block-btn"
-      *ngIf="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+      *ngIf="profile.IsBlockedByReader"
       (click)="unblock()"
     >
       <span>Unblock</span>

@@ -69,15 +69,17 @@ export class CreatorProfileDetailsComponent {
       if (response.isConfirmed) {
         delete this.globalVars.loggedInUser.BlockedPubKeys[this.profile.PublicKeyBase58Check];
         this.backendApi
-          .BlockPublicKey(
+          .CreateBlockPublicKeyTxn(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
             this.profile.PublicKeyBase58Check,
-            true /* unblock */
+            true /* unblock */,
+            this.globalVars.feeRateBitCloutPerKB
           )
           .subscribe(
             () => {
               this.globalVars.logEvent("user : unblock");
+              this.profile.IsBlockedByReader = false;
             },
             (err) => {
               console.log(err);
@@ -113,14 +115,17 @@ export class CreatorProfileDetailsComponent {
         this.globalVars.loggedInUser.BlockedPubKeys[this.profile.PublicKeyBase58Check] = {};
         Promise.all([
           this.backendApi
-            .BlockPublicKey(
+            .CreateBlockPublicKeyTxn(
               this.globalVars.localNode,
               this.globalVars.loggedInUser.PublicKeyBase58Check,
-              this.profile.PublicKeyBase58Check
+              this.profile.PublicKeyBase58Check,
+              false,
+              this.globalVars.feeRateBitCloutPerKB * 1e9
             )
             .subscribe(
               () => {
                 this.globalVars.logEvent("user : block");
+                this.profile.IsBlockedByReader = true;
               },
               (err) => {
                 console.error(err);
@@ -147,7 +152,7 @@ export class CreatorProfileDetailsComponent {
     }
 
     this.loading = true;
-    this.backendApi.GetSingleProfile(this.globalVars.localNode, "", this.userName).subscribe((res) => {
+    this.backendApi.GetSingleProfile(this.globalVars.localNode, readerPubKey, "", this.userName).subscribe((res) => {
       if (!res) {
         console.log("This profile was not found. It either does not exist or it was deleted.");
         return;
