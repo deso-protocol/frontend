@@ -15,16 +15,18 @@
   </div>
 
   <div
-    class="cursor-pointer d-flex align-items-center"
+    (click)="$event.stopPropagation()"
+    class="btn-group cursor-pointer d-flex align-items-center"
     dropdown
+    #dropdown="bs-dropdown"
     [ngClass]="{
       'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RecloutedByReader : false
     }"
   >
-    <a class="link--unstyled" dropdownToggle>
+    <a class="link--unstyled" dropdownToggle id="recloutActionsButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <i class="icon-repost feed-post-icon-row__icon"></i>
     </a>
-    <div class="dropdown-menu p-0 fs-12px" style="min-width: 5rem" *dropdownMenu>
+    <div class="dropdown-menu p-0 fs-12px" style="min-width: 6rem" *dropdownMenu aria-labelledby="recloutActionsButton">
       <a
         *ngIf="sendingRecloutRequest; else recloutOptions"
         class="dropdown-menu-item d-block p-5px feed-post__dropdown-menu-item"
@@ -37,15 +39,15 @@
           class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
           (click)="_undoReclout($event)"
         >
-          <i class="icon-repost"></i>
-          Hide Reclout
+          <i class="icon-repost fs-12px"></i>
+          Hide
         </a>
         <ng-template #recloutElseBlock>
           <a
             class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
             (click)="_reclout($event)"
           >
-            <i class="icon-repost"></i>
+            <i class="icon-repost fs-12px"></i>
             Reclout
           </a>
         </ng-template>
@@ -53,7 +55,7 @@
           class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
           (click)="openModal($event, true)"
         >
-          <i class="fas fa-pencil-alt px-5px" style="font-size: 10px"></i>
+          <i class="fas fa-pencil-alt pl-5px" style="font-size: 10px"></i>
           Quote
         </a>
       </ng-template>

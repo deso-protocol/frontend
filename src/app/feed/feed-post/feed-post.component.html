@@ -45,7 +45,6 @@
 <div
   *ngIf="!post.IsHidden && !hidingPost && !globalVars.hasUserBlockedCreator(postContent.PosterPublicKeyBase58Check)"
   class="d-flex flex-column js-feed-post"
-  style="overflow: hidden"
   [ngClass]="{ 'js-feed-post-hover': hoverable }"
 >
   <a
