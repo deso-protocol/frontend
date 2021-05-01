@@ -60,6 +60,7 @@
           [showReplyingToContent]="true"
           [afterCommentCreatedCallback]="prependToSubcommentList.bind(this, item, currentPost)"
           [blocked]="isPostBlocked(item)"
+          [enableChangeDetection]="true"
           (postDeleted)="onPostHidden(item, currentPost, null)"
           (userBlocked)="userBlocked($event)"
         ></feed-post>

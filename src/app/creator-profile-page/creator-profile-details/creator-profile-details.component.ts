@@ -73,7 +73,7 @@ export class CreatorProfileDetailsComponent {
             this.globalVars.loggedInUser.PublicKeyBase58Check,
             this.profile.PublicKeyBase58Check,
             true /* unblock */,
-            this.globalVars.feeRateBitCloutPerKB
+            this.globalVars.feeRateBitCloutPerKB * 1e9
           )
           .subscribe(
             () => {

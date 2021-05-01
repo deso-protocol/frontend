@@ -44,9 +44,7 @@ export class CreatorProfilePostsComponent {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private location: Location
-  ) {
-    // this.datasource = this.getDatasource();
-  }
+  ) {}
 
   // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
   getDatasource() {

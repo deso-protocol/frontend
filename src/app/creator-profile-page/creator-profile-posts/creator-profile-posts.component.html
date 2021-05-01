@@ -22,6 +22,7 @@
       [post]="post"
       [afterCommentCreatedCallback]="_prependComment.bind(this, post)"
       [blocked]="profile.IsBlockedByReader"
+      [enableChangeDetection]="true"
       (userBlocked)="userBlocked()"
     ></feed-post>
     <div *ngFor="let comment of post.Comments">
