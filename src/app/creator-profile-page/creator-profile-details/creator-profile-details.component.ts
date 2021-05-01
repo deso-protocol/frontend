@@ -67,7 +67,6 @@ export class CreatorProfileDetailsComponent {
     }).then((response: any) => {
       this.userUnblocked.emit(this.profile.PublicKeyBase58Check);
       if (response.isConfirmed) {
-        delete this.globalVars.loggedInUser.BlockedPubKeys[this.profile.PublicKeyBase58Check];
         this.backendApi
           .CreateBlockPublicKeyTxn(
             this.globalVars.localNode,
@@ -112,7 +111,6 @@ export class CreatorProfileDetailsComponent {
       reverseButtons: true,
     }).then((response: any) => {
       if (response.isConfirmed) {
-        this.globalVars.loggedInUser.BlockedPubKeys[this.profile.PublicKeyBase58Check] = {};
         Promise.all([
           this.backendApi
             .CreateBlockPublicKeyTxn(

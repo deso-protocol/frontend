@@ -338,7 +338,7 @@ export class PostThreadComponent {
     }
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
-      predicate: ({ $index, data, element}) => {
+      predicate: ({ $index, data, element }) => {
         let currentPost = (data as any) as PostEntryResponse;
         console.log(currentPost);
         if (currentPost.PosterPublicKeyBase58Check === posterPublicKey) {
@@ -346,7 +346,7 @@ export class PostThreadComponent {
         }
         currentPost = _.cloneDeep(currentPost);
         return [currentPost];
-      }
+      },
     });
   }
 }
