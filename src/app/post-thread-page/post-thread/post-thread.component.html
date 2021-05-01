@@ -17,7 +17,6 @@
     <feed-post
       [post]="parentPost"
       [includePaddingOnPost]="true"
-      [enableChangeDetection]="true"
       [contentShouldLinkToThread]="true"
       [afterCommentCreatedCallback]="updateCommentCountAndShowToast.bind(this, parentPost)"
       [isParentPostInThread]="true"
@@ -34,7 +33,6 @@
     <feed-post
       [post]="currentPost"
       [includePaddingOnPost]="true"
-      [enableChangeDetection]="true"
       [contentShouldLinkToThread]="true"
       [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
       [isParentPostInThread]="true"

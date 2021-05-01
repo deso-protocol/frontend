@@ -14,7 +14,7 @@ import { VideoUrlParserService } from "../../../lib/services/video-url-parser-se
   templateUrl: "./feed-post.component.html",
   styleUrls: ["./feed-post.component.sass"],
 })
-export class FeedPostComponent implements OnInit, AfterViewInit {
+export class FeedPostComponent implements OnInit {
   @Input()
   get post(): PostEntryResponse {
     return this._post;
@@ -75,7 +75,6 @@ export class FeedPostComponent implements OnInit, AfterViewInit {
   @Input() showDropdown = true;
   @Input() showFollowLink = false;
 
-  @Input() enableChangeDetection = false;
   @Input() includePaddingOnPost = false;
 
   @Input() showQuotedContent = true;
@@ -108,12 +107,6 @@ export class FeedPostComponent implements OnInit, AfterViewInit {
     }
     if (!this.post.RecloutCount) {
       this.post.RecloutCount = 0;
-    }
-  }
-
-  ngAfterViewInit() {
-    if (!this.enableChangeDetection) {
-      // this.ref.detach();
     }
   }
 
