@@ -4,7 +4,7 @@ interface that allows users to interact with the data on the BitClout blockchain
 ## Getting started
 Bitclout frontend-ui depends on node Node.js, currently tested on v14.16.1.
 
-On Macos  and Unbunut, the most relaiable way to install Node is to use the [Node Version Manager](https://github.com/creationix/nvm) which allows you to have multiple node verions installed at once just incanse you have other applications that depends on different versoins.
+On MacOs  and Unbuntu, the most reliable way to install Node is to use the [Node Version Manager](https://github.com/creationix/nvm) which allows you to have multiple node versions installed at once just incase you have other applications that depends on different versions.
 
 To install NVM for OSX/Linux, add the following command in your terminal:
 
