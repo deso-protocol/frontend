@@ -166,7 +166,7 @@ export class FeedCreatePostComponent implements OnInit {
     // Check if the user has an account.
     if (!this.globalVars || !this.globalVars.loggedInUser) {
       this.globalVars.logEvent("alert : post : account");
-      SharedDialogs.showCreateAccountToPostDialog(this.router);
+      SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
       return;
     }
 
