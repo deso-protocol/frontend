@@ -297,7 +297,7 @@ export class FeedPostIconRowComponent {
       return;
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       this.globalVars.logEvent("alert : diamond : profile");
-      SharedDialogs.showCreateProfileToPostDialog(this.router);
+      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "diamond");
       return;
     }
     this.clickCounter += 1;
