@@ -964,8 +964,7 @@ $green-font-color: #19B028;
 
 .feed-post__parent-thread-connector {
   height: 100%;
-  margin-top: 15px;
-  border-right: 2px solid;
+  border-right: 2px solid $border-grey;
   border-color: $border-grey;
   width: 55%;
 }
