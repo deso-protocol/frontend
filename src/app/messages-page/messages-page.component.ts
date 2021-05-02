@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
+import { AppRoutingModule } from "../app-routing.module";
 
 @Component({
   selector: "app-messages-page",
@@ -13,6 +14,7 @@ export class MessagesPageComponent {
   selectedThreadDisplayName = "";
   selectedThreadProfilePic = "";
   showThreadView = false;
+  AppRoutingModule = AppRoutingModule;
 
   constructor(public globalVars: GlobalVarsService) {}
 
