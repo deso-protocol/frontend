@@ -12,6 +12,7 @@ import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
+import {configFromArray} from "ngx-bootstrap/chronos/create/from-array";
 
 @Injectable({
   providedIn: "root",
@@ -508,7 +509,9 @@ export class GlobalVarsService {
       clock: 100,
     };
     if (dropDiamonds) {
-      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg" }];
+      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 7.5 }];
+      confettiSettings.max = 200;
+      confettiSettings.clock = 150;
     }
     this.confetti = new ConfettiGenerator(confettiSettings);
     this.confetti.render();

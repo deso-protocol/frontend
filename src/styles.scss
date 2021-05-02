@@ -382,6 +382,13 @@ $green-font-color: #19B028;
   }
 }
 
+.diamond-popover-container {
+  max-width: 100% !important;
+  width: auto;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
 .fixed-top-bar {
   position: fixed;
   background-color: white;
