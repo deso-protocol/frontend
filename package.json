@@ -27,7 +27,6 @@
     "@angular/router": "^11.2.12",
     "amplitude-js": "^7.4.3",
     "autolinker": "^3.14.2",
-    "blockchain.info": "^2.12.1",
     "bs58": "^4.0.1",
     "canvas-confetti": "^1.3.0",
     "cipher-base": "^1.0.4",

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, Input, ChangeDetectorRef, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
@@ -15,26 +15,36 @@ import { CommentModalComponent } from "../../comment-modal/comment-modal.compone
   styleUrls: ["./feed-post-icon-row.component.sass"],
 })
 export class FeedPostIconRowComponent {
+  @ViewChild("diamondPopover", { static: false }) diamondPopover: any;
+
   @Input() post: PostEntryResponse;
   @Input() postContent: PostEntryResponse;
   @Input() parentPost: PostEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
   @Input() afterRecloutCreatedCallback: any = null;
 
-  globalVars: GlobalVarsService;
   sendingRecloutRequest = false;
 
+  // Boolean for whether or not the div explaining diamonds should be collapsed or not.
+  collapseDiamondInfo = false;
+  // Boolean for tracking if we are processing a send diamonds event.
+  sendingDiamonds = false;
+  // Track if this is a single or multi-click event on the diamond icon.
+  clickCounter = 0;
+  // Track the diamond selected in the diamond popover.
+  diamondSelected = 1;
+  // Timeout for determining whether this is a single or double click event.
+  static SingleClickDebounce = 300;
+
   constructor(
-    private _globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private platformLocation: PlatformLocation,
     private ref: ChangeDetectorRef,
     private modalService: BsModalService
-  ) {
-    this.globalVars = _globalVars;
-  }
+  ) {}
 
   _detectChanges() {
     this.ref.detectChanges();
@@ -274,5 +284,74 @@ export class FeedPostIconRowComponent {
     const origin = (this.platformLocation as any).location.origin;
 
     return origin + path;
+  }
+
+  showDiamondModal(): boolean {
+    return !this.backendApi.GetStorage("hasSeenDiamondInfo");
+  }
+
+  diamondSingleClick(event: any): void {
+    event.stopPropagation();
+    if (!this.globalVars.loggedInUser) {
+      this._preventNonLoggedInUserActions("diamond");
+      return;
+    } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
+      this.globalVars.logEvent("alert : diamond : profile");
+      SharedDialogs.showCreateProfileToPostDialog(this.router);
+      return;
+    }
+    this.clickCounter += 1;
+    setTimeout(() => {
+      if (this.clickCounter === 1 && !this.showDiamondModal()) {
+        // Handle single click case when the user has interacted with the diamond feature before and this post has not
+        // received a diamond from the user yet.
+        this.globalVars.celebrate(true);
+      } else {
+        // Either this is a double tap event, a single tap on an already diamonded post, or the first time a user is
+        // interacting with the diamond feature.
+        // Show the diamond popover
+        this.openDiamondPopover();
+      }
+      this.clickCounter = 0;
+    }, FeedPostIconRowComponent.SingleClickDebounce);
+  }
+
+  openDiamondPopover() {
+    this.backendApi.SetStorage("hasSeenDiamondInfo", true);
+    this.collapseDiamondInfo = this.backendApi.GetStorage("collapseDiamondInfo");
+    this.diamondPopover.show();
+  }
+
+  expandDiamondInfo(event: any): void {
+    this.toggleDiamondInfo(event, false);
+  }
+
+  hideDiamondInfo(event: any): void {
+    this.toggleDiamondInfo(event, true);
+  }
+
+  toggleDiamondInfo(event: any, isCollapse: boolean) {
+    // Prevent popover from closing
+    event.stopPropagation();
+    // Save the user's preference for seeing the diamond info or not and then toggle the collapse state of the div.
+    this.backendApi.SetStorage("collapseDiamondInfo", isCollapse);
+    this.collapseDiamondInfo = isCollapse;
+  }
+
+  onDiamondSelected(event: any, index: number): void {
+    this.diamondSelected = index + 1;
+    event.stopPropagation();
+    this.sendingDiamonds = true;
+    // On transaction success, celebrate and close popover.
+    this.globalVars.celebrate(true);
+    // this.diamondPopover.hide();
+  }
+
+  getUSDForDiamond(index: number): string {
+    const val = Math.pow(10, index - 1);
+    if (val < 1) {
+      return this.globalVars.formatUSD(val, 2);
+    }
+    return this.globalVars.abbreviateNumber(val, 0, true);
   }
 }
