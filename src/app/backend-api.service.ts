@@ -1314,8 +1314,10 @@ export class BackendApiService {
       } else if (errorMessage.indexOf("RuleErrorInvalidUsername") >= 0) {
         errorMessage =
           "Your username contains invalid characters. Usernames can only numbers, English letters, and underscores.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferInsufficientCoins")) {
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferInsufficientCoins") >= 0) {
         errorMessage = "You need more of your own creator coin to give a diamond of this level.";
+      } else if (errorMessage.indexOf("RuleErrorInputSpendsPreviouslySpentOutput") >= 0) {
+        errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
       }
     }
     return errorMessage;
