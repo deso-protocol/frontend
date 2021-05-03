@@ -1,0 +1,48 @@
+<div class="row no-gutters border-bottom border-color-grey fc-muted">
+  <div class="col-4 d-flex py-15px mb-0">Username</div>
+  <div class="col-4 text-center py-15px mb-0">Most Diamonds</div>
+  <div class="col-4 text-center py-15px mb-0">Total Diamonds</div>
+</div>
+<div *ngIf="!isLoading && diamondSummaryList.length == 0" class="row no-gutters pt-10px">
+  <div class="d-flex align-items-center" style="margin-bottom: 0">
+    No one has sent @{{ profile.Username }} a diamond yet.&nbsp;
+    <a [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username]">Be the first!</a>
+  </div>
+</div>
+<simple-center-loader *ngIf="isLoading"></simple-center-loader>
+<div *ngFor="let row of diamondSummaryList">
+  <div class="row no-gutters py-10px border-bottom mb-0">
+    <div class="col-4 d-flex align-items-left mb-0">
+      <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
+        <div
+          class="creator-profile-details__hodler-avatar mr-10px"
+          style="background-image: url('/assets/img/default_profile_pic.png')"
+        ></div>
+        {{ globalVars.truncate("lazynina", 15) }}
+      </div>
+      <a *ngIf="row.ProfileEntryResponse"
+        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, row.ProfileEntryResponse.Username]"
+        class="d-flex align-items-center link--unstyled"
+      >
+        <div
+          class="creator-profile-details__hodler-avatar mr-10px"
+          [style.background-image]="'url(' + row.ProfileEntryResponse.ProfilePic + ')'"
+        ></div>
+        {{ globalVars.truncate(row.ProfileEntryResponse.Username, 15) }}
+      </a>
+    </div>
+    <div class="col-4 text-center mb-0 d-flex align-items-center justify-content-center">
+      <i *ngFor="let diamond of counter(row.HighestDiamondLevel)" class="icon-diamond fs-22px d-block"></i>
+    </div>
+    <div class="col-4 mb-0 d-flex align-items-center justify-content-center">
+      {{ row.TotalDiamonds }}
+    </div>
+  </div>
+
+</div>
+
+<div *ngIf="!isLoading && diamondSummaryList.length != 0" class="row no-gutters font-weight-bold">
+  <div class="col-4 py-15px mb-0">Total</div>
+  <div class="col-4 py-15px mb-0"><!--Blank--></div>
+  <div class="col-4 text-center py-15px mb-0">{{ totalDiamonds }}</div>
+</div>

@@ -44,6 +44,7 @@ export class BackendRoutes {
   static RoutePathGetIdentities = "/get-identities";
   static RoutePathDeleteIdentities = "/delete-identities";
   static RoutePathSendDiamonds = "/send-diamonds";
+  static RoutePathGetDiamondsForPublicKey = "/get-diamonds-for-public-key";
 
   // Admin routes.
   static NodeControlRoute = "/admin/node-control";
@@ -899,6 +900,16 @@ export class BackendApiService {
     });
 
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+  }
+
+  GetDiamondsForPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
+      PublicKeyBase58Check,
+    });
+    return request;
   }
 
   BuyOrSellCreatorCoin(
