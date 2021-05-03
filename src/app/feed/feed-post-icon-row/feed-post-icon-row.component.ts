@@ -324,6 +324,9 @@ export class FeedPostIconRowComponent {
           let successFunction = this.sendDiamondsSuccess;
           if (skipCelebration) {
             successFunction = this.sendDiamondSuccessSkipCelebration;
+          } else {
+            // Celebrate when the SendDiamonds call completes
+            this.globalVars.celebrate(true);
           }
           this.globalVars.updateEverything(res.TxnHashHex, successFunction, this.sendDiamondsFailure, this);
         },
@@ -374,7 +377,6 @@ export class FeedPostIconRowComponent {
   }
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
-    comp.globalVars.celebrate(true);
     comp.sendingDiamonds = false;
   }
 
@@ -428,6 +430,7 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
+
     if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
       this.globalVars._alertError("You cannot downgrade a diamond");
       this.closeDiamondPopover();
@@ -436,6 +439,7 @@ export class FeedPostIconRowComponent {
     this.diamondSelected = index + 1;
     event.stopPropagation();
     if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
+      this.closeDiamondPopover();
       SwalHelper.fire({
         icon: "info",
         title: `Sending ${this.diamondSelected} diamonds to ${this.postContent.ProfileEntryResponse?.Username}`,
