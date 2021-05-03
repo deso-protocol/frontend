@@ -463,7 +463,7 @@ export class FeedPostIconRowComponent {
   }
 
   getUSDForDiamond(index: number): string {
-    const bitcloutNanos = this.globalVars.diamondLevelMap[index + 1];
+    const bitcloutNanos = this.globalVars.diamondLevelMap[index];
     const val = this.globalVars.nanosToUSDNumber(bitcloutNanos);
     if (val < 1) {
       return this.globalVars.formatUSD(val, 2);
