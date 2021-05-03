@@ -219,7 +219,8 @@ export class NotificationsListComponent implements OnInit {
       const isDiamond = cctMeta.DiamondLevel > 0;
       result.icon = isDiamond ? "icon-diamond fc-blue" : "fas fa-paper-plane fc-blue";
       result.action = `${actorName} sent you ${
-        isDiamond
+const diamondsText = isDiamond ? ... : "";
+result.action = `${actorName} sent you ${diamondsText} <b>${this.globalVars.nanosToBitClout(cctMeta.CreatorCoinToTransferNanos, 6)} ${cctMeta.CreatorUsername} coins`;
           ? "<b>" +
             cctMeta.DiamondLevel.toString() +
             " diamond" +
