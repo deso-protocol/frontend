@@ -28,11 +28,17 @@
           class="creator-profile-details__hodler-avatar mr-10px"
           [style.background-image]="'url(' + row.ProfileEntryResponse.ProfilePic + ')'"
         ></div>
-        {{ globalVars.truncate(row.ProfileEntryResponse.Username, 10) }}
+        <div class="text-truncate holdings__name">
+          <span>{{ globalVars.truncate(row.ProfileEntryResponse.Username, 10) }}</span>
+          <div class="text-grey9 fs-12px">
+            {{ globalVars.nanosToUSD(row.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+          </div>
+        </div>
+
       </a>
     </div>
     <div class="col-5 mb-0 d-flex align-items-center justify-flex-start">
-      <i *ngFor="let diamond of counter(row.HighestDiamondLevel)" class="icon-diamond fs-22px d-block"></i>
+      <i *ngFor="let diamond of counter(row.HighestDiamondLevel)" class="icon-diamond fs-22px d-block" style="margin-right: -5px;"></i>
     </div>
     <div class="col-3 mb-0 d-flex align-items-center justify-content-center">
       {{ row.TotalDiamonds }}
