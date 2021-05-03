@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectorRef, ViewChild } from "@angular/core";
+import { Component, Input, ChangeDetectorRef, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
@@ -8,6 +8,7 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
+import { PopoverDirective } from "ngx-bootstrap/popover";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -15,7 +16,7 @@ import { CommentModalComponent } from "../../comment-modal/comment-modal.compone
   styleUrls: ["./feed-post-icon-row.component.sass"],
 })
 export class FeedPostIconRowComponent {
-  @ViewChild("diamondPopover", { static: false }) diamondPopover: any;
+  @ViewChild("diamondPopover", { static: false }) diamondPopover: PopoverDirective;
 
   @Input() post: PostEntryResponse;
   @Input() postContent: PostEntryResponse;
@@ -310,7 +311,7 @@ export class FeedPostIconRowComponent {
       .toPromise()
       .then(
         (res) => {
-          this.diamondPopover.show();
+          this.openDiamondPopover();
           this.globalVars.logEvent("diamond: send", {
             SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
             ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
@@ -336,7 +337,7 @@ export class FeedPostIconRowComponent {
           this.globalVars._alertError(parsedError);
         }
       )
-      .finally(() => this.diamondPopover.hide());
+      .finally(() => this.closeDiamondPopover());
   }
 
   async diamondClickHandler(event: any): Promise<void> {
@@ -349,10 +350,6 @@ export class FeedPostIconRowComponent {
       return;
     } else if (this.globalVars.loggedInUser.PublicKeyBase58Check === this.postContent.PosterPublicKeyBase58Check) {
       this.globalVars._alertError("You cannot diamond your own post");
-      return;
-    }
-    if (this.diamondPopover.isOpen) {
-      this.diamondPopover.hide();
       return;
     }
     if (this.showDiamondModal()) {
@@ -390,13 +387,30 @@ export class FeedPostIconRowComponent {
     comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
   }
 
+  diamondPopoverOpen = false;
   openDiamondPopover() {
     this.backendApi.SetStorage("hasSeenDiamondInfo", true);
     this.collapseDiamondInfo = this.backendApi.GetStorage("collapseDiamondInfo");
     this.diamondSelected = this.getCurrentDiamondLevel();
     this.diamondPopover.show();
+    this.diamondPopoverOpen = true;
+    // this.diamondPopoverOpen = this.diamondPopover.isOpen();
+    document.addEventListener("click", this.popoverOpenClickHandler, true);
   }
 
+  closeDiamondPopover() {
+    this.diamondPopoverOpen = false;
+    this.diamondPopover.hide();
+    document.removeEventListener("click", this.popoverOpenClickHandler);
+  }
+
+  popoverOpenClickHandler = (e: Event) => {
+    const popoverElement = document.getElementById("diamond-popover");
+    if (popoverElement && e.target !== popoverElement && !popoverElement.contains(e.target as any)) {
+      e.stopPropagation();
+      this.closeDiamondPopover();
+    }
+  };
   expandDiamondInfo(event: any): void {
     this.toggleDiamondInfo(event, false);
   }
@@ -416,7 +430,7 @@ export class FeedPostIconRowComponent {
   async onDiamondSelected(event: any, index: number): Promise<void> {
     if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
       this.globalVars._alertError("You cannot downgrade a diamond");
-      this.diamondPopover.hide();
+      this.closeDiamondPopover();
       return;
     }
     this.diamondSelected = index + 1;
@@ -451,7 +465,6 @@ export class FeedPostIconRowComponent {
   getUSDForDiamond(index: number): string {
     const bitcloutNanos = this.globalVars.diamondLevelMap[index + 1];
     const val = this.globalVars.nanosToUSDNumber(bitcloutNanos);
-    // const val = Math.pow(10, index - 1);
     if (val < 1) {
       return this.globalVars.formatUSD(val, 2);
     }
