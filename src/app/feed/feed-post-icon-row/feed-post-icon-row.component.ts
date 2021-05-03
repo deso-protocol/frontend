@@ -32,9 +32,12 @@ export class FeedPostIconRowComponent {
   // Track if this is a single or multi-click event on the diamond icon.
   clickCounter = 0;
   // Track the diamond selected in the diamond popover.
-  diamondSelected = 1;
+  diamondSelected: number;
   // Timeout for determining whether this is a single or double click event.
   static SingleClickDebounce = 300;
+
+  // Threshold above which user must confirm before sending diamonds
+  static DiamondWarningThreshold = 3;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -287,38 +290,110 @@ export class FeedPostIconRowComponent {
   }
 
   showDiamondModal(): boolean {
-    return !this.backendApi.GetStorage("hasSeenDiamondInfo");
+    return (
+      !this.backendApi.GetStorage("hasSeenDiamondInfo") ||
+      this.postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
+    );
   }
 
-  diamondSingleClick(event: any): void {
+  sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
+    this.sendingDiamonds = true;
+    return this.backendApi
+      .SendDiamonds(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.postContent.PosterPublicKeyBase58Check,
+        this.postContent.PostHashHex,
+        diamonds,
+        this.globalVars.feeRateBitCloutPerKB * 1e9
+      )
+      .toPromise()
+      .then(
+        (res) => {
+          this.diamondPopover.show();
+          this.globalVars.logEvent("diamond: send", {
+            SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+            ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
+            DiamondPostHashHex: this.postContent.PostHashHex,
+            DiamondLevel: diamonds,
+          });
+          this.diamondSelected = diamonds;
+          this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
+          this.postContent.PostEntryReaderState.DiamondLevelBestowed = diamonds;
+          let successFunction = this.sendDiamondsSuccess;
+          if (skipCelebration) {
+            successFunction = this.sendDiamondSuccessSkipCelebration;
+          }
+          this.globalVars.updateEverything(res.TxnHashHex, successFunction, this.sendDiamondsFailure, this);
+        },
+        (err) => {
+          if (err.status === 0) {
+            return this.globalVars._alertError("BitClout is under heavy load. Please try again in one minute.");
+          }
+          this.sendingDiamonds = false;
+          const parsedError = this.backendApi.parseProfileError(err);
+          this.globalVars.logEvent("diamonds: send: error", { parsedError });
+          this.globalVars._alertError(parsedError);
+        }
+      )
+      .finally(() => this.diamondPopover.hide());
+  }
+
+  async diamondClickHandler(event: any): Promise<void> {
     event.stopPropagation();
     if (!this.globalVars.loggedInUser) {
-      this._preventNonLoggedInUserActions("diamond");
-      return;
+      return this._preventNonLoggedInUserActions("diamond");
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       this.globalVars.logEvent("alert : diamond : profile");
       SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "diamond");
       return;
+    } else if (this.globalVars.loggedInUser.PublicKeyBase58Check === this.postContent.PosterPublicKeyBase58Check) {
+      this.globalVars._alertError("You cannot diamond your own post");
+      return;
     }
-    this.clickCounter += 1;
-    setTimeout(() => {
-      if (this.clickCounter === 1 && !this.showDiamondModal()) {
-        // Handle single click case when the user has interacted with the diamond feature before and this post has not
-        // received a diamond from the user yet.
-        this.globalVars.celebrate(true);
-      } else {
-        // Either this is a double tap event, a single tap on an already diamonded post, or the first time a user is
-        // interacting with the diamond feature.
-        // Show the diamond popover
-        this.openDiamondPopover();
-      }
-      this.clickCounter = 0;
-    }, FeedPostIconRowComponent.SingleClickDebounce);
+    if (this.diamondPopover.isOpen) {
+      this.diamondPopover.hide();
+      return;
+    }
+    if (this.showDiamondModal()) {
+      this.openDiamondPopover();
+    } else {
+      this.clickCounter += 1;
+      setTimeout(() => {
+        if (this.clickCounter === 1 && !this.showDiamondModal()) {
+          // Handle single click case when the user has interacted with the diamond feature before and this post has not
+          // received a diamond from the user yet.
+          this.globalVars.celebrate(true);
+          this.sendDiamonds(1, true);
+        } else {
+          // Either this is a double tap event, a single tap on an already diamonded post, or the first time a user is
+          // interacting with the diamond feature.
+          // Show the diamond popover
+          this.openDiamondPopover();
+        }
+        this.clickCounter = 0;
+      }, FeedPostIconRowComponent.SingleClickDebounce);
+    }
+  }
+
+  sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
+    comp.globalVars.celebrate(true);
+    comp.sendingDiamonds = false;
+  }
+
+  sendDiamondSuccessSkipCelebration(comp: FeedPostIconRowComponent) {
+    comp.sendingDiamonds = false;
+  }
+
+  sendDiamondsFailure(comp: FeedPostIconRowComponent) {
+    comp.sendingDiamonds = false;
+    comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
   }
 
   openDiamondPopover() {
     this.backendApi.SetStorage("hasSeenDiamondInfo", true);
     this.collapseDiamondInfo = this.backendApi.GetStorage("collapseDiamondInfo");
+    this.diamondSelected = this.getCurrentDiamondLevel();
     this.diamondPopover.show();
   }
 
@@ -338,20 +413,52 @@ export class FeedPostIconRowComponent {
     this.collapseDiamondInfo = isCollapse;
   }
 
-  onDiamondSelected(event: any, index: number): void {
+  async onDiamondSelected(event: any, index: number): Promise<void> {
+    if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
+      this.globalVars._alertError("You cannot downgrade a diamond");
+      this.diamondPopover.hide();
+      return;
+    }
     this.diamondSelected = index + 1;
     event.stopPropagation();
-    this.sendingDiamonds = true;
-    // On transaction success, celebrate and close popover.
-    this.globalVars.celebrate(true);
-    // this.diamondPopover.hide();
+    if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
+      SwalHelper.fire({
+        icon: "info",
+        title: `Sending ${this.diamondSelected} diamonds to ${this.postContent.ProfileEntryResponse?.Username}`,
+        html: `Clicking confirm will send ${this.getUSDForDiamond(
+          this.diamondSelected
+        )} worth of your creator coin to @${this.postContent.ProfileEntryResponse?.Username}`,
+        showCancelButton: true,
+        showConfirmButton: true,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+          cancelButton: "btn btn-light no",
+        },
+        confirmButtonText: "Confirm",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then(async (res: any) => {
+        if (res.isConfirmed) {
+          await this.sendDiamonds(this.diamondSelected);
+        }
+      });
+    } else {
+      await this.sendDiamonds(this.diamondSelected);
+    }
   }
 
   getUSDForDiamond(index: number): string {
-    const val = Math.pow(10, index - 1);
+    const bitcloutNanos = this.globalVars.diamondLevelMap[index + 1];
+    const val = this.globalVars.nanosToUSDNumber(bitcloutNanos);
+    // const val = Math.pow(10, index - 1);
     if (val < 1) {
       return this.globalVars.formatUSD(val, 2);
     }
     return this.globalVars.abbreviateNumber(val, 0, true);
+  }
+
+  getCurrentDiamondLevel(): number {
+    return this.postContent.PostEntryReaderState?.DiamondLevelBestowed || 0;
   }
 }

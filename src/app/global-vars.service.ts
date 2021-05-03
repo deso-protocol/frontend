@@ -82,6 +82,9 @@ export class GlobalVarsService {
   youHodlMap = {};
   hodlYouMap = {};
 
+  // Map of diamond level to bitclout nanos.
+  diamondLevelMap = {};
+
   // TODO(performance): We used to call the functions called by this function every
   // second. Now we call them only when needed, but the future is to get rid of this
   // and make everything use sockets.

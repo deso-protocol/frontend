@@ -283,7 +283,7 @@ export class AppComponent implements OnInit {
       .subscribe((res: any) => {
         this.globalVars.hasUnreadNotifications = res.HasUnreadNotifications;
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
-
+        this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
 
         // Setup amplitude on first run

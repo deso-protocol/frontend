@@ -80,7 +80,10 @@
 
   <ng-template #popTemplate>
     <div *ngIf="!sendingDiamonds; else sendingDiamondSpinner">
-      <div (click)="expandDiamondInfo($event)" class="fc-muted d-block fs-12px" *ngIf="collapseDiamondInfo">Click to learn more about Diamonds.</div>
+      <div class="d-block">
+        <a (click)="expandDiamondInfo($event)" class="fc-muted fs-12px" *ngIf="collapseDiamondInfo">
+          Click to learn more about Diamonds.</a>
+      </div>
       <div class="fs-12px w-100" id="diamondInfoCollapse" [collapse]="collapseDiamondInfo" [isAnimated]="true">
         <a (click)="hideDiamondInfo($event)" class="fc-muted" style="float:right">collapse</a>
         Diamonds are like tips, but way better.
@@ -94,14 +97,16 @@
         </ul>
         Some diamonds are rarer than others, but all diamonds are forever.
         <br/>
-        <br/>
       </div>
-      <div class="d-block fs-12px">Select a diamond to give this post. @{{post.ProfileEntryResponse.Username}} will receive the dollar amount shown as a tip from you.</div>
+      <div class="d-block fs-12px">
+        <br/>
+        <b>Select a diamond to give this post. @{{post.ProfileEntryResponse.Username}} will receive the amount shown as a tip from you.</b></div>
       <div class="d-flex justify-content-center pt-10px">
         <rating [max]="6" [(ngModel)]="diamondSelected" [customTemplate]="diamondRating" [readonly]="sendingDiamonds"></rating>
         <ng-template #diamondRating let-index="index" let-value="value">
-          <div class="d-inline-block px-10px" (click)="onDiamondSelected($event, index)">
-            <i class="far fa-gem fs-25px d-block" [ngStyle]="{ color: index < value ? '#0058F7' : '#555555'}"></i>
+          <div class="d-inline-block px-10px" (click)="onDiamondSelected($event, index)" [ngStyle]="{disabled: index < getCurrentDiamondLevel()}">
+            <i class="far fa-gem fs-25px d-block"
+               [ngStyle]="{color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555'}"></i>
             <div class="d-block fc-muted fs-12px" style="text-align: center;">{{getUSDForDiamond(index)}}</div>
           </div>
         </ng-template>
@@ -114,21 +119,24 @@
   </ng-template>
   <div class="cursor-pointer d-flex align-items-center">
 
-      <i
-        [popover]="popTemplate"
-        triggers=""
-        placement="bottom"
-        containerClass="diamond-popover-container"
-        [container]="globalVars.isMobile() ? '.global__content__inner' : '.global__center__inner'"
-        [outsideClick]="true"
-        #diamondPopover="bs-popover"
-        class="far fa-gem feed-post-icon-row__icon fs-15px-important"
-        (click)="diamondSingleClick($event)"
-      ></i>
-      0
+    <i
+      [popover]="popTemplate"
+      triggers=""
+      placement="auto"
+      containerClass="diamond-popover-container"
+      container="body"
+      [outsideClick]="true"
+      #diamondPopover="bs-popover"
+      class="far fa-gem feed-post-icon-row__icon fs-15px-important"
+      [ngClass]="{
+    'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
+  }"
+      (click)="diamondClickHandler($event)"
+    ></i>
+      {{ postContent.DiamondCount }}
   </div>
 
-  <div class="cursor-pointer d-flex align-items-center">
+  <div class="d-none d-lg-flex cursor-pointer align-items-center">
     <i
       class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon"
       (click)="copyPostLinkToClipboard($event)"
