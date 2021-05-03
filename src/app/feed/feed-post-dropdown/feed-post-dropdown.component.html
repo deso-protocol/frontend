@@ -4,8 +4,9 @@
     <i class="fas fa-ellipsis-h"></i>
   </a>
   <div class="dropdown-menu dropdown-menu-right p-0" *dropdownMenu>
-    <a class="dropdown-menu-item fs-12px d-block link-unstyled p-10px feed-post__dropdown-menu-item text-dark"
-       style="cursor: default">
+    <a class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-dark"
+       (click)="copyPostLinkToClipboard($event)"
+    >
       <i class="icon-link"></i>
       Link to Post
     </a>

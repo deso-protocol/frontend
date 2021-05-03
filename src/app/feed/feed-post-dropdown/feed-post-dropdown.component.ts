@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { PostEntryResponse } from "../../backend-api.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { PlatformLocation } from "@angular/common";
 
 @Component({
   selector: "feed-post-dropdown",
@@ -16,7 +18,12 @@ export class FeedPostDropdownComponent {
   @Output() toggleGlobalFeed = new EventEmitter();
   @Output() togglePostPin = new EventEmitter();
 
-  constructor(public globalVars: GlobalVarsService) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private platformLocation: PlatformLocation
+  ) {}
 
   reportPost() {
     window.open(
@@ -83,5 +90,26 @@ export class FeedPostDropdownComponent {
 
   _pinPostToGlobalFeed(event: any) {
     this.togglePostPin.emit(event);
+  }
+
+  copyPostLinkToClipboard(event) {
+    this.globalVars.logEvent("post : share");
+
+    // Prevent the post from navigating.
+    event.stopPropagation();
+
+    this.globalVars._copyText(this._getPostUrl());
+  }
+
+  _getPostUrl() {
+    const pathArray = ["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex];
+
+    // need to preserve the curent query params for our dev env to work
+    const currentQueryParams = this.activatedRoute.snapshot.queryParams;
+
+    const path = this.router.createUrlTree(pathArray, { queryParams: currentQueryParams }).toString();
+    const origin = (this.platformLocation as any).location.origin;
+
+    return origin + path;
   }
 }
