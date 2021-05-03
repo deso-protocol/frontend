@@ -512,7 +512,7 @@ export class GlobalVarsService {
       clock: 100,
     };
     if (dropDiamonds) {
-      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 7.5 }];
+      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 10 }];
       confettiSettings.max = 200;
       confettiSettings.clock = 150;
     }
