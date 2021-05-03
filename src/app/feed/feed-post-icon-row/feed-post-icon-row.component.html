@@ -105,9 +105,9 @@
         <rating [max]="6" [(ngModel)]="diamondSelected" [customTemplate]="diamondRating" [readonly]="sendingDiamonds"></rating>
         <ng-template #diamondRating let-index="index" let-value="value">
           <div class="d-inline-block px-10px" (click)="onDiamondSelected($event, index)" [ngStyle]="{disabled: index < getCurrentDiamondLevel()}">
-            <i class="far fa-gem fs-25px d-block"
+            <i class="icon-diamond fs-25px d-block"
                [ngStyle]="{color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555'}"></i>
-            <div class="d-block fc-muted fs-12px" style="text-align: center;">{{getUSDForDiamond(index)}}</div>
+            <div class="d-block fc-muted fs-12px" style="text-align: center;">{{getUSDForDiamond(index+1)}}</div>
           </div>
         </ng-template>
       </div>
@@ -118,7 +118,6 @@
     </ng-template>
   </ng-template>
   <div class="cursor-pointer d-flex align-items-center">
-
     <i
       [popover]="popTemplate"
       triggers=""
@@ -127,7 +126,8 @@
       container="body"
       [outsideClick]="true"
       #diamondPopover="bs-popover"
-      class="far fa-gem feed-post-icon-row__icon fs-15px-important"
+      class="icon-diamond feed-post-icon-row__icon p-2px"
+      style="font-size: 20px !important; padding-right: 5px;"
       [ngClass]="{
     'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
   }"
