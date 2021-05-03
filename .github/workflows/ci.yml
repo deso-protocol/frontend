@@ -24,7 +24,7 @@ jobs:
       - name: Install modules
         run: npm install
       - name: Run ESLint
-        run: eslint . --ext .js,.jsx,.ts,.tsx
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx
   build:
     runs-on: ubuntu-latest
     env:
