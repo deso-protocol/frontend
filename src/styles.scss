@@ -384,6 +384,13 @@ $green-font-color: #19B028;
 
 .diamond-popover-container {
   max-width: 100% !important;
+  width: 400px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.diamond-popover-container-mobile {
+  max-width: 100% !important;
   width: auto;
   margin-right: 10px;
   margin-left: 10px;
@@ -824,7 +831,6 @@ $green-font-color: #19B028;
 
 .post-thread__comment-container {
   border-top: 4px solid $border-grey;
-  overflow-y: scroll;
   flex-grow: 1;
 }
 

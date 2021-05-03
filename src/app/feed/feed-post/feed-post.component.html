@@ -77,6 +77,7 @@
         *ngIf="showDropdown"
         class="ml-auto"
         [post]="post"
+        [postContent]="postContent"
         (postHidden)="hidePost()"
         (userBlocked)="blockUser()"
         (toggleGlobalFeed)="_addPostToGlobalFeed()"
