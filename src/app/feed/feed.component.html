@@ -90,10 +90,6 @@
       <div *ngIf="!activeTabReadyForDisplay()" class="fs-15px">Load More</div>
       <div *ngIf="activeTabReadyForDisplay()" class="fs-15px">Loading...</div>
     </div>
-
-    <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-    <div class="global__bottom-bar-mobile-height"></div>
-    <div class="global__bottom-bar-mobile-height"></div>
   </div>
 
   <div
@@ -116,4 +112,7 @@
     </div>
   </div>
   <simple-center-loader *ngIf="showLoadingSpinner()"></simple-center-loader>
+  <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+  <div class="global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
 </div>

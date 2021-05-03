@@ -9,6 +9,7 @@ import { PostEntryResponse } from "../../backend-api.service";
 })
 export class FeedPostDropdownComponent {
   @Input() post: PostEntryResponse;
+  @Input() postContent: PostEntryResponse;
 
   @Output() postHidden = new EventEmitter();
   @Output() userBlocked = new EventEmitter();
