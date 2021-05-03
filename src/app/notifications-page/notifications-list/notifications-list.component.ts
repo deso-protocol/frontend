@@ -219,7 +219,13 @@ export class NotificationsListComponent implements OnInit {
       const isDiamond = cctMeta.DiamondLevel > 0;
       result.icon = isDiamond ? "icon-diamond fc-blue" : "fas fa-paper-plane fc-blue";
       result.action = `${actorName} sent you ${
-        isDiamond ? "<b>" + cctMeta.DiamondLevel.toString() + " diamonds</b>, worth " : ""
+        isDiamond
+          ? "<b>" +
+            cctMeta.DiamondLevel.toString() +
+            " diamonds" +
+            (cctMeta.DiamondLevel > 1 ? "s" : "") +
+            "</b>, worth "
+          : ""
       } <b>${this.globalVars.nanosToBitClout(cctMeta.CreatorCoinToTransferNanos, 6)} ${cctMeta.CreatorUsername} coins`;
       return result;
     } else if (txnMeta.TxnType === "SUBMIT_POST") {
