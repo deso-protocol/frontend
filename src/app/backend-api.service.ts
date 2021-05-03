@@ -1318,8 +1318,10 @@ export class BackendApiService {
         errorMessage = "You need more of your own creator coin to give a diamond of this level.";
       } else if (errorMessage.indexOf("RuleErrorInputSpendsPreviouslySpentOutput") >= 0) {
         errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
+        errorMessage = "You need to buy some of your creator coin before you can give a diamond.";
       }
-    }
+  }
     return errorMessage;
   }
 
