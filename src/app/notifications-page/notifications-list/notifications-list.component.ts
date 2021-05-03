@@ -222,7 +222,7 @@ export class NotificationsListComponent implements OnInit {
         isDiamond
           ? "<b>" +
             cctMeta.DiamondLevel.toString() +
-            " diamonds" +
+            " diamond" +
             (cctMeta.DiamondLevel > 1 ? "s" : "") +
             "</b>, worth "
           : ""
