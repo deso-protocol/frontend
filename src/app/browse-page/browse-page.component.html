@@ -37,10 +37,10 @@
     <!-- Mobile login row-->
     <div
       *ngIf="!this.globalVars.loggedInUser"
-      class="d-lg-none px-15px pt-5px background-color-light-grey border-color-grey font-weight-bold"
+      class="d-lg-none p-5px background-color-light-grey border-color-grey font-weight-bold"
     >
-      <a class="pr-30px" (click)="globalVars.launchLoginFlow()">Log in</a>
-      <a (click)="globalVars.launchSignupFlow()">Sign up</a>
+      <a class="pl-10px" (click)="globalVars.launchLoginFlow()">Log in</a>
+      <a class="pl-15px" (click)="globalVars.launchSignupFlow()">Sign up</a>
     </div>
   </div>
 
