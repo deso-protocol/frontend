@@ -234,12 +234,11 @@ export class BackendApiService {
 
   GetStorage(key: string) {
     const data = localStorage.getItem(key);
-
-    if (data !== "" && data != null && data !== "null") {
-      return JSON.parse(data);
-    } else {
+    if (data === "") {
       return null;
     }
+
+    return JSON.parse(data);
   }
 
   // Assemble a URL to hit the BE with.

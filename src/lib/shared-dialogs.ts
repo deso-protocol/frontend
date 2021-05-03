@@ -1,10 +1,11 @@
 import RouteNamesService from "../app/route-names.service";
 import { SwalHelper } from "./helpers/swal-helper";
+import { GlobalVarsService } from "../app/global-vars.service";
 import { Router } from "@angular/router";
 
 const RouteNames = RouteNamesService;
 export class SharedDialogs {
-  static showCreateAccountToPostDialog(router: Router) {
+  static showCreateAccountToPostDialog(globalVars: GlobalVarsService) {
     return SwalHelper.fire({
       icon: "info",
       title: `Create an account to post`,
@@ -21,7 +22,7 @@ export class SharedDialogs {
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
-        router.navigate(["/" + RouteNames.SIGN_UP], { queryParamsHandling: "merge" });
+        globalVars.launchSignupFlow();
       }
     });
   }

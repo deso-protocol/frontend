@@ -16,11 +16,9 @@
 
 <!--CTA-->
 <div class="text-center px-20px not-found__content-container">
-  To {{ creatorCoinTrade.tradeVerbString().toLowerCase() }} {{ creatorCoinTrade.creatorProfile.Username }} coin,
-
-  <a (click)="globalVars.launchSignupFlow()">create an account</a>
-
+  <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold">Create an account</a>
   or
-
-  <a (click)="globalVars.launchLoginFlow()">log in.</a>
+  <a (click)="globalVars.launchLoginFlow()" class="font-weight-bold">log in</a>
+  <br>
+  to {{ creatorCoinTrade.tradeVerbString().toLowerCase() }} {{ creatorCoinTrade.creatorProfile.Username }} coin.
 </div>

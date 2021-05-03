@@ -1,7 +1,7 @@
 <!--
   DESKTOP
   -->
-<div class="global__desktop">
+<div class="global__desktop" *ngIf="!globalVars.isMobile()">
   <left-bar></left-bar>
 
   <div class="global__content__flex">
@@ -28,7 +28,7 @@
 <!--
   MOBILE
   -->
-<div class="global__mobile flex-column">
+<div class="global__mobile flex-column" *ngIf="globalVars.isMobile()">
   <left-bar-mobile></left-bar-mobile>
 
   <div class="d-flex flex-column flex-grow-1 vh-100">
@@ -61,8 +61,17 @@
       <div
         class="messages-thread__avatar mr-15px"
         [style.background-image]="'url(' + selectedThreadProfilePic + ')'"
+        [ngClass]="{ 'cursor-auto': !selectedThread.ProfileEntryResponse }"
+        [routerLink]="selectedThread.ProfileEntryResponse ? AppRoutingModule.profilePath(selectedThreadDisplayName) : []"
+        queryParamsHandling="merge"
       ></div>
-      {{ selectedThreadDisplayName }}
+      <a class="link--unstyled"
+        [routerLink]="selectedThread.ProfileEntryResponse ? AppRoutingModule.profilePath(selectedThreadDisplayName) : []"
+        queryParamsHandling="merge"
+      >{{ selectedThreadDisplayName }}</a>
+      <span *ngIf="selectedThread.ProfileEntryResponse?.IsVerified" class="ml-1 text-primary">
+            <i class="fas fa-check-circle fa-md align-middle"></i>
+      </span>
     </div>
 
     <!-- Scrollable Content -->

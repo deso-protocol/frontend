@@ -73,7 +73,7 @@ export class FeedPostIconRowComponent {
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
-        this.router.navigate(["/" + RouteNames.SIGN_UP], { queryParamsHandling: "merge" });
+        this.globalVars.launchSignupFlow();
       }
     });
   }
@@ -242,7 +242,7 @@ export class FeedPostIconRowComponent {
     if (!this.globalVars.loggedInUser) {
       // Check if the user has an account.
       this.globalVars.logEvent("alert : reply : account");
-      SharedDialogs.showCreateAccountToPostDialog(this.router);
+      SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       // Check if the user has a profile.
       this.globalVars.logEvent("alert : reply : profile");

@@ -33,7 +33,6 @@
     "class-transformer": "^0.2.0",
     "confetti-js": "github:iworkinprogress/confetti-js#61702bfc88d8b328e4c5df484c89ef31285060a9",
     "core-js": "^2.5.4",
-    "elliptic": "^6.4.1",
     "fs": "0.0.1-security",
     "google-libphonenumber": "^3.2.16",
     "hash-base": "^3.0.4",
