@@ -431,10 +431,11 @@ export class GlobalVarsService {
     if (!ll) {
       ll = 18;
     }
-    if (!ss || ss.length < ll) {
+    if (!ss || ss.length <= ll) {
       return ss;
     }
-    return ss.slice(0, ll) + "...";
+    // Subtract 3 for the characters lost to ellipses.
+    return ss.slice(0, ll - 3) + "...";
   }
 
   _parseFloat(val: any) {

@@ -219,12 +219,27 @@ export class NotificationsListComponent implements OnInit {
       const isDiamond = cctMeta.DiamondLevel > 0;
       result.icon = isDiamond ? "icon-diamond fc-blue" : "fas fa-paper-plane fc-blue";
       const diamondText = isDiamond
-        ? "<b>" + cctMeta.DiamondLevel.toString() + " diamond" + (cctMeta.DiamondLevel > 1 ? "s" : "") + "</b>, worth "
+        ? "<b>" + cctMeta.DiamondLevel.toString() + " diamond" + (cctMeta.DiamondLevel > 1 ? "s" : "") + "</b>"
         : "";
-      result.action = `${actorName} sent you ${diamondText} <b>${this.globalVars.nanosToBitClout(
-        cctMeta.CreatorCoinToTransferNanos,
-        6
-      )} ${cctMeta.CreatorUsername} coins`;
+      let postText = "";
+      if (isDiamond && cctMeta.PostHashHex) {
+        const post = this.postMap[cctMeta.PostHashHex];
+        if (!post) {
+          return null;
+        }
+        const truncatedPost = _.truncate(_.escape(`${post.Body} ${post.ImageURLs?.[0] || ""}`));
+        postText = ` on your post <i class="text-grey7">${truncatedPost}</i>`;
+      }
+      if (isDiamond && cctMeta.PostHashHex) {
+        result.link = AppRoutingModule.postPath(cctMeta.PostHashHex);
+      }
+      const coinCount = !isDiamond
+        ? `<b>${this.globalVars.nanosToBitClout(cctMeta.CreatorCoinToTransferNanos, 6)} ${
+            cctMeta.CreatorUsername
+          } coins</b>`
+        : "";
+      result.action = `${actorName} sent you ${diamondText} ${coinCount} ${postText}`;
+
       return result;
     } else if (txnMeta.TxnType === "SUBMIT_POST") {
       const spMeta = txnMeta.SubmitPostTxindexMetadata;
