@@ -33,8 +33,6 @@ After installing node, you can clone the repo:
 git clone https://github.com/bitclout/frontend.git
 cd frontend
 ```
-Before launching the UI you must install the npm packages:
-
 
 ## Development server
 
