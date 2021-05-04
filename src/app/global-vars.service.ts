@@ -434,8 +434,7 @@ export class GlobalVarsService {
     if (!ss || ss.length <= ll) {
       return ss;
     }
-    // Subtract 3 for the characters lost to ellipses.
-    return ss.slice(0, ll - 3) + "...";
+    return ss.slice(0, ll) + "...";
   }
 
   _parseFloat(val: any) {
