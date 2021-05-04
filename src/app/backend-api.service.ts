@@ -43,6 +43,8 @@ export class BackendRoutes {
   static RoutePathGetTxn = "/get-txn";
   static RoutePathGetIdentities = "/get-identities";
   static RoutePathDeleteIdentities = "/delete-identities";
+  static RoutePathSendDiamonds = "/send-diamonds";
+  static RoutePathGetDiamondsForPublicKey = "/get-diamonds-for-public-key";
 
   // Admin routes.
   static NodeControlRoute = "/admin/node-control";
@@ -145,6 +147,7 @@ export class PostEntryResponse {
   Comments: PostEntryResponse[];
   LikeCount: number;
   RecloutCount: number;
+  DiamondCount: number;
   // Information about the reader's state w/regard to this post (e.g. if they liked it).
   PostEntryReaderState?: PostEntryReaderState;
   // True if this post hash hex is in the global feed.
@@ -165,6 +168,9 @@ export class PostEntryReaderState {
 
   // This is the post hash hex of the reclout
   RecloutPostHashHex?: string;
+
+  // Level of diamond the user gave this post.
+  DiamondLevelBestowed?: number;
 }
 
 export class BalanceEntryResponse {
@@ -228,12 +234,11 @@ export class BackendApiService {
 
   GetStorage(key: string) {
     const data = localStorage.getItem(key);
-
-    if (data !== "" && data != null && data !== "null") {
-      return JSON.parse(data);
-    } else {
+    if (data === "") {
       return null;
     }
+
+    return JSON.parse(data);
   }
 
   // Assemble a URL to hit the BE with.
@@ -878,6 +883,35 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, ReaderPublicKeyBase58Check);
   }
 
+  SendDiamonds(
+    endpoint: string,
+    SenderPublicKeyBase58Check: string,
+    ReceiverPublicKeyBase58Check: string,
+    DiamondPostHashHex: string,
+    DiamondLevel: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathSendDiamonds, {
+      SenderPublicKeyBase58Check,
+      ReceiverPublicKeyBase58Check,
+      DiamondPostHashHex,
+      DiamondLevel,
+      MinFeeRateNanosPerKB,
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+  }
+
+  GetDiamondsForPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
+      PublicKeyBase58Check,
+    });
+    return request;
+  }
+
   BuyOrSellCreatorCoin(
     endpoint: string,
 
@@ -1280,8 +1314,14 @@ export class BackendApiService {
       } else if (errorMessage.indexOf("RuleErrorInvalidUsername") >= 0) {
         errorMessage =
           "Your username contains invalid characters. Usernames can only numbers, English letters, and underscores.";
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferInsufficientCoins") >= 0) {
+        errorMessage = "You need more of your own creator coin to give a diamond of this level.";
+      } else if (errorMessage.indexOf("RuleErrorInputSpendsPreviouslySpentOutput") >= 0) {
+        errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
+        errorMessage = "You need to buy some of your creator coin before you can give a diamond.";
       }
-    }
+  }
     return errorMessage;
   }
 

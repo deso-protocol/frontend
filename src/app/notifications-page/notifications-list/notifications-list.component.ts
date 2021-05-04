@@ -216,8 +216,12 @@ export class NotificationsListComponent implements OnInit {
         return null;
       }
 
-      result.icon = "fas fa-paper-plane fc-blue";
-      result.action = `${actorName} sent you <b>${this.globalVars.nanosToBitClout(
+      const isDiamond = cctMeta.DiamondLevel > 0;
+      result.icon = isDiamond ? "icon-diamond fc-blue" : "fas fa-paper-plane fc-blue";
+      const diamondText = isDiamond
+        ? "<b>" + cctMeta.DiamondLevel.toString() + " diamond" + (cctMeta.DiamondLevel > 1 ? "s" : "") + "</b>, worth "
+        : "";
+      result.action = `${actorName} sent you ${diamondText} <b>${this.globalVars.nanosToBitClout(
         cctMeta.CreatorCoinToTransferNanos,
         6
       )} ${cctMeta.CreatorUsername} coins`;

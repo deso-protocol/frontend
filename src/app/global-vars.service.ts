@@ -12,6 +12,7 @@ import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
+import {configFromArray} from "ngx-bootstrap/chronos/create/from-array";
 
 @Injectable({
   providedIn: "root",
@@ -80,6 +81,9 @@ export class GlobalVarsService {
   // hodls and the users who hodl him.
   youHodlMap = {};
   hodlYouMap = {};
+
+  // Map of diamond level to bitclout nanos.
+  diamondLevelMap = {};
 
   // TODO(performance): We used to call the functions called by this function every
   // second. Now we call them only when needed, but the future is to get rid of this
@@ -494,7 +498,7 @@ export class GlobalVarsService {
     });
   }
 
-  celebrate() {
+  celebrate(dropDiamonds: boolean = false) {
     const canvasID = "my-canvas-" + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
@@ -507,6 +511,11 @@ export class GlobalVarsService {
       rotate: true,
       clock: 100,
     };
+    if (dropDiamonds) {
+      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 10 }];
+      confettiSettings.max = 200;
+      confettiSettings.clock = 150;
+    }
     this.confetti = new ConfettiGenerator(confettiSettings);
     this.confetti.render();
   }

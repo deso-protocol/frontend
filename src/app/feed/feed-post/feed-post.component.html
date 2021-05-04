@@ -72,10 +72,12 @@
         <i class="icon-repost fs-20px" style="vertical-align: middle"></i>
         <span style="vertical-align: middle" class="fs-15px">@{{ reclouterProfile.Username }} reclouted</span>
       </a>
+
       <feed-post-dropdown
         *ngIf="showDropdown"
         class="ml-auto"
         [post]="post"
+        [postContent]="postContent"
         (postHidden)="hidePost()"
         (userBlocked)="blockUser()"
         (toggleGlobalFeed)="_addPostToGlobalFeed()"
@@ -171,6 +173,7 @@
             *ngIf="showDropdown && !reclouterProfile"
             class="ml-auto"
             [post]="post"
+            [postContent]="postContent"
             (postHidden)="hidePost()"
             (userBlocked)="blockUser()"
             (toggleGlobalFeed)="_addPostToGlobalFeed($event)"

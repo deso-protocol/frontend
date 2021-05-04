@@ -14,4 +14,12 @@ export class LeftBarButtonComponent {
   notificationCount = 1;
 
   constructor(public globalVars: GlobalVarsService) {}
+
+  _queryParamsForLink(link: string) {
+    if(link.includes(this.globalVars.RouteNames.BROWSE)) {
+      return { stepNum: null, adminTab: null } 
+    } else {
+      return { stepNum: null, adminTab: null, feedTab: null }
+    }
+  }
 }

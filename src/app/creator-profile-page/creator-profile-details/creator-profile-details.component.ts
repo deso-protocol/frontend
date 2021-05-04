@@ -14,8 +14,16 @@ import { CreatorProfileTopCardComponent } from "../creator-profile-top-card/crea
 export class CreatorProfileDetailsComponent {
   @ViewChild(CreatorProfileTopCardComponent, { static: false }) childTopCardComponent;
 
-  static TABS = { posts: "Posts", "creator-coin": "Creator Coin" };
-  static TABS_LOOKUP = { Posts: "posts", "Creator Coin": "creator-coin" };
+  static TABS = {
+    "posts": "Posts",
+    "creator-coin": "Creator Coin",
+    "diamonds": "Diamonds",
+  };
+  static TABS_LOOKUP = { 
+    "Posts": "posts",
+    "Creator Coin": "creator-coin",
+    "Diamonds": "diamonds",
+  };
   appData: GlobalVarsService;
   userName: string;
   profile: ProfileEntryResponse;
@@ -35,7 +43,6 @@ export class CreatorProfileDetailsComponent {
   ) {
     this.route.params.subscribe((params) => {
       this.userName = params.username;
-      this.activeTab = "Posts";
       this._refreshContent();
     });
     this.route.queryParams.subscribe((params) => {

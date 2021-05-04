@@ -71,4 +71,8 @@ export class WalletComponent implements OnInit {
       " BitClout.\n\n"
     );
   }
+
+  usernameTruncationLength(): number {
+    return this.globalVars.isMobile() ? 14 : 20;
+  }
 }
