@@ -35,21 +35,10 @@ cd frontend
 ```
 Before launching the UI you must install the npm packages:
 
-```
-npm install
-```
-
 
 ## Development server
-Once all the packages have been installed you can start the development server by running:
 
-
-```
-npm start
-```
-or
-
-`npm run start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `npm install` to install all dependencies. Then `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
