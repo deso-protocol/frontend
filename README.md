@@ -46,4 +46,4 @@ Run `npm run generate component component-name` to generate a new component. You
 
 ## Build
 
-After proper configuration of `environment.ts` and `environment.prod.ts`, run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. Use `npm run build_prod` for a production build.
+proper configuration of `environment.ts` and `environment.prod.ts`, run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. Use `npm run build_prod` for a production build.
