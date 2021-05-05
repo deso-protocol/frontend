@@ -221,10 +221,10 @@ export class NotificationsListComponent implements OnInit {
         let postText = "";
         if (cctMeta.PostHashHex) {
           const truncatedPost = this.truncatePost(cctMeta.PostHashHex);
-          postText = ` on your post <i class="text-grey7">${truncatedPost}</i>`;
+          postText = `<i class="text-grey7">${truncatedPost}</i>`;
           result.link = AppRoutingModule.postPath(cctMeta.PostHashHex);
         }
-        result.action = `${actorName} sent you <b>${cctMeta.DiamondLevel.toString()} diamond${
+        result.action = `${actorName} gave <b>${cctMeta.DiamondLevel.toString()} diamond${
           cctMeta.DiamondLevel > 1 ? "s" : ""
         }</b> ${postText}`;
       } else {
