@@ -1,4 +1,6 @@
 import { Injectable } from "@angular/core";
+import {HttpClient} from "@angular/common/http";
+import * as http from "http";
 
 @Injectable({
   providedIn: "root",
@@ -83,6 +85,19 @@ export class VideoUrlParserService {
     return url.hostname.endsWith("youtube.com") || url.hostname.endsWith("youtu.be");
   }
 
+  static isTiktokLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isTiktokFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isTiktokFromURL(url: URL): boolean {
+    return url.hostname.endsWith("tiktok.com");
+  }
+
   static isValidVimeoEmbedURL(link: string) {
     const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))/;
     return !!link.match(regExp);
@@ -93,10 +108,22 @@ export class VideoUrlParserService {
     return !!link.match(regExp);
   }
 
+  static isValidTiktokEmbedURL(link: string) {
+    return true;
+  }
+
   static isValidEmbedURL(link: string): boolean {
     if (link) {
       return this.isValidVimeoEmbedURL(link) || this.isValidYoutubeEmbedURL(link);
     }
     return false;
+  }
+
+  static TikTokOembedURL = "https://www.tiktok.com/oembed";
+  static getTikTokOembedURLForLink(link: string): string {
+    return `${this.TikTokOembedURL}/url=${link}`;
+  }
+  static getTiktokEmbedCode(httpClient: HttpClient, link: string): any {
+    httpClient.get(this.getTikTokOembedURLForLink(link)).subscribe((res) => console.log(res));
   }
 }
