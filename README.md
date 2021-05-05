@@ -3,7 +3,7 @@
 This is the repository for the reference BitClout Angular app. It serves as an
 interface that allows users to interact with the data on the BitClout blockchain.
 ## Getting started
-Bitclout frontend-ui depends on node Node.js, currently tested on v14.16.1.
+Bitclout's frontend is an Angular application which requires Node to run its development commands.
 
 On MacOs  and Linux based systems, the most reliable way to install Node is to use the [Node Version Manager](https://github.com/nvm-sh/nvm) which allows you to have multiple node versions installed at once just incase you have other applications that depends on different versions.
 
