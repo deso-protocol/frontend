@@ -63,6 +63,11 @@ jobs:
             --output type=docker,name=${{ env.IMAGE_NAME }} | docker load
           echo "Cache size: $(du -sh ${{ env.BUILD_CACHE }})"
 
+      - name: Tag stable
+        if: contains(github.event.head_commit.message, '[stable]')
+        run: |
+          docker tag ${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}:stable
+
       - name: Tag and push
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
