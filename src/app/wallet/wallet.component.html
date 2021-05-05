@@ -114,7 +114,9 @@
                   [style.background-image]="'url(' + creator.ProfileEntryResponse.ProfilePic + ')'"
                 ></div>
                 <div class="text-truncate holdings__name">
-                  <span>{{ globalVars.truncate(creator.ProfileEntryResponse.Username, usernameTruncationLength()) }}</span>
+                  <span>
+                    {{ globalVars.truncate(creator.ProfileEntryResponse.Username, usernameTruncationLength()) }}
+                  </span>
 
                   <span
                     *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"

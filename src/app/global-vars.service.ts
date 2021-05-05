@@ -12,7 +12,7 @@ import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
-import {configFromArray} from "ngx-bootstrap/chronos/create/from-array";
+import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
 
 @Injectable({
   providedIn: "root",

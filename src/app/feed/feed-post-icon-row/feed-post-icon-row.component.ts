@@ -429,7 +429,6 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
-
     if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
       this.globalVars._alertError("You cannot downgrade a diamond");
       this.closeDiamondPopover();

@@ -928,10 +928,7 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
-  GetDiamondsForPublicKey(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-  ): Observable<any> {
+  GetDiamondsForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
       PublicKeyBase58Check,
     });
@@ -1347,7 +1344,7 @@ export class BackendApiService {
       } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
         errorMessage = "You need to buy some of your creator coin before you can give a diamond.";
       }
-  }
+    }
     return errorMessage;
   }
 

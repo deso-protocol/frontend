@@ -62,15 +62,22 @@
         class="messages-thread__avatar mr-15px"
         [style.background-image]="'url(' + selectedThreadProfilePic + ')'"
         [ngClass]="{ 'cursor-auto': !selectedThread.ProfileEntryResponse }"
-        [routerLink]="selectedThread.ProfileEntryResponse ? AppRoutingModule.profilePath(selectedThreadDisplayName) : []"
+        [routerLink]="
+          selectedThread.ProfileEntryResponse ? AppRoutingModule.profilePath(selectedThreadDisplayName) : []
+        "
         queryParamsHandling="merge"
       ></div>
-      <a class="link--unstyled"
-        [routerLink]="selectedThread.ProfileEntryResponse ? AppRoutingModule.profilePath(selectedThreadDisplayName) : []"
+      <a
+        class="link--unstyled"
+        [routerLink]="
+          selectedThread.ProfileEntryResponse ? AppRoutingModule.profilePath(selectedThreadDisplayName) : []
+        "
         queryParamsHandling="merge"
-      >{{ selectedThreadDisplayName }}</a>
+      >
+        {{ selectedThreadDisplayName }}
+      </a>
       <span *ngIf="selectedThread.ProfileEntryResponse?.IsVerified" class="ml-1 text-primary">
-            <i class="fas fa-check-circle fa-md align-middle"></i>
+        <i class="fas fa-check-circle fa-md align-middle"></i>
       </span>
     </div>
 

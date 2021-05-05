@@ -4,7 +4,7 @@ import {
   BackendApiService,
   ProfileEntryResponse,
   BalanceEntryResponse,
-  PostEntryResponse
+  PostEntryResponse,
 } from "../../backend-api.service";
 import * as _ from "lodash";
 

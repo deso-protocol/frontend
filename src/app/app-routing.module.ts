@@ -24,8 +24,8 @@ import { GetStarterBitcloutPageComponent } from "./get-starter-bitclout-page/get
 import { WalletComponent } from "./wallet/wallet.component";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
-import {DiamondPostsComponent} from "./diamond-posts-page/diamond-posts/diamond-posts.component";
-import {DiamondPostsPageComponent} from "./diamond-posts-page/diamond-posts-page.component";
+import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamond-posts.component";
+import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -99,7 +99,7 @@ const routes: Routes = [
     pathMatch: "full",
   },
   {
-    path: RouteNames.USER_PREFIX + "/:receiver/" + RouteNames.DIAMONDS +  "/:sender",
+    path: RouteNames.USER_PREFIX + "/:receiver/" + RouteNames.DIAMONDS + "/:sender",
     component: DiamondPostsPageComponent,
     pathMatch: "full",
   },

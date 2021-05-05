@@ -15,14 +15,14 @@ export class CreatorProfileDetailsComponent {
   @ViewChild(CreatorProfileTopCardComponent, { static: false }) childTopCardComponent;
 
   static TABS = {
-    "posts": "Posts",
+    posts: "Posts",
     "creator-coin": "Creator Coin",
-    "diamonds": "Diamonds",
+    diamonds: "Diamonds",
   };
-  static TABS_LOOKUP = { 
-    "Posts": "posts",
+  static TABS_LOOKUP = {
+    Posts: "posts",
     "Creator Coin": "creator-coin",
-    "Diamonds": "diamonds",
+    Diamonds: "diamonds",
   };
   appData: GlobalVarsService;
   userName: string;
