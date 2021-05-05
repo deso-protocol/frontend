@@ -396,7 +396,6 @@ export class FeedPostIconRowComponent {
     this.diamondSelected = this.getCurrentDiamondLevel();
     this.diamondPopover.show();
     this.diamondPopoverOpen = true;
-    // this.diamondPopoverOpen = this.diamondPopover.isOpen();
     document.addEventListener("click", this.popoverOpenClickHandler, true);
   }
 

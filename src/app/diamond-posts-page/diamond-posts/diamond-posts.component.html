@@ -1,10 +1,50 @@
-<!-- Top Bar -->
+<!-- Top Bar-->
 <div
   class="global__top-bar d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
 >
   <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-
- Diamonds
+  <div class="text-truncate" [ngStyle]="{ 'max-width': globalVars.isMobile() ? '350px' : '' }">
+     Diamonds from @{{senderUsername}}
+  </div>
 </div>
 <div class="global__top-bar__height"></div>
-<simple-center-loader *ngIf="loading"></simple-center-loader>
+<simple-center-loader *ngIf="loadingFirstPage && !loadingNextPage"></simple-center-loader>
+<div class="flex-grow-1">
+  <div #uiScroll *uiScroll="let post of datasource" class="border-bottom border-color-grey">
+    <div *ngIf="post.ShowDiamondDivider"
+         class="light-grey-divider border-bottom border-color-grey d-flex align-items-center justify-content-center flex-row"
+    >
+      <div class="py-10px">
+        <i class="icon-diamond fc-blue fs-20px" *ngFor="let _ of diamondArray(post.DiamondsFromSender)"></i>
+      </div>
+    </div>
+    <feed-post
+      *ngIf="post.ProfileEntryResponse"
+      [showDiamondsFromSender]="true"
+      [contentShouldLinkToThread]="true"
+      [includePaddingOnPost]="true"
+      [post]="post"
+      [blocked]="globalVars.hasUserBlockedCreator(post.ProfileEntryResponse.PublicKeyBase58Check)"
+      [afterCommentCreatedCallback]="_prependComment.bind(this, post)"
+    ></feed-post>
+    <div *ngFor="let comment of post.Comments">
+      <div class="px-15px pb-15px post-thread__subcomment-container">
+        <feed-post
+          [includePaddingOnPost]="false"
+          [post]="comment"
+          [parentPost]="post"
+          [contentShouldLinkToThread]="true"
+          [showIconRow]="false"
+          [showDropdown]="false"
+          [showReplyToContent]="false"
+          [isSubcomment]="true"
+          [afterCommentCreatedCallback]="_prependComment.bind(this, post)"
+        ></feed-post>
+      </div>
+    </div>
+  </div>
+  <simple-center-loader [height]="200" *ngIf="loadingNextPage && !loadingFirstPage"></simple-center-loader>
+</div>
+<div class="global__bottom-bar-mobile-height"></div>
+<div class="global__bottom-bar-mobile-height"></div>
+
