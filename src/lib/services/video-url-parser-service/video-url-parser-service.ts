@@ -37,6 +37,32 @@ export class VideoUrlParserService {
     return `https://player.vimeo.com/video/${vimeoVideoID}`;
   }
 
+  static tiktokParser(url: string): string | boolean {
+    // try {
+    //   const tiktokURL = new URL(url);
+    //   if (tiktokURL.hostname === "vm.tiktok.com") {
+    //     // httpClient.get()
+    //   }
+    // } catch (e) {
+    //   return false;
+    // }
+    const regExp = /^.*(tiktok\.com\/)((v\/)|(@[A-Za-z0-9_-]{2,24}\/video\/))|(\d{0,30}).*/;
+    const match = url.match(regExp);
+    console.log(match);
+    return match && match[5] ? match[5] : false;
+  }
+
+  static constructTikTokEmbedURL(url: URL): string {
+    const tiktokVideoID = this.tiktokParser(url.toString());
+    console.log(tiktokVideoID);
+    if (!tiktokVideoID) {
+      return "";
+    }
+    console.log(url);
+    console.log(`https://www.tiktok.com/embed/v2/${tiktokVideoID}`);
+    return `https://www.tiktok.com/embed/v2/${tiktokVideoID}`;
+  }
+
   static getEmbedVideoURL(embedVideoURL: string): string {
     if (embedVideoURL) {
       try {
@@ -46,6 +72,10 @@ export class VideoUrlParserService {
         }
         if (this.isVimeoFromURL(url)) {
           return this.constructVimeoEmbedURL(url);
+        }
+        if (this.isTiktokFromURL(url)) {
+          console.log(url);
+          return this.constructTikTokEmbedURL(url);
         }
         return "";
       } catch (e) {
@@ -95,6 +125,7 @@ export class VideoUrlParserService {
   }
 
   static isTiktokFromURL(url: URL): boolean {
+    console.log("in here: " + url.hostname.endsWith("tiktok.com"));
     return url.hostname.endsWith("tiktok.com");
   }
 
@@ -108,22 +139,27 @@ export class VideoUrlParserService {
     return !!link.match(regExp);
   }
 
+  // https://www.tiktok.com/oembed?url=https://www.tiktok.com/@thelavignes/video/6958254201961057542
   static isValidTiktokEmbedURL(link: string) {
-    return true;
+    // `https://www.tiktok.com/embed/v2/${tiktokVideoID}
+    const regExp = /(https:\/\/www.tiktok.com\/embed\/v2\/[0-9]{})/;
+    return !!link.match(regExp);
   }
 
   static isValidEmbedURL(link: string): boolean {
+    console.log(link);
+    console.log(this.isValidTiktokEmbedURL(link));
     if (link) {
-      return this.isValidVimeoEmbedURL(link) || this.isValidYoutubeEmbedURL(link);
+      return this.isValidVimeoEmbedURL(link) || this.isValidYoutubeEmbedURL(link) || this.isValidTiktokEmbedURL(link);
     }
     return false;
   }
 
-  static TikTokOembedURL = "https://www.tiktok.com/oembed";
-  static getTikTokOembedURLForLink(link: string): string {
-    return `${this.TikTokOembedURL}/url=${link}`;
-  }
-  static getTiktokEmbedCode(httpClient: HttpClient, link: string): any {
-    httpClient.get(this.getTikTokOembedURLForLink(link)).subscribe((res) => console.log(res));
-  }
+  // static TikTokOembedURL = "https://www.tiktok.com/oembed";
+  // // static getTikTokOembedURLForLink(link: string): string {
+  // //   return `${this.TikTokOembedURL}/url=${link}`;
+  // }
+  // static getTiktokEmbedCode(httpClient: HttpClient, link: string): any {
+  //   httpClient.get(this.getTikTokOembedURLForLink(link)).subscribe((res) => console.log(res));
+  // }
 }

@@ -7,6 +7,8 @@ import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { UpdateProfileComponent } from "../../update-profile-page/update-profile/update-profile.component";
 import { FeedPostComponent } from "../feed-post/feed-post.component";
 import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
+import {HttpClient} from "@angular/common/http";
+import * as http from "http";
 
 @Component({
   selector: "feed-create-post",
@@ -57,9 +59,24 @@ export class FeedCreatePostComponent implements OnInit {
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
-    private appData: GlobalVarsService
+    private appData: GlobalVarsService,
+    private httpClient: HttpClient,
   ) {
     this.globalVars = appData;
+    // httpClient.get("https://vm.tiktok.com/ZMeVVKBXY/").subscribe((res) => {
+    //   console.log("https://vm.toktok.com/ZMeVVKBXY/");
+    //   console.log(res);
+    // });
+    // const mobileURL = "https://m.tiktok.com/v/6927311811863760133";
+    // httpClient.get(mobileURL).subscribe((res) => {
+    //   console.log(mobileURL);
+    //   console.log(res);
+    // });
+    // const desktopURL = "https://www.tiktok.com/@tmiguel811/video/6927311811863760133";
+    // httpClient.get(desktopURL).subscribe((res) => {
+    //   console.log(desktopURL);
+    //   console.log(res);
+    // });
   }
 
   ngOnInit() {
