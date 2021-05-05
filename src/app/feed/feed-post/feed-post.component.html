@@ -245,9 +245,11 @@
         </div>
 
         <!-- Embedded Videos -->
-        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__image-container">
+        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__video-embed-container"
+        >
           <iframe
-            height="315"
+            id="embed-video-player"
+            [height]="getEmbedVideoHeight()"
             class="feed-post__image"
             [ngStyle]="{
               'margin-top': setNegativeMargins(getEmbedVideoURLForPostContent(), globalVars) ? '-65px' : '',

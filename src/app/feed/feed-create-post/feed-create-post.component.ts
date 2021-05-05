@@ -4,11 +4,7 @@ import { BackendApiService } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
-import { UpdateProfileComponent } from "../../update-profile-page/update-profile/update-profile.component";
-import { FeedPostComponent } from "../feed-post/feed-post.component";
 import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
-import {HttpClient} from "@angular/common/http";
-import * as http from "http";
 
 @Component({
   selector: "feed-create-post",
@@ -48,6 +44,7 @@ export class FeedCreatePostComponent implements OnInit {
 
   showEmbedVideoURL = false;
   embedVideoURL = "";
+  constructedEmbedVideoURL: any;
   // Emits a PostEntryResponse. It would be better if this were typed.
   @Output() postCreated = new EventEmitter();
 
@@ -59,24 +56,9 @@ export class FeedCreatePostComponent implements OnInit {
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
-    private appData: GlobalVarsService,
-    private httpClient: HttpClient,
+    private appData: GlobalVarsService
   ) {
     this.globalVars = appData;
-    // httpClient.get("https://vm.tiktok.com/ZMeVVKBXY/").subscribe((res) => {
-    //   console.log("https://vm.toktok.com/ZMeVVKBXY/");
-    //   console.log(res);
-    // });
-    // const mobileURL = "https://m.tiktok.com/v/6927311811863760133";
-    // httpClient.get(mobileURL).subscribe((res) => {
-    //   console.log(mobileURL);
-    //   console.log(res);
-    // });
-    // const desktopURL = "https://www.tiktok.com/@tmiguel811/video/6927311811863760133";
-    // httpClient.get(desktopURL).subscribe((res) => {
-    //   console.log(desktopURL);
-    //   console.log(res);
-    // });
   }
 
   ngOnInit() {
@@ -103,6 +85,18 @@ export class FeedCreatePostComponent implements OnInit {
     this.randomMovieQuote = this.randomMovieQuotes[randomInt];
   }
 
+  async setEmbedVideoURL() {
+    this.constructedEmbedVideoURL = await VideoUrlParserService.getEmbedVideoURL(
+      this.backendApi,
+      this.globalVars,
+      this.embedVideoURL
+    );
+  }
+
+  getEmbedVideoURL() {
+    return this.constructedEmbedVideoURL;
+  }
+
   submitPost() {
     if (this.postInput.length > GlobalVarsService.MAX_POST_LENGTH) {
       return;
@@ -119,7 +113,7 @@ export class FeedCreatePostComponent implements OnInit {
 
     const postExtraData = {};
     if (this.embedVideoURL) {
-      const videoURL = VideoUrlParserService.getEmbedVideoURL(this.embedVideoURL);
+      const videoURL = this.getEmbedVideoURL();
       if (VideoUrlParserService.isValidEmbedURL(videoURL)) {
         postExtraData["EmbedVideoURL"] = videoURL;
       }
@@ -157,6 +151,7 @@ export class FeedCreatePostComponent implements OnInit {
           this.postInput = "";
           this.postImageSrc = null;
           this.embedVideoURL = "";
+          this.constructedEmbedVideoURL = "";
           this.changeRef.detectChanges();
 
           // Refresh the post page.

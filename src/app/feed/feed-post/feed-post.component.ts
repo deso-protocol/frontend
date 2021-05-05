@@ -99,8 +99,9 @@ export class FeedPostComponent implements OnInit {
   hidingPost = false;
   quotedContent: any;
   _blocked: boolean;
+  constructedEmbedVideoURL: any;
 
-  ngOnInit() {
+  async ngOnInit() {
     if (this.globalVars.loggedInUser) {
       this.loggedInUserStakeAmount = this._getLoggedInUserStakeAmount();
       this.loggedInUserNextStakePayout = this._getLoggedInUserNextStakePayout();
@@ -108,6 +109,7 @@ export class FeedPostComponent implements OnInit {
     if (!this.post.RecloutCount) {
       this.post.RecloutCount = 0;
     }
+    await this.setEmbedVideoURLForPostContent();
   }
 
   onPostClicked(event) {
@@ -392,8 +394,20 @@ export class FeedPostComponent implements OnInit {
       });
   }
 
-  getEmbedVideoURLForPostContent(): string {
-    return VideoUrlParserService.getEmbedVideoURL(this.postContent.PostExtraData["EmbedVideoURL"]);
+  getEmbedVideoURLForPostContent(): any {
+    return this.constructedEmbedVideoURL;
+  }
+
+  async setEmbedVideoURLForPostContent(): Promise<void> {
+    this.constructedEmbedVideoURL = await VideoUrlParserService.getEmbedVideoURL(
+      this.backendApi,
+      this.globalVars,
+      this.postContent.PostExtraData["EmbedVideoURL"]
+    );
+  }
+
+  getEmbedVideoHeight(): number {
+    return VideoUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
 
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.

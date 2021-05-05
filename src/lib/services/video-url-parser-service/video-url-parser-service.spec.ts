@@ -1,6 +1,35 @@
 import { VideoUrlParserService } from "./video-url-parser-service";
+import { TestBed } from "@angular/core/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { BackendApiService, ProfileEntryResponse } from "../../../app/backend-api.service";
+import { GlobalVarsService } from "../../../app/global-vars.service";
 
 describe("VideoUrlParserService", () => {
+  let globalVarsService;
+  let backendApiService;
+
+  beforeEach(async () => {
+    const localNode = "bitclout.com";
+    const loggedInUser = new ProfileEntryResponse();
+    loggedInUser.PublicKeyBase58Check = "fakepublickey";
+    const globalVarSpy = jasmine.createSpyObj("GlobalVarsService", []);
+    globalVarSpy.localNode = localNode;
+    globalVarSpy.loggedInUser = loggedInUser;
+    const backendApiSpy = jasmine.createSpyObj("BackendApiService", ["GetFullTikTokURL"]);
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [
+        { provide: GlobalVarsService, useValue: globalVarSpy },
+        { provide: BackendApiService, useValue: backendApiSpy },
+      ],
+    });
+    globalVarsService = TestBed.inject(GlobalVarsService);
+    backendApiService = TestBed.inject(BackendApiService);
+    backendApiService.GetFullTikTokURL.and.returnValue({
+      FullTikTokURL: backendApiFullTikTokURLResponse,
+    });
+  });
+
   const youtubeVideoID = "CC8MU_ELvso";
   const validYoutubeURLs = [
     `http://www.youtube.com/watch?v=${youtubeVideoID}`,
@@ -14,6 +43,17 @@ describe("VideoUrlParserService", () => {
   const validVimeoURLs = [`http://vimeo.com/${vimeoVideoID}`];
   const validVimeoEmbedURLs = [`https://player.vimeo.com/video/${vimeoVideoID}`];
 
+  const tiktokVideoID = "6943259044295673349";
+  const tiktokShortVideoID = "ZMeV3WmVr";
+  const validTikTokURLs = [
+    `https://www.tiktok.com/@ox_zung/video/${tiktokVideoID}?is_copy_url=0&is_from_webapp=v1&sender_device=pc&sender_web_id=${tiktokVideoID}`,
+    `https://m.tiktok.com/v/${tiktokVideoID}`,
+  ];
+
+  const backendApiFullTikTokURLResponse = validTikTokURLs[1];
+  const validShortTikTokURLs = [`https://vm.tiktok.com/${tiktokShortVideoID}`]
+
+  const validTikTokEmbedURLs = [`https://www.tiktok.com/embed/v2/${tiktokVideoID}`];
   const invalidURLs = [
     "https://google.com",
     "facebook.com<script></script>",
@@ -54,10 +94,37 @@ describe("VideoUrlParserService", () => {
     }
   });
 
+  it("parses tiktok URLs from user input correctly and only validates embed urls", async () => {
+    for (const link of validTikTokURLs) {
+      expect(VideoUrlParserService.isTiktokLink(link)).toBeTruthy();
+      const embedURL = await VideoUrlParserService.constructTikTokEmbedURL(
+        backendApiService,
+        globalVarsService,
+        new URL(link)
+      );
+      expect(embedURL).toEqual(`https://www.tiktok.com/embed/v2/${vimeoVideoID}`);
+      expect(VideoUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
+      expect(VideoUrlParserService.isValidEmbedURL(link)).toBeFalsy();
+    }
+    for (const link of validShortTikTokURLs) {
+      // expect(VideoUrlParserService.isTikTokLink(link)).toBeTruthy();
+    }
+    for (const embedLink of validVimeoEmbedURLs) {
+      expect(VideoUrlParserService.isTiktokLink(embedLink)).toBeTruthy();
+      expect(VideoUrlParserService.isValidEmbedURL(embedLink)).toBeTruthy();
+      const constructedEmbedURL = await VideoUrlParserService.constructTikTokEmbedURL(
+        backendApiService,
+        globalVarsService,
+        new URL(embedLink)
+      );
+      expect(VideoUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
+    }
+  });
+
   it("invalid URLs return falsy values", () => {
     for (const link of invalidURLs) {
       expect(VideoUrlParserService.isValidEmbedURL(link)).toBeFalsy();
-      expect(VideoUrlParserService.getEmbedVideoURL(link)).toBeFalsy();
+      expect(VideoUrlParserService.getEmbedVideoURL(backendApiService, globalVarsService, link)).toBeFalsy();
     }
   });
 });

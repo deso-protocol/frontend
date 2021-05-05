@@ -901,6 +901,18 @@ $green-font-color: #19B028;
   }
 }
 
+.feed-post__video-embed-container {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  max-height: 780px;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
 .feed-post__image-container {
   display: flex;
   position: relative;

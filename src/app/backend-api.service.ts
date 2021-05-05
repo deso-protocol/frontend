@@ -64,6 +64,8 @@ export class BackendRoutes {
   static RoutePathUpdateBitcoinUSDExchangeRate = "/admin/update-bitcoin-usd-exchange-rate";
   static RoutePathUpdateGlobalParams = "/admin/update-global-params";
   static RoutePathGetGlobalParams = "/admin/get-global-params";
+
+  static RoutePathGetFullTikTokURL = "/get-full-tiktok-url";
 }
 
 export class Transaction {
@@ -1256,6 +1258,13 @@ export class BackendApiService {
   GetGlobalParams(endpoint: string, UpdaterPublicKeyBase58Check: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathGetGlobalParams, UpdaterPublicKeyBase58Check, {
       AdminPublicKey: UpdaterPublicKeyBase58Check,
+    });
+  }
+
+  GetFullTikTokURL(endpoint: string, UpdaterPublicKeyBase58Check: string, TikTokShortVideoID: string): Observable<any> {
+    console.log("over here");
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetFullTikTokURL, UpdaterPublicKeyBase58Check, {
+      TikTokShortVideoID,
     });
   }
 
