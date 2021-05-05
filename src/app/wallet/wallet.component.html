@@ -105,7 +105,7 @@
             >
               <!-- Name-->
               <a
-                class="col d-flex align-items-center link--unstyled holdings__creator-coin-name"
+                class="col-lg-5 col-6 d-flex align-items-center link--unstyled holdings__creator-coin-name"
                 [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
                 queryParamsHandling="merge"
               >
@@ -114,7 +114,7 @@
                   [style.background-image]="'url(' + creator.ProfileEntryResponse.ProfilePic + ')'"
                 ></div>
                 <div class="text-truncate holdings__name">
-                  <span>{{ globalVars.truncate(creator.ProfileEntryResponse.Username, usernameTruncationLength()) }}</span>
+                  <span>{{creator.ProfileEntryResponse.Username}}</span>
 
                   <span
                     *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
