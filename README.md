@@ -14,7 +14,7 @@ Make sure you have build tools installed
 ```npm install --global --production windows-build-tools```.
 
 
-To install NVM for OSX/Linux, add the following command in your terminal:
+To install NVM for OSX/Linux, execute the following command in your terminal:
 
 ```
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
