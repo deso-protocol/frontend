@@ -22,7 +22,7 @@ nvm install v14
 nvm use v14
 ```
 Note: If nvm fails to install due to: " Command 'nvm' not found." 
-Restart your terminal OR use command ```source ~/.nvm/nvm.sh``` (this will refresh the available commands in your system path).
+Restart your terminal or execute `source ~/.nvm/nvm.sh` to refresh the available commands in your system path
 
 
 
