@@ -14,10 +14,8 @@ export class VideoUrlParserService {
   static constructYoutubeEmbedURL(url: URL): string {
     const youtubeVideoID = this.youtubeParser(url.toString());
     // If we can't find the videoID, return the empty string which stops the iframe from loading.
-    if (!youtubeVideoID) {
-      return "";
-    }
-    return `https://www.youtube-nocookie.com/embed/${youtubeVideoID}`;
+
+    return youtubeVideoID ? `https://www.youtube-nocookie.com/embed/${youtubeVideoID}` : "";
   }
 
   // Vimeo video URLs are simple -- anything after the last "/" in the url indicates the videoID.
