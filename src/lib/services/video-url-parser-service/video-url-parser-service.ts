@@ -184,7 +184,7 @@ export class VideoUrlParserService {
       return 315;
     }
     if (this.isValidTiktokEmbedURL(link)) {
-      return 750;
+      return 700;
     }
     return 315;
   }
