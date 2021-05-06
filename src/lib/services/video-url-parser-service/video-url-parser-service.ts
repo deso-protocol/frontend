@@ -52,7 +52,7 @@ export class VideoUrlParserService {
         if (match && match[2]) {
           return backendApi.GetFullTikTokURL(globalVars.localNode, match[2]).pipe(
             map((res) => {
-              return this.extractTikTokVideoID(res.FullTikTokURL);
+              return this.extractTikTokVideoID(res);
             })
           );
         } else {

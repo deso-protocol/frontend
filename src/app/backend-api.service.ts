@@ -1264,7 +1264,11 @@ export class BackendApiService {
   GetFullTikTokURL(endpoint: string, TikTokShortVideoID: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetFullTikTokURL, {
       TikTokShortVideoID,
-    });
+    }).pipe(
+      map((res) => {
+        return res.FullTikTokURL;
+      })
+    );
   }
 
   // Error parsing
