@@ -1319,7 +1319,7 @@ export class BackendApiService {
       } else if (errorMessage.indexOf("RuleErrorInputSpendsPreviouslySpentOutput") >= 0) {
         errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
       } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
-        errorMessage = "You must own this creator coin before transfering it.";
+        errorMessage = "You must own this creator coin before transferring it.";
       }
   }
     return errorMessage;
