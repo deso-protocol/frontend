@@ -58,7 +58,7 @@ describe("VideoUrlParserService", () => {
     for (const link of validYoutubeURLs) {
       expect(VideoUrlParserService.isYoutubeLink(link)).toBeTruthy();
       const embedURL = VideoUrlParserService.constructYoutubeEmbedURL(new URL(link));
-      expect(embedURL).toEqual(`https://www.youtube-nocookie.com/embed/${youtubeVideoID}`);
+      expect(embedURL).toEqual(`https://www.youtube.com/embed/${youtubeVideoID}`);
       expect(VideoUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
       expect(VideoUrlParserService.isValidEmbedURL(link)).toBeFalsy();
     }

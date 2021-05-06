@@ -18,7 +18,6 @@ export class VideoUrlParserService {
   static constructYoutubeEmbedURL(url: URL): string {
     const youtubeVideoID = this.youtubeParser(url.toString());
     // If we can't find the videoID, return the empty string which stops the iframe from loading.
-
     return youtubeVideoID ? `https://www.youtube-nocookie.com/embed/${youtubeVideoID}` : "";
   }
 
@@ -31,7 +30,7 @@ export class VideoUrlParserService {
 
   static constructVimeoEmbedURL(url: URL): string {
     const vimeoVideoID = this.vimeoParser(url.toString());
-    return vimeoVideoID ? `https://player.vimeo.com/video/${vimeoVideoID}` : "";
+    return vimeoVideoID ? `https://player.vimeo.com/video/${vimeoVideoID}?dnt=1` : "";
   }
 
   static extractTikTokVideoID(fullTikTokURL: string): string | boolean {
@@ -158,6 +157,11 @@ export class VideoUrlParserService {
     return !!link.match(regExp);
   }
 
+  static isValidYoutubeNoCookieEmbedURL(link: string) {
+    const regExp = /(https:\/\/www.youtube-nocookie.com\/embed\/[A-Za-z0-9_-]{11})/;
+    return !!link.match(regExp);
+  }
+
   // https://www.tiktok.com/oembed?url=https://www.tiktok.com/@thelavignes/video/6958254201961057542
   static isValidTiktokEmbedURL(link: string) {
     // `https://www.tiktok.com/embed/v2/${tiktokVideoID}
@@ -167,7 +171,12 @@ export class VideoUrlParserService {
 
   static isValidEmbedURL(link: string): boolean {
     if (link) {
-      return this.isValidVimeoEmbedURL(link) || this.isValidYoutubeEmbedURL(link) || this.isValidTiktokEmbedURL(link);
+      return (
+        this.isValidVimeoEmbedURL(link) ||
+        this.isValidYoutubeEmbedURL(link) ||
+        this.isValidYoutubeNoCookieEmbedURL(link) ||
+        this.isValidTiktokEmbedURL(link)
+      );
     }
     return false;
   }
