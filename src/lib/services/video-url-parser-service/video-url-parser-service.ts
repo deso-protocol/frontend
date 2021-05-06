@@ -44,25 +44,25 @@ export class VideoUrlParserService {
     globalVars: GlobalVarsService,
     url: string
   ): Observable<string | boolean> {
+    let tiktokURL;
     try {
-      const tiktokURL = new URL(url);
-      if (tiktokURL.hostname === "vm.tiktok.com") {
-        const regExp = /^.*(vm\.tiktok\.com\/)([A-Za-z0-9]{6,12}).*/;
-        const match = url.match(regExp);
-        if (match && match[2]) {
-          return backendApi.GetFullTikTokURL(globalVars.localNode, match[2]).pipe(
-            map((res) => {
-              return this.extractTikTokVideoID(res);
-            })
-          );
-        } else {
-          return of(false);
-        }
-      } else {
-        return of(this.extractTikTokVideoID(url));
-      }
+      tiktokURL = new URL(url);
     } catch (e) {
       return of(false);
+    }
+    if (tiktokURL.hostname === "vm.tiktok.com") {
+      const regExp = /^.*(vm\.tiktok\.com\/)([A-Za-z0-9]{6,12}).*/;
+      const match = url.match(regExp);
+      if (!match || !match[2]) {
+        return of(false);
+      }
+      return backendApi.GetFullTikTokURL(globalVars.localNode, match[2]).pipe(
+        map((res) => {
+          return this.extractTikTokVideoID(res);
+        })
+      );
+    } else {
+      return of(this.extractTikTokVideoID(url));
     }
   }
 
@@ -83,26 +83,27 @@ export class VideoUrlParserService {
     globalVars: GlobalVarsService,
     embedVideoURL: string
   ): Observable<string> {
-    if (embedVideoURL) {
-      try {
-        const url = new URL(embedVideoURL);
-        if (this.isYoutubeFromURL(url)) {
-          return of(this.constructYoutubeEmbedURL(url));
-        }
-        if (this.isVimeoFromURL(url)) {
-          return of(this.constructVimeoEmbedURL(url));
-        }
-        if (this.isTiktokFromURL(url)) {
-          return this.constructTikTokEmbedURL(backendApi, globalVars, url);
-        }
-        return of("");
-      } catch (e) {
-        // If the embed video URL doesn't start with http(s), try the url with that as a prefix.
-        if (!embedVideoURL.startsWith("https://") && !embedVideoURL.startsWith("http://")) {
-          return this.getEmbedVideoURL(backendApi, globalVars, `https://${embedVideoURL}`);
-        }
-        return of("");
+    if (!embedVideoURL) {
+      return of("");
+    }
+    let url;
+    try {
+      url = new URL(embedVideoURL);
+    } catch (e) {
+      // If the embed video URL doesn't start with http(s), try the url with that as a prefix.
+      if (!embedVideoURL.startsWith("https://") && !embedVideoURL.startsWith("http://")) {
+        return this.getEmbedVideoURL(backendApi, globalVars, `https://${embedVideoURL}`);
       }
+      return of("");
+    }
+    if (this.isYoutubeFromURL(url)) {
+      return of(this.constructYoutubeEmbedURL(url));
+    }
+    if (this.isVimeoFromURL(url)) {
+      return of(this.constructVimeoEmbedURL(url));
+    }
+    if (this.isTiktokFromURL(url)) {
+      return this.constructTikTokEmbedURL(backendApi, globalVars, url);
     }
     return of("");
   }
