@@ -1,9 +1,10 @@
 <!-- Top Bar -->
-<div
-  *ngIf="!isMobile"
-  class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
->
+<div *ngIf="!isMobile" class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey">
   Messages
+    <div class="d-flex justify-content-end w-100 align-items-right pr-15px pb-15px mt-10px">
+        <i *ngIf="hasUnreadMessages" (click)="_markAllUnread()" class="fc-blue icon-messages cursor-pointer feed-post-icon-row__icon"></i>
+        <i *ngIf="!hasUnreadMessages" class="fc-light icon-messages" style="color:#ccc; font-size: 25px;border-radius: 50%;margin-right: 2px;"></i>
+    </div>
 </div>
 
 <search-bar

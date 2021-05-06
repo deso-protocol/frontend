@@ -18,6 +18,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   @Input() isMobile = false;
   @Output() selectedThreadEmitter = new EventEmitter<any>();
   selectedThread: any;
+  hasUnreadMessages: boolean;
 
   // The contact to select by default, passed in via query param. Note: if the current user
   // doesn't have a conversation with the contact, these parameters do nothing.
@@ -40,7 +41,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     if (this.messageThreads && this.messageThreads.length > 0) {
       this.updateReadMessagesForSelectedThread();
     }
-
+    this.hasUnreadMessages = (this.globalVars.messageNotificationCount != 0)
     this._setSelectedThreadBasedOnDefaultThread();
   }
 
@@ -48,6 +49,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     // If messageThreads were not loaded when the component initialized, we handle them here.
     if (changes.messageThreads.previousValue === null && changes.messageThreads.currentValue.length > 0) {
       this.updateReadMessagesForSelectedThread();
+      this.hasUnreadMessages = (this.globalVars.messageNotificationCount != 0)
     }
   }
 
@@ -158,4 +160,24 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         }
       );
   }
+
+  _markAllUnread() {
+    this.hasUnreadMessages=false
+    const messageReadStateUpdatesByContact = this.globalVars.messageResponse.TotalMessagesByContact
+    this.globalVars.messageResponse.MessageReadStateByContact = this.globalVars.messageResponse.TotalMessagesByContact
+    this.globalVars._setNumMessagesToRead();
+    this.backendApi.UpdateUserGlobalMetadata(
+      this.globalVars.localNode,
+      this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+      "" /*EmailAddress*/,
+      messageReadStateUpdatesByContact
+    )
+    .subscribe(
+      (res) => {},
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
 }
