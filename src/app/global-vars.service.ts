@@ -431,7 +431,7 @@ export class GlobalVarsService {
     if (!ll) {
       ll = 18;
     }
-    if (!ss || ss.length < ll) {
+    if (!ss || ss.length <= ll) {
       return ss;
     }
     return ss.slice(0, ll) + "...";
