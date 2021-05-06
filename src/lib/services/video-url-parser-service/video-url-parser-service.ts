@@ -17,7 +17,7 @@ export class VideoUrlParserService {
     if (!youtubeVideoID) {
       return "";
     }
-    return `https://www.youtube.com/embed/${youtubeVideoID}`;
+    return `https://www.youtube-nocookie.com/embed/${youtubeVideoID}`;
   }
 
   // Vimeo video URLs are simple -- anything after the last "/" in the url indicates the videoID.
