@@ -1,27 +1,19 @@
 import { VideoUrlParserService } from "./video-url-parser-service";
 import { TestBed } from "@angular/core/testing";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { BackendApiService, ProfileEntryResponse } from "../../../app/backend-api.service";
+import { BackendApiService } from "../../../app/backend-api.service";
 import { GlobalVarsService } from "../../../app/global-vars.service";
+import { RouterModule } from "@angular/router";
 
 describe("VideoUrlParserService", () => {
   let globalVarsService;
   let backendApiService;
 
   beforeEach(async () => {
-    const localNode = "bitclout.com";
-    const loggedInUser = new ProfileEntryResponse();
-    loggedInUser.PublicKeyBase58Check = "fakepublickey";
-    const globalVarSpy = jasmine.createSpyObj("GlobalVarsService", []);
-    globalVarSpy.localNode = localNode;
-    globalVarSpy.loggedInUser = loggedInUser;
     const backendApiSpy = jasmine.createSpyObj("BackendApiService", ["GetFullTikTokURL"]);
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [
-        { provide: GlobalVarsService, useValue: globalVarSpy },
-        { provide: BackendApiService, useValue: backendApiSpy },
-      ],
+    await TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule, RouterModule.forRoot([])],
+      providers: [GlobalVarsService, { provide: BackendApiService, useValue: backendApiSpy }],
     });
     globalVarsService = TestBed.inject(GlobalVarsService);
     backendApiService = TestBed.inject(BackendApiService);
@@ -51,7 +43,7 @@ describe("VideoUrlParserService", () => {
   ];
 
   const backendApiFullTikTokURLResponse = validTikTokURLs[1];
-  const validShortTikTokURLs = [`https://vm.tiktok.com/${tiktokShortVideoID}`]
+  const validShortTikTokURLs = [`https://vm.tiktok.com/${tiktokShortVideoID}`];
 
   const validTikTokEmbedURLs = [`https://www.tiktok.com/embed/v2/${tiktokVideoID}`];
   const invalidURLs = [
@@ -96,21 +88,21 @@ describe("VideoUrlParserService", () => {
 
   it("parses tiktok URLs from user input correctly and only validates embed urls", async () => {
     for (const link of validTikTokURLs) {
-      expect(VideoUrlParserService.isTiktokLink(link)).toBeTruthy();
+      expect(VideoUrlParserService.isTikTokLink(link)).toBeTruthy();
       const embedURL = await VideoUrlParserService.constructTikTokEmbedURL(
         backendApiService,
         globalVarsService,
         new URL(link)
       );
-      expect(embedURL).toEqual(`https://www.tiktok.com/embed/v2/${vimeoVideoID}`);
+      expect(embedURL).toEqual(`https://www.tiktok.com/embed/v2/${tiktokVideoID}`);
       expect(VideoUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
       expect(VideoUrlParserService.isValidEmbedURL(link)).toBeFalsy();
     }
     for (const link of validShortTikTokURLs) {
-      // expect(VideoUrlParserService.isTikTokLink(link)).toBeTruthy();
+      expect(VideoUrlParserService.isTikTokLink(link)).toBeTruthy();
     }
-    for (const embedLink of validVimeoEmbedURLs) {
-      expect(VideoUrlParserService.isTiktokLink(embedLink)).toBeTruthy();
+    for (const embedLink of validTikTokEmbedURLs) {
+      expect(VideoUrlParserService.isTikTokLink(embedLink)).toBeTruthy();
       expect(VideoUrlParserService.isValidEmbedURL(embedLink)).toBeTruthy();
       const constructedEmbedURL = await VideoUrlParserService.constructTikTokEmbedURL(
         backendApiService,
@@ -121,10 +113,10 @@ describe("VideoUrlParserService", () => {
     }
   });
 
-  it("invalid URLs return falsy values", () => {
+  it("invalid URLs return falsy values", async () => {
     for (const link of invalidURLs) {
       expect(VideoUrlParserService.isValidEmbedURL(link)).toBeFalsy();
-      expect(VideoUrlParserService.getEmbedVideoURL(backendApiService, globalVarsService, link)).toBeFalsy();
+      expect(await VideoUrlParserService.getEmbedVideoURL(backendApiService, globalVarsService, link)).toBeFalsy();
     }
   });
 });

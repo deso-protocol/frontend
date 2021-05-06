@@ -142,7 +142,7 @@ export class VideoUrlParserService {
     return url.hostname.endsWith("youtube.com") || url.hostname.endsWith("youtu.be");
   }
 
-  static isTiktokLink(link: string): boolean {
+  static isTikTokLink(link: string): boolean {
     try {
       const url = new URL(link);
       return this.isTiktokFromURL(url);
