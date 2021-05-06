@@ -85,11 +85,9 @@ export class FeedCreatePostComponent implements OnInit {
     this.randomMovieQuote = this.randomMovieQuotes[randomInt];
   }
 
-  async setEmbedVideoURL() {
-    this.constructedEmbedVideoURL = await VideoUrlParserService.getEmbedVideoURL(
-      this.backendApi,
-      this.globalVars,
-      this.embedVideoURL
+  setEmbedVideoURL() {
+    VideoUrlParserService.getEmbedVideoURL(this.backendApi, this.globalVars, this.embedVideoURL).subscribe(
+      (res) => (this.constructedEmbedVideoURL = res)
     );
   }
 

@@ -89,14 +89,13 @@ describe("VideoUrlParserService", () => {
   it("parses tiktok URLs from user input correctly and only validates embed urls", async () => {
     for (const link of validTikTokURLs) {
       expect(VideoUrlParserService.isTikTokLink(link)).toBeTruthy();
-      const embedURL = await VideoUrlParserService.constructTikTokEmbedURL(
-        backendApiService,
-        globalVarsService,
-        new URL(link)
+      VideoUrlParserService.constructTikTokEmbedURL(backendApiService, globalVarsService, new URL(link)).subscribe(
+        (embedURL) => {
+          expect(embedURL).toEqual(`https://www.tiktok.com/embed/v2/${tiktokVideoID}`);
+          expect(VideoUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
+          expect(VideoUrlParserService.isValidEmbedURL(link)).toBeFalsy();
+        }
       );
-      expect(embedURL).toEqual(`https://www.tiktok.com/embed/v2/${tiktokVideoID}`);
-      expect(VideoUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
-      expect(VideoUrlParserService.isValidEmbedURL(link)).toBeFalsy();
     }
     for (const link of validShortTikTokURLs) {
       expect(VideoUrlParserService.isTikTokLink(link)).toBeTruthy();
@@ -104,19 +103,20 @@ describe("VideoUrlParserService", () => {
     for (const embedLink of validTikTokEmbedURLs) {
       expect(VideoUrlParserService.isTikTokLink(embedLink)).toBeTruthy();
       expect(VideoUrlParserService.isValidEmbedURL(embedLink)).toBeTruthy();
-      const constructedEmbedURL = await VideoUrlParserService.constructTikTokEmbedURL(
-        backendApiService,
-        globalVarsService,
-        new URL(embedLink)
+      VideoUrlParserService.constructTikTokEmbedURL(backendApiService, globalVarsService, new URL(embedLink)).subscribe(
+        (constructedEmbedURL) => {
+          expect(VideoUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
+        }
       );
-      expect(VideoUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
     }
   });
 
   it("invalid URLs return falsy values", async () => {
     for (const link of invalidURLs) {
       expect(VideoUrlParserService.isValidEmbedURL(link)).toBeFalsy();
-      expect(await VideoUrlParserService.getEmbedVideoURL(backendApiService, globalVarsService, link)).toBeFalsy();
+      VideoUrlParserService.getEmbedVideoURL(backendApiService, globalVarsService, link).subscribe((res) =>
+        expect(res).toBeFalsy()
+      );
     }
   });
 });

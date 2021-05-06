@@ -1261,9 +1261,8 @@ export class BackendApiService {
     });
   }
 
-  GetFullTikTokURL(endpoint: string, UpdaterPublicKeyBase58Check: string, TikTokShortVideoID: string): Observable<any> {
-    console.log("over here");
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetFullTikTokURL, UpdaterPublicKeyBase58Check, {
+  GetFullTikTokURL(endpoint: string, TikTokShortVideoID: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetFullTikTokURL, {
       TikTokShortVideoID,
     });
   }
@@ -1330,7 +1329,7 @@ export class BackendApiService {
       } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
         errorMessage = "You need to buy some of your creator coin before you can give a diamond.";
       }
-  }
+    }
     return errorMessage;
   }
 

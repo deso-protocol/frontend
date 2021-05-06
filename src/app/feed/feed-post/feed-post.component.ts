@@ -101,7 +101,7 @@ export class FeedPostComponent implements OnInit {
   _blocked: boolean;
   constructedEmbedVideoURL: any;
 
-  async ngOnInit() {
+  ngOnInit() {
     if (this.globalVars.loggedInUser) {
       this.loggedInUserStakeAmount = this._getLoggedInUserStakeAmount();
       this.loggedInUserNextStakePayout = this._getLoggedInUserNextStakePayout();
@@ -109,7 +109,7 @@ export class FeedPostComponent implements OnInit {
     if (!this.post.RecloutCount) {
       this.post.RecloutCount = 0;
     }
-    await this.setEmbedVideoURLForPostContent();
+    this.setEmbedVideoURLForPostContent();
   }
 
   onPostClicked(event) {
@@ -398,12 +398,12 @@ export class FeedPostComponent implements OnInit {
     return this.constructedEmbedVideoURL;
   }
 
-  async setEmbedVideoURLForPostContent(): Promise<void> {
-    this.constructedEmbedVideoURL = await VideoUrlParserService.getEmbedVideoURL(
+  setEmbedVideoURLForPostContent(): void {
+    VideoUrlParserService.getEmbedVideoURL(
       this.backendApi,
       this.globalVars,
       this.postContent.PostExtraData["EmbedVideoURL"]
-    );
+    ).subscribe((res) => (this.constructedEmbedVideoURL = res));
   }
 
   getEmbedVideoHeight(): number {

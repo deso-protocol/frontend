@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import { BackendApiService } from "../../../app/backend-api.service";
 import { GlobalVarsService } from "../../../app/global-vars.service";
+import { Observable, of } from "rxjs";
+import { map } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
@@ -16,10 +18,7 @@ export class VideoUrlParserService {
   static constructYoutubeEmbedURL(url: URL): string {
     const youtubeVideoID = this.youtubeParser(url.toString());
     // If we can't find the videoID, return the empty string which stops the iframe from loading.
-    if (!youtubeVideoID) {
-      return "";
-    }
-    return `https://www.youtube.com/embed/${youtubeVideoID}`;
+    return youtubeVideoID ? `https://www.youtube.com/embed/${youtubeVideoID}` : "";
   }
 
   // Vimeo video URLs are simple -- anything after the last "/" in the url indicates the videoID.
@@ -31,89 +30,81 @@ export class VideoUrlParserService {
 
   static constructVimeoEmbedURL(url: URL): string {
     const vimeoVideoID = this.vimeoParser(url.toString());
-    if (!vimeoVideoID) {
-      return "";
-    }
-    return `https://player.vimeo.com/video/${vimeoVideoID}`;
+    return vimeoVideoID ? `https://player.vimeo.com/video/${vimeoVideoID}` : "";
   }
 
-  static async tiktokParser(
+  static extractTikTokVideoID(fullTikTokURL: string): string | boolean {
+    const regExp = /^.*((tiktok\.com\/)(v\/)|(@[A-Za-z0-9_-]{2,24}\/video\/)|(embed\/v2\/))(\d{0,30}).*/;
+    const match = fullTikTokURL.match(regExp);
+    return match && match[6] ? match[6] : false;
+  }
+
+  static tiktokParser(
     backendApi: BackendApiService,
     globalVars: GlobalVarsService,
     url: string
-  ): Promise<string | boolean> {
-    let fullTikTokURL = url;
+  ): Observable<string | boolean> {
     try {
       const tiktokURL = new URL(url);
       if (tiktokURL.hostname === "vm.tiktok.com") {
         const regExp = /^.*(vm\.tiktok\.com\/)([A-Za-z0-9]{6,12}).*/;
         const match = url.match(regExp);
         if (match && match[2]) {
-          fullTikTokURL = await backendApi
-            .GetFullTikTokURL(globalVars.localNode, globalVars.loggedInUser.PublicKeyBase58Check, match[2])
-            .toPromise()
-            .then(
-              (res) => {
-                return res.FullTikTokURL;
-              },
-              () => {
-                return false;
-              }
-            );
-          if (!fullTikTokURL) {
-            return false;
-          }
+          return backendApi.GetFullTikTokURL(globalVars.localNode, match[2]).pipe(
+            map((res) => {
+              return this.extractTikTokVideoID(res.FullTikTokURL);
+            })
+          );
         } else {
-          return false;
+          return of(false);
         }
+      } else {
+        return of(this.extractTikTokVideoID(url));
       }
     } catch (e) {
-      return false;
+      return of(false);
     }
-    const regExp = /^.*((tiktok\.com\/)(v\/)|(@[A-Za-z0-9_-]{2,24}\/video\/)|(embed\/v2\/))(\d{0,30}).*/;
-    const match = fullTikTokURL.match(regExp);
-    return match && match[6] ? match[6] : false;
   }
 
-  static async constructTikTokEmbedURL(
+  static constructTikTokEmbedURL(
     backendApi: BackendApiService,
     globalVars: GlobalVarsService,
     url: URL
-  ): Promise<string> {
-    const tiktokVideoID = await this.tiktokParser(backendApi, globalVars, url.toString());
-    if (!tiktokVideoID) {
-      return "";
-    }
-    return `https://www.tiktok.com/embed/v2/${tiktokVideoID}`;
+  ): Observable<string> {
+    return this.tiktokParser(backendApi, globalVars, url.toString()).pipe(
+      map((res) => {
+        return res ? `https://www.tiktok.com/embed/v2/${res}` : "";
+      })
+    );
   }
 
-  static async getEmbedVideoURL(
+  static getEmbedVideoURL(
     backendApi: BackendApiService,
     globalVars: GlobalVarsService,
     embedVideoURL: string
-  ): Promise<string> {
+  ): Observable<string> {
     if (embedVideoURL) {
       try {
         const url = new URL(embedVideoURL);
         if (this.isYoutubeFromURL(url)) {
-          return this.constructYoutubeEmbedURL(url);
+          return of(this.constructYoutubeEmbedURL(url));
         }
         if (this.isVimeoFromURL(url)) {
-          return this.constructVimeoEmbedURL(url);
+          return of(this.constructVimeoEmbedURL(url));
         }
         if (this.isTiktokFromURL(url)) {
-          return await this.constructTikTokEmbedURL(backendApi, globalVars, url);
+          return this.constructTikTokEmbedURL(backendApi, globalVars, url);
         }
-        return "";
+        return of("");
       } catch (e) {
         // If the embed video URL doesn't start with http(s), try the url with that as a prefix.
         if (!embedVideoURL.startsWith("https://") && !embedVideoURL.startsWith("http://")) {
           return this.getEmbedVideoURL(backendApi, globalVars, `https://${embedVideoURL}`);
         }
-        return "";
+        return of("");
       }
     }
-    return "";
+    return of("");
   }
 
   static isVimeoLink(link: string): boolean {
@@ -180,9 +171,6 @@ export class VideoUrlParserService {
   }
 
   static getEmbedHeight(link: string): number {
-    if (this.isValidVimeoEmbedURL(link) || this.isValidYoutubeEmbedURL(link)) {
-      return 315;
-    }
     if (this.isValidTiktokEmbedURL(link)) {
       return 700;
     }
