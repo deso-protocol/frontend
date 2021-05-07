@@ -28,7 +28,7 @@
       </a>
     </div>
     <div class="col-3 d-flex align-items-center mb-0">
-      {{ (row.BalanceNanos / 1e9).toFixed(4) }}
+      {{ (row.BalanceNanos / 1e9).toFixed(9) }}
     </div>
     <div class="col-3 d-flex align-items-center mb-0">
       ≈ {{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceBitCloutNanos, true) }}
