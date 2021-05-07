@@ -73,7 +73,7 @@ export class FeedPostComponent implements OnInit {
   @Input() showLeftSelectedBorder = false;
 
   @Input() showDropdown = true;
-  @Input() showFollowLink = false;
+  @Input() hideFollowLink = false;
 
   @Input() includePaddingOnPost = false;
 

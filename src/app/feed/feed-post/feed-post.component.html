@@ -116,7 +116,6 @@
       }"
       *ngIf="!postContent.IsHidden"
     >
-      <!--         'p-5px': includePaddingOnPost && reclouterProfile,-->
 
       <!-- Avatar -->
       <div class="feed-post__avatar-container">
@@ -162,7 +161,7 @@
 
           <!-- Desktop follow button-->
           <follow-button
-            *ngIf="showFollowLink"
+            *ngIf="!hideFollowLink"
             class="ml-10px fs-12px d-lg-block d-none text-grey5"
             [displayAsLink]="true"
             [followLinkClass]="'link--unstyled'"
@@ -184,7 +183,7 @@
         <!-- Mobile follow button-->
         <div class="mt-5px d-lg-none text-grey5">
           <follow-button
-            *ngIf="showFollowLink"
+            *ngIf="!hideFollowLink"
             class="fs-12px"
             [displayAsLink]="true"
             [followLinkClass]="'link--unstyled'"
