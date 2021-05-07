@@ -45,6 +45,26 @@ export class SanitizeAndAutoLinkPipe implements PipeTransform {
       cashtagClass: AppComponent.DYNAMICALLY_ADDED_ROUTER_LINK_CLASS,
     });
 
-    return Autolinker.link(textWithMentionLinks);
+    return Autolinker.link(textWithMentionLinks, {
+      replaceFn : function(match) {
+        switch ( match.getType() ) {
+          case 'url':
+            //check if url to link matches current host, so its routed properly
+            const fullHost = (window as any).location.host;
+            if( match.getMatchedText().indexOf( fullHost ) !== -1 ) {
+              var tag = match.buildTag();
+              var rxStr = `https?://${fullHost}`
+              var re = RegExp(rxStr)
+              tag.setAttr( 'target', '_self' ); //dont open link in new window/tab
+              tag.setAttr( 'rel', 'nofollow' );
+              tag.setAttr('href',match.getMatchedText().replace(re,"").replace(/\?.*/,"")) //remove prefix & hostname & query string
+              tag.setClass(AppComponent.DYNAMICALLY_ADDED_ROUTER_LINK_CLASS) //add router class
+              return tag;
+            }
+        }
+        // let autolinker handle other links as needed 
+        return true;
+      }
+    });
   }
 }
