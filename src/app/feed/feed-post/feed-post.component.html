@@ -217,25 +217,9 @@
           [routerLink]="['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex]"
           queryParamsHandling="merge"
         ></div>
-        <div
-          *ngIf="quotedContent && showQuotedContent"
-          class="border border-color-grey p-15px br-12px"
-          [ngClass]="{ 'feed-post__quoted-content': hoverable }"
-        >
-          <feed-post
-            *ngIf="quotedContent && showQuotedContent"
-            [post]="quotedContent"
-            [includePaddingOnPost]="false"
-            [showIconRow]="false"
-            [showDropdown]="false"
-            [showQuotedContent]="false"
-            [contentShouldLinkToThread]="contentShouldLinkToThread"
-            [hoverable]="false"
-          ></feed-post>
-        </div>
 
-        <!-- Media -->
-        <div *ngIf="postContent.ImageURLs && postContent.ImageURLs[0]" class="feed-post__image-container">
+        <!-- Media, don't show images on comment posts. -->
+        <div *ngIf="postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID" class="feed-post__image-container">
           <img
             (click)="openImgModal($event, postContent.ImageURLs[0])"
             data-toggle="modal"
@@ -260,6 +244,23 @@
             allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
             allowfullscreen
           ></iframe>
+        </div>
+
+        <div
+          *ngIf="quotedContent && showQuotedContent"
+          class="border border-color-grey p-15px br-12px"
+          [ngClass]="{ 'feed-post__quoted-content': hoverable }"
+        >
+          <feed-post
+            *ngIf="quotedContent && showQuotedContent"
+            [post]="quotedContent"
+            [includePaddingOnPost]="false"
+            [showIconRow]="false"
+            [showDropdown]="false"
+            [showQuotedContent]="false"
+            [contentShouldLinkToThread]="contentShouldLinkToThread"
+            [hoverable]="false"
+          ></feed-post>
         </div>
 
         <!-- Bottom Buttons -->

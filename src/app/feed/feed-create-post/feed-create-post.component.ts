@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
@@ -14,10 +14,11 @@ import { VideoUrlParserService } from "../../../lib/services/video-url-parser-se
 export class FeedCreatePostComponent implements OnInit {
   static SHOW_POST_LENGTH_WARNING_THRESHOLD = 260; // show warning at 260 characters
 
-  // FeedPostComponent = FeedPostComponent;
   VideoUrlParserService = VideoUrlParserService;
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
+  @Input() parentPost: PostEntryResponse = null;
+  @Input() isQuote: boolean = false;
 
   @ViewChild("postImage") postImage;
   @ViewChild("autosize") autosize: CdkTextareaAutosize;
@@ -80,6 +81,15 @@ export class FeedCreatePostComponent implements OnInit {
     return this.postInput.length > GlobalVarsService.MAX_POST_LENGTH;
   }
 
+  getPlaceholderText() {
+    // Creating vanilla post
+    if (!this.parentPost) {
+      return this.randomMovieQuote;
+    }
+    // Creating comment or quote reclout;
+    return this.isQuote ? "Add a quote" : "Post your reply";
+  }
+
   _setRandomMovieQuote() {
     const randomInt = Math.floor(Math.random() * this.randomMovieQuotes.length);
     this.randomMovieQuote = this.randomMovieQuotes[randomInt];
@@ -116,6 +126,17 @@ export class FeedCreatePostComponent implements OnInit {
         postExtraData["EmbedVideoURL"] = videoURL;
       }
     }
+
+    const bodyObj = {
+      Body: this.postInput,
+      ImageURLs: [],
+      // Only submit images if the post is a quoted reclout or a vanilla post.
+      Images: !this.parentPost || this.isQuote ? [this.postImageSrc].filter((n) => n) : [],
+    };
+    let recloutedPostHashHex = "";
+    if (this.isQuote) {
+      recloutedPostHashHex = this.parentPost.PostHashHex;
+    }
     this.submittingPost = true;
 
     this.backendApi
@@ -123,14 +144,10 @@ export class FeedCreatePostComponent implements OnInit {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         "" /*PostHashHexToModify*/,
-        "" /*ParentPostHashHex*/,
+        this.parentPost && !this.isQuote ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
         "" /*Title*/,
-        {
-          Body: this.postInput,
-          ImageURLs: [],
-          Images: [this.postImageSrc].filter((n) => n),
-        } /*BodyObj*/,
-        "",
+        bodyObj /*BodyObj*/,
+        recloutedPostHashHex,
         postExtraData,
         "" /*Sub*/,
         // TODO: Should we have different values for creator basis points and stake multiple?

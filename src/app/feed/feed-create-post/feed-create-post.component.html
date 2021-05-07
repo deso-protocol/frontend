@@ -23,15 +23,24 @@
   <div class="flex-fill">
     <textarea
       [(ngModel)]="postInput"
-      rows="{{ numberOfRowsInTextArea }}"
-      class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
-      placeholder="{{ randomMovieQuote }}"
+      [ngStyle]="{ 'border-color': parentPost ? 'antiquewhite' : ''}"
+      rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
+      [ngClass]="{
+      'border-0': !parentPost,
+      'feed-create-post__textarea': !parentPost,
+      'm-5px': !parentPost,
+      'p-0': !parentPost,
+      'br-12px': parentPost,
+      'lh-18px': parentPost
+       }"
+      class="form-control fs-18px"
+      [placeholder]="getPlaceholderText()"
       cdkTextareaAutosize
       #autosize="cdkTextareaAutosize"
     ></textarea>
 
     <!-- Post image -->
-    <div class="feed-post__image-container">
+    <div class="feed-post__image-container" *ngIf="!parentPost || isQuote">
       <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
       <img class="feed-post__image" src="{{ postImageSrc }}" />
     </div>
@@ -49,7 +58,7 @@
     </div>
   </div>
 </div>
-<div class="flex-fill px-15px br-10px" [ngClass]="{ 'd-none': !showEmbedVideoURL }">
+<div class="flex-fill px-15px br-10px" [ngClass]="{ 'd-none': !showEmbedVideoURL, 'pt-10px': parentPost }">
   <input class="br-3px"
          type="url"
          [(ngModel)]="embedVideoURL"
@@ -70,15 +79,19 @@
     {{ postInput.length }} / {{ GlobalVarsService.MAX_POST_LENGTH }}
   </span>
   <i
-    class="fas fa-video fa-lg text-grey8A cursor-pointer px-15px"
+    class="fas fa-video fa-lg text-grey8A cursor-pointer"
     style="font-size: 18px"
+    [ngClass]="{ 'px-15px': !parentPost || isQuote }"
     (click)="showEmbedVideoURL = !showEmbedVideoURL"
   ></i>
-  <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFileInput($event.target.files)" />
-  <i
-    class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
-    (click)="imageInput.click()"
-  ></i>
+  <div *ngIf="!parentPost || isQuote">
+    <input  #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFileInput($event.target.files)" />
+    <i
+       class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
+       (click)="imageInput.click()"
+    ></i>
+  </div>
+
 
   <button
     class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
