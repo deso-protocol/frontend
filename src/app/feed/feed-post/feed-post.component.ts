@@ -414,4 +414,11 @@ export class FeedPostComponent implements OnInit {
   setNegativeMargins(link: string, globalVars: GlobalVarsService) {
     return globalVars.isMobile() && VideoUrlParserService.isVimeoLink(link);
   }
+
+  mapImageURLs(imgURL: string): string {
+    if (imgURL.startsWith("https://i.imgur.com")) {
+      return imgURL.replace("https://i.imgur.com", "https://images.bitclout.com/i.imgur.com");
+    }
+    return imgURL;
+  }
 }
