@@ -431,7 +431,7 @@ export class GlobalVarsService {
     if (!ll) {
       ll = 18;
     }
-    if (!ss || ss.length < ll) {
+    if (!ss || ss.length <= ll) {
       return ss;
     }
     return ss.slice(0, ll) + "...";
@@ -561,7 +561,9 @@ export class GlobalVarsService {
   }
 
   launchLoginFlow() {
+    this.logEvent("account : login : launch");
     this.identityService.launch("/log-in").subscribe((res) => {
+      this.logEvent("account : login : success");
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().subscribe(() => {
         this.flowRedirect(res.signedUp);
@@ -570,7 +572,9 @@ export class GlobalVarsService {
   }
 
   launchSignupFlow() {
+    this.logEvent("account : create : launch");
     this.identityService.launch("/sign-up").subscribe((res) => {
+      this.logEvent("account : create : success");
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().subscribe(() => {
         this.flowRedirect(res.signedUp);

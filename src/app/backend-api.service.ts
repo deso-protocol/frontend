@@ -65,6 +65,8 @@ export class BackendRoutes {
   static RoutePathUpdateBitcoinUSDExchangeRate = "/admin/update-bitcoin-usd-exchange-rate";
   static RoutePathUpdateGlobalParams = "/admin/update-global-params";
   static RoutePathGetGlobalParams = "/admin/get-global-params";
+
+  static RoutePathGetFullTikTokURL = "/get-full-tiktok-url";
 }
 
 export class Transaction {
@@ -1282,6 +1284,16 @@ export class BackendApiService {
     });
   }
 
+  GetFullTikTokURL(endpoint: string, TikTokShortVideoID: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetFullTikTokURL, {
+      TikTokShortVideoID,
+    }).pipe(
+      map((res) => {
+        return res.FullTikTokURL;
+      })
+    );
+  }
+
   // Error parsing
   stringifyError(err) {
     if (err && err.error && err.error.error) {
@@ -1342,7 +1354,7 @@ export class BackendApiService {
       } else if (errorMessage.indexOf("RuleErrorInputSpendsPreviouslySpentOutput") >= 0) {
         errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
       } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
-        errorMessage = "You need to buy some of your creator coin before you can give a diamond.";
+        errorMessage = "You must own this creator coin before transferring it.";
       }
     }
     return errorMessage;

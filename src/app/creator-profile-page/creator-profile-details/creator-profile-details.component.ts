@@ -154,14 +154,20 @@ export class CreatorProfileDetailsComponent {
     }
 
     this.loading = true;
-    this.backendApi.GetSingleProfile(this.globalVars.localNode, "", this.userName).subscribe((res) => {
-      if (!res) {
-        console.log("This profile was not found. It either does not exist or it was deleted.");
-        return;
+    this.backendApi.GetSingleProfile(this.globalVars.localNode, "", this.userName).subscribe(
+      (res) => {
+        if (!res) {
+          console.log("This profile was not found. It either does not exist or it was deleted.");
+          this.loading = false;
+          return;
+        }
+        this.profile = res.Profile;
+        this.loading = false;
+      },
+      (_) => {
+        this.loading = false;
       }
-      this.profile = res.Profile;
-      this.loading = false;
-    });
+    );
   }
 
   _handleTabClick(tabName: string) {

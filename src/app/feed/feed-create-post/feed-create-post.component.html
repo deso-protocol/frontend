@@ -36,12 +36,12 @@
       <img class="feed-post__image" src="{{ postImageSrc }}" />
     </div>
     <!-- Embedded Video -->
-    <div class="feed-post__image-container" *ngIf="VideoUrlParserService.getEmbedVideoURL(embedVideoURL)">
-      <i class="icon-close feed-post__image-delete" (click)="embedVideoURL = ''; showEmbedVideoURL = false"></i>
+    <div class="feed-post__video-embed-container" *ngIf="getEmbedVideoURL()">
+      <i class="icon-close feed-post__image-delete" (click)="embedVideoURL = ''; showEmbedVideoURL = false; constructedEmbedVideoURL = ''"></i>
       <iframe
-        height="315"
+        [height]="VideoUrlParserService.getEmbedHeight(getEmbedVideoURL())"
         class="feed-post__image"
-        [src]="VideoUrlParserService.getEmbedVideoURL(embedVideoURL) | sanitizeVideoEmbed"
+        [src]="getEmbedVideoURL() | sanitizeVideoEmbed"
         frameborder="0"
         allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
         allowfullscreen
@@ -50,7 +50,11 @@
   </div>
 </div>
 <div class="flex-fill px-15px br-10px" [ngClass]="{ 'd-none': !showEmbedVideoURL }">
-  <input class="br-3px" type="url" [(ngModel)]="embedVideoURL" placeholder="Enter a url to a youtube or vimeo video" />
+  <input class="br-3px"
+         type="url"
+         [(ngModel)]="embedVideoURL"
+         (ngModelChange)="setEmbedVideoURL()"
+         placeholder="Enter a url to a youtube, vimeo, or tiktok video" />
 </div>
 <!-- Image Upload + Post Buttons -->
 <div class="d-flex justify-content-end align-items-center pr-15px pb-15px mt-10px">

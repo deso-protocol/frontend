@@ -17,6 +17,10 @@ file_server
   file index.html
 }
 
+handle_errors {
+  header Cache-Control no-store
+}
+
 rewrite @html {http.matchers.file.relative}
 
 # Don't cache index.html and set CSP
@@ -54,4 +58,5 @@ header @html Content-Security-Policy "
     identity.bitclout.blue
     identity.bitclout.green
     https://www.youtube.com
-    https://player.vimeo.com;"
+    https://player.vimeo.com
+    https://www.tiktok.com;"

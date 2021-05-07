@@ -4,8 +4,6 @@ import { BackendApiService } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
-import { UpdateProfileComponent } from "../../update-profile-page/update-profile/update-profile.component";
-import { FeedPostComponent } from "../feed-post/feed-post.component";
 import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
 
 @Component({
@@ -46,6 +44,7 @@ export class FeedCreatePostComponent implements OnInit {
 
   showEmbedVideoURL = false;
   embedVideoURL = "";
+  constructedEmbedVideoURL: any;
   // Emits a PostEntryResponse. It would be better if this were typed.
   @Output() postCreated = new EventEmitter();
 
@@ -86,6 +85,16 @@ export class FeedCreatePostComponent implements OnInit {
     this.randomMovieQuote = this.randomMovieQuotes[randomInt];
   }
 
+  setEmbedVideoURL() {
+    VideoUrlParserService.getEmbedVideoURL(this.backendApi, this.globalVars, this.embedVideoURL).subscribe(
+      (res) => (this.constructedEmbedVideoURL = res)
+    );
+  }
+
+  getEmbedVideoURL() {
+    return this.constructedEmbedVideoURL;
+  }
+
   submitPost() {
     if (this.postInput.length > GlobalVarsService.MAX_POST_LENGTH) {
       return;
@@ -102,7 +111,7 @@ export class FeedCreatePostComponent implements OnInit {
 
     const postExtraData = {};
     if (this.embedVideoURL) {
-      const videoURL = VideoUrlParserService.getEmbedVideoURL(this.embedVideoURL);
+      const videoURL = this.getEmbedVideoURL();
       if (VideoUrlParserService.isValidEmbedURL(videoURL)) {
         postExtraData["EmbedVideoURL"] = videoURL;
       }
@@ -140,6 +149,7 @@ export class FeedCreatePostComponent implements OnInit {
           this.postInput = "";
           this.postImageSrc = null;
           this.embedVideoURL = "";
+          this.constructedEmbedVideoURL = "";
           this.changeRef.detectChanges();
 
           // Refresh the post page.
