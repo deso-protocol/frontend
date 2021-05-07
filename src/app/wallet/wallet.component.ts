@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
+import { BalanceEntryResponse } from "../backend-api.service";
 
 @Component({
   selector: "wallet",
@@ -10,29 +11,60 @@ export class WalletComponent implements OnInit {
   globalVars: GlobalVarsService;
   AppRoutingModule = AppRoutingModule;
   hasUnminedCreatorCoins: boolean;
+  showTransferredCoins: boolean = false;
+
+  usersYouReceived: BalanceEntryResponse[] = [];
+  usersYouPurchased: BalanceEntryResponse[] = [];
+
+  static coinsPurchasedTab: string = "Coins Purchased";
+  static coinsReceivedTab: string = "Coins Received";
+  tabs = [WalletComponent.coinsPurchasedTab, WalletComponent.coinsReceivedTab];
+  activeTab: string = WalletComponent.coinsPurchasedTab;
 
   constructor(private appData: GlobalVarsService) {
     this.globalVars = appData;
   }
 
   ngOnInit() {
-    for (let creator of this.usersYouHODL()) {
-      if (creator.NetBalanceInMempool != 0) {
+    this.globalVars.loggedInUser.UsersYouHODL.map((balanceEntryResponse: BalanceEntryResponse) => {
+      if (balanceEntryResponse.NetBalanceInMempool != 0) {
         this.hasUnminedCreatorCoins = true;
       }
-    }
+      if (balanceEntryResponse.HasPurchased) {
+        this.usersYouPurchased.push(balanceEntryResponse);
+      } else {
+        this.usersYouReceived.push(balanceEntryResponse);
+      }
+    });
+    this.sortHodlings(this.usersYouPurchased);
+    this.sortHodlings(this.usersYouReceived);
   }
 
-  usersYouHODL() {
-    const creators = this.globalVars.loggedInUser.UsersYouHODL;
-    creators.sort((a, b) => {
+  sortHodlings(hodlings: BalanceEntryResponse[]): void {
+    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
         this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) -
         this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry)
       );
     });
-    return creators;
   }
+
+  // getHodlingsForActiveTab() {
+  //   return this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased;
+  // }
+
+  // usersYouHODL() {
+  //   const creators = this.globalVars.loggedInUser.UsersYouHODL.filter(
+  //     (creator: BalanceEntryResponse) => creator.HasPurchased == !this.showTransferredCoins
+  //   );
+  //   creators.sort((a, b) => {
+  //     return (
+  //       this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) -
+  //       this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry)
+  //     );
+  //   });
+  //   return creators;
+  // }
 
   totalValue() {
     let result = 0;
@@ -74,5 +106,16 @@ export class WalletComponent implements OnInit {
 
   usernameTruncationLength(): number {
     return this.globalVars.isMobile() ? 14 : 20;
+  }
+
+  emptyHodlerListMessage(): string {
+    return this.showTransferredCoins
+      ? "You haven't received coins from any creators you don't already hold"
+      : "You haven't purchased any creator coins yet.";
+  }
+
+  _handleTabClick(tab: string) {
+    this.showTransferredCoins = tab === WalletComponent.coinsReceivedTab;
+    this.activeTab = tab;
   }
 }
