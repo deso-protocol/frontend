@@ -49,23 +49,6 @@ export class WalletComponent implements OnInit {
     });
   }
 
-  // getHodlingsForActiveTab() {
-  //   return this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased;
-  // }
-
-  // usersYouHODL() {
-  //   const creators = this.globalVars.loggedInUser.UsersYouHODL.filter(
-  //     (creator: BalanceEntryResponse) => creator.HasPurchased == !this.showTransferredCoins
-  //   );
-  //   creators.sort((a, b) => {
-  //     return (
-  //       this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) -
-  //       this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry)
-  //     );
-  //   });
-  //   return creators;
-  // }
-
   totalValue() {
     let result = 0;
 
@@ -110,7 +93,7 @@ export class WalletComponent implements OnInit {
 
   emptyHodlerListMessage(): string {
     return this.showTransferredCoins
-      ? "You haven't received coins from any creators you don't already hold"
+      ? "You haven't received coins from any creators you don't already hold."
       : "You haven't purchased any creator coins yet.";
   }
 
