@@ -245,11 +245,9 @@
         </div>
 
         <!-- Embedded Videos -->
-        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__video-embed-container"
-        >
+        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__image-container">
           <iframe
-            id="embed-video-player"
-            [height]="getEmbedVideoHeight()"
+            height="315"
             class="feed-post__image"
             [ngStyle]="{
               'margin-top': setNegativeMargins(getEmbedVideoURLForPostContent(), globalVars) ? '-65px' : '',
@@ -325,4 +323,16 @@
       </div>
     </div>
   </a>
+  <div>
+    <!-- Like, Comment, Reclout, Share Buttons -->
+    <feed-post-icon-row
+      *ngIf="showIconRow"
+      [noMaxWidth]="true"
+      [post]="post"
+      [postContent]="postContent"
+      [parentPost]="parentPost"
+      [afterCommentCreatedCallback]="afterCommentCreatedCallback"
+      [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+    ></feed-post-icon-row>
+  </div>
 </div>

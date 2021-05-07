@@ -1,6 +1,7 @@
 <div
   class="js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between"
-  style="margin-top: 8px; max-width: 420px"
+  [ngClass]="{'max-width-420px': !noMaxWidth}"
+  style="margin-top: 8px"
 >
   <!-- TODO: post threads: needs hover treatment-->
   <!--     [routerLink]="router.url"-->
