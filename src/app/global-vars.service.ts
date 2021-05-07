@@ -12,7 +12,7 @@ import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
-import {configFromArray} from "ngx-bootstrap/chronos/create/from-array";
+import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
 
 @Injectable({
   providedIn: "root",
@@ -561,7 +561,9 @@ export class GlobalVarsService {
   }
 
   launchLoginFlow() {
+    this.logEvent("account : login : launch");
     this.identityService.launch("/log-in").subscribe((res) => {
+      this.logEvent("account : login : success");
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().subscribe(() => {
         this.flowRedirect(res.signedUp);
@@ -570,7 +572,9 @@ export class GlobalVarsService {
   }
 
   launchSignupFlow() {
+    this.logEvent("account : create : launch");
     this.identityService.launch("/sign-up").subscribe((res) => {
+      this.logEvent("account : create : success");
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().subscribe(() => {
         this.flowRedirect(res.signedUp);
