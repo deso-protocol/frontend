@@ -612,14 +612,9 @@ export class BackendApiService {
     RecloutedPostHashHex: string,
     PostExtraData: any,
     Sub: string,
-    CreatorBasisPoints: number,
-    StakeMultipleBasisPoints: number,
     IsHidden: boolean,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    CreatorBasisPoints = Math.floor(CreatorBasisPoints);
-    StakeMultipleBasisPoints = Math.floor(StakeMultipleBasisPoints);
-
     const request = this.post(endpoint, BackendRoutes.RoutePathSubmitPost, {
       UpdaterPublicKeyBase58Check,
       PostHashHexToModify,
@@ -629,8 +624,6 @@ export class BackendApiService {
       RecloutedPostHashHex,
       PostExtraData,
       Sub,
-      CreatorBasisPoints,
-      StakeMultipleBasisPoints,
       IsHidden,
       MinFeeRateNanosPerKB,
     });
@@ -904,10 +897,7 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
-  GetDiamondsForPublicKey(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-  ): Observable<any> {
+  GetDiamondsForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
       PublicKeyBase58Check,
     });
