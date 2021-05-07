@@ -1272,7 +1272,7 @@ export class BackendApiService {
   }
 
   // Error parsing
-  stringifyError(err) {
+  stringifyError(err): string {
     if (err && err.error && err.error.error) {
       return err.error.error;
     }
@@ -1280,7 +1280,7 @@ export class BackendApiService {
     return JSON.stringify(err);
   }
 
-  parsePostError(err) {
+  parsePostError(err): string {
     if (err.status === 0) {
       return "BitClout is experiencing heavy load. Please try again in one minute.";
     }
@@ -1301,7 +1301,7 @@ export class BackendApiService {
     return errorMessage;
   }
 
-  parseProfileError(err) {
+  parseProfileError(err): string {
     if (err.status === 0) {
       return "BitClout is experiencing heavy load. Please try again in one minute.";
     }
@@ -1332,12 +1332,16 @@ export class BackendApiService {
         errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
       } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
         errorMessage = "You must own this creator coin before transferring it.";
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinBuyMustTradeNonZeroBitCloutAfterFounderReward") >= 0) {
+        errorMessage =
+          "This creator has set their founder's reward to 100%. " +
+          "You cannot buy creators that have set their founder's reward to 100%.";
       }
     }
     return errorMessage;
   }
 
-  parseMessageError(err) {
+  parseMessageError(err): string {
     if (err.status === 0) {
       return "BitClout is experiencing heavy load. Please try again in one minute.";
     }
