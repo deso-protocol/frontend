@@ -225,7 +225,11 @@ export class CreatorCoinTrade {
   }
 
   getFoundersRewardPercent() {
-    return this.creatorProfile.CoinEntry.CreatorBasisPoints / 100;
+    if (this.isBuyingCreatorCoin) {
+      return this.creatorProfile.CoinEntry.CreatorBasisPoints / 100;
+    } else {
+      return 0;
+    }
   }
 
   showFounderRewardWarning() {
