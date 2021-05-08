@@ -2,37 +2,14 @@
 
 This is the repository for the reference BitClout Angular app. It serves as an
 interface that allows users to interact with the data on the BitClout blockchain.
+
 ## Getting started
-Bitclout's frontend is an Angular application which requires Node to run its development commands.
 
-On MacOs  and Linux based systems, the most reliable way to install Node is to use the [Node Version Manager](https://github.com/nvm-sh/nvm) which allows you to have multiple node versions installed at once just incase you have other applications that depends on different versions.
+The Bitclout frontend requires NodeJS.
 
-To install Node on Windows Use the official [Nodejs.org](https://nodejs.org/en/download/) site.
+On MacOS and Linux, install `node` using [Node Version Manager](https://github.com/nvm-sh/nvm#installing-and-updating).
 
-To verify that Node.js is installed properly, open a terminal (command prompt) and run ```node --version```
-Make sure you have build tools installed 
-```npm install --global --production windows-build-tools```.
-
-
-To install NVM for OSX/Linux, execute the following command in your terminal:
-
-```
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-nvm install v14
-nvm use v14
-```
-Note: If nvm fails to install due to: " Command 'nvm' not found." 
-Restart your terminal or execute `source ~/.nvm/nvm.sh` to refresh the available commands in your system path
-
-
-
-
-After installing node, you can clone the repo:
-
-```
-git clone https://github.com/bitclout/frontend.git
-cd frontend
-```
+On Windows, download `node` from [nodejs.org](https://nodejs.org/en/download/). You will also need to run: `npm install --global windows-build-tools`
 
 ## Development server
 
