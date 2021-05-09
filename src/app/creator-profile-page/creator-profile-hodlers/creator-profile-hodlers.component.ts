@@ -134,7 +134,9 @@ export class CreatorProfileHodlersComponent {
   getTooltipForRow(row: BalanceEntryResponse): string {
     return row.HasPurchased
       ? `This user has purchased some amount of $${this.profile.Username} coin.`
-      : `This user has not purchased $${this.profile.Username} coin. The user has only received these creator coins from transfers.`;
+      : `This user has not purchased $${this.profile.Username} coin.
+      The user has only received these creator coins from transfers.
+      Buying any amount of this coin will change the status to "purchased."`;
   }
 
   stopEvent(event: any) {
