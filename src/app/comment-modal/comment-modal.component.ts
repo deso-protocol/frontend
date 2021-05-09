@@ -79,8 +79,6 @@ export class CommentModalComponent {
         "" /*Sub*/,
         // TODO: Should we have different values for creator basis points and stake multiple?
         // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
-        0 /*CreatorBasisPoints*/,
-        1.25 * 100 * 100 /*StakeMultipleBasisPoints*/,
         false /*IsHidden*/,
         this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/
       )
