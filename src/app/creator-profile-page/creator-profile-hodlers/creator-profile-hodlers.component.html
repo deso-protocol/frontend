@@ -6,7 +6,7 @@
 </div>
 <simple-center-loader *ngIf="datasource.adapter.isLoading && loadingFirstPage"></simple-center-loader>
 <div #uiScroll *uiScroll="let row of datasource">
-  <div class="row no-gutters p-10px border-bottom mb-0" *ngIf="!row.totalRow">
+  <div class="row no-gutters p-10px border-bottom mb-0" *ngIf="!row.totalRow && (row.HasPurchased || isRowForCreator(row))">
     <div class="col-6 d-flex align-items-center mb-0">
       <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
         <div
@@ -38,13 +38,13 @@
   <div class="row no-gutters font-weight-bold" *ngIf="row.totalRow">
     <div class="col-6 py-15px mb-0">Total</div>
     <div class="col-3 py-15px mb-0">
-      {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}
+      {{ (totalCoinsPurchasedInCirculation / 1e9).toFixed(4) }}
     </div>
     <div class="col-3 py-15px mb-0">
       ≈
       {{
         globalVars.creatorCoinNanosToUSDNaive(
-          profile.CoinEntry.CoinsInCirculationNanos,
+          totalCoinsPurchasedInCirculation,
           profile.CoinPriceBitCloutNanos,
           true
         )

@@ -12,6 +12,7 @@ import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
 })
 export class CreatorProfileHodlersComponent {
   showTotal = false;
+  totalCoinsPurchasedInCirculation = 0;
 
   @Input() profile: ProfileEntryResponse;
 
@@ -104,6 +105,11 @@ export class CreatorProfileHodlersComponent {
       .toPromise()
       .then((res) => {
         const balanceEntryResponses: any[] = res.Hodlers;
+        balanceEntryResponses.forEach((balanceEntryResponse: BalanceEntryResponse) => {
+          if (balanceEntryResponse.HasPurchased) {
+            this.totalCoinsPurchasedInCirculation += balanceEntryResponse.BalanceNanos;
+          }
+        });
         this.pagedKeys[page + 1] = res.LastPublicKeyBase58Check || "";
         if (
           balanceEntryResponses.length < CreatorProfileHodlersComponent.PAGE_SIZE ||
@@ -119,5 +125,9 @@ export class CreatorProfileHodlersComponent {
         this.loadingFirstPage = false;
         return balanceEntryResponses;
       });
+  }
+
+  isRowForCreator(row: BalanceEntryResponse) {
+    return row.CreatorPublicKeyBase58Check == row.HODLerPublicKeyBase58Check;
   }
 }
