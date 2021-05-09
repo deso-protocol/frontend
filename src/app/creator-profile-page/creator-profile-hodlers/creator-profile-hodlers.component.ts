@@ -127,7 +127,7 @@ export class CreatorProfileHodlersComponent {
       });
   }
 
-  getTotalCoinsInCirculation(): number {
-    return 0;
+  isRowForCreator(row: BalanceEntryResponse) {
+    return row.CreatorPublicKeyBase58Check == row.HODLerPublicKeyBase58Check;
   }
 }

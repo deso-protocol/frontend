@@ -6,7 +6,7 @@
 </div>
 <simple-center-loader *ngIf="datasource.adapter.isLoading && loadingFirstPage"></simple-center-loader>
 <div #uiScroll *uiScroll="let row of datasource">
-  <div class="row no-gutters p-10px border-bottom mb-0" *ngIf="!row.totalRow && row.HasPurchased">
+  <div class="row no-gutters p-10px border-bottom mb-0" *ngIf="!row.totalRow && (row.HasPurchased || isRowForCreator(row))">
     <div class="col-6 d-flex align-items-center mb-0">
       <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
         <div
