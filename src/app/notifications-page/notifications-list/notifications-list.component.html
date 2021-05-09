@@ -14,7 +14,7 @@
   <span>You don't have any notifications</span>
 </div>
 
-<div #uiScroll *uiScroll="let item of datasource" class="border-bottom border-color-grey">
+<div #uiScroll *uiScroll="let item of datasource; let index = index" class="border-bottom border-color-grey">
   <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
     <div class="d-flex flex-row align-items-center">
       <div *ngIf="item.icon" class="notifications__icon">
@@ -35,7 +35,22 @@
       [showReplyingToContent]="!!item.parentPost"
       [parentPost]="item.parentPost"
       [contentShouldLinkToThread]="true"
+      [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
     ></feed-post>
+    <div *ngFor="let comment of item.post.Comments">
+      <div class="px-15px pb-15px post-thread__subcomment-container">
+        <feed-post
+          [includePaddingOnPost]="false"
+          [post]="comment"
+          [parentPost]="item.post"
+          [contentShouldLinkToThread]="true"
+          [showIconRow]="false"
+          [showDropdown]="false"
+          [showReplyToContent]="false"
+          [isSubcomment]="true"
+        ></feed-post>
+      </div>
+    </div>
   </div>
 </div>
 <simple-center-loader *ngIf="loadingMoreNotifications && !isLoading" [height]="200"></simple-center-loader>

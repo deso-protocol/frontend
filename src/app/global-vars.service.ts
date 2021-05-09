@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { User } from "./backend-api.service";
+import { PostEntryResponse, User } from "./backend-api.service";
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
@@ -536,6 +536,23 @@ export class GlobalVarsService {
   isMaybePublicKey(pk: string) {
     // Test net public keys start with 'tBC', regular public keys start with 'BC'.
     return pk.startsWith("tBC") || pk.startsWith("BC");
+  }
+
+  isVanillaReclout(post: PostEntryResponse): boolean {
+    return !post.Body && !post.ImageURLs?.length && !!post.RecloutedPostEntryResponse;
+  }
+
+  getPostContentHashHex(post: PostEntryResponse): string {
+    return this.isVanillaReclout(post) ? post.RecloutedPostEntryResponse.PostHashHex : post.PostHashHex;
+  }
+
+  incrementCommentCount(post: PostEntryResponse): PostEntryResponse {
+    if (this.isVanillaReclout(post)) {
+      post.RecloutedPostEntryResponse.CommentCount += 1;
+    } else {
+      post.CommentCount += 1;
+    }
+    return post;
   }
 
   // Log an event to amplitude
