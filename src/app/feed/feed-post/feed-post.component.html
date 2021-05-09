@@ -80,7 +80,8 @@
         [postContent]="postContent"
         (postHidden)="hidePost()"
         (userBlocked)="blockUser()"
-        (toggleGlobalFeed)="_addPostToGlobalFeed()"
+        (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
+        (togglePostPin)="_pinPostToGlobalFeed($event)"
       ></feed-post-dropdown>
     </div>
 
@@ -175,8 +176,8 @@
             [postContent]="postContent"
             (postHidden)="hidePost()"
             (userBlocked)="blockUser()"
-            (toggleGlobalFeed)="_addPostToGlobalFeed(event)"
-            (togglePostPin)="_pinPostToGlobalFeed(event)"
+            (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
+            (togglePostPin)="_pinPostToGlobalFeed($event)"
           ></feed-post-dropdown>
         </div>
 

@@ -331,9 +331,7 @@ export class FeedPostComponent implements OnInit {
 
   _addPostToGlobalFeed(event: any) {
     // Prevent the post from navigating.
-    if (event) {
-      event.stopPropagation();
-    }
+    event.stopPropagation();
 
     this.addingPostToGlobalFeed = true;
     const postHashHex = this.post.PostHashHex;
@@ -367,9 +365,7 @@ export class FeedPostComponent implements OnInit {
 
   _pinPostToGlobalFeed(event: any) {
     // Prevent the post from navigating.
-    if (event) {
-      event.stopPropagation();
-    }
+    event.stopPropagation();
 
     this.pinningPost = true;
     const postHashHex = this._post.PostHashHex;
