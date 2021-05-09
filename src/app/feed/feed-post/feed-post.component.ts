@@ -14,7 +14,7 @@ import { VideoUrlParserService } from "../../../lib/services/video-url-parser-se
   templateUrl: "./feed-post.component.html",
   styleUrls: ["./feed-post.component.sass"],
 })
-export class FeedPostComponent implements OnInit, AfterViewInit {
+export class FeedPostComponent implements OnInit {
   @Input()
   get post(): PostEntryResponse {
     return this._post;
@@ -73,9 +73,8 @@ export class FeedPostComponent implements OnInit, AfterViewInit {
   @Input() showLeftSelectedBorder = false;
 
   @Input() showDropdown = true;
-  @Input() showFollowLink = false;
+  @Input() hideFollowLink = false;
 
-  @Input() enableChangeDetection = false;
   @Input() includePaddingOnPost = false;
 
   @Input() showQuotedContent = true;
@@ -100,6 +99,7 @@ export class FeedPostComponent implements OnInit, AfterViewInit {
   hidingPost = false;
   quotedContent: any;
   _blocked: boolean;
+  constructedEmbedVideoURL: any;
 
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
@@ -109,12 +109,7 @@ export class FeedPostComponent implements OnInit, AfterViewInit {
     if (!this.post.RecloutCount) {
       this.post.RecloutCount = 0;
     }
-  }
-
-  ngAfterViewInit() {
-    if (!this.enableChangeDetection) {
-      this.ref.detach();
-    }
+    this.setEmbedVideoURLForPostContent();
   }
 
   onPostClicked(event) {
@@ -336,7 +331,9 @@ export class FeedPostComponent implements OnInit, AfterViewInit {
 
   _addPostToGlobalFeed(event: any) {
     // Prevent the post from navigating.
-    event.stopPropagation();
+    if (event) {
+      event.stopPropagation();
+    }
 
     this.addingPostToGlobalFeed = true;
     const postHashHex = this.post.PostHashHex;
@@ -370,7 +367,9 @@ export class FeedPostComponent implements OnInit, AfterViewInit {
 
   _pinPostToGlobalFeed(event: any) {
     // Prevent the post from navigating.
-    event.stopPropagation();
+    if (event) {
+      event.stopPropagation();
+    }
 
     this.pinningPost = true;
     const postHashHex = this._post.PostHashHex;
@@ -402,8 +401,20 @@ export class FeedPostComponent implements OnInit, AfterViewInit {
       });
   }
 
-  getEmbedVideoURLForPostContent(): string {
-    return VideoUrlParserService.getEmbedVideoURL(this.postContent.PostExtraData["EmbedVideoURL"]);
+  getEmbedVideoURLForPostContent(): any {
+    return this.constructedEmbedVideoURL;
+  }
+
+  setEmbedVideoURLForPostContent(): void {
+    VideoUrlParserService.getEmbedVideoURL(
+      this.backendApi,
+      this.globalVars,
+      this.postContent.PostExtraData["EmbedVideoURL"]
+    ).subscribe((res) => (this.constructedEmbedVideoURL = res));
+  }
+
+  getEmbedVideoHeight(): number {
+    return VideoUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
 
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.

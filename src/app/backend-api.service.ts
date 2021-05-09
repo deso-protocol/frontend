@@ -43,6 +43,8 @@ export class BackendRoutes {
   static RoutePathGetTxn = "/get-txn";
   static RoutePathGetIdentities = "/get-identities";
   static RoutePathDeleteIdentities = "/delete-identities";
+  static RoutePathSendDiamonds = "/send-diamonds";
+  static RoutePathGetDiamondsForPublicKey = "/get-diamonds-for-public-key";
 
   // Admin routes.
   static NodeControlRoute = "/admin/node-control";
@@ -62,6 +64,8 @@ export class BackendRoutes {
   static RoutePathUpdateBitcoinUSDExchangeRate = "/admin/update-bitcoin-usd-exchange-rate";
   static RoutePathUpdateGlobalParams = "/admin/update-global-params";
   static RoutePathGetGlobalParams = "/admin/get-global-params";
+
+  static RoutePathGetFullTikTokURL = "/get-full-tiktok-url";
 }
 
 export class Transaction {
@@ -146,6 +150,7 @@ export class PostEntryResponse {
   Comments: PostEntryResponse[];
   LikeCount: number;
   RecloutCount: number;
+  DiamondCount: number;
   // Information about the reader's state w/regard to this post (e.g. if they liked it).
   PostEntryReaderState?: PostEntryReaderState;
   // True if this post hash hex is in the global feed.
@@ -166,6 +171,9 @@ export class PostEntryReaderState {
 
   // This is the post hash hex of the reclout
   RecloutPostHashHex?: string;
+
+  // Level of diamond the user gave this post.
+  DiamondLevelBestowed?: number;
 }
 
 export class BalanceEntryResponse {
@@ -174,6 +182,8 @@ export class BalanceEntryResponse {
   // The public keys are provided for the frontend
   CreatorPublicKeyBase58Check: string;
 
+  // Has the hodler purchased these creator coins
+  HasPurchased: boolean;
   // How much this HODLer owns of a particular creator coin.
   BalanceNanos: number;
   // The net effect of transactions in the mempool on a given BalanceEntry's BalanceNanos.
@@ -229,12 +239,11 @@ export class BackendApiService {
 
   GetStorage(key: string) {
     const data = localStorage.getItem(key);
-
-    if (data !== "" && data != null && data !== "null") {
-      return JSON.parse(data);
-    } else {
+    if (data === "") {
       return null;
     }
+
+    return JSON.parse(data);
   }
 
   // Assemble a URL to hit the BE with.
@@ -885,6 +894,35 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, ReaderPublicKeyBase58Check);
   }
 
+  SendDiamonds(
+    endpoint: string,
+    SenderPublicKeyBase58Check: string,
+    ReceiverPublicKeyBase58Check: string,
+    DiamondPostHashHex: string,
+    DiamondLevel: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathSendDiamonds, {
+      SenderPublicKeyBase58Check,
+      ReceiverPublicKeyBase58Check,
+      DiamondPostHashHex,
+      DiamondLevel,
+      MinFeeRateNanosPerKB,
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+  }
+
+  GetDiamondsForPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
+      PublicKeyBase58Check,
+    });
+    return request;
+  }
+
   BuyOrSellCreatorCoin(
     endpoint: string,
 
@@ -1235,8 +1273,18 @@ export class BackendApiService {
     });
   }
 
+  GetFullTikTokURL(endpoint: string, TikTokShortVideoID: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetFullTikTokURL, {
+      TikTokShortVideoID,
+    }).pipe(
+      map((res) => {
+        return res.FullTikTokURL;
+      })
+    );
+  }
+
   // Error parsing
-  stringifyError(err) {
+  stringifyError(err): string {
     if (err && err.error && err.error.error) {
       return err.error.error;
     }
@@ -1244,7 +1292,7 @@ export class BackendApiService {
     return JSON.stringify(err);
   }
 
-  parsePostError(err) {
+  parsePostError(err): string {
     if (err.status === 0) {
       return "BitClout is experiencing heavy load. Please try again in one minute.";
     }
@@ -1265,7 +1313,7 @@ export class BackendApiService {
     return errorMessage;
   }
 
-  parseProfileError(err) {
+  parseProfileError(err): string {
     if (err.status === 0) {
       return "BitClout is experiencing heavy load. Please try again in one minute.";
     }
@@ -1290,12 +1338,22 @@ export class BackendApiService {
       } else if (errorMessage.indexOf("RuleErrorInvalidUsername") >= 0) {
         errorMessage =
           "Your username contains invalid characters. Usernames can only numbers, English letters, and underscores.";
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferInsufficientCoins") >= 0) {
+        errorMessage = "You need more of your own creator coin to give a diamond of this level.";
+      } else if (errorMessage.indexOf("RuleErrorInputSpendsPreviouslySpentOutput") >= 0) {
+        errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
+        errorMessage = "You must own this creator coin before transferring it.";
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinBuyMustTradeNonZeroBitCloutAfterFounderReward") >= 0) {
+        errorMessage =
+          "This creator has set their founder's reward to 100%. " +
+          "You cannot buy creators that have set their founder's reward to 100%.";
       }
     }
     return errorMessage;
   }
 
-  parseMessageError(err) {
+  parseMessageError(err): string {
     if (err.status === 0) {
       return "BitClout is experiencing heavy load. Please try again in one minute.";
     }

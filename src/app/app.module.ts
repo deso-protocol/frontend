@@ -86,6 +86,9 @@ import { UiScrollModule } from "ngx-ui-scroll";
 import { PageComponent } from "./page/page.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
+import { PopoverModule } from "ngx-bootstrap/popover";
+import { RatingModule } from "ngx-bootstrap/rating";
+import { CollapseModule } from "ngx-bootstrap/collapse";
 import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
 import { SignUpGetStarterBitcloutComponent } from "./sign-up/sign-up-get-starter-bitclout/sign-up-get-starter-bitclout.component";
@@ -98,6 +101,7 @@ import { Toast, ToastrModule } from "ngx-toastr";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
+import { CreatorDiamondsComponent } from './creator-profile-page/creator-diamonds/creator-diamonds.component';
 
 @NgModule({
   declarations: [
@@ -181,6 +185,7 @@ import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.comp
     CommentModalComponent,
     WalletActionsDropdownComponent,
     PickACoinPageComponent,
+    CreatorDiamondsComponent,
   ],
   imports: [
     BrowserModule,
@@ -198,6 +203,9 @@ import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.comp
     AnimateOnScrollModule.forRoot(),
     ToastrModule.forRoot(),
     BsDropdownModule.forRoot(),
+    PopoverModule.forRoot(),
+    RatingModule.forRoot(),
+    CollapseModule.forRoot(),
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],

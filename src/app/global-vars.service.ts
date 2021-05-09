@@ -12,6 +12,7 @@ import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
+import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
 
 @Injectable({
   providedIn: "root",
@@ -80,6 +81,9 @@ export class GlobalVarsService {
   // hodls and the users who hodl him.
   youHodlMap = {};
   hodlYouMap = {};
+
+  // Map of diamond level to bitclout nanos.
+  diamondLevelMap = {};
 
   // TODO(performance): We used to call the functions called by this function every
   // second. Now we call them only when needed, but the future is to get rid of this
@@ -427,7 +431,7 @@ export class GlobalVarsService {
     if (!ll) {
       ll = 18;
     }
-    if (!ss || ss.length < ll) {
+    if (!ss || ss.length <= ll) {
       return ss;
     }
     return ss.slice(0, ll) + "...";
@@ -494,7 +498,7 @@ export class GlobalVarsService {
     });
   }
 
-  celebrate() {
+  celebrate(dropDiamonds: boolean = false) {
     const canvasID = "my-canvas-" + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
@@ -507,6 +511,11 @@ export class GlobalVarsService {
       rotate: true,
       clock: 100,
     };
+    if (dropDiamonds) {
+      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 10 }];
+      confettiSettings.max = 200;
+      confettiSettings.clock = 150;
+    }
     this.confetti = new ConfettiGenerator(confettiSettings);
     this.confetti.render();
   }
@@ -552,7 +561,9 @@ export class GlobalVarsService {
   }
 
   launchLoginFlow() {
+    this.logEvent("account : login : launch");
     this.identityService.launch("/log-in").subscribe((res) => {
+      this.logEvent("account : login : success");
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().subscribe(() => {
         this.flowRedirect(res.signedUp);
@@ -561,7 +572,9 @@ export class GlobalVarsService {
   }
 
   launchSignupFlow() {
+    this.logEvent("account : create : launch");
     this.identityService.launch("/sign-up").subscribe((res) => {
+      this.logEvent("account : create : success");
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().subscribe(() => {
         this.flowRedirect(res.signedUp);

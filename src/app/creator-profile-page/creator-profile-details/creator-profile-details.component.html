@@ -14,7 +14,7 @@
 
   <!-- Feed Selector -->
   <tab-selector
-    [tabs]="['Posts', 'Creator Coin']"
+    [tabs]="['Posts', 'Creator Coin', 'Diamonds']"
     [activeTab]="activeTab"
     (tabClick)="_handleTabClick($event)"
   ></tab-selector>
@@ -66,7 +66,7 @@
   </div>
 
   <!-- Posts -->
-  <div *ngIf="profile && activeTab == 'Posts' && !loading" style="overflow-y: scroll">
+  <div *ngIf="profile && activeTab == 'Posts' && !loading">
     <div *ngIf="profile.IsBlockedByReader; else showPosts" class="w-100 d-flex p-15px">
       <span>
         You have blocked {{ profile.Username }}.
@@ -78,7 +78,8 @@
       <creator-profile-posts
         [profile]="profile"
         [showProfileAsReserved]="showProfileAsReserved()"
-        (blockUser)="userBlocked()"></creator-profile-posts>
+        (blockUser)="userBlocked()"
+      ></creator-profile-posts>
     </ng-template>
   </div>
 
@@ -86,7 +87,7 @@
   <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'Creator Coin' && !loading">
     <div class="w-100 d-flex justify-content-start px-15px fs-15px">
       <div class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px">
-        Holders of {{ profile.Username }} coin
+        Holders of ${{ profile.Username }} coin
       </div>
     </div>
 
@@ -111,6 +112,23 @@
     </div>
     <div class="w-100 p-35px"></div>
   </div>
+
+  <!-- Diamonds -->
+  <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'Diamonds' && !loading">
+    <div class="w-100 d-flex justify-content-start px-15px fs-15px">
+      <div class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px">
+        Diamonds received by @{{ profile.Username }}
+      </div>
+    </div>
+
+    <div>
+      <div class="container fs-15px flex-grow-1">
+        <creator-diamonds [profile]="profile"></creator-diamonds>
+      </div>
+    </div>
+    <div class="w-100 p-35px"></div>
+  </div>
+
 </div>
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
 <div class="global__bottom-bar-mobile-height"></div>

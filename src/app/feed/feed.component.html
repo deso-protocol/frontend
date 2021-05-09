@@ -25,14 +25,6 @@
     <div class="w-100 border-bottom border-color-grey light-grey-divider" style="min-height: 10px"></div>
   </div>
 
-  <!-- Desktop Tab Selector -->
-  <tab-selector
-    *ngIf="!isMobile"
-    [tabs]="feedTabs"
-    [activeTab]="activeTab"
-    (tabClick)="_handleTabClick($event)"
-  ></tab-selector>
-
   <!-- Mobile BitClout Price -->
   <div
     *ngIf="isMobile"
@@ -45,9 +37,8 @@
     </div>
   </div>
 
-  <!-- Mobile Tab Selector -->
+  <!-- Tab Selector -->
   <tab-selector
-    *ngIf="isMobile"
     [tabs]="feedTabs"
     [activeTab]="activeTab"
     (tabClick)="_handleTabClick($event)"
@@ -56,7 +47,7 @@
   <div [id]="getPullToRefreshMarkerId()"></div>
 
   <!-- Posts -->
-  <div [style.overflow-y]="!isMobile ? 'scroll' : null" *ngIf="showGlobalOrFollowingPosts()">
+  <div *ngIf="showGlobalOrFollowingPosts()">
     <div *ngFor="let post of postsToShow()">
       <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
         <!--
@@ -73,7 +64,7 @@
           [showReplyingToContent]="!!post.parentPost"
           [parentPost]="post.parentPost"
           [contentShouldLinkToThread]="true"
-          [showFollowLink]="showFollowLink()"
+          [hideFollowLink]="hideFollowLink()"
           [showLeftSelectedBorder]="post.IsPinned"
           [blocked]="post.ProfileEntryResponse.IsBlockedByReader"
           (postDeleted)="onPostHidden($event)"
@@ -90,10 +81,6 @@
       <div *ngIf="!activeTabReadyForDisplay()" class="fs-15px">Load More</div>
       <div *ngIf="activeTabReadyForDisplay()" class="fs-15px">Loading...</div>
     </div>
-
-    <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-    <div class="global__bottom-bar-mobile-height"></div>
-    <div class="global__bottom-bar-mobile-height"></div>
   </div>
 
   <div
@@ -116,4 +103,7 @@
     </div>
   </div>
   <simple-center-loader *ngIf="showLoadingSpinner()"></simple-center-loader>
+  <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+  <div class="global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
 </div>

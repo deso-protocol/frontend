@@ -9,8 +9,7 @@ import { GlobalVarsService } from "../../global-vars.service";
 })
 export class TradeCreatorTableComponent {
   static FOUNDER_REWARD_EXPLANATION =
-    "The founder reward is set by the creator. It allows the creator " +
-    "to keep a certain percentage of new coins that are minted when you buy the creator's coin.";
+    "The founder reward is set by the creator and determines what percentage of your purchase goes directly to the creator.";
 
   @Input() displayForCreatorForm: boolean = false;
   @Input() creatorCoinTrade: CreatorCoinTrade;

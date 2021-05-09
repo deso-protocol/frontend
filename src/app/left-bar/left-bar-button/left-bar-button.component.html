@@ -3,7 +3,7 @@
   <a
     (click)="globalVars.isLeftBarMobileOpen = false; (true)"
     [routerLink]="[link]"
-    [queryParams]="{ stepNum: null, adminTab: null, feedTab: null }"
+    [queryParams]="_queryParamsForLink(link)"
     queryParamsHandling="merge"
     routerLinkActive
     #rla="routerLinkActive"
@@ -23,7 +23,7 @@
       class="cursor-pointer fs-15px text-grey5"
       (click)="globalVars.isLeftBarMobileOpen = false; (true)"
       [routerLink]="[link]"
-      [queryParams]="{ stepNum: null, adminTab: null, feedTab: null }"
+      [queryParams]="_queryParamsForLink(link)"
       [routerLinkActive]="['font-weight-bold', 'fc-default']"
       [routerLinkActiveOptions]="{ exact: true }"
       queryParamsHandling="merge"
@@ -41,10 +41,10 @@
         text-align: center;
         line-height: 18px;
         height: 20px;
-        width: 20px;
+        padding: 0px 5px;
       "
     >
-      {{ globalVars.messageNotificationCount }}
+      {{ globalVars.messageNotificationCount > 999 ? "999+" : globalVars.messageNotificationCount }}
     </div>
   </div>
 </div>

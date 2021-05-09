@@ -1,11 +1,12 @@
 <!-- Top Bar -->
 <div
-  class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+  class="global__top-bar d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
 >
   <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
   Notifications
 </div>
+<div class="global__top-bar__height"></div>
 <div *ngIf="isLoading">
   <simple-center-loader></simple-center-loader>
 </div>
@@ -34,10 +35,10 @@
       [showReplyingToContent]="!!item.parentPost"
       [parentPost]="item.parentPost"
       [contentShouldLinkToThread]="true"
-      [showFollowLink]="true"
     ></feed-post>
   </div>
 </div>
 <simple-center-loader *ngIf="loadingMoreNotifications && !isLoading" [height]="200"></simple-center-loader>
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+<div class="d-lg-none global__bottom-bar-mobile-height"></div>
 <div class="global__bottom-bar-mobile-height"></div>

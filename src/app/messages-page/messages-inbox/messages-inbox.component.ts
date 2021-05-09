@@ -124,7 +124,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       this.router.navigate(
         [
           "/" + this.globalVars.RouteNames.INBOX_PREFIX,
-          thread.ProfileEntryResponse.Username || thread.ProfileEntryResponse.PublicKeyBase58Check,
+          thread.ProfileEntryResponse?.Username || thread.PublicKeyBase58Check,
         ],
         { queryParamsHandling: "merge" }
       );

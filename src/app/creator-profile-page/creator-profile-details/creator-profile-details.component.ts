@@ -14,8 +14,18 @@ import { CreatorProfileTopCardComponent } from "../creator-profile-top-card/crea
 export class CreatorProfileDetailsComponent {
   @ViewChild(CreatorProfileTopCardComponent, { static: false }) childTopCardComponent;
 
-  static TABS = { posts: "Posts", "creator-coin": "Creator Coin" };
-  static TABS_LOOKUP = { Posts: "posts", "Creator Coin": "creator-coin" };
+  static TABS = {
+    posts: "Posts",
+    // Leaving this one in so old links will direct to the Coin Purchasers tab.
+    "creator-coin": "Creator Coin",
+    "coin-purchasers": "Creator Coin",
+    diamonds: "Diamonds",
+  };
+  static TABS_LOOKUP = {
+    Posts: "posts",
+    "Creator Coin": "creator-coin",
+    Diamonds: "diamonds",
+  };
   appData: GlobalVarsService;
   userName: string;
   profile: ProfileEntryResponse;
@@ -35,7 +45,6 @@ export class CreatorProfileDetailsComponent {
   ) {
     this.route.params.subscribe((params) => {
       this.userName = params.username;
-      this.activeTab = "Posts";
       this._refreshContent();
     });
     this.route.queryParams.subscribe((params) => {
@@ -150,14 +159,20 @@ export class CreatorProfileDetailsComponent {
     }
 
     this.loading = true;
-    this.backendApi.GetSingleProfile(this.globalVars.localNode, readerPubKey, "", this.userName).subscribe((res) => {
-      if (!res) {
-        console.log("This profile was not found. It either does not exist or it was deleted.");
-        return;
+    this.backendApi.GetSingleProfile(this.globalVars.localNode, readerPubKey, "", this.userName).subscribe(
+      (res) => {
+        if (!res) {
+          console.log("This profile was not found. It either does not exist or it was deleted.");
+          this.loading = false;
+          return;
+        }
+        this.profile = res.Profile;
+        this.loading = false;
+      },
+      (_) => {
+        this.loading = false;
       }
-      this.profile = res.Profile;
-      this.loading = false;
-    });
+    );
   }
 
   _handleTabClick(tabName: string) {

@@ -76,6 +76,13 @@
           </div>
         </div>
 
+        <!-- Tab Selector -->
+        <tab-selector
+          [tabs]="tabs"
+          [activeTab]="activeTab"
+          (tabClick)="_handleTabClick($event)"
+        ></tab-selector>
+
         <div class="fs-15px">
           <div
             class="row no-gutters d-flex align-items-center fc-muted border-bottom border-color-grey pl-15px py-15px"
@@ -94,7 +101,7 @@
             </div>
             <div class="col-lg-1 col-2 d-block mb-0"></div>
           </div>
-          <div *ngFor="let creator of usersYouHODL()">
+          <div *ngFor="let creator of (showTransferredCoins ? usersYouReceived : usersYouPurchased)">
             <!-- Screen out zero balances -->
             <div
               *ngIf="
@@ -105,7 +112,7 @@
             >
               <!-- Name-->
               <a
-                class="col d-flex align-items-center link--unstyled holdings__creator-coin-name"
+                class="col-lg-5 col-6 d-flex align-items-center link--unstyled holdings__creator-coin-name"
                 [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
                 queryParamsHandling="merge"
               >
@@ -114,7 +121,7 @@
                   [style.background-image]="'url(' + creator.ProfileEntryResponse.ProfilePic + ')'"
                 ></div>
                 <div class="text-truncate holdings__name">
-                  <span>{{ creator.ProfileEntryResponse.Username }}</span>
+                  <span>{{creator.ProfileEntryResponse.Username}}</span>
 
                   <span
                     *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
@@ -184,10 +191,11 @@
             </div>
           </div>
           <div
-            *ngIf="globalVars.loggedInUser.UsersYouHODL.length == 0"
-            class="d-flex justify-content-center fs-15px fc-muted w-100 mt-30px"
+            *ngIf="(showTransferredCoins ? usersYouReceived : usersYouPurchased).length == 0"
+            class="d-flex justify-content-center fs-15px fc-muted w-100 mt-30px px-15px"
+            style="text-align: center"
           >
-            You don't hold any creator coins yet.
+            {{emptyHodlerListMessage()}}
           </div>
         </div>
 

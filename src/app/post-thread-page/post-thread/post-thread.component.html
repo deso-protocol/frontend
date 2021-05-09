@@ -1,8 +1,8 @@
 <!-- Top Bar -->
 <!-- FIXME: TODO: post threads: loading skeletons -->
-<div *ngIf="currentPost" style="padding-bottom: 20vh">
+<div *ngIf="currentPost" style="padding-bottom: 20vh" class="d-flex flex-column">
   <div
-    class="global__top-bar__height d-flex align-items-center justify-content-between fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+    class="global__top-bar d-flex align-items-center justify-content-between fs-18px font-weight-bold px-15px border-bottom border-color-grey"
   >
     <div class="d-flex align-items-center">
       <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
@@ -11,13 +11,14 @@
     </div>
   </div>
 
+  <div class="global__top-bar__height"></div>
+
   <div *ngFor="let parentPost of currentPost.ParentPosts">
     <!--  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a -->
     <!--  top-level post should be prepended to the post's list of comments -->
     <feed-post
       [post]="parentPost"
       [includePaddingOnPost]="true"
-      [enableChangeDetection]="true"
       [contentShouldLinkToThread]="true"
       [afterCommentCreatedCallback]="updateCommentCountAndShowToast.bind(this, parentPost)"
       [isParentPostInThread]="true"
@@ -34,7 +35,6 @@
     <feed-post
       [post]="currentPost"
       [includePaddingOnPost]="true"
-      [enableChangeDetection]="true"
       [contentShouldLinkToThread]="true"
       [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
       [isParentPostInThread]="true"

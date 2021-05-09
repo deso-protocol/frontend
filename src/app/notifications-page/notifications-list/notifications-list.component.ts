@@ -216,11 +216,25 @@ export class NotificationsListComponent implements OnInit {
         return null;
       }
 
-      result.icon = "fas fa-paper-plane fc-blue";
-      result.action = `${actorName} sent you <b>${this.globalVars.nanosToBitClout(
-        cctMeta.CreatorCoinToTransferNanos,
-        6
-      )} ${cctMeta.CreatorUsername} coins`;
+      if (cctMeta.DiamondLevel) {
+        result.icon = "icon-diamond fc-blue";
+        let postText = "";
+        if (cctMeta.PostHashHex) {
+          const truncatedPost = this.truncatePost(cctMeta.PostHashHex);
+          postText = `<i class="text-grey7">${truncatedPost}</i>`;
+          result.link = AppRoutingModule.postPath(cctMeta.PostHashHex);
+        }
+        result.action = `${actorName} gave <b>${cctMeta.DiamondLevel.toString()} diamond${
+          cctMeta.DiamondLevel > 1 ? "s" : ""
+        }</b> ${postText}`;
+      } else {
+        result.icon = "fas fa-paper-plane fc-blue";
+        result.action = `${actorName} sent you <b>${this.globalVars.nanosToBitClout(
+          cctMeta.CreatorCoinToTransferNanos,
+          6
+        )} ${cctMeta.CreatorUsername} coins`;
+      }
+
       return result;
     } else if (txnMeta.TxnType === "SUBMIT_POST") {
       const spMeta = txnMeta.SubmitPostTxindexMetadata;
@@ -284,12 +298,11 @@ export class NotificationsListComponent implements OnInit {
       }
 
       const postHash = likeMeta.PostHashHex;
-      const post = this.postMap[postHash];
-      if (!post) {
+
+      const postText = this.truncatePost(postHash);
+      if (!postText) {
         return null;
       }
-
-      const postText = _.truncate(_.escape(`${post.Body} ${post.ImageURLs?.[0] || ""}`));
       const action = likeMeta.IsUnlike ? "unliked" : "liked";
 
       result.icon = likeMeta.IsUnlike ? "fas fa-heart-broken fc-red" : "fas fa-heart fc-red";
@@ -301,5 +314,13 @@ export class NotificationsListComponent implements OnInit {
 
     // If we don't recognize the transaction type we return null
     return null;
+  }
+
+  truncatePost(postHashHex: any): string | null {
+    const post = this.postMap[postHashHex];
+    if (!post) {
+      return null;
+    }
+    return _.truncate(_.escape(`${post.Body} ${post.ImageURLs?.[0] || ""}`));
   }
 }

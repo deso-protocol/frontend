@@ -283,7 +283,7 @@ export class AppComponent implements OnInit {
       .subscribe((res: any) => {
         this.globalVars.hasUnreadNotifications = res.HasUnreadNotifications;
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
-
+        this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
 
         // Setup amplitude on first run
@@ -435,6 +435,15 @@ export class AppComponent implements OnInit {
 
   loadApp() {
     this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
+    // Filter out invalid public keys
+    const publicKeys = Object.keys(this.identityService.identityServiceUsers);
+    for (const publicKey of publicKeys) {
+      if (!publicKey.match(/^[a-zA-Z0-9]{54,55}$/)) {
+        delete this.identityService.identityServiceUsers[publicKey];
+      }
+    }
+    this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
+
     this.globalVars.updateEverything();
 
     // Clean up legacy seedinfo storage. only called when a user visits the site again after a successful import

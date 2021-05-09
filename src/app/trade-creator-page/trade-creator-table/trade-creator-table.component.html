@@ -1,7 +1,7 @@
 <div *ngIf="creatorCoinTrade.isCreatorCoinTransfer(); else elseBlock">
   <!-- Amount you're transferring -->
   <div *ngIf="!displayForCreatorForm" class="py-3 border-bottom d-flex justify-content-between flex-wrap">
-    <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Recipent</span>
+    <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Recipient</span>
 
     <div class="d-inline-block" style="max-width: 70%; overflow-wrap: anywhere">
       <span *ngIf="creatorCoinTrade.transferRecipient.value.length > 25; else usernameRecipient">
@@ -93,7 +93,7 @@
 
   <!-- Founder's Reward Warning -->
   <div
-    *ngIf="creatorCoinTrade.expectedFounderRewardNanos && creatorCoinTrade.expectedFounderRewardNanos > 0"
+    *ngIf="creatorCoinTrade.getFoundersRewardPercent() > 0"
     class="py-3 border-bottom text-muted d-flex"
   >
     <div class="mr-10px">

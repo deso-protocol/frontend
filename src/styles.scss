@@ -162,6 +162,7 @@ $green-font-color: #19B028;
 
 .fs-25px { font-size: 25px; }
 .fs-24px { font-size: 24px; }
+.fs-22px { font-size: 22px; }
 .fs-20px { font-size: 20px; }
 .fs-18px { font-size: 18px; }
 .fs-16px { font-size: 16px; }
@@ -380,6 +381,20 @@ $green-font-color: #19B028;
   .global__mobile {
       display: flex;
   }
+}
+
+.diamond-popover-container {
+  max-width: 100% !important;
+  width: 400px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.diamond-popover-container-mobile {
+  max-width: 100% !important;
+  width: auto;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .fixed-top-bar {
@@ -817,7 +832,6 @@ $green-font-color: #19B028;
 
 .post-thread__comment-container {
   border-top: 4px solid $border-grey;
-  overflow-y: scroll;
   flex-grow: 1;
 }
 
@@ -885,6 +899,18 @@ $green-font-color: #19B028;
   &:hover {
     background-color: $light-grey-for-divider
   }
+}
+
+.feed-post__video-embed-container {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  max-height: 700px;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 
 .feed-post__image-container {
@@ -964,8 +990,7 @@ $green-font-color: #19B028;
 
 .feed-post__parent-thread-connector {
   height: 100%;
-  margin-top: 15px;
-  border-right: 2px solid;
+  border-right: 2px solid $border-grey;
   border-color: $border-grey;
   width: 55%;
 }

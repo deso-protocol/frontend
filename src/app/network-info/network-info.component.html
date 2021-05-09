@@ -55,7 +55,7 @@
       </span>
       <div
         (click)="_copyNetworkInfo('lastBlockHeight')"
-        class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+        class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px"
       >
         <i class="far fa-copy fa-xs"></i>
       </div>
@@ -66,7 +66,7 @@
     Last Block Hash:
     <div class="fc-blue d-flex align-items-center">
       {{ globalVars.nodeInfo.BitCloutStatus.LatestHeaderHash.slice(0, 15) }}...
-      <div (click)="_copyNetworkInfo('lastBlockHash')" class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px">
+      <div (click)="_copyNetworkInfo('lastBlockHash')" class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px">
         <i class="far fa-copy fa-xs"></i>
       </div>
       <div *ngIf="isCopied.lastBlockHash" class="fs-15px px-5px py-0px">
@@ -114,7 +114,7 @@
         {{ key.slice(0, 15) }}...
         <div
           (click)="_copyNetworkInfo('minerPublicKey', ii)"
-          class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+          class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px"
         >
           <i class="far fa-copy fa-xs"></i>
         </div>
@@ -139,20 +139,20 @@
       <div
         *ngIf="!updatingMiners"
         (click)="updateMiners()"
-        class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+        class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
       >
         Update
       </div>
-      <div *ngIf="updatingMiners" class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px">Updating</div>
+      <div *ngIf="updatingMiners" class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px">Updating</div>
     </div>
     <div
       *ngIf="!stoppingMiners"
       (click)="stopMining()"
-      class="btn btn-secondary fs-15px lh-15px fc-muted p-5px mt-10px"
+      class="btn btn-outline-secondary fs-15px lh-15px p-5px mt-10px"
     >
       Stop Mining
     </div>
-    <div *ngIf="stoppingMiners" class="btn btn-secondary fs-15px lh-15px fc-muted p-5px mt-10px">Stopping</div>
+    <div *ngIf="stoppingMiners" class="btn btn-outline-secondary fs-15px lh-15px p-5px mt-10px">Stopping</div>
   </div>
 </div>
 
@@ -185,7 +185,7 @@
             <div
               *ngIf="peer.isCopied !== true"
               (click)="copyPeer(peer)"
-              class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+              class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px"
             >
               <i class="far fa-copy fa-xs"></i>
             </div>
@@ -194,7 +194,7 @@
             </div>
             <div
               (click)="disconnectBitCloutPeer(peer.IP + ':' + peer.ProtocolPort)"
-              class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+              class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
             >
               Disconnect
             </div>
@@ -223,7 +223,7 @@
             <div
               *ngIf="peer.isCopied !== true"
               (click)="copyPeer(peer)"
-              class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+              class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px"
             >
               <i class="far fa-copy fa-xs"></i>
             </div>
@@ -232,7 +232,7 @@
             </div>
             <div
               (click)="disconnectBitCloutPeer(peer.IP + ':' + peer.ProtocolPort)"
-              class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+              class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
             >
               Disconnect
             </div>
@@ -262,7 +262,7 @@
             <div
               *ngIf="peer.isCopied !== true"
               (click)="copyPeer(peer)"
-              class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+              class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px"
             >
               <i class="far fa-copy fa-xs"></i>
             </div>
@@ -271,7 +271,7 @@
             </div>
             <div
               (click)="connectBitCloutPeer(peer.IP + ':' + peer.ProtocolPort)"
-              class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+              class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
             >
               Connect
             </div>
@@ -288,7 +288,7 @@
       />
       <div
         (click)="connectBitCloutPeer(manualBitcloutPeer)"
-        class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+        class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
       >
         Connect
       </div>
@@ -337,7 +337,7 @@
             <div
               *ngIf="peer.isCopied !== true"
               (click)="copyPeer(peer)"
-              class="btn btn-secondary fc-muted d-flex fs-15px p-5px ml-10px"
+              class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px"
             >
               <i class="far fa-copy fa-xs"></i>
             </div>
@@ -346,7 +346,7 @@
             </div>
             <div
               (click)="connectBitcoinPeer(peer.IP + ':' + peer.ProtocolPort)"
-              class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+              class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
             >
               Connect
             </div>
@@ -359,7 +359,7 @@
       <input [(ngModel)]="manualBitcoinPeer" placeholder="Enter an address." style="width: 200px; border-radius: 3px" />
       <div
         (click)="connectBitcoinPeer(manualBitcoinPeer)"
-        class="btn btn-secondary fs-15px lh-15px fc-muted p-5px ml-5px"
+        class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
       >
         Connect
       </div>

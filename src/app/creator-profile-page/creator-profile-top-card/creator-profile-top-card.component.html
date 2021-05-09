@@ -8,7 +8,7 @@
 
   <div class="creator-profile__avatar" [style.background-image]="'url(' + profile.ProfilePic + ')'"></div>
   <div class="d-flex align-items-center justify-content-end pt-15px mr-15px js-creator-profile-top-card-container">
-    <div *ngIf="!profileBelongsToLoggedInUser()" class="fs-15px pr-15px" dropdown container="body">
+    <div *ngIf="!profileBelongsToLoggedInUser() && globalVars.loggedInUser" class="fs-15px pr-15px" dropdown container="body">
       <a class="link--unstyled text-grey9 link--unstyled text-grey9" dropdownToggle>
         <i class="fas fa-ellipsis-h"></i>
       </a>
@@ -114,7 +114,7 @@
   </div>
 
   <div
-    class="fs-12px mt-10px pt-15px pb-15px flex-wrap container border-top border-bottom border-color-grey light-grey-divider"
+    class="fs-12px mt-10px pt-15px pb-15px flex-wrap border-top border-bottom border-color-grey light-grey-divider"
   >
     <div class="fs-12x d-inline-block col-4 mb-0" style="text-align: center">
       <span class="font-weight-bold d-block">≈ {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}</span>
