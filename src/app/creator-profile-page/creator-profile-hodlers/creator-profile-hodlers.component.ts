@@ -12,7 +12,6 @@ import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
 })
 export class CreatorProfileHodlersComponent {
   showTotal = false;
-  totalCoinsPurchasedInCirculation = 0;
 
   @Input() profile: ProfileEntryResponse;
 
@@ -105,11 +104,6 @@ export class CreatorProfileHodlersComponent {
       .toPromise()
       .then((res) => {
         const balanceEntryResponses: any[] = res.Hodlers;
-        balanceEntryResponses.forEach((balanceEntryResponse: BalanceEntryResponse) => {
-          if (balanceEntryResponse.HasPurchased) {
-            this.totalCoinsPurchasedInCirculation += balanceEntryResponse.BalanceNanos;
-          }
-        });
         this.pagedKeys[page + 1] = res.LastPublicKeyBase58Check || "";
         if (
           balanceEntryResponses.length < CreatorProfileHodlersComponent.PAGE_SIZE ||
@@ -129,5 +123,24 @@ export class CreatorProfileHodlersComponent {
 
   isRowForCreator(row: BalanceEntryResponse) {
     return row.CreatorPublicKeyBase58Check == row.HODLerPublicKeyBase58Check;
+  }
+
+  usernameStyle() {
+    return {
+      "max-width": this.globalVars.isMobile() ? "100px" : "200px",
+    };
+  }
+
+  getTooltipForRow(row: BalanceEntryResponse): string {
+    return row.HasPurchased
+      ? `This user has purchased some amount of $${this.profile.Username} coin.`
+      : `This user has not purchased $${this.profile.Username} coin.
+      The user has only received these creator coins from transfers.
+      Buying any amount of this coin will change the status to "purchased."`;
+  }
+
+  stopEvent(event: any) {
+    event.stopPropagation();
+    event.preventDefault();
   }
 }

@@ -17,13 +17,13 @@ export class CreatorProfileDetailsComponent {
   static TABS = {
     posts: "Posts",
     // Leaving this one in so old links will direct to the Coin Purchasers tab.
-    "creator-coin": "Coin Purchasers",
-    "coin-purchasers": "Coin Purchasers",
+    "creator-coin": "Creator Coin",
+    "coin-purchasers": "Creator Coin",
     diamonds: "Diamonds",
   };
   static TABS_LOOKUP = {
     Posts: "posts",
-    "Coin Purchasers": "coin-purchasers",
+    "Creator Coin": "creator-coin",
     Diamonds: "diamonds",
   };
   appData: GlobalVarsService;
