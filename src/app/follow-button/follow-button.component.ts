@@ -36,7 +36,9 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   changeRef: ChangeDetectorRef;
 
   unfollow(event) {
-    event.stopPropagation();
+    if (event) {
+      event.stopPropagation();
+    }
     this._toggleFollow(false);
   }
 

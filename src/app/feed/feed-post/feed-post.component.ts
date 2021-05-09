@@ -222,16 +222,19 @@ export class FeedPostComponent implements OnInit {
     }).then((response: any) => {
       if (response.isConfirmed) {
         this.backendApi
-          .BlockPublicKey(
+          .CreateBlockPublicKeyTxn(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.post.PosterPublicKeyBase58Check
+            this.post.PosterPublicKeyBase58Check,
+            false,
+            this.globalVars.feeRateBitCloutPerKB * 1e9
           )
           .subscribe(
             () => {
               this.globalVars.logEvent("user : block");
-              this.globalVars.loggedInUser.BlockedPubKeys[this.post.PosterPublicKeyBase58Check] = {};
+              this.post.ProfileEntryResponse.IsBlockedByReader = true;
               this.userBlocked.emit(this.post.PosterPublicKeyBase58Check);
+              this.ref.detectChanges();
             },
             (err) => {
               console.error(err);

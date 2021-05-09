@@ -14,33 +14,32 @@
   </div>
 </div>
 <ng-container *ngIf="!showProfileAsReserved">
-  <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
-    <div #uiScroll *uiScroll="let post of datasource" class="border-bottom border-color-grey">
-      <feed-post
-        *ngIf="post.ProfileEntryResponse"
-        [contentShouldLinkToThread]="true"
-        [includePaddingOnPost]="true"
-        [post]="post"
-        [afterCommentCreatedCallback]="_prependComment.bind(this, post)"
-        [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
-        (userBlocked)="userBlocked()"
-      ></feed-post>
-      <div *ngFor="let comment of post.Comments">
-        <div class="px-15px pb-15px post-thread__subcomment-container">
-          <feed-post
-            [includePaddingOnPost]="false"
-            [post]="comment"
-            [parentPost]="post"
-            [contentShouldLinkToThread]="true"
-            [showIconRow]="false"
-            [showDropdown]="false"
-            [showReplyToContent]="false"
-            [isSubcomment]="true"
-            [afterCommentCallback]="_prependComment.bind(this.post)"
-          ></feed-post>
-        </div>
+  <div #uiScroll *uiScroll="let post of datasource" class="border-bottom border-color-grey">
+    <feed-post
+      *ngIf="post.ProfileEntryResponse"
+      [contentShouldLinkToThread]="true"
+      [includePaddingOnPost]="true"
+      [post]="post"
+      [afterCommentCreatedCallback]="_prependComment.bind(this, post)"
+      [blocked]="profile.IsBlockedByReader"
+      [enableChangeDetection]="true"
+      (userBlocked)="userBlocked()"
+    ></feed-post>
+    <div *ngFor="let comment of post.Comments">
+      <div class="px-15px pb-15px post-thread__subcomment-container">
+        <feed-post
+          [includePaddingOnPost]="false"
+          [post]="comment"
+          [parentPost]="post"
+          [contentShouldLinkToThread]="true"
+          [showIconRow]="false"
+          [showDropdown]="false"
+          [showReplyToContent]="false"
+          [isSubcomment]="true"
+          [afterCommentCallback]="_prependComment.bind(this.post)"
+        ></feed-post>
       </div>
     </div>
-    <simple-center-loader [height]="200" *ngIf="loadingNextPage && !loadingFirstPage"></simple-center-loader>
   </div>
+  <simple-center-loader [height]="200" *ngIf="loadingNextPage && !loadingFirstPage"></simple-center-loader>
 </ng-container>

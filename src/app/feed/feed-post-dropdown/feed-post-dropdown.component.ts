@@ -39,7 +39,7 @@ export class FeedPostDropdownComponent {
     // User shouldn't be able to block themselves
     return (
       this.globalVars.loggedInUser?.PublicKeyBase58Check !== this.post.PosterPublicKeyBase58Check &&
-      !this.globalVars.hasUserBlockedCreator(this.post.PosterPublicKeyBase58Check)
+      !this.post.ProfileEntryResponse.IsBlockedByReader
     );
   }
 

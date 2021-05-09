@@ -27,6 +27,7 @@ export class BackendRoutes {
   static RoutePathGetMessagesStateless = "/get-messages-stateless";
   static RoutePathGetFollowsStateless = "/get-follows-stateless";
   static RoutePathCreateFollowTxnStateless = "/create-follow-txn-stateless";
+  static RoutePathCreateBlockPublicKeyTxnStateless = "/create-block-public-key-txn-stateless";
   static RoutePathCreateLikeStateless = "/create-like-stateless";
   static RoutePathBuyOrSellCreatorCoin = "/buy-or-sell-creator-coin-WVAzTWpGOFFnMlBvWXZhTFA4NjNSZGNW";
   static RoutePathBuyOrSellCreatorCoinPreview = "/buy-or-sell-creator-coin-preview-WVAzTWpGOFFnMlBvWXZhTFA4NjNSZGNW";
@@ -38,7 +39,6 @@ export class BackendRoutes {
   static RoutePathGetSinglePost = "/get-single-post";
   static RoutePathSendPhoneNumberVerificationText = "/send-phone-number-verification-text";
   static RoutePathSubmitPhoneNumberVerificationCode = "/submit-phone-number-verification-code";
-  static RoutePathBlockPublicKey = "/block-public-key";
   static RoutePathGetBlockTemplate = "/get-block-template";
   static RoutePathGetTxn = "/get-txn";
   static RoutePathGetIdentities = "/get-identities";
@@ -99,6 +99,7 @@ export class ProfileEntryResponse {
   Posts?: PostEntryResponse[];
   IsReserved?: boolean;
   IsVerified?: boolean;
+  IsBlockedByReader?: boolean;
 }
 
 export class User {
@@ -709,8 +710,14 @@ export class BackendApiService {
       AddGlobalFeedBool,
     });
   }
-  GetSingleProfile(endpoint: string, PublicKeyBase58Check: string, Username: string): Observable<any> {
+  GetSingleProfile(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetSingleProfile, {
+      UserPublicKeyBase58Check,
       PublicKeyBase58Check,
       Username,
     });
@@ -991,17 +998,20 @@ export class BackendApiService {
     return request;
   }
 
-  BlockPublicKey(
+  CreateBlockPublicKeyTxn(
     endpoint: string,
     PublicKeyBase58Check: string,
     BlockPublicKeyBase58Check: string,
-    Unblock: boolean = false
+    Unblock: boolean = false,
+    MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathBlockPublicKey, PublicKeyBase58Check, {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCreateBlockPublicKeyTxnStateless, {
       PublicKeyBase58Check,
       BlockPublicKeyBase58Check,
       Unblock,
+      MinFeeRateNanosPerKB,
     });
+    return this.signAndSubmitTransaction(endpoint, request, PublicKeyBase58Check);
   }
 
   // Note that FetchStartIndex < 0 means "fetch me the latest notifications."

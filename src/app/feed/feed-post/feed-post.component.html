@@ -28,7 +28,7 @@
 </div>
 
 <div
-  *ngIf="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+  *ngIf="post.ProfileEntryResponse.IsBlockedByReader"
   class="p-15px background-color-grey d-flex align-items-center justify-content-center fs-15px"
 >
   <a
@@ -43,7 +43,7 @@
 </div>
 
 <div
-  *ngIf="!post.IsHidden && !hidingPost && !globalVars.hasUserBlockedCreator(postContent.PosterPublicKeyBase58Check)"
+  *ngIf="!post.IsHidden && !hidingPost && !post.ProfileEntryResponse.IsBlockedByReader"
   class="d-flex flex-column js-feed-post"
   [ngClass]="{ 'js-feed-post-hover': hoverable }"
 >
@@ -80,7 +80,8 @@
         [postContent]="postContent"
         (postHidden)="hidePost()"
         (userBlocked)="blockUser()"
-        (toggleGlobalFeed)="_addPostToGlobalFeed()"
+        (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
+        (togglePostPin)="_pinPostToGlobalFeed($event)"
       ></feed-post-dropdown>
     </div>
 

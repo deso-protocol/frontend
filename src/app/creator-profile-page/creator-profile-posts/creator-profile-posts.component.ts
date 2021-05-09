@@ -20,15 +20,18 @@ export class CreatorProfilePostsComponent {
   datasource: IDatasource<IAdapter<PostEntryResponse>> = this.getDatasource();
   loadingFirstPage = true;
   loadingNextPage = false;
-  pagedKeys = {
-    0: "",
+  initialPagedKeys = {
+    0: '',
+  };
+  pagedKeys = this.initialPagedKeys;
+
+  initialPagedRequests = {
+    '-1': new Promise(resolve => {
+      resolve([]);
+    })
   };
 
-  pagedRequests = {
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
-  };
+  pagedRequests = this.initialPagedRequests;
 
   lastPage = null;
 
@@ -41,9 +44,7 @@ export class CreatorProfilePostsComponent {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private location: Location
-  ) {
-    // this.datasource = this.getDatasource();
-  }
+  ) {}
 
   // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
   getDatasource() {
@@ -139,6 +140,9 @@ export class CreatorProfilePostsComponent {
   }
 
   userBlocked() {
+    this.profile.IsBlockedByReader = true;
+    this.pagedRequests = this.initialPagedRequests;
+    this.pagedKeys = this.initialPagedKeys;
     this.blockUser.emit();
   }
 

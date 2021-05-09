@@ -25,7 +25,7 @@
       [showThreadConnectionLine]="true"
       [blocked]="isPostBlocked(parentPost)"
       (postDeleted)="onPostHidden(currentPost, null, null)"
-      (userBlocked)="afterUserBlocked($event)"
+      (userBlocked)="userBlocked($event)"
     ></feed-post>
   </div>
 
@@ -41,7 +41,7 @@
       [showLeftSelectedBorder]="true"
       [blocked]="isPostBlocked(currentPost)"
       (postDeleted)="onPostHidden(currentPost, null, null)"
-      (userBlocked)="afterUserBlocked($event)"
+      (userBlocked)="userBlocked($event)"
     ></feed-post>
   </div>
 
@@ -60,8 +60,9 @@
           [showReplyingToContent]="true"
           [afterCommentCreatedCallback]="prependToSubcommentList.bind(this, item, currentPost)"
           [blocked]="isPostBlocked(item)"
+          [enableChangeDetection]="true"
           (postDeleted)="onPostHidden(item, currentPost, null)"
-          (userBlocked)="afterUserBlocked($event)"
+          (userBlocked)="userBlocked($event)"
         ></feed-post>
 
         <div *ngFor="let subcommentPost of item.Comments">
@@ -81,7 +82,7 @@
               [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, item, currentPost)"
               [blocked]="isPostBlocked(subcommentPost)"
               (postDeleted)="onPostHidden(subcommentPost, item, currentPost)"
-              (userBlocked)="afterUserBlocked($event)"
+              (userBlocked)="userBlocked($event)"
             ></feed-post>
           </div>
         </div>

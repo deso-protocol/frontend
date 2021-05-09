@@ -67,18 +67,20 @@
 
   <!-- Posts -->
   <div *ngIf="profile && activeTab == 'Posts' && !loading">
-    <creator-profile-posts
-      [profile]="profile"
-      [showProfileAsReserved]="showProfileAsReserved()"
-      (blockUser)="userBlocked()"
-    ></creator-profile-posts>
-    <div *ngIf="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)" class="w-100 d-flex p-15px">
+    <div *ngIf="profile.IsBlockedByReader; else showPosts" class="w-100 d-flex p-15px">
       <span>
         You have blocked {{ profile.Username }}.
         <a (click)="unblock()">Unblock</a>
         to see their posts.
       </span>
     </div>
+    <ng-template #showPosts>
+      <creator-profile-posts
+        [profile]="profile"
+        [showProfileAsReserved]="showProfileAsReserved()"
+        (blockUser)="userBlocked()"
+      ></creator-profile-posts>
+    </ng-template>
   </div>
 
   <!-- Creator Coin Info -->

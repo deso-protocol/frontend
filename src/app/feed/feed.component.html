@@ -66,7 +66,7 @@
           [contentShouldLinkToThread]="true"
           [hideFollowLink]="hideFollowLink()"
           [showLeftSelectedBorder]="post.IsPinned"
-          [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+          [blocked]="post.ProfileEntryResponse.IsBlockedByReader"
           (postDeleted)="onPostHidden($event)"
           (userBlocked)="userBlocked()"
         ></feed-post>

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { FeedComponent } from "../../feed/feed.component";
 import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
 import { ToastrService } from "ngx-toastr";
@@ -323,11 +323,30 @@ export class PostThreadComponent {
     this.datasource.adapter.reset();
   }
 
-  isPostBlocked(post: any): boolean {
-    return this.globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check);
+  isPostBlocked(post: PostEntryResponse): boolean {
+    return post.ProfileEntryResponse.IsBlockedByReader;
   }
 
-  afterUserBlocked(blockedPubKey: any) {
-    this.globalVars.loggedInUser.BlockedPubKeys[blockedPubKey] = {};
+  async userBlocked(posterPublicKey: string): Promise<void> {
+    for (const post of this.currentPost.ParentPosts) {
+      if (post.PosterPublicKeyBase58Check === posterPublicKey) {
+        post.ProfileEntryResponse.IsBlockedByReader = true;
+      }
+    }
+    if (this.currentPost.PosterPublicKeyBase58Check === posterPublicKey) {
+      this.currentPost.ProfileEntryResponse.IsBlockedByReader = true;
+    }
+    await this.datasource.adapter.relax();
+    await this.datasource.adapter.update({
+      predicate: ({ $index, data, element }) => {
+        let currentPost = (data as any) as PostEntryResponse;
+        console.log(currentPost);
+        if (currentPost.PosterPublicKeyBase58Check === posterPublicKey) {
+          currentPost.ProfileEntryResponse.IsBlockedByReader = true;
+        }
+        currentPost = _.cloneDeep(currentPost);
+        return [currentPost];
+      },
+    });
   }
 }
