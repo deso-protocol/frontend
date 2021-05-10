@@ -57,7 +57,7 @@ export class FeedPostDropdownComponent {
   }
 
   globalFeedEligible(): boolean {
-    return this.globalVars.showAdminTools() && !this.post.ParentStakeID;
+    return this.globalVars.showAdminTools();
   }
 
   showAddToGlobalFeedDropdownItem(): boolean {
