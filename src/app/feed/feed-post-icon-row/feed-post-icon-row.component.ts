@@ -112,9 +112,6 @@ export class FeedPostIconRowComponent {
         this.postContent.PostHashHex,
         {},
         "" /*Sub*/,
-        0 /*CreatorBasisPoints*/,
-        // What does this do??
-        1.25 * 100 * 100 /*StakeMultipleBasisPoints*/,
         false /*IsHidden*/,
         // What should the fee rate be for this?
         this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
@@ -164,9 +161,6 @@ export class FeedPostIconRowComponent {
         this.postContent.PostHashHex,
         {},
         "" /*Sub*/,
-        0 /*CreatorBasisPoints*/,
-        // What does this do??
-        1.25 * 100 * 100 /*StakeMultipleBasisPoints*/,
         true /*IsHidden*/,
         // What should the fee rate be for this?
         this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
@@ -431,7 +425,6 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
-
     if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
       this.globalVars._alertError("You cannot downgrade a diamond");
       this.closeDiamondPopover();

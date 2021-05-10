@@ -93,7 +93,7 @@
 
   <!-- Founder's Reward Warning -->
   <div
-    *ngIf="creatorCoinTrade.expectedFounderRewardNanos && creatorCoinTrade.expectedFounderRewardNanos > 0"
+    *ngIf="creatorCoinTrade.getFoundersRewardPercent() > 0"
     class="py-3 border-bottom text-muted d-flex"
   >
     <div class="mr-10px">

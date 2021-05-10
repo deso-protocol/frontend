@@ -184,8 +184,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     FeedComponent.appendCommentAfterParentPost(this.postsToShow(), postEntryResponse);
   }
 
-  showFollowLink() {
-    return this.activeTab === FeedComponent.GLOBAL_TAB;
+  hideFollowLink() {
+    return this.activeTab === FeedComponent.FOLLOWING_TAB;
   }
 
   postsToShow() {

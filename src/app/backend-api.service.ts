@@ -181,6 +181,8 @@ export class BalanceEntryResponse {
   // The public keys are provided for the frontend
   CreatorPublicKeyBase58Check: string;
 
+  // Has the hodler purchased these creator coins
+  HasPurchased: boolean;
   // How much this HODLer owns of a particular creator coin.
   BalanceNanos: number;
   // The net effect of transactions in the mempool on a given BalanceEntry's BalanceNanos.
@@ -612,14 +614,9 @@ export class BackendApiService {
     RecloutedPostHashHex: string,
     PostExtraData: any,
     Sub: string,
-    CreatorBasisPoints: number,
-    StakeMultipleBasisPoints: number,
     IsHidden: boolean,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    CreatorBasisPoints = Math.floor(CreatorBasisPoints);
-    StakeMultipleBasisPoints = Math.floor(StakeMultipleBasisPoints);
-
     const request = this.post(endpoint, BackendRoutes.RoutePathSubmitPost, {
       UpdaterPublicKeyBase58Check,
       PostHashHexToModify,
@@ -629,8 +626,6 @@ export class BackendApiService {
       RecloutedPostHashHex,
       PostExtraData,
       Sub,
-      CreatorBasisPoints,
-      StakeMultipleBasisPoints,
       IsHidden,
       MinFeeRateNanosPerKB,
     });
@@ -904,10 +899,7 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
-  GetDiamondsForPublicKey(
-    endpoint: string,
-    PublicKeyBase58Check: string,
-  ): Observable<any> {
+  GetDiamondsForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
       PublicKeyBase58Check,
     });
@@ -1272,7 +1264,7 @@ export class BackendApiService {
   }
 
   // Error parsing
-  stringifyError(err) {
+  stringifyError(err): string {
     if (err && err.error && err.error.error) {
       return err.error.error;
     }
@@ -1280,7 +1272,7 @@ export class BackendApiService {
     return JSON.stringify(err);
   }
 
-  parsePostError(err) {
+  parsePostError(err): string {
     if (err.status === 0) {
       return "BitClout is experiencing heavy load. Please try again in one minute.";
     }
@@ -1301,7 +1293,7 @@ export class BackendApiService {
     return errorMessage;
   }
 
-  parseProfileError(err) {
+  parseProfileError(err): string {
     if (err.status === 0) {
       return "BitClout is experiencing heavy load. Please try again in one minute.";
     }
@@ -1332,12 +1324,16 @@ export class BackendApiService {
         errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
       } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
         errorMessage = "You must own this creator coin before transferring it.";
+      } else if (errorMessage.indexOf("RuleErrorCreatorCoinBuyMustTradeNonZeroBitCloutAfterFounderReward") >= 0) {
+        errorMessage =
+          "This creator has set their founder's reward to 100%. " +
+          "You cannot buy creators that have set their founder's reward to 100%.";
       }
     }
     return errorMessage;
   }
 
-  parseMessageError(err) {
+  parseMessageError(err): string {
     if (err.status === 0) {
       return "BitClout is experiencing heavy load. Please try again in one minute.";
     }

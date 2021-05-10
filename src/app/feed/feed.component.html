@@ -64,7 +64,7 @@
           [showReplyingToContent]="!!post.parentPost"
           [parentPost]="post.parentPost"
           [contentShouldLinkToThread]="true"
-          [showFollowLink]="showFollowLink()"
+          [hideFollowLink]="hideFollowLink()"
           [showLeftSelectedBorder]="post.IsPinned"
           [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
           (postDeleted)="onPostHidden($event)"
