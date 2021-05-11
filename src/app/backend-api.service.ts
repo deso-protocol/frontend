@@ -323,7 +323,6 @@ export class BackendApiService {
   }
 
   post(endpoint: string, path: string, body: any): Observable<any> {
-    console.log(body);
     return this.httpClient.post<any>(this._makeRequestURL(endpoint, path), body).pipe(catchError(this._handleError));
   }
 
