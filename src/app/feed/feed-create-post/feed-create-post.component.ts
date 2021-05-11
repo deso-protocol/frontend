@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
-import {environment} from "../../../environments/environment";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "feed-create-post",
