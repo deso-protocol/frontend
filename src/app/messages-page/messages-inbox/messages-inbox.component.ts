@@ -37,6 +37,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    // If an initial message exists, we open the thread and read it.
     if (this.messageThreads && this.messageThreads.length > 0) {
       this.updateReadMessagesForSelectedThread();
     }
@@ -78,6 +79,31 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
       clearInterval(interval);
     }, 50);
+  }
+
+  // This marks all messages as read and relays this request to the server.
+  _markAllMessagesRead() {
+    for (let thread of this.messageThreads) {
+      this.messageThreads.UnreadStateByContact[thread.ProfileEntryResponse.PublicKeyBase58Check] = false;
+    }
+
+    // Send an update back to the server noting that we want to mark all threads read.
+    this.backendApi.MarkAllMessagesRead(this.globalVars.localNode,
+      this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .subscribe(
+        () => {
+          this.globalVars.logEvent("user : all-message-read");
+        },
+        (err) => {
+          console.log(err);
+          const parsedError = this.backendApi.stringifyError(err);
+          this.globalVars.logEvent("user : all-message-read : error", { parsedError });
+          this.globalVars._alertError(parsedError);
+        }
+      );
+
+    // Reflect this change in NumberOfUnreadThreads.
+    this.globalVars.messageResponse.NumberOfUnreadThreads = 0
   }
 
   _getThreadWithPubKey(pubKey: string) {
@@ -132,30 +158,31 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   updateReadMessagesForSelectedThread() {
-    const messageReadStateUpdatesByContact = {};
+    debugger;
     let contactPubKey = this.messageThreads[0]?.PublicKeyBase58Check;
     if (this.selectedThread && this.selectedThread.PublicKeyBase58Check) {
       contactPubKey = this.selectedThread.PublicKeyBase58Check;
     }
-    const totalReadMessages = this.globalVars.messageResponse.TotalMessagesByContact?.[contactPubKey] || 0;
-    messageReadStateUpdatesByContact[contactPubKey] = totalReadMessages;
 
     // We update the read message state on global vars before sending the request so it is more instant.
-    this.globalVars.messageResponse.MessageReadStateByContact[contactPubKey] = totalReadMessages;
+    this.globalVars.messageResponse.UnreadStateByContact[contactPubKey] = false;
+    this.globalVars.messageResponse.NumberOfUnreadThreads = 0;
     this.globalVars._setNumMessagesToRead();
 
-    this.backendApi
-      .UpdateUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-        "" /*EmailAddress*/,
-        messageReadStateUpdatesByContact
-      )
+    // Send an update back to the server noting that we read this thread.
+    this.backendApi.MarkContactMessagesRead(this.globalVars.localNode,
+      this.globalVars.loggedInUser.PublicKeyBase58Check,
+      this.selectedThread.PublicKeyBase58Check)
       .subscribe(
-        (res) => {},
-        (err) => {
-          console.log(err);
-        }
-      );
+      () => {
+        this.globalVars.logEvent("user : message-read");
+      },
+      (err) => {
+        console.log(err);
+        const parsedError = this.backendApi.stringifyError(err);
+        this.globalVars.logEvent("user : message-read : error", { parsedError });
+        this.globalVars._alertError(parsedError);
+      }
+    );
   }
 }

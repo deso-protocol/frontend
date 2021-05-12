@@ -1,9 +1,19 @@
 <!-- Top Bar -->
-<div
-  *ngIf="!isMobile"
-  class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
->
+<div *ngIf="!isMobile" class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey">
   Messages
+
+  <div class="d-flex justify-content-end w-100 align-items-right pr-15px pb-15px mt-10px">
+    {{this.globalVars.messageResponse.NumberOfUnreadThreads}}
+    {{this.globalVars.messageResponse}}
+    <div *ngIf="this.globalVars.messageResponse != null &&
+    this.globalVars.messageResponse.NumberOfUnreadThreads != 0 ; then thenBlock else elseBlock"></div>
+    <ng-template #thenBlock>
+      <i (click)="_markAllMessagesRead()" class="fc-blue far fa-envelope cursor-pointer feed-post-icon-row__icon"></i>
+    </ng-template>
+    <ng-template #elseBlock>
+      <i class="far fa-envelope cursor-pointer" style="font-size: 25px; border-radius: 50%; margin-right: 2px; cursor: default;"></i>
+    </ng-template>
+  </div>
 </div>
 
 <search-bar

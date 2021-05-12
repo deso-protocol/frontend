@@ -211,8 +211,8 @@ export class AppComponent implements OnInit {
             this.globalVars.messageResponse.OrderedContactsWithMessages = missingOrderedContacts.concat(
               res.OrderedContactsWithMessages
             );
-            this.globalVars.messageResponse.TotalMessagesByContact = res.TotalMessagesByContact;
-            this.globalVars.messageResponse.MessageReadStateByContact = res.MessageReadStateByContact;
+            this.globalVars.messageResponse.UnreadStateByContact = res.UnreadStateByContact;
+            this.globalVars.messageResponse.NumberOfUnreadThreads = res.NumberOfUnreadThreads;
           }
 
           // Update the number of messages to read.

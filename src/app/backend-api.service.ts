@@ -25,6 +25,8 @@ export class BackendRoutes {
   static RoutePathGetHodlersForPublicKey = "/get-hodlers-for-public-key";
   static RoutePathSendMessageStateless = "/send-message-stateless";
   static RoutePathGetMessagesStateless = "/get-messages-stateless";
+  static RoutePathMarkContactMessagesRead = "/mark-contact-messages-read";
+  static RoutePathMarkAllMessagesRead = "/mark-all-messages-read";
   static RoutePathGetFollowsStateless = "/get-follows-stateless";
   static RoutePathCreateFollowTxnStateless = "/create-follow-txn-stateless";
   static RoutePathCreateLikeStateless = "/create-like-stateless";
@@ -821,9 +823,16 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, FollowerPublicKeyBase58Check);
   }
 
-  GetMessages(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+  GetMessages(endpoint: string,
+              PublicKeyBase58Check: string,
+              FetchAfterPublicKeyBase58Check: string = "",
+              NumToFetch: number = 25,
+              HoldersOnly: boolean = false): Observable<any> {
     let req = this.httpClient.post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetMessagesStateless), {
       PublicKeyBase58Check,
+      FetchAfterPublicKeyBase58Check,
+      NumToFetch,
+      HoldersOnly,
     });
 
     // create an array of messages to decrypt
@@ -1009,6 +1018,26 @@ export class BackendApiService {
       PublicKeyBase58Check,
       BlockPublicKeyBase58Check,
       Unblock,
+    });
+  }
+
+  MarkContactMessagesRead(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    ContactPublicKeyBase58Check: string,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkContactMessagesRead, UserPublicKeyBase58Check, {
+      UserPublicKeyBase58Check,
+      ContactPublicKeyBase58Check,
+    });
+  }
+
+  MarkAllMessagesRead(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkContactMessagesRead, UserPublicKeyBase58Check, {
+      UserPublicKeyBase58Check,
     });
   }
 
