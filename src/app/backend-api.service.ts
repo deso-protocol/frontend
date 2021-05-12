@@ -29,7 +29,6 @@ export class BackendRoutes {
   static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
   static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
   static RoutePathBuyOrSellCreatorCoin = "/api/v0/buy-or-sell-creator-coin";
-  static RoutePathBuyOrSellCreatorCoinPreview = "/api/v0/buy-or-sell-creator-coin-preview";
   static RoutePathTransferCreatorCoin = "/api/v0/transfer-creator-coin";
   static RoutePathUpdateUserGlobalMetadata = "/api/v0/update-user-global-metadata";
   static RoutePathGetUserGlobalMetadata = "/api/v0/get-user-global-metadata";
@@ -942,10 +941,7 @@ export class BackendApiService {
     MinBitCloutExpectedNanos = Math.floor(MinBitCloutExpectedNanos);
     MinCreatorCoinExpectedNanos = Math.floor(MinCreatorCoinExpectedNanos);
 
-    const routeName = Broadcast
-      ? BackendRoutes.RoutePathBuyOrSellCreatorCoin
-      : BackendRoutes.RoutePathBuyOrSellCreatorCoinPreview;
-    let request = this.post(endpoint, routeName, {
+    let request = this.post(endpoint, BackendRoutes.RoutePathBuyOrSellCreatorCoin, {
       UpdaterPublicKeyBase58Check,
       CreatorPublicKeyBase58Check,
       OperationType,
