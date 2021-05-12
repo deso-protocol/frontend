@@ -1036,7 +1036,7 @@ export class BackendApiService {
     endpoint: string,
     UserPublicKeyBase58Check: string,
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkContactMessagesRead, UserPublicKeyBase58Check, {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkAllMessagesRead, UserPublicKeyBase58Check, {
       UserPublicKeyBase58Check,
     });
   }

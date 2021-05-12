@@ -84,7 +84,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   // This marks all messages as read and relays this request to the server.
   _markAllMessagesRead() {
     for (let thread of this.messageThreads) {
-      this.messageThreads.UnreadStateByContact[thread.ProfileEntryResponse.PublicKeyBase58Check] = false;
+      this.globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] = false;
     }
 
     // Send an update back to the server noting that we want to mark all threads read.
@@ -158,7 +158,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   updateReadMessagesForSelectedThread() {
-    debugger;
     let contactPubKey = this.messageThreads[0]?.PublicKeyBase58Check;
     if (this.selectedThread && this.selectedThread.PublicKeyBase58Check) {
       contactPubKey = this.selectedThread.PublicKeyBase58Check;
@@ -166,7 +165,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
     // We update the read message state on global vars before sending the request so it is more instant.
     this.globalVars.messageResponse.UnreadStateByContact[contactPubKey] = false;
-    this.globalVars.messageResponse.NumberOfUnreadThreads = 0;
     this.globalVars._setNumMessagesToRead();
 
     // Send an update back to the server noting that we read this thread.
@@ -184,5 +182,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         this.globalVars._alertError(parsedError);
       }
     );
+
+    // Reflect the new read receipt in the NumberOfUnreadThreads
+    this.globalVars.messageResponse.NumberOfUnreadThreads -= 1;
   }
 }
