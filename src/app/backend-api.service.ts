@@ -899,11 +899,15 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
-  GetDiamondsForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
+  GetDiamondsForPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    FetchYouDiamonded: boolean = false
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
       PublicKeyBase58Check,
+      FetchYouDiamonded,
     });
-    return request;
   }
 
   BuyOrSellCreatorCoin(

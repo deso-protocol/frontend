@@ -1,54 +1,69 @@
-<div class="row no-gutters border-bottom border-color-grey fc-muted">
-  <div class="col-lg-4 col-5 d-flex align-items-center py-15px mb-0">Username</div>
-  <div class="col-lg-5 col-4 text-left d-flex align-items-center py-15px mb-0">Most Diamonds</div>
-  <div class="col-3 text-center d-flex align-items-center py-15px mb-0">Total Diamonds</div>
-</div>
-<div *ngIf="!isLoading && diamondSummaryList.length == 0" class="row no-gutters pt-10px">
-  <div class="d-flex align-items-center" style="margin-bottom: 0">
-    No one has sent @{{ profile.Username }} a diamond yet.&nbsp;
-    <a [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username]">Be the first!</a>
+<div class="w-100 d-flex flex-column justify-content-start px-15px fs-15px">
+  <div class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px">
+    Diamonds {{ activeTab.toLowerCase() }} by @{{ profile.Username }}
   </div>
+  <!-- Tabs -->
+  <tab-selector
+    [tabs]="[CreatorDiamondsComponent.RECEIVED, CreatorDiamondsComponent.GIVEN]"
+    [activeTab]="activeTab"
+    (tabClick)="_handleTabClick($event)"
+  ></tab-selector>
 </div>
-<simple-center-loader *ngIf="isLoading"></simple-center-loader>
-<div *ngFor="let row of diamondSummaryList">
-  <div class="row no-gutters py-10px border-bottom mb-0">
-    <div class="col-lg-4 col-5 d-flex align-items-left mb-0">
-      <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
-        <div
-          class="creator-profile-details__hodler-avatar mr-10px"
-          style="background-image: url('/assets/img/default_profile_pic.png')"
-        ></div>
-        {{ globalVars.truncate("lazynina", 15) }}
+<div>
+  <div class="container fs-15px flex-grow-1">
+    <div class="row no-gutters border-bottom border-color-grey fc-muted">
+      <div class="col-lg-4 col-5 d-flex align-items-center py-15px mb-0">Username</div>
+      <div class="col-lg-5 col-4 text-left d-flex align-items-center py-15px mb-0">Most Diamonds</div>
+      <div class="col-3 text-center d-flex align-items-center py-15px mb-0">Total Diamonds</div>
+    </div>
+    <div *ngIf="!isLoading && diamondSummaryList.length == 0" class="row no-gutters pt-10px">
+      <div class="d-flex align-items-center" style="margin-bottom: 0">
+        {{ getNoDiamondsMessage() }}
+        <a [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username]" *ngIf="!showDiamondsGiven">Be the first!</a>
       </div>
-      <a *ngIf="row.ProfileEntryResponse"
-        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, row.ProfileEntryResponse.Username]"
-        class="d-flex align-items-center link--unstyled"
-      >
-        <div
-          class="creator-profile-details__hodler-avatar mr-10px"
-          [style.background-image]="'url(' + row.ProfileEntryResponse.ProfilePic + ')'"
-        ></div>
-        <div class="text-truncate holdings__name" style="font-size: 14px;">
-          <span>{{ globalVars.truncate(row.ProfileEntryResponse.Username, usernameTruncationLength()) }}</span>
-          <div class="text-grey9 fs-12px">
-            {{ globalVars.nanosToUSD(row.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+    </div>
+    <simple-center-loader *ngIf="isLoading"></simple-center-loader>
+    <div *ngFor="let row of diamondSummaryList">
+      <div class="row no-gutters py-10px border-bottom mb-0">
+        <div class="col-lg-4 col-5 d-flex align-items-left mb-0">
+          <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
+            <div
+              class="creator-profile-details__hodler-avatar mr-10px"
+              style="background-image: url('/assets/img/default_profile_pic.png')"
+            ></div>
+            {{ globalVars.truncate("lazynina", 15) }}
           </div>
-        </div>
+          <a *ngIf="row.ProfileEntryResponse"
+            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, row.ProfileEntryResponse.Username]"
+            class="d-flex align-items-center link--unstyled"
+          >
+            <div
+              class="creator-profile-details__hodler-avatar mr-10px"
+              [style.background-image]="'url(' + row.ProfileEntryResponse.ProfilePic + ')'"
+            ></div>
+            <div class="text-truncate holdings__name" style="font-size: 14px;">
+              <span>{{ globalVars.truncate(row.ProfileEntryResponse.Username, usernameTruncationLength()) }}</span>
+              <div class="text-grey9 fs-12px">
+                {{ globalVars.nanosToUSD(row.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+              </div>
+            </div>
 
-      </a>
+          </a>
+        </div>
+        <div class="col-lg-5 col-4 mb-0 d-flex align-items-center justify-flex-start">
+          <i *ngFor="let diamond of counter(row.HighestDiamondLevel)" class="icon-diamond fs-20px d-block" style="margin-right: -7px;"></i>
+        </div>
+        <div class="col-3 mb-0 d-flex align-items-center justify-content-center">
+          {{ row.TotalDiamonds }}
+        </div>
+      </div>
+
     </div>
-    <div class="col-lg-5 col-4 mb-0 d-flex align-items-center justify-flex-start">
-      <i *ngFor="let diamond of counter(row.HighestDiamondLevel)" class="icon-diamond fs-20px d-block" style="margin-right: -7px;"></i>
-    </div>
-    <div class="col-3 mb-0 d-flex align-items-center justify-content-center">
-      {{ row.TotalDiamonds }}
+
+    <div *ngIf="!isLoading && diamondSummaryList.length != 0" class="row no-gutters font-weight-bold">
+      <div class="col-4 py-15px mb-0">Total</div>
+      <div class="col-5 py-15px mb-0"><!--Blank--></div>
+      <div class="col-3 text-center py-15px mb-0">{{ totalDiamonds }}</div>
     </div>
   </div>
-
-</div>
-
-<div *ngIf="!isLoading && diamondSummaryList.length != 0" class="row no-gutters font-weight-bold">
-  <div class="col-4 py-15px mb-0">Total</div>
-  <div class="col-5 py-15px mb-0"><!--Blank--></div>
-  <div class="col-3 text-center py-15px mb-0">{{ totalDiamonds }}</div>
 </div>
