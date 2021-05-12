@@ -45,7 +45,7 @@
         </div>
       </div>
       <div *ngIf="thread.Messages.length > 0" class="fc-muted">
-        {{ globalVars.convertTstampToDateOrTime(thread.Messages[0].TstampNanos) }}
+        {{ globalVars.convertTstampToDateOrTime(thread.Messages[thread.Messages.length - 1].TstampNanos) }}
       </div>
     </div>
     <div *ngIf="thread.Messages.length > 0">
