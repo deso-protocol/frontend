@@ -28,9 +28,8 @@ export class BackendRoutes {
   static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
   static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
   static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
-  static RoutePathBuyOrSellCreatorCoin = "/api/v0/buy-or-sell-creator-coin-WVAzTWpGOFFnMlBvWXZhTFA4NjNSZGNW";
-  static RoutePathBuyOrSellCreatorCoinPreview =
-    "/api/v0/buy-or-sell-creator-coin-preview-WVAzTWpGOFFnMlBvWXZhTFA4NjNSZGNW";
+  static RoutePathBuyOrSellCreatorCoin = "/api/v0/buy-or-sell-creator-coin";
+  static RoutePathBuyOrSellCreatorCoinPreview = "/api/v0/buy-or-sell-creator-coin-preview";
   static RoutePathTransferCreatorCoin = "/api/v0/transfer-creator-coin";
   static RoutePathUpdateUserGlobalMetadata = "/api/v0/update-user-global-metadata";
   static RoutePathGetUserGlobalMetadata = "/api/v0/get-user-global-metadata";
