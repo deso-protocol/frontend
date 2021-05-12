@@ -73,9 +73,9 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         return (responseUsername && matchesUsername) || matchesPublicKey;
       });
 
-      if (!this.selectedThread) {
-        this._handleMessagesThreadClick(defaultThread);
-      }
+      // if (!this.selectedThread) {
+      //   this._handleMessagesThreadClick(defaultThread);
+      // }
 
       clearInterval(interval);
     }, 50);
