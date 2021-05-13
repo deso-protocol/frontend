@@ -87,6 +87,6 @@ export class CreatorDiamondsComponent implements OnInit {
         }
       }
     });
-    return this.globalVars.nanosToUSDNumber(total*1000);
+    return this.globalVars.nanosToUSDNumber(total);
   }
 }
