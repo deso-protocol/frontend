@@ -129,7 +129,6 @@
       }"
       *ngIf="!postContent.IsHidden"
     >
-
       <!-- Avatar -->
       <div class="feed-post__avatar-container">
         <a
@@ -257,8 +256,7 @@
         </div>
 
         <!-- Embedded Videos -->
-        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__video-embed-container"
-        >
+        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__video-embed-container">
           <iframe
             id="embed-video-player"
             [height]="getEmbedVideoHeight()"

@@ -63,10 +63,10 @@ export class CreatorDiamondsComponent implements OnInit {
 
   getDiamondPostsLink(row): string[] {
     return [
-      '/' + this.globalVars.RouteNames.USER_PREFIX,
+      "/" + this.globalVars.RouteNames.USER_PREFIX,
       this.showDiamondsGiven ? row.ProfileEntryResponse.Username : this.profile.Username,
       this.globalVars.RouteNames.DIAMONDS,
-      this.showDiamondsGiven ? this.profile.Username : row.ProfileEntryResponse.Username
+      this.showDiamondsGiven ? this.profile.Username : row.ProfileEntryResponse.Username,
     ];
   }
 
