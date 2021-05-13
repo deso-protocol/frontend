@@ -260,7 +260,7 @@
         </div>
 
         <!-- Bottom Buttons -->
-        <div class="feed-post__icon-row-holder">
+        <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">
           <!-- Like, Comment, Reclout, Share Buttons -->
           <feed-post-icon-row
             *ngIf="showIconRow"
@@ -322,14 +322,37 @@
       </div>
     </div>
   </a>
-  <div>
-    <!-- Like, Comment, Reclout, Share Buttons -->
+  <!-- 
+    This HTML is used on the main post in a thread in order to show detailed info
+    about the interactions with that thread.  TODO: We should probably break the
+    "main" post in a thread into it's own file so it can have more custom styling
+    with less code complexity.
+  -->
+  <div class="feed-post__blue-border px-30px pb-5px" *ngIf="showInteractionDetails">
+    <div class="py-10px fs-15px border-top border-bottom border-color-light-grey">
+      <span>
+        <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b> Reclouts&nbsp;
+      </span>
+      <span>
+        <b>XXX</b> Quote Reclouts&nbsp;
+      </span>
+      <span class="d-none d-lg-inline">
+        <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
+      </span>
+    </div>
+    <div class="d-lg-none py-10px fs-15px border-bottom border-color-light-grey">
+      <span>
+        <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
+      </span>
+    </div>
     <feed-post-icon-row
+      class="mt-2px"
       *ngIf="showIconRow"
       [noMaxWidth]="true"
       [post]="post"
       [postContent]="postContent"
       [parentPost]="parentPost"
+      [hideNumbers]="true"
       [afterCommentCreatedCallback]="afterCommentCreatedCallback"
       [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
     ></feed-post-icon-row>
