@@ -468,7 +468,7 @@ export class AppComponent implements OnInit {
 
   installDD() {
     const { apiKey, jsPath, ajaxListenerPath, endpoint } = environment.dd;
-    if (!apiKey || !jsPath || !ajaxListenerPath) {
+    if (!apiKey || !jsPath || !ajaxListenerPath || !endpoint) {
       return;
     }
 
