@@ -1,6 +1,12 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse  } from "../../backend-api.service";
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+  BalanceEntryResponse,
+  PostEntryResponse,
+} from "../../backend-api.service";
+import * as _ from "lodash";
 
 @Component({
   selector: "creator-diamonds",
@@ -49,27 +55,26 @@ export class CreatorDiamondsComponent implements OnInit {
     return Array(num);
   }
 
-  usernameTruncationLength(): number {
-    return this.globalVars.isMobile() ? 10 : 12;
-  }
-
-  _handleTabClick(tabName) {
-    if (tabName !== this.activeTab) {
-      this.activeTab = tabName;
-      this.showDiamondsGiven = tabName === CreatorDiamondsComponent.GIVEN;
-      this.fetchDiamonds();
-    }
-  }
-
-  _toggleActiveTab() {
-    this.activeTab = this.activeTab === CreatorDiamondsComponent.GIVEN ? CreatorDiamondsComponent.RECEIVED : CreatorDiamondsComponent.GIVEN;
-    this.showDiamondsGiven = this.activeTab === CreatorDiamondsComponent.GIVEN;
-    this.fetchDiamonds();
-  }
-
   getNoDiamondsMessage() {
     return this.showDiamondsGiven
       ? `@${this.profile.Username} has not given any diamonds yet.`
       : `No has sent @${this.profile.Username} a diamond yet.`;
+  }
+
+  getDiamondPostsLink(row): string[] {
+    return [
+      '/' + this.globalVars.RouteNames.USER_PREFIX,
+      this.showDiamondsGiven ? row.ProfileEntryResponse.Username : this.profile.Username,
+      this.globalVars.RouteNames.DIAMONDS,
+      this.showDiamondsGiven ? this.profile.Username : row.ProfileEntryResponse.Username
+    ];
+  }
+
+  onChange(event): void {
+    if (this.activeTab !== event) {
+      this.activeTab = event;
+      this.showDiamondsGiven = this.activeTab === CreatorDiamondsComponent.GIVEN;
+      this.fetchDiamonds();
+    }
   }
 }
