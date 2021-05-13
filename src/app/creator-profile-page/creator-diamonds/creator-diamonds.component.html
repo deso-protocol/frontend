@@ -29,13 +29,6 @@
       >
         <div class="row no-gutters py-10px border-bottom mb-0">
           <div class="col-lg-4 col-5 d-flex align-items-left mb-0">
-            <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
-              <div
-                class="creator-profile-details__hodler-avatar mr-10px"
-                style="background-image: url('/assets/img/default_profile_pic.png')"
-              ></div>
-              {{ globalVars.truncate("lazynina", 15) }}
-            </div>
             <a
               *ngIf="row.ProfileEntryResponse"
               [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, row.ProfileEntryResponse.Username]"
@@ -45,8 +38,8 @@
                 class="creator-profile-details__hodler-avatar mr-10px"
                 [style.background-image]="'url(' + row.ProfileEntryResponse.ProfilePic + ')'"
               ></div>
-              <div class="text-truncate holdings__name" style="font-size: 14px">
-                <span>{{ globalVars.truncate(row.ProfileEntryResponse.Username, usernameTruncationLength()) }}</span>
+              <div class="text-truncate" style="font-size: 14px" [ngStyle]="{'max-width': globalVars.isMobile() ? '100px' : '200px'}">
+                <span>{{ row.ProfileEntryResponse.Username }}</span>
                 <div class="text-grey9 fs-12px">
                   {{ globalVars.nanosToUSD(row.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
                 </div>
@@ -71,8 +64,8 @@
 
     <div *ngIf="!isLoading && diamondSummaryList.length != 0" class="row no-gutters font-weight-bold">
       <div class="col-4 py-15px mb-0">Total</div>
-      <div class="col-5 py-15px mb-0"><!--Blank--></div>
-      <div class="col-3 text-center py-15px mb-0">{{ totalDiamonds }}</div>
+      <div class="col-4 py-15px mb-0"><!--Blank--></div>
+      <div class="col-4 text-center py-15px mb-0">{{ totalDiamonds }} ≈ {{ globalVars.abbreviateNumber(valueOfAllDiamonds(), 2, true) }}</div>
     </div>
 
   </div>

@@ -77,4 +77,16 @@ export class CreatorDiamondsComponent implements OnInit {
       this.fetchDiamonds();
     }
   }
+
+  valueOfAllDiamonds(): number {
+    let total = 0;
+    this.diamondSummaryList.map((diamondSummary) => {
+      for (const diamondLevel in diamondSummary.DiamondLevelMap) {
+        if (diamondLevel in this.globalVars.diamondLevelMap) {
+          total += this.globalVars.diamondLevelMap[diamondLevel] * diamondSummary.DiamondLevelMap[diamondLevel];
+        }
+      }
+    });
+    return this.globalVars.nanosToUSDNumber(total*1000);
+  }
 }
