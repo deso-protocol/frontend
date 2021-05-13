@@ -1,13 +1,14 @@
 <div class="w-100 d-flex flex-column justify-content-start px-15px fs-15px">
+<!--  &lt;!&ndash; Tabs &ndash;&gt;-->
+<!--  <tab-selector-->
+<!--    [tabs]="[CreatorDiamondsComponent.RECEIVED, CreatorDiamondsComponent.GIVEN]"-->
+<!--    [activeTab]="activeTab"-->
+<!--    (tabClick)="_handleTabClick($event)"-->
+<!--  ></tab-selector>-->
   <div class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px">
-    Diamonds {{ activeTab.toLowerCase() }} by @{{ profile.Username }}
+    Diamonds <a (click)="_toggleActiveTab()" class="link--unstyled"><i>{{ activeTab.toLowerCase() }}</i></a> by @{{ profile.Username }}
   </div>
-  <!-- Tabs -->
-  <tab-selector
-    [tabs]="[CreatorDiamondsComponent.RECEIVED, CreatorDiamondsComponent.GIVEN]"
-    [activeTab]="activeTab"
-    (tabClick)="_handleTabClick($event)"
-  ></tab-selector>
+
 </div>
 <div>
   <div class="container fs-15px flex-grow-1">

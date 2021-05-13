@@ -61,6 +61,12 @@ export class CreatorDiamondsComponent implements OnInit {
     }
   }
 
+  _toggleActiveTab() {
+    this.activeTab = this.activeTab === CreatorDiamondsComponent.GIVEN ? CreatorDiamondsComponent.RECEIVED : CreatorDiamondsComponent.GIVEN;
+    this.showDiamondsGiven = this.activeTab === CreatorDiamondsComponent.GIVEN;
+    this.fetchDiamonds();
+  }
+
   getNoDiamondsMessage() {
     return this.showDiamondsGiven
       ? `@${this.profile.Username} has not given any diamonds yet.`
