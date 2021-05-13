@@ -495,7 +495,7 @@ export class BuyBitcloutComponent implements OnInit {
     this.backendApi.GetBitcoinFeeRateSatoshisPerKB().subscribe(
       (res: any) => {
         if (res.priority != null) {
-          this.buyBitCloutFields.bitcoinTransactionFeeRateSatoshisPerKB = 1.5 * res.priority * 1000;
+          this.buyBitCloutFields.bitcoinTransactionFeeRateSatoshisPerKB = 2.0 * res.priority * 1000;
           // console.log('Using Bitcoin sats/KB fee: ', this.buyBitCloutFields.bitcoinTransactionFeeRateSatoshisPerKB)
         } else {
           console.error("res.priority was null so didn't set default fee: ", res);
