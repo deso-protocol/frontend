@@ -609,7 +609,7 @@ export class GlobalVarsService {
     if (!this.localNode) {
       const hostname = (window as any).location.hostname;
       if (environment.production) {
-        this.localNode = `api.${hostname}`;
+        this.localNode = hostname;
       } else {
         this.localNode = `${hostname}:17001`;
       }
