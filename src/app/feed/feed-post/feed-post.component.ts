@@ -80,7 +80,7 @@ export class FeedPostComponent implements OnInit {
   @Input() showQuotedContent = true;
   @Input() hoverable = true;
 
-  @Input() showDiamondsFromSender = false;
+  @Input() showReplyingTo = false;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();

@@ -161,6 +161,10 @@ export class PostEntryResponse {
   InMempool: boolean;
   IsPinned: boolean;
   DiamondsFromSender?: number;
+}
+
+export class DiamondsPost {
+  Post: PostEntryResponse;
   // Boolean that is set to true when this is the first post at a given diamond level.
   ShowDiamondDivider?: boolean;
 }

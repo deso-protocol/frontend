@@ -58,7 +58,7 @@ export class CreatorDiamondsComponent implements OnInit {
   getNoDiamondsMessage() {
     return this.showDiamondsGiven
       ? `@${this.profile.Username} has not given any diamonds yet.`
-      : `No has sent @${this.profile.Username} a diamond yet.`;
+      : `@${this.profile.Username} has not received any diamonds yet.`;
   }
 
   getDiamondPostsLink(row): string[] {

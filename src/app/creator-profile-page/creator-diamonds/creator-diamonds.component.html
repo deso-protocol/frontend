@@ -12,10 +12,10 @@
         class="font-weight-bold fs-20px"
         style="background-color: none"
       >
-        received{{ activeTab === CreatorDiamondsComponent.RECEIVED ? "" : "" }}
+        received
       </option>
       <option [value]="CreatorDiamondsComponent.GIVEN" class="font-weight-bold fs-20px" style="background-color: none">
-        given{{ activeTab === CreatorDiamondsComponent.GIVEN ? "" : "" }}
+        given
       </option>
     </select>
     by @{{ profile.Username }}
@@ -29,10 +29,12 @@
       </div>
       <div *ngIf="!isLoading && diamondSummaryList.length == 0" class="row no-gutters pt-10px">
         <div class="d-flex align-items-center" style="margin-bottom: 0">
-          {{ getNoDiamondsMessage() }}
-          <a [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username]" *ngIf="!showDiamondsGiven">
-            Be the first!
-          </a>
+          <span>
+            {{ getNoDiamondsMessage() }}
+            <a [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username]" *ngIf="!showDiamondsGiven">
+              &nbsp;Be the first!
+            </a>
+          </span>
         </div>
       </div>
       <simple-center-loader *ngIf="isLoading"></simple-center-loader>

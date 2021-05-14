@@ -2,7 +2,7 @@ import { Component, Input } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService, DiamondsPost, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import * as _ from "lodash";
 
 @Component({
@@ -51,7 +51,7 @@ export class DiamondPostsComponent {
   static PAGE_SIZE = 10;
 
   getDatasource() {
-    return new Datasource<IAdapter<PostEntryResponse>>({
+    return new Datasource<IAdapter<DiamondsPost>>({
       get: (index, count, success) => {
         const startIdx = Math.max(index, 0);
         const endIdx = index + count - 1;
@@ -123,19 +123,22 @@ export class DiamondPostsComponent {
         if (!this.senderProfileEntryResponse) {
           this.senderProfileEntryResponse = res.SenderProfileEntryResponse;
         }
-        posts.map((post) => (post.ProfileEntryResponse = res.ReceiverProfileEntryResponse));
+        const diamondPosts = posts.map((post) => {
+          post.ProfileEntryResponse = res.ReceiverProfileEntryResponse
+          const diamondPost = new DiamondsPost();
+          diamondPost.Post = post;
+          return diamondPost;
+        });
 
         let lastDiamondLevel = this.lastDiamondLevelOnPage[page - 1];
-        console.log(lastDiamondLevel);
-        for (let ii = 0; ii < posts.length; ii++) {
-          posts[ii].ProfileEntryResponse = this.receiverProfileEntryResponse;
-          if (posts[ii].DiamondsFromSender != lastDiamondLevel) {
-            posts[ii].ShowDiamondDivider = true;
-            lastDiamondLevel = posts[ii].DiamondsFromSender;
+        for (let ii = 0; ii < diamondPosts.length; ii++) {
+          diamondPosts[ii].Post.ProfileEntryResponse = this.receiverProfileEntryResponse;
+          if (diamondPosts[ii].Post.DiamondsFromSender != lastDiamondLevel) {
+            diamondPosts[ii].ShowDiamondDivider = true;
+            lastDiamondLevel = diamondPosts[ii].Post.DiamondsFromSender;
           }
         }
-        console.log(posts.length);
-        return posts;
+        return diamondPosts;
       })
       .finally(() => {
         this.loadingFirstPage = false;
