@@ -16,6 +16,7 @@ export class BackendRoutes {
 
   static GetUsersStatelessRoute = "/api/v0/get-users-stateless";
   static RoutePathSubmitPost = "/api/v0/submit-post";
+  static RoutePathUploadImage = "/api/v0/upload-image";
   static RoutePathSubmitTransaction = "/api/v0/submit-transaction";
   static RoutePathUpdateProfile = "/api/v0/update-profile";
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
@@ -600,6 +601,22 @@ export class BackendApiService {
         return Promise.all(txnPromises).then((xxx) => res);
       }),
       catchError(this._handleError)
+    );
+  }
+
+  UploadImage(endpoint: string, UserPublicKeyBase58Check: string, file: File): Observable<any> {
+    const request = this.identityService.jwt({
+      ...this.identityService.identityServiceParamsForKey(UserPublicKeyBase58Check),
+    });
+    return request.pipe(
+      switchMap((signed) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("UserPublicKeyBase58Check", UserPublicKeyBase58Check);
+        formData.append("JWT", signed.jwt);
+
+        return this.post(endpoint, BackendRoutes.RoutePathUploadImage, formData);
+      })
     );
   }
 
