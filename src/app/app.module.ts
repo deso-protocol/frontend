@@ -101,7 +101,9 @@ import { Toast, ToastrModule } from "ngx-toastr";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
-import { CreatorDiamondsComponent } from './creator-profile-page/creator-diamonds/creator-diamonds.component';
+import { CreatorDiamondsComponent } from "./creator-profile-page/creator-diamonds/creator-diamonds.component";
+import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
+import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamond-posts.component";
 
 @NgModule({
   declarations: [
@@ -186,6 +188,8 @@ import { CreatorDiamondsComponent } from './creator-profile-page/creator-diamond
     WalletActionsDropdownComponent,
     PickACoinPageComponent,
     CreatorDiamondsComponent,
+    DiamondPostsPageComponent,
+    DiamondPostsComponent,
   ],
   imports: [
     BrowserModule,

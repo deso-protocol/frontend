@@ -16,10 +16,10 @@ export class LeftBarButtonComponent {
   constructor(public globalVars: GlobalVarsService) {}
 
   _queryParamsForLink(link: string) {
-    if(link.includes(this.globalVars.RouteNames.BROWSE)) {
-      return { stepNum: null, adminTab: null } 
+    if (link.includes(this.globalVars.RouteNames.BROWSE)) {
+      return { stepNum: null, adminTab: null };
     } else {
-      return { stepNum: null, adminTab: null, feedTab: null }
+      return { stepNum: null, adminTab: null, feedTab: null };
     }
   }
 }

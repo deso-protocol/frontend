@@ -14,15 +14,24 @@
           style="background-image: url('/assets/img/default_profile_pic.png')"
         ></div>
         <div class="d-flex flex-column">
-         <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.HODLerPublicKeyBase58Check }}</span>
-          <div class="text-grey9" style="font-size: 10px;"
-               (click)="stopEvent($event); tooltip.toggle();"
-               class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
-               matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-               [matTooltip]="getTooltipForRow(row)"
-               #tooltip="matTooltip">
-            <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px;"><i class="fas fa-exchange-alt pr-5px"></i>Received</div>
-            <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px"><i class="fas fa-check-square pr-5px"></i>Purchased</div>
+          <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.HODLerPublicKeyBase58Check }}</span>
+          <div
+            class="text-grey9"
+            style="font-size: 10px"
+            (click)="stopEvent($event); tooltip.toggle()"
+            class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="getTooltipForRow(row)"
+            #tooltip="matTooltip"
+          >
+            <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px">
+              <i class="fas fa-exchange-alt pr-5px"></i>
+              Received
+            </div>
+            <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px">
+              <i class="fas fa-check-square pr-5px"></i>
+              Purchased
+            </div>
           </div>
         </div>
       </div>
@@ -37,14 +46,23 @@
         ></div>
         <div class="d-flex flex-column">
           <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.ProfileEntryResponse.Username }}</span>
-          <div class="text-grey9" style="font-size: 10px;"
-               (click)="stopEvent($event); tooltip.toggle();"
-               class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
-               matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-               [matTooltip]="getTooltipForRow(row)"
-               #tooltip="matTooltip">
-            <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px;"><i class="fas fa-exchange-alt pr-5px"></i>Received</div>
-            <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px"><i class="fas fa-check-square pr-5px"></i>Purchased</div>
+          <div
+            class="text-grey9"
+            style="font-size: 10px"
+            (click)="stopEvent($event); tooltip.toggle()"
+            class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="getTooltipForRow(row)"
+            #tooltip="matTooltip"
+          >
+            <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px">
+              <i class="fas fa-exchange-alt pr-5px"></i>
+              Received
+            </div>
+            <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px">
+              <i class="fas fa-check-square pr-5px"></i>
+              Purchased
+            </div>
           </div>
         </div>
       </a>

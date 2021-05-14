@@ -23,6 +23,7 @@ export class BackendRoutes {
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
+  static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
   static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
@@ -159,6 +160,13 @@ export class PostEntryResponse {
   ParentPosts: PostEntryResponse[];
   InMempool: boolean;
   IsPinned: boolean;
+  DiamondsFromSender?: number;
+}
+
+export class DiamondsPost {
+  Post: PostEntryResponse;
+  // Boolean that is set to true when this is the first post at a given diamond level.
+  ShowDiamondDivider?: boolean;
 }
 
 export class PostEntryReaderState {
@@ -747,6 +755,28 @@ export class BackendApiService {
       NumToFetch,
     });
   }
+
+  GetDiamondedPosts(
+    endpoint: string,
+    ReceiverPublicKeyBase58Check: string,
+    ReceiverUsername: string,
+    SenderPublicKeyBase58Check: string,
+    SenderUsername: string,
+    ReaderPublicKeyBase58Check: string,
+    StartPostHashHex: string,
+    NumToFetch: number
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondedPosts, {
+      ReceiverPublicKeyBase58Check,
+      ReceiverUsername,
+      SenderPublicKeyBase58Check,
+      SenderUsername,
+      ReaderPublicKeyBase58Check,
+      StartPostHashHex,
+      NumToFetch,
+    });
+  }
+
   GetHodlersForPublicKey(
     endpoint: string,
     PublicKeyBase58Check: string,
@@ -915,11 +945,15 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
-  GetDiamondsForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
+  GetDiamondsForPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    FetchYouDiamonded: boolean = false
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
       PublicKeyBase58Check,
+      FetchYouDiamonded,
     });
-    return request;
   }
 
   BuyOrSellCreatorCoin(
