@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
+import { Datasource, IDatasource } from "ngx-ui-scroll";
 
 @Component({
   selector: "app-messages-page",
@@ -32,5 +33,13 @@ export class MessagesPageComponent {
       this.selectedThreadDisplayName = thread.ProfileEntryResponse.Username;
     }
     this.showThreadView = true;
+  }
+
+  _toggleSettingsTray() {
+    this.globalVars.openSettingsTray = !this.globalVars.openSettingsTray;
+  }
+
+  _settingsTrayBeOpen() {
+    return this.globalVars.openSettingsTray;
   }
 }

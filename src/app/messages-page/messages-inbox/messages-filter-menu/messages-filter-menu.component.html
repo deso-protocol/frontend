@@ -1,0 +1,29 @@
+
+<div class="flexbox-parent">
+  <!-- Filters -->
+  <div class="background-color-grey p-35px d-flex flex-row align-items-center">
+    <span class="pt-15px pb-15px">Filters:</span>
+  </div>
+
+  <!-- Sort -->
+  <div class="background-color-grey p-35px d-flex flex-row align-items-center">
+    <span class="pt-15px pb-15px">Sort:</span>
+    <div style="margin-left: 40px">
+      <change-account-selector></change-account-selector>
+    </div>
+  </div>
+
+  <!-- Apply -->
+  <div class="background-color-grey d-flex flex-row align-items-center">
+    <button
+      *ngIf="true"
+      (click)="updateGlobalMessagesPreferences"
+      class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
+    >
+      Apply
+    </button>
+    <button *ngIf="false" class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px" disabled>
+      Applying...
+    </button>
+  </div>
+</div>

@@ -102,6 +102,7 @@ import { SignUpComponent } from "./sign-up/sign-up.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
 import { CreatorDiamondsComponent } from './creator-profile-page/creator-diamonds/creator-diamonds.component';
+import { MessagesFilterMenuComponent } from './messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component';
 
 @NgModule({
   declarations: [
@@ -186,6 +187,7 @@ import { CreatorDiamondsComponent } from './creator-profile-page/creator-diamond
     WalletActionsDropdownComponent,
     PickACoinPageComponent,
     CreatorDiamondsComponent,
+    MessagesFilterMenuComponent,
   ],
   imports: [
     BrowserModule,

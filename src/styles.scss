@@ -1133,6 +1133,15 @@ $green-font-color: #19B028;
   top: -13px;
 }
 
+.messages-header-icon-row__icon {
+  font-size: 20px;
+  border-radius: 25%;
+  margin-right: 2px;
+  &:hover {
+    background-color: #CAE4F1;
+  }
+}
+
 .messages-inbox__desktop-column {
   width: 100%;
   max-width: 380px;

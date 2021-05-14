@@ -3,7 +3,6 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, User } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as _ from "lodash";
-import { Location } from "@angular/common";
 
 @Component({
   selector: "messages-inbox",
@@ -13,11 +12,21 @@ import { Location } from "@angular/common";
 export class MessagesInboxComponent implements OnInit, OnChanges {
   static CONTACT_US_USERNAME = "clippy";
 
+  static TABS = {
+    "all": "All",
+    "my-holders": "My Holders",
+    "custom": "Diamonds",
+  };
+
   @Input() messageThreads: any;
   @Input() profileMap: any;
   @Input() isMobile = false;
   @Output() selectedThreadEmitter = new EventEmitter<any>();
   selectedThread: any;
+  newMessagesFromPage: number;
+  fetchingMoreMessages: boolean = false;
+  openSettingsTray: boolean = false;
+  activeTab: string;
 
   // The contact to select by default, passed in via query param. Note: if the current user
   // doesn't have a conversation with the contact, these parameters do nothing.
@@ -29,10 +38,17 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private appData: GlobalVarsService,
   ) {
     this.route.params.subscribe((params) => {
       this.contactUsername = params.username;
+    });
+
+    this.route.queryParams.subscribe((params) => {
+      this.activeTab =
+        params.tab && params.tab in MessagesInboxComponent.TABS
+          ? MessagesInboxComponent.TABS[params.tab]
+          : "My Holders";
     });
   }
 
@@ -43,6 +59,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     }
 
     this._setSelectedThreadBasedOnDefaultThread();
+
+    this._tabClicked('All')
   }
 
   ngOnChanges(changes: any) {
@@ -50,6 +68,101 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     if (changes.messageThreads.previousValue === null && changes.messageThreads.currentValue.length > 0) {
       this.updateReadMessagesForSelectedThread();
     }
+  }
+
+  showMoreButton() {
+    return !(this.newMessagesFromPage != null && this.newMessagesFromPage < this.globalVars.messagesPerFetch);
+  }
+
+  showLoadingMessage() {
+    return this.fetchingMoreMessages;
+  }
+
+  loadMoreMessages() {
+    // If we're currently fetching messages
+    if (this.fetchingMoreMessages) {
+      return;
+    }
+
+    this.fetchingMoreMessages = true;
+    if (!this.globalVars.loggedInUser) {
+      return;
+    }
+
+    if (this.newMessagesFromPage != null && this.newMessagesFromPage == 0) {
+      return
+    }
+
+    let fetchAfterPubKey = "";
+    if (this.globalVars.messageResponse.OrderedContactsWithMessages) {
+      fetchAfterPubKey =
+        this.globalVars.messageResponse.OrderedContactsWithMessages[this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1].PublicKeyBase58Check;
+    }
+
+    this.backendApi
+      .GetMessages(
+        this.appData.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        fetchAfterPubKey,
+        this.globalVars.messagesPerFetch,
+        false,
+      )
+      .toPromise()
+      .then(
+        (res) => {
+          if (this.globalVars.pauseMessageUpdates) {
+            // We pause message updates when a user sends a messages so that we can
+            // wait for it to be sent before updating the thread.  If we do not do this the
+            // temporary message place holder would disappear until "GetMessages()" finds it.
+          } else {
+            if (!this.globalVars.messageResponse) {
+              this.globalVars.messageResponse = res;
+
+              // If globalVars already has a messageResponse, we need to consolidate.
+            } else if (JSON.stringify(this.globalVars.messageResponse) !== JSON.stringify(res)) {
+
+              // Add the new contacts
+              this.globalVars.messageResponse.OrderedContactsWithMessages =
+                this.globalVars.messageResponse.OrderedContactsWithMessages.concat(res.OrderedContactsWithMessages);
+
+              // If they're a new contact, add their read/unread status mapping
+              for (let key in res.UnreadStateByContact) {
+                this.globalVars.messageResponse.UnreadStateByContact[key] = res.UnreadStateByContact[key];
+              }
+
+              // Update the number of unread threads
+              this.globalVars.messageResponse.NumberOfUnreadThreads =
+                this.globalVars.messageResponse.NumberOfUnreadThreads + res.NumberOfUnreadThreads;
+
+              // Update the number of new messages so we know when to stop scrolling
+              this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+            }
+          }
+        },
+        (err) => {
+          console.error(this.backendApi.stringifyError(err));
+        }
+      ).finally(() => {
+      this.fetchingMoreMessages = false;
+      }
+    );
+  }
+
+  _tabClicked(tabName: any) {
+    this.activeTab = tabName;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: tabName },
+      queryParamsHandling: "merge",
+    });
+  }
+
+  _toggleSettingsTray() {
+    this.globalVars.openSettingsTray = !this.globalVars.openSettingsTray;
+  }
+
+  _settingsTrayBeOpen() {
+    return this.globalVars.openSettingsTray;
   }
 
   // This sets the thread based on the defaultContactPublicKey or defaultContactUsername URL

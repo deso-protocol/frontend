@@ -31,7 +31,7 @@
 <div class="global__mobile flex-column" *ngIf="globalVars.isMobile()">
   <left-bar-mobile></left-bar-mobile>
 
-  <div class="d-flex flex-column flex-grow-1 vh-100">
+  <div class="d-flex flex-column flex-grow-1 vh-150">
     <!-- Inbox Header -->
     <div
       *ngIf="!showThreadView"
@@ -40,6 +40,12 @@
       <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
       Messages
+
+      <!-- Settings -->
+      <div class="d-flex w-100 justify-content-end align-items-right pr-10px">
+        <i (click)="_toggleSettingsTray()"
+           class="fas fa-sliders-h cursor-pointer messages-header-icon-row__icon pt-2px"></i>
+      </div>
     </div>
 
     <!-- Thread View Header -->
