@@ -160,9 +160,10 @@ export class DiamondPostsComponent {
           currentPost.Comments = currentPost.Comments || [];
           currentPost.Comments.unshift(_.cloneDeep(newComment));
           currentPost.CommentCount += 1;
+          currentPost = _.cloneDeep(currentPost);
+          return [currentPost];
         }
-        currentPost = _.cloneDeep(currentPost);
-        return [currentPost];
+        return true;
       },
     });
   }
