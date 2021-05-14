@@ -54,6 +54,7 @@ export class GlobalVarsService {
   bitcloutToUSDExchangeRateToDisplay = "Fetching...";
 
   messageNotificationCount = 0;
+  messagesSortAlgorithm = "time"
   messagesPerFetch = 25;
   openSettingsTray = false;
 

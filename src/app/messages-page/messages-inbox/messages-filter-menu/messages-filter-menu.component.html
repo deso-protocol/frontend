@@ -1,29 +1,41 @@
 
-<div class="flexbox-parent">
-  <!-- Filters -->
-  <div class="background-color-grey p-35px d-flex flex-row align-items-center">
-    <span class="pt-15px pb-15px">Filters:</span>
+<div class="mt-15px w-100 divtext">
+  Filter for:<br>
+</div>
+
+<div class="mt-15px w-100 d-flex flex-row" style="vertical-align: middle">
+  <label class="cursor-pointer d-flex flex-row w-20"><input type="checkbox" name="checkbox" value="value">Text</label>
+</div>
+
+<div class="d-flex flex-row">
+  <div class="mt-15px w-30 divtext">
+    Sort By:
   </div>
 
-  <!-- Sort -->
-  <div class="background-color-grey p-35px d-flex flex-row align-items-center">
-    <span class="pt-15px pb-15px">Sort:</span>
-    <div style="margin-left: 40px">
-      <change-account-selector></change-account-selector>
+  <div class="d-flex flex-center w-70 pb-15px">
+    <div class="btn-group d-flex flex-center pl-20px pr-20px w-100 pt-15px" dropdown>
+      <button id="button-basic" dropdownToggle type="button" class="btn btn-secondary dropdown-toggle text-grey6"
+              aria-controls="dropdown-basic">
+        {{sortAlgorithmToText()}}<span class="caret"></span>
+      </button>
+      <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pl-20px pr-20px w-100"
+          role="menu" aria-labelledby="button-basic">
+        <li role="menuitem"><a class="dropdown-item" href="#">Most recent first</a></li>
+        <li role="menuitem"><a class="dropdown-item" href="#">Most BitClout locked first</a></li>
+        <li role="menuitem"><a class="dropdown-item" href="#">Most followed first</a></li>
+      </ul>
     </div>
   </div>
+</div>
 
+<div class="d-flex flex-center w-100 pb-15px border-bottom border-color-grey">
   <!-- Apply -->
-  <div class="background-color-grey d-flex flex-row align-items-center">
+  <div class="w-100 btn-default">
     <button
-      *ngIf="true"
-      (click)="updateGlobalMessagesPreferences"
-      class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
+      (click)="updateGlobalMessagesPreferences()"
+      class="btn btn-primary btn-lg font-weight-bold fs-13px mt-5px"
     >
-      Apply
-    </button>
-    <button *ngIf="false" class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px" disabled>
-      Applying...
+      Update
     </button>
   </div>
 </div>

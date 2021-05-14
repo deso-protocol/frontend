@@ -1160,6 +1160,11 @@ $green-font-color: #19B028;
   height: calc(100% - 160px);
 }
 
+.messages-filter-menu__checkbox {
+  margin: 0;
+  float: left;
+}
+
 .messages-thread__avatar {
   height: 45px;
   width: 45px;
@@ -1806,6 +1811,10 @@ input {
 .btn-primary {
   background-color: #005BFF;
   border-color: #005BFF;
+}
+.btn-secondary {
+  background-color: #FFFFFF;
+  border-color: $border-grey;
 }
 #foobarxyz p {
   margin: 0;

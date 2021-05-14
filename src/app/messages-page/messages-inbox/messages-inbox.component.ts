@@ -25,7 +25,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   selectedThread: any;
   newMessagesFromPage: number;
   fetchingMoreMessages: boolean = false;
-  openSettingsTray: boolean = false;
   activeTab: string;
 
   // The contact to select by default, passed in via query param. Note: if the current user
