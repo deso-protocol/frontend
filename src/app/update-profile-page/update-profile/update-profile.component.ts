@@ -123,7 +123,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.profileUpdateErrors.descriptionError = false;
     }
 
-    if (this.profilePicInput == null || this.profilePicInput.length == 0) {
+    if (
+      this.profilePicInput == null ||
+      this.profilePicInput.length == 0 ||
+      this.profilePicInput.length > 5 * 1024 * 1024 //
+    ) {
       this.profileUpdateErrors.profilePicError = true;
       hasErrors = true;
     } else {
@@ -221,6 +225,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     let fileToUpload = files.item(0);
     if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {
       this.globalVars._alertError("File selected does not have an image file type.");
+      return;
+    }
+    if (fileToUpload.size > 5 * 1024 * 1024) {
+      this.globalVars._alertError("Please upload an image that is smaller than 5MB.");
       return;
     }
     var reader = new FileReader();
