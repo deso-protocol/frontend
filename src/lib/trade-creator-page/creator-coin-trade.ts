@@ -1,5 +1,5 @@
 import { GlobalVarsService } from "../../app/global-vars.service";
-import { BackendApiService } from "../../app/backend-api.service";
+import { BackendApiService, ProfileEntryResponse } from "../../app/backend-api.service";
 import { FormControl, Validators } from "@angular/forms";
 
 export class CreatorCoinTrade {
@@ -23,7 +23,7 @@ export class CreatorCoinTrade {
   expectedBitCloutReturnedNanos: number = 0;
 
   // ProfileEntry response from server
-  creatorProfile;
+  creatorProfile: ProfileEntryResponse;
   showSlippageError: boolean;
 
   // This needs to be stored on creatorCoinTrade so that the fee is persisted if the user
@@ -59,6 +59,13 @@ export class CreatorCoinTrade {
 
   isCreatorCoinTransfer() {
     return this.tradeType === CreatorCoinTrade.TRANSFER_VERB;
+  }
+
+  isBuyingOwnCoin(): boolean {
+    return (
+      this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+      this.isBuyingCreatorCoin
+    );
   }
 
   creatorCoinCurrencyString() {
@@ -177,6 +184,9 @@ export class CreatorCoinTrade {
   }
 
   assetReturnedAmount() {
+    if (this.isBuyingOwnCoin()) {
+      return ((this.expectedCreatorCoinReturnedNanos || 0) + (this.expectedFounderRewardNanos || 0)) / 1e9;
+    }
     if (this.isBuyingCreatorCoin) {
       return (this.expectedCreatorCoinReturnedNanos || 0) / 1e9;
     } else {
@@ -284,7 +294,9 @@ export class CreatorCoinTrade {
   // 1 creator coin == how much USD?
   usdPriceOfCreatorCoin() {
     let bitCloutPerCoin;
-    if (this.isBuyingCreatorCoin) {
+    if (this.isBuyingOwnCoin()) {
+      bitCloutPerCoin = this.bitCloutToSell / this.assetReturnedAmount();
+    } else if (this.isBuyingCreatorCoin) {
       bitCloutPerCoin = (this.bitCloutToSell * 1e9) / this.expectedCreatorCoinReturnedNanos;
     } else {
       bitCloutPerCoin = this.expectedBitCloutReturnedNanos / (this.creatorCoinToSell * 1e9);
@@ -301,6 +313,11 @@ export class CreatorCoinTrade {
 
   // BitClout per creator coin
   bitCloutPriceOfCreatorCoin() {
+    if (this.isBuyingOwnCoin()) {
+      return (
+        this.bitCloutToSell / ((this.expectedCreatorCoinReturnedNanos + (this.expectedFounderRewardNanos || 0)) / 1e9)
+      );
+    }
     if (this.isBuyingCreatorCoin) {
       return this.bitCloutToSell / (this.expectedCreatorCoinReturnedNanos / 1e9);
     } else {
