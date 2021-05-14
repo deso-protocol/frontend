@@ -48,6 +48,8 @@ export class FeedCreatePostComponent implements OnInit {
   // Emits a PostEntryResponse. It would be better if this were typed.
   @Output() postCreated = new EventEmitter();
 
+  showCanvas = false;
+
   globalVars: GlobalVarsService;
   GlobalVarsService = GlobalVarsService;
 
@@ -148,6 +150,8 @@ export class FeedCreatePostComponent implements OnInit {
           this.postImageSrc = null;
           this.embedVideoURL = "";
           this.constructedEmbedVideoURL = "";
+          this.resetCanvas();
+          this.showCanvas = false;
           this.changeRef.detectChanges();
 
           // Refresh the post page.
@@ -201,14 +205,48 @@ export class FeedCreatePostComponent implements OnInit {
       this.globalVars._alertError("File is too large. Please choose a file less than 15MB");
       return;
     }
+    const resetCanvas = this.resetCanvas();
+    const imgCanvas = resetCanvas[0];
+    const imageContext = resetCanvas[1];
+    const fileType = fileToUpload.type;
+
     const reader = new FileReader();
+    reader.readAsDataURL(fileToUpload);
     reader.onload = (event: any) => {
-      const base64Image = btoa(event.target.result);
-      // image/png
-      const fileType = fileToUpload.type;
-      const src = `data:${fileType};base64,${base64Image}`;
-      this.postImageSrc = src;
+      if (fileType === "image/gif") {
+        this.postImageSrc = event.target.result;
+      } else {
+        const myImage = new Image();
+        myImage.src = event.target.result;
+        myImage.onload = (e: Event) => {
+          let width = myImage.width;
+          let height = myImage.height;
+          if (width > height) {
+            if (width > 1000) {
+              height = (1000 / width) * height;
+              width = 1000;
+            }
+          } else {
+            if (height > 1000) {
+              width = (1000 / height) * width;
+              height = 1000 / height;
+            }
+          }
+
+          imgCanvas.width = width;
+          imgCanvas.height = height;
+          this.showCanvas = true;
+          imageContext.drawImage(myImage, 0, 0, width, height);
+          this.postImageSrc = imgCanvas.toDataURL("image/webp", 0.8);
+        };
+      }
     };
-    reader.readAsBinaryString(fileToUpload);
+  }
+
+  resetCanvas(): [HTMLCanvasElement, CanvasRenderingContext2D] {
+    let imgCanvas = document.getElementById("feed-post-image-canvas") as HTMLCanvasElement;
+    let imageContext = imgCanvas.getContext("2d");
+    imageContext.clearRect(0, 0, imgCanvas.width, imgCanvas.height);
+    return [imgCanvas, imageContext]
   }
 }

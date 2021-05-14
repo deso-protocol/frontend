@@ -33,7 +33,8 @@
     <!-- Post image -->
     <div class="feed-post__image-container">
       <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
-      <img class="feed-post__image" src="{{ postImageSrc }}" />
+      <img class="feed-post__image" *ngIf="!showCanvas" src="{{ postImageSrc }}" />
+      <canvas id="feed-post-image-canvas" [ngClass]="{'d-none': !showCanvas}" class="feed-post__image"></canvas>
     </div>
     <!-- Embedded Video -->
     <div class="feed-post__video-embed-container" *ngIf="getEmbedVideoURL()">
