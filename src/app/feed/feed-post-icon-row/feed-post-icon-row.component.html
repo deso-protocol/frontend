@@ -23,7 +23,14 @@
       'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RecloutedByReader : false
     }"
   >
-    <a class="link--unstyled" dropdownToggle id="recloutActionsButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <a
+      class="link--unstyled"
+      dropdownToggle
+      id="recloutActionsButton"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
       <i class="icon-repost feed-post-icon-row__icon"></i>
     </a>
     <div class="dropdown-menu p-0 fs-12px" style="min-width: 6rem" *dropdownMenu aria-labelledby="recloutActionsButton">
@@ -81,14 +88,25 @@
   <ng-template #popTemplate>
     <div id="diamond-popover">
       <div *ngIf="!sendingDiamonds; else sendingDiamondSpinner">
-        <div (click)="expandDiamondInfo($event)">Give a diamond. <b>@{{postContent.ProfileEntryResponse.Username}}</b> will receive the amount shown as <b>a tip</b> from you, paid in <b>${{globalVars.loggedInUser.ProfileEntryResponse.Username}} coin</b>.
-          <i class="fas fa-info-circle"></i></div>
-        <div class="fs-14px w-100 mt-3 mb-1" id="diamondInfoCollapse" [collapse]="collapseDiamondInfo" [isAnimated]="true">
-          <div class="mb-2">
-            When you give a diamond:
-          </div>
+        <div (click)="expandDiamondInfo($event)">
+          Give a diamond.
+          <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
+          will receive the amount shown as
+          <b>a tip</b>
+          from you, paid in
+          <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>
+          .
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <div
+          class="fs-14px w-100 mt-3 mb-1"
+          id="diamondInfoCollapse"
+          [collapse]="collapseDiamondInfo"
+          [isAnimated]="true"
+        >
+          <div class="mb-2">When you give a diamond:</div>
           <ul class="mb-2">
-            <li> The receiver gets a tip paid in your creator coin </li>
+            <li>The receiver gets a tip paid in your creator coin</li>
             <li>A collectible badge shows up on the receiver's profile</li>
             <li>The receiver's comment on your post moves to the top</li>
           </ul>
@@ -97,25 +115,37 @@
           </div>
         </div>
         <div class="d-flex justify-content-center pt-10px">
-          <rating [max]="6" [(ngModel)]="diamondSelected" [customTemplate]="diamondRating" [readonly]="sendingDiamonds"></rating>
+          <rating
+            [max]="6"
+            [(ngModel)]="diamondSelected"
+            [customTemplate]="diamondRating"
+            [readonly]="sendingDiamonds"
+          ></rating>
           <ng-template #diamondRating let-index="index" let-value="value">
-            <div class="d-inline-block px-10px" (click)="onDiamondSelected($event, index)" [ngStyle]="{disabled: index < getCurrentDiamondLevel()}">
-              <i class="icon-diamond fs-25px d-block"
-                 [ngStyle]="{color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555'}"></i>
-              <div class="d-block fc-muted fs-12px" style="text-align: center;">{{getUSDForDiamond(index+1)}}</div>
+            <div
+              class="d-inline-block px-10px"
+              (click)="onDiamondSelected($event, index)"
+              [ngStyle]="{ disabled: index < getCurrentDiamondLevel() }"
+            >
+              <i
+                class="icon-diamond fs-25px d-block"
+                [ngStyle]="{ color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555' }"
+              ></i>
+              <div class="d-block fc-muted fs-12px" style="text-align: center">{{ getUSDForDiamond(index + 1) }}</div>
             </div>
           </ng-template>
         </div>
       </div>
       <ng-template #sendingDiamondSpinner>
-        Sending @{{postContent.ProfileEntryResponse.Username}} {{diamondSelected}} diamonds!
+        Sending @{{ postContent.ProfileEntryResponse.Username }} {{ diamondSelected }} diamonds!
         <simple-center-loader [height]="200"></simple-center-loader>
       </ng-template>
     </div>
-
   </ng-template>
-  <div class="cursor-pointer d-flex align-items-center"
-       [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }">
+  <div
+    class="cursor-pointer d-flex align-items-center"
+    [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
+  >
     <i
       [popover]="popTemplate"
       triggers=""
@@ -125,10 +155,10 @@
       [outsideClick]="true"
       #diamondPopover="bs-popover"
       class="icon-diamond feed-post-icon-row__icon p-2px"
-      style="font-size: 20px !important; padding-right: 5px;"
+      style="font-size: 20px !important; padding-right: 5px"
       (click)="diamondClickHandler($event)"
     ></i>
-      {{ postContent.DiamondCount }}
+    {{ postContent.DiamondCount }}
   </div>
 
   <div class="d-none d-lg-flex cursor-pointer align-items-center">
