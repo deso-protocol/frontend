@@ -14,22 +14,29 @@ export class MessagesFilterMenuComponent implements OnInit {
     private messagesInbox: MessagesInboxComponent,
   ) { }
 
+  public messageFilterFollowingMe = false;
+  public messageFilterIFollow = false;
+  public messageFilterHoldsMe = false;
+  public messageFilterIHold = false;
+
   ngOnInit(): void {
   }
 
   updateGlobalMessagesPreferences() {
     this.messagesInbox._toggleSettingsTray(); // Close the settings tray
+  }
 
-    this.globalVars.messagesSortAlgorithm = 'followers'; // Set globalVars message sort algorithm
+  setSortAlgorithm(s: string) {
+    this.globalVars.messagesSortAlgorithm = s;
   }
 
   sortAlgorithmToText() {
     if (this.globalVars.messagesSortAlgorithm == 'time') {
-      return 'Most Recent First';
+      return 'Most recent';
     } else if (this.globalVars.messagesSortAlgorithm == 'followers') {
-      return 'Most Followed First';
+      return 'Most followed';
     } else {
-      return 'Most BitClout Locked First';
+      return 'Most clout';
     }
   }
 }

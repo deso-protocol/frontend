@@ -1,35 +1,57 @@
-
-<div class="mt-15px w-100 divtext">
-  Filter for:<br>
+<div class="mr-15px ml-15px pt-15px pb-5px divtext font-weight-bold border-color-blue border-bottom">
+  Custom Inbox Settings
 </div>
 
-<div class="mt-15px w-100 d-flex flex-row" style="vertical-align: middle">
-  <label class="cursor-pointer d-flex flex-row w-20"><input type="checkbox" name="checkbox" value="value">Text</label>
+<div class="d-flex pt-15px pb-15px flex-row">
+  <div class="divtext w-50 align-middle">
+    Only show:
+  </div>
+
+  <div class="w-100 d-flex pl-5px flex-column">
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <input id="holdsMeCheckbox" type="checkbox" name="holdsMe" class="w-10" [(ngModel)]="messageFilterHoldsMe">
+      <label for="holdsMeCheckbox" style="margin-bottom: 0">Who holds my coin</label>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <input id="iHoldCheckbox" type="checkbox" style="vertical-align: middle;" name="iHold" class="w-10" [(ngModel)]="messageFilterIHold">
+      <label for="iHoldCheckbox" style="margin-bottom: 0">Whose coin I hold</label>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <input id="followingMeCheckbox" type="checkbox" style="vertical-align: middle;" name="followingMe" class="w-10" [(ngModel)]="messageFilterFollowingMe">
+      <label for="followingMeCheckbox" style="margin-bottom: 0">Who follows me</label>
+    </div>
+
+    <div class="mt-5px d-flex flex-row align-items-center">
+      <input id="iFollowCheckbox" type="checkbox" name="iFollow" class="w-10" [(ngModel)]="messageFilterIFollow">
+      <label for="iFollowCheckbox" style="margin-bottom: 0">Who I follow</label>
+    </div>
+  </div>
 </div>
 
 <div class="d-flex flex-row">
-  <div class="mt-15px w-30 divtext">
+  <div class="divtext w-40 align-middle">
     Sort By:
   </div>
 
-  <div class="d-flex flex-center w-70 pb-15px">
-    <div class="btn-group d-flex flex-center pl-20px pr-20px w-100 pt-15px" dropdown>
+  <div class="w-100">
+    <div class="btn-group pl-25px" dropdown>
       <button id="button-basic" dropdownToggle type="button" class="btn btn-secondary dropdown-toggle text-grey6"
               aria-controls="dropdown-basic">
         {{sortAlgorithmToText()}}<span class="caret"></span>
       </button>
-      <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pl-20px pr-20px w-100"
+      <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
           role="menu" aria-labelledby="button-basic">
-        <li role="menuitem"><a class="dropdown-item" href="#">Most recent first</a></li>
-        <li role="menuitem"><a class="dropdown-item" href="#">Most BitClout locked first</a></li>
-        <li role="menuitem"><a class="dropdown-item" href="#">Most followed first</a></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="setSortAlgorithm('time')">Most recent</a></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="setSortAlgorithm('clout')">Most clout</a></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="setSortAlgorithm('followers')">Most followers</a></li>
       </ul>
     </div>
   </div>
 </div>
 
 <div class="d-flex flex-center w-100 pb-15px border-bottom border-color-grey">
-  <!-- Apply -->
   <div class="w-100 btn-default">
     <button
       (click)="updateGlobalMessagesPreferences()"
