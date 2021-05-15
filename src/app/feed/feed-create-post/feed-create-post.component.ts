@@ -203,8 +203,13 @@ export class FeedCreatePostComponent implements OnInit {
     }
     this.backendApi
       .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, fileToUpload)
-      .subscribe((res) => {
-        this.postImageSrc = res.ImageURL;
-      });
+      .subscribe(
+        (res) => {
+          this.postImageSrc = res.ImageURL;
+        },
+        (err) => {
+          this.globalVars._alertError(JSON.stringify(err.error.error));
+        }
+      );
   }
 }
