@@ -6,7 +6,6 @@ import {BackendApiService} from "../../../backend-api.service";
 @Component({
   selector: 'app-messages-filter-menu',
   templateUrl: './messages-filter-menu.component.html',
-  styleUrls: ['./messages-filter-menu.component.scss']
 })
 export class MessagesFilterMenuComponent implements OnInit {
 
