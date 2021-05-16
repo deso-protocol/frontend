@@ -101,6 +101,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       "",
       this.globalVars.messagesPerFetch,
       this.globalVars.messagesRequestsHoldersOnly,
+      this.globalVars.messagesRequestsHoldingsOnly,
+      this.globalVars.messagesRequestsFollowersOnly,
+      this.globalVars.messagesRequestsFollowedOnly,
+      this.globalVars.messagesSortAlgorithm,
     ).subscribe(
       (res) => {
         if (this.globalVars.pauseMessageUpdates) {
@@ -148,6 +152,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         fetchAfterPubKey,
         this.globalVars.messagesPerFetch,
         this.globalVars.messagesRequestsHoldersOnly,
+        this.globalVars.messagesRequestsHoldingsOnly,
+        this.globalVars.messagesRequestsFollowersOnly,
+        this.globalVars.messagesRequestsFollowedOnly,
+        this.globalVars.messagesSortAlgorithm,
       )
       .toPromise()
       .then(
