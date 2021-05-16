@@ -228,6 +228,12 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
   _clearMessages() {
     this.newMessagesFromPage = null;
+
+    // If messageResponse isn't set, we return
+    if (!this.globalVars.messageResponse) {
+      return;
+    }
+
     this.globalVars.messageResponse.OrderedContactsWithMessages = [];
     this.globalVars.messageResponse.UnreadStateByContact = {};
     this.globalVars.messageResponse.NumberOfUnreadThreads = 0;
@@ -366,6 +372,11 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   updateReadMessagesForSelectedThread() {
+    // If selectedThread is undefined, we return
+    if (!this.selectedThread) {
+      return;
+    }
+
     let contactPubKey = this.messageThreads[0]?.PublicKeyBase58Check;
     if (this.selectedThread && this.selectedThread.PublicKeyBase58Check) {
       contactPubKey = this.selectedThread.PublicKeyBase58Check;
