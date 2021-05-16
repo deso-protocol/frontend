@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { Datasource, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
@@ -322,5 +322,31 @@ export class NotificationsListComponent implements OnInit {
       return null;
     }
     return _.truncate(_.escape(`${post.Body} ${post.ImageURLs?.[0] || ""}`));
+  }
+
+  async afterCommentCallback(uiParent, index, newComment) {
+    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiParent.post);
+    await this.datasource.adapter.relax();
+    await this.datasource.adapter.update({
+      predicate: ({ $index, data, element }) => {
+        let currentNotification = data as any;
+        if ($index === index) {
+          newComment.parentPost = currentNotification.post;
+          currentNotification.post.Comments = currentNotification.post.Comments || [];
+          currentNotification.post.Comments.unshift(_.cloneDeep(newComment));
+          currentNotification.post = this.globalVars.incrementCommentCount(currentNotification.post);
+          return [currentNotification];
+        } else if (
+          currentNotification.post &&
+          this.globalVars.getPostContentHashHex(currentNotification.post) === uiPostParentHashHex
+        ) {
+          // We also want to increment the comment count on any other notifications related to the same post hash hex.
+          currentNotification.post = this.globalVars.incrementCommentCount(currentNotification.post);
+          return [currentNotification];
+        }
+        // Leave all other items in the datasource as is.
+        return true;
+      },
+    });
   }
 }

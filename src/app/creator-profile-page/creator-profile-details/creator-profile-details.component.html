@@ -113,20 +113,9 @@
 
   <!-- Diamonds -->
   <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'Diamonds' && !loading">
-    <div class="w-100 d-flex justify-content-start px-15px fs-15px">
-      <div class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px">
-        Diamonds received by @{{ profile.Username }}
-      </div>
-    </div>
-
-    <div>
-      <div class="container fs-15px flex-grow-1">
-        <creator-diamonds [profile]="profile"></creator-diamonds>
-      </div>
-    </div>
+    <creator-diamonds [profile]="profile"></creator-diamonds>
     <div class="w-100 p-35px"></div>
   </div>
-
 </div>
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
 <div class="global__bottom-bar-mobile-height"></div>

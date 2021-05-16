@@ -80,6 +80,8 @@ export class FeedPostComponent implements OnInit {
   @Input() showQuotedContent = true;
   @Input() hoverable = true;
 
+  @Input() showReplyingTo = false;
+
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
 
@@ -190,8 +192,6 @@ export class FeedPostComponent implements OnInit {
             this._post.RecloutedPostEntryResponse?.PostHashHex || "",
             {},
             "" /*Sub*/,
-            0 /*CreatorBasisPoints*/,
-            0 /*StakeMultipleBasisPoints*/,
             true /*IsHidden*/,
             this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
           )
@@ -413,5 +413,12 @@ export class FeedPostComponent implements OnInit {
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.
   setNegativeMargins(link: string, globalVars: GlobalVarsService) {
     return globalVars.isMobile() && VideoUrlParserService.isVimeoLink(link);
+  }
+
+  mapImageURLs(imgURL: string): string {
+    if (imgURL.startsWith("https://i.imgur.com")) {
+      return imgURL.replace("https://i.imgur.com", "https://images.bitclout.com/i.imgur.com");
+    }
+    return imgURL;
   }
 }

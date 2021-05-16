@@ -16,7 +16,9 @@ export class CreatorProfileDetailsComponent {
 
   static TABS = {
     posts: "Posts",
+    // Leaving this one in so old links will direct to the Coin Purchasers tab.
     "creator-coin": "Creator Coin",
+    "coin-purchasers": "Creator Coin",
     diamonds: "Diamonds",
   };
   static TABS_LOOKUP = {

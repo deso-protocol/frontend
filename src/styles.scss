@@ -190,6 +190,7 @@ $green-font-color: #19B028;
 
 .background-color-grey { background-color: #F5F5F5; } // mocks call this G4
 .background-color-light-grey { background-color: $light-grey-for-divider; }
+.background-color-light-grey-important { background-color: $light-grey-for-divider !important }
 .background-color-light-pink { background-color: lightpink; }
 
 // Custom padding classes.
@@ -811,6 +812,8 @@ $green-font-color: #19B028;
   top: -22px;
   border: solid 1px $border-grey;
   z-index: 5; // the input has a z-index of 3 at one point.
+  max-height: 600px;
+  overflow-y: scroll;
 }
 
 .search-bar__avatar {

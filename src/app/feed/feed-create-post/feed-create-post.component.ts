@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "feed-create-post",
@@ -127,16 +128,13 @@ export class FeedCreatePostComponent implements OnInit {
         "" /*Title*/,
         {
           Body: this.postInput,
-          ImageURLs: [],
-          Images: [this.postImageSrc].filter((n) => n),
+          ImageURLs: [this.postImageSrc].filter((n) => n),
         } /*BodyObj*/,
         "",
         postExtraData,
         "" /*Sub*/,
         // TODO: Should we have different values for creator basis points and stake multiple?
         // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
-        0 /*CreatorBasisPoints*/,
-        1.25 * 100 * 100 /*StakeMultipleBasisPoints*/,
         false /*IsHidden*/,
         this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/
       )
@@ -203,14 +201,15 @@ export class FeedCreatePostComponent implements OnInit {
       this.globalVars._alertError("File is too large. Please choose a file less than 15MB");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      const base64Image = btoa(event.target.result);
-      // image/png
-      const fileType = fileToUpload.type;
-      const src = `data:${fileType};base64,${base64Image}`;
-      this.postImageSrc = src;
-    };
-    reader.readAsBinaryString(fileToUpload);
+    this.backendApi
+      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, fileToUpload)
+      .subscribe(
+        (res) => {
+          this.postImageSrc = res.ImageURL;
+        },
+        (err) => {
+          this.globalVars._alertError(JSON.stringify(err.error.error));
+        }
+      );
   }
 }

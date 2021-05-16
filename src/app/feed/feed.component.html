@@ -38,12 +38,7 @@
   </div>
 
   <!-- Tab Selector -->
-  <tab-selector
-    [tabs]="feedTabs"
-    [activeTab]="activeTab"
-    (tabClick)="_handleTabClick($event)"
-  ></
-  tab-selector>
+  <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
 
   <div [id]="getPullToRefreshMarkerId()"></div>
 

@@ -5,6 +5,7 @@ import { GlobalVarsService } from "./global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
+import { environment } from "../environments/environment";
 
 @Component({
   selector: "app-root",
@@ -374,6 +375,8 @@ export class AppComponent implements OnInit {
         }
       });
     }
+
+    this.installDD();
   }
 
   loadApp() {
@@ -404,5 +407,23 @@ export class AppComponent implements OnInit {
 
       this.globalVars.updateEverything();
     });
+  }
+
+  installDD() {
+    const { apiKey, jsPath, ajaxListenerPath, endpoint } = environment.dd;
+    if (!apiKey || !jsPath || !ajaxListenerPath || !endpoint) {
+      return;
+    }
+
+    // @ts-ignore
+    window.ddjskey = apiKey;
+    // @ts-ignore
+    window.ddoptions = { ajaxListenerPath, endpoint };
+
+    const datadomeScript = document.createElement("script");
+    const firstScript = document.getElementsByTagName("script")[0];
+    datadomeScript.async = true;
+    datadomeScript.src = jsPath;
+    firstScript.parentNode.insertBefore(datadomeScript, firstScript);
   }
 }
