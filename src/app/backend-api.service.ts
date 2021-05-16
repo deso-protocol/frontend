@@ -67,6 +67,7 @@ export class BackendRoutes {
   static RoutePathUpdateBitcoinUSDExchangeRate = "/api/v0/admin/update-bitcoin-usd-exchange-rate";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
+  static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns"
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 }
@@ -1333,6 +1334,19 @@ export class BackendApiService {
 
   GetGlobalParams(endpoint: string, UpdaterPublicKeyBase58Check: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathGetGlobalParams, UpdaterPublicKeyBase58Check, {
+      AdminPublicKey: UpdaterPublicKeyBase58Check,
+    });
+  }
+
+  EvictUnminedBitcoinTxns(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check,
+    BitcoinTxnHashes: string[],
+    DryRun: boolean,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathEvictUnminedBitcoinTxns, UpdaterPublicKeyBase58Check, {
+      BitcoinTxnHashes,
+      DryRun,
       AdminPublicKey: UpdaterPublicKeyBase58Check,
     });
   }

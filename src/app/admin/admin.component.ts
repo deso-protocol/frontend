@@ -56,6 +56,7 @@ export class AdminComponent implements OnInit {
   submittingUnrestrictUpdate = false;
   submittingWhitelistUpdate = false;
   submittingUnwhitelistUpdate = false;
+  submittingEvictUnminedBitcoinTxns = false;
 
   submittingRemovePhone = false;
   dbDetailsOpen = false;
@@ -73,6 +74,7 @@ export class AdminComponent implements OnInit {
   updatingMinimumNetworkFee = false;
   feeRateBitCloutPerKB = (1000 / 1e9).toFixed(9); // Default fee rate.
   bitcoinBlockHashOrHeight = "";
+  evictBitcoinTxnHashes = "";
   usernameToVerify = "";
   usernameForWhomToRemoveVerification = "";
   usernameToFetchVerificationAuditLogs = "";
@@ -883,6 +885,57 @@ export class AdminComponent implements OnInit {
       )
       .add(() => {
         this.submittingReprocessRequest = false;
+      });
+  }
+
+  evictBitcoinExchangeTxns(dryRun: boolean) {
+    SwalHelper.fire({
+      title: "Are you ready?",
+      html: `About to evict ${this.evictBitcoinTxnHashes} with DryRun=${dryRun}`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    })
+      .then((res: any) => {
+        if (res.isConfirmed) {
+          this.submittingEvictUnminedBitcoinTxns = true;
+          this.backendApi
+            .EvictUnminedBitcoinTxns(
+              this.globalVars.localNode,
+              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.evictBitcoinTxnHashes.split(","),
+              dryRun
+            )
+            .subscribe(
+              (res: any) => {
+                if (res == null) {
+                  this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
+                  return null;
+                }
+
+                this.globalVars._alertSuccess(
+                  `Success! Lost ${res.TotalMempoolTxns-res.MempoolTxnsLeftAfterEviction} mempool
+                  txns with ${res.TotalMempoolTxns} total txns in the mempool before eviction.
+                  Types: ${JSON.stringify(res.TxnTypesEvicted, null, 2)}.
+                  Check the response of this request in the browser's inspector for more information.`
+                );
+              },
+              (error) => {
+                console.error(error);
+                this.globalVars._alertError(this.extractError(error));
+              }
+            )
+            .add(() => {
+              this.submittingEvictUnminedBitcoinTxns = false;
+            });
+        }
+      })
+      .finally(() => {
+        this.submittingEvictUnminedBitcoinTxns = false;
       });
   }
 
