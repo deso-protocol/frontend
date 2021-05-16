@@ -329,21 +329,41 @@
     with less code complexity.
   -->
   <div class="feed-post__blue-border px-30px pb-5px" *ngIf="showInteractionDetails">
-    <div class="py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer">
-      <span (click)="openRecloutsModal($event, '')">
-        <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b> Reclouts&nbsp;
-      </span>
-      <span (click)="openQuoteRecloutsModal($event, '')">
-        <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b> Quote Reclouts&nbsp;
-      </span>
-      <span (click)="openDiamondsModal($event, '')" class="d-none d-lg-inline">
-        <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
-      </span>
-    </div>
-    <div class="d-lg-none py-10px fs-15px border-bottom border-color-light-grey cursor-pointer">
-      <span (click)="openDiamondsModal($event, '')">
-        <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
-      </span>
+    <div class="container w-100 p-0px">
+      <!-- DESKTOP --> 
+      <div class="row no-gutters d-none d-lg-block py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer">
+        <div class="d-flex justify-content-between">
+          <span (click)="openRecloutsModal($event, '')">
+            <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b> Reclouts&nbsp;
+          </span>
+          <span (click)="openQuoteRecloutsModal($event, '')">
+            <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b> Quote Reclouts&nbsp;
+          </span>
+          <span (click)="openLikesModal($event, '')">
+            <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b> Likes
+          </span>
+          <span (click)="openDiamondsModal($event, '')">
+            <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
+          </span>
+        </div>
+      </div>
+      <!-- MOBILE --> 
+      <div class="row no-gutters d-lg-none py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer">
+        <div class="col-6 mb-0" (click)="openRecloutsModal($event, '')">
+          <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b> Reclouts&nbsp;
+        </div>
+        <div class="col-6 mb-0" (click)="openQuoteRecloutsModal($event, '')">
+          <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b> Quote Reclouts&nbsp;
+        </div>
+      </div>
+      <div class="row no-gutters d-lg-none py-10px fs-15px border-bottom border-color-light-grey cursor-pointer">
+        <div (click)="openLikesModal($event, '')" class="col-6 mb-0">
+          <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b> Likes
+        </div>
+        <div (click)="openDiamondsModal($event, '')" class="col-6 mb-0">
+          <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
+        </div>
+      </div>
     </div>
     <feed-post-icon-row
       class="mt-2px"

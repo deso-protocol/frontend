@@ -105,6 +105,7 @@ import { CreatorDiamondsComponent } from './creator-profile-page/creator-diamond
 import { DiamondsModalComponent } from './diamonds-modal/diamonds-modal.component';
 import { RecloutsModalComponent } from './reclouts-modal/reclouts-modal.component';
 import { QuoteRecloutsModalComponent } from './quote-reclouts-modal/quote-reclouts-modal.component';
+import { LikesModalComponent } from './likes-modal/likes-modal.component';
 
 @NgModule({
   declarations: [
@@ -192,6 +193,7 @@ import { QuoteRecloutsModalComponent } from './quote-reclouts-modal/quote-reclou
     DiamondsModalComponent,
     RecloutsModalComponent,
     QuoteRecloutsModalComponent,
+    LikesModalComponent,
   ],
   imports: [
     BrowserModule,
