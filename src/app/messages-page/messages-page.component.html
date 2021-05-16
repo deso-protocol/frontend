@@ -39,6 +39,17 @@
     >
       <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
+      <div class="d-flex justify-content-end align-items-right pr-10px">
+        <div *ngIf="this.globalVars.messageResponse != null &&
+    this.globalVars.messageResponse.NumberOfUnreadThreads > 0 ; then thenEnvelopeBlock else elseEnvelopeBlock"></div>
+        <ng-template #thenEnvelopeBlock>
+          <i (click)="_markAllMessagesReadMobile()" class="fc-blue far fa-envelope cursor-pointer messages-header-icon-row__icon pt-2px"></i>
+        </ng-template>
+        <ng-template #elseEnvelopeBlock>
+          <i class="far fa-envelope cursor-auto fs-20px pt-2px"></i>
+        </ng-template>
+      </div>
+
       Messages
 
       <!-- Settings -->
