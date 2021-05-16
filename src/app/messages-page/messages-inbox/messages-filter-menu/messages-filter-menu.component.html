@@ -10,22 +10,22 @@
   <div class="w-100 d-flex pl-5px flex-column">
     <div class="mt-5px d-flex flex-row align-items-center">
       <input id="holdsMeCheckbox" type="checkbox" name="holdsMe" class="w-10" [(ngModel)]="messageFilterHoldsMe">
-      <label for="holdsMeCheckbox" style="margin-bottom: 0">Who holds my coin</label>
+      <label for="holdsMeCheckbox" class="cursor-pointer" style="margin-bottom: 0">Who holds my coin</label>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
       <input id="iHoldCheckbox" type="checkbox" style="vertical-align: middle;" name="iHold" class="w-10" [(ngModel)]="messageFilterIHold">
-      <label for="iHoldCheckbox" style="margin-bottom: 0">Whose coin I hold</label>
+      <label for="iHoldCheckbox" class="cursor-pointer" style="margin-bottom: 0">Whose coin I hold</label>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
       <input id="followingMeCheckbox" type="checkbox" style="vertical-align: middle;" name="followingMe" class="w-10" [(ngModel)]="messageFilterFollowingMe">
-      <label for="followingMeCheckbox" style="margin-bottom: 0">Who follows me</label>
+      <label for="followingMeCheckbox" class="cursor-pointer" style="margin-bottom: 0">Who follows me</label>
     </div>
 
     <div class="mt-5px d-flex flex-row align-items-center">
       <input id="iFollowCheckbox" type="checkbox" name="iFollow" class="w-10" [(ngModel)]="messageFilterIFollow">
-      <label for="iFollowCheckbox" style="margin-bottom: 0">Who I follow</label>
+      <label for="iFollowCheckbox" class="cursor-pointer" style="margin-bottom: 0">Who I follow</label>
     </div>
   </div>
 </div>
@@ -45,7 +45,7 @@
           role="menu" aria-labelledby="button-basic">
         <li role="menuitem"><a class="dropdown-item" (click)="setSortAlgorithm('time')">Most recent</a></li>
         <li role="menuitem"><a class="dropdown-item" (click)="setSortAlgorithm('clout')">Most clout</a></li>
-        <li role="menuitem"><a class="dropdown-item" (click)="setSortAlgorithm('followers')">Most followers</a></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="setSortAlgorithm('followers')">Most followed</a></li>
       </ul>
     </div>
   </div>
@@ -55,7 +55,7 @@
   <div class="w-100 btn-default">
     <button
       (click)="updateGlobalMessagesPreferences()"
-      class="btn btn-primary btn-lg font-weight-bold fs-13px mt-5px"
+      class="btn btn-primary btn-lg font-weight-bold mr-30px fs-13px mt-5px"
     >
       Update
     </button>

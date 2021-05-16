@@ -12,10 +12,15 @@ import * as _ from "lodash";
 export class MessagesInboxComponent implements OnInit, OnChanges {
   static CONTACT_US_USERNAME = "clippy";
 
-  static TABS = {
-    "all": "All",
+  static QUERYTOTAB = {
+    "all":        "All",
     "my-holders": "My Holders",
-    "custom": "Diamonds",
+    "custom":     "Custom",
+  };
+  static TABTOQUERY = {
+    "All":        "all",
+    "My Holders": "my-holders",
+    "Custom":     "custom"
   };
 
   @Input() messageThreads: any;
@@ -43,12 +48,22 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       this.contactUsername = params.username;
     });
 
+    // Based on the route path set the tab and update filter/sort params
     this.route.queryParams.subscribe((params) => {
       this.activeTab =
-        params.tab && params.tab in MessagesInboxComponent.TABS
-          ? MessagesInboxComponent.TABS[params.tab]
+        params.messagesTab && params.messagesTab in MessagesInboxComponent.QUERYTOTAB
+          ? MessagesInboxComponent.QUERYTOTAB[params.messagesTab]
           : "My Holders";
+      if (this.activeTab != "My Holders") {
+        this._handleTabClick(this.activeTab);
+      }
     });
+
+    // Set the filter parameters based on the tab
+    this._setMessagesFilter(this.activeTab);
+
+    // Load the initial messages for the user
+    this.loadInitialMessages();
   }
 
   ngOnInit() {
@@ -58,8 +73,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     }
 
     this._setSelectedThreadBasedOnDefaultThread();
-
-    this._tabClicked('All')
   }
 
   ngOnChanges(changes: any) {
@@ -75,6 +88,36 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
   showLoadingMessage() {
     return this.fetchingMoreMessages;
+  }
+
+  loadInitialMessages() {
+    if (!this.globalVars.loggedInUser) {
+      return;
+    }
+
+    this.backendApi.GetMessages(
+      this.appData.localNode,
+      this.globalVars.loggedInUser.PublicKeyBase58Check,
+      "",
+      this.globalVars.messagesPerFetch,
+      this.globalVars.messagesRequestsHoldersOnly,
+    ).subscribe(
+      (res) => {
+        if (this.globalVars.pauseMessageUpdates) {
+          // We pause message updates when a user sends a messages so that we can
+          // wait for it to be sent before updating the thread.  If we do not do this the
+          // temporary message place holder would disappear until "GetMessages()" finds it.
+        } else {
+          this.globalVars.messageResponse = res;
+
+          // Update the number of new messages so we know when to stop scrolling
+          this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+        }
+      },
+      (err) => {
+        console.error(this.backendApi.stringifyError(err));
+      }
+    );
   }
 
   loadMoreMessages() {
@@ -104,7 +147,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         fetchAfterPubKey,
         this.globalVars.messagesPerFetch,
-        false,
+        this.globalVars.messagesRequestsHoldersOnly,
       )
       .toPromise()
       .then(
@@ -147,20 +190,65 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     );
   }
 
-  _tabClicked(tabName: any) {
+  _setMessagesFilter(tabName: any) {
+    // Set the request parameters if it's a known tab.
+    // Custom is set in the filter menu component and saved in local storage.
+    if (tabName == "My Holders") {
+      this.globalVars.messagesRequestsHoldersOnly = true;
+      this.globalVars.messagesRequestsHoldingsOnly = false;
+      this.globalVars.messagesRequestsFollowersOnly = false;
+      this.globalVars.messagesRequestsFollowedOnly = false;
+      this.globalVars.messagesSortAlgorithm = "time";
+    } else if (tabName == "All") {
+      this.globalVars.messagesRequestsHoldersOnly = false;
+      this.globalVars.messagesRequestsHoldingsOnly = false;
+      this.globalVars.messagesRequestsFollowersOnly = false;
+      this.globalVars.messagesRequestsFollowedOnly = false;
+      this.globalVars.messagesSortAlgorithm = "time";
+    } else if (tabName == "Custom") {
+      this.globalVars.messagesRequestsHoldersOnly =
+        this.backendApi.GetStorage('customMessagesRequestsHoldersOnly');
+      this.globalVars.messagesRequestsHoldingsOnly =
+        this.backendApi.GetStorage('customMessagesRequestsHoldingsOnly');
+      this.globalVars.messagesRequestsFollowersOnly =
+        this.backendApi.GetStorage('customMessagesRequestsFollowersOnly');
+      this.globalVars.messagesRequestsFollowedOnly =
+        this.backendApi.GetStorage('customMessagesRequestsFollowedOnly');
+      this.globalVars.messagesSortAlgorithm = this.backendApi.GetStorage('customMessagesSortAlgorithm');
+    }
+  }
+
+  _clearMessages() {
+    this.newMessagesFromPage = null;
+    this.globalVars.messageResponse.OrderedContactsWithMessages = [];
+    this.globalVars.messageResponse.UnreadStateByContact = {};
+    this.globalVars.messageResponse.NumberOfUnreadThreads = 0;
+  }
+
+  _handleTabClick(tabName: any) {
+    // Clear the current messages
+    this._clearMessages();
+
+    // Set the messages filters based on the tab
+    this._setMessagesFilter(tabName);
+
+    // Make sure the tab is set in the url
     this.activeTab = tabName;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { tab: tabName },
+      queryParams: { messagesTab: MessagesInboxComponent.TABTOQUERY[tabName] },
       queryParamsHandling: "merge",
     });
+
+    // Fetch initial messages for the new tab
+    this.loadInitialMessages();
   }
 
   _toggleSettingsTray() {
     this.globalVars.openSettingsTray = !this.globalVars.openSettingsTray;
   }
 
-  _settingsTrayBeOpen() {
+  _settingsTrayIsOpen() {
     return this.globalVars.openSettingsTray;
   }
 

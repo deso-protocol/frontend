@@ -22,11 +22,11 @@
   </div>
 </div>
 
-<div *ngIf="_settingsTrayBeOpen()">
+<div *ngIf="_settingsTrayIsOpen()">
   <app-messages-filter-menu></app-messages-filter-menu>
 </div>
 
-<div *ngIf="messageThreads" class="messages-inbox__threads">
+<div *ngIf="messageThreads" class="messages-inbox__threads vh-93">
   <!-- Search -->
   <search-bar
     [isSearchForUsersToMessage]="true"

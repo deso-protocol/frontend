@@ -827,12 +827,20 @@ export class BackendApiService {
               PublicKeyBase58Check: string,
               FetchAfterPublicKeyBase58Check: string = "",
               NumToFetch: number = 25,
-              HoldersOnly: boolean = false): Observable<any> {
+              HoldersOnly: boolean = false,
+              HoldingsOnly: boolean = false,
+              FollowersOnly: boolean = false,
+              FollowingOnly: boolean = false,
+              SortAlgorithm: string = "time",): Observable<any> {
     let req = this.httpClient.post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetMessagesStateless), {
       PublicKeyBase58Check,
       FetchAfterPublicKeyBase58Check,
       NumToFetch,
       HoldersOnly,
+      HoldingsOnly,
+      FollowersOnly,
+      FollowingOnly,
+      SortAlgorithm,
     });
 
     // create an array of messages to decrypt
