@@ -342,7 +342,7 @@
           <span (click)="openLikesModal($event, '')">
             <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b> Likes
           </span>
-          <span (click)="openDiamondsModal($event, '')">
+          <span (click)="openDiamondsModal($event)">
             <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
           </span>
         </div>
@@ -360,7 +360,7 @@
         <div (click)="openLikesModal($event, '')" class="col-6 mb-0">
           <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b> Likes
         </div>
-        <div (click)="openDiamondsModal($event, '')" class="col-6 mb-0">
+        <div (click)="openDiamondsModal($event)" class="col-6 mb-0">
           <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
         </div>
       </div>

@@ -162,10 +162,13 @@ export class FeedPostComponent implements OnInit {
     });
   }
 
-  openDiamondsModal(event, imageURL) {
+  openDiamondsModal(event) {
     event.stopPropagation();
     this.modalService.show(DiamondsModalComponent, {
       class: "modal-dialog-centered",
+      initialState: {
+        postHashHex: this.post.PostHashHex,
+      },
     });
   }
 

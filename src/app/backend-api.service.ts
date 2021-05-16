@@ -44,6 +44,10 @@ export class BackendRoutes {
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
   static RoutePathSendDiamonds = "/api/v0/send-diamonds";
   static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
+  static RoutePathGetLikesForPost = "/api/v0/get-likes-for-post";
+  static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
+  static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
+  static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -901,6 +905,70 @@ export class BackendApiService {
   GetDiamondsForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
       PublicKeyBase58Check,
+    });
+    return request;
+  }
+
+  GetLikesForPost(
+    endpoint: string, 
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string,
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathGetLikesForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+    return request;
+  }
+
+  GetDiamondsForPost(
+    endpoint: string, 
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string,
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+    return request;
+  }
+
+  GetRecloutsForPost(
+    endpoint: string, 
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string,
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathGetRecloutsForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+    return request;
+  }
+
+  GetQuoteRecloutsForPost(
+    endpoint: string, 
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string,
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathGetQuoteRecloutsForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
     });
     return request;
   }
