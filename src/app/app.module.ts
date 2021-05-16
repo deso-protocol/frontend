@@ -102,6 +102,9 @@ import { SignUpComponent } from "./sign-up/sign-up.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
 import { CreatorDiamondsComponent } from './creator-profile-page/creator-diamonds/creator-diamonds.component';
+import { DiamondsModalComponent } from './diamonds-modal/diamonds-modal.component';
+import { RecloutsModalComponent } from './reclouts-modal/reclouts-modal.component';
+import { QuoteRecloutsModalComponent } from './quote-reclouts-modal/quote-reclouts-modal.component';
 
 @NgModule({
   declarations: [
@@ -186,6 +189,9 @@ import { CreatorDiamondsComponent } from './creator-profile-page/creator-diamond
     WalletActionsDropdownComponent,
     PickACoinPageComponent,
     CreatorDiamondsComponent,
+    DiamondsModalComponent,
+    RecloutsModalComponent,
+    QuoteRecloutsModalComponent,
   ],
   imports: [
     BrowserModule,

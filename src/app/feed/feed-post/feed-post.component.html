@@ -329,19 +329,19 @@
     with less code complexity.
   -->
   <div class="feed-post__blue-border px-30px pb-5px" *ngIf="showInteractionDetails">
-    <div class="py-10px fs-15px border-top border-bottom border-color-light-grey">
-      <span>
+    <div class="py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer">
+      <span (click)="openRecloutsModal($event, '')">
         <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b> Reclouts&nbsp;
       </span>
-      <span>
-        <b>XXX</b> Quote Reclouts&nbsp;
+      <span (click)="openQuoteRecloutsModal($event, '')">
+        <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b> Quote Reclouts&nbsp;
       </span>
-      <span class="d-none d-lg-inline">
+      <span (click)="openDiamondsModal($event, '')" class="d-none d-lg-inline">
         <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
       </span>
     </div>
-    <div class="d-lg-none py-10px fs-15px border-bottom border-color-light-grey">
-      <span>
+    <div class="d-lg-none py-10px fs-15px border-bottom border-color-light-grey cursor-pointer">
+      <span (click)="openDiamondsModal($event, '')">
         <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
       </span>
     </div>

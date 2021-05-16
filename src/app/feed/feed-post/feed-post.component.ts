@@ -5,6 +5,9 @@ import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
+import { DiamondsModalComponent } from "../../diamonds-modal/diamonds-modal.component";
+import { RecloutsModalComponent } from "../../reclouts-modal/reclouts-modal.component";
+import { QuoteRecloutsModalComponent } from "../../quote-reclouts-modal/quote-reclouts-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
 import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
@@ -155,6 +158,27 @@ export class FeedPostComponent implements OnInit {
       initialState: {
         imageURL,
       },
+    });
+  }
+
+  openDiamondsModal(event, imageURL) {
+    event.stopPropagation();
+    this.modalService.show(DiamondsModalComponent, {
+      class: "modal-dialog-centered",
+    });
+  }
+
+  openRecloutsModal(event, imageURL) {
+    event.stopPropagation();
+    this.modalService.show(RecloutsModalComponent, {
+      class: "modal-dialog-centered",
+    });
+  }
+
+  openQuoteRecloutsModal(event, imageURL) {
+    event.stopPropagation();
+    this.modalService.show(QuoteRecloutsModalComponent, {
+      class: "modal-dialog-centered",
     });
   }
 
