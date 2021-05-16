@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
     // We also have a meta tag in index.html that does this in a different way to make
     // sure it's nuked.
     //
+    //
     // TODO: I'm pretty sure all of this could fail on IE so we should make sure people
     // only use the app with chrome.
     Object.defineProperty(document, "referrer", {
