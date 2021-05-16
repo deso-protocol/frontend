@@ -31,7 +31,7 @@
 <div class="global__mobile flex-column" *ngIf="globalVars.isMobile()">
   <left-bar-mobile></left-bar-mobile>
 
-  <div class="d-flex flex-column flex-grow-1 vh-150">
+  <div class="d-flex flex-column flex-grow-1 vh-100">
     <!-- Inbox Header -->
     <div
       *ngIf="!showThreadView"
@@ -121,6 +121,7 @@
       ></messages-thread-view>
     </div>
   </div>
+
   <bottom-bar-mobile
     *ngIf="!showThreadView"
     class="global__bottom-bar-mobile"
