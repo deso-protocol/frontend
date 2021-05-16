@@ -67,6 +67,8 @@ export class MessagesFilterMenuComponent implements OnInit {
       return 'Most recent';
     } else if (this.messageSortAlgorithm == 'followers') {
       return 'Most followed';
+    } else if (this.messageSortAlgorithm == 'holders') {
+      return 'Largest Holders'
     } else {
       return 'Most clout';
     }
