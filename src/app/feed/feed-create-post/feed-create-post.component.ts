@@ -197,7 +197,8 @@ export class FeedCreatePostComponent implements OnInit {
 
   _handleFileInput(files: FileList) {
     const fileToUpload = files.item(0);
-    if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {
+    const fileType = fileToUpload.type;
+    if (!fileType || !fileType.startsWith("image/")) {
       this.globalVars._alertError("File selected does not have an image file type.");
       return;
     }
@@ -208,7 +209,6 @@ export class FeedCreatePostComponent implements OnInit {
     const resetCanvas = this.resetCanvas();
     const imgCanvas = resetCanvas[0];
     const imageContext = resetCanvas[1];
-    const fileType = fileToUpload.type;
 
     const reader = new FileReader();
     reader.readAsDataURL(fileToUpload);
@@ -247,6 +247,6 @@ export class FeedCreatePostComponent implements OnInit {
     let imgCanvas = document.getElementById("feed-post-image-canvas") as HTMLCanvasElement;
     let imageContext = imgCanvas.getContext("2d");
     imageContext.clearRect(0, 0, imgCanvas.width, imgCanvas.height);
-    return [imgCanvas, imageContext]
+    return [imgCanvas, imageContext];
   }
 }

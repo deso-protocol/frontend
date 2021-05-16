@@ -231,20 +231,52 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.globalVars._alertError("Please upload an image that is smaller than 5MB.");
       return;
     }
-    var reader = new FileReader();
+    const reader = new FileReader();
+    reader.readAsDataURL(fileToUpload);
     reader.onload = (event: any) => {
-      let base64Image = btoa(event.target.result);
-      // image/png
-      let fileType = fileToUpload.type;
-      let url = `data:${fileType};base64,${base64Image}`;
-      this.profilePicInput = url;
-
-      return;
+      // let base64Image = btoa(event.target.result);
+      // // image/png
+      // let fileType = fileToUpload.type;
+      // let url = `data:${fileType};base64,${base64Image}`;
+      // this.profilePicInput = url;
+      const myImage = new Image();
+      myImage.src = event.target.result;
+      myImage.onload = (e: Event) => {
+        let width = myImage.width;
+        let height = myImage.height;
+        if (width > height) {
+          if (width > 150) {
+            height = (150 / width) * height;
+            width = 150;
+          }
+        } else {
+          if (height > 150) {
+            width = (150 / height) * width;
+            height = 150 / height;
+          }
+        }
+        const resetCanvas = this.resetCanvas();
+        const imgCanvas = resetCanvas[0];
+        const imageContext = resetCanvas[1];
+        imgCanvas.width = width;
+        imgCanvas.height = height;
+        imageContext.drawImage(myImage, 0, 0, width, height);
+        this.profilePicInput = imgCanvas.toDataURL("image/webp", 0.8);
+        return;
+      };
     };
-    reader.readAsBinaryString(fileToUpload);
+  }
+
+  resetCanvas(): [HTMLCanvasElement, CanvasRenderingContext2D] {
+    let imgCanvas = document.getElementById("profile-pic-image-canvas") as HTMLCanvasElement;
+    let imageContext = imgCanvas.getContext("2d");
+    imageContext.clearRect(0, 0, imgCanvas.width, imgCanvas.height);
+    return [imgCanvas, imageContext];
   }
 
   _resetImage() {
     this.profilePicInput = "";
+    this.resetCanvas();
+    // this.showCanvas = false;
   }
 }

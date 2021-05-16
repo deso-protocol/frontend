@@ -67,6 +67,7 @@
             <div *ngIf="profilePicInput">
               <div style="height: 1rem"></div>
               <div class="update-profile__image" [style.background-image]="'url(' + profilePicInput + ')'">
+                <canvas id="profile-pic-image-canvas" class="d-none"></canvas>
                 <div (click)="_resetImage()" class="update-profile__image-delete">x</div>
               </div>
             </div>
