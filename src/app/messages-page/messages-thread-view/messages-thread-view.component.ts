@@ -89,7 +89,7 @@ export class MessagesThreadViewComponent {
     for (let ii = 0; ii < this.globalVars.messageResponse.OrderedContactsWithMessages.length; ii++) {
       // Check if we've hit the contact in the list
       if (this.globalVars.messageResponse.OrderedContactsWithMessages[ii].PublicKeyBase58Check
-          == this.messageThread.PublicKeyBase58Check) {
+          === this.messageThread.PublicKeyBase58Check) {
         // Check if this thread is already at the top
         if (ii == 0) {
           break;
@@ -97,11 +97,11 @@ export class MessagesThreadViewComponent {
 
         // Move the threads around inside OrderedContactsWithMessages to put the current thread at the top.
         let currentContact = this.globalVars.messageResponse.OrderedContactsWithMessages[ii];
-        for (let jj = ii - 1; jj >= 0; jj--) {
-          this.globalVars.messageResponse.OrderedContactsWithMessages[jj + 1] =
-            this.globalVars.messageResponse.OrderedContactsWithMessages[jj];
-        }
-        this.globalVars.messageResponse.OrderedContactsWithMessages[0] = currentContact;
+        let messagesBelow = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(ii + 1);
+        let messagesAbove = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(0, ii);
+        let newMessageList = messagesAbove.concat(messagesBelow);
+        newMessageList.unshift(currentContact);
+        this.globalVars.messageResponse.OrderedContactsWithMessages = newMessageList;
       }
     }
 

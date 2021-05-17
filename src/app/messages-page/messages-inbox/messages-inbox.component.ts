@@ -42,7 +42,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
     private router: Router,
-    private appData: GlobalVarsService,
   ) {
     this.route.params.subscribe((params) => {
       this.contactUsername = params.username;
@@ -54,7 +53,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         params.messagesTab && params.messagesTab in MessagesInboxComponent.QUERYTOTAB
           ? MessagesInboxComponent.QUERYTOTAB[params.messagesTab]
           : "My Holders";
-      if (this.activeTab != "My Holders") {
+      if (this.activeTab !== "My Holders") {
         this._handleTabClick(this.activeTab);
       }
     });
@@ -86,17 +85,13 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     return !(this.newMessagesFromPage != null && this.newMessagesFromPage < this.globalVars.messagesPerFetch);
   }
 
-  showLoadingMessage() {
-    return this.fetchingMoreMessages;
-  }
-
   loadInitialMessages() {
     if (!this.globalVars.loggedInUser) {
       return;
     }
 
     this.backendApi.GetMessages(
-      this.appData.localNode,
+      this.globalVars.localNode,
       this.globalVars.loggedInUser.PublicKeyBase58Check,
       "",
       this.globalVars.messagesPerFetch,
@@ -147,7 +142,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
     this.backendApi
       .GetMessages(
-        this.appData.localNode,
+        this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         fetchAfterPubKey,
         this.globalVars.messagesPerFetch,

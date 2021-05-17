@@ -62,11 +62,11 @@ export class MessagesFilterMenuComponent implements OnInit {
   }
 
   sortAlgorithmToText() {
-    if (this.messageSortAlgorithm == 'time') {
+    if (this.messageSortAlgorithm === 'time') {
       return 'Most recent';
-    } else if (this.messageSortAlgorithm == 'followers') {
+    } else if (this.messageSortAlgorithm === 'followers') {
       return 'Most followed';
-    } else if (this.messageSortAlgorithm == 'holders') {
+    } else if (this.messageSortAlgorithm === 'holders') {
       return 'Largest Holders'
     } else {
       return 'Most clout';
