@@ -62,21 +62,12 @@ export class MessagesFilterMenuComponent implements OnInit {
   }
 
   sortAlgorithmToText() {
-<<<<<<< HEAD
-    if (this.messageSortAlgorithm === 'time') {
-      return 'Most recent';
-    } else if (this.messageSortAlgorithm === 'followers') {
-      return 'Most followed';
-    } else if (this.messageSortAlgorithm === 'holders') {
-      return 'Largest Holders'
-=======
     if (this.messageSortAlgorithm == "time") {
       return "Most recent";
     } else if (this.messageSortAlgorithm == "followers") {
       return "Most followed";
     } else if (this.messageSortAlgorithm == "holders") {
       return "Largest Holders";
->>>>>>> ln/fix-message-routing
     } else {
       return "Most clout";
     }
