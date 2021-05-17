@@ -27,8 +27,8 @@ export class BackendRoutes {
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
   static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
-  static RoutePathMarkContactMessagesRead = "/mark-contact-messages-read";
-  static RoutePathMarkAllMessagesRead = "/mark-all-messages-read";
+  static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
+  static RoutePathMarkAllMessagesRead = "/api/v0/mark-all-messages-read";
   static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
   static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
   static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
