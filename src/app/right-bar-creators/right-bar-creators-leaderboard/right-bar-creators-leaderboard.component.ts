@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
 
 @Component({
   selector: "right-bar-creators-leaderboard",
@@ -10,6 +10,7 @@ import { BackendApiService } from "../../backend-api.service";
 })
 export class RightBarCreatorsLeaderboardComponent implements OnInit {
   static MAX_PROFILE_ENTRIES = 10;
+  static rando = Math.random();
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -53,5 +54,11 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
           this.globalVars._alertError("Error loading profiles: " + this.backendApi.stringifyError(err));
         }
       );
+
+    this.backendApi.GetBitHuntLatestProjects().subscribe((response) => console.log(response));
+  }
+
+  getDiamonds(profile: ProfileEntryResponse): number {
+    return Math.floor((RightBarCreatorsLeaderboardComponent.rando * profile.CoinEntry.BitCloutLockedNanos) / 1e9);
   }
 }

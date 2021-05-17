@@ -38,11 +38,34 @@
     <right-bar-signup></right-bar-signup>
   </div>
 
+<!--  <tab-selector [tabs]="['Gainers', 'Diamonds', 'Spotlight']" [activeTab]="'Gainers'"></tab-selector>-->
   <!-- Title -->
-  <div class="fs-15px text-grey5 font-weight-bold mb-15px">
-    <a class="link--unstyled" [routerLink]="'/' + globalVars.RouteNames.CREATORS" queryParamsHandling="merge">
-      Top Weekly Creators
-    </a>
+  <div class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column">
+<!--    <div>-->
+<!--      <a class="link&#45;&#45;unstyled" [routerLink]="'/' + globalVars.RouteNames.CREATORS" queryParamsHandling="merge">-->
+<!--        Top Weekly Gainers-->
+<!--      </a>-->
+<!--    </div>-->
+    <div>
+      Top Daily
+      <select
+        #rightBarSelect
+        id="right-bar-chart-select"
+        class="right-bar-select-box fs-15px text-grey5 font-weight-bold"
+        (change)="setSelectWidth(rightBarSelect.value)"
+      >
+        <option *ngFor="let option of chartOptions"
+          [value]="option.name"
+          style="background-color: none"
+          class="fs-15px text-grey5 font-weight-bold"
+        >
+         {{option.name}}
+        </option>
+      </select>
+      </div>
+    <div>
+      <a class="link--unstyled fs-12px text-grey7" href="https://bitcloutpulse.com" target="_blank"><i class="fas fa-external-link-alt pr-5px"></i>Powered by BitClout Pulse</a>
+    </div>
   </div>
 
   <!-- Creators -->
