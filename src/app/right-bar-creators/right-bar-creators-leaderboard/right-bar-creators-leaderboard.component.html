@@ -32,13 +32,13 @@
   </div>
 
   <div class="d-flex flex-column" style="align-items: flex-end">
-    <div class="fc-green">
+    <div class="fc-green" *ngIf="activeTab === RightBarCreatorsComponent.GAINERS.name">
       +${{ globalVars.abbreviateNumber(profileEntryResponse.CoinEntry.BitCloutLockedNanos / 1e9, 2) }}
       <img src="assets/img/logo-192.png" style="height: 20px; margin-left: -10px;"/>
     </div>
-<!--    <div class="fc-blue">-->
-<!--      {{ globalVars.abbreviateNumber(getDiamonds(profileEntryResponse), 2) }}<i class="icon-diamond"></i>-->
-<!--    </div>-->
+    <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
+      {{ globalVars.abbreviateNumber(getDiamonds(profileEntryResponse), 2) }}<i class="icon-diamond"></i>
+    </div>
     <div class="text-grey7" style="font-size: 10px">~{{ globalVars.nanosToUSD(profileEntryResponse.CoinPriceBitCloutNanos, 2) }}</div>
   </div>
 

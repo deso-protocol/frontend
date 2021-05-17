@@ -1,7 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { RightBarCreatorsComponent } from "../right-bar-creators.component";
 
 @Component({
   selector: "right-bar-creators-leaderboard",
@@ -9,8 +10,11 @@ import { BackendApiService, ProfileEntryResponse } from "../../backend-api.servi
   styleUrls: ["./right-bar-creators-leaderboard.component.scss"],
 })
 export class RightBarCreatorsLeaderboardComponent implements OnInit {
+  @Input() activeTab: string;
+
   static MAX_PROFILE_ENTRIES = 10;
   static rando = Math.random();
+  RightBarCreatorsComponent = RightBarCreatorsComponent;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -55,7 +59,7 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
         }
       );
 
-    this.backendApi.GetBitHuntLatestProjects().subscribe((response) => console.log(response));
+    // this.backendApi.GetBitHuntLatestProjects().subscribe((response) => console.log(response));
   }
 
   getDiamonds(profile: ProfileEntryResponse): number {

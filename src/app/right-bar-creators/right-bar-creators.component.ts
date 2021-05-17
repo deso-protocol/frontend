@@ -5,6 +5,10 @@ import { BackendApiService } from "../backend-api.service";
 class RightBarTabOption {
   name: string;
   width: number;
+  poweredBy: {
+    name: string;
+    link: string;
+  };
 }
 
 @Component({
@@ -16,12 +20,26 @@ export class RightBarCreatorsComponent implements OnInit {
   constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   activeTab: string;
+  selectedOptionWidth: string;
+  activeRightTabOption: RightBarTabOption;
 
   static RightBarTabKey = "RightBarTab";
 
-  static GAINERS: RightBarTabOption = { name: "Gainers", width: 90 };
-  static DIAMONDS: RightBarTabOption = { name: "Diamonded Creators", width: 190 };
-  static COMMUNITY: RightBarTabOption = { name: "Community Projects", width: 190 };
+  static GAINERS: RightBarTabOption = {
+    name: "Top Daily Gainers",
+    width: 175,
+    poweredBy: { name: "BitClout Pulse", link: "https://bitcloutpulse.com" },
+  };
+  static DIAMONDS: RightBarTabOption = {
+    name: "Top Daily Diamonded Creators",
+    width: 275,
+    poweredBy: { name: "BitClout Pulse", link: "https://bitcloutpulse.com" },
+  };
+  static COMMUNITY: RightBarTabOption = {
+    name: "Top Community Projects",
+    width: 225,
+    poweredBy: { name: "BitHunt", link: "https://bithunt.com" },
+  };
 
   chartMap = {
     [RightBarCreatorsComponent.GAINERS.name]: RightBarCreatorsComponent.GAINERS,
@@ -31,15 +49,21 @@ export class RightBarCreatorsComponent implements OnInit {
 
   ngOnInit() {
     const defaultTab = this.backendApi.GetStorage(RightBarCreatorsComponent.RightBarTabKey);
-    this.activeTab = defaultTab in this.chartMap ? defaultTab : RightBarCreatorsComponent.GAINERS.name;
-    this.selectTab();
+    this.activeTab = defaultTab in this.chartMap ? defaultTab : this.selectRandomTab();
+    this.selectTab(true);
   }
 
-  selectTab() {
-    console.log(JSON.stringify(this.activeTab));
+  selectRandomTab(): string {
+    const keys = Object.keys(this.chartMap);
+    return keys[(keys.length * Math.random()) << 0];
+  }
+
+  selectTab(skipStorage: boolean = false) {
     const rightTabOption = this.chartMap[this.activeTab];
-    const selectElement = document.getElementById("right-bar-chart-select");
-    selectElement.style.width = rightTabOption.width + "px";
-    this.backendApi.SetStorage(RightBarCreatorsComponent.RightBarTabKey, this.activeTab);
+    this.activeRightTabOption = rightTabOption;
+    this.selectedOptionWidth = rightTabOption.width + "px";
+    if (!skipStorage) {
+      this.backendApi.SetStorage(RightBarCreatorsComponent.RightBarTabKey, this.activeTab);
+    }
   }
 }

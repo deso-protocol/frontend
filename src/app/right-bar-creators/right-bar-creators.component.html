@@ -47,11 +47,12 @@
 <!--      </a>-->
 <!--    </div>-->
     <div>
-      Top Daily
+<!--      Top Daily-->
       <select
         #rightBarSelect
         id="right-bar-chart-select"
         class="right-bar-select-box fs-15px text-grey5 font-weight-bold"
+        [ngStyle]="{'width': selectedOptionWidth}"
         (change)="selectTab()"
         [(ngModel)]="activeTab"
       >
@@ -64,11 +65,12 @@
         </option>
       </select>
       </div>
-    <div>
-      <a class="link--unstyled fs-12px text-grey7" href="https://bitcloutpulse.com" target="_blank"><i class="fas fa-external-link-alt pr-5px"></i>Powered by BitClout Pulse</a>
+    <div class="pt-5px">
+      <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
+        <i class="fas fa-external-link-alt pr-5px"></i>Powered by {{activeRightTabOption.poweredBy.name}}</a>
     </div>
   </div>
 
   <!-- Creators -->
-  <right-bar-creators-leaderboard></right-bar-creators-leaderboard>
+  <right-bar-creators-leaderboard [activeTab]="activeTab"></right-bar-creators-leaderboard>
 </div>
