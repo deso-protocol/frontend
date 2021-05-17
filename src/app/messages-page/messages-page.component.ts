@@ -2,7 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
 import { Datasource, IDatasource } from "ngx-ui-scroll";
-import {BackendApiService} from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-messages-page",
@@ -18,8 +19,7 @@ export class MessagesPageComponent {
   showThreadView = false;
   AppRoutingModule = AppRoutingModule;
 
-  constructor(public globalVars: GlobalVarsService,
-              private backendApi: BackendApiService,) {}
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {}
 
   _handleMessageThreadSelectedMobile(thread: any) {
     if (!thread) {
@@ -52,8 +52,8 @@ export class MessagesPageComponent {
     }
 
     // Send an update back to the server noting that we want to mark all threads read.
-    this.backendApi.MarkAllMessagesRead(this.globalVars.localNode,
-      this.globalVars.loggedInUser.PublicKeyBase58Check)
+    this.backendApi
+      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
       .subscribe(
         () => {
           this.globalVars.logEvent("user : all-message-read");
@@ -67,6 +67,11 @@ export class MessagesPageComponent {
       );
 
     // Reflect this change in NumberOfUnreadThreads.
-    this.globalVars.messageResponse.NumberOfUnreadThreads = 0
+    this.globalVars.messageResponse.NumberOfUnreadThreads = 0;
+  }
+
+  navigateToInbox() {
+    this.selectedThread = null;
+    this.showThreadView = false;
   }
 }
