@@ -226,7 +226,6 @@ export class AppComponent implements OnInit {
     this.backendApi
       .GetAppState(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe((res: any) => {
-        this.globalVars.hasUnreadNotifications = res.HasUnreadNotifications;
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
@@ -237,13 +236,6 @@ export class AppComponent implements OnInit {
           this.globalVars.amplitude.init(res.AmplitudeKey, null, {
             apiEndpoint: res.AmplitudeDomain,
           });
-
-          // Store the password if we have one
-          if (res.Password) {
-            this.globalVars.amplitude.setUserProperties({
-              password: res.Password,
-            });
-          }
 
           // Track initial app load event so we are aware of every user
           // who visits our site (and not just those who click a button)

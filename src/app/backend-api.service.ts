@@ -64,7 +64,6 @@ export class BackendRoutes {
   static RoutePathAdminRemoveVerificationBadge = "/api/v0/admin/remove-verification-badge";
   static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
-  static RoutePathUpdateBitcoinUSDExchangeRate = "/api/v0/admin/update-bitcoin-usd-exchange-rate";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
@@ -112,10 +111,8 @@ export class User {
   PublicKeysBase58CheckFollowedByUser: string[];
   EncryptedSeedHex: string;
 
-  SeedInfo: any;
   BalanceNanos: number;
   UnminedBalanceNanos: number;
-  LocalState: any;
 
   NumActionItems: any;
   NumMessagesToRead: any;
@@ -1292,21 +1289,6 @@ export class BackendApiService {
       ToUsernameOrPublicKeyBase58Check,
       MinFeeRateNanosPerKB,
       AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
-  }
-
-  UpdateBitcoinUSDExchangeRate(
-    endpoint: string,
-    UpdaterPublicKeyBase58Check: string,
-    USDCentsPerBitcoin: number,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateBitcoinUSDExchangeRate, {
-      UpdaterPublicKeyBase58Check,
-      USDCentsPerBitcoin,
-      MinFeeRateNanosPerKB,
     });
 
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
