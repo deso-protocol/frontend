@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
+import { BsModalRef } from "ngx-bootstrap/modal";
 
 @Component({
   selector: 'diamonds-modal',
@@ -15,6 +16,7 @@ export class DiamondsModalComponent implements OnInit {
   constructor(
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
+    public bsModalRef: BsModalRef
   ) { }
 
   ngOnInit(): void {

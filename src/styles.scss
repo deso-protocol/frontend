@@ -848,6 +848,16 @@ $green-font-color: #19B028;
   flex-flow: column;
 }
 
+.interaction-modal__header {
+  height: 25px;
+}
+
+.interaction-modal__close-button {
+  margin: 0;
+  padding: 0;
+  float: none;
+}
+
 .feed-create-comment-form__reply-container {
   margin-left: 80px
 }
