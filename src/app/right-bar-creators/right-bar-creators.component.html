@@ -52,14 +52,15 @@
         #rightBarSelect
         id="right-bar-chart-select"
         class="right-bar-select-box fs-15px text-grey5 font-weight-bold"
-        (change)="setSelectWidth(rightBarSelect.value)"
+        (change)="selectTab()"
+        [(ngModel)]="activeTab"
       >
-        <option *ngFor="let option of chartOptions"
-          [value]="option.name"
+        <option *ngFor="let option of chartMap | keyvalue"
+          [value]="option.key"
           style="background-color: none"
           class="fs-15px text-grey5 font-weight-bold"
         >
-         {{option.name}}
+         {{option.key}}
         </option>
       </select>
       </div>
