@@ -27,6 +27,8 @@ export class BackendRoutes {
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
   static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
+  static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
+  static RoutePathMarkAllMessagesRead = "/api/v0/mark-all-messages-read";
   static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
   static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
   static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
@@ -65,7 +67,7 @@ export class BackendRoutes {
   static RoutePathUpdateBitcoinUSDExchangeRate = "/api/v0/admin/update-bitcoin-usd-exchange-rate";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
-  static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns"
+  static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 }
@@ -863,9 +865,26 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, FollowerPublicKeyBase58Check);
   }
 
-  GetMessages(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+  GetMessages(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    FetchAfterPublicKeyBase58Check: string = "",
+    NumToFetch: number = 25,
+    HoldersOnly: boolean = false,
+    HoldingsOnly: boolean = false,
+    FollowersOnly: boolean = false,
+    FollowingOnly: boolean = false,
+    SortAlgorithm: string = "time"
+  ): Observable<any> {
     let req = this.httpClient.post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetMessagesStateless), {
       PublicKeyBase58Check,
+      FetchAfterPublicKeyBase58Check,
+      NumToFetch,
+      HoldersOnly,
+      HoldingsOnly,
+      FollowersOnly,
+      FollowingOnly,
+      SortAlgorithm,
     });
 
     // create an array of messages to decrypt
@@ -1049,6 +1068,23 @@ export class BackendApiService {
       PublicKeyBase58Check,
       BlockPublicKeyBase58Check,
       Unblock,
+    });
+  }
+
+  MarkContactMessagesRead(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    ContactPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkContactMessagesRead, UserPublicKeyBase58Check, {
+      UserPublicKeyBase58Check,
+      ContactPublicKeyBase58Check,
+    });
+  }
+
+  MarkAllMessagesRead(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkAllMessagesRead, UserPublicKeyBase58Check, {
+      UserPublicKeyBase58Check,
     });
   }
 
@@ -1305,7 +1341,7 @@ export class BackendApiService {
     endpoint: string,
     UpdaterPublicKeyBase58Check,
     BitcoinTxnHashes: string[],
-    DryRun: boolean,
+    DryRun: boolean
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathEvictUnminedBitcoinTxns, UpdaterPublicKeyBase58Check, {
       BitcoinTxnHashes,

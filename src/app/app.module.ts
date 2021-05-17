@@ -104,6 +104,7 @@ import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.comp
 import { CreatorDiamondsComponent } from "./creator-profile-page/creator-diamonds/creator-diamonds.component";
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamond-posts.component";
+import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
 
 @NgModule({
   declarations: [
@@ -188,6 +189,7 @@ import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamon
     WalletActionsDropdownComponent,
     PickACoinPageComponent,
     CreatorDiamondsComponent,
+    MessagesFilterMenuComponent,
     DiamondPostsPageComponent,
     DiamondPostsComponent,
   ],

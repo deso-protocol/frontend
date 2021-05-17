@@ -53,7 +53,16 @@ export class GlobalVarsService {
 
   bitcloutToUSDExchangeRateToDisplay = "Fetching...";
 
+  // We keep information regarding the messages tab in global vars for smooth
+  // transitions to and from messages.
   messageNotificationCount = 0;
+  messagesSortAlgorithm = "time";
+  messagesPerFetch = 25;
+  openSettingsTray = false;
+  messagesRequestsHoldersOnly = true;
+  messagesRequestsHoldingsOnly = false;
+  messagesRequestsFollowersOnly = false;
+  messagesRequestsFollowedOnly = false;
 
   // Whether or not to show processig spinners in the UI for unmined transactions.
   showProcessingSpinners = false;

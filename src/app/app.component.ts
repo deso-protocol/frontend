@@ -145,9 +145,6 @@ export class AppComponent implements OnInit {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
-        // Fetch messages once we've updated the logged in user
-        this._updateMessages();
-
         // Convert the lists of coin balance entries into maps.
         // TODD: I've intermittently seen errors here where UsersYouHODL is null.
         // That's why I added this || [] thing. We should figure
@@ -173,60 +170,6 @@ export class AppComponent implements OnInit {
     );
 
     return observable;
-  }
-
-  _updateMessages() {
-    if (!this.globalVars.loggedInUser) {
-      return;
-    }
-
-    this.backendApi.GetMessages(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe(
-      (res) => {
-        if (this.globalVars.pauseMessageUpdates) {
-          // We pause message updates when a user sends a messages so that we can
-          // wait for it to be sent before updating the thread.  If we do not do this the
-          // temporary message place holder would disappear until "GetMessages()" finds it.
-        } else {
-          if (!this.globalVars.messageResponse) {
-            this.globalVars.messageResponse = res;
-
-            // If globalVars already has a messageResponse, we need to consolidate.
-          } else if (JSON.stringify(this.globalVars.messageResponse) !== JSON.stringify(res)) {
-            // We create maps for the new list of contacts+messages so that we can efficiently
-            // check which contacts are missing from the new list. Anything that is missing
-            // is a new thread started by the user that should appear at the top of their inbox.
-            const responseContacts = {};
-            for (const responseContact of res.OrderedContactsWithMessages) {
-              responseContacts[responseContact.PublicKeyBase58Check] = responseContact.Messages;
-            }
-
-            // Iterate over the current list of contacts and if they are missing from
-            // the new list, add them to the top of a list of missing ordered contacts.
-            const missingOrderedContacts = [];
-            for (const currentContact of this.globalVars.messageResponse.OrderedContactsWithMessages) {
-              if (!responseContacts[currentContact.PublicKeyBase58Check]) {
-                missingOrderedContacts.push(currentContact);
-              }
-            }
-
-            // Append the missing contacts to the front of the response contacts.
-            this.globalVars.messageResponse.OrderedContactsWithMessages = missingOrderedContacts.concat(
-              res.OrderedContactsWithMessages
-            );
-            this.globalVars.messageResponse.TotalMessagesByContact = res.TotalMessagesByContact;
-            this.globalVars.messageResponse.MessageReadStateByContact = res.MessageReadStateByContact;
-          }
-
-          // Update the number of messages to read.
-          this.globalVars._setNumMessagesToRead();
-
-          this.ref.detectChanges();
-        }
-      },
-      (err) => {
-        console.error(this.backendApi.stringifyError(err));
-      }
-    );
   }
 
   _updateBitCloutDisplayExchangeRate() {
