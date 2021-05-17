@@ -74,7 +74,6 @@ const routes: Routes = [
   { path: RouteNames.BUY_BITCLOUT, component: BuyBitcloutPageComponent, pathMatch: "full" },
   { path: RouteNames.PICK_A_COIN, component: PickACoinPageComponent, pathMatch: "full" },
   { path: RouteNames.INBOX_PREFIX, component: MessagesPageComponent, pathMatch: "full" },
-  { path: RouteNames.INBOX_PREFIX + "/:username", component: MessagesPageComponent, pathMatch: "full" },
   { path: RouteNames.SIGN_UP, component: SignUpComponent, pathMatch: "full" },
   { path: RouteNames.WALLET, component: WalletComponent, pathMatch: "full" },
   { path: RouteNames.UPDATE_PROFILE, component: UpdateProfilePageComponent, pathMatch: "full" },

@@ -1,11 +1,16 @@
 <!-- Top Bar -->
-<div *ngIf="!isMobile"
-     class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey">
+<div
+  *ngIf="!isMobile"
+  class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+>
   <!-- Clear Inbox -->
   <div class="d-flex justify-content-end align-items-right pr-10px">
     <div *ngIf="globalVars?.messageResponse?.NumberOfThreads > 0 ; then thenEnvelopeBlock else elseEnvelopeBlock"></div>
     <ng-template #thenEnvelopeBlock>
-      <i (click)="_markAllMessagesRead()" class="fc-blue far fa-envelope cursor-pointer messages-header-icon-row__icon pt-2px"></i>
+      <i
+        (click)="_markAllMessagesRead()"
+        class="fc-blue far fa-envelope cursor-pointer messages-header-icon-row__icon pt-2px"
+      ></i>
     </ng-template>
     <ng-template #elseEnvelopeBlock>
       <i class="far fa-envelope cursor-auto fs-20px pt-2px"></i>
@@ -16,13 +21,15 @@
 
   <!-- Settings -->
   <div class="d-flex w-100 justify-content-end align-items-right pr-10px">
-    <i (click)="_toggleSettingsTray()"
-      class="fas fa-sliders-h cursor-pointer messages-header-icon-row__icon pt-2px"></i>
+    <i
+      (click)="_toggleSettingsTray()"
+      class="fas fa-sliders-h cursor-pointer messages-header-icon-row__icon pt-2px"
+    ></i>
   </div>
 </div>
 
 <div *ngIf="_settingsTrayIsOpen()">
-  <app-messages-filter-menu></app-messages-filter-menu>
+  <messages-filter-menu></messages-filter-menu>
 </div>
 
 <div *ngIf="messageThreads" class="messages-inbox__threads vh-100">
@@ -67,4 +74,3 @@
   <div class="global__bottom-bar-mobile-height"></div>
   <div class="global__bottom-bar-mobile-height"></div>
 </div>
-

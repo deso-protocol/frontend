@@ -124,7 +124,7 @@ export class DiamondPostsComponent {
           this.senderProfileEntryResponse = res.SenderProfileEntryResponse;
         }
         const diamondPosts = posts.map((post) => {
-          post.ProfileEntryResponse = res.ReceiverProfileEntryResponse
+          post.ProfileEntryResponse = res.ReceiverProfileEntryResponse;
           const diamondPost = new DiamondsPost();
           diamondPost.Post = post;
           return diamondPost;

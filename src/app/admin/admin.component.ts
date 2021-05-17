@@ -918,7 +918,7 @@ export class AdminComponent implements OnInit {
                 }
 
                 this.globalVars._alertSuccess(
-                  `Success! Lost ${res.TotalMempoolTxns-res.MempoolTxnsLeftAfterEviction} mempool
+                  `Success! Lost ${res.TotalMempoolTxns - res.MempoolTxnsLeftAfterEviction} mempool
                   txns with ${res.TotalMempoolTxns} total txns in the mempool before eviction.
                   Types: ${JSON.stringify(res.TxnTypesEvicted, null, 2)}.
                   Check the response of this request in the browser's inspector for more information.`

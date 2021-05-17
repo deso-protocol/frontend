@@ -13,14 +13,14 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   static CONTACT_US_USERNAME = "clippy";
 
   static QUERYTOTAB = {
-    "all":        "All",
+    all: "All",
     "my-holders": "My Holders",
-    "custom":     "Custom",
+    custom: "Custom",
   };
   static TABTOQUERY = {
-    "All":        "all",
+    All: "all",
     "My Holders": "my-holders",
-    "Custom":     "custom"
+    Custom: "custom",
   };
 
   @Input() messageThreads: any;
@@ -43,10 +43,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     private route: ActivatedRoute,
     private router: Router,
   ) {
-    this.route.params.subscribe((params) => {
-      this.contactUsername = params.username;
-    });
-
     // Based on the route path set the tab and update filter/sort params
     this.route.queryParams.subscribe((params) => {
       this.activeTab =
@@ -90,33 +86,35 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.backendApi.GetMessages(
-      this.globalVars.localNode,
-      this.globalVars.loggedInUser.PublicKeyBase58Check,
-      "",
-      this.globalVars.messagesPerFetch,
-      this.globalVars.messagesRequestsHoldersOnly,
-      this.globalVars.messagesRequestsHoldingsOnly,
-      this.globalVars.messagesRequestsFollowersOnly,
-      this.globalVars.messagesRequestsFollowedOnly,
-      this.globalVars.messagesSortAlgorithm,
-    ).subscribe(
-      (res) => {
-        if (this.globalVars.pauseMessageUpdates) {
-          // We pause message updates when a user sends a messages so that we can
-          // wait for it to be sent before updating the thread.  If we do not do this the
-          // temporary message place holder would disappear until "GetMessages()" finds it.
-        } else {
-          this.globalVars.messageResponse = res;
+    this.backendApi
+      .GetMessages(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        "",
+        this.globalVars.messagesPerFetch,
+        this.globalVars.messagesRequestsHoldersOnly,
+        this.globalVars.messagesRequestsHoldingsOnly,
+        this.globalVars.messagesRequestsFollowersOnly,
+        this.globalVars.messagesRequestsFollowedOnly,
+        this.globalVars.messagesSortAlgorithm
+      )
+      .subscribe(
+        (res) => {
+          if (this.globalVars.pauseMessageUpdates) {
+            // We pause message updates when a user sends a messages so that we can
+            // wait for it to be sent before updating the thread.  If we do not do this the
+            // temporary message place holder would disappear until "GetMessages()" finds it.
+          } else {
+            this.globalVars.messageResponse = res;
 
-          // Update the number of new messages so we know when to stop scrolling
-          this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+            // Update the number of new messages so we know when to stop scrolling
+            this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+          }
+        },
+        (err) => {
+          console.error(this.backendApi.stringifyError(err));
         }
-      },
-      (err) => {
-        console.error(this.backendApi.stringifyError(err));
-      }
-    );
+      );
   }
 
   loadMoreMessages() {
@@ -131,13 +129,14 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     }
 
     if (this.newMessagesFromPage != null && this.newMessagesFromPage == 0) {
-      return
+      return;
     }
 
     let fetchAfterPubKey = "";
     if (this.globalVars.messageResponse.OrderedContactsWithMessages) {
-      fetchAfterPubKey =
-        this.globalVars.messageResponse.OrderedContactsWithMessages[this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1].PublicKeyBase58Check;
+      fetchAfterPubKey = this.globalVars.messageResponse.OrderedContactsWithMessages[
+        this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1
+      ].PublicKeyBase58Check;
     }
 
     this.backendApi
@@ -150,7 +149,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         this.globalVars.messagesRequestsHoldingsOnly,
         this.globalVars.messagesRequestsFollowersOnly,
         this.globalVars.messagesRequestsFollowedOnly,
-        this.globalVars.messagesSortAlgorithm,
+        this.globalVars.messagesSortAlgorithm
       )
       .toPromise()
       .then(
@@ -165,10 +164,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
               // If globalVars already has a messageResponse, we need to consolidate.
             } else if (JSON.stringify(this.globalVars.messageResponse) !== JSON.stringify(res)) {
-
               // Add the new contacts
-              this.globalVars.messageResponse.OrderedContactsWithMessages =
-                this.globalVars.messageResponse.OrderedContactsWithMessages.concat(res.OrderedContactsWithMessages);
+              this.globalVars.messageResponse.OrderedContactsWithMessages = this.globalVars.messageResponse.OrderedContactsWithMessages.concat(
+                res.OrderedContactsWithMessages
+              );
 
               // If they're a new contact, add their read/unread status mapping
               for (let key in res.UnreadStateByContact) {
@@ -187,10 +186,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         (err) => {
           console.error(this.backendApi.stringifyError(err));
         }
-      ).finally(() => {
-      this.fetchingMoreMessages = false;
-      }
-    );
+      )
+      .finally(() => {
+        this.fetchingMoreMessages = false;
+      });
   }
 
   _setMessagesFilter(tabName: any) {
@@ -209,15 +208,11 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       this.globalVars.messagesRequestsFollowedOnly = false;
       this.globalVars.messagesSortAlgorithm = "time";
     } else if (tabName == "Custom") {
-      this.globalVars.messagesRequestsHoldersOnly =
-        this.backendApi.GetStorage('customMessagesRequestsHoldersOnly');
-      this.globalVars.messagesRequestsHoldingsOnly =
-        this.backendApi.GetStorage('customMessagesRequestsHoldingsOnly');
-      this.globalVars.messagesRequestsFollowersOnly =
-        this.backendApi.GetStorage('customMessagesRequestsFollowersOnly');
-      this.globalVars.messagesRequestsFollowedOnly =
-        this.backendApi.GetStorage('customMessagesRequestsFollowedOnly');
-      this.globalVars.messagesSortAlgorithm = this.backendApi.GetStorage('customMessagesSortAlgorithm');
+      this.globalVars.messagesRequestsHoldersOnly = this.backendApi.GetStorage("customMessagesRequestsHoldersOnly");
+      this.globalVars.messagesRequestsHoldingsOnly = this.backendApi.GetStorage("customMessagesRequestsHoldingsOnly");
+      this.globalVars.messagesRequestsFollowersOnly = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");
+      this.globalVars.messagesRequestsFollowedOnly = this.backendApi.GetStorage("customMessagesRequestsFollowedOnly");
+      this.globalVars.messagesSortAlgorithm = this.backendApi.GetStorage("customMessagesSortAlgorithm");
     }
   }
 
@@ -297,8 +292,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     }
 
     // Send an update back to the server noting that we want to mark all threads read.
-    this.backendApi.MarkAllMessagesRead(this.globalVars.localNode,
-      this.globalVars.loggedInUser.PublicKeyBase58Check)
+    this.backendApi
+      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
       .subscribe(
         () => {
           this.globalVars.logEvent("user : all-message-read");
@@ -312,7 +307,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       );
 
     // Reflect this change in NumberOfUnreadThreads.
-    this.globalVars.messageResponse.NumberOfUnreadThreads = 0
+    this.globalVars.messageResponse.NumberOfUnreadThreads = 0;
   }
 
   _getThreadWithPubKey(pubKey: string) {
@@ -355,15 +350,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     this.selectedThread = thread;
     this.selectedThreadEmitter.emit(thread);
     this.updateReadMessagesForSelectedThread();
-    if (thread) {
-      this.router.navigate(
-        [
-          "/" + this.globalVars.RouteNames.INBOX_PREFIX,
-          thread.ProfileEntryResponse?.Username || thread.PublicKeyBase58Check,
-        ],
-        { queryParamsHandling: "merge" }
-      );
-    }
   }
 
   updateReadMessagesForSelectedThread() {
@@ -382,20 +368,23 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     this.globalVars._setNumMessagesToRead();
 
     // Send an update back to the server noting that we read this thread.
-    this.backendApi.MarkContactMessagesRead(this.globalVars.localNode,
-      this.globalVars.loggedInUser.PublicKeyBase58Check,
-      this.selectedThread.PublicKeyBase58Check)
+    this.backendApi
+      .MarkContactMessagesRead(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.selectedThread.PublicKeyBase58Check
+      )
       .subscribe(
-      () => {
-        this.globalVars.logEvent("user : message-read");
-      },
-      (err) => {
-        console.log(err);
-        const parsedError = this.backendApi.stringifyError(err);
-        this.globalVars.logEvent("user : message-read : error", { parsedError });
-        this.globalVars._alertError(parsedError);
-      }
-    );
+        () => {
+          this.globalVars.logEvent("user : message-read");
+        },
+        (err) => {
+          console.log(err);
+          const parsedError = this.backendApi.stringifyError(err);
+          this.globalVars.logEvent("user : message-read : error", { parsedError });
+          this.globalVars._alertError(parsedError);
+        }
+      );
 
     // Reflect the new read receipt in the NumberOfUnreadThreads
     this.globalVars.messageResponse.NumberOfUnreadThreads -= 1;
