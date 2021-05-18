@@ -234,11 +234,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     const reader = new FileReader();
     reader.readAsDataURL(fileToUpload);
     reader.onload = (event: any) => {
-      // let base64Image = btoa(event.target.result);
-      // // image/png
-      // let fileType = fileToUpload.type;
-      // let url = `data:${fileType};base64,${base64Image}`;
-      // this.profilePicInput = url;
       const myImage = new Image();
       myImage.src = event.target.result;
       myImage.onload = (e: Event) => {
@@ -277,6 +272,5 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   _resetImage() {
     this.profilePicInput = "";
     this.resetCanvas();
-    // this.showCanvas = false;
   }
 }

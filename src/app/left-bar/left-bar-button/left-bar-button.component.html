@@ -7,7 +7,6 @@
     queryParamsHandling="merge"
     routerLinkActive
     #rla="routerLinkActive"
-    [routerLinkActiveOptions]="{ exact: true }"
     [ngClass]="{
       'left-bar__dot-unread': isUnread,
       'left-bar__dot-inactive': !rla.isActive,
@@ -25,7 +24,6 @@
       [routerLink]="[link]"
       [queryParams]="_queryParamsForLink(link)"
       [routerLinkActive]="['font-weight-bold', 'fc-default']"
-      [routerLinkActiveOptions]="{ exact: true }"
       queryParamsHandling="merge"
     >
       {{ buttonLabel }}

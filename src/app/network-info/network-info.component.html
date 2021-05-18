@@ -53,10 +53,7 @@
       <span>
         {{ globalVars.nodeInfo.BitCloutStatus.LatestHeaderHeight }}
       </span>
-      <div
-        (click)="_copyNetworkInfo('lastBlockHeight')"
-        class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px"
-      >
+      <div (click)="_copyNetworkInfo('lastBlockHeight')" class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px">
         <i class="far fa-copy fa-xs"></i>
       </div>
       <div *ngIf="isCopied.lastBlockHeight" class="fs-15px px-5px py-0px">
@@ -145,11 +142,7 @@
       </div>
       <div *ngIf="updatingMiners" class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px">Updating</div>
     </div>
-    <div
-      *ngIf="!stoppingMiners"
-      (click)="stopMining()"
-      class="btn btn-outline-secondary fs-15px lh-15px p-5px mt-10px"
-    >
+    <div *ngIf="!stoppingMiners" (click)="stopMining()" class="btn btn-outline-secondary fs-15px lh-15px p-5px mt-10px">
       Stop Mining
     </div>
     <div *ngIf="stoppingMiners" class="btn btn-outline-secondary fs-15px lh-15px p-5px mt-10px">Stopping</div>

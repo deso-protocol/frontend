@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "feed-create-post",
@@ -129,8 +130,7 @@ export class FeedCreatePostComponent implements OnInit {
         "" /*Title*/,
         {
           Body: this.postInput,
-          ImageURLs: [],
-          Images: [this.postImageSrc].filter((n) => n),
+          ImageURLs: [this.postImageSrc].filter((n) => n),
         } /*BodyObj*/,
         "",
         postExtraData,
@@ -238,6 +238,17 @@ export class FeedCreatePostComponent implements OnInit {
           this.showCanvas = true;
           imageContext.drawImage(myImage, 0, 0, width, height);
           this.postImageSrc = imgCanvas.toDataURL("image/webp", 0.8);
+          // TODO: fix upload image to take a base64 encoded webp string
+          // this.backendApi
+          //   .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, fileToUpload)
+          //   .subscribe(
+          //     (res) => {
+          //       this.postImageSrc = res.ImageURL;
+          //     },
+          //     (err) => {
+          //       this.globalVars._alertError(JSON.stringify(err.error.error));
+          //     }
+          //   );
         };
       }
     };

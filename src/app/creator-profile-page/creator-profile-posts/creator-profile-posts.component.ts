@@ -121,19 +121,23 @@ export class CreatorProfilePostsComponent {
       });
   }
 
-  async _prependComment(uiPostParent, newComment) {
+  async _prependComment(uiPostParent, index, newComment) {
+    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
       predicate: ({ $index, data, element }) => {
         let currentPost = (data as any) as PostEntryResponse;
-        if (currentPost.PostHashHex === uiPostParent.PostHashHex) {
+        if ($index === index) {
           newComment.parentPost = currentPost;
           currentPost.Comments = currentPost.Comments || [];
           currentPost.Comments.unshift(_.cloneDeep(newComment));
-          currentPost.CommentCount += 1;
+          return [this.globalVars.incrementCommentCount(currentPost)];
+        } else if (this.globalVars.getPostContentHashHex(currentPost) === uiPostParentHashHex) {
+          // We also want to increment the comment count on any other notifications related to the same post hash hex.
+          return [this.globalVars.incrementCommentCount(currentPost)];
         }
-        currentPost = _.cloneDeep(currentPost);
-        return [currentPost];
+        // Leave all other items in the datasource as is.
+        return true;
       },
     });
   }
