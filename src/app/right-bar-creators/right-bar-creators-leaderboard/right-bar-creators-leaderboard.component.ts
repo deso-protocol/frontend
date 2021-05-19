@@ -3,6 +3,9 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
 import { RightBarCreatorsComponent } from "../right-bar-creators.component";
+import { HttpClient } from "@angular/common/http";
+import { forkJoin, of } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 @Component({
   selector: "right-bar-creators-leaderboard",
@@ -16,11 +19,20 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
   static rando = Math.random();
   RightBarCreatorsComponent = RightBarCreatorsComponent;
 
+  topGainers: any[];
+  topGainerProfiles: any[] = [];
+  topGainersLoaded = false;
+
+  topDiamonded: any[];
+  topDiamondProfiles: any[] = [];
+  topDiamondedLoaded = false;
+
   constructor(
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private _router: Router,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private httpClient: HttpClient
   ) {}
 
   ngOnInit() {
@@ -58,7 +70,37 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
           this.globalVars._alertError("Error loading profiles: " + this.backendApi.stringifyError(err));
         }
       );
-
+    this.httpClient
+      .get("https://www.bitcloutpulse.com/api/bitclout/leaderboard/bitclout_locked_24h?ref=bcl")
+      .subscribe((res: any) => {
+        this.topGainers = res.results;
+        forkJoin(
+          this.topGainers.map((gainer) =>
+            this.backendApi
+              .GetSingleProfile(this.globalVars.localNode, gainer["public_key"], null)
+              .pipe(catchError((err) => of(null)))
+          )
+        ).subscribe({
+          next: (value: any) => {
+            for (let ii = 0; ii < value.length; ii++) {
+              if (value[ii]) {
+                this.topGainerProfiles.push({
+                  Profile: value[ii].Profile,
+                  BitcloutLockedGained: this.topGainers[ii]["net_change_24h_bitclout_nanos"],
+                });
+              }
+            }
+          },
+          // error: (error: any) => {
+          //   this.topGainerProfiles.push(null);
+          //   console.log(error);
+          // },
+          complete: () => {
+            this.topGainersLoaded = true;
+            console.log(this.topGainerProfiles);
+          },
+        });
+      });
     // this.backendApi.GetBitHuntLatestProjects().subscribe((response) => console.log(response));
   }
 
