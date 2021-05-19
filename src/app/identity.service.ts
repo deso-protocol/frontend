@@ -183,8 +183,6 @@ export class IdentityService {
       this.handleStorageGranted();
     } else if (method === "login") {
       this.handleLogin(payload);
-    } else if (method === "import") {
-      this.handleImport(id);
     } else if (method === "info") {
       this.handleInfo(id);
     } else {
