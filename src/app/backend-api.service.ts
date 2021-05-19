@@ -44,7 +44,6 @@ export class BackendRoutes {
   static RoutePathBlockPublicKey = "/api/v0/block-public-key";
   static RoutePathGetBlockTemplate = "/api/v0/get-block-template";
   static RoutePathGetTxn = "/api/v0/get-txn";
-  static RoutePathGetIdentities = "/api/v0/get-identities";
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
   static RoutePathSendDiamonds = "/api/v0/send-diamonds";
   static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
@@ -216,9 +215,6 @@ export class BackendApiService {
 
   // Store sent messages and associated metadata in localStorage
   MessageMetaKey = "messageMetaKey";
-
-  // Store successful identityService.import result in localStorage
-  IdentityImportCompleteKey = "identityImportComplete";
 
   // Store the identity users in localStorage
   IdentityUsersKey = "identityUsers";
@@ -397,12 +393,6 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.RoutePathGetTxn, {
       TxnHashHex,
     });
-  }
-
-  GetIdentities(endpoint: string): Observable<any> {
-    return this.httpClient
-      .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetIdentities), {}, { withCredentials: true })
-      .pipe(catchError(this._handleError));
   }
 
   DeleteIdentities(endpoint: string): Observable<any> {

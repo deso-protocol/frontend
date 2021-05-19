@@ -21,9 +21,6 @@ export class IdentityService {
   identityServiceURL: string;
   sanitizedIdentityServiceURL;
 
-  // Importing identities
-  importingIdentities: any[];
-
   // User data
   identityServiceUsers;
   identityServicePublicKeyAdded: string;
@@ -151,10 +148,6 @@ export class IdentityService {
     this.identityWindowSubject.next(payload);
     this.identityWindowSubject.complete();
     this.identityWindowSubject = null;
-  }
-
-  private handleImport(id: string) {
-    this.respond(this.identityWindow, id, { identities: this.importingIdentities });
   }
 
   private handleInfo(id: string) {
