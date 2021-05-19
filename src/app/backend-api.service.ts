@@ -69,6 +69,10 @@ export class BackendRoutes {
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
+
+  // Wyre routes.
+  static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
+  static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
 }
 
 export class Transaction {
@@ -1340,6 +1344,21 @@ export class BackendApiService {
         return res.FullTikTokURL;
       })
     );
+  }
+
+  // Wyre
+  GetWyreWalletOrderQuotation(endpoint: string, BtcAddress: string, SourceAmount: number): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderQuotation, {
+      BtcAddress,
+      SourceAmount,
+    });
+  }
+
+  GetWyreWalletOrderReservation(endpoint: string, BtcAddress: string, SourceAmount: number): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderReservation, {
+      BtcAddress,
+      SourceAmount,
+    });
   }
 
   // Error parsing

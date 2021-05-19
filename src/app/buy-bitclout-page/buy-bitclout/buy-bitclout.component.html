@@ -22,10 +22,13 @@
           .
         </div>
 
-        <!-- Spacer -->
-        <div style="height: 60px"></div>
-
-        <div>
+        <div class="pb-15px">
+          <tab-selector [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)" ></tab-selector>
+        </div>
+        <div *ngIf="activeTab === BuyBitcloutComponent.BUY_WITH_USD">
+          <buy-bitclout-usd></buy-bitclout-usd>
+        </div>
+        <div *ngIf="activeTab === BuyBitcloutComponent.BUY_WITH_BTC">
           <!-- Step One Box -->
           <div class="w-100 border-top border-color-grey">
             <div
