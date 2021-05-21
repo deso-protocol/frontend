@@ -350,12 +350,6 @@ export class BackendApiService {
     );
   }
 
-  GetBitHuntLatestProjects(): Observable<any> {
-    return this.httpClient
-      .get<any>("https://bitclouthunt-api.onrender.com/v1/latest-projects")
-      .pipe(catchError(this._handleError));
-  }
-
   GetExchangeRate(endpoint: string): Observable<any> {
     return this.get(endpoint, BackendRoutes.ExchangeRateRoute);
   }

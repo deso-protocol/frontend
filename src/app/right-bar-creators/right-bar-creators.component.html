@@ -45,22 +45,25 @@
         #rightBarSelect
         id="right-bar-chart-select"
         class="right-bar-select-box fs-15px text-grey5 font-weight-bold"
-        [ngStyle]="{'width': selectedOptionWidth}"
+        [ngStyle]="{ width: selectedOptionWidth }"
         (change)="selectTab()"
         [(ngModel)]="activeTab"
       >
-        <option *ngFor="let option of chartMap | keyvalue"
+        <option
+          *ngFor="let option of chartMap | keyvalue"
           [value]="option.key"
           style="background-color: none"
           class="fs-15px text-grey5 font-weight-bold"
         >
-         {{option.key}}
+          {{ option.key }}
         </option>
       </select>
-      </div>
+    </div>
     <div class="pt-5px">
       <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
-        <i class="fas fa-external-link-alt pr-5px"></i>Powered by {{activeRightTabOption.poweredBy.name}}</a>
+        <i class="fas fa-external-link-alt pr-5px"></i>
+        Powered by {{ activeRightTabOption.poweredBy.name }}
+      </a>
     </div>
   </div>
 

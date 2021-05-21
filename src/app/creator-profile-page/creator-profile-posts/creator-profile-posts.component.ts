@@ -122,7 +122,7 @@ export class CreatorProfilePostsComponent {
   }
 
   async _prependComment(uiPostParent, index, newComment) {
-    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent)
+    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
       predicate: ({ $index, data, element }) => {
