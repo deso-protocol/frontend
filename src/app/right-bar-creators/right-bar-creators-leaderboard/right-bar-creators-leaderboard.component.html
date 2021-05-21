@@ -1,5 +1,5 @@
 <a
-  *ngFor="let profileEntryResponse of topGainerProfiles; let index = index"
+  *ngFor="let profileEntryResponse of getActiveTabLeaderboard()"
   [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Profile.Username]"
   queryParamsHandling="merge"
   class="link--unstyled d-flex align-items-center text-grey5 fs-15px pb-5px"
@@ -20,7 +20,7 @@
       <i class="far fa-clock fa-md align-middle"></i>
     </span>
       <span
-        *ngIf="profileEntryResponse.IsVerified"
+        *ngIf="profileEntryResponse.Profile.IsVerified"
         (click)="tooltip.toggle()"
         class="ml-1 cursor-pointer text-primary"
         matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
@@ -33,13 +33,12 @@
 
     <div class="d-flex flex-column" style="align-items: flex-end">
       <div class="fc-green" *ngIf="activeTab === RightBarCreatorsComponent.GAINERS.name">
-        +${{ globalVars.abbreviateNumber(globalVars.nanosToUSDNumber(profileEntryResponse.BitcloutLockedGained), 2) }}
-        <!--      +${{ globalVars.abbreviateNumber(profileEntryResponse.CoinEntry.BitCloutLockedNanos / 1e9, 2) }}-->
+        +${{ globalVars.abbreviateNumber(globalVars.nanosToUSDNumber(profileEntryResponse.BitCloutLockedGained), 2) }}
         <img src="assets/img/logo-192.png" style="height: 20px; margin-left: -10px;"/>
       </div>
-<!--      <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">-->
-<!--        {{ globalVars.abbreviateNumber(getDiamonds(profileEntryResponse), 2) }}<i class="icon-diamond"></i>-->
-<!--      </div>-->
+      <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
+        {{ globalVars.abbreviateNumber(profileEntryResponse.DiamondsReceived, 0) }}<i class="icon-diamond"></i>
+      </div>
       <div class="text-grey7" style="font-size: 10px">~{{ globalVars.nanosToUSD(profileEntryResponse.Profile.CoinPriceBitCloutNanos, 2) }}</div>
     </div>
 </a>

@@ -38,16 +38,9 @@
     <right-bar-signup></right-bar-signup>
   </div>
 
-<!--  <tab-selector [tabs]="['Gainers', 'Diamonds', 'Spotlight']" [activeTab]="'Gainers'"></tab-selector>-->
   <!-- Title -->
   <div class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column">
-<!--    <div>-->
-<!--      <a class="link&#45;&#45;unstyled" [routerLink]="'/' + globalVars.RouteNames.CREATORS" queryParamsHandling="merge">-->
-<!--        Top Weekly Gainers-->
-<!--      </a>-->
-<!--    </div>-->
     <div>
-<!--      Top Daily-->
       <select
         #rightBarSelect
         id="right-bar-chart-select"
@@ -71,6 +64,9 @@
     </div>
   </div>
 
+  <div *ngIf="activeRightTabOption === RightBarCreatorsComponent.COMMUNITY">
+    <span class="text-grey5 font-weight-bold">Coming soon!</span>
+  </div>
   <!-- Creators -->
   <right-bar-creators-leaderboard [activeTab]="activeTab"></right-bar-creators-leaderboard>
 </div>

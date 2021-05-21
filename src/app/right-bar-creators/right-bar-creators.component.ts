@@ -23,6 +23,7 @@ export class RightBarCreatorsComponent implements OnInit {
   selectedOptionWidth: string;
   activeRightTabOption: RightBarTabOption;
 
+  RightBarCreatorsComponent = RightBarCreatorsComponent;
   static RightBarTabKey = "RightBarTab";
 
   static GAINERS: RightBarTabOption = {
