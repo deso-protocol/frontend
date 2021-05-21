@@ -13,6 +13,8 @@ import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
+import { CommunityProject } from "../lib/services/bithunt/bithunt-service";
+import { LeaderboardResponse } from "../lib/services/pulse/pulse-service";
 
 @Injectable({
   providedIn: "root",
@@ -65,6 +67,10 @@ export class GlobalVarsService {
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
+  topGainerLeaderboard: LeaderboardResponse[] = [];
+  topDiamondedLeaderboard: LeaderboardResponse[] = [];
+  allCommunityProjectsLeaderboard: CommunityProject[] = [];
+  topCommunityProjectsLeaderboard: CommunityProject[] = [];
 
   // We track logged-in state
   loggedInUser: User;
