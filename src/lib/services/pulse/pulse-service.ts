@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BackendApiService, ProfileEntryResponse } from "../../../app/backend-api.service";
-import { forkJoin, Observable, of } from "rxjs";
+import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
+import { Observable } from "rxjs";
 import { GlobalVarsService } from "../../../app/global-vars.service";
-import { catchError, map } from "rxjs/operators";
+import { map, switchMap } from "rxjs/operators";
 
 class PulseLeaderboardResult {
   public_key: string;
@@ -56,25 +56,39 @@ export class PulseService {
   }
 
   getDiamondsReceivedLeaderboard(): Observable<any> {
-    return this.httpClient.get(this.constructPulseURL(PulseLeaderboardType.Diamonds));
+    return this.httpClient.get(this.constructPulseURL(PulseLeaderboardType.Diamonds)).pipe(
+      switchMap((res: PulseLeaderboardResponse) => {
+        return this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.Diamonds);
+      })
+    );
   }
 
-  getBitCloutLockedLeaderboard(): Observable<any> {
-    return this.httpClient.get(this.constructPulseURL(PulseLeaderboardType.BitCloutLocked));
+  getBitCloutLockedLeaderboard(): Observable<LeaderboardResponse[]> {
+    return this.httpClient
+      .get(this.constructPulseURL(PulseLeaderboardType.BitCloutLocked))
+      .pipe(
+        switchMap((res: PulseLeaderboardResponse) =>
+          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.BitCloutLocked)
+        )
+      );
   }
 
   getProfilesForPulseLeaderboard(
     res: PulseLeaderboardResponse,
     leaderboardType: PulseLeaderboardType
-  ): Observable<any> {
+  ): Observable<LeaderboardResponse[]> {
     const results = res.results;
-    return forkJoin(
-      results.map((result) =>
-        this.backendApi.GetSingleProfile(this.globalVars.localNode, result.public_key, null).pipe(
-          catchError((err) => of(null)),
-          map((res: { Profile: ProfileEntryResponse }, index: number) => {
+    return this.backendApi
+      .GetUsersStateless(
+        this.globalVars.localNode,
+        results.map((result) => result.public_key),
+        true
+      )
+      .pipe(
+        map((res: any) => {
+          return res.UserList.map((user: User, index: number) => {
             return {
-              Profile: res.Profile,
+              Profile: user.ProfileEntryResponse,
               BitCloutLockedGained:
                 leaderboardType === PulseLeaderboardType.BitCloutLocked
                   ? results[index][LeaderboardToDataAttribute[leaderboardType]]
@@ -84,9 +98,8 @@ export class PulseService {
                   ? results[index][LeaderboardToDataAttribute[leaderboardType]]
                   : null,
             };
-          })
-        )
-      )
-    );
+          });
+        })
+      );
   }
 }

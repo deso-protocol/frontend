@@ -50,13 +50,8 @@ export class RightBarCreatorsComponent implements OnInit {
 
   ngOnInit() {
     const defaultTab = this.backendApi.GetStorage(RightBarCreatorsComponent.RightBarTabKey);
-    this.activeTab = defaultTab in this.chartMap ? defaultTab : this.selectRandomTab();
+    this.activeTab = defaultTab in this.chartMap ? defaultTab : RightBarCreatorsComponent.GAINERS.name;
     this.selectTab(true);
-  }
-
-  selectRandomTab(): string {
-    const keys = Object.keys(this.chartMap);
-    return keys[(keys.length * Math.random()) << 0];
   }
 
   selectTab(skipStorage: boolean = false) {

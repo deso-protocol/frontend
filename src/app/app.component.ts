@@ -124,7 +124,7 @@ export class AppComponent implements OnInit {
     }
 
     this.callingUpdateTopLevelData = true;
-    const observable = this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys);
+    const observable = this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, false);
 
     observable.subscribe(
       (res: any) => {

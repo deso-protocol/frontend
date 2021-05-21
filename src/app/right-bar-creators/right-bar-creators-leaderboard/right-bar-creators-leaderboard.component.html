@@ -1,8 +1,20 @@
 <a
-  *ngFor="let profileEntryResponse of getActiveTabLeaderboard()"
+  *ngFor="
+    let profileEntryResponse of activeTab === RightBarCreatorsComponent.GAINERS.name
+      ? globalVars.topGainerLeaderboard
+      : activeTab === RightBarCreatorsComponent.DIAMONDS.name
+      ? globalVars.topDiamondedLeaderboard
+      : activeTab === RightBarCreatorsComponent.COMMUNITY.name
+      ? globalVars.topCommunityProjectsLeaderboard
+      : []
+  "
   [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Profile.Username]"
   queryParamsHandling="merge"
-  class="link--unstyled d-flex align-items-center text-grey5 fs-15px pb-5px"
+  class="link--unstyled d-flex align-items-center text-grey5 fs-15px"
+  [ngClass]="{
+    'pb-5px': activeTab !== RightBarCreatorsComponent.COMMUNITY.name,
+    'pb-15px': activeTab === RightBarCreatorsComponent.COMMUNITY.name
+  }"
 >
   <div
     class="right-bar-creators-leaderboard__creator-avatar"
@@ -38,10 +50,21 @@
     </div>
     <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
       {{ globalVars.abbreviateNumber(profileEntryResponse.DiamondsReceived, 0) }}
-      <i class="icon-diamond"></i>
+      <i class="icon-diamond" style="margin-left: -10px"></i>
     </div>
-    <div class="text-grey7" style="font-size: 10px">
+    <div
+      [ngClass]="{
+        'text-grey7': activeTab !== RightBarCreatorsComponent.COMMUNITY.name,
+        'text-grey5': activeTab === RightBarCreatorsComponent.COMMUNITY.name
+      }"
+      [ngStyle]="{ 'font-size': activeTab === RightBarCreatorsComponent.COMMUNITY.name ? '15px' : '10px' }"
+    >
       ~{{ globalVars.nanosToUSD(profileEntryResponse.Profile.CoinPriceBitCloutNanos, 2) }}
+      <i
+        class="fas fa-external-link-alt"
+        *ngIf="activeTab === RightBarCreatorsComponent.COMMUNITY.name"
+        [href]="profileEntryResponse.BithuntProject.website_url"
+      ></i>
     </div>
   </div>
 </a>
