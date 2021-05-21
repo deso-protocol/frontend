@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
     // We also have a meta tag in index.html that does this in a different way to make
     // sure it's nuked.
     //
+    //
     // TODO: I'm pretty sure all of this could fail on IE so we should make sure people
     // only use the app with chrome.
     Object.defineProperty(document, "referrer", {
@@ -144,9 +145,6 @@ export class AppComponent implements OnInit {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
-        // Fetch messages once we've updated the logged in user
-        this._updateMessages();
-
         // Convert the lists of coin balance entries into maps.
         // TODD: I've intermittently seen errors here where UsersYouHODL is null.
         // That's why I added this || [] thing. We should figure
@@ -172,60 +170,6 @@ export class AppComponent implements OnInit {
     );
 
     return observable;
-  }
-
-  _updateMessages() {
-    if (!this.globalVars.loggedInUser) {
-      return;
-    }
-
-    this.backendApi.GetMessages(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe(
-      (res) => {
-        if (this.globalVars.pauseMessageUpdates) {
-          // We pause message updates when a user sends a messages so that we can
-          // wait for it to be sent before updating the thread.  If we do not do this the
-          // temporary message place holder would disappear until "GetMessages()" finds it.
-        } else {
-          if (!this.globalVars.messageResponse) {
-            this.globalVars.messageResponse = res;
-
-            // If globalVars already has a messageResponse, we need to consolidate.
-          } else if (JSON.stringify(this.globalVars.messageResponse) !== JSON.stringify(res)) {
-            // We create maps for the new list of contacts+messages so that we can efficiently
-            // check which contacts are missing from the new list. Anything that is missing
-            // is a new thread started by the user that should appear at the top of their inbox.
-            const responseContacts = {};
-            for (const responseContact of res.OrderedContactsWithMessages) {
-              responseContacts[responseContact.PublicKeyBase58Check] = responseContact.Messages;
-            }
-
-            // Iterate over the current list of contacts and if they are missing from
-            // the new list, add them to the top of a list of missing ordered contacts.
-            const missingOrderedContacts = [];
-            for (const currentContact of this.globalVars.messageResponse.OrderedContactsWithMessages) {
-              if (!responseContacts[currentContact.PublicKeyBase58Check]) {
-                missingOrderedContacts.push(currentContact);
-              }
-            }
-
-            // Append the missing contacts to the front of the response contacts.
-            this.globalVars.messageResponse.OrderedContactsWithMessages = missingOrderedContacts.concat(
-              res.OrderedContactsWithMessages
-            );
-            this.globalVars.messageResponse.TotalMessagesByContact = res.TotalMessagesByContact;
-            this.globalVars.messageResponse.MessageReadStateByContact = res.MessageReadStateByContact;
-          }
-
-          // Update the number of messages to read.
-          this.globalVars._setNumMessagesToRead();
-
-          this.ref.detectChanges();
-        }
-      },
-      (err) => {
-        console.error(this.backendApi.stringifyError(err));
-      }
-    );
   }
 
   _updateBitCloutDisplayExchangeRate() {
@@ -282,7 +226,6 @@ export class AppComponent implements OnInit {
     this.backendApi
       .GetAppState(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe((res: any) => {
-        this.globalVars.hasUnreadNotifications = res.HasUnreadNotifications;
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
@@ -293,13 +236,6 @@ export class AppComponent implements OnInit {
           this.globalVars.amplitude.init(res.AmplitudeKey, null, {
             apiEndpoint: res.AmplitudeDomain,
           });
-
-          // Store the password if we have one
-          if (res.Password) {
-            this.globalVars.amplitude.setUserProperties({
-              password: res.Password,
-            });
-          }
 
           // Track initial app load event so we are aware of every user
           // who visits our site (and not just those who click a button)
@@ -404,34 +340,24 @@ export class AppComponent implements OnInit {
     this._updateBitCloutExchangeRate();
     this._updateAppState();
 
-    const hasLegacyUserList = this.backendApi.GetStorage(this.backendApi.LegacyUserListKey);
-    const identityImportComplete = this.backendApi.GetStorage(this.backendApi.IdentityImportCompleteKey);
+    this.identityService.info().subscribe((res) => {
+      // If the browser is not supported, display the browser not supported screen.
+      if (!res.browserSupported) {
+        this.globalVars.requestingStorageAccess = true;
+        return;
+      }
 
-    if (hasLegacyUserList && !identityImportComplete) {
-      this.backendApi.GetIdentities(this.globalVars.localNode).subscribe((res) => {
-        this.identityService.importingIdentities = res.Identities;
-        this.globalVars.importingIdentities = true;
-      });
-    } else {
-      this.identityService.info().subscribe((res) => {
-        // If the browser is not supported, display the browser not supported screen.
-        if (!res.browserSupported) {
-          this.globalVars.requestingStorageAccess = true;
-          return;
-        }
-
-        const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
-        if (res.hasStorageAccess || !isLoggedIn) {
+      const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
+      if (res.hasStorageAccess || !isLoggedIn) {
+        this.loadApp();
+      } else {
+        this.globalVars.requestingStorageAccess = true;
+        this.identityService.storageGranted.subscribe(() => {
+          this.globalVars.requestingStorageAccess = false;
           this.loadApp();
-        } else {
-          this.globalVars.requestingStorageAccess = true;
-          this.identityService.storageGranted.subscribe(() => {
-            this.globalVars.requestingStorageAccess = false;
-            this.loadApp();
-          });
-        }
-      });
-    }
+        });
+      }
+    });
 
     this.installDD();
   }
@@ -453,17 +379,6 @@ export class AppComponent implements OnInit {
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
     this.backendApi.RemoveStorage(this.backendApi.LegacyUserListKey);
     this.backendApi.RemoveStorage(this.backendApi.LegacySeedListKey);
-  }
-
-  launchIdentityImportFlow() {
-    this.identityService.launch("/import").subscribe((res) => {
-      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-
-      this.backendApi.SetStorage(this.backendApi.IdentityImportCompleteKey, true);
-      this.globalVars.importingIdentities = false;
-
-      this.globalVars.updateEverything();
-    });
   }
 
   installDD() {

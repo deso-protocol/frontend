@@ -389,7 +389,6 @@ export class BuyBitcloutComponent implements OnInit {
     // Account for the case where we haven't fetched the protocol exchange rate yet.
     // For some reason this was taking 20 seconds in prod...
     if (!this.appData.ProtocolUSDCentsPerBitcoinExchangeRate) {
-      debugger;
       SwalHelper.fire({
         icon: "error",
         title: `Oops...`,
