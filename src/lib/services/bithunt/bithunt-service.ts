@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { forkJoin, Observable } from "rxjs";
+import {forkJoin, Observable, of} from "rxjs";
 import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
 import { GlobalVarsService } from "../../../app/global-vars.service";
 import { map, switchMap } from "rxjs/operators";
@@ -27,7 +27,7 @@ export class CommunityProject {
   BithuntProject: BithuntProject;
 }
 
-const bithuntURL = "bithunt.bitclout.com/public/projects";
+const bithuntURL = "https://bithunt.bitclout.com/public/projects";
 
 export class BithuntService {
   constructor(
@@ -61,6 +61,9 @@ export class BithuntService {
   }
 
   getProfilesForBithuntLeaderboard(projects: BithuntLeaderboardResponse): Observable<CommunityProject[]> {
+    if (projects.projects.length === 0) {
+      return of([]);
+    }
     return this.backendApi
       .GetUsersStateless(
         this.globalVars.localNode,
