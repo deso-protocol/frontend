@@ -43,9 +43,6 @@ export class GlobalVarsService {
   // We're waiting for the user to grant storage access (full-screen takeover)
   requestingStorageAccess = false;
 
-  // We're importing legacy seedinfos
-  importingIdentities = false;
-
   RouteNames = RouteNames;
 
   pausePolling = false; // TODO: Monkey patch for when polling conflicts with other calls.
@@ -53,7 +50,16 @@ export class GlobalVarsService {
 
   bitcloutToUSDExchangeRateToDisplay = "Fetching...";
 
+  // We keep information regarding the messages tab in global vars for smooth
+  // transitions to and from messages.
   messageNotificationCount = 0;
+  messagesSortAlgorithm = "time";
+  messagesPerFetch = 25;
+  openSettingsTray = false;
+  messagesRequestsHoldersOnly = true;
+  messagesRequestsHoldingsOnly = false;
+  messagesRequestsFollowersOnly = false;
+  messagesRequestsFollowedOnly = false;
 
   // Whether or not to show processig spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
@@ -89,9 +95,6 @@ export class GlobalVarsService {
   // second. Now we call them only when needed, but the future is to get rid of this
   // and make everything use sockets.
   updateEverything: any;
-
-  // has unread notifications
-  hasUnreadNotifications = false;
 
   emailRegExp = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 

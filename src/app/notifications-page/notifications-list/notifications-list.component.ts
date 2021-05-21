@@ -95,8 +95,6 @@ export class NotificationsListComponent implements OnInit {
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   ngOnInit() {
-    // mark notifications as read (necessary because we no longer poll)
-    this.globalVars.hasUnreadNotifications = false;
   }
 
   getPage(page: number) {
