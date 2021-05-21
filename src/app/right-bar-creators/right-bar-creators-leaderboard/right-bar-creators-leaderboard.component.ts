@@ -41,9 +41,10 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
 
     const bithuntService = new BithuntService(this.httpClient, this.backendApi, this.globalVars);
     if (this.globalVars.topCommunityProjectsLeaderboard.length === 0) {
-      bithuntService
-        .getCommunityProjectsLeaderboard()
-        .subscribe((res) => (this.globalVars.topCommunityProjectsLeaderboard = res));
+      bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
+        this.globalVars.allCommunityProjectsLeaderboard = res;
+        this.globalVars.topCommunityProjectsLeaderboard = this.globalVars.allCommunityProjectsLeaderboard.slice(0, 10);
+      });
     }
   }
 }

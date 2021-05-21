@@ -1,8 +1,9 @@
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { forkJoin, Observable } from "rxjs";
 import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
 import { GlobalVarsService } from "../../../app/global-vars.service";
 import { map, switchMap } from "rxjs/operators";
+import { flatten } from "lodash";
 
 class BithuntLeaderboardResponse {
   projects: BithuntProject[];
@@ -26,6 +27,8 @@ export class CommunityProject {
   BithuntProject: BithuntProject;
 }
 
+const bithuntURL = "bithunt.bitclout.com/public/projects";
+
 export class BithuntService {
   constructor(
     private httpClient: HttpClient,
@@ -34,8 +37,22 @@ export class BithuntService {
   ) {}
 
   getCommunityProjectsLeaderboard(): Observable<CommunityProject[]> {
+    const pages = Array.apply(null, { length: 10 });
+    return forkJoin(pages.map((_, index: number) => this.getCommunityProjectsLeaderboardPage(index))).pipe(
+      map((res: CommunityProject[][]) => {
+        const projects = flatten(res);
+        return projects
+          .filter((project: CommunityProject) => project.Profile)
+          .sort((a, b) => {
+            return b.Profile.CoinEntry.BitCloutLockedNanos - a.Profile.CoinEntry.BitCloutLockedNanos;
+          });
+      })
+    );
+  }
+
+  getCommunityProjectsLeaderboardPage(page: number): Observable<CommunityProject[]> {
     return this.httpClient
-      .get("bithunt.bitclout.com/public/projects?limit=10", {
+      .get(`${bithuntURL}?page=${page + 1}`, {
         headers: {
           Accept: "application/json",
         },

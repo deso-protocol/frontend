@@ -69,6 +69,7 @@ export class GlobalVarsService {
   rightBarLeaderboard = [];
   topGainerLeaderboard: LeaderboardResponse[] = [];
   topDiamondedLeaderboard: LeaderboardResponse[] = [];
+  allCommunityProjectsLeaderboard: CommunityProject[] = [];
   topCommunityProjectsLeaderboard: CommunityProject[] = [];
 
   // We track logged-in state
