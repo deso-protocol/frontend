@@ -153,7 +153,7 @@ export class VideoUrlParserService {
   }
 
   static isValidYoutubeEmbedURL(link: string) {
-    const regExp = /(https:\/\/www.youtube.com\/embed\/[A-Za-z0-9_-]{11})/;
+    const regExp = /(https:\/\/www\.youtube\.com\/embed\/[A-Za-z0-9_-]{11})/;
     return !!link.match(regExp);
   }
 
