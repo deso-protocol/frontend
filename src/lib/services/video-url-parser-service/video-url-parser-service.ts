@@ -118,7 +118,8 @@ export class VideoUrlParserService {
   }
 
   static isVimeoFromURL(url: URL): boolean {
-    return url.hostname.endsWith("vimeo.com");
+    const pattern = /\bvimeo\.com$/;
+    return pattern.test(url.hostname);
   }
 
   static isYoutubeLink(link: string): boolean {
@@ -131,7 +132,11 @@ export class VideoUrlParserService {
   }
 
   static isYoutubeFromURL(url: URL): boolean {
-    return url.hostname.endsWith("youtube.com") || url.hostname.endsWith("youtu.be");
+    const patterns = [
+      /\byoutube\.com$/,
+      /\byoutu\.be$/,
+    ];
+    return patterns.some(p => p.test(url.hostname));
   }
 
   static isTikTokLink(link: string): boolean {
@@ -144,7 +149,8 @@ export class VideoUrlParserService {
   }
 
   static isTiktokFromURL(url: URL): boolean {
-    return url.hostname.endsWith("tiktok.com");
+    const pattern = /\btiktok\.com$/;
+    return pattern.test(url.hostname);
   }
 
   static isValidVimeoEmbedURL(link: string) {
@@ -153,7 +159,7 @@ export class VideoUrlParserService {
   }
 
   static isValidYoutubeEmbedURL(link: string) {
-    const regExp = /(https:\/\/www.youtube.com\/embed\/[A-Za-z0-9_-]{11})/;
+    const regExp = /(https:\/\/www\.youtube\.com\/embed\/[A-Za-z0-9_-]{11})/;
     return !!link.match(regExp);
   }
 

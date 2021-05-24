@@ -52,6 +52,8 @@ describe("VideoUrlParserService", () => {
     `https://www.youtube.com/watch?v=<script>somestuff</script>`,
     "http://vimeo.com/<b>123</b>",
     "123abc.com/1234556",
+    `https://wwwzyoutube.com/embed/${youtubeVideoID}`,
+    `https://nottiktok.com/embed/v2/${tiktokShortVideoID}`,
   ];
 
   it("parses youtube URLs from user input correctly and only validates embed urls", () => {
