@@ -6,18 +6,10 @@
   </div>
 </div>
 
-<div *ngFor="let diamond of diamonds">
-  <div class="fs-15px p-10px d-flex align-items-center border-bottom border-color-grey">
-    <!-- Avatar -->
-    <div class="manage-follows__avatar-container">
-      <a
-        class="manage-follows__avatar br-12px"
-        [style.background-image]="'url(' + diamond.DiamondSenderProfile.ProfilePic + ')'"
-        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, diamond.DiamondSenderProfile.Username]"
-        queryParamsHandling="merge"
-      ></a>
-    </div>
-    {{diamond.DiamondSenderProfile.Username}}
-    {{diamond.DiamondLevel}}
-  </div>
+<div #uiScroll *uiScroll="let diamond of datasource">
+  <simple-profile-card 
+    [profile]="diamond.DiamondSenderProfile"
+    [diamondLevel]="diamond.DiamondLevel"></simple-profile-card>
 </div>
+
+<simple-center-loader *ngIf="loading"></simple-center-loader>

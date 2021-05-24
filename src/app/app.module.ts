@@ -106,6 +106,7 @@ import { DiamondsModalComponent } from './diamonds-modal/diamonds-modal.componen
 import { RecloutsModalComponent } from './reclouts-modal/reclouts-modal.component';
 import { QuoteRecloutsModalComponent } from './quote-reclouts-modal/quote-reclouts-modal.component';
 import { LikesModalComponent } from './likes-modal/likes-modal.component';
+import { SimpleProfileCardComponent } from './simple-profile-card/simple-profile-card.component';
 
 @NgModule({
   declarations: [
@@ -194,6 +195,7 @@ import { LikesModalComponent } from './likes-modal/likes-modal.component';
     RecloutsModalComponent,
     QuoteRecloutsModalComponent,
     LikesModalComponent,
+    SimpleProfileCardComponent,
   ],
   imports: [
     BrowserModule,

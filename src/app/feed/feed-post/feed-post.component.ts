@@ -174,8 +174,11 @@ export class FeedPostComponent implements OnInit {
 
   openLikesModal(event, imageURL) {
     event.stopPropagation();
-    this.modalService.show(DiamondsModalComponent, {
+    this.modalService.show(LikesModalComponent, {
       class: "modal-dialog-centered",
+      initialState: {
+        postHashHex: this.post.PostHashHex,
+      },
     });
   }
 

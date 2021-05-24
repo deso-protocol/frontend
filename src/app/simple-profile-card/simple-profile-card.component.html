@@ -1,0 +1,42 @@
+<!--
+  NOTE: An explicit height is set on each row element b/c ngx-ui-scroll shows too 
+  much "forward padding" at the end of short lists without it. 
+  LIkely related closed github issue: https://github.com/dhilt/ngx-ui-scroll/issues/111
+-->
+<div style="height: 80px" class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey">
+  
+  <div class="row no-gutters w-100">
+
+    <div class="col-6 d-flex align-items-center" style="margin-bottom: 0px">
+      <!-- Avatar -->
+      <div class="simple-profile-card__avatar-container">
+        <a
+          class="simple-profile-card__avatar br-12px"
+          [style.background-image]="'url(' + profile.ProfilePic + ')'"
+          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username]"
+          queryParamsHandling="merge"
+        ></a>
+      </div>
+      <div class="text-truncate holdings__name" style="font-size: 15px;">
+        <span>{{ profile.Username }}</span>
+        <div class="text-grey9">
+          {{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}
+        </div>
+      </div>
+    </div>
+  
+    <div class="col-6 d-flex align-items-center justify-content-center" style="margin-bottom: 0px">
+      <div *ngIf="diamondLevel > 0">
+        <i *ngFor="let diamond of counter(diamondLevel)" class="icon-diamond fs-20px d-block"></i>
+      </div>
+      <div *ngIf="showHeartIcon">
+        <i class="icon-heart-fill fs-20px d-block"></i>
+      </div>
+      <div *ngIf="showRecloutIcon">
+        <i class="icon-repost fs-20px d-block"></i>
+      </div>
+    </div>
+
+  </div>
+
+</div>
