@@ -125,7 +125,7 @@ export class AppComponent implements OnInit {
     }
 
     this.callingUpdateTopLevelData = true;
-    const observable = this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys);
+    const observable = this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, false);
 
     observable.subscribe(
       (res: any) => {
@@ -340,34 +340,24 @@ export class AppComponent implements OnInit {
     this._updateBitCloutExchangeRate();
     this._updateAppState();
 
-    const hasLegacyUserList = this.backendApi.GetStorage(this.backendApi.LegacyUserListKey);
-    const identityImportComplete = this.backendApi.GetStorage(this.backendApi.IdentityImportCompleteKey);
+    this.identityService.info().subscribe((res) => {
+      // If the browser is not supported, display the browser not supported screen.
+      if (!res.browserSupported) {
+        this.globalVars.requestingStorageAccess = true;
+        return;
+      }
 
-    if (hasLegacyUserList && !identityImportComplete) {
-      this.backendApi.GetIdentities(this.globalVars.localNode).subscribe((res) => {
-        this.identityService.importingIdentities = res.Identities;
-        this.globalVars.importingIdentities = true;
-      });
-    } else {
-      this.identityService.info().subscribe((res) => {
-        // If the browser is not supported, display the browser not supported screen.
-        if (!res.browserSupported) {
-          this.globalVars.requestingStorageAccess = true;
-          return;
-        }
-
-        const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
-        if (res.hasStorageAccess || !isLoggedIn) {
+      const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
+      if (res.hasStorageAccess || !isLoggedIn) {
+        this.loadApp();
+      } else {
+        this.globalVars.requestingStorageAccess = true;
+        this.identityService.storageGranted.subscribe(() => {
+          this.globalVars.requestingStorageAccess = false;
           this.loadApp();
-        } else {
-          this.globalVars.requestingStorageAccess = true;
-          this.identityService.storageGranted.subscribe(() => {
-            this.globalVars.requestingStorageAccess = false;
-            this.loadApp();
-          });
-        }
-      });
-    }
+        });
+      }
+    });
 
     this.installDD();
   }
@@ -389,17 +379,6 @@ export class AppComponent implements OnInit {
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
     this.backendApi.RemoveStorage(this.backendApi.LegacyUserListKey);
     this.backendApi.RemoveStorage(this.backendApi.LegacySeedListKey);
-  }
-
-  launchIdentityImportFlow() {
-    this.identityService.launch("/import").subscribe((res) => {
-      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-
-      this.backendApi.SetStorage(this.backendApi.IdentityImportCompleteKey, true);
-      this.globalVars.importingIdentities = false;
-
-      this.globalVars.updateEverything();
-    });
   }
 
   installDD() {

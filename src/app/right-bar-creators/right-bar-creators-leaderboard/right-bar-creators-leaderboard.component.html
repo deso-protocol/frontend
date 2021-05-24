@@ -1,18 +1,30 @@
 <a
-  *ngFor="let profileEntryResponse of globalVars.rightBarLeaderboard"
-  [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Username]"
+  *ngFor="
+    let profileEntryResponse of activeTab === RightBarCreatorsComponent.GAINERS.name
+      ? globalVars.topGainerLeaderboard
+      : activeTab === RightBarCreatorsComponent.DIAMONDS.name
+      ? globalVars.topDiamondedLeaderboard
+      : activeTab === RightBarCreatorsComponent.COMMUNITY.name
+      ? globalVars.topCommunityProjectsLeaderboard
+      : []
+  "
+  [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Profile.Username]"
   queryParamsHandling="merge"
-  class="link--unstyled d-flex align-items-center text-grey5 fs-15px pb-15px"
+  class="link--unstyled d-flex align-items-center text-grey5 fs-15px"
+  [ngClass]="{
+    'pb-5px': activeTab !== RightBarCreatorsComponent.COMMUNITY.name,
+    'pb-15px': activeTab === RightBarCreatorsComponent.COMMUNITY.name
+  }"
 >
   <div
     class="right-bar-creators-leaderboard__creator-avatar"
-    [ngStyle]="{ 'background-image': 'url(' + profileEntryResponse.ProfilePic + ')' }"
+    [ngStyle]="{ 'background-image': 'url(' + profileEntryResponse.Profile.ProfilePic + ')' }"
   ></div>
 
   <div style="flex-grow: 1">
-    <span>{{ profileEntryResponse.Username }}</span>
+    <span>{{ profileEntryResponse.Profile.Username }}</span>
     <span
-      *ngIf="profileEntryResponse.IsReserved && !profileEntryResponse.IsVerified"
+      *ngIf="profileEntryResponse.Profile.IsReserved && !profileEntryResponse.Profile.IsVerified"
       class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
       matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
       [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
@@ -20,7 +32,7 @@
       <i class="far fa-clock fa-md align-middle"></i>
     </span>
     <span
-      *ngIf="profileEntryResponse.IsVerified"
+      *ngIf="profileEntryResponse.Profile.IsVerified"
       (click)="tooltip.toggle()"
       class="ml-1 cursor-pointer text-primary"
       matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
@@ -31,5 +43,28 @@
     </span>
   </div>
 
-  <div>~{{ globalVars.nanosToUSD(profileEntryResponse.CoinPriceBitCloutNanos, 2) }}</div>
+  <div class="d-flex flex-column" style="align-items: flex-end">
+    <div class="fc-green" *ngIf="activeTab === RightBarCreatorsComponent.GAINERS.name">
+      +${{ globalVars.abbreviateNumber(globalVars.nanosToUSDNumber(profileEntryResponse.BitCloutLockedGained), 2) }}
+      <img src="assets/img/logo-192.png" style="height: 20px; margin-left: -10px" />
+    </div>
+    <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
+      {{ globalVars.abbreviateNumber(profileEntryResponse.DiamondsReceived, 0) }}
+      <i class="icon-diamond" style="margin-left: -10px"></i>
+    </div>
+    <div
+      [ngClass]="{
+        'text-grey7': activeTab !== RightBarCreatorsComponent.COMMUNITY.name,
+        'text-grey5': activeTab === RightBarCreatorsComponent.COMMUNITY.name
+      }"
+      [ngStyle]="{ 'font-size': activeTab === RightBarCreatorsComponent.COMMUNITY.name ? '15px' : '10px' }"
+    >
+      ~{{ globalVars.nanosToUSD(profileEntryResponse.Profile.CoinPriceBitCloutNanos, 2) }}
+      <i
+        class="fas fa-external-link-alt"
+        *ngIf="activeTab === RightBarCreatorsComponent.COMMUNITY.name"
+        [href]="profileEntryResponse.BithuntProject.website_url"
+      ></i>
+    </div>
+  </div>
 </a>

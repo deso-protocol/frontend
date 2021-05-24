@@ -30,6 +30,8 @@ header @html Content-Security-Policy "
   connect-src 'self'
     bitclout.com:*
     api.bitclout.com
+    bithunt.bitclout.com
+    pulse.bitclout.com
     api.bitpop.dev
     localhost:*
     explorer.bitclout.com:*

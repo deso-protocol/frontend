@@ -44,7 +44,6 @@ export class BackendRoutes {
   static RoutePathBlockPublicKey = "/api/v0/block-public-key";
   static RoutePathGetBlockTemplate = "/api/v0/get-block-template";
   static RoutePathGetTxn = "/api/v0/get-txn";
-  static RoutePathGetIdentities = "/api/v0/get-identities";
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
   static RoutePathSendDiamonds = "/api/v0/send-diamonds";
   static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
@@ -220,9 +219,6 @@ export class BackendApiService {
 
   // Store sent messages and associated metadata in localStorage
   MessageMetaKey = "messageMetaKey";
-
-  // Store successful identityService.import result in localStorage
-  IdentityImportCompleteKey = "identityImportComplete";
 
   // Store the identity users in localStorage
   IdentityUsersKey = "identityUsers";
@@ -403,12 +399,6 @@ export class BackendApiService {
     });
   }
 
-  GetIdentities(endpoint: string): Observable<any> {
-    return this.httpClient
-      .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetIdentities), {}, { withCredentials: true })
-      .pipe(catchError(this._handleError));
-  }
-
   DeleteIdentities(endpoint: string): Observable<any> {
     return this.httpClient
       .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, { withCredentials: true })
@@ -521,9 +511,10 @@ export class BackendApiService {
   }
 
   // User-related functions.
-  GetUsersStateless(endpoint: string, publicKeys: any[]): Observable<any> {
+  GetUsersStateless(endpoint: string, publicKeys: any[], skipHodlings: boolean = false): Observable<any> {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
       PublicKeysBase58Check: publicKeys,
+      SkipHodlings: skipHodlings,
     });
   }
 

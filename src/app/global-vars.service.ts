@@ -13,6 +13,8 @@ import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
+import { CommunityProject } from "../lib/services/bithunt/bithunt-service";
+import { LeaderboardResponse } from "../lib/services/pulse/pulse-service";
 
 @Injectable({
   providedIn: "root",
@@ -43,9 +45,6 @@ export class GlobalVarsService {
   // We're waiting for the user to grant storage access (full-screen takeover)
   requestingStorageAccess = false;
 
-  // We're importing legacy seedinfos
-  importingIdentities = false;
-
   RouteNames = RouteNames;
 
   pausePolling = false; // TODO: Monkey patch for when polling conflicts with other calls.
@@ -68,6 +67,10 @@ export class GlobalVarsService {
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
+  topGainerLeaderboard: LeaderboardResponse[] = [];
+  topDiamondedLeaderboard: LeaderboardResponse[] = [];
+  allCommunityProjectsLeaderboard: CommunityProject[] = [];
+  topCommunityProjectsLeaderboard: CommunityProject[] = [];
 
   // We track logged-in state
   loggedInUser: User;
