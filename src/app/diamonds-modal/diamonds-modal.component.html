@@ -6,10 +6,12 @@
   </div>
 </div>
 
-<div #uiScroll *uiScroll="let diamond of datasource">
-  <simple-profile-card 
-    [profile]="diamond.DiamondSenderProfile"
-    [diamondLevel]="diamond.DiamondLevel"></simple-profile-card>
+<div class="flex-grow-1">
+  <div #uiScroll *uiScroll="let diamond of datasource">
+    <simple-profile-card 
+      [profile]="diamond.DiamondSenderProfile"
+      [diamondLevel]="diamond.DiamondLevel"></simple-profile-card>
+  </div>
 </div>
 
 <simple-center-loader *ngIf="loading"></simple-center-loader>

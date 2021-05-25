@@ -1,9 +1,4 @@
-<!--
-  NOTE: An explicit height is set on each row element b/c ngx-ui-scroll shows too 
-  much "forward padding" at the end of short lists without it. 
-  LIkely related closed github issue: https://github.com/dhilt/ngx-ui-scroll/issues/111
--->
-<div style="height: 80px" class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey">
+<div class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey">
   
   <div class="row no-gutters w-100">
 
@@ -26,14 +21,14 @@
     </div>
   
     <div class="col-6 d-flex align-items-center justify-content-center" style="margin-bottom: 0px">
-      <div *ngIf="diamondLevel > 0">
+      <div *ngIf="diamondLevel > 0" class="d-flex">
         <i *ngFor="let diamond of counter(diamondLevel)" class="icon-diamond fs-20px d-block"></i>
       </div>
       <div *ngIf="showHeartIcon">
-        <i class="icon-heart-fill fs-20px d-block"></i>
+        <i class="icon-heart-fill fs-32px d-block fc-red"></i>
       </div>
       <div *ngIf="showRecloutIcon">
-        <i class="icon-repost fs-20px d-block"></i>
+        <i class="icon-repost fs-32px d-block fc-green"></i>
       </div>
     </div>
 

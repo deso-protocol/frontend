@@ -188,6 +188,9 @@ export class FeedPostComponent implements OnInit {
     event.stopPropagation();
     this.modalService.show(RecloutsModalComponent, {
       class: "modal-dialog-centered",
+      initialState: {
+        postHashHex: this.post.PostHashHex,
+      },
     });
   }
 
@@ -195,6 +198,9 @@ export class FeedPostComponent implements OnInit {
     event.stopPropagation();
     this.modalService.show(QuoteRecloutsModalComponent, {
       class: "modal-dialog-centered",
+      initialState: {
+        postHashHex: this.post.PostHashHex,
+      },
     });
   }
 
