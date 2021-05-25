@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { BsModalRef } from "ngx-bootstrap/modal";
+import { InfiniteScroller } from "../infinite-scroller"
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 
 @Component({
@@ -32,57 +33,10 @@ export class LikesModalComponent implements OnInit {
 
   // Infinite scroll metadata.
   pageOffset = 0;
-  pagedRequests = { 
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
-  };
   lastPage = null;
   pageSize = 50;
 
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic.
-  datasource: IDatasource<IAdapter<any>> = new Datasource<IAdapter<any>>({
-    get: (index, count, success) => {
-      const startIdx = Math.max(index, 0);
-      const endIdx = index + count - 1;
-      if (startIdx > endIdx) {
-        success([]);
-        return;
-      }
-
-      const startPage = Math.floor(startIdx / this.pageSize);
-      const endPage = Math.floor(endIdx / this.pageSize);
-
-      const pageRequests: any[] = [];
-      for (let i = startPage; i <= endPage; i++) {
-        const existingRequest = this.pagedRequests[i];
-        if (existingRequest) {
-          pageRequests.push(existingRequest);
-        } else {
-          const newRequest = this.pagedRequests[i - 1].then((_) => {
-            return this.getPage(i);
-          });
-          this.pagedRequests[i] = newRequest;
-          pageRequests.push(newRequest);
-        }
-      }
-
-      return Promise.all(pageRequests).then((pageResults) => {
-        pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
-        const start = startIdx - startPage * this.pageSize;
-        const end = start + endIdx - startIdx + 1;
-        return pageResults.slice(start, end);
-      });
-    },
-    settings: {
-      startIndex: 0,
-      minIndex: 0,
-      bufferSize: 50,
-      windowViewport: false,
-    },
-  });
-
-  getPage(page: number) {
+  getPage = (page: number) => {
     // After we have filled the lastPage, do not honor any more requests.
     if (this.lastPage != null && page > this.lastPage) { return []; }
     this.loading = true;
@@ -111,4 +65,7 @@ export class LikesModalComponent implements OnInit {
         this.errorLoading = true
       });
   }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, false);
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
