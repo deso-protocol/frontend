@@ -1550,6 +1550,26 @@ $green-font-color: #19B028;
 
 
 //
+// Simple profile card (for likes, reclouts, diamonds modal)
+//
+
+.simple-profile-card__avatar {
+  display: block;
+  height: 50px;
+  width: 50px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.simple-profile-card__avatar-container {
+  width: 56px; // TODO: figure out why chrome doesn't render this as 50px
+  margin-right: 15px;
+}
+
+
+//
 // (end) v0 styles
 //
 
