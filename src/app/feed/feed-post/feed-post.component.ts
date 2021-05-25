@@ -87,6 +87,9 @@ export class FeedPostComponent implements OnInit {
 
   @Input() showReplyingTo = false;
 
+  // If the post is shown in a modal, this is used to hide the modal on post click.
+  @Input() containerModalRef: any = null;
+
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
 
@@ -120,6 +123,10 @@ export class FeedPostComponent implements OnInit {
   }
 
   onPostClicked(event) {
+    if (this.containerModalRef !== null) {
+      this.containerModalRef.hide()
+    }
+
     // if we shouldn't be navigating the user to a new page, just return
     if (!this.contentShouldLinkToThread) {
       return true;
