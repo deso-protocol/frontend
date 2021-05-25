@@ -1,16 +1,15 @@
-<div class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey">
+<a class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey link--unstyled"
+   (click)="onClick()">
   
   <div class="row no-gutters w-100">
 
     <div class="col-6 d-flex align-items-center" style="margin-bottom: 0px">
       <!-- Avatar -->
       <div class="simple-profile-card__avatar-container">
-        <a
+        <div
           class="simple-profile-card__avatar br-12px"
           [style.background-image]="'url(' + profile.ProfilePic + ')'"
-          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username]"
-          queryParamsHandling="merge"
-        ></a>
+        ></div>
       </div>
       <div class="text-truncate holdings__name" style="font-size: 15px;">
         <span>{{ profile.Username }}</span>
@@ -34,4 +33,4 @@
 
   </div>
 
-</div>
+</a>

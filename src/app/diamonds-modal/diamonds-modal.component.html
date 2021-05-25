@@ -10,7 +10,8 @@
   <div #uiScroll *uiScroll="let diamond of datasource">
     <simple-profile-card 
       [profile]="diamond.DiamondSenderProfile"
-      [diamondLevel]="diamond.DiamondLevel"></simple-profile-card>
+      [diamondLevel]="diamond.DiamondLevel"
+      [containerModalRef]="bsModalRef"></simple-profile-card>
   </div>
 </div>
 

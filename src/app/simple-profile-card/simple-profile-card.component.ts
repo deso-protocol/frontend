@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GlobalVarsService } from "../global-vars.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'simple-profile-card',
@@ -10,9 +11,11 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() diamondLevel = -1;
   @Input() showHeartIcon = false;
   @Input() showRecloutIcon = false;
+  @Input() containerModalRef: any = null;
 
   constructor(
     public globalVars: GlobalVarsService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -20,6 +23,16 @@ export class SimpleProfileCardComponent implements OnInit {
 
   counter(num: number) {
     return Array(num);
+  }
+
+  onClick() {
+    if (this.containerModalRef !== null) {
+      this.containerModalRef.hide()
+    }
+
+    this.router.navigate(['/' + this.globalVars.RouteNames.USER_PREFIX, this.profile.Username], {
+      queryParamsHandling: "merge",
+    });
   }
 
 }
