@@ -16,15 +16,19 @@ export class BackendRoutes {
 
   static GetUsersStatelessRoute = "/api/v0/get-users-stateless";
   static RoutePathSubmitPost = "/api/v0/submit-post";
+  static RoutePathUploadImage = "/api/v0/upload-image";
   static RoutePathSubmitTransaction = "/api/v0/submit-transaction";
   static RoutePathUpdateProfile = "/api/v0/update-profile";
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
+  static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
   static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
+  static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
+  static RoutePathMarkAllMessagesRead = "/api/v0/mark-all-messages-read";
   static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
   static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
   static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
@@ -40,7 +44,6 @@ export class BackendRoutes {
   static RoutePathBlockPublicKey = "/api/v0/block-public-key";
   static RoutePathGetBlockTemplate = "/api/v0/get-block-template";
   static RoutePathGetTxn = "/api/v0/get-txn";
-  static RoutePathGetIdentities = "/api/v0/get-identities";
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
   static RoutePathSendDiamonds = "/api/v0/send-diamonds";
   static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
@@ -64,9 +67,9 @@ export class BackendRoutes {
   static RoutePathAdminRemoveVerificationBadge = "/api/v0/admin/remove-verification-badge";
   static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
-  static RoutePathUpdateBitcoinUSDExchangeRate = "/api/v0/admin/update-bitcoin-usd-exchange-rate";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
+  static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 }
@@ -111,10 +114,8 @@ export class User {
   PublicKeysBase58CheckFollowedByUser: string[];
   EncryptedSeedHex: string;
 
-  SeedInfo: any;
   BalanceNanos: number;
   UnminedBalanceNanos: number;
-  LocalState: any;
 
   NumActionItems: any;
   NumMessagesToRead: any;
@@ -162,6 +163,13 @@ export class PostEntryResponse {
   ParentPosts: PostEntryResponse[];
   InMempool: boolean;
   IsPinned: boolean;
+  DiamondsFromSender?: number;
+}
+
+export class DiamondsPost {
+  Post: PostEntryResponse;
+  // Boolean that is set to true when this is the first post at a given diamond level.
+  ShowDiamondDivider?: boolean;
 }
 
 export class PostEntryReaderState {
@@ -211,9 +219,6 @@ export class BackendApiService {
 
   // Store sent messages and associated metadata in localStorage
   MessageMetaKey = "messageMetaKey";
-
-  // Store successful identityService.import result in localStorage
-  IdentityImportCompleteKey = "identityImportComplete";
 
   // Store the identity users in localStorage
   IdentityUsersKey = "identityUsers";
@@ -394,12 +399,6 @@ export class BackendApiService {
     });
   }
 
-  GetIdentities(endpoint: string): Observable<any> {
-    return this.httpClient
-      .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetIdentities), {}, { withCredentials: true })
-      .pipe(catchError(this._handleError));
-  }
-
   DeleteIdentities(endpoint: string): Observable<any> {
     return this.httpClient
       .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, { withCredentials: true })
@@ -512,9 +511,10 @@ export class BackendApiService {
   }
 
   // User-related functions.
-  GetUsersStateless(endpoint: string, publicKeys: any[]): Observable<any> {
+  GetUsersStateless(endpoint: string, publicKeys: any[], skipHodlings: boolean = false): Observable<any> {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
       PublicKeysBase58Check: publicKeys,
+      SkipHodlings: skipHodlings,
     });
   }
 
@@ -604,6 +604,22 @@ export class BackendApiService {
         return Promise.all(txnPromises).then((xxx) => res);
       }),
       catchError(this._handleError)
+    );
+  }
+
+  UploadImage(endpoint: string, UserPublicKeyBase58Check: string, file: File): Observable<any> {
+    const request = this.identityService.jwt({
+      ...this.identityService.identityServiceParamsForKey(UserPublicKeyBase58Check),
+    });
+    return request.pipe(
+      switchMap((signed) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("UserPublicKeyBase58Check", UserPublicKeyBase58Check);
+        formData.append("JWT", signed.jwt);
+
+        return this.post(endpoint, BackendRoutes.RoutePathUploadImage, formData);
+      })
     );
   }
 
@@ -734,6 +750,28 @@ export class BackendApiService {
       NumToFetch,
     });
   }
+
+  GetDiamondedPosts(
+    endpoint: string,
+    ReceiverPublicKeyBase58Check: string,
+    ReceiverUsername: string,
+    SenderPublicKeyBase58Check: string,
+    SenderUsername: string,
+    ReaderPublicKeyBase58Check: string,
+    StartPostHashHex: string,
+    NumToFetch: number
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondedPosts, {
+      ReceiverPublicKeyBase58Check,
+      ReceiverUsername,
+      SenderPublicKeyBase58Check,
+      SenderUsername,
+      ReaderPublicKeyBase58Check,
+      StartPostHashHex,
+      NumToFetch,
+    });
+  }
+
   GetHodlersForPublicKey(
     endpoint: string,
     PublicKeyBase58Check: string,
@@ -819,9 +857,26 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, FollowerPublicKeyBase58Check);
   }
 
-  GetMessages(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+  GetMessages(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    FetchAfterPublicKeyBase58Check: string = "",
+    NumToFetch: number = 25,
+    HoldersOnly: boolean = false,
+    HoldingsOnly: boolean = false,
+    FollowersOnly: boolean = false,
+    FollowingOnly: boolean = false,
+    SortAlgorithm: string = "time"
+  ): Observable<any> {
     let req = this.httpClient.post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetMessagesStateless), {
       PublicKeyBase58Check,
+      FetchAfterPublicKeyBase58Check,
+      NumToFetch,
+      HoldersOnly,
+      HoldingsOnly,
+      FollowersOnly,
+      FollowingOnly,
+      SortAlgorithm,
     });
 
     // create an array of messages to decrypt
@@ -902,11 +957,15 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
-  GetDiamondsForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
+  GetDiamondsForPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    FetchYouDiamonded: boolean = false
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
       PublicKeyBase58Check,
+      FetchYouDiamonded,
     });
-    return request;
   }
 
   GetLikesForPost(
@@ -1065,6 +1124,23 @@ export class BackendApiService {
       PublicKeyBase58Check,
       BlockPublicKeyBase58Check,
       Unblock,
+    });
+  }
+
+  MarkContactMessagesRead(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    ContactPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkContactMessagesRead, UserPublicKeyBase58Check, {
+      UserPublicKeyBase58Check,
+      ContactPublicKeyBase58Check,
+    });
+  }
+
+  MarkAllMessagesRead(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkAllMessagesRead, UserPublicKeyBase58Check, {
+      UserPublicKeyBase58Check,
     });
   }
 
@@ -1277,21 +1353,6 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
-  UpdateBitcoinUSDExchangeRate(
-    endpoint: string,
-    UpdaterPublicKeyBase58Check: string,
-    USDCentsPerBitcoin: number,
-    MinFeeRateNanosPerKB: number
-  ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateBitcoinUSDExchangeRate, {
-      UpdaterPublicKeyBase58Check,
-      USDCentsPerBitcoin,
-      MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
-  }
-
   UpdateGlobalParams(
     endpoint: string,
     UpdaterPublicKeyBase58Check: string,
@@ -1313,6 +1374,19 @@ export class BackendApiService {
 
   GetGlobalParams(endpoint: string, UpdaterPublicKeyBase58Check: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathGetGlobalParams, UpdaterPublicKeyBase58Check, {
+      AdminPublicKey: UpdaterPublicKeyBase58Check,
+    });
+  }
+
+  EvictUnminedBitcoinTxns(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check,
+    BitcoinTxnHashes: string[],
+    DryRun: boolean
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathEvictUnminedBitcoinTxns, UpdaterPublicKeyBase58Check, {
+      BitcoinTxnHashes,
+      DryRun,
       AdminPublicKey: UpdaterPublicKeyBase58Check,
     });
   }

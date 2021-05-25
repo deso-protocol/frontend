@@ -504,6 +504,32 @@
         <button *ngIf="submittingReprocessRequest" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
       </div>
     </div>
+    <!-- Reprocess Bitcoin Block -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Evict unmined Bitcoin txns:
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="evictBitcoinTxnHashes"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter comma-separated Bitcoin txn hashes"
+        />
+        <button
+          *ngIf="!submittingEvictUnminedBitcoinTxns"
+          (click)="evictBitcoinExchangeTxns(true)"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
+          Test
+        </button>
+        <button
+          *ngIf="!submittingEvictUnminedBitcoinTxns"
+          (click)="evictBitcoinExchangeTxns(false)"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
+          Execute
+        </button>
+        <button *ngIf="submittingReprocessRequest" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+      </div>
+    </div>
 
     <!-- Update Global Params -->
     <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">

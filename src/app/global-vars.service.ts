@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { User } from "./backend-api.service";
+import { PostEntryResponse, User } from "./backend-api.service";
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
@@ -13,6 +13,8 @@ import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
+import { CommunityProject } from "../lib/services/bithunt/bithunt-service";
+import { LeaderboardResponse } from "../lib/services/pulse/pulse-service";
 
 @Injectable({
   providedIn: "root",
@@ -43,9 +45,6 @@ export class GlobalVarsService {
   // We're waiting for the user to grant storage access (full-screen takeover)
   requestingStorageAccess = false;
 
-  // We're importing legacy seedinfos
-  importingIdentities = false;
-
   RouteNames = RouteNames;
 
   pausePolling = false; // TODO: Monkey patch for when polling conflicts with other calls.
@@ -53,12 +52,25 @@ export class GlobalVarsService {
 
   bitcloutToUSDExchangeRateToDisplay = "Fetching...";
 
+  // We keep information regarding the messages tab in global vars for smooth
+  // transitions to and from messages.
   messageNotificationCount = 0;
+  messagesSortAlgorithm = "time";
+  messagesPerFetch = 25;
+  openSettingsTray = false;
+  messagesRequestsHoldersOnly = true;
+  messagesRequestsHoldingsOnly = false;
+  messagesRequestsFollowersOnly = false;
+  messagesRequestsFollowedOnly = false;
 
   // Whether or not to show processig spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
+  topGainerLeaderboard: LeaderboardResponse[] = [];
+  topDiamondedLeaderboard: LeaderboardResponse[] = [];
+  allCommunityProjectsLeaderboard: CommunityProject[] = [];
+  topCommunityProjectsLeaderboard: CommunityProject[] = [];
 
   // We track logged-in state
   loggedInUser: User;
@@ -89,9 +101,6 @@ export class GlobalVarsService {
   // second. Now we call them only when needed, but the future is to get rid of this
   // and make everything use sockets.
   updateEverything: any;
-
-  // has unread notifications
-  hasUnreadNotifications = false;
 
   emailRegExp = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
@@ -536,6 +545,23 @@ export class GlobalVarsService {
   isMaybePublicKey(pk: string) {
     // Test net public keys start with 'tBC', regular public keys start with 'BC'.
     return pk.startsWith("tBC") || pk.startsWith("BC");
+  }
+
+  isVanillaReclout(post: PostEntryResponse): boolean {
+    return !post.Body && !post.ImageURLs?.length && !!post.RecloutedPostEntryResponse;
+  }
+
+  getPostContentHashHex(post: PostEntryResponse): string {
+    return this.isVanillaReclout(post) ? post.RecloutedPostEntryResponse.PostHashHex : post.PostHashHex;
+  }
+
+  incrementCommentCount(post: PostEntryResponse): PostEntryResponse {
+    if (this.isVanillaReclout(post)) {
+      post.RecloutedPostEntryResponse.CommentCount += 1;
+    } else {
+      post.CommentCount += 1;
+    }
+    return post;
   }
 
   // Log an event to amplitude

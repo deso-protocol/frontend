@@ -3,16 +3,51 @@
   *ngIf="!isMobile"
   class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
 >
+  <!-- Clear Inbox -->
+  <div class="d-flex justify-content-end align-items-right pr-10px">
+    <div *ngIf="globalVars.messageResponse != null && globalVars.messageResponse.NumberOfUnreadThreads > 0 ;
+                 then thenEnvelopeBlock else elseEnvelopeBlock"></div>
+    <ng-template #thenEnvelopeBlock>
+      <i
+        (click)="_markAllMessagesRead()"
+        class="fc-blue far fa-envelope cursor-pointer messages-header-icon-row__icon pt-2px"
+      ></i>
+    </ng-template>
+    <ng-template #elseEnvelopeBlock>
+      <i class="far fa-envelope cursor-auto fs-20px pt-2px"></i>
+    </ng-template>
+  </div>
+
   Messages
+
+  <!-- Settings -->
+  <div class="d-flex w-100 justify-content-end align-items-right pr-10px">
+    <i
+      (click)="_toggleSettingsTray()"
+      class="fas fa-sliders-h cursor-pointer messages-header-icon-row__icon pt-2px"
+    ></i>
+  </div>
 </div>
 
-<search-bar
-  [isSearchForUsersToMessage]="true"
-  (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
-  class="pb-15px border-bottom border-color-grey"
-></search-bar>
+<div *ngIf="_settingsTrayIsOpen()">
+  <messages-filter-menu></messages-filter-menu>
+</div>
 
-<div *ngIf="messageThreads" class="messages-inbox__threads">
+<div *ngIf="messageThreads" class="messages-inbox__threads vh-100">
+  <!-- Search -->
+  <search-bar
+    [isSearchForUsersToMessage]="true"
+    (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+    class="pb-15px border-bottom border-color-grey"
+  ></search-bar>
+
+  <!-- Tabs -->
+  <tab-selector
+    [tabs]="['All', 'My Holders', 'Custom']"
+    [activeTab]="activeTab"
+    (tabClick)="_handleTabClick($event)"
+  ></tab-selector>
+
   <!-- NOTE: We add any newMessageThread to the front of our messageThread array. -->
   <!-- This is used to handle the creation of new message threads. -->
   <div *ngFor="let thread of messageThreads; let ii = index">
@@ -27,7 +62,16 @@
       [thread]="thread"
     ></messages-thread>
   </div>
-</div>
 
-<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-<div class="global__bottom-bar-mobile-height"></div>
+  <div
+    *ngIf="showMoreButton()"
+    class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
+    (click)="loadMoreMessages()"
+  >
+    <div *ngIf="!fetchingMoreMessages" class="fs-15px">Load More</div>
+    <div *ngIf="fetchingMoreMessages" class="fs-15px">Loading...</div>
+  </div>
+
+  <div class="global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
+</div>

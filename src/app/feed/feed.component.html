@@ -38,11 +38,7 @@
   </div>
 
   <!-- Tab Selector -->
-  <tab-selector
-    [tabs]="feedTabs"
-    [activeTab]="activeTab"
-    (tabClick)="_handleTabClick($event)"
-  ></tab-selector>
+  <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
 
   <div [id]="getPullToRefreshMarkerId()"></div>
 
@@ -64,7 +60,6 @@
           [showReplyingToContent]="!!post.parentPost"
           [parentPost]="post.parentPost"
           [contentShouldLinkToThread]="true"
-          [hideFollowLink]="hideFollowLink()"
           [showLeftSelectedBorder]="post.IsPinned"
           [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
           (postDeleted)="onPostHidden($event)"

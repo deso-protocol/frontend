@@ -55,6 +55,19 @@
     }"
   >
     <div
+      *ngIf="showReplyingTo && post.ParentStakeID != ''"
+      class="pl-15px pt-5px align-items-center"
+      style="margin-bottom: -5px"
+    >
+      <a
+        class="fc-muted font-weight-semibold fs-15px"
+        queryParamsHandling="merge"
+        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, post.ParentPosts[0].ProfileEntryResponse.Username]"
+      >
+        replying to {{ post.ParentPosts[0].ProfileEntryResponse.Username }}
+      </a>
+    </div>
+    <div
       *ngIf="reclouterProfile"
       class="feed-post__container d-flex justify-content-left w-100 pb-5px"
       [ngClass]="{
@@ -116,7 +129,6 @@
       }"
       *ngIf="!postContent.IsHidden"
     >
-
       <!-- Avatar -->
       <div class="feed-post__avatar-container">
         <a
@@ -244,7 +256,7 @@
         </div>
 
         <!-- Embedded Videos -->
-        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__image-container">
+        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__video-embed-container">
           <iframe
             height="315"
             class="feed-post__image"

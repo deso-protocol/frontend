@@ -56,6 +56,7 @@ export class AdminComponent implements OnInit {
   submittingUnrestrictUpdate = false;
   submittingWhitelistUpdate = false;
   submittingUnwhitelistUpdate = false;
+  submittingEvictUnminedBitcoinTxns = false;
 
   submittingRemovePhone = false;
   dbDetailsOpen = false;
@@ -73,6 +74,7 @@ export class AdminComponent implements OnInit {
   updatingMinimumNetworkFee = false;
   feeRateBitCloutPerKB = (1000 / 1e9).toFixed(9); // Default fee rate.
   bitcoinBlockHashOrHeight = "";
+  evictBitcoinTxnHashes = "";
   usernameToVerify = "";
   usernameForWhomToRemoveVerification = "";
   usernameToFetchVerificationAuditLogs = "";
@@ -784,76 +786,6 @@ export class AdminComponent implements OnInit {
       });
   }
 
-  updateBitcoinExchangeRate() {
-    if (
-      this.bitcoinExchangeRate === undefined ||
-      this.bitcoinExchangeRate < 1000 ||
-      this.bitcoinExchangeRate > 100000
-    ) {
-      SwalHelper.fire({
-        icon: "error",
-        title: `Oops...`,
-        html: "Please set a reasonable exchange rate.",
-        showConfirmButton: true,
-        showCancelButton: false,
-        focusConfirm: true,
-        customClass: {
-          confirmButton: "btn btn-light",
-          cancelButton: "btn btn-light no",
-        },
-      });
-      return;
-    }
-    SwalHelper.fire({
-      title: "Are you ready?",
-      html:
-        `Update the Bitcoin to USD exchange rate to ${this.bitcoinExchangeRate} USD` +
-        ` per Bitcoin with a fee per KB of ${this.feeRateBitCloutPerKB} nanos?`,
-      showCancelButton: true,
-      customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
-      },
-      reverseButtons: true,
-    }).then((res: any) => {
-      if (res.isConfirmed) {
-        this.updatingBitcoinExchangeRate = true;
-        this.backendApi
-          .UpdateBitcoinUSDExchangeRate(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.bitcoinExchangeRate * 100 /*USDCentsPerBitcoin*/,
-            Math.floor(parseFloat(this.feeRateBitCloutPerKB) * 1e9) /*MinFeeRateNanosPerKB*/
-          )
-          .subscribe(
-            (res: any) => {
-              if (res == null || res.FeeNanos == null) {
-                this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
-                return null;
-              }
-
-              const totalFeeBitClout = res.FeeNanos / 1e9;
-
-              this.globalVars._alertSuccess(
-                sprintf(
-                  "Successfully updated exchange rate. TxID: %s for a fee of %d BitClout",
-                  res.TransactionIDBase58Check,
-                  totalFeeBitClout
-                )
-              );
-            },
-            (error) => {
-              console.error(error);
-              this.globalVars._alertError(this.extractError(error));
-            }
-          )
-          .add(() => {
-            this.updatingBitcoinExchangeRate = false;
-          });
-      }
-    });
-  }
-
   reprocessBitcoinBlock() {
     if (this.bitcoinBlockHashOrHeight === "") {
       this.globalVars._alertError("Please enter either a Bitcoin block hash or a Bitcoin block height.");
@@ -883,6 +815,57 @@ export class AdminComponent implements OnInit {
       )
       .add(() => {
         this.submittingReprocessRequest = false;
+      });
+  }
+
+  evictBitcoinExchangeTxns(dryRun: boolean) {
+    SwalHelper.fire({
+      title: "Are you ready?",
+      html: `About to evict ${this.evictBitcoinTxnHashes} with DryRun=${dryRun}`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    })
+      .then((res: any) => {
+        if (res.isConfirmed) {
+          this.submittingEvictUnminedBitcoinTxns = true;
+          this.backendApi
+            .EvictUnminedBitcoinTxns(
+              this.globalVars.localNode,
+              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.evictBitcoinTxnHashes.split(","),
+              dryRun
+            )
+            .subscribe(
+              (res: any) => {
+                if (res == null) {
+                  this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
+                  return null;
+                }
+
+                this.globalVars._alertSuccess(
+                  `Success! Lost ${res.TotalMempoolTxns - res.MempoolTxnsLeftAfterEviction} mempool
+                  txns with ${res.TotalMempoolTxns} total txns in the mempool before eviction.
+                  Types: ${JSON.stringify(res.TxnTypesEvicted, null, 2)}.
+                  Check the response of this request in the browser's inspector for more information.`
+                );
+              },
+              (error) => {
+                console.error(error);
+                this.globalVars._alertError(this.extractError(error));
+              }
+            )
+            .add(() => {
+              this.submittingEvictUnminedBitcoinTxns = false;
+            });
+        }
+      })
+      .finally(() => {
+        this.submittingEvictUnminedBitcoinTxns = false;
       });
   }
 

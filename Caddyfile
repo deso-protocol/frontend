@@ -30,6 +30,8 @@ header @html Content-Security-Policy "
   connect-src 'self'
     bitclout.com:*
     api.bitclout.com
+    bithunt.bitclout.com
+    pulse.bitclout.com
     api.bitpop.dev
     localhost:*
     explorer.bitclout.com:*
@@ -57,6 +59,7 @@ header @html Content-Security-Policy "
     identity.bitclout.com
     identity.bitclout.blue
     identity.bitclout.green
+    https://geo.captcha-delivery.com
     https://www.youtube.com
     https://player.vimeo.com
     https://www.tiktok.com;"
