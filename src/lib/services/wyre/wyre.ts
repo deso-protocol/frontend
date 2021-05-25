@@ -14,11 +14,11 @@ export class WyreService {
     private backendApi: BackendApiService
   ) {}
 
-  makeWalletOrderReservation(btcAddress: string, sourceAmount: number): Observable<any> {
-    return this.backendApi.GetWyreWalletOrderReservation(this.globalVars.localNode, btcAddress, sourceAmount);
+  makeWalletOrderReservation(sourceAmount: number): Observable<any> {
+    return this.backendApi.GetWyreWalletOrderReservation(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, sourceAmount);
   }
 
-  makeWalletOrderQuotation(btcAddress: string, sourceAmount: number): Observable<any> {
-    return this.backendApi.GetWyreWalletOrderQuotation(this.globalVars.localNode, btcAddress, sourceAmount);
+  makeWalletOrderQuotation(sourceAmount: number): Observable<any> {
+    return this.backendApi.GetWyreWalletOrderQuotation(this.globalVars.localNode, sourceAmount);
   }
 }

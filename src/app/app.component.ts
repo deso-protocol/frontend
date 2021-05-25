@@ -229,6 +229,7 @@ export class AppComponent implements OnInit {
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
+        this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
 
         // Setup amplitude on first run
         if (!this.globalVars.amplitude && res.AmplitudeKey) {

@@ -1338,16 +1338,15 @@ export class BackendApiService {
   }
 
   // Wyre
-  GetWyreWalletOrderQuotation(endpoint: string, BtcAddress: string, SourceAmount: number): Observable<any> {
+  GetWyreWalletOrderQuotation(endpoint: string, SourceAmount: number): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderQuotation, {
-      BtcAddress,
       SourceAmount,
     });
   }
 
-  GetWyreWalletOrderReservation(endpoint: string, BtcAddress: string, SourceAmount: number): Observable<any> {
+  GetWyreWalletOrderReservation(endpoint: string, ReferenceId: string, SourceAmount: number): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderReservation, {
-      BtcAddress,
+      ReferenceId,
       SourceAmount,
     });
   }

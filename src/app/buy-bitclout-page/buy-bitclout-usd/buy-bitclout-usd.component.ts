@@ -15,7 +15,6 @@ export class BuyBitcloutUSDComponent {
   wyreService: WyreService;
 
   amount: number;
-  sourceAmount: number;
   quotation: any;
   bitcloutReceived: number;
   usdFees: number;
@@ -28,13 +27,8 @@ export class BuyBitcloutUSDComponent {
     this.wyreService = new WyreService(this.httpClient, this.globalVars, this.backendApi);
   }
 
-  btcDepositAddress(): string {
-    const pubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
-    return this.identityService.identityServiceUsers[pubKey]?.btcDepositAddress;
-  }
-
   onBuyClicked(): void {
-    this.wyreService.makeWalletOrderReservation(this.btcDepositAddress(), this.amount).subscribe(
+    this.wyreService.makeWalletOrderReservation(this.amount).subscribe(
       (res) => {
         window.open(res.url);
       },
@@ -48,7 +42,7 @@ export class BuyBitcloutUSDComponent {
     this.bitcloutReceived = null;
     this.usdFees = null;
     this.quotation = null;
-    this.wyreService.makeWalletOrderQuotation(this.btcDepositAddress(), this.amount).subscribe(
+    this.wyreService.makeWalletOrderQuotation(this.amount).subscribe(
       (res) => {
         this.parseQuotation(res);
       },
