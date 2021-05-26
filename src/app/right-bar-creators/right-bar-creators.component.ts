@@ -42,15 +42,22 @@ export class RightBarCreatorsComponent implements OnInit {
     poweredBy: { name: "BitHunt", link: "https://bithunt.com" },
   };
 
+  static ALL_TIME: RightBarTabOption = {
+    name: "Top Creators All Time",
+    width: 225,
+    poweredBy: null,
+  };
+
   chartMap = {
     [RightBarCreatorsComponent.GAINERS.name]: RightBarCreatorsComponent.GAINERS,
     [RightBarCreatorsComponent.DIAMONDS.name]: RightBarCreatorsComponent.DIAMONDS,
     [RightBarCreatorsComponent.COMMUNITY.name]: RightBarCreatorsComponent.COMMUNITY,
+    [RightBarCreatorsComponent.ALL_TIME.name]: RightBarCreatorsComponent.ALL_TIME,
   };
 
   ngOnInit() {
     const defaultTab = this.backendApi.GetStorage(RightBarCreatorsComponent.RightBarTabKey);
-    this.activeTab = defaultTab in this.chartMap ? defaultTab : RightBarCreatorsComponent.GAINERS.name;
+    this.activeTab = defaultTab in this.chartMap ? defaultTab : RightBarCreatorsComponent.ALL_TIME.name;
     this.selectTab(true);
   }
 
