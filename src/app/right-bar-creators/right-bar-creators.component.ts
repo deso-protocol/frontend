@@ -44,7 +44,7 @@ export class RightBarCreatorsComponent implements OnInit {
 
   static ALL_TIME: RightBarTabOption = {
     name: "Top Creators All Time",
-    width: 225,
+    width: 210,
     poweredBy: null,
   };
 
