@@ -15,7 +15,11 @@ export class WyreService {
   ) {}
 
   makeWalletOrderReservation(sourceAmount: number): Observable<any> {
-    return this.backendApi.GetWyreWalletOrderReservation(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, sourceAmount);
+    return this.backendApi.GetWyreWalletOrderReservation(
+      this.globalVars.localNode,
+      this.globalVars.loggedInUser.PublicKeyBase58Check,
+      sourceAmount
+    );
   }
 
   makeWalletOrderQuotation(sourceAmount: number): Observable<any> {

@@ -23,8 +23,11 @@
         </div>
 
         <div style="height: 60px;" *ngIf="!globalVars.showBuyWithUSD"></div>
-        <div class="pb-15px" *ngIf="globalVars.showBuyWithUSD">
-          <tab-selector [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)" ></tab-selector>
+        <div class="pb-15px"
+             *ngIf="globalVars.showBuyWithUSD"
+             [ngClass]="{'mb-10px': activeTab === BuyBitcloutComponent.BUY_WITH_BTC }"
+        >
+          <tab-selector [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
         </div>
         <div *ngIf="activeTab === BuyBitcloutComponent.BUY_WITH_USD && globalVars.showBuyWithUSD">
           <buy-bitclout-usd></buy-bitclout-usd>

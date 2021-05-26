@@ -1,40 +1,26 @@
-<div>
-  <div class="w-100 border-top border-color-grey">
-    <div
-      class="fs-15px buy-bitclout__box-label-adjustment pl-5px pr-5px ml-10px"
-      style="background-color: white"
-    >
-      Step One
+<div class="w-100">
+  <div class="px-15px">
+    <div class="fs-18px font-weight-bold">
+      Enter an amount in USD to convert to BitClout
     </div>
-    <div class="px-15px pt-5px">
-      <div class="fs-18px font-weight-bold">
-        Enter an amount of USD you would like to convert to BitClout.
+    <div class="fs-18px py-15px d-flex" >
+      <div class="d-inline-block" style="width: 50%;">
+      <input class="form-control px-15px col"
+             style="width: 100%"
+             type="number"
+             min="10"
+             max="10000"
+             step="1"
+             matInput [(ngModel)]="amount" (input)="updateQuotation()">
       </div>
-      <div class="fs-18px mb-1 mt-1">
-        <div class="row no-gutters pt-5px">
-        <input class="form-control px-15px col" type="number" matInput [(ngModel)]="amount" (change)="updateQuotation()">
-        <div class="col-2 pl-2" style="min-width: 85px">
-          <div class="btn btn-outline-primary w-100"
-               style="border-radius: 3px">
-            Enter
-          </div>
-        </div>
-        </div>
-        <div class="pt-5px fs-18px" *ngIf="bitcloutReceived">
-          Estimated BitClout received: {{ bitcloutReceived }}
-          <br/>
-          Estimated Fees (USD): ${{usdFees}}
-        </div>
+      <div class="px-15px">
+        <button
+          class="btn btn-primary font-weight-bold fs-15px px-15px"
+          (click)="onBuyClicked()">Buy</button>
       </div>
-      <button
-        class="btn btn-lg"
-        style="border-radius: 3px;"
-        (click)="onBuyClicked()"
-        [disabled]="!quotation" [ngClass]="{'btn-outline-secondary': !quotation, 'btn-outline-primary': quotation}">Buy</button>
-      <div>
-        You will be redirected to Wyre to purchase Bitcoin which will be sent to an address controlled by this node.
-        In return, you will receive an amount of Bitclout commensurate with the amount of Bitcoin you purchased.
-      </div>
+    </div>
+    <div class="fs-15px text-grey7" *ngIf="bitcloutReceived">
+      Estimated BitClout received: {{ bitcloutReceived }}
     </div>
   </div>
 </div>

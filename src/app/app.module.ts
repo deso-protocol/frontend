@@ -77,6 +77,7 @@ import { TosPageComponent } from "./tos-page/tos-page.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminPageComponent } from "./admin-page/admin-page.component";
 import { AdminComponent } from "./admin/admin.component";
+import { AdminWyreComponent } from "./admin/admin-wyre/admin-wyre.component";
 import { NetworkInfoComponent } from "./network-info/network-info.component";
 import { SanitizeAndAutoLinkPipe } from "../lib/pipes/sanitize-and-auto-link-pipe";
 import { SanitizeVideoEmbedPipe } from "../lib/pipes/sanitize-video-embed-pipe";
@@ -175,6 +176,7 @@ import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/mess
     TosPageComponent,
     AdminPageComponent,
     AdminComponent,
+    AdminWyreComponent,
     NetworkInfoComponent,
     SanitizeAndAutoLinkPipe,
     SanitizeVideoEmbedPipe,

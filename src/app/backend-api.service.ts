@@ -66,6 +66,7 @@ export class BackendRoutes {
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
+  static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
@@ -1335,6 +1336,18 @@ export class BackendApiService {
         return res.FullTikTokURL;
       })
     );
+  }
+
+  GetWyreWalletOrderForPublicKey(
+    endpoint: string,
+    AdminPublicKeyBase58Check,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetWyreWalletOrdersForPublicKey, AdminPublicKeyBase58Check, {
+      PublicKeyBase58Check,
+      Username,
+    });
   }
 
   // Wyre
