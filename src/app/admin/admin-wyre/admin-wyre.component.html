@@ -21,6 +21,9 @@
   <div *ngFor="let order of wyreOrders">
     Order {{ order.LatestWyreWalletOrderWebhookPayload.orderId }} -- {{ order.LatestWyreWalletOrderWebhookPayload.orderStatus }}
     <ul>
+      <li>
+        Created at: {{ order.Timestamp }}
+      </li>
       <li style="word-break: break-word">
         btc tx: {{ order.LatestWyreTrackWalletOrderResponse.blockchainNetworkTx }}
       </li>
@@ -32,6 +35,9 @@
       </li>
       <li>
         BitClout Nanos Purchased: {{ order.BitCloutPurchasedNanos }}
+      </li>
+      <li style="word-break: break-word">
+        BitClout Basic Transfer Hash: {{ order.BasicTransferTxnHash }}
       </li>
     </ul>
   </div>
