@@ -13,6 +13,7 @@ import { BithuntService } from "../../../lib/services/bithunt/bithunt-service";
   styleUrls: ["./right-bar-creators-leaderboard.component.scss"],
 })
 export class RightBarCreatorsLeaderboardComponent implements OnInit {
+  static MAX_PROFILE_ENTRIES = 10;
   @Input() activeTab: string;
 
   RightBarCreatorsComponent = RightBarCreatorsComponent;
@@ -45,6 +46,43 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
         this.globalVars.allCommunityProjectsLeaderboard = res;
         this.globalVars.topCommunityProjectsLeaderboard = this.globalVars.allCommunityProjectsLeaderboard.slice(0, 10);
       });
+    }
+
+    if (this.globalVars.topCreatorsAllTimeLeaderboard.length === 0) {
+      let readerPubKey = "";
+      if (this.globalVars.loggedInUser) {
+        readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      }
+      this.backendApi
+        .GetProfiles(
+          this.globalVars.localNode,
+          null /*PublicKeyBase58Check*/,
+          null /*Username*/,
+          null /*UsernamePrefix*/,
+          null /*Description*/,
+          BackendApiService.GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE /*Order by*/,
+          10 /*NumEntriesToReturn*/,
+          readerPubKey /*ReaderPublicKeyBase58Check*/,
+          "leaderboard" /*ModerationType*/,
+          false /*FetchUsersThatHODL*/,
+          false /*AddGlobalFeedBool*/
+        )
+        .subscribe(
+          (response) => {
+            this.globalVars.topCreatorsAllTimeLeaderboard = response.ProfilesFound.slice(
+              0,
+              RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES
+            ).map((profile) => {
+              return {
+                Profile: profile,
+              };
+            });
+          },
+          (err) => {
+            console.error(err);
+            this.globalVars._alertError("Error loading profiles: " + this.backendApi.stringifyError(err));
+          }
+        );
     }
   }
 }

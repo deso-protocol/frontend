@@ -59,7 +59,7 @@
         </option>
       </select>
     </div>
-    <div class="pt-5px">
+    <div class="pt-5px" *ngIf="activeRightTabOption.poweredBy">
       <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
         <i class="fas fa-external-link-alt pr-5px"></i>
         Powered by {{ activeRightTabOption.poweredBy.name }}
