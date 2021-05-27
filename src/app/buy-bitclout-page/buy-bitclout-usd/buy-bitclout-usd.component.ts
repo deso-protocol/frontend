@@ -6,6 +6,8 @@ import { IdentityService } from "../../identity.service";
 import { BackendApiService } from "../../backend-api.service";
 import * as _ from "lodash";
 import Swal from "sweetalert2";
+import { ActivatedRoute } from "@angular/router";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
 
 @Component({
   selector: "buy-bitclout-usd",
@@ -26,10 +28,29 @@ export class BuyBitcloutUSDComponent {
     private globalVars: GlobalVarsService,
     private httpClient: HttpClient,
     private identityService: IdentityService,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private route: ActivatedRoute
   ) {
     this.wyreService = new WyreService(this.httpClient, this.globalVars, this.backendApi);
     this.debouncedGetQuotation = _.debounce(this._refreshQuotation.bind(this), 300);
+    this.route.queryParams.subscribe((queryParams) => {
+      if (queryParams.destAmount) {
+        const btcPurchased = queryParams.destAmount;
+        SwalHelper.fire({
+          icon: "success",
+          title: `Purchase Completed`,
+          html: `Your purchase of approximately ${this.getBitCloutReceived(btcPurchased).toFixed(
+            4
+          )} BitClout was successful. It may take a few minutes to appear in your wallet.`,
+          showConfirmButton: true,
+          focusConfirm: true,
+          customClass: {
+            confirmButton: "btn btn-light",
+          },
+          confirmButtonText: "Ok",
+        });
+      }
+    });
   }
 
   onBuyClicked(): void {
@@ -84,8 +105,11 @@ export class BuyBitcloutUSDComponent {
       return;
     }
     this.quotation = quotation;
-    const btcReceived = quotation.destAmount;
-    this.bitcloutReceived = (btcReceived * 1e8) / (this.globalVars.satoshisPerBitCloutExchangeRate * 1.01);
+    this.bitcloutReceived = this.getBitCloutReceived(quotation.destAmount);
     this.usdFees = quotation.fees.USD;
+  }
+
+  getBitCloutReceived(btcReceived: number): number {
+    return (btcReceived * 1e8) / (this.globalVars.satoshisPerBitCloutExchangeRate * 1.01);
   }
 }
