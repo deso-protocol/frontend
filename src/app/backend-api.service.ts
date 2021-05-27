@@ -386,6 +386,7 @@ export class BackendApiService {
   GetBlockTemplate(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetBlockTemplate, {
       PublicKeyBase58Check,
+      HeaderVersion: 1,
     });
   }
 
