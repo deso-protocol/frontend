@@ -1345,6 +1345,7 @@ export class BackendApiService {
     Username: string
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathGetWyreWalletOrdersForPublicKey, AdminPublicKeyBase58Check, {
+      AdminPublicKey: AdminPublicKeyBase58Check,
       PublicKeyBase58Check,
       Username,
     });
