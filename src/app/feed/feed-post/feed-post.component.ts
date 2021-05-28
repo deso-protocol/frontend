@@ -104,7 +104,7 @@ export class FeedPostComponent implements OnInit {
   constructedEmbedVideoURL: any;
 
   //max length to show of posts in feeds
-  maxPostLength = 260;
+  maxPostLength = 280;
 
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
