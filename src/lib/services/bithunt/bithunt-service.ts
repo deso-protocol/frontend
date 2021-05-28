@@ -4,6 +4,7 @@ import { BackendApiService, ProfileEntryResponse, User } from "../../../app/back
 import { GlobalVarsService } from "../../../app/global-vars.service";
 import { map, switchMap } from "rxjs/operators";
 import { flatten } from "lodash";
+import * as _ from "lodash";
 
 class BithuntLeaderboardResponse {
   projects: BithuntProject[];
@@ -72,6 +73,9 @@ export class BithuntService {
       )
       .pipe(
         map((res: any) => {
+          res.UserList = _.filter(res.UserList, function(o) { return !o.IsGraylisted; });
+          res.UserList = _.filter(res.UserList, function(o) { return !o.IsBlacklisted; });
+
           return res.UserList.map((user: User, index: number) => {
             return {
               Profile: user.ProfileEntryResponse,
