@@ -6,7 +6,7 @@ import { IdentityService } from "../../identity.service";
 import { BackendApiService } from "../../backend-api.service";
 import * as _ from "lodash";
 import Swal from "sweetalert2";
-import { ActivatedRoute } from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 
 @Component({
@@ -17,7 +17,7 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 export class BuyBitcloutUSDComponent {
   wyreService: WyreService;
 
-  amount: number;
+  amount = 99;
   quotation: any;
   bitcloutReceived: number;
   usdFees: number;
@@ -29,7 +29,8 @@ export class BuyBitcloutUSDComponent {
     private httpClient: HttpClient,
     private identityService: IdentityService,
     private backendApi: BackendApiService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.wyreService = new WyreService(this.httpClient, this.globalVars, this.backendApi);
     this.debouncedGetQuotation = _.debounce(this._refreshQuotation.bind(this), 300);
@@ -49,12 +50,16 @@ export class BuyBitcloutUSDComponent {
           },
           confirmButtonText: "Ok",
         });
+
+        this.globalVars.celebrate();
+        this.router.navigate([], { queryParams: {} });
       }
     });
   }
 
   onBuyClicked(): void {
-    this.wyreService.makeWalletOrderReservation(this.amount).subscribe(
+    const totalAmount = this.amount + this.usdFees;
+    this.wyreService.makeWalletOrderReservation(totalAmount).subscribe(
       (res) => {
         const wyreUrl = res.url;
         Swal.fire({
