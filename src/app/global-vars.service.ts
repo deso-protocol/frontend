@@ -125,6 +125,9 @@ export class GlobalVarsService {
   // Whether or not to show the Verify phone number flow.
   showPhoneNumberVerification = false;
 
+  // Whether or not to show the Buy BitClout with USD flow.
+  showBuyWithUSD = false;
+
   // Whether or not this node comps profile creation.
   isCompProfileCreation = false;
 

@@ -66,8 +66,13 @@ export class BackendRoutes {
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
+  static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
+
+  // Wyre routes.
+  static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
+  static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
 }
 
 export class Transaction {
@@ -1332,6 +1337,33 @@ export class BackendApiService {
         return res.FullTikTokURL;
       })
     );
+  }
+
+  GetWyreWalletOrderForPublicKey(
+    endpoint: string,
+    AdminPublicKeyBase58Check,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetWyreWalletOrdersForPublicKey, AdminPublicKeyBase58Check, {
+      AdminPublicKey: AdminPublicKeyBase58Check,
+      PublicKeyBase58Check,
+      Username,
+    });
+  }
+
+  // Wyre
+  GetWyreWalletOrderQuotation(endpoint: string, SourceAmount: number): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderQuotation, {
+      SourceAmount,
+    });
+  }
+
+  GetWyreWalletOrderReservation(endpoint: string, ReferenceId: string, SourceAmount: number): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderReservation, {
+      ReferenceId,
+      SourceAmount,
+    });
   }
 
   // Error parsing

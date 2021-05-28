@@ -1,0 +1,32 @@
+<div class="w-100">
+  <div class="px-15px">
+    <div class="fs-18px font-weight-bold mb-10px">
+      Enter an amount in USD to convert to BitClout
+    </div>
+    <p class="mb-5px">You can purchase up to ${{ maxUsdAmount }} of BitClout per week using USD.</p>
+    <p class="mb-10px">For larger purchases, <a [routerLink]="['', 'buy-bitclout']" [queryParams]="{'btc':true}">buy with Bitcoin.</a></p>
+    <div class="fs-18px py-15px d-flex">
+      <div style="width: 40%">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <input class="form-control"
+                 type="number"
+                 min="10"
+                 max="10000"
+                 matInput [(ngModel)]="amount" (input)="updateQuotation()">
+          <div class="input-group-append">
+            <span class="input-group-text">USD</span>
+          </div>
+        </div>
+      </div>
+      <button
+        class="btn btn-primary font-weight-bold fs-15px px-15px ml-10px"
+        (click)="onBuyClicked()">Buy BitClout</button>
+    </div>
+    <div class="fs-15px text-grey7" *ngIf="bitcloutReceived">
+      Estimated BitClout received: {{ bitcloutReceived.toFixed(4) }}
+    </div>
+  </div>
+</div>
