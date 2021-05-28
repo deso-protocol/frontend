@@ -54,7 +54,10 @@ export class BuyBitcloutComponent implements OnInit {
   ) {
     this.appData = globalVars;
     this.route.queryParams.subscribe((params: Params) => {
-      // Block people from purchasing $BitClout until they enter this magic string.
+      if (params.btc) {
+        this.activeTab = BuyBitcloutComponent.BUY_WITH_BTC;
+        this.router.navigate([], { queryParams: {} });
+      }
     });
   }
 

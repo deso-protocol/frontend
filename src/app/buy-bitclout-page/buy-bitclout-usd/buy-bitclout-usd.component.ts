@@ -24,6 +24,9 @@ export class BuyBitcloutUSDComponent implements OnInit {
 
   debouncedGetQuotation: () => void;
 
+  maxUsdAmount = 450;
+  minUsdAmount = 5;
+
   constructor(
     private globalVars: GlobalVarsService,
     private httpClient: HttpClient,
@@ -91,6 +94,18 @@ export class BuyBitcloutUSDComponent implements OnInit {
   }
 
   updateQuotation(): void {
+    if (this.amount < this.minUsdAmount) {
+      this.amount = undefined;
+      setTimeout(() => {
+        this.amount = this.minUsdAmount;
+      }, 0);
+    } else if (this.amount > this.maxUsdAmount) {
+      this.amount = undefined;
+      setTimeout(() => {
+        this.amount = this.maxUsdAmount;
+      }, 0);
+    }
+
     this.debouncedGetQuotation();
   }
 
