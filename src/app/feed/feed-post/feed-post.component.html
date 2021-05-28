@@ -214,9 +214,10 @@
         </div>
 
         <!-- Content -->
+        <!-- TODO: Add a read more button for posts that are too long? -->
         <div
           class="roboto-regular mt-1"
-          [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
+          [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent, 'feed-post__readmore': !isParentPostInThread && postContent.Body.length > maxPostLength }"
           style="
             overflow-wrap: anywhere;
             -ms-word-break: break-all;

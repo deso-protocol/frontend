@@ -103,6 +103,9 @@ export class FeedPostComponent implements OnInit {
   _blocked: boolean;
   constructedEmbedVideoURL: any;
 
+  //max length to show of posts in feeds
+  maxPostLength = 260;
+
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
       this.loggedInUserStakeAmount = this._getLoggedInUserStakeAmount();

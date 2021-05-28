@@ -1005,6 +1005,22 @@ $green-font-color: #19B028;
   width: 55%;
 }
 
+.feed-post__readmore {
+  max-height: 150px;
+  position: relative;
+  overflow: hidden;
+}
+
+.feed-post__readmore:after {
+    content:"";
+    position:absolute;
+    top:90px;
+    left:0;
+    height:60px;
+    width:100%;
+    background: linear-gradient(rgba(255, 255, 255, 0), #fff);
+}
+
 .left-bar__dot-active {
   font-size: 50px;
   line-height: 18px;
