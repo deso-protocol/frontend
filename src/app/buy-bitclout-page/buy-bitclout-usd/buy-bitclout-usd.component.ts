@@ -17,7 +17,7 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 export class BuyBitcloutUSDComponent implements OnInit {
   wyreService: WyreService;
 
-  amount: number = 99;
+  amount = 99;
   quotation: any;
   bitcloutReceived: number;
   usdFees: number;
@@ -115,7 +115,7 @@ export class BuyBitcloutUSDComponent implements OnInit {
     }
     this.quotation = quotation;
     this.bitcloutReceived = this.getBitCloutReceived(quotation.destAmount);
-    this.usdFees = quotation.fees.USD;
+    this.usdFees = quotation.sourceAmount - quotation.sourceAmountWithoutFees;
   }
 
   getBitCloutReceived(btcReceived: number): number {
