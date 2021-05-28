@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { HttpClient } from "@angular/common/http";
 import { WyreService } from "../../../lib/services/wyre/wyre";
@@ -14,10 +14,10 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
   templateUrl: "./buy-bitclout-usd.component.html",
   styleUrls: ["./buy-bitclout-usd.component.scss"],
 })
-export class BuyBitcloutUSDComponent {
+export class BuyBitcloutUSDComponent implements OnInit {
   wyreService: WyreService;
 
-  amount = 99;
+  amount: number = 99;
   quotation: any;
   bitcloutReceived: number;
   usdFees: number;
@@ -55,6 +55,10 @@ export class BuyBitcloutUSDComponent {
         this.router.navigate([], { queryParams: {} });
       }
     });
+  }
+
+  ngOnInit() {
+    this._refreshQuotation();
   }
 
   onBuyClicked(): void {
