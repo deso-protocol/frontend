@@ -146,11 +146,10 @@ export class CreatorProfilePostsComponent {
     this.blockUser.emit();
   }
 
-  profileBelongsToLoggedInUser() {
-    if (this.globalVars.loggedInUser && this.globalVars.loggedInUser.ProfileEntryResponse) {
-      return this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check;
-    } else {
-      return false;
-    }
+  profileBelongsToLoggedInUser(): boolean {
+    return (
+      this.globalVars.loggedInUser?.ProfileEntryResponse &&
+      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
+    );
   }
 }

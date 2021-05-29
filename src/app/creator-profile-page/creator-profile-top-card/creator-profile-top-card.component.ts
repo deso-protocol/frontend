@@ -38,13 +38,11 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     });
   }
 
-  profileBelongsToLoggedInUser() {
-    if (this.globalVars.loggedInUser && this.globalVars.loggedInUser.ProfileEntryResponse) {
-      return (
-        this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
-      );
-    }
-    return false;
+  profileBelongsToLoggedInUser(): boolean {
+    return (
+      this.globalVars.loggedInUser?.ProfileEntryResponse &&
+      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
+    );
   }
 
   ngOnDestroy() {
