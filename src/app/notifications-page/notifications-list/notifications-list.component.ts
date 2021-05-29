@@ -181,8 +181,9 @@ export class NotificationsListComponent implements OnInit {
     };
 
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
+      const amount = this.globalVars.nanosToBitClout(notification.Metadata.BasicTransferTxindexMetadata.TotalOutputNanos);
       result.icon = "fas fa-money-bill-wave-alt fc-green";
-      result.action = `${actorName} sent you BitClout!</b>`;
+      result.action = `${actorName} sent you ${amount} BitClout!</b>`;
       return result;
     } else if (txnMeta.TxnType === "CREATOR_COIN") {
       // If we don't have the corresponding metadata then return null.
