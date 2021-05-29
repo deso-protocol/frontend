@@ -40,10 +40,11 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   profileBelongsToLoggedInUser() {
     if (this.globalVars.loggedInUser && this.globalVars.loggedInUser.ProfileEntryResponse) {
-      return this.globalVars.loggedInUser.ProfileEntryResponse.Username === this.profile.Username;
-    } else {
-      return false;
+      return (
+        this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
+      );
     }
+    return false;
   }
 
   ngOnDestroy() {
