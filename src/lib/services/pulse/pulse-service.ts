@@ -88,6 +88,7 @@ export class PulseService {
       )
       .pipe(
         map((res: any) => {
+          res.UserList = _.filter(res.UserList, function(o) { return o.ProfileEntryResponse !== null })
           res.UserList = _.filter(res.UserList, function(o) { return !o.IsGraylisted; });
           res.UserList = _.filter(res.UserList, function(o) { return !o.IsBlacklisted; });
           if (res.UserList.length > 10) { res.UserList = res.UserList.slice(0, 10) }
