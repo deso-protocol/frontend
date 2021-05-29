@@ -11,6 +11,6 @@ more.
 # About This Repo
 Documentation for this repo lives on docs.bitclout.com. Specifically, the following
 docs should give you everything you need to get started:
-* [BitClout Code Walkthrough](https://FIXME)
-* [Setting Up Your Dev Environment](https://FIXME)
-* [Making Your First Changes](https://FIXME)
+* [BitClout Code Walkthrough](https://docs.bitclout.com/code/walkthrough)
+* [Setting Up Your Dev Environment](https://docs.bitclout.com/code/dev-setup)
+* [Making Your First Changes](https://docs.bitclout.com/code/making-your-first-changes)

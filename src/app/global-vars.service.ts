@@ -67,6 +67,7 @@ export class GlobalVarsService {
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
+  topCreatorsAllTimeLeaderboard: LeaderboardResponse[] = [];
   topGainerLeaderboard: LeaderboardResponse[] = [];
   topDiamondedLeaderboard: LeaderboardResponse[] = [];
   allCommunityProjectsLeaderboard: CommunityProject[] = [];
