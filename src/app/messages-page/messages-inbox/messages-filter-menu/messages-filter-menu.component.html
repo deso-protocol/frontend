@@ -8,22 +8,36 @@
 
     <div class="w-100 d-flex pl-5px flex-column">
       <div class="mt-5px d-flex flex-row align-items-center">
-        <input id="holdsMeCheckbox" type="checkbox" name="holdsMe" class="w-10" [(ngModel)]="messageFilterHoldsMe">
+        <input id="holdsMeCheckbox" type="checkbox" name="holdsMe" class="w-10" [(ngModel)]="messageFilterHoldsMe" />
         <label for="holdsMeCheckbox" class="cursor-pointer mb-0">Holders</label>
       </div>
 
       <div class="mt-5px d-flex flex-row align-items-center">
-        <input id="iHoldCheckbox" type="checkbox" style="vertical-align: middle;" name="iHold" class="w-10" [(ngModel)]="messageFilterIHold">
+        <input
+          id="iHoldCheckbox"
+          type="checkbox"
+          style="vertical-align: middle"
+          name="iHold"
+          class="w-10"
+          [(ngModel)]="messageFilterIHold"
+        />
         <label for="iHoldCheckbox" class="cursor-pointer mb-0">Holdings</label>
       </div>
 
       <div class="mt-5px d-flex flex-row align-items-center">
-        <input id="followingMeCheckbox" type="checkbox" style="vertical-align: middle;" name="followingMe" class="w-10" [(ngModel)]="messageFilterFollowingMe">
+        <input
+          id="followingMeCheckbox"
+          type="checkbox"
+          style="vertical-align: middle"
+          name="followingMe"
+          class="w-10"
+          [(ngModel)]="messageFilterFollowingMe"
+        />
         <label for="followingMeCheckbox" class="cursor-pointer mb-0">Followers</label>
       </div>
 
       <div class="mt-5px d-flex flex-row align-items-center">
-        <input id="iFollowCheckbox" type="checkbox" name="iFollow" class="w-10" [(ngModel)]="messageFilterIFollow">
+        <input id="iFollowCheckbox" type="checkbox" name="iFollow" class="w-10" [(ngModel)]="messageFilterIFollow" />
         <label for="iFollowCheckbox" class="cursor-pointer mb-0">Following</label>
       </div>
     </div>

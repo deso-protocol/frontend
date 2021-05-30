@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { HttpClient } from "@angular/common/http";
 import { WyreService } from "../../../lib/services/wyre/wyre";
@@ -6,8 +6,9 @@ import { IdentityService } from "../../identity.service";
 import { BackendApiService } from "../../backend-api.service";
 import * as _ from "lodash";
 import Swal from "sweetalert2";
-import {ActivatedRoute, Router} from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { FeedComponent } from "../../feed/feed.component";
 
 @Component({
   selector: "buy-bitclout-usd",
@@ -25,6 +26,7 @@ export class BuyBitcloutUSDComponent implements OnInit {
   debouncedGetQuotation: () => void;
 
   maxUsdAmount = 450;
+  minUsdAmount = 10;
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -38,7 +40,9 @@ export class BuyBitcloutUSDComponent implements OnInit {
     this.debouncedGetQuotation = _.debounce(this._refreshQuotation.bind(this), 300);
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.destAmount) {
+        this.globalVars.logEvent("wyre : buy : success", queryParams);
         const btcPurchased = queryParams.destAmount;
+        this.globalVars.celebrate();
         SwalHelper.fire({
           icon: "success",
           title: `Purchase Completed`,
@@ -46,15 +50,24 @@ export class BuyBitcloutUSDComponent implements OnInit {
             4
           )} BitClout was successful. It may take a few minutes to appear in your wallet.`,
           showConfirmButton: true,
-          focusConfirm: true,
+          showCancelButton: true,
+          reverseButtons: true,
           customClass: {
             confirmButton: "btn btn-light",
+            cancelButton: "btn btn-light no",
           },
-          confirmButtonText: "Ok",
+          confirmButtonText: "Continue to Feed ",
+          cancelButtonText: "Buy More",
+        }).then((res) => {
+          queryParams = {};
+          if (res.isConfirmed) {
+            this.router.navigate(["/" + globalVars.RouteNames.BROWSE], {
+              queryParams: { feedTab: FeedComponent.GLOBAL_TAB },
+            });
+          } else {
+            this.router.navigate([], { queryParams: {} });
+          }
         });
-
-        this.globalVars.celebrate();
-        this.router.navigate([], { queryParams: {} });
       }
     });
   }
@@ -82,6 +95,7 @@ export class BuyBitcloutUSDComponent implements OnInit {
           reverseButtons: true,
         }).then((res: any) => {
           if (res.isConfirmed) {
+            this.globalVars.logEvent("wyre : buy", { amount: this.amount });
             window.open(wyreUrl);
           }
         });
@@ -99,6 +113,12 @@ export class BuyBitcloutUSDComponent implements OnInit {
         this.amount = this.maxUsdAmount;
       }, 0);
     }
+    if (this.amount < this.minUsdAmount) {
+      this.amount = undefined;
+      setTimeout(() => {
+        this.amount = this.minUsdAmount;
+      }, 0);
+    }
 
     this.debouncedGetQuotation();
   }
@@ -107,14 +127,16 @@ export class BuyBitcloutUSDComponent implements OnInit {
     this.bitcloutReceived = null;
     this.usdFees = null;
     this.quotation = null;
-    this.wyreService.makeWalletOrderQuotation(this.amount).subscribe(
-      (res) => {
-        this.parseQuotation(res);
-      },
-      (err) => {
-        this.globalVars._alertError(err.error.message);
-      }
-    );
+    if (this.amount >= 10) {
+      this.wyreService.makeWalletOrderQuotation(this.amount).subscribe(
+        (res) => {
+          this.parseQuotation(res);
+        },
+        (err) => {
+          this.globalVars._alertError(err.error.message);
+        }
+      );
+    }
   }
 
   parseQuotation(quotation: any): void {

@@ -8,37 +8,28 @@
         class="form-control w-100 fs-15px lh-15px"
         placeholder="Enter a username or public key."
       />
-      <button
-        *ngIf="!loadingWyreOrders"
-        (click)="_loadWyreOrders()"
-        class="btn btn-outline-primary fs-15px ml-5px"
-      >
+      <button *ngIf="!loadingWyreOrders" (click)="_loadWyreOrders()" class="btn btn-outline-primary fs-15px ml-5px">
         Fetch
       </button>
       <button *ngIf="loadingWyreOrders" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
     </div>
   </div>
   <div *ngFor="let order of wyreOrders" class="px-15px">
-    Order {{ order.LatestWyreWalletOrderWebhookPayload.orderId }} -- {{ order.LatestWyreWalletOrderWebhookPayload.orderStatus }}
+    Order {{ order.LatestWyreWalletOrderWebhookPayload.orderId }} --
+    {{ order.LatestWyreWalletOrderWebhookPayload.orderStatus }}
     <ul>
+      <li>Created at: {{ order.Timestamp }}</li>
+      <li style="word-break: break-word">btc tx: {{ order.LatestWyreTrackWalletOrderResponse.blockchainNetworkTx }}</li>
       <li>
-        Created at: {{ order.Timestamp }}
-      </li>
-      <li style="word-break: break-word">
-        btc tx: {{ order.LatestWyreTrackWalletOrderResponse.blockchainNetworkTx }}
-      </li>
-      <li>
-        Source amount: {{ order.LatestWyreTrackWalletOrderResponse.sourceAmount }} {{ order.LatestWyreTrackWalletOrderResponse.sourceCurrency }}
+        Source amount: {{ order.LatestWyreTrackWalletOrderResponse.sourceAmount }}
+        {{ order.LatestWyreTrackWalletOrderResponse.sourceCurrency }}
       </li>
       <li>
-        Destination amount: {{ order.LatestWyreTrackWalletOrderResponse.destAmount }} {{ order.LatestWyreTrackWalletOrderResponse.destCurrency }}
+        Destination amount: {{ order.LatestWyreTrackWalletOrderResponse.destAmount }}
+        {{ order.LatestWyreTrackWalletOrderResponse.destCurrency }}
       </li>
-      <li>
-        BitClout Nanos Purchased: {{ order.BitCloutPurchasedNanos }}
-      </li>
-      <li style="word-break: break-word">
-        BitClout Basic Transfer Hash: {{ order.BasicTransferTxnHash }}
-      </li>
+      <li>BitClout Nanos Purchased: {{ order.BitCloutPurchasedNanos }}</li>
+      <li style="word-break: break-word">BitClout Basic Transfer Hash: {{ order.BasicTransferTxnHash }}</li>
     </ul>
   </div>
 </div>

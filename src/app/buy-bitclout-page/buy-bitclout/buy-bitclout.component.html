@@ -13,19 +13,11 @@
   <div class="d-flex flex-column">
     <div style="flex-grow: 1">
       <div class="global__mobile-scrollable-section" *ngIf="!waitingOnTxnConfirmation">
-        <!-- Description -->
-        <div class="fc-muted fs-15px mt-30px ml-15px">
-          $BitClout is a
-          <span style="color: black">cryptocurrency</span>
-          like Bitcoin, only it powers the first
-          <span style="color: black">decentralized social network</span>
-          .
-        </div>
-
-        <div style="height: 60px;" *ngIf="!globalVars.showBuyWithUSD"></div>
-        <div class="pb-15px"
-             *ngIf="globalVars.showBuyWithUSD"
-             [ngClass]="{'mb-10px': activeTab === BuyBitcloutComponent.BUY_WITH_BTC }"
+        <div style="height: 60px" *ngIf="!globalVars.showBuyWithUSD"></div>
+        <div
+          class="pb-15px"
+          *ngIf="globalVars.showBuyWithUSD"
+          [ngClass]="{ 'mb-10px': activeTab === BuyBitcloutComponent.BUY_WITH_BTC }"
         >
           <tab-selector [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
         </div>

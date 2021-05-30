@@ -39,7 +39,10 @@
   </div>
 
   <!-- Title -->
-  <div class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column">
+  <div
+    class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column"
+    [ngClass]="{ 'pb-10px': !activeRightTabOption.poweredBy }"
+  >
     <div>
       <select
         #rightBarSelect

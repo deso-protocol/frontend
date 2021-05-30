@@ -5,8 +5,13 @@
 >
   <!-- Clear Inbox -->
   <div class="d-flex justify-content-end align-items-right pr-10px">
-    <div *ngIf="globalVars.messageResponse != null && globalVars.messageResponse.NumberOfUnreadThreads > 0 ;
-                 then thenEnvelopeBlock else elseEnvelopeBlock"></div>
+    <div
+      *ngIf="
+        globalVars.messageResponse != null && globalVars.messageResponse.NumberOfUnreadThreads > 0;
+        then thenEnvelopeBlock;
+        else elseEnvelopeBlock
+      "
+    ></div>
     <ng-template #thenEnvelopeBlock>
       <i
         (click)="_markAllMessagesRead()"

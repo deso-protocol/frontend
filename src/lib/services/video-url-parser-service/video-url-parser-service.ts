@@ -132,11 +132,8 @@ export class VideoUrlParserService {
   }
 
   static isYoutubeFromURL(url: URL): boolean {
-    const patterns = [
-      /\byoutube\.com$/,
-      /\byoutu\.be$/,
-    ];
-    return patterns.some(p => p.test(url.hostname));
+    const patterns = [/\byoutube\.com$/, /\byoutu\.be$/];
+    return patterns.some((p) => p.test(url.hostname));
   }
 
   static isTikTokLink(link: string): boolean {

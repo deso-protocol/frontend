@@ -39,7 +39,7 @@ export class BuyBitcloutComponent implements OnInit {
   BuyBitcloutComponent = BuyBitcloutComponent;
 
   static BUY_WITH_USD = "Buy with USD";
-  static BUY_WITH_BTC = "Buy with BTC";
+  static BUY_WITH_BTC = "Buy with Bitcoin";
 
   buyTabs = [BuyBitcloutComponent.BUY_WITH_USD, BuyBitcloutComponent.BUY_WITH_BTC];
   activeTab = BuyBitcloutComponent.BUY_WITH_USD;
