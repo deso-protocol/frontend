@@ -124,7 +124,7 @@ export class FeedPostComponent implements OnInit {
 
   onPostClicked(event) {
     if (this.containerModalRef !== null) {
-      this.containerModalRef.hide()
+      this.containerModalRef.hide();
     }
 
     // if we shouldn't be navigating the user to a new page, just return
@@ -171,44 +171,28 @@ export class FeedPostComponent implements OnInit {
     });
   }
 
-  openDiamondsModal(event) {
+  openInteractionModal(event, component): void {
     event.stopPropagation();
-    this.modalService.show(DiamondsModalComponent, {
+    this.modalService.show(component, {
       class: "modal-dialog-centered",
-      initialState: {
-        postHashHex: this.post.PostHashHex,
-      },
+      initialState: { postHashHex: this.post.PostHashHex },
     });
   }
 
-  openLikesModal(event, imageURL) {
-    event.stopPropagation();
-    this.modalService.show(LikesModalComponent, {
-      class: "modal-dialog-centered",
-      initialState: {
-        postHashHex: this.post.PostHashHex,
-      },
-    });
+  openDiamondsModal(event): void {
+    this.openInteractionModal(event, DiamondsModalComponent);
   }
 
-  openRecloutsModal(event, imageURL) {
-    event.stopPropagation();
-    this.modalService.show(RecloutsModalComponent, {
-      class: "modal-dialog-centered",
-      initialState: {
-        postHashHex: this.post.PostHashHex,
-      },
-    });
+  openLikesModal(event): void {
+    this.openInteractionModal(event, LikesModalComponent);
   }
 
-  openQuoteRecloutsModal(event, imageURL) {
-    event.stopPropagation();
-    this.modalService.show(QuoteRecloutsModalComponent, {
-      class: "modal-dialog-centered",
-      initialState: {
-        postHashHex: this.post.PostHashHex,
-      },
-    });
+  openRecloutsModal(event): void {
+    this.openInteractionModal(event, RecloutsModalComponent);
+  }
+
+  openQuoteRecloutsModal(event): void {
+    this.openInteractionModal(event, QuoteRecloutsModalComponent);
   }
 
   hidePost() {

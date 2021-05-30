@@ -258,7 +258,8 @@
         <!-- Embedded Videos -->
         <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__video-embed-container">
           <iframe
-            height="315"
+            id="embed-video-player"
+            [height]="getEmbedVideoHeight()"
             class="feed-post__image"
             [ngStyle]="{
               'margin-top': setNegativeMargins(getEmbedVideoURLForPostContent(), globalVars) ? '-65px' : '',
@@ -334,7 +335,7 @@
       </div>
     </div>
   </a>
-  <!-- 
+  <!--
     This HTML is used on the main post in a thread in order to show detailed info
     about the interactions with that thread.  TODO: We should probably break the
     "main" post in a thread into it's own file so it can have more custom styling
@@ -342,38 +343,50 @@
   -->
   <div class="feed-post__blue-border px-30px pb-5px" *ngIf="showInteractionDetails">
     <div class="container w-100 p-0px">
-      <!-- DESKTOP --> 
-      <div class="row no-gutters d-none d-lg-block py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer">
+      <!-- DESKTOP -->
+      <div
+        class="row no-gutters d-none d-lg-block py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer"
+      >
         <div class="d-flex justify-content-between">
-          <span (click)="openRecloutsModal($event, '')">
-            <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b> Reclouts&nbsp;
+          <span (click)="openRecloutsModal($event)">
+            <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b>
+            Reclouts&nbsp;
           </span>
-          <span (click)="openQuoteRecloutsModal($event, '')">
-            <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b> Quote Reclouts&nbsp;
+          <span (click)="openQuoteRecloutsModal($event)">
+            <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b>
+            Quote Reclouts&nbsp;
           </span>
-          <span (click)="openLikesModal($event, '')">
-            <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b> Likes
+          <span (click)="openLikesModal($event)">
+            <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b>
+            Likes
           </span>
           <span (click)="openDiamondsModal($event)">
-            <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
+            <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b>
+            Diamonds
           </span>
         </div>
       </div>
-      <!-- MOBILE --> 
-      <div class="row no-gutters d-lg-none py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer">
-        <div class="col-6 mb-0" (click)="openRecloutsModal($event, '')">
-          <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b> Reclouts&nbsp;
+      <!-- MOBILE -->
+      <div
+        class="row no-gutters d-lg-none py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer"
+      >
+        <div class="col-6 mb-0" (click)="openRecloutsModal($event)">
+          <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b>
+          Reclouts&nbsp;
         </div>
-        <div class="col-6 mb-0" (click)="openQuoteRecloutsModal($event, '')">
-          <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b> Quote Reclouts&nbsp;
+        <div class="col-6 mb-0" (click)="openQuoteRecloutsModal($event)">
+          <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b>
+          Quote Reclouts&nbsp;
         </div>
       </div>
       <div class="row no-gutters d-lg-none py-10px fs-15px border-bottom border-color-light-grey cursor-pointer">
-        <div (click)="openLikesModal($event, '')" class="col-6 mb-0">
-          <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b> Likes
+        <div (click)="openLikesModal($event)" class="col-6 mb-0">
+          <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b>
+          Likes
         </div>
         <div (click)="openDiamondsModal($event)" class="col-6 mb-0">
-          <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b> Diamonds
+          <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b>
+          Diamonds
         </div>
       </div>
     </div>

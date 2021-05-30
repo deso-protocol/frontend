@@ -7,14 +7,17 @@
       : activeTab === RightBarCreatorsComponent.COMMUNITY.name
       ? globalVars.topCommunityProjectsLeaderboard
       : activeTab === RightBarCreatorsComponent.ALL_TIME.name
-      ? globalVars.topCreatorsAllTimeLeaderboard : []
+      ? globalVars.topCreatorsAllTimeLeaderboard
+      : []
   "
   [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Profile.Username]"
   queryParamsHandling="merge"
   class="link--unstyled d-flex align-items-center text-grey5 fs-15px"
   [ngClass]="{
-    'pb-5px': activeTab !== RightBarCreatorsComponent.COMMUNITY.name && activeTab !== RightBarCreatorsComponent.ALL_TIME.name,
-    'pb-15px': activeTab === RightBarCreatorsComponent.COMMUNITY.name || activeTab === RightBarCreatorsComponent.ALL_TIME.name
+    'pb-5px':
+      activeTab !== RightBarCreatorsComponent.COMMUNITY.name && activeTab !== RightBarCreatorsComponent.ALL_TIME.name,
+    'pb-15px':
+      activeTab === RightBarCreatorsComponent.COMMUNITY.name || activeTab === RightBarCreatorsComponent.ALL_TIME.name
   }"
 >
   <div
@@ -55,10 +58,20 @@
     </div>
     <div
       [ngClass]="{
-        'text-grey7': activeTab !== RightBarCreatorsComponent.COMMUNITY.name && activeTab !== RightBarCreatorsComponent.ALL_TIME.name,
-        'text-grey5': activeTab === RightBarCreatorsComponent.COMMUNITY.name || activeTab === RightBarCreatorsComponent.ALL_TIME.name
+        'text-grey7':
+          activeTab !== RightBarCreatorsComponent.COMMUNITY.name &&
+          activeTab !== RightBarCreatorsComponent.ALL_TIME.name,
+        'text-grey5':
+          activeTab === RightBarCreatorsComponent.COMMUNITY.name ||
+          activeTab === RightBarCreatorsComponent.ALL_TIME.name
       }"
-      [ngStyle]="{ 'font-size': activeTab === RightBarCreatorsComponent.COMMUNITY.name || activeTab === RightBarCreatorsComponent.ALL_TIME.name ? '15px' : '10px' }"
+      [ngStyle]="{
+        'font-size':
+          activeTab === RightBarCreatorsComponent.COMMUNITY.name ||
+          activeTab === RightBarCreatorsComponent.ALL_TIME.name
+            ? '15px'
+            : '10px'
+      }"
     >
       ~{{ globalVars.nanosToUSD(profileEntryResponse.Profile.CoinPriceBitCloutNanos, 2) }}
       <i
