@@ -390,16 +390,28 @@
         </div>
       </div>
     </div>
-    <feed-post-icon-row
-      class="mt-2px"
-      *ngIf="showIconRow"
-      [noMaxWidth]="true"
-      [post]="post"
-      [postContent]="postContent"
-      [parentPost]="parentPost"
-      [hideNumbers]="true"
-      [afterCommentCreatedCallback]="afterCommentCreatedCallback"
-      [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
-    ></feed-post-icon-row>
+
+  </div>
+  <div *ngIf="showInteractionDetails"
+       class="feed-post__container d-flex justify-content-left w-100"
+       [ngClass]="{
+        'px-15px': includePaddingOnPost,
+        'pb-15px': includePaddingOnPost,
+        'feed-post__blue-border': showLeftSelectedBorder,
+        'feed-post__parent-post-font-size': isParentPostInThread
+      }">
+    <div class="feed-post__avatar-container"></div>
+    <div class="w-100" style="margin-left:-5px">
+      <feed-post-icon-row
+        class="mt-2px"
+        *ngIf="showIconRow"
+        [post]="post"
+        [postContent]="postContent"
+        [parentPost]="parentPost"
+        [hideNumbers]="true"
+        [afterCommentCreatedCallback]="afterCommentCreatedCallback"
+        [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+      ></feed-post-icon-row>
+    </div>
   </div>
 </div>

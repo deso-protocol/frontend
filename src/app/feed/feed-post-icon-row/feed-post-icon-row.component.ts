@@ -23,7 +23,6 @@ export class FeedPostIconRowComponent {
   @Input() parentPost: PostEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
   @Input() afterRecloutCreatedCallback: any = null;
-  @Input() noMaxWidth: boolean = false;
   @Input() hideNumbers: boolean = false;
 
   sendingRecloutRequest = false;
