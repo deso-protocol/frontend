@@ -180,19 +180,27 @@ export class FeedPostComponent implements OnInit {
   }
 
   openDiamondsModal(event): void {
-    this.openInteractionModal(event, DiamondsModalComponent);
+    if (this.postContent.DiamondCount) {
+      this.openInteractionModal(event, DiamondsModalComponent);
+    }
   }
 
   openLikesModal(event): void {
-    this.openInteractionModal(event, LikesModalComponent);
+    if (this.postContent.LikeCount) {
+      this.openInteractionModal(event, LikesModalComponent);
+    }
   }
 
   openRecloutsModal(event): void {
-    this.openInteractionModal(event, RecloutsModalComponent);
+    if (this.postContent.RecloutCount) {
+      this.openInteractionModal(event, RecloutsModalComponent);
+    }
   }
 
   openQuoteRecloutsModal(event): void {
-    this.openInteractionModal(event, QuoteRecloutsModalComponent);
+    if (this.postContent.QuoteRecloutCount) {
+      this.openInteractionModal(event, QuoteRecloutsModalComponent);
+    }
   }
 
   hidePost() {

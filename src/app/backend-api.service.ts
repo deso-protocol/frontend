@@ -153,6 +153,7 @@ export class PostEntryResponse {
   Comments: PostEntryResponse[];
   LikeCount: number;
   RecloutCount: number;
+  QuoteRecloutCount: number;
   DiamondCount: number;
   // Information about the reader's state w/regard to this post (e.g. if they liked it).
   PostEntryReaderState?: PostEntryReaderState;

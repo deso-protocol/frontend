@@ -371,21 +371,21 @@
         class="row no-gutters d-lg-none py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer"
       >
         <div class="col-6 mb-0" (click)="openRecloutsModal($event)">
-          <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b>
+          <b>{{ globalVars.abbreviateNumber(postContent.RecloutCount) }}</b>
           Reclouts&nbsp;
         </div>
         <div class="col-6 mb-0" (click)="openQuoteRecloutsModal($event)">
-          <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b>
+          <b>{{ globalVars.abbreviateNumber(postContent.QuoteRecloutCount) }}</b>
           Quote Reclouts&nbsp;
         </div>
       </div>
       <div class="row no-gutters d-lg-none py-10px fs-15px border-bottom border-color-light-grey cursor-pointer">
         <div (click)="openLikesModal($event)" class="col-6 mb-0">
-          <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b>
+          <b>{{ globalVars.abbreviateNumber(postContent.LikeCount) }}</b>
           Likes
         </div>
         <div (click)="openDiamondsModal($event)" class="col-6 mb-0">
-          <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b>
+          <b>{{ globalVars.abbreviateNumber(postContent.DiamondCount) }}</b>
           Diamonds
         </div>
       </div>
