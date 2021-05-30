@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import {forkJoin, Observable, of} from "rxjs";
+import { forkJoin, Observable, of } from "rxjs";
 import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
 import { GlobalVarsService } from "../../../app/global-vars.service";
 import { map, switchMap } from "rxjs/operators";

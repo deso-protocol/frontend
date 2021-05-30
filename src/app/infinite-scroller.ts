@@ -1,7 +1,7 @@
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 
 export class InfiniteScroller {
-  pagedRequests = { 
+  pagedRequests = {
     "-1": new Promise((resolve) => {
       resolve([]);
     }),
@@ -11,9 +11,10 @@ export class InfiniteScroller {
     private pageSize: number,
     private getPage: (page: number) => any[] | Promise<any>,
     private windowViewport: boolean,
-  ) { }
+    private bufferSize: number = 50
+  ) {}
 
-  getDatasource() {
+  getDatasource(): IDatasource<IAdapter<any>> {
     return new Datasource<IAdapter<any>>({
       get: (index, count, success) => {
         const startIdx = Math.max(index, 0);
@@ -22,10 +23,10 @@ export class InfiniteScroller {
           success([]);
           return;
         }
-  
+
         const startPage = Math.floor(startIdx / this.pageSize);
         const endPage = Math.floor(endIdx / this.pageSize);
-  
+
         const pageRequests: any[] = [];
         for (let i = startPage; i <= endPage; i++) {
           const existingRequest = this.pagedRequests[i];
@@ -39,7 +40,7 @@ export class InfiniteScroller {
             pageRequests.push(newRequest);
           }
         }
-  
+
         return Promise.all(pageRequests).then((pageResults) => {
           pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
           const start = startIdx - startPage * this.pageSize;
@@ -50,9 +51,9 @@ export class InfiniteScroller {
       settings: {
         startIndex: 0,
         minIndex: 0,
-        bufferSize: 50,
+        bufferSize: this.bufferSize,
         windowViewport: this.windowViewport,
       },
-    })
+    });
   }
 }

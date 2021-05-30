@@ -153,6 +153,7 @@ export class PostEntryResponse {
   Comments: PostEntryResponse[];
   LikeCount: number;
   RecloutCount: number;
+  QuoteRecloutCount: number;
   DiamondCount: number;
   // Information about the reader's state w/regard to this post (e.g. if they liked it).
   PostEntryReaderState?: PostEntryReaderState;
@@ -970,67 +971,63 @@ export class BackendApiService {
   }
 
   GetLikesForPost(
-    endpoint: string, 
+    endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
-    ReaderPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathGetLikesForPost, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetLikesForPost, {
       PostHashHex,
       Offset,
       Limit,
       ReaderPublicKeyBase58Check,
     });
-    return request;
   }
 
   GetDiamondsForPost(
-    endpoint: string, 
+    endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
-    ReaderPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPost, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPost, {
       PostHashHex,
       Offset,
       Limit,
       ReaderPublicKeyBase58Check,
     });
-    return request;
   }
 
   GetRecloutsForPost(
-    endpoint: string, 
+    endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
-    ReaderPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathGetRecloutsForPost, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetRecloutsForPost, {
       PostHashHex,
       Offset,
       Limit,
       ReaderPublicKeyBase58Check,
     });
-    return request;
   }
 
   GetQuoteRecloutsForPost(
-    endpoint: string, 
+    endpoint: string,
     PostHashHex: string,
     Offset: number,
     Limit: number,
-    ReaderPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathGetQuoteRecloutsForPost, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetQuoteRecloutsForPost, {
       PostHashHex,
       Offset,
       Limit,
       ReaderPublicKeyBase58Check,
     });
-    return request;
   }
 
   BuyOrSellCreatorCoin(

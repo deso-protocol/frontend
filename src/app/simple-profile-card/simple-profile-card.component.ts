@@ -1,10 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 
 @Component({
-  selector: 'simple-profile-card',
-  templateUrl: './simple-profile-card.component.html',
+  selector: "simple-profile-card",
+  templateUrl: "./simple-profile-card.component.html",
 })
 export class SimpleProfileCardComponent implements OnInit {
   @Input() profile;
@@ -13,13 +13,9 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() showRecloutIcon = false;
   @Input() containerModalRef: any = null;
 
-  constructor(
-    public globalVars: GlobalVarsService,
-    private router: Router,
-  ) { }
+  constructor(public globalVars: GlobalVarsService, private router: Router) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   counter(num: number) {
     return Array(num);
@@ -27,12 +23,11 @@ export class SimpleProfileCardComponent implements OnInit {
 
   onClick() {
     if (this.containerModalRef !== null) {
-      this.containerModalRef.hide()
+      this.containerModalRef.hide();
     }
 
-    this.router.navigate(['/' + this.globalVars.RouteNames.USER_PREFIX, this.profile.Username], {
+    this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, this.profile.Username], {
       queryParamsHandling: "merge",
     });
   }
-
 }

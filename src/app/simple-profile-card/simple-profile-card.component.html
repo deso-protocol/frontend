@@ -1,8 +1,8 @@
-<a class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey link--unstyled"
-   (click)="onClick()">
-  
+<a
+  class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey link--unstyled"
+  (click)="onClick()"
+>
   <div class="row no-gutters w-100">
-
     <div class="col-6 d-flex align-items-center" style="margin-bottom: 0px">
       <!-- Avatar -->
       <div class="simple-profile-card__avatar-container">
@@ -11,14 +11,14 @@
           [style.background-image]="'url(' + profile.ProfilePic + ')'"
         ></div>
       </div>
-      <div class="text-truncate holdings__name" style="font-size: 15px;">
+      <div class="text-truncate holdings__name" style="font-size: 15px">
         <span>{{ profile.Username }}</span>
         <div class="text-grey9">
           {{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}
         </div>
       </div>
     </div>
-  
+
     <div class="col-6 d-flex align-items-center justify-content-center" style="margin-bottom: 0px">
       <div *ngIf="diamondLevel > 0" class="d-flex">
         <i *ngFor="let diamond of counter(diamondLevel)" class="icon-diamond fs-20px d-block"></i>
@@ -30,7 +30,5 @@
         <i class="icon-repost fs-32px d-block fc-green"></i>
       </div>
     </div>
-
   </div>
-
 </a>
