@@ -78,6 +78,10 @@ export class BuyBitcloutUSDComponent implements OnInit {
 
   onBuyClicked(): void {
     const totalAmount = this.amount + this.usdFees;
+    if (this.amount < 10) {
+      this.globalVars._alertError("The minimum purchase amount is $10");
+      return;
+    }
     this.wyreService.makeWalletOrderReservation(totalAmount).subscribe(
       (res) => {
         const wyreUrl = res.url;
