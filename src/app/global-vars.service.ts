@@ -603,7 +603,7 @@ export class GlobalVarsService {
 
   launchSignupFlow() {
     this.logEvent("account : create : launch");
-    this.identityService.launch("/sign-up").subscribe((res) => {
+    this.identityService.launch("/log-in").subscribe((res) => {
       this.logEvent("account : create : success");
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().subscribe(() => {
