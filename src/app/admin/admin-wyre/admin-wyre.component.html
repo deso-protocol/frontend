@@ -19,6 +19,7 @@
     {{ order.LatestWyreWalletOrderWebhookPayload.orderStatus }}
     <ul>
       <li>Created at: {{ order.Timestamp }}</li>
+      <li *ngIf="order.LatestWyreTrackWalletOrderResponse?.failedReason">Failed Reason: {{order.LatestWyreTrackWalletOrderResponse?.failedReason}}</li>
       <li style="word-break: break-word" *ngIf="order.LatestWyreTrackWalletOrderResponse">btc tx: {{ order.LatestWyreTrackWalletOrderResponse.blockchainNetworkTx }}</li>
       <li *ngIf="order.LatestWyreTrackWalletOrderResponse">
         Source amount: {{ order.LatestWyreTrackWalletOrderResponse.sourceAmount }}
