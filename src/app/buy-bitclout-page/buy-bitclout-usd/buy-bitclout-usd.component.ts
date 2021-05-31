@@ -113,12 +113,6 @@ export class BuyBitcloutUSDComponent implements OnInit {
         this.amount = this.maxUsdAmount;
       }, 0);
     }
-    if (this.amount < this.minUsdAmount) {
-      this.amount = undefined;
-      setTimeout(() => {
-        this.amount = this.minUsdAmount;
-      }, 0);
-    }
 
     this.debouncedGetQuotation();
   }
