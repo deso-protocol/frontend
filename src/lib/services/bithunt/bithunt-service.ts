@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import {forkJoin, Observable, of} from "rxjs";
+import { forkJoin, Observable, of } from "rxjs";
 import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
 import { GlobalVarsService } from "../../../app/global-vars.service";
 import { map, switchMap } from "rxjs/operators";
@@ -73,8 +73,12 @@ export class BithuntService {
       )
       .pipe(
         map((res: any) => {
-          res.UserList = _.filter(res.UserList, function(o) { return !o.IsGraylisted; });
-          res.UserList = _.filter(res.UserList, function(o) { return !o.IsBlacklisted; });
+          res.UserList = _.filter(res.UserList, function (o) {
+            return !o.IsGraylisted;
+          });
+          res.UserList = _.filter(res.UserList, function (o) {
+            return !o.IsBlacklisted;
+          });
 
           return res.UserList.map((user: User, index: number) => {
             return {
