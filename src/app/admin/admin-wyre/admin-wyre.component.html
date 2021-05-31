@@ -19,17 +19,17 @@
     {{ order.LatestWyreWalletOrderWebhookPayload.orderStatus }}
     <ul>
       <li>Created at: {{ order.Timestamp }}</li>
-      <li style="word-break: break-word">btc tx: {{ order.LatestWyreTrackWalletOrderResponse.blockchainNetworkTx }}</li>
-      <li>
+      <li style="word-break: break-word" *ngIf="order.LatestWyreTrackWalletOrderResponse">btc tx: {{ order.LatestWyreTrackWalletOrderResponse.blockchainNetworkTx }}</li>
+      <li *ngIf="order.LatestWyreTrackWalletOrderResponse">
         Source amount: {{ order.LatestWyreTrackWalletOrderResponse.sourceAmount }}
         {{ order.LatestWyreTrackWalletOrderResponse.sourceCurrency }}
       </li>
-      <li>
+      <li *ngIf="order.LatestWyreTrackWalletOrderResponse">
         Destination amount: {{ order.LatestWyreTrackWalletOrderResponse.destAmount }}
         {{ order.LatestWyreTrackWalletOrderResponse.destCurrency }}
       </li>
-      <li>BitClout Nanos Purchased: {{ order.BitCloutPurchasedNanos }}</li>
-      <li style="word-break: break-word">BitClout Basic Transfer Hash: {{ order.BasicTransferTxnHash }}</li>
+      <li *ngIf="order.BitCloutPurchasedNanos">BitClout Nanos Purchased: {{ order.BitCloutPurchasedNanos }}</li>
+      <li style="word-break: break-word" *ngIf="order.BasicTransferTxnHash">BitClout Basic Transfer Hash: {{ order.BasicTransferTxnHash }}</li>
     </ul>
   </div>
 </div>
