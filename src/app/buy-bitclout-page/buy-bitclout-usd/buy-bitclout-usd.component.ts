@@ -174,8 +174,6 @@ export class BuyBitcloutUSDComponent implements OnInit {
   onSelectFiatCurrency(event): void {
     this.selectedFiatCurrency = event;
     this.selectedFiatCurrencySymbol = currencyToSymbolMap[event];
-    console.log(this.selectedFiatCurrencySymbol);
-    console.log(currencyToSymbolMap);
     this._refreshQuotation();
   }
 
