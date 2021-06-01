@@ -170,7 +170,7 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
             // TODO: there's prob some "out of funds" error which is a problem
             const parsedError = this.backendApi.parseMessageError(response);
             this.globalVars.logEvent(`user : ${isFollow ? "follow" : "unfollow"} : error`, { parsedError });
-            this.appData._alertError(parsedError);
+            this.appData._alertError(parsedError, !!parsedError.indexOf("insufficient"));
           }
         }
       )

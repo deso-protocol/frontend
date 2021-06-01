@@ -544,17 +544,24 @@ export class GlobalVarsService {
     });
   }
 
-  _alertError(err: any) {
+  _alertError(err: any, showBuyBitClout: boolean = false) {
     SwalHelper.fire({
       icon: "error",
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
+      showCancelButton: showBuyBitClout,
       focusConfirm: true,
       customClass: {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
+      confirmButtonText: showBuyBitClout ? "Buy BitClout" : "Ok",
+      reverseButtons: true,
+    }).then((res) => {
+      if (showBuyBitClout && res.isConfirmed) {
+        this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+      }
     });
   }
 
