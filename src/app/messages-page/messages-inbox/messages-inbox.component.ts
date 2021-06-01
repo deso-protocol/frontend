@@ -44,14 +44,15 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   ) {
     // Based on the route path set the tab and update filter/sort params
     this.route.queryParams.subscribe((params) => {
-      let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab")
+      let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab");
       this.activeTab =
         params.messagesTab && params.messagesTab in MessagesInboxComponent.QUERYTOTAB
-          ? MessagesInboxComponent.QUERYTOTAB[params.messagesTab] : storedTab;
+          ? MessagesInboxComponent.QUERYTOTAB[params.messagesTab]
+          : storedTab;
 
       // Set the default active tab if there's nothing saved in local storage
       if (this.activeTab === null) {
-        this.activeTab = "My Holders"
+        this.activeTab = "My Holders";
       }
 
       // Handle the tab click if the stored messages are from a different tab
@@ -75,7 +76,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   showMoreButton() {
-    return !(this.globalVars.newMessagesFromPage != null && this.globalVars.newMessagesFromPage < this.globalVars.messagesPerFetch);
+    return !(
+      this.globalVars.newMessagesFromPage != null &&
+      this.globalVars.newMessagesFromPage < this.globalVars.messagesPerFetch
+    );
   }
 
   loadMoreMessages() {
@@ -166,7 +170,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     });
 
     // Set the most recent tab in local storage
-    this.backendApi.SetStorage("mostRecentMessagesTab", tabName)
+    this.backendApi.SetStorage("mostRecentMessagesTab", tabName);
 
     // Fetch initial messages for the new tab
     this.globalVars.SetupMessages();
@@ -195,7 +199,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       }
 
       // Check if the query params are set, otherwise default to the first thread
-      let defaultThread = null
+      let defaultThread = null;
       if (this.defaultContactUsername || this.defaultContactPublicKey) {
         defaultThread = _.find(orderedContactsWithMessages, (messageContactResponse) => {
           let responseUsername = messageContactResponse.ProfileEntryResponse?.Username;
