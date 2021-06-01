@@ -62,7 +62,9 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this._setSelectedThreadBasedOnDefaultThread();
+    if (!this.isMobile) {
+      this._setSelectedThreadBasedOnDefaultThread();
+    }
   }
 
   ngOnChanges(changes: any) {
