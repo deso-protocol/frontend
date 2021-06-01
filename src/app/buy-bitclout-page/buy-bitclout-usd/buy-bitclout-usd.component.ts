@@ -139,7 +139,6 @@ export class BuyBitcloutUSDComponent implements OnInit {
     this.quotation = null;
     this.usdEquivalent = null;
     this.quotationError = "";
-    // if (this.amount >= 10) {
     this.wyreService.makeWalletOrderQuotation(this.amount, this.selectedCountry, this.selectedFiatCurrency).subscribe(
       (res) => {
         this.parseQuotation(res);
@@ -148,7 +147,6 @@ export class BuyBitcloutUSDComponent implements OnInit {
         this.quotationError = err.error.message;
       }
     );
-    // }
   }
 
   parseQuotation(quotation: any): void {
