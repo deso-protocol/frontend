@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedComponent } from "../../feed/feed.component";
+import currencyToSymbolMap from "currency-symbol-map/map";
 
 @Component({
   selector: "buy-bitclout-usd",
@@ -20,13 +21,23 @@ export class BuyBitcloutUSDComponent implements OnInit {
 
   amount = 99;
   quotation: any;
-  bitcloutReceived: number;
-  usdFees: number;
+  bitcloutReceived: string;
+  fees: number;
 
   debouncedGetQuotation: () => void;
 
   maxUsdAmount = 450;
-  minUsdAmount = 10;
+
+  usdEquivalent: number;
+  supportedCountries: string[];
+  supportedFiatCurrencies: { [k: string]: string };
+
+  selectedFiatCurrency = "USD";
+  selectedFiatCurrencySymbol = "$";
+  selectedCountry = "US";
+
+  quotationError: string = "";
+  reservationError: string = "";
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -37,6 +48,10 @@ export class BuyBitcloutUSDComponent implements OnInit {
     private router: Router
   ) {
     this.wyreService = new WyreService(this.httpClient, this.globalVars, this.backendApi);
+    this.supportedFiatCurrencies = this.wyreService.getSupportedFiatCurrencies();
+    this.wyreService.getSupportedCountries().subscribe((res) => {
+      this.supportedCountries = res;
+    });
     this.debouncedGetQuotation = _.debounce(this._refreshQuotation.bind(this), 300);
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.destAmount) {
@@ -77,32 +92,36 @@ export class BuyBitcloutUSDComponent implements OnInit {
   }
 
   onBuyClicked(): void {
-    const totalAmount = this.amount + this.usdFees;
-    if (this.amount < 10) {
-      this.globalVars._alertError("The minimum purchase amount is $10");
+    if (this.quotationError) {
       return;
     }
-    this.wyreService.makeWalletOrderReservation(totalAmount).subscribe(
+    const totalAmount = this.amount + this.fees;
+    this.wyreService.makeWalletOrderReservation(totalAmount, this.selectedCountry, this.selectedFiatCurrency).subscribe(
       (res) => {
         const wyreUrl = res.url;
-        Swal.fire({
-          title: "Purchase BitClout",
-          html:
-            "You will complete your purchase through Wyre. Your USD will be converted to <b>Bitcoin</b> and then into <b>BitClout</b> automatically.",
-          showCancelButton: true,
-          showConfirmButton: true,
-          confirmButtonText: "Buy",
-          customClass: {
-            confirmButton: "btn btn-light",
-            cancelButton: "btn btn-light no",
-          },
-          reverseButtons: true,
-        }).then((res: any) => {
-          if (res.isConfirmed) {
-            this.globalVars.logEvent("wyre : buy", { amount: this.amount });
-            window.open(wyreUrl);
-          }
-        });
+        if (res.url) {
+          Swal.fire({
+            title: "Purchase BitClout",
+            html:
+              "You will complete your purchase through Wyre. Your USD will be converted to <b>Bitcoin</b> and then into <b>BitClout</b> automatically.",
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: "Buy",
+            customClass: {
+              confirmButton: "btn btn-light",
+              cancelButton: "btn btn-light no",
+            },
+            reverseButtons: true,
+          }).then((res: any) => {
+            if (res.isConfirmed) {
+              this.globalVars.logEvent("wyre : buy", { amount: this.amount });
+              window.open(wyreUrl);
+            }
+          });
+        } else {
+          this.reservationError = res.message;
+          this.globalVars._alertError(res.message);
+        }
       },
       (err) => {
         this.globalVars._alertError(err.error.message);
@@ -111,43 +130,57 @@ export class BuyBitcloutUSDComponent implements OnInit {
   }
 
   updateQuotation(): void {
-    if (this.amount > this.maxUsdAmount) {
-      this.amount = undefined;
-      setTimeout(() => {
-        this.amount = this.maxUsdAmount;
-      }, 0);
-    }
-
     this.debouncedGetQuotation();
   }
 
   _refreshQuotation(): void {
     this.bitcloutReceived = null;
-    this.usdFees = null;
+    this.fees = null;
     this.quotation = null;
-    if (this.amount >= 10) {
-      this.wyreService.makeWalletOrderQuotation(this.amount).subscribe(
-        (res) => {
-          this.parseQuotation(res);
-        },
-        (err) => {
-          this.globalVars._alertError(err.error.message);
-        }
-      );
-    }
+    this.usdEquivalent = null;
+    this.quotationError = "";
+    this.wyreService.makeWalletOrderQuotation(this.amount, this.selectedCountry, this.selectedFiatCurrency).subscribe(
+      (res) => {
+        this.parseQuotation(res);
+      },
+      (err) => {
+        this.quotationError = err.error.message;
+      }
+    );
   }
 
   parseQuotation(quotation: any): void {
-    if (quotation.errorCode) {
-      this.globalVars._alertError("Error: " + quotation.message);
+    if (quotation.errorCode || quotation.message) {
+      this.quotationError = quotation.message;
       return;
     }
     this.quotation = quotation;
-    this.bitcloutReceived = this.getBitCloutReceived(quotation.destAmount);
-    this.usdFees = quotation.sourceAmount - quotation.sourceAmountWithoutFees;
+    this.usdEquivalent = this.getUSDEquivalent(quotation);
+
+    if (this.usdEquivalent > this.maxUsdAmount) {
+      this.quotationError = `Maximum purchase amount is ${this.maxUsdAmount} USD`;
+      return;
+    }
+    this.bitcloutReceived = this.getBitCloutReceived(quotation.destAmount).toFixed(4);
+    this.fees = quotation.sourceAmount - quotation.sourceAmountWithoutFees;
   }
 
   getBitCloutReceived(btcReceived: number): number {
     return (btcReceived * 1e8) / (this.globalVars.satoshisPerBitCloutExchangeRate * 1.01);
+  }
+
+  onSelectFiatCurrency(event): void {
+    this.selectedFiatCurrency = event;
+    this.selectedFiatCurrencySymbol = currencyToSymbolMap[event];
+    this._refreshQuotation();
+  }
+
+  onSelectCountry(event): void {
+    this.selectedCountry = event;
+    this._refreshQuotation();
+  }
+
+  getUSDEquivalent(quotation: any) {
+    return quotation.equivalencies.USD;
   }
 }

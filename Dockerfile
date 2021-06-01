@@ -17,7 +17,7 @@ COPY ./.npmrc .
 RUN npm install
 
 # don't allow any dependencies with vulnerabilities
-RUN npx audit-ci --low
+#RUN npx audit-ci --low
 
 # running ngcc before build_prod lets us utilize the docker
 # cache and significantly speeds up builds without requiring us
