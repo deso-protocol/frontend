@@ -156,30 +156,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       });
   }
 
-  _setMessagesFilter(tabName: any) {
-    // Set the request parameters if it's a known tab.
-    // Custom is set in the filter menu component and saved in local storage.
-    if (tabName == "My Holders") {
-      this.globalVars.messagesRequestsHoldersOnly = true;
-      this.globalVars.messagesRequestsHoldingsOnly = false;
-      this.globalVars.messagesRequestsFollowersOnly = false;
-      this.globalVars.messagesRequestsFollowedOnly = false;
-      this.globalVars.messagesSortAlgorithm = "time";
-    } else if (tabName == "All") {
-      this.globalVars.messagesRequestsHoldersOnly = false;
-      this.globalVars.messagesRequestsHoldingsOnly = false;
-      this.globalVars.messagesRequestsFollowersOnly = false;
-      this.globalVars.messagesRequestsFollowedOnly = false;
-      this.globalVars.messagesSortAlgorithm = "time";
-    } else if (tabName == "Custom") {
-      this.globalVars.messagesRequestsHoldersOnly = this.backendApi.GetStorage("customMessagesRequestsHoldersOnly");
-      this.globalVars.messagesRequestsHoldingsOnly = this.backendApi.GetStorage("customMessagesRequestsHoldingsOnly");
-      this.globalVars.messagesRequestsFollowersOnly = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");
-      this.globalVars.messagesRequestsFollowedOnly = this.backendApi.GetStorage("customMessagesRequestsFollowedOnly");
-      this.globalVars.messagesSortAlgorithm = this.backendApi.GetStorage("customMessagesSortAlgorithm");
-    }
-  }
-
   _handleTabClick(tabName: any) {
     // Clear the current messages
     this.globalVars.messageResponse = null;
@@ -196,7 +172,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     this.backendApi.SetStorage("mostRecentMessagesTab", tabName)
 
     // Fetch initial messages for the new tab
-    this.globalVars._setupMessages();
+    this.globalVars.SetupMessages();
   }
 
   _toggleSettingsTray() {

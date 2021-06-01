@@ -157,7 +157,7 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  _setupMessages() {
+  SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
       this.messageNotificationCount = 0;
@@ -176,26 +176,20 @@ export class GlobalVarsService {
     }
 
     // Set the filters most recently used and load the messages
-    this._setMessagesFilter(storedTab);
-    this._loadInitialMessages();
+    this.SetMessagesFilter(storedTab);
+    this.LoadInitialMessages();
   }
 
-  _setMessagesFilter(tabName: any) {
+  SetMessagesFilter(tabName: any) {
     // Set the request parameters if it's a known tab.
     // Custom is set in the filter menu component and saved in local storage.
-    if (tabName == "My Holders") {
-      this.messagesRequestsHoldersOnly = true;
+    if (tabName !== "Custom") {
+      this.messagesRequestsHoldersOnly = tabName === "My Holders";
       this.messagesRequestsHoldingsOnly = false;
       this.messagesRequestsFollowersOnly = false;
       this.messagesRequestsFollowedOnly = false;
       this.messagesSortAlgorithm = "time";
-    } else if (tabName == "All") {
-      this.messagesRequestsHoldersOnly = false;
-      this.messagesRequestsHoldingsOnly = false;
-      this.messagesRequestsFollowersOnly = false;
-      this.messagesRequestsFollowedOnly = false;
-      this.messagesSortAlgorithm = "time";
-    } else if (tabName == "Custom") {
+    } else {
       this.messagesRequestsHoldersOnly = this.backendApi.GetStorage("customMessagesRequestsHoldersOnly");
       this.messagesRequestsHoldingsOnly = this.backendApi.GetStorage("customMessagesRequestsHoldingsOnly");
       this.messagesRequestsFollowersOnly = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");
@@ -204,7 +198,7 @@ export class GlobalVarsService {
     }
   }
 
-  _loadInitialMessages() {
+  LoadInitialMessages() {
     if (!this.loggedInUser) {
       return;
     }
