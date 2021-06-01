@@ -62,11 +62,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    // If an initial message exists, we open the thread and read it.
-    if (this.messageThreads && this.messageThreads.length > 0) {
-      this.updateReadMessagesForSelectedThread();
-    }
-
     this._setSelectedThreadBasedOnDefaultThread();
   }
 
@@ -197,12 +192,20 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         return;
       }
 
-      let defaultThread = _.find(orderedContactsWithMessages, (messageContactResponse) => {
-        let responseUsername = messageContactResponse.ProfileEntryResponse?.Username;
-        let matchesUsername = responseUsername && responseUsername === this.contactUsername;
-        let matchesPublicKey = this.contactUsername === messageContactResponse.PublicKeyBase58Check;
-        return (responseUsername && matchesUsername) || matchesPublicKey;
-      });
+      // Check if the query params are set, otherwise default to the first thread
+      let defaultThread = null
+      if (this.defaultContactUsername || this.defaultContactPublicKey) {
+        defaultThread = _.find(orderedContactsWithMessages, (messageContactResponse) => {
+          let responseUsername = messageContactResponse.ProfileEntryResponse?.Username;
+          let matchesUsername = responseUsername && responseUsername === this.contactUsername;
+          let matchesPublicKey = this.contactUsername === messageContactResponse.PublicKeyBase58Check;
+          return (responseUsername && matchesUsername) || matchesPublicKey;
+        });
+      } else {
+        if (orderedContactsWithMessages.length > 0) {
+          defaultThread = orderedContactsWithMessages[0]
+        }
+      }
 
       if (!this.selectedThread) {
         this._handleMessagesThreadClick(defaultThread);
