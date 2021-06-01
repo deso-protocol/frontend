@@ -90,23 +90,6 @@ export class AppComponent implements OnInit {
     const userCopy = JSON.parse(JSON.stringify(user));
   }
 
-  _numMessagesToRead(messageResponse: any) {
-    if (!this.globalVars.loggedInUser || !messageResponse || !messageResponse.OrderedContactsWithMessages) {
-      return;
-    }
-    let totalMessages = 0;
-    let totalRead = 0;
-    for (const contact of messageResponse.OrderedContactsWithMessages) {
-      totalMessages += contact.Messages.length;
-      const numRead = this.globalVars.messageMeta.notificationMap[
-        this.globalVars.loggedInUser.PublicKeyBase58Check + contact.PublicKeyBase58Check
-      ];
-      totalRead += numRead ? numRead : 0;
-    }
-    const numNotifications = totalMessages - totalRead;
-    return numNotifications > 0 ? numNotifications : "";
-  }
-
   _updateTopLevelData() {
     if (this.callingUpdateTopLevelData) {
       return;
@@ -144,6 +127,9 @@ export class AppComponent implements OnInit {
         if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser)) {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
+
+        // Setup messages for the logged in user
+        this.globalVars.SetupMessages()
 
         // Convert the lists of coin balance entries into maps.
         // TODD: I've intermittently seen errors here where UsersYouHODL is null.
