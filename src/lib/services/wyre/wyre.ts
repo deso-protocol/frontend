@@ -47,7 +47,7 @@ export class WyreService {
     ZAR: "South African Rand",
   };
 
-  makeWalletOrderReservation(sourceAmount: number, country: string, fiatCurrency: string,): Observable<any> {
+  makeWalletOrderReservation(sourceAmount: number, country: string, fiatCurrency: string): Observable<any> {
     return this.backendApi.GetWyreWalletOrderReservation(
       this.globalVars.localNode,
       this.globalVars.loggedInUser.PublicKeyBase58Check,

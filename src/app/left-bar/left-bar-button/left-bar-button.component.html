@@ -42,7 +42,11 @@
         padding: 0px 5px;
       "
     >
-      {{ globalVars.messageResponse.NumberOfUnreadThreads > 999 ? "999+" : globalVars.messageResponse.NumberOfUnreadThreads }}
+      {{
+        globalVars.messageResponse.NumberOfUnreadThreads > 999
+          ? "999+"
+          : globalVars.messageResponse.NumberOfUnreadThreads
+      }}
     </div>
   </div>
 </div>
