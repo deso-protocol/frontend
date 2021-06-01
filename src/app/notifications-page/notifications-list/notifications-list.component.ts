@@ -94,8 +94,7 @@ export class NotificationsListComponent implements OnInit {
 
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   getPage(page: number) {
     if (this.lastPage && page > this.lastPage) {

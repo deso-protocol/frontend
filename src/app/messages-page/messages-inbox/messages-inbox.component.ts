@@ -41,7 +41,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ) {
     // Based on the route path set the tab and update filter/sort params
     this.route.queryParams.subscribe((params) => {

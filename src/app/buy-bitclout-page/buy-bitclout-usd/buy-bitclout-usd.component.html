@@ -1,32 +1,82 @@
 <div class="w-100">
   <div class="px-15px">
-    <div class="fs-18px font-weight-bold mb-10px">
-      Enter an amount in USD to convert to BitClout
-    </div>
+    <div class="fs-18px font-weight-bold mb-10px">Enter an amount in USD to convert to BitClout</div>
     <p class="mb-5px">You can purchase up to ${{ maxUsdAmount }} of BitClout per week using USD.</p>
-    <p class="mb-10px">For larger purchases, <a [routerLink]="['', 'buy-bitclout']" [queryParams]="{'btc':true}">buy with Bitcoin.</a></p>
-    <div class="fs-18px py-15px d-flex">
-      <div style="width: 40%">
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
+    <p class="mb-10px">
+      For larger purchases,
+      <a [routerLink]="['', 'buy-bitclout']" [queryParams]="{ btc: true }">buy with Bitcoin.</a>
+    </p>
+    <div class="fs-18px py-15px d-flex flex-column">
+      <div class="d-flex flex-row">
+        <div class="py-15px" style="width:48%">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">{{selectedFiatCurrencySymbol}}</span>
+            </div>
+            <input
+              class="form-control"
+              type="number"
+              matInput
+              [(ngModel)]="amount"
+              (input)="updateQuotation()"
+            />
           </div>
-          <input class="form-control"
-                 type="number"
-                 min="10"
-                 max="10000"
-                 matInput [(ngModel)]="amount" (input)="updateQuotation()">
-          <div class="input-group-append">
-            <span class="input-group-text">USD</span>
+        </div>
+        <div class="d-flex px-10px" style="align-items: center;">≈</div>
+        <div class="py-15px" style="width:48%">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$CLOUT</span>
+            </div>
+            <input
+              class="form-control"
+              style="background-color:white;"
+              disabled
+              matInput
+              [(ngModel)]="bitcloutReceived"
+            />
           </div>
         </div>
       </div>
-      <button
-        class="btn btn-primary font-weight-bold fs-15px px-15px ml-10px"
-        (click)="onBuyClicked()">Buy BitClout</button>
+      <div class="d-flex flex-row">
+        <div class="input-group" style="width:48%">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Currency</span>
+          </div>
+          <select
+            [ngModel]="selectedFiatCurrency"
+            (ngModelChange)="onSelectFiatCurrency($event)"
+            class="form-control"
+            style="background-color: white"
+          >
+            <option
+              *ngFor="let fiat of supportedFiatCurrencies | keyvalue"
+              [value]="fiat.key"
+            >
+              {{ fiat.key }}
+            </option>
+          </select>
+        </div>
+        <div class="d-flex px-15px" style="align-items: center; width:30px;"> </div>
+        <div class="input-group" style="width:48%">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Country</span>
+          </div>
+          <select [ngModel]="selectedCountry" (ngModelChange)="onSelectCountry($event)" class="form-control" style="background-color: white">
+            <option *ngFor="let country of supportedCountries" [value]="country"> {{ country }} </option>
+          </select>
+        </div>
+      </div>
     </div>
-    <div class="fs-15px text-grey7" *ngIf="bitcloutReceived">
-      Estimated BitClout received: {{ bitcloutReceived.toFixed(4) }}
+    <div class="fs-15px fc-red pb-15px" *ngIf="quotationError">
+      {{ quotationError }}
     </div>
+    <button
+      class="btn btn-primary font-weight-bold fs-15px px-15px"
+      (click)="onBuyClicked()"
+      [ngClass]="{'disabled': quotationError}"
+    >
+      Buy BitClout
+    </button>
   </div>
 </div>
