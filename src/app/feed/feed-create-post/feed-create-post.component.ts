@@ -21,6 +21,8 @@ export class FeedCreatePostComponent implements OnInit {
   @Input() parentPost: PostEntryResponse = null;
   @Input() isQuote: boolean = false;
 
+  isComment: boolean;
+
   @ViewChild("postImage") postImage;
   @ViewChild("autosize") autosize: CdkTextareaAutosize;
 
@@ -64,6 +66,7 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
   }
 
@@ -121,7 +124,7 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     const postExtraData = {};
-    if (this.embedVideoURL) {
+    if (!this.isComment && this.embedVideoURL) {
       const videoURL = this.getEmbedVideoURL();
       if (VideoUrlParserService.isValidEmbedURL(videoURL)) {
         postExtraData["EmbedVideoURL"] = videoURL;
@@ -131,20 +134,18 @@ export class FeedCreatePostComponent implements OnInit {
     const bodyObj = {
       Body: this.postInput,
       // Only submit images if the post is a quoted reclout or a vanilla post.
-      ImageURLs: !this.parentPost || this.isQuote ? [this.postImageSrc].filter((n) => n) : [],
+      ImageURLs: !this.isComment ? [this.postImageSrc].filter((n) => n) : [],
     };
-    let recloutedPostHashHex = "";
-    if (this.isQuote) {
-      recloutedPostHashHex = this.parentPost.PostHashHex;
-    }
+    const recloutedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
+    const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
 
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         "" /*PostHashHexToModify*/,
-        this.parentPost && !this.isQuote ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
+        this.isComment ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
         "" /*Title*/,
         bodyObj /*BodyObj*/,
         recloutedPostHashHex,
@@ -157,7 +158,7 @@ export class FeedCreatePostComponent implements OnInit {
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : create");
+          this.globalVars.logEvent(`post : ${postType}`);
 
           this.submittingPost = false;
 
@@ -177,7 +178,7 @@ export class FeedCreatePostComponent implements OnInit {
         (err) => {
           const parsedError = this.backendApi.parsePostError(err);
           this.globalVars._alertError(parsedError);
-          this.globalVars.logEvent("post : create : error", { parsedError });
+          this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
 
           this.submittingPost = false;
           this.changeRef.detectChanges();
@@ -189,23 +190,21 @@ export class FeedCreatePostComponent implements OnInit {
 
   _createPost() {
     // Check if the user has an account.
-    if (!this.globalVars || !this.globalVars.loggedInUser) {
+    if (!this.globalVars?.loggedInUser) {
       this.globalVars.logEvent("alert : post : account");
       SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
       return;
     }
 
     // Check if the user has a profile.
-    else if (this.globalVars && !this.globalVars.doesLoggedInUserHaveProfile()) {
+    if (!this.globalVars?.doesLoggedInUserHaveProfile()) {
       this.globalVars.logEvent("alert : post : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
     }
 
     // The user has an account and a profile. Let's create a post.
-    else {
-      this.submitPost();
-    }
+    this.submitPost();
   }
 
   _handleFileInput(files: FileList) {

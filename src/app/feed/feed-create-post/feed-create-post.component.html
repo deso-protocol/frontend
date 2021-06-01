@@ -40,12 +40,12 @@
     ></textarea>
 
     <!-- Post image -->
-    <div class="feed-post__image-container" *ngIf="!parentPost || isQuote">
+    <div class="feed-post__image-container" *ngIf="!isComment && postImageSrc">
       <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
       <img class="feed-post__image" src="{{ postImageSrc }}" />
     </div>
     <!-- Embedded Video -->
-    <div class="feed-post__video-embed-container" *ngIf="getEmbedVideoURL()">
+    <div class="feed-post__video-embed-container" *ngIf="!isComment && getEmbedVideoURL()">
       <i
         class="icon-close feed-post__image-delete"
         (click)="embedVideoURL = ''; showEmbedVideoURL = false; constructedEmbedVideoURL = ''"
@@ -62,7 +62,7 @@
   </div>
 </div>
 
-<div class="flex-fill px-15px br-10px" [ngClass]="{ 'd-none': !showEmbedVideoURL, 'pt-10px': parentPost }">
+<div class="flex-fill px-15px br-10px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="!isComment && showEmbedVideoURL">
   <input
     class="br-3px"
     type="url"
@@ -84,13 +84,12 @@
   >
     {{ postInput.length }} / {{ GlobalVarsService.MAX_POST_LENGTH }}
   </span>
-  <i
-    class="fas fa-video fa-lg text-grey8A cursor-pointer"
+  <i *ngIf="!isComment"
+    class="fas fa-video fa-lg text-grey8A cursor-pointer px-15px"
     style="font-size: 18px"
-    [ngClass]="{ 'px-15px': !parentPost || isQuote }"
     (click)="showEmbedVideoURL = !showEmbedVideoURL"
   ></i>
-  <div *ngIf="!parentPost || isQuote">
+  <div *ngIf="!isComment">
     <input  #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFileInput($event.target.files)" />
     <i
        class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
