@@ -102,8 +102,7 @@ export class BuyBitcloutUSDComponent implements OnInit {
         if (res.url) {
           Swal.fire({
             title: "Purchase BitClout",
-            html:
-              "You will complete your purchase through Wyre. Your USD will be converted to <b>Bitcoin</b> and then into <b>BitClout</b> automatically.",
+            html: `You will complete your purchase through Wyre. Your ${this.selectedFiatCurrency} will be converted to <b>Bitcoin</b> and then into <b>BitClout</b> automatically.`,
             showCancelButton: true,
             showConfirmButton: true,
             confirmButtonText: "Buy",
