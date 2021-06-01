@@ -45,20 +45,21 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   ) {
     // Based on the route path set the tab and update filter/sort params
     this.route.queryParams.subscribe((params) => {
+      let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab")
       this.activeTab =
         params.messagesTab && params.messagesTab in MessagesInboxComponent.QUERYTOTAB
-          ? MessagesInboxComponent.QUERYTOTAB[params.messagesTab]
-          : "My Holders";
-      if (this.activeTab !== "My Holders") {
+          ? MessagesInboxComponent.QUERYTOTAB[params.messagesTab] : storedTab;
+
+      // Set the default active tab if there's nothing saved in local storage
+      if (this.activeTab === null) {
+        this.activeTab = "My Holders"
+      }
+
+      // Handle the tab click if the stored messages are from a different tab
+      if (this.activeTab !== storedTab) {
         this._handleTabClick(this.activeTab);
       }
     });
-
-    // Set the filter parameters based on the tab
-    this._setMessagesFilter(this.activeTab);
-
-    // Load the initial messages for the user
-    this.loadInitialMessages();
   }
 
   ngOnInit() {
@@ -78,43 +79,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   showMoreButton() {
-    return !(this.newMessagesFromPage != null && this.newMessagesFromPage < this.globalVars.messagesPerFetch);
-  }
-
-  loadInitialMessages() {
-    if (!this.globalVars.loggedInUser) {
-      return;
-    }
-
-    this.backendApi
-      .GetMessages(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        "",
-        this.globalVars.messagesPerFetch,
-        this.globalVars.messagesRequestsHoldersOnly,
-        this.globalVars.messagesRequestsHoldingsOnly,
-        this.globalVars.messagesRequestsFollowersOnly,
-        this.globalVars.messagesRequestsFollowedOnly,
-        this.globalVars.messagesSortAlgorithm
-      )
-      .subscribe(
-        (res) => {
-          if (this.globalVars.pauseMessageUpdates) {
-            // We pause message updates when a user sends a messages so that we can
-            // wait for it to be sent before updating the thread.  If we do not do this the
-            // temporary message place holder would disappear until "GetMessages()" finds it.
-          } else {
-            this.globalVars.messageResponse = res;
-
-            // Update the number of new messages so we know when to stop scrolling
-            this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
-          }
-        },
-        (err) => {
-          console.error(this.backendApi.stringifyError(err));
-        }
-      );
+    return !(this.globalVars.newMessagesFromPage != null && this.globalVars.newMessagesFromPage < this.globalVars.messagesPerFetch);
   }
 
   loadMoreMessages() {
@@ -216,25 +181,9 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     }
   }
 
-  _clearMessages() {
-    this.newMessagesFromPage = null;
-
-    // If messageResponse isn't set, we return
-    if (!this.globalVars.messageResponse) {
-      return;
-    }
-
-    this.globalVars.messageResponse.OrderedContactsWithMessages = [];
-    this.globalVars.messageResponse.UnreadStateByContact = {};
-    this.globalVars.messageResponse.NumberOfUnreadThreads = 0;
-  }
-
   _handleTabClick(tabName: any) {
     // Clear the current messages
-    this._clearMessages();
-
-    // Set the messages filters based on the tab
-    this._setMessagesFilter(tabName);
+    this.globalVars.messageResponse = null;
 
     // Make sure the tab is set in the url
     this.activeTab = tabName;
@@ -244,8 +193,11 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       queryParamsHandling: "merge",
     });
 
+    // Set the most recent tab in local storage
+    this.backendApi.SetStorage("mostRecentMessagesTab", tabName)
+
     // Fetch initial messages for the new tab
-    this.loadInitialMessages();
+    this.globalVars._setupMessages();
   }
 
   _toggleSettingsTray() {
@@ -364,29 +316,28 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     }
 
     // We update the read message state on global vars before sending the request so it is more instant.
-    this.globalVars.messageResponse.UnreadStateByContact[contactPubKey] = false;
-    this.globalVars._setNumMessagesToRead();
+    if (this.globalVars.messageResponse.UnreadStateByContact[contactPubKey]) {
+      this.globalVars.messageResponse.UnreadStateByContact[contactPubKey] = false;
+      this.globalVars.messageResponse.NumberOfUnreadThreads -= 1;
 
-    // Send an update back to the server noting that we read this thread.
-    this.backendApi
-      .MarkContactMessagesRead(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.selectedThread.PublicKeyBase58Check
-      )
-      .subscribe(
-        () => {
-          this.globalVars.logEvent("user : message-read");
-        },
-        (err) => {
-          console.log(err);
-          const parsedError = this.backendApi.stringifyError(err);
-          this.globalVars.logEvent("user : message-read : error", { parsedError });
-          this.globalVars._alertError(parsedError);
-        }
-      );
-
-    // Reflect the new read receipt in the NumberOfUnreadThreads
-    this.globalVars.messageResponse.NumberOfUnreadThreads -= 1;
+      // Send an update back to the server noting that we read this thread.
+      this.backendApi
+        .MarkContactMessagesRead(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.selectedThread.PublicKeyBase58Check
+        )
+        .subscribe(
+          () => {
+            this.globalVars.logEvent("user : message-read");
+          },
+          (err) => {
+            console.log(err);
+            const parsedError = this.backendApi.stringifyError(err);
+            this.globalVars.logEvent("user : message-read : error", { parsedError });
+            this.globalVars._alertError(parsedError);
+          }
+        );
+    }
   }
 }

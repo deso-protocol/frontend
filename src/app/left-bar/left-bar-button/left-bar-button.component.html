@@ -29,7 +29,7 @@
       {{ buttonLabel }}
     </a>
     <div
-      *ngIf="hasNotifications && globalVars.messageNotificationCount != 0"
+      *ngIf="hasNotifications && globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
       class="ml-5px p-5x fs-15px"
       style="
         border-radius: 3px;
@@ -42,7 +42,7 @@
         padding: 0px 5px;
       "
     >
-      {{ globalVars.messageNotificationCount > 999 ? "999+" : globalVars.messageNotificationCount }}
+      {{ globalVars.messageResponse.NumberOfUnreadThreads > 999 ? "999+" : globalVars.messageResponse.NumberOfUnreadThreads }}
     </div>
   </div>
 </div>

@@ -58,6 +58,7 @@ export class GlobalVarsService {
   messagesSortAlgorithm = "time";
   messagesPerFetch = 25;
   openSettingsTray = false;
+  newMessagesFromPage = 0;
   messagesRequestsHoldersOnly = true;
   messagesRequestsHoldingsOnly = false;
   messagesRequestsFollowersOnly = false;
@@ -156,35 +157,87 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  _setNumMessagesToRead() {
-    if (
-      !this.loggedInUser ||
-      !this.messageResponse ||
-      !this.messageResponse.OrderedContactsWithMessages ||
-      !this.messageResponse.TotalMessagesByContact ||
-      !this.messageResponse.MessageReadStateByContact
-    ) {
+  _setupMessages() {
+    // If there's no loggedInUser, we set the notification count to zero
+    if (!this.loggedInUser) {
       this.messageNotificationCount = 0;
       return;
     }
-    let totalMessages = 0;
-    let totalRead = 0;
-    for (let contact of this.messageResponse.OrderedContactsWithMessages) {
-      if (contact.Messages.length > 0) {
-        if (this.messageResponse.TotalMessagesByContact[contact.PublicKeyBase58Check]) {
-          totalMessages += this.messageResponse.TotalMessagesByContact[contact.PublicKeyBase58Check];
-        }
-        if (this.messageResponse.MessageReadStateByContact[contact.PublicKeyBase58Check]) {
-          totalRead += this.messageResponse.MessageReadStateByContact[contact.PublicKeyBase58Check];
-        }
-      }
+
+    // If a message response already exists, we skip this step
+    if (this.messageResponse) {
+      return;
     }
-    let notificationCount = totalMessages - totalRead;
-    if (notificationCount >= 0) {
-      this.messageNotificationCount = notificationCount;
-    } else {
-      this.messageNotificationCount = 0;
+
+    let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab");
+    if (storedTab === null) {
+      storedTab = "My Holders";
+      this.backendApi.SetStorage("mostRecentMessagesTab", storedTab);
     }
+
+    // Set the filters most recently used and load the messages
+    this._setMessagesFilter(storedTab);
+    this._loadInitialMessages();
+  }
+
+  _setMessagesFilter(tabName: any) {
+    // Set the request parameters if it's a known tab.
+    // Custom is set in the filter menu component and saved in local storage.
+    if (tabName == "My Holders") {
+      this.messagesRequestsHoldersOnly = true;
+      this.messagesRequestsHoldingsOnly = false;
+      this.messagesRequestsFollowersOnly = false;
+      this.messagesRequestsFollowedOnly = false;
+      this.messagesSortAlgorithm = "time";
+    } else if (tabName == "All") {
+      this.messagesRequestsHoldersOnly = false;
+      this.messagesRequestsHoldingsOnly = false;
+      this.messagesRequestsFollowersOnly = false;
+      this.messagesRequestsFollowedOnly = false;
+      this.messagesSortAlgorithm = "time";
+    } else if (tabName == "Custom") {
+      this.messagesRequestsHoldersOnly = this.backendApi.GetStorage("customMessagesRequestsHoldersOnly");
+      this.messagesRequestsHoldingsOnly = this.backendApi.GetStorage("customMessagesRequestsHoldingsOnly");
+      this.messagesRequestsFollowersOnly = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");
+      this.messagesRequestsFollowedOnly = this.backendApi.GetStorage("customMessagesRequestsFollowedOnly");
+      this.messagesSortAlgorithm = this.backendApi.GetStorage("customMessagesSortAlgorithm");
+    }
+  }
+
+  _loadInitialMessages() {
+    if (!this.loggedInUser) {
+      return;
+    }
+
+    this.backendApi
+      .GetMessages(
+        this.localNode,
+        this.loggedInUser.PublicKeyBase58Check,
+        "",
+        this.messagesPerFetch,
+        this.messagesRequestsHoldersOnly,
+        this.messagesRequestsHoldingsOnly,
+        this.messagesRequestsFollowersOnly,
+        this.messagesRequestsFollowedOnly,
+        this.messagesSortAlgorithm
+      )
+      .subscribe(
+        (res) => {
+          if (this.pauseMessageUpdates) {
+            // We pause message updates when a user sends a messages so that we can
+            // wait for it to be sent before updating the thread.  If we do not do this the
+            // temporary message place holder would disappear until "GetMessages()" finds it.
+          } else {
+            this.messageResponse = res;
+
+            // Update the number of new messages so we know when to stop scrolling
+            this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+          }
+        },
+        (err) => {
+          console.error(this.backendApi.stringifyError(err));
+        }
+      );
   }
 
   _notifyLoggedInUserObservers(newLoggedInUser: User, isSameUserAsBefore: boolean) {
