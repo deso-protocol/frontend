@@ -203,10 +203,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
           let matchesPublicKey = this.contactUsername === messageContactResponse.PublicKeyBase58Check;
           return (responseUsername && matchesUsername) || matchesPublicKey;
         });
-      } else {
-        if (orderedContactsWithMessages.length > 0) {
-          defaultThread = orderedContactsWithMessages[0]
-        }
+      } else if (orderedContactsWithMessages.length > 0) {
+        defaultThread = orderedContactsWithMessages[0];
       }
 
       if (!this.selectedThread) {
