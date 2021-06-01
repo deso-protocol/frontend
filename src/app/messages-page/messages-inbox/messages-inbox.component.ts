@@ -28,7 +28,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   @Input() isMobile = false;
   @Output() selectedThreadEmitter = new EventEmitter<any>();
   selectedThread: any;
-  newMessagesFromPage: number;
   fetchingMoreMessages: boolean = false;
   activeTab: string;
 
@@ -93,7 +92,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       return;
     }
 
-    if (this.newMessagesFromPage != null && this.newMessagesFromPage == 0) {
+    if (this.globalVars.newMessagesFromPage != null && this.globalVars.newMessagesFromPage == 0) {
       return;
     }
 
@@ -144,7 +143,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
                 this.globalVars.messageResponse.NumberOfUnreadThreads + res.NumberOfUnreadThreads;
 
               // Update the number of new messages so we know when to stop scrolling
-              this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+              this.globalVars.newMessagesFromPage = res.OrderedContactsWithMessages.length;
             }
           }
         },
