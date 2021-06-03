@@ -104,6 +104,7 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   formatNumber(val: number): string {
-    return val.toString();
+    // When timer expires, show all 0s.
+    return (val < 0 ? 0 : val).toString();
   }
 }
