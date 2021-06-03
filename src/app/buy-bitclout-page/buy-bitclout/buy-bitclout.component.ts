@@ -183,7 +183,7 @@ export class BuyBitcloutComponent implements OnInit {
 
     // Update the total fee to account for the extra Bitcoin.
     return this.backendApi
-      .BurnBitcoin(
+      .ExchangeBitcoin(
         this.appData.localNode,
         this.appData.latestBitcoinAPIResponse,
         this.btcDepositAddress(),
@@ -264,7 +264,7 @@ export class BuyBitcloutComponent implements OnInit {
         // Execute the buy
         this.waitingOnTxnConfirmation = true;
         return this.backendApi
-          .BurnBitcoin(
+          .ExchangeBitcoin(
             this.appData.localNode,
             this.appData.latestBitcoinAPIResponse,
             this.btcDepositAddress(),

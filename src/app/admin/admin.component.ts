@@ -57,6 +57,7 @@ export class AdminComponent implements OnInit {
   submittingWhitelistUpdate = false;
   submittingUnwhitelistUpdate = false;
   submittingEvictUnminedBitcoinTxns = false;
+  submittingUSDToBitCloutExchangeRateUpdate = false;
 
   submittingRemovePhone = false;
   dbDetailsOpen = false;
@@ -67,6 +68,7 @@ export class AdminComponent implements OnInit {
   mempoolSummaryStats: any = {};
   mempoolTxnCount = 0;
   bitcoinExchangeRate: number;
+  usdToBitCloutExchangeRate: number;
   updatingBitcoinExchangeRate = false;
   updatingGlobalParams = false;
   updatingUSDToBitcoin = false;
@@ -713,6 +715,42 @@ export class AdminComponent implements OnInit {
   updateGlobalParamMinimumNetworkFee() {
     this.updatingMinimumNetworkFee = true;
     this.updateGlobalParams(-1, -1, this.updateGlobalParamsValues.MinimumNetworkFeeNanosPerKB);
+  }
+
+  updateUSDToBitCloutExchangeRate(): void {
+    SwalHelper.fire({
+      title: "Are you ready?",
+      html: `You are about to update the exchange rate of USD to BitClout to be $${this.usdToBitCloutExchangeRate}`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.updatingUSDToBitcoin = true;
+        this.backendApi
+          .SetUSDCentsToBitCloutExchangeRate(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.usdToBitCloutExchangeRate * 100
+          )
+          .subscribe(
+            (res: any) => {
+              console.log(res);
+              this.globalVars._alertSuccess(
+                sprintf("Successfully updated the exchange to $%d/BitClout", res.USDCentsPerBitClout / 100)
+              );
+            },
+            (err: any) => {
+              this.globalVars._alertError(this.extractError(err));
+            }
+          )
+          .add(() => (this.updatingUSDToBitcoin = false));
+      }
+    });
   }
 
   updateGlobalParams(usdPerBitcoin: number, createProfileFeeNanos: number, minimumNetworkFeeNanosPerKB: number) {
