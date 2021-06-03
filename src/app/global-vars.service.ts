@@ -157,6 +157,9 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
+  // This controls the default text of the countdown timer component.
+  timerText: string = "Deflation Bomb:";
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {

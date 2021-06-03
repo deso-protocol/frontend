@@ -2,6 +2,9 @@
 <div class="w-100">
   <div class="container d-sm-none">
     <div class="row d-flex justify-content-center landing__ticker">
+      <div class="input-group w-auto pb-5px">
+        <countdown-timer [borderRadiusSize]="10"></countdown-timer>
+      </div>
       <div class="input-group w-auto">
         <div class="input-group-prepend">
           <label class="landing__nav-buy input-group-text">
@@ -27,7 +30,10 @@
     <div class="row">
       <div class="col landing__logo">BitClout</div>
       <div class="col d-flex justify-content-end align-items-center">
-        <div class="input-group w-auto d-none d-sm-flex">
+        <div class="d-none d-sm-flex w-auto">
+          <countdown-timer [borderRadiusSize]="10"></countdown-timer>
+        </div>
+        <div class="input-group w-auto d-none d-sm-flex" style="margin-left: 25px">
           <div class="input-group-prepend">
             <label class="landing__nav-buy input-group-text">
               {{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD

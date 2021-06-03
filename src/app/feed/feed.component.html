@@ -25,6 +25,8 @@
     <div class="w-100 border-bottom border-color-grey light-grey-divider" style="min-height: 10px"></div>
   </div>
 
+  <!-- Mobile Countdown Timer -->
+  <countdown-timer *ngIf="isMobile" [justifyLeft]="true"></countdown-timer>
   <!-- Mobile BitClout Price -->
   <div
     *ngIf="isMobile"

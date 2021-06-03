@@ -1,0 +1,19 @@
+<div
+  style="background-color: black;"
+  class="fc-red cursor-pointer"
+  [ngStyle]="{
+  'font-size': fontSize + 'px',
+  'border-radius': borderRadiusSize + 'px',
+  'font-weight': fontWeight
+  }"
+  (click)="navigateToURL()"
+>
+  <div class="px-15px py-5px d-flex" [ngClass]="{ 'justify-content-between': !justifyLeft, 'justify-left': justifyLeft }">
+    <div>
+      {{ timerText }}
+    </div>
+     <div>
+       &nbsp;{{ days + "d "  + hours + "h " + minutes + "m " + seconds + "s" }}
+     </div>
+  </div>
+</div>
