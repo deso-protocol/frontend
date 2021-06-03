@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
 })
 export class CountdownTimerComponent implements OnInit {
   // TODO: Replace with actual date and time this timer should end.
-  @Input() timerEnd: number = new Date("June 12, 2021 9:00:00").getTime();
+  @Input() timerEnd: number = new Date("June 12, 2021 9:00:00 PDT").getTime();
   @Input() fontSize: number = 13;
   @Input() borderRadiusSize: number = 0;
   @Input() fontWeight: number = 400;
