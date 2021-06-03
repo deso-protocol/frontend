@@ -47,10 +47,9 @@ export class CountdownTimerComponent implements OnInit {
     }, 1000);
   }
 
-  // TODO: Replace posthash hex
   navigateToURL(): void {
     this.router.navigate([
-      "/" + this.globalVars.RouteNames.POSTS + "/" + "42723e6ee398000b63be928a8aceaa388ce81ef0f29f4aa8f4a2d80852849540",
+      "/" + this.globalVars.RouteNames.POSTS + "/" + "3bc11727c5dc6721c5b5a4ce183f53a7b0bfc5e57de333a29009ad24db483149",
     ]);
   }
 
