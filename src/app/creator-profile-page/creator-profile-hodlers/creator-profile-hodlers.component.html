@@ -45,7 +45,27 @@
           [style.background-image]="'url(' + row.ProfileEntryResponse.ProfilePic + ')'"
         ></div>
         <div class="d-flex flex-column">
-          <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.ProfileEntryResponse.Username }}</span>
+          <div class="d-flex align-items-center">
+            <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.ProfileEntryResponse.Username }}</span>
+            <span
+              *ngIf="row.ProfileEntryResponse.IsReserved && !row.ProfileEntryResponse.IsVerified"
+              class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
+            >
+              <i class="far fa-clock fa-md"></i>
+            </span>
+            <span
+              *ngIf="row.ProfileEntryResponse.IsVerified"
+              (click)="tooltip.toggle()"
+              class="ml-1 cursor-pointer text-primary align-middle"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This account is verified'"
+              #tooltip="matTooltip"
+            >
+              <i class="fas fa-check-circle fa-md"></i>
+            </span>
+          </div>
           <div
             class="text-grey9"
             style="font-size: 10px"
