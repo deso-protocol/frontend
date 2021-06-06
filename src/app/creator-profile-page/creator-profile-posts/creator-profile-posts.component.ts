@@ -102,7 +102,8 @@ export class CreatorProfilePostsComponent {
         this.profile.Username,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         lastPostHashHex,
-        CreatorProfilePostsComponent.PAGE_SIZE
+        CreatorProfilePostsComponent.PAGE_SIZE,
+        false /*MediaRequired*/
       )
       .toPromise()
       .then((res) => {
