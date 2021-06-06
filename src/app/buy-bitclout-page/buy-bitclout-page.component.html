@@ -1,5 +1,6 @@
 <app-page>
   <div *ngIf="globalVars.loggedInUser; else elseBlock">
+    {{ setTitle('Buy $BitClout - BitClout') }}
     <buy-bitclout></buy-bitclout>
   </div>
   <ng-template #elseBlock>

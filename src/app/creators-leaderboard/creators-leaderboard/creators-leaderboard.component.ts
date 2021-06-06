@@ -4,6 +4,7 @@ import { BackendApiService } from "../../backend-api.service";
 import { AppRoutingModule } from "../../app-routing.module";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { Datasource, IDatasource } from "ngx-ui-scroll";
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: "creators-leaderboard",
@@ -81,7 +82,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
     },
   });
 
-  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService, private titleService: Title) {
     this.appData = globalVars;
   }
 
@@ -144,5 +145,10 @@ export class CreatorsLeaderboardComponent implements OnInit {
       this.appData.loggedInUser.PublicKeyBase58Check,
       targetPubKeyBase58Check
     );
+  }
+
+  // Set Title function for dynamically setting the title
+  public setTitle(newTitle: string) {
+    this.titleService.setTitle(newTitle);
   }
 }

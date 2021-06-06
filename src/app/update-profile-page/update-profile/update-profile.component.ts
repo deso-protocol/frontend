@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
+import { Title } from '@angular/platform-browser';
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -48,7 +49,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
-    private router: Router
+    private router: Router,
+    private titleService: Title,
   ) {}
 
   ngOnInit() {
@@ -246,5 +248,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _resetImage() {
     this.profilePicInput = "";
+  }
+
+  // Set Title function for dynamically setting the title
+  public setTitle(newTitle: string) {
+    this.titleService.setTitle(newTitle);
   }
 }

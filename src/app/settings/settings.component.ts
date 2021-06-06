@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { CountryISO } from "ngx-intl-tel-input";
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: "settings",
@@ -17,7 +18,7 @@ export class SettingsComponent implements OnInit {
   showSuccessMessage = false;
   successMessageTimeout: any;
 
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private titleService: Title,) {}
 
   ngOnInit() {
     this._getUserMetadata();
@@ -78,5 +79,10 @@ export class SettingsComponent implements OnInit {
           this.showSuccessMessage = false;
         }, 500);
       });
+  }
+
+  // Set Title function for dynamically setting the title
+  public setTitle(newTitle: string) {
+    this.titleService.setTitle(newTitle);
   }
 }

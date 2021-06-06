@@ -3,6 +3,7 @@ import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { Title } from '@angular/platform-browser';
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -33,7 +34,7 @@ export class TransferBitcloutComponent implements OnInit {
   loadingMax = false;
   sendingBitClout = false;
 
-  constructor(private backendApi: BackendApiService, private globalVarsService: GlobalVarsService) {
+  constructor(private backendApi: BackendApiService, private globalVarsService: GlobalVarsService, private titleService: Title) {
     this.globalVars = globalVarsService;
   }
 
@@ -290,4 +291,10 @@ export class TransferBitcloutComponent implements OnInit {
     // errorString.
     return JSON.stringify(err);
   }
+
+  // Set Title function for dynamically setting the title
+  public setTitle(newTitle: string) {
+    this.titleService.setTitle(newTitle);
+  }
+
 }

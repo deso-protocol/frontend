@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "app-pick-a-coin-page",
@@ -11,7 +12,7 @@ export class PickACoinPageComponent implements OnInit {
   AppRoutingModule = AppRoutingModule;
   hasUnminedCreatorCoins: boolean;
 
-  constructor(private appData: GlobalVarsService) {
+  constructor(private appData: GlobalVarsService, private titleService: Title) {
     this.globalVars = appData;
   }
 
@@ -32,5 +33,10 @@ export class PickACoinPageComponent implements OnInit {
       );
     });
     return creators;
+  }
+
+  // Set Title function for dynamically setting the title
+  public setTitle(newTitle: string) {
+    this.titleService.setTitle(newTitle);
   }
 }
