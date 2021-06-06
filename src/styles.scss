@@ -1160,15 +1160,15 @@ $green-font-color: #19B028;
   border-radius: 25%;
   margin-right: 2px;
   &:hover {
-    background-color: #CAE4F1;
+    background-color: var(--secondary);
   }
 }
 
 .messages-inbox__desktop-column {
   width: 100%;
   max-width: 380px;
-  border-left: solid 1px $border-grey;
-  border-right: solid 1px $border-grey;
+  border-left: solid 1px var(--secondary);
+  border-right: solid 1px var(--secondary);
 
 }
 
@@ -1201,7 +1201,7 @@ $green-font-color: #19B028;
 .messages-thread__desktop-column {
   width: 100%;
   max-width: 600px;
-  border-right: solid 1px $border-grey;
+  border-right: solid 1px var(--secondary);
 }
 
 .messages-thread__border-radius {
@@ -1722,8 +1722,8 @@ input {
 }
 textarea {
   background-color: transparent;
-  border: 1px solid $border-color;
-  color: $important-text-color;
+  border: 1px solid var(--secondary);
+  color: var(--text);
   padding-left: .5rem;
   padding-right: .5rem;
   max-width: 100%;
