@@ -82,6 +82,7 @@ export class GlobalVarsService {
   globoMods: any;
   feeRateBitCloutPerKB = 0.0;
   postsToShow = [];
+  followFeedPosts = [];
   messageResponse = null;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
