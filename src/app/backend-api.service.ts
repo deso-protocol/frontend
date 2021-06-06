@@ -357,7 +357,7 @@ export class BackendApiService {
 
   // Use empty string to return all top categories.
   GetBitcoinFeeRateSatoshisPerKB(): Observable<any> {
-    return this.httpClient.get<any>("https://api.blockchain.info/mempool/fees").pipe(catchError(this._handleError));
+    return this.httpClient.get<any>("https://api.blockchain.com/mempool/fees").pipe(catchError(this._handleError));
   }
 
   SendPhoneNumberVerificationText(
