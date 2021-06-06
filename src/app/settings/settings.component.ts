@@ -3,6 +3,7 @@ import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { CountryISO } from "ngx-intl-tel-input";
 import { Title } from '@angular/platform-browser';
+import { ThemeService } from '../theme/theme.service';
 
 @Component({
   selector: "settings",
@@ -18,7 +19,7 @@ export class SettingsComponent implements OnInit {
   showSuccessMessage = false;
   successMessageTimeout: any;
 
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private titleService: Title,) {}
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private titleService: Title, private themeService: ThemeService) {}
 
   ngOnInit() {
     this._getUserMetadata();
@@ -84,5 +85,17 @@ export class SettingsComponent implements OnInit {
   // Set Title function for dynamically setting the title
   public setTitle(newTitle: string) {
     this.titleService.setTitle(newTitle);
+  }
+
+  // Toggle Function for Themeing
+  toggle() {
+    const active = this.themeService.getActiveTheme() ;
+    if (active.name === 'dark') {
+      this.themeService.setTheme('light');
+      localStorage.setItem('theme', 'light');
+    } else {
+      this.themeService.setTheme('dark');
+      localStorage.setItem('theme', 'dark');
+    }
   }
 }

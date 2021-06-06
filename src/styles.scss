@@ -11,6 +11,12 @@ $feed-border-radius: 12px;
 // regular style toast
 @import '~ngx-toastr/toastr';
 
+// New themeing class
+.main {
+  background: var(--background) !important;
+  color: var(--text) !important;
+}
+
 html {
   overflow-y: scroll;
   overscroll-behavior-y: none;
@@ -33,14 +39,13 @@ body {
 }
 
 h1 {
-  color: $light-color;
   margin: 0;
-  color: #333333;
+  color: var(--text);
 }
 
 h2,h3,h4,h5,h6,p {
   margin: 0;
-  color: #333333;
+  color: var(--text);
   font-family: 'Roboto Mono';
   font-weight: normal;
 }
@@ -111,7 +116,7 @@ $green-font-color: #19B028;
 .text-grey2 { color: #222222 } // mocks call this G0
 .text-grey3 { color: #333333 }
 .text-grey4 { color: #444444 }
-.text-grey5 { color: #555555 } // mocks call this G1
+.text-grey5 { color: var(--text) } // mocks call this G1
 .text-grey6 { color: #666666 }
 .text-grey7 { color: #777777 }
 .text-grey8 { color: #888888 }
@@ -150,8 +155,8 @@ $green-font-color: #19B028;
 .w-100 { width: 100% }
 
 // Custom font classes.
-.fc-default { color: $normal-font-color; }
-.fc-muted { color: $light-font-color; }
+.fc-default { color: var(--text); }
+.fc-muted { color: var(--textalt); }
 .fc-blue { color: $buy-button-blue; }
 .fc-red { color: $red-font-color; }
 .fc-green { color: $green-font-color; }
@@ -183,14 +188,14 @@ $green-font-color: #19B028;
 .roboto-mono { font-family: 'Roboto Mono' }
 
 // Custom border classes.
-.border-color-grey { border-color: $border-grey; }
+.border-color-grey { border-color: var(--secondary) !important; }
 .border-color-blue { border-color: $buy-button-blue; }
 .tab-underline-active { border-bottom: solid $buy-button-blue 3px; }
 .tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
 
-.background-color-grey { background-color: #F5F5F5; } // mocks call this G4
-.background-color-light-grey { background-color: $light-grey-for-divider; }
-.background-color-light-grey-important { background-color: $light-grey-for-divider !important }
+.background-color-grey { background-color: var(--secondary); } // mocks call this G4
+.background-color-light-grey { background-color: var(--secondary); }
+.background-color-light-grey-important { background-color: var(--secondary) !important }
 .background-color-light-pink { background-color: lightpink; }
 
 // Custom padding classes.
@@ -400,7 +405,7 @@ $green-font-color: #19B028;
 
 .fixed-top-bar {
   position: fixed;
-  background-color: white;
+  background-color: var(--background);
   z-index: 10
 }
 
@@ -420,7 +425,7 @@ $green-font-color: #19B028;
   left: 0;
   bottom: 0;
   width: 100%;
-  background-color: white;
+  background-color: var(--background);
   height: 60px;
 }
 
@@ -448,7 +453,7 @@ $green-font-color: #19B028;
 }
 
 .light-grey-divider {
-  background-color: $light-grey-for-divider;
+  background-color: var(--secondary);
 }
 
 .top-bar-mobile__avatar {
@@ -562,13 +567,13 @@ $green-font-color: #19B028;
 .global__center__inner {
   min-height: 100vh;
   width: $global__center__width;
-  border-left: $border-grey solid 1px;
-  border-right: $border-grey solid 1px;
+  border-left: var(--secondary) solid 1px;
+  border-right: var(--secondary) solid 1px;
 }
 
 .global__top-bar {
   position: fixed;
-  background: #fff;
+  background: var(--background);
   z-index: 30;
   width: $global__center__width - 2; // subtract 2 for borders
 
@@ -681,7 +686,7 @@ $green-font-color: #19B028;
 
 .holdings__divider {
   height: 66px;
-  background-color: $light-grey-for-divider;
+  background-color: var(--background);
 }
 
 .holdings__avatar {
@@ -767,7 +772,7 @@ $green-font-color: #19B028;
   margin-left: -10px;
   position: relative;
   z-index: 30;
-  background-color: $light-grey-for-divider;
+  background-color: var(--background);
   width: 185px;
   padding-top: 8px;
   padding-bottom: 8px;
@@ -804,19 +809,19 @@ $green-font-color: #19B028;
   font-size: 19px;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
-  background-color: rgba(0,0,0,0);
-  border-color: #ced4da;
-  border-right-color: rgba(0,0,0,0)
+  background-color: var(--background);
+  border-color: var(--secondary);
+  border-right-color: rgba(0,0,0,0);
 }
 
 .search-bar__results-dropdown {
   box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
   border-radius: 0px 0px 3px 3px;
   cursor: pointer;
-  background-color: white;
+  background-color: var(--background);
   position: relative;
   top: -22px;
-  border: solid 1px $border-grey;
+  border: solid 1px var(--secondary);
   z-index: 5; // the input has a z-index of 3 at one point.
   max-height: 600px;
   overflow-y: scroll;
@@ -833,15 +838,21 @@ $green-font-color: #19B028;
 }
 
 .search-bar__selected-color {
-  background-color: $border-grey;
+  background-color: var(--secondary);
+}
+
+.search-bar__fix-active {
+  border-color: var(--secondary);
+  border-left: 0px;
 }
 
 .search-bar__fix-active:active, .search-bar__fix-active:focus {
-  border-color: #ced4da;
+  border-color: var(--secondary);
+  border-left: 0px;
 }
 
 .post-thread__comment-container {
-  border-top: 4px solid $border-grey;
+  border-top: 4px solid var(--secondary);
   flex-grow: 1;
 }
 
@@ -898,7 +909,7 @@ $green-font-color: #19B028;
 }
 
 .js-feed-post-hover:hover {
-  background-color: $light-grey-for-divider-2;
+  background-color: var(--secondary);
 }
 
 .feed-post__quoted-content:hover {
@@ -907,7 +918,7 @@ $green-font-color: #19B028;
 
 .feed-post__dropdown-menu-item {
   &:hover {
-    background-color: $light-grey-for-divider
+    background-color: var(--secondary)
   }
 }
 
@@ -960,7 +971,7 @@ $green-font-color: #19B028;
   border-radius: 50%;
   margin-right: 2px;
   &:hover {
-    background-color: #CAE4F1;
+    background-color: var(--secondary);
   }
 }
 
@@ -980,7 +991,7 @@ $green-font-color: #19B028;
 }
 
 .feed-post__coin-price-holder {
-  background-color: #F5F5F5;
+  background-color: var(--secalt);
 }
 
 .feed-post__avatar {
@@ -1035,11 +1046,12 @@ $green-font-color: #19B028;
 }
 
 .right-bar-creators__balance-box {
-  background-color: $light-grey-for-divider;
+  background-color: var(--secondary);
+  color: var(--text);
 }
 
 .creator-leaderboard__load-more:hover {
-  background-color: whitesmoke;
+  background-color: var(--secondary);
 }
 
 .feed__light-grey-divider {
@@ -1133,13 +1145,13 @@ $green-font-color: #19B028;
 }
 
 .buy-bitclout__amount-background {
-  background-color: $light-grey-for-divider-2;
+  background-color: var(--background);
 }
 
 .buy-bitclout__box-label-adjustment {
   position: relative;
   width: fit-content;
-  background-color: white;
+  background-color: var(--background) !important;
   top: -13px;
 }
 
@@ -1356,7 +1368,7 @@ $green-font-color: #19B028;
 // Landing page
 .landing__ticker {
   padding: 20px;
-  background-color: #EEE;
+  background-color: var(--background);
 }
 
 .landing__header {
@@ -1374,7 +1386,7 @@ $green-font-color: #19B028;
 }
 
 .landing__nav-link {
-  color: #222222;
+  color: var(--text);
   margin-left: 25px;
   font-size: 13px;
 }
@@ -1397,6 +1409,9 @@ $green-font-color: #19B028;
 
 .landing__hero {
   padding: 100px 0;
+  border-left: 1px solid var(--secondary) !important;
+  border-right: 1px solid var(--secondary) !important;
+  color: var(--text);
 }
 
 .landing__sign-up {
@@ -1441,7 +1456,7 @@ $green-font-color: #19B028;
 .landing__example {
   padding: 30px 50px;
   padding-bottom: 0px;
-  background-color: #FFF;
+  background-color: var(--background);
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
 }
@@ -1454,7 +1469,7 @@ $green-font-color: #19B028;
   bottom: 0;
   left: 0;
   pointer-events: none;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1) 90%);
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0), var(--secondary) 90%);
   width: 100%;
   height: 4em;
 }
@@ -1467,6 +1482,9 @@ $green-font-color: #19B028;
 
 .landing__platform {
   padding: 100px 0;
+  border-top: 1px solid var(--secondary) !important;
+  border-right: 1px solid var(--secondary) !important;
+  border-left: 1px solid var(--secondary) !important;
 }
 
 .landing__platform-header {
@@ -1483,7 +1501,8 @@ $green-font-color: #19B028;
 }
 
 .landing__echo {
-  background-color: #F5F5F5;
+  background-color: var(--background);
+  border-top: 1px solid var(--secondary);
   padding: 50px 0;
 }
 
@@ -1673,6 +1692,11 @@ $green-font-color: #19B028;
 .form-label {
   color: $important-text-color;
   font-size: $normal-text-size;
+}
+.form-control {
+  color: var(--text) !important;
+  background: var(--background) !important;
+  border-color: var(--secondary) !important;
 }
 .normal-text {
   color: $text-color;
@@ -1867,4 +1891,92 @@ input {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+// Added BootStrap and Custom CSS for Themeing
+.border-bottom {
+  border-bottom: 1px solid var(--secondary) !important;
+}
+
+.border-top {
+  border-top: 1px solid var(--secondary) !important;
+}
+
+.border-left {
+  border-left: 1px solid var(--secondary) !important;
+}
+
+.border-right {
+  border-right: 1px solid var(--secondary) !important;
+}
+
+.text-black {
+  color: var(--text) !important;
+}
+
+.table {
+  color: var(--text) !important;
+}
+
+.clout {
+  filter: var(--filter);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  top: 11px;
+  margin: 0 5px;
+}
+.switch input { 
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color:  #333;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color:white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #0077ff;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
