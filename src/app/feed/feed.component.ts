@@ -43,7 +43,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   isLoadingFollowingOnPageLoad;
 
   globalVars: GlobalVarsService;
-  followFeedPosts = []; // array of PostEntrys
   serverHasMoreFollowFeedPosts = true;
   serverHasMoreGlobalFeedPosts = true;
   loadingMoreFollowFeedPosts = false;
@@ -122,12 +121,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnDestroy() {
     this.pullToRefreshHandler?.destroy();
     this.loggedInUserSubscription.unsubscribe();
-    this.followChangeSubscription.unsubscribe();
   }
 
   _reloadFollowFeed() {
     // Reload the follow feed from scratch
-    this.followFeedPosts = [];
+    this.globalVars.followFeedPosts = [];
     this.loadingFirstBatchOfFollowFeedPosts = true;
     return this._loadFollowFeedPosts();
   }
@@ -143,7 +141,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     // Request the follow feed (so we have it ready for display if needed)
-    this._reloadFollowFeed();
+    if (this.globalVars.followFeedPosts.length === 0) {
+      this.loadingFirstBatchOfFollowFeedPosts = true;
+      this._reloadFollowFeed();
+    }
 
     // The activeTab is set after we load the following based on whether the user is
     // already following anybody
@@ -194,7 +195,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   postsToShow() {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       // No need to delay on the Following tab. It handles the "slow switching" issue itself.
-      return this.followFeedPosts;
+      return this.globalVars.followFeedPosts;
     } else {
       return this.globalVars.postsToShow;
     }
@@ -299,6 +300,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         false /*GetPostsForFollowFeed*/,
         true /*GetPostsForGlobalWhitelist*/,
         false,
+        false /*MediaRequired*/,
         0,
         this.globalVars.showAdminTools() /*AddGlobalFeedBool*/
       )
@@ -335,7 +337,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   _loadFollowing() {
     this.isLoadingFollowingOnPageLoad = true;
-
     this.backendApi
       .GetFollows(
         this.appData.localNode,
@@ -365,10 +366,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     // Get the last post hash in case this is a "load more" request.
     let lastPostHash = "";
-    if (this.followFeedPosts.length > 0 && !reload) {
-      lastPostHash = this.followFeedPosts[this.followFeedPosts.length - 1].PostHashHex;
+    if (this.globalVars.followFeedPosts.length > 0 && !reload) {
+      lastPostHash = this.globalVars.followFeedPosts[this.globalVars.followFeedPosts.length - 1].PostHashHex;
     }
-
     return this.backendApi
       .GetPostsStateless(
         this.globalVars.localNode,
@@ -382,6 +382,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         true /*GetPostsForFollowFeed*/,
         false /*GetPostsForGlobalWhitelist*/,
         false,
+        false /*MediaRequired*/,
         0,
         this.globalVars.showAdminTools() /*AddGlobalFeedBool*/
       )
@@ -389,9 +390,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         tap(
           (res) => {
             if (lastPostHash !== "") {
-              this.followFeedPosts = this.followFeedPosts.concat(res.PostsFound);
+              this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(res.PostsFound);
             } else {
-              this.followFeedPosts = res.PostsFound;
+              this.globalVars.followFeedPosts = res.PostsFound;
             }
             if (res.PostsFound.length < FeedComponent.NUM_TO_FETCH) {
               this.serverHasMoreFollowFeedPosts = false;

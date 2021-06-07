@@ -231,6 +231,7 @@ export class AdminComponent implements OnInit {
         false /*GetPostsForFollowFeed*/,
         false /*GetPostsForGlobalWhitelist*/,
         true,
+        false /*MediaRequired*/,
         this.selectedTimeWindow,
         true /*AddGlobalFeedBool*/
       )
@@ -279,6 +280,7 @@ export class AdminComponent implements OnInit {
         false /*GetPostsForFollowFeed*/,
         false /*GetPostsForGlobalWhitelist*/,
         false,
+        false /*MediaRequired*/,
         0,
         true /*AddGlobalFeedBool*/
       )
