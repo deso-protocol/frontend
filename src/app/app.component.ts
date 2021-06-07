@@ -54,11 +54,6 @@ export class AppComponent implements OnInit {
 
   bitcloutToUSDExchangeRateToDisplay = "fetching...";
 
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
-  }
-
   // Throttle the calls to update the top-level data so they only happen after a
   // previous call has finished.
   callingUpdateTopLevelData = false;

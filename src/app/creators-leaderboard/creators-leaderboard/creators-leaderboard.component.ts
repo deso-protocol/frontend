@@ -138,6 +138,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
   ngOnInit() {
     this.isLoadingProfilesForFirstTime = true;
+    this.titleService.setTitle('Buy Creator Coins - BitClout');
   }
 
   canLoggedInUserFollowTargetPublicKey(targetPubKeyBase58Check) {
@@ -145,10 +146,5 @@ export class CreatorsLeaderboardComponent implements OnInit {
       this.appData.loggedInUser.PublicKeyBase58Check,
       targetPubKeyBase58Check
     );
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }

@@ -40,6 +40,7 @@ export class TransferBitcloutComponent implements OnInit {
 
   ngOnInit() {
     this.feeRateBitCloutPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
+    this.titleService.setTitle('Send $BitClout - BitClout');
   }
 
   _clickMaxBitClout() {
@@ -291,10 +292,4 @@ export class TransferBitcloutComponent implements OnInit {
     // errorString.
     return JSON.stringify(err);
   }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
-  }
-
 }

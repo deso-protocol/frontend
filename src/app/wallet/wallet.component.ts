@@ -43,6 +43,7 @@ export class WalletComponent implements OnInit {
     });
     this.sortHodlings(this.usersYouPurchased);
     this.sortHodlings(this.usersYouReceived);
+    this.titleService.setTitle('Wallet - BitClout');
   }
 
   sortHodlings(hodlings: BalanceEntryResponse[]): void {
@@ -105,10 +106,5 @@ export class WalletComponent implements OnInit {
   _handleTabClick(tab: string) {
     this.showTransferredCoins = tab === WalletComponent.coinsReceivedTab;
     this.activeTab = tab;
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }

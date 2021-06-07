@@ -55,6 +55,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this._updateFormBasedOnLoggedInUser();
+    this.titleService.setTitle('Update Profile - BitClout');
   }
 
   // This is used to handle any changes to the loggedInUser elegantly.
@@ -248,10 +249,5 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _resetImage() {
     this.profilePicInput = "";
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }

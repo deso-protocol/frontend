@@ -57,6 +57,10 @@ export class CreatorProfileDetailsComponent {
     });
   }
 
+  ngOnInit() {
+    this.titleService.setTitle(this.userName+' on BitClout')
+  }
+
   userBlocked() {
     this.childTopCardComponent._unfollowIfBlocked();
   }
@@ -200,10 +204,5 @@ export class CreatorProfileDetailsComponent {
       !this.globalVars.loggedInUser?.ProfileEntryResponse?.Username &&
       this.globalVars.loggedInUser?.UsersYouHODL?.length === 0
     );
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }

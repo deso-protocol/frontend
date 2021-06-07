@@ -10,10 +10,10 @@ import { Title } from '@angular/platform-browser';
 export class BuyBitcloutPageComponent {
   isLeftBarMobileOpen: boolean = false;
 
+  ngOnInit() {
+    this.titleService.setTitle('Buy $BitClout - BitClout');
+  }
+
   constructor(public globalVars: GlobalVarsService, private titleService: Title) {}
 
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
-  }
 }

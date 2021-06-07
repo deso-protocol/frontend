@@ -22,6 +22,7 @@ export class PickACoinPageComponent implements OnInit {
         this.hasUnminedCreatorCoins = true;
       }
     }
+    this.titleService.setTitle('Send Creator Coins - BitClout');
   }
 
   usersYouHODL() {
@@ -33,10 +34,5 @@ export class PickACoinPageComponent implements OnInit {
       );
     });
     return creators;
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }

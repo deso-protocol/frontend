@@ -4,7 +4,6 @@
 <not-found *ngIf="!profile && !loading"></not-found>
 
 <div *ngIf="profile && !loading" class="flex-grow-1">
-  {{ setTitle(profile.Username+' on BitClout') }}
   <!-- Top Card With Creator Info -->
   <creator-profile-top-card
     *ngIf="profile && !loading"

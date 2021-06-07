@@ -41,6 +41,7 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this._getUserMetadata();
+    this.titleService.setTitle('Settings - BitClout');
   }
 
   _getUserMetadata() {
@@ -98,10 +99,5 @@ export class SettingsComponent implements OnInit {
           this.showSuccessMessage = false;
         }, 500);
       });
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }

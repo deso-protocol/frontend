@@ -22,6 +22,10 @@ export class MessagesPageComponent {
 
   constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router, private titleService: Title,) {}
 
+  ngOnInit() {
+    this.titleService.setTitle('Messages - BitClout');
+  }
+
   _handleMessageThreadSelectedMobile(thread: any) {
     if (!thread) {
       return;
@@ -74,10 +78,5 @@ export class MessagesPageComponent {
   navigateToInbox() {
     this.selectedThread = null;
     this.showThreadView = false;
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }

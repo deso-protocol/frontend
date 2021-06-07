@@ -96,6 +96,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit() {
     this._initializeFeeds();
+    this.titleService.setTitle('Feed - BitClout');
   }
 
   ngAfterViewChecked() {
@@ -506,10 +507,5 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Add the post to the parent's list of comments so that the comment count gets updated
     parentPost.Comments = parentPost.Comments || [];
     parentPost.Comments.unshift(postEntryResponse);
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }

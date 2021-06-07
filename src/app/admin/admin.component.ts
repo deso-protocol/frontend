@@ -160,7 +160,7 @@ export class AdminComponent implements OnInit {
     this._loadNextBlockStats();
     this._loadGlobalParams();
 
-    this.setTitle('Admin - BitClout');
+    this.titleService.setTitle('Admin - BitClout');
   }
 
   _updateNodeInfo() {
@@ -1041,10 +1041,5 @@ export class AdminComponent implements OnInit {
           });
       }
     });
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }

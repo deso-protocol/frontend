@@ -9,8 +9,7 @@ import { Title } from '@angular/platform-browser';
 export class NotificationsPageComponent {
   constructor(private titleService: Title) { }
   
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
+  ngOnInit() {
+    this.titleService.setTitle('Notifications - BitClout');
   }
 }

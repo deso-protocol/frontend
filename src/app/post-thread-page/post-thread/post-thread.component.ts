@@ -41,6 +41,10 @@ export class PostThreadComponent {
     });
   }
 
+  ngOnInit() {
+    this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username+' on BitClout: "'+ this.currentPost.Body+'"')
+  }
+
   _rerenderThread() {
     // Force angular to re-render the whole thread tree by cloning currentPost
     // If we don't do this, the parent's commentCount won't always update (angular won't
@@ -331,10 +335,5 @@ export class PostThreadComponent {
 
   afterUserBlocked(blockedPubKey: any) {
     this.globalVars.loggedInUser.BlockedPubKeys[blockedPubKey] = {};
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }
