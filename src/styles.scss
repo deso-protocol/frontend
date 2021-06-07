@@ -52,8 +52,10 @@ h2,h3,h4,h5,h6,p {
 
 a {
   cursor: pointer; // for anchors without hrefs
+  color: var(--link);
   &:hover, &:active, &:focus {
     text-decoration: inherit; // I prefer no underline when you hover over links
+    color: var(--hover);
   }
 }
 
@@ -116,7 +118,7 @@ $green-font-color: #19B028;
 .text-grey2 { color: #222222 } // mocks call this G0
 .text-grey3 { color: #333333 }
 .text-grey4 { color: #444444 }
-.text-grey5 { color: var(--text) } // mocks call this G1
+.text-grey5 { color: var(--grey) } // mocks call this G1
 .text-grey6 { color: #666666 }
 .text-grey7 { color: #777777 }
 .text-grey8 { color: #888888 }
@@ -155,7 +157,7 @@ $green-font-color: #19B028;
 .w-100 { width: 100% }
 
 // Custom font classes.
-.fc-default { color: var(--text); }
+.fc-default { color: var(--norm); }
 .fc-muted { color: var(--textalt); }
 .fc-blue { color: $buy-button-blue; }
 .fc-red { color: $red-font-color; }
@@ -331,7 +333,7 @@ $green-font-color: #19B028;
 .vh-100 { height: 100vh !important; }
 
 .position-fixed { position: fixed; }
-.background-color-white { background-color: white; }
+.background-color-white { background-color: var(--background); }
 
 .global__container {
   height: 100%;
@@ -621,7 +623,7 @@ $green-font-color: #19B028;
   max-width: 280px;
   min-width: 245px;
   height: 100vh;
-  background-color: white;
+  background-color: var(--background);
 }
 
 .right-bar-select-box {
@@ -1695,7 +1697,7 @@ $green-font-color: #19B028;
 }
 .form-control {
   color: var(--text) !important;
-  background: var(--background) !important;
+  background: var(--formbg) !important;
   border-color: var(--secondary) !important;
 }
 .normal-text {
