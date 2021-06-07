@@ -165,7 +165,7 @@ export class AppComponent implements OnInit {
     }
 
     // The exchange rate requires getting the current Bitcoin price in USD.
-    this.httpClient.get<any>("https://blockchain.info/ticker").subscribe(
+    this.httpClient.get<any>("https://api.blockchain.com/ticker").subscribe(
       (res: any) => {
         if (res.USD != null && res.USD.last != null) {
           this.globalVars.usdPerBitcoinExchangeRate = res.USD.last;

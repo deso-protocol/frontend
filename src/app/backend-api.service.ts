@@ -357,7 +357,7 @@ export class BackendApiService {
 
   // Use empty string to return all top categories.
   GetBitcoinFeeRateSatoshisPerKB(): Observable<any> {
-    return this.httpClient.get<any>("https://api.blockchain.info/mempool/fees").pipe(catchError(this._handleError));
+    return this.httpClient.get<any>("https://api.blockchain.com/mempool/fees").pipe(catchError(this._handleError));
   }
 
   SendPhoneNumberVerificationText(
@@ -666,6 +666,7 @@ export class BackendApiService {
     GetPostsForFollowFeed: boolean,
     GetPostsForGlobalWhitelist: boolean,
     GetPostsByClout: boolean,
+    MediaRequired: boolean,
     PostsByCloutMinutesLookback: number,
     AddGlobalFeedBool: boolean
   ): Observable<any> {
@@ -680,6 +681,7 @@ export class BackendApiService {
       GetPostsForFollowFeed,
       GetPostsForGlobalWhitelist,
       GetPostsByClout,
+      MediaRequired,
       PostsByCloutMinutesLookback,
       AddGlobalFeedBool,
     });
@@ -742,7 +744,8 @@ export class BackendApiService {
     Username: string,
     ReaderPublicKeyBase58Check: string,
     LastPostHashHex: string,
-    NumToFetch: number
+    NumToFetch: number,
+    MediaRequired: boolean
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetPostsForPublicKey, {
       PublicKeyBase58Check,
@@ -750,6 +753,7 @@ export class BackendApiService {
       ReaderPublicKeyBase58Check,
       LastPostHashHex,
       NumToFetch,
+      MediaRequired,
     });
   }
 
