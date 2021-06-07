@@ -338,17 +338,4 @@ export class PostThreadComponent {
   public setTitle(newTitle: string) {
     this.titleService.setTitle(newTitle);
   }
-
-  // Set Meta function for dynamically setting the meta tags
-  public setMeta(newContent: string) {
-    this.metaService.addTag({ property: 'og:title', content: newContent});
-    this.metaService.addTag({ property: 'og:type', content: 'article'});
-    this.metaService.addTag({ property: 'al:ios:app_name', content: 'BitClout'});
-    this.metaService.addTag({ property: 'al:android:app_name', content: 'BitClout'});
-  }
-
-  // Set Meta function for dynamically setting the meta tags
-  public setMetaDesc(newContent: string) {
-    this.metaService.addTag({ property: 'og:description', content: newContent});
-  }
 }

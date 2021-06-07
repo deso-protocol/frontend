@@ -21,6 +21,21 @@ export class SettingsComponent implements OnInit {
 
   constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private titleService: Title, private themeService: ThemeService) {}
 
+  selectedTheme: string = '';
+
+  selectChangeHandler (event: any) {
+    //update the ui
+    this.selectedTheme = event.target.value;
+
+    if (this.selectedTheme == 'light') {
+      this.themeService.setTheme('light');
+      localStorage.setItem('theme', 'light');
+    } else if (this.selectedTheme == 'dark') {
+      this.themeService.setTheme('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
   ngOnInit() {
     this._getUserMetadata();
   }
@@ -85,17 +100,5 @@ export class SettingsComponent implements OnInit {
   // Set Title function for dynamically setting the title
   public setTitle(newTitle: string) {
     this.titleService.setTitle(newTitle);
-  }
-
-  // Toggle Function for Themeing
-  toggle() {
-    const active = this.themeService.getActiveTheme() ;
-    if (active.name === 'dark') {
-      this.themeService.setTheme('light');
-      localStorage.setItem('theme', 'light');
-    } else {
-      this.themeService.setTheme('dark');
-      localStorage.setItem('theme', 'dark');
-    }
   }
 }

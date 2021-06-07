@@ -225,7 +225,7 @@ import { darkTheme } from './theme/dark-theme';
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
       themes: [lightTheme, darkTheme],
-      active: localStorage.getItem('theme') || 'dark'
+      active: localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     })
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
