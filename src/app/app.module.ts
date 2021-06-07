@@ -110,9 +110,9 @@ import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/mess
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
 
 // Dark and Light Theme
-import { ThemeModule } from './theme/theme.module';
-import { lightTheme } from './theme/light-theme';
-import { darkTheme } from './theme/dark-theme';
+import { ThemeModule } from "./theme/theme.module";
+import { lightTheme } from "./theme/light-theme";
+import { darkTheme } from "./theme/dark-theme";
 
 @NgModule({
   declarations: [
@@ -225,8 +225,10 @@ import { darkTheme } from './theme/dark-theme';
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
       themes: [lightTheme, darkTheme],
-      active: localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
-    })
+      active:
+        localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
+    }),
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],

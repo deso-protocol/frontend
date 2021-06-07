@@ -22,7 +22,7 @@ export class PickACoinPageComponent implements OnInit {
         this.hasUnminedCreatorCoins = true;
       }
     }
-    this.titleService.setTitle('Send Creator Coins - BitClout');
+    this.titleService.setTitle("Send Creator Coins - BitClout");
   }
 
   usersYouHODL() {

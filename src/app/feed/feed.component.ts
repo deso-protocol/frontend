@@ -6,7 +6,7 @@ import { Subscription } from "rxjs";
 import { tap, finalize, first } from "rxjs/operators";
 import * as _ from "lodash";
 import PullToRefresh from "pulltorefreshjs";
-import { Title } from '@angular/platform-browser';
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "feed",
@@ -65,7 +65,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private backendApi: BackendApiService,
-    private titleService: Title,
+    private titleService: Title
   ) {
     this.globalVars = appData;
 
@@ -96,7 +96,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit() {
     this._initializeFeeds();
-    this.titleService.setTitle('Feed - BitClout');
+    this.titleService.setTitle("Feed - BitClout");
   }
 
   ngAfterViewChecked() {

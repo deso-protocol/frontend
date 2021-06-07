@@ -5,6 +5,7 @@
   <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
   Settings
 </div>
+
 <div class="global__top-bar__height"></div>
 
 <div class="d-flex flex-column">
@@ -50,9 +51,9 @@
         </button>
         <div *ngIf="showSuccessMessage" style="color: green" class="fs-15px ml-10px">Success!</div>
       </div>
-      
+
       <div class="fs-15px pt-30px">BitClout Theme</div>
-      <br>
+      <br />
       <select name="theme" id="theme" (change)="selectChangeHandler($event)" class="form-control selector">
         <option *ngIf="whichTheme == 'dark'" value="dark">Dark Theme</option>
         <option *ngIf="whichTheme == 'light'" value="light">Light Theme</option>

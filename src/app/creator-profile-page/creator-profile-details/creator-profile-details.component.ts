@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { CreatorProfileTopCardComponent } from "../creator-profile-top-card/creator-profile-top-card.component";
-import { Title } from '@angular/platform-browser';
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "creator-profile-details",
@@ -43,7 +43,7 @@ export class CreatorProfileDetailsComponent {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private location: Location,
-    private titleService: Title,
+    private titleService: Title
   ) {
     this.route.params.subscribe((params) => {
       this.userName = params.username;
@@ -58,7 +58,7 @@ export class CreatorProfileDetailsComponent {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(this.userName+' on BitClout')
+    this.titleService.setTitle(this.userName + " on BitClout");
   }
 
   userBlocked() {

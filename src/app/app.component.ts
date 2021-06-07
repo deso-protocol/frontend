@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
 import { environment } from "../environments/environment";
-import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: "app-root",
@@ -21,8 +20,7 @@ export class AppComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     public identityService: IdentityService,
-    private router: Router,
-    private titleService: Title,
+    private router: Router
   ) {
     this.globalVars.Init(
       null, // loggedInUser

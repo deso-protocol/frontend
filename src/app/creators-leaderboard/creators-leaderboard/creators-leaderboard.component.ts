@@ -4,7 +4,7 @@ import { BackendApiService } from "../../backend-api.service";
 import { AppRoutingModule } from "../../app-routing.module";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { Datasource, IDatasource } from "ngx-ui-scroll";
-import { Title } from '@angular/platform-browser';
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "creators-leaderboard",
@@ -82,7 +82,11 @@ export class CreatorsLeaderboardComponent implements OnInit {
     },
   });
 
-  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService, private titleService: Title) {
+  constructor(
+    private globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private titleService: Title
+  ) {
     this.appData = globalVars;
   }
 
@@ -138,7 +142,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
   ngOnInit() {
     this.isLoadingProfilesForFirstTime = true;
-    this.titleService.setTitle('Buy Creator Coins - BitClout');
+    this.titleService.setTitle("Buy Creator Coins - BitClout");
   }
 
   canLoggedInUserFollowTargetPublicKey(targetPubKeyBase58Check) {

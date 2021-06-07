@@ -9,6 +9,7 @@
       Home
     </div>
   </div>
+
   <div class="global__top-bar__height"></div>
 
   <div *ngIf="!isMobile">
@@ -27,10 +28,7 @@
   <!-- Mobile Countdown Timer -->
   <countdown-timer *ngIf="isMobile" [justifyLeft]="true"></countdown-timer>
   <!-- Mobile BitClout Price -->
-  <div
-    *ngIf="isMobile"
-    class="d-flex border-bottom border-color-grey background-color-grey py-5px px-15px fs-12px"
-  >
+  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-grey py-5px px-15px fs-12px">
     <div>$BitClout Price&nbsp;&nbsp;&nbsp;</div>
     <div>
       ~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}
