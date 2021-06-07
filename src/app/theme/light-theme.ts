@@ -9,5 +9,6 @@ export const lightTheme: Theme = {
     '--secalt': '#eee',
     '--textalt': '#777',
     '--filter': 'invert(0%) sepia(5%) saturate(7493%) hue-rotate(217deg) brightness(105%) contrast(101%)',
+    '--unread': '#e7effe',
   }
 };

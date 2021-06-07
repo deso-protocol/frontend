@@ -9,5 +9,6 @@ export const darkTheme: Theme = {
     '--secalt': '#111',
     '--textalt': '#eee',
     '--filter': 'invert(98%) sepia(1%) saturate(264%) hue-rotate(181deg) brightness(116%) contrast(100%)',
+    '--unread': '#1a293f',
   }
 } 

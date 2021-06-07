@@ -159,6 +159,8 @@ export class AdminComponent implements OnInit {
     this._loadMempoolStats();
     this._loadNextBlockStats();
     this._loadGlobalParams();
+
+    this.setTitle('Admin - BitClout');
   }
 
   _updateNodeInfo() {

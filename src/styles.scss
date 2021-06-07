@@ -194,7 +194,7 @@ $green-font-color: #19B028;
 .tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
 
 .background-color-grey { background-color: var(--secondary); } // mocks call this G4
-.background-color-light-grey { background-color: var(--secondary); }
+.background-color-light-grey { background-color: var(--secalt); }
 .background-color-light-grey-important { background-color: var(--secondary) !important }
 .background-color-light-pink { background-color: lightpink; }
 
@@ -1246,7 +1246,7 @@ $green-font-color: #19B028;
 }
 
 .message-thread__unread-light-blue {
-  background-color: #e7effe;
+  background-color: var(--unread);
 }
 
 .admin__add-to-feed-button {
@@ -1932,4 +1932,15 @@ input {
 
 .selector option:active, .selector option:hover {
   outline-color: blue;
+}
+
+.notification {
+  border-radius: 3px;
+  background-color: var(--background);
+  color: #fe3537;
+  border: 1px #fe3537 solid;
+  text-align: center;
+  line-height: 18px;
+  height: 20px;
+  padding: 0px 5px;
 }

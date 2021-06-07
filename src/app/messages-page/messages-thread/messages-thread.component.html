@@ -4,7 +4,7 @@
   (mouseleave)="isHovered = false"
   [ngClass]="{
     'messages-inbox__selected-thread': isSelected,
-    'background-color-light-grey': isHovered || isSelected,
+    'background-color-grey': isHovered || isSelected,
     'message-thread__unread-light-blue':
       !isHovered &&
       globalVars.messageResponse &&
