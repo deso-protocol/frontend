@@ -336,7 +336,7 @@ $green-font-color: #19B028;
 .background-color-white { background-color: var(--background); }
 
 .global__container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
 }
 
