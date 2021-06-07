@@ -666,6 +666,7 @@ export class BackendApiService {
     GetPostsForFollowFeed: boolean,
     GetPostsForGlobalWhitelist: boolean,
     GetPostsByClout: boolean,
+    MediaRequired: boolean,
     PostsByCloutMinutesLookback: number,
     AddGlobalFeedBool: boolean
   ): Observable<any> {
@@ -680,6 +681,7 @@ export class BackendApiService {
       GetPostsForFollowFeed,
       GetPostsForGlobalWhitelist,
       GetPostsByClout,
+      MediaRequired,
       PostsByCloutMinutesLookback,
       AddGlobalFeedBool,
     });
@@ -742,7 +744,8 @@ export class BackendApiService {
     Username: string,
     ReaderPublicKeyBase58Check: string,
     LastPostHashHex: string,
-    NumToFetch: number
+    NumToFetch: number,
+    MediaRequired: boolean
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetPostsForPublicKey, {
       PublicKeyBase58Check,
@@ -750,6 +753,7 @@ export class BackendApiService {
       ReaderPublicKeyBase58Check,
       LastPostHashHex,
       NumToFetch,
+      MediaRequired,
     });
   }
 

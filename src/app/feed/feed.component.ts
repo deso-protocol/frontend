@@ -297,6 +297,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         false /*GetPostsForFollowFeed*/,
         true /*GetPostsForGlobalWhitelist*/,
         false,
+        false /*MediaRequired*/,
         0,
         this.globalVars.showAdminTools() /*AddGlobalFeedBool*/
       )
@@ -378,6 +379,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         true /*GetPostsForFollowFeed*/,
         false /*GetPostsForGlobalWhitelist*/,
         false,
+        false /*MediaRequired*/,
         0,
         this.globalVars.showAdminTools() /*AddGlobalFeedBool*/
       )
