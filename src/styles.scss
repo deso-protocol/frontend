@@ -915,7 +915,7 @@ $green-font-color: #19B028;
 }
 
 .feed-post__quoted-content:hover {
-  background-color: $staking-grey !important;
+  background-color: var(--secalt) !important;
 }
 
 .feed-post__dropdown-menu-item {

@@ -14,7 +14,7 @@ export const lightTheme: Theme = {
     '--link': '#007BFF',
     '--hover': '#0056b3',
     '--border': '#ced4da',
-    '--filter': 'invert(0%) sepia(5%) saturate(7493%) hue-rotate(217deg) brightness(105%) contrast(101%)',
+    '--filter': '',
     '--unread': '#e7effe',
   }
 };
