@@ -812,7 +812,7 @@ $green-font-color: #19B028;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
   background-color: var(--background);
-  border-color: var(--secondary);
+  border-color: var(--border);
   border-right-color: rgba(0,0,0,0);
 }
 
@@ -1727,7 +1727,7 @@ input {
 }
 textarea {
   background-color: transparent;
-  border: 1px solid var(--secondary);
+  border: 1px solid var(--border);
   color: var(--text);
   padding-left: .5rem;
   padding-right: .5rem;
