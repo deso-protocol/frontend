@@ -1,13 +1,18 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "buy-bitclout-page",
   templateUrl: "./buy-bitclout-page.component.html",
   styleUrls: ["./buy-bitclout-page.component.scss"],
 })
-export class BuyBitcloutPageComponent {
+export class BuyBitcloutPageComponent implements OnInit {
   isLeftBarMobileOpen: boolean = false;
 
-  constructor(public globalVars: GlobalVarsService) {}
+  ngOnInit() {
+    this.titleService.setTitle("Buy $BitClout - BitClout");
+  }
+
+  constructor(public globalVars: GlobalVarsService, private titleService: Title) {}
 }

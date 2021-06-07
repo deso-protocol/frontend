@@ -109,6 +109,11 @@ import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamon
 import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
 
+// Dark and Light Theme
+import { ThemeModule } from "./theme/theme.module";
+import { lightTheme } from "./theme/light-theme";
+import { darkTheme } from "./theme/dark-theme";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -218,6 +223,12 @@ import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.compo
     PopoverModule.forRoot(),
     RatingModule.forRoot(),
     CollapseModule.forRoot(),
+    ThemeModule.forRoot({
+      themes: [lightTheme, darkTheme],
+      active:
+        localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
+    }),
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],

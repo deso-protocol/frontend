@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "app-pick-a-coin-page",
@@ -11,7 +12,7 @@ export class PickACoinPageComponent implements OnInit {
   AppRoutingModule = AppRoutingModule;
   hasUnminedCreatorCoins: boolean;
 
-  constructor(private appData: GlobalVarsService) {
+  constructor(private appData: GlobalVarsService, private titleService: Title) {
     this.globalVars = appData;
   }
 
@@ -21,6 +22,7 @@ export class PickACoinPageComponent implements OnInit {
         this.hasUnminedCreatorCoins = true;
       }
     }
+    this.titleService.setTitle("Send Creator Coins - BitClout");
   }
 
   usersYouHODL() {

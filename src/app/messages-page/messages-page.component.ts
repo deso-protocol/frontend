@@ -4,6 +4,7 @@ import { AppRoutingModule } from "../app-routing.module";
 import { Datasource, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "app-messages-page",
@@ -19,7 +20,16 @@ export class MessagesPageComponent {
   showThreadView = false;
   AppRoutingModule = AppRoutingModule;
 
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private router: Router,
+    private titleService: Title
+  ) {}
+
+  ngOnInit() {
+    this.titleService.setTitle("Messages - BitClout");
+  }
 
   _handleMessageThreadSelectedMobile(thread: any) {
     if (!thread) {

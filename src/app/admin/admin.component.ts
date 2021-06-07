@@ -5,6 +5,7 @@ import { BackendApiService, ProfileEntryResponse } from "../backend-api.service"
 import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import * as _ from "lodash";
+import { Title } from "@angular/platform-browser";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -127,7 +128,8 @@ export class AdminComponent implements OnInit {
     private _globalVars: GlobalVarsService,
     private router: Router,
     private route: ActivatedRoute,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private titleService: Title
   ) {
     this.globalVars = _globalVars;
   }
@@ -157,6 +159,8 @@ export class AdminComponent implements OnInit {
     this._loadMempoolStats();
     this._loadNextBlockStats();
     this._loadGlobalParams();
+
+    this.titleService.setTitle("Admin - BitClout");
   }
 
   _updateNodeInfo() {
