@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { CreatorProfileTopCardComponent } from "../creator-profile-top-card/creator-profile-top-card.component";
-import { Title, Meta } from '@angular/platform-browser';
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "creator-profile-details",
@@ -43,8 +43,7 @@ export class CreatorProfileDetailsComponent {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private location: Location,
-    private titleService: Title,
-    private metaService: Meta,
+    private titleService: Title
   ) {
     this.route.params.subscribe((params) => {
       this.userName = params.username;
@@ -56,6 +55,10 @@ export class CreatorProfileDetailsComponent {
           ? CreatorProfileDetailsComponent.TABS[params.tab]
           : "Posts";
     });
+  }
+
+  ngOnInit() {
+    this.titleService.setTitle(this.userName + " on BitClout");
   }
 
   userBlocked() {
@@ -201,23 +204,5 @@ export class CreatorProfileDetailsComponent {
       !this.globalVars.loggedInUser?.ProfileEntryResponse?.Username &&
       this.globalVars.loggedInUser?.UsersYouHODL?.length === 0
     );
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
-  }
-
-  // Set Meta function for dynamically setting the meta tags
-  public setMeta(newContent: string) {
-    this.metaService.addTag({ property: 'og:title', content: newContent});
-    this.metaService.addTag({ property: 'og:type', content: 'article'});
-    this.metaService.addTag({ property: 'al:ios:app_name', content: 'BitClout'});
-    this.metaService.addTag({ property: 'al:android:app_name', content: 'BitClout'});
-  }
-
-  // Set Meta function for dynamically setting the meta tags
-  public setMetaDesc(newContent: string) {
-    this.metaService.addTag({ property: 'og:description', content: newContent});
   }
 }

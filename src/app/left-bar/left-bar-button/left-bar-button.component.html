@@ -30,17 +30,7 @@
     </a>
     <div
       *ngIf="hasNotifications && globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
-      class="ml-5px p-5x fs-15px"
-      style="
-        border-radius: 3px;
-        background-color: white;
-        color: #fe3537;
-        border: 1px #fe3537 solid;
-        text-align: center;
-        line-height: 18px;
-        height: 20px;
-        padding: 0px 5px;
-      "
+      class="ml-5px p-5x fs-15px notification"
     >
       {{
         globalVars.messageResponse.NumberOfUnreadThreads > 999

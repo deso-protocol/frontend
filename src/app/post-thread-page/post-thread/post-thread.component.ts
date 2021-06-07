@@ -5,7 +5,7 @@ import { BackendApiService } from "../../backend-api.service";
 import { FeedComponent } from "../../feed/feed.component";
 import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
 import { ToastrService } from "ngx-toastr";
-import { Meta, Title, MetaDefinition } from '@angular/platform-browser';
+import { Title } from "@angular/platform-browser";
 
 import * as _ from "lodash";
 
@@ -29,8 +29,7 @@ export class PostThreadComponent {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private toastr: ToastrService,
-    private titleService: Title,
-    private metaService:Meta,
+    private titleService: Title
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -40,6 +39,10 @@ export class PostThreadComponent {
     this.route.params.subscribe((params) => {
       this._setStateFromActivatedRoute(route);
     });
+  }
+
+  ngOnInit() {
+    this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
   }
 
   _rerenderThread() {
@@ -332,23 +335,5 @@ export class PostThreadComponent {
 
   afterUserBlocked(blockedPubKey: any) {
     this.globalVars.loggedInUser.BlockedPubKeys[blockedPubKey] = {};
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
-  }
-
-  // Set Meta function for dynamically setting the meta tags
-  public setMeta(newContent: string) {
-    this.metaService.addTag({ property: 'og:title', content: newContent});
-    this.metaService.addTag({ property: 'og:type', content: 'article'});
-    this.metaService.addTag({ property: 'al:ios:app_name', content: 'BitClout'});
-    this.metaService.addTag({ property: 'al:android:app_name', content: 'BitClout'});
-  }
-
-  // Set Meta function for dynamically setting the meta tags
-  public setMetaDesc(newContent: string) {
-    this.metaService.addTag({ property: 'og:description', content: newContent});
   }
 }

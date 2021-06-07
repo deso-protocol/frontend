@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
-import { Title } from '@angular/platform-browser';
+import { Title } from "@angular/platform-browser";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -50,11 +50,12 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private router: Router,
-    private titleService: Title,
+    private titleService: Title
   ) {}
 
   ngOnInit() {
     this._updateFormBasedOnLoggedInUser();
+    this.titleService.setTitle("Update Profile - BitClout");
   }
 
   // This is used to handle any changes to the loggedInUser elegantly.
@@ -248,10 +249,5 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _resetImage() {
     this.profilePicInput = "";
-  }
-
-  // Set Title function for dynamically setting the title
-  public setTitle(newTitle: string) {
-    this.titleService.setTitle(newTitle);
   }
 }
