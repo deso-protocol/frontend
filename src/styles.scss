@@ -541,8 +541,8 @@ $green-font-color: #19B028;
 .global__desktop .global__content__inner {
   min-height: 100vh;
   width: $global__content__width;
-  border-left: $border-grey solid 1px;
-  border-right: $border-grey solid 1px;
+  border-left: var(--secondary) solid 1px;
+  border-right: var(--secondary) solid 1px;
 }
 
 .global__sidebar__width {
@@ -1013,8 +1013,8 @@ $green-font-color: #19B028;
 
 .feed-post__parent-thread-connector {
   height: 100%;
-  border-right: 2px solid $border-grey;
-  border-color: $border-grey;
+  border-right: 2px solid var(--secondary);
+  border-color: var(--secondary);
   width: 55%;
 }
 
@@ -1059,7 +1059,7 @@ $green-font-color: #19B028;
 .feed__light-grey-divider {
   width: 100%;
   min-height: 10px;
-  border-bottom: $border-grey 1px solid;
+  border-bottom: var(--secondary) 1px solid;
   background-color: $light-grey-for-divider;
 }
 
@@ -1852,7 +1852,7 @@ input {
 }
 .btn-secondary {
   background-color: #FFFFFF;
-  border-color: $border-grey;
+  border-color: var(--secondary);
 }
 #foobarxyz p {
   margin: 0;
