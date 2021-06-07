@@ -1407,6 +1407,9 @@ $green-font-color: #19B028;
   border-radius: 10px;
   padding-left: 15px;
   padding-right: 15px;
+  background-color: var(--secondary);
+  color: var(--text);
+  border-color: var(--border);
 }
 
 .landing__hero {
@@ -1492,7 +1495,7 @@ $green-font-color: #19B028;
 .landing__platform-header {
   font-weight: bold;
   font-size: 35px;
-  color: #000;
+  color: var(--text);
   padding: 0 20px;
 }
 
@@ -1845,6 +1848,7 @@ input {
 .btn-primary {
   background-color: #005BFF;
   border-color: #005BFF;
+  color: #fff;
 }
 .btn-secondary {
   background-color: #FFFFFF;
