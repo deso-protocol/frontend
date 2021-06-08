@@ -415,7 +415,7 @@
   </div>
 
   <!-- Super Info -->
-  <div *ngIf="activeTab == 'Super'" class="w-100 d-flex flex-column" style="overflow-y: scroll">
+  <div *ngIf="activeTab == 'Super' && globalVars.showSuperAdminTools()" class="w-100 d-flex flex-column" style="overflow-y: scroll">
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
@@ -715,7 +715,7 @@
 </div>
 
 <div
-  *ngIf="!globalVars.showAdminTools()"
+  *ngIf="!globalVars.showAdminTools() || (activeTab == 'Super' && !globalVars.showSuperAdminTools())"
   class="d-flex flex-column align-items-center justify-content-center p-15px font-italic"
   style="height: 600px"
 >
