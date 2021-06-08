@@ -282,7 +282,11 @@ export class GlobalVarsService {
   }
 
   showAdminTools(): boolean {
-    return this.loggedInUser?.IsAdmin;
+    return this.loggedInUser?.IsAdmin || this.loggedInUser?.IsSuperAdmin;
+  }
+
+  showSuperAdminTools(): boolean {
+    return this.loggedInUser?.IsSuperAdmin;
   }
 
   networkName(): string {

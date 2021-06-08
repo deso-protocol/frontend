@@ -129,6 +129,7 @@ export class User {
   BlockedPubKeys: { [key: string]: object };
 
   IsAdmin?: boolean;
+  IsSuperAdmin?: boolean;
 }
 
 export class PostEntryResponse {
