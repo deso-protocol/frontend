@@ -96,7 +96,7 @@ export class AdminComponent implements OnInit {
   usernameVerificationAuditLogs: any = [];
   loadingVerifiedUsers = false;
   loadingVerifiedUsersAuditLog = false;
-  adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Wyre"];
+  adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Wyre", "Super"];
   POSTS_TAB = "Posts";
   POSTS_BY_CLOUT_TAB = "Posts By Clout";
   adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_CLOUT_TAB];
@@ -145,10 +145,6 @@ export class AdminComponent implements OnInit {
         this.activeTab = queryParams.adminTab;
       } else {
         this.activeTab = "Posts";
-      }
-
-      if (queryParams.super && queryParams.super === "true") {
-        this.adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Super"];
       }
     });
     // load data
