@@ -160,6 +160,12 @@ export class GlobalVarsService {
 
   // This controls the default text of the countdown timer component.
   timerText: string = "Deflation Bomb:";
+  pastDeflationBomb: boolean;
+
+  //
+  ExchangeUSDCentsPerBitClout: number;
+  USDCentsPerBitCloutReservePrice: number;
+  BuyBitCloutFeeBasisPoints: number;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero

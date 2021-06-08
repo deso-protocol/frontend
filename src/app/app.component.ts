@@ -199,8 +199,20 @@ export class AppComponent implements OnInit {
         this.globalVars.NanosSold = res.NanosSold;
         this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
 
-        // The exchange rate requires getting the current Bitcoin price in USD.
-        this._updateBitCloutDisplayExchangeRate();
+        this.globalVars.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
+        this.globalVars.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
+        this.globalVars.BuyBitCloutFeeBasisPoints = res.BuyBitCloutFeeBasisPoints;
+
+        if (this.globalVars.pastDeflationBomb) {
+          const nanosPerUnit = 1e9;
+          this.globalVars.nanosPerUSDExchangeRate = nanosPerUnit / (this.globalVars.ExchangeUSDCentsPerBitClout / 100);
+          this.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, null);
+          // TODO: When we get rid of the old app, we will only use the globalVars version of this.
+          this.globalVars.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, 2);
+        } else {
+          // The exchange rate requires getting the current Bitcoin price in USD.
+          this._updateBitCloutDisplayExchangeRate();
+        }
       },
       (error) => {
         console.error(error);
@@ -216,7 +228,7 @@ export class AppComponent implements OnInit {
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
-
+        this.globalVars.pastDeflationBomb = res.PastDeflationBomb;
         // Setup amplitude on first run
         if (!this.globalVars.amplitude && res.AmplitudeKey) {
           this.globalVars.amplitude = require("amplitude-js");
