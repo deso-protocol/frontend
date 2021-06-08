@@ -948,7 +948,7 @@ $green-font-color: #19B028;
   display: flex;
   width: 100%;
   flex-direction: column;
-  background-color: rgba(0,0,0,0.8) !important;
+  background-color: var(--secondary) !important;
   border: 1px solid var(--border) !important;
   color: var(--text) !important;
   opacity: 1 !important;
