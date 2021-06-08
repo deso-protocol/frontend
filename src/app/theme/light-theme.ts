@@ -14,6 +14,7 @@ export const lightTheme: Theme = {
     "--link": "#007BFF",
     "--hover": "#0056b3",
     "--border": "#E5E5E5",
+    "--mborder": "#E5E5E5",
     "--filter": "",
     "--unread": "#e7effe",
   },

@@ -14,6 +14,7 @@ export const darkTheme: Theme = {
     "--link": "#4DA3FF",
     "--hover": "#72b6ff",
     "--border": "#484848",
+    "--mborder": "#484848",
     "--filter": "invert(98%) sepia(1%) saturate(264%) hue-rotate(181deg) brightness(116%) contrast(100%)",
     "--unread": "#1a293f",
   },
