@@ -73,12 +73,12 @@
   <div
     (click)="toggleLike($event)"
     [ngClass]="{ 'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false }"
-    class="cursor-pointer d-flex align-items-center"
+    class="cursor-pointer d-flex align-items-center love"
   >
     <i
       [ngClass]="{
         'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-        'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
+        'icon-heart-fill is_animating': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
       }"
       class="feed-post-icon-row__icon"
     ></i>
