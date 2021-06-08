@@ -945,7 +945,7 @@ $green-font-color: #19B028;
 
 .modal-content {
   background-color: var(--background) !important;
-  border-color: var(--border) !important;
+  border: 1px solid var(--border) !important;
   color: var(--text) !important;
 }
 
