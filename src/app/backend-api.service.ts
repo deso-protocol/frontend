@@ -64,7 +64,12 @@ export class BackendRoutes {
   static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
-  static RoutePathSetUSDCentsToBitCloutExchangeRate = "/api/v0/admin/set-usd-cents-to-bitclout-exchange-rate";
+  static RoutePathSetUSDCentsToBitCloutReserveExchangeRate =
+    "/api/v0/admin/set-usd-cents-to-bitclout-reserve-exchange-rate";
+  static RoutePathGetUSDCentsToBitCloutReserveExchangeRate =
+    "/api/v0/admin/get-usd-cents-to-bitclout-reserve-exchange-rate";
+  static RoutePathSetBuyBitCloutFeeBasisPoints = "/api/v0/admin/set-buy-bitclout-fee-basis-points";
+  static RoutePathGetBuyBitCloutFeeBasisPoints = "/api/v0/admin/get-buy-bitclout-fee-basis-points";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
   static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
@@ -1296,15 +1301,34 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
-  SetUSDCentsToBitCloutExchangeRate(
+  SetUSDCentsToBitCloutReserveExchangeRate(
     endpoint: string,
     AdminPublicKey: string,
     USDCentsPerBitClout: number
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToBitCloutExchangeRate, AdminPublicKey, {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToBitCloutReserveExchangeRate, AdminPublicKey, {
       AdminPublicKey,
       USDCentsPerBitClout,
     });
+  }
+
+  GetUSDCentsToBitCloutReserveExchangeRate(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToBitCloutReserveExchangeRate);
+  }
+
+  SetBuyBitCloutFeeBasisPoints(
+    endpoint: string,
+    AdminPublicKey: string,
+    BuyBitCloutFeeBasisPoints: number
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyBitCloutFeeBasisPoints, AdminPublicKey, {
+      AdminPublicKey,
+      BuyBitCloutFeeBasisPoints,
+    });
+  }
+
+  GetBuyBitCloutFeeBasisPoints(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetBuyBitCloutFeeBasisPoints);
   }
 
   UpdateGlobalParams(
