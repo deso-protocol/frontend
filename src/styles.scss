@@ -895,6 +895,16 @@ $green-font-color: #19B028;
   background-position: center;
 }
 
+.modal-content {
+  background-color: var(--background) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--border) !important;
+}
+
 .modal-header .feed-create-comment-form__close {
   margin: 0;
   padding: 0;
@@ -919,8 +929,11 @@ $green-font-color: #19B028;
 }
 
 .feed-post__dropdown-menu-item {
+  background-color: var(--secondary);
+  color: var(--text);
   &:hover {
-    background-color: var(--secondary)
+    background-color: var(--secalt);
+    color: var(--text);
   }
 }
 
