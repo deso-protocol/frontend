@@ -33,16 +33,9 @@ export class SettingsComponent implements OnInit {
   selectChangeHandler(event: any) {
     //update the ui
     this.selectedTheme = event.target.value;
-
-    if (this.selectedTheme == "light") {
-      this.themeService.setTheme("light");
-      this.whichTheme = "light";
-      localStorage.setItem("theme", "light");
-    } else if (this.selectedTheme == "dark") {
-      this.themeService.setTheme("dark");
-      this.whichTheme = "dark";
-      localStorage.setItem("theme", "dark");
-    }
+    document.querySelector('[app-theme]').className = 'main global__container'; // clear theme class
+    document.querySelector('[app-theme]').classList.add(this.selectedTheme || 'dark'); // add theme class
+    // moved inline styles to styles.scss
   }
 
   ngOnInit() {
