@@ -23,7 +23,8 @@ export class ThemeDirective implements OnInit {
 
   updateTheme(theme: Theme) {
     for (const key in theme.properties) {
-      this._elementRef.nativeElement.style.setProperty(key, theme.properties[key]);
+      // TODO: remove most of this service, we only need to change the container class
+      //this._elementRef.nativeElement.style.setProperty(key, theme.properties[key]);
     }
   }
 }
