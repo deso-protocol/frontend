@@ -35,8 +35,8 @@ header @html Content-Security-Policy "
     api.bitpop.dev
     localhost:*
     explorer.bitclout.com:*
-    https://blockchain.info/ticker
-    https://api.blockchain.info/mempool/fees
+    https://api.blockchain.com/ticker
+    https://api.blockchain.com/mempool/fees
     https://ka-f.fontawesome.com/
     bitcoinfees.earn.com
     api.blockcypher.com

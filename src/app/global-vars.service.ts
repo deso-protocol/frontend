@@ -82,6 +82,7 @@ export class GlobalVarsService {
   globoMods: any;
   feeRateBitCloutPerKB = 0.0;
   postsToShow = [];
+  followFeedPosts = [];
   messageResponse = null;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
@@ -156,6 +157,9 @@ export class GlobalVarsService {
   minSatoshisBurnedForProfileCreation: number;
 
   amplitude: AmplitudeClient;
+
+  // This controls the default text of the countdown timer component.
+  timerText: string = "Deflation Bomb:";
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero

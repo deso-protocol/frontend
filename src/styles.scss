@@ -11,6 +11,12 @@ $feed-border-radius: 12px;
 // regular style toast
 @import '~ngx-toastr/toastr';
 
+// New themeing class
+.main {
+  background: var(--background) !important;
+  color: var(--text) !important;
+}
+
 html {
   overflow-y: scroll;
   overscroll-behavior-y: none;
@@ -33,22 +39,23 @@ body {
 }
 
 h1 {
-  color: $light-color;
   margin: 0;
-  color: #333333;
+  color: var(--text);
 }
 
 h2,h3,h4,h5,h6,p {
   margin: 0;
-  color: #333333;
+  color: var(--text);
   font-family: 'Roboto Mono';
   font-weight: normal;
 }
 
 a {
   cursor: pointer; // for anchors without hrefs
+  color: var(--link);
   &:hover, &:active, &:focus {
     text-decoration: inherit; // I prefer no underline when you hover over links
+    color: var(--hover);
   }
 }
 
@@ -111,7 +118,7 @@ $green-font-color: #19B028;
 .text-grey2 { color: #222222 } // mocks call this G0
 .text-grey3 { color: #333333 }
 .text-grey4 { color: #444444 }
-.text-grey5 { color: #555555 } // mocks call this G1
+.text-grey5 { color: var(--grey) } // mocks call this G1
 .text-grey6 { color: #666666 }
 .text-grey7 { color: #777777 }
 .text-grey8 { color: #888888 }
@@ -150,8 +157,8 @@ $green-font-color: #19B028;
 .w-100 { width: 100% }
 
 // Custom font classes.
-.fc-default { color: $normal-font-color; }
-.fc-muted { color: $light-font-color; }
+.fc-default { color: var(--norm); }
+.fc-muted { color: var(--textalt); }
 .fc-blue { color: $buy-button-blue; }
 .fc-red { color: $red-font-color; }
 .fc-green { color: $green-font-color; }
@@ -183,14 +190,14 @@ $green-font-color: #19B028;
 .roboto-mono { font-family: 'Roboto Mono' }
 
 // Custom border classes.
-.border-color-grey { border-color: $border-grey; }
+.border-color-grey { border-color: var(--border) !important; }
 .border-color-blue { border-color: $buy-button-blue; }
 .tab-underline-active { border-bottom: solid $buy-button-blue 3px; }
 .tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
 
-.background-color-grey { background-color: #F5F5F5; } // mocks call this G4
-.background-color-light-grey { background-color: $light-grey-for-divider; }
-.background-color-light-grey-important { background-color: $light-grey-for-divider !important }
+.background-color-grey { background-color: var(--border); } // mocks call this G4
+.background-color-light-grey { background-color: var(--secondary); }
+.background-color-light-grey-important { background-color: var(--secondary) !important }
 .background-color-light-pink { background-color: lightpink; }
 
 // Custom padding classes.
@@ -326,10 +333,10 @@ $green-font-color: #19B028;
 .vh-100 { height: 100vh !important; }
 
 .position-fixed { position: fixed; }
-.background-color-white { background-color: white; }
+.background-color-white { background-color: var(--background); }
 
 .global__container {
-  height: 100%;
+  min-height: 100vh;
   display: flex;
 }
 
@@ -400,7 +407,7 @@ $green-font-color: #19B028;
 
 .fixed-top-bar {
   position: fixed;
-  background-color: white;
+  background-color: var(--background);
   z-index: 10
 }
 
@@ -420,7 +427,7 @@ $green-font-color: #19B028;
   left: 0;
   bottom: 0;
   width: 100%;
-  background-color: white;
+  background-color: var(--background);
   height: 60px;
 }
 
@@ -448,7 +455,7 @@ $green-font-color: #19B028;
 }
 
 .light-grey-divider {
-  background-color: $light-grey-for-divider;
+  background-color: var(--secondary);
 }
 
 .top-bar-mobile__avatar {
@@ -534,8 +541,8 @@ $green-font-color: #19B028;
 .global__desktop .global__content__inner {
   min-height: 100vh;
   width: $global__content__width;
-  border-left: $border-grey solid 1px;
-  border-right: $border-grey solid 1px;
+  border-left: var(--border) solid 1px;
+  border-right: var(--border) solid 1px;
 }
 
 .global__sidebar__width {
@@ -562,13 +569,13 @@ $green-font-color: #19B028;
 .global__center__inner {
   min-height: 100vh;
   width: $global__center__width;
-  border-left: $border-grey solid 1px;
-  border-right: $border-grey solid 1px;
+  border-left: var(--border) solid 1px;
+  border-right: var(--border) solid 1px;
 }
 
 .global__top-bar {
   position: fixed;
-  background: #fff;
+  background: var(--background);
   z-index: 30;
   width: $global__center__width - 2; // subtract 2 for borders
 
@@ -616,7 +623,7 @@ $green-font-color: #19B028;
   max-width: 280px;
   min-width: 245px;
   height: 100vh;
-  background-color: white;
+  background-color: var(--background);
 }
 
 .right-bar-select-box {
@@ -681,7 +688,7 @@ $green-font-color: #19B028;
 
 .holdings__divider {
   height: 66px;
-  background-color: $light-grey-for-divider;
+  background-color: var(--secondary);
 }
 
 .holdings__avatar {
@@ -767,7 +774,7 @@ $green-font-color: #19B028;
   margin-left: -10px;
   position: relative;
   z-index: 30;
-  background-color: $light-grey-for-divider;
+  background-color: var(--secondary);
   width: 185px;
   padding-top: 8px;
   padding-bottom: 8px;
@@ -779,7 +786,7 @@ $green-font-color: #19B028;
 }
 
 .change-account-selector__hover:hover {
-  background-color: whitesmoke;
+  background-color: var(--secondary);
 }
 
 .change-account-selector__shadow {
@@ -804,19 +811,19 @@ $green-font-color: #19B028;
   font-size: 19px;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
-  background-color: rgba(0,0,0,0);
-  border-color: #ced4da;
-  border-right-color: rgba(0,0,0,0)
+  background-color: var(--background);
+  border-color: var(--border);
+  border-right-color: rgba(0,0,0,0);
 }
 
 .search-bar__results-dropdown {
   box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
   border-radius: 0px 0px 3px 3px;
   cursor: pointer;
-  background-color: white;
+  background-color: var(--background);
   position: relative;
   top: -22px;
-  border: solid 1px $border-grey;
+  border: solid 1px var(--border);
   z-index: 5; // the input has a z-index of 3 at one point.
   max-height: 600px;
   overflow-y: scroll;
@@ -833,15 +840,21 @@ $green-font-color: #19B028;
 }
 
 .search-bar__selected-color {
-  background-color: $border-grey;
+  background-color: var(--border);
+}
+
+.search-bar__fix-active {
+  border-color: var(--secondary);
+  border-left: 0px;
 }
 
 .search-bar__fix-active:active, .search-bar__fix-active:focus {
-  border-color: #ced4da;
+  border-color: var(--secondary);
+  border-left: 0px;
 }
 
 .post-thread__comment-container {
-  border-top: 4px solid $border-grey;
+  border-top: 4px solid var(--secondary);
   flex-grow: 1;
 }
 
@@ -898,16 +911,16 @@ $green-font-color: #19B028;
 }
 
 .js-feed-post-hover:hover {
-  background-color: $light-grey-for-divider-2;
+  background-color: var(--secondary);
 }
 
 .feed-post__quoted-content:hover {
-  background-color: $staking-grey !important;
+  background-color: var(--secalt) !important;
 }
 
 .feed-post__dropdown-menu-item {
   &:hover {
-    background-color: $light-grey-for-divider
+    background-color: var(--secondary)
   }
 }
 
@@ -960,7 +973,7 @@ $green-font-color: #19B028;
   border-radius: 50%;
   margin-right: 2px;
   &:hover {
-    background-color: #CAE4F1;
+    background-color: var(--secondary);
   }
 }
 
@@ -980,7 +993,7 @@ $green-font-color: #19B028;
 }
 
 .feed-post__coin-price-holder {
-  background-color: #F5F5F5;
+  background-color: var(--secalt);
 }
 
 .feed-post__avatar {
@@ -1000,8 +1013,8 @@ $green-font-color: #19B028;
 
 .feed-post__parent-thread-connector {
   height: 100%;
-  border-right: 2px solid $border-grey;
-  border-color: $border-grey;
+  border-right: 2px solid var(--secondary);
+  border-color: var(--secondary);
   width: 55%;
 }
 
@@ -1035,17 +1048,18 @@ $green-font-color: #19B028;
 }
 
 .right-bar-creators__balance-box {
-  background-color: $light-grey-for-divider;
+  background-color: var(--secondary);
+  color: var(--text);
 }
 
 .creator-leaderboard__load-more:hover {
-  background-color: whitesmoke;
+  background-color: var(--secondary);
 }
 
 .feed__light-grey-divider {
   width: 100%;
   min-height: 10px;
-  border-bottom: $border-grey 1px solid;
+  border-bottom: var(--border) 1px solid;
   background-color: $light-grey-for-divider;
 }
 
@@ -1133,13 +1147,13 @@ $green-font-color: #19B028;
 }
 
 .buy-bitclout__amount-background {
-  background-color: $light-grey-for-divider-2;
+  background-color: var(--background);
 }
 
 .buy-bitclout__box-label-adjustment {
   position: relative;
   width: fit-content;
-  background-color: white;
+  background-color: var(--background) !important;
   top: -13px;
 }
 
@@ -1148,15 +1162,15 @@ $green-font-color: #19B028;
   border-radius: 25%;
   margin-right: 2px;
   &:hover {
-    background-color: #CAE4F1;
+    background-color: var(--secondary);
   }
 }
 
 .messages-inbox__desktop-column {
   width: 100%;
   max-width: 380px;
-  border-left: solid 1px $border-grey;
-  border-right: solid 1px $border-grey;
+  border-left: solid 1px var(--border);
+  border-right: solid 1px var(--border);
 
 }
 
@@ -1189,7 +1203,7 @@ $green-font-color: #19B028;
 .messages-thread__desktop-column {
   width: 100%;
   max-width: 600px;
-  border-right: solid 1px $border-grey;
+  border-right: solid 1px var(--secondary);
 }
 
 .messages-thread__border-radius {
@@ -1234,7 +1248,7 @@ $green-font-color: #19B028;
 }
 
 .message-thread__unread-light-blue {
-  background-color: #e7effe;
+  background-color: var(--unread);
 }
 
 .admin__add-to-feed-button {
@@ -1356,7 +1370,7 @@ $green-font-color: #19B028;
 // Landing page
 .landing__ticker {
   padding: 20px;
-  background-color: #EEE;
+  background-color: var(--background);
 }
 
 .landing__header {
@@ -1374,7 +1388,7 @@ $green-font-color: #19B028;
 }
 
 .landing__nav-link {
-  color: #222222;
+  color: var(--text);
   margin-left: 25px;
   font-size: 13px;
 }
@@ -1393,10 +1407,16 @@ $green-font-color: #19B028;
   border-radius: 10px;
   padding-left: 15px;
   padding-right: 15px;
+  background-color: var(--secondary);
+  color: var(--text);
+  border-color: var(--border);
 }
 
 .landing__hero {
   padding: 100px 0;
+  border-left: 1px solid var(--secondary) !important;
+  border-right: 1px solid var(--secondary) !important;
+  color: var(--text);
 }
 
 .landing__sign-up {
@@ -1441,7 +1461,7 @@ $green-font-color: #19B028;
 .landing__example {
   padding: 30px 50px;
   padding-bottom: 0px;
-  background-color: #FFF;
+  background-color: var(--background);
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
 }
@@ -1454,7 +1474,7 @@ $green-font-color: #19B028;
   bottom: 0;
   left: 0;
   pointer-events: none;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1) 90%);
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0), var(--secondary) 90%);
   width: 100%;
   height: 4em;
 }
@@ -1467,12 +1487,15 @@ $green-font-color: #19B028;
 
 .landing__platform {
   padding: 100px 0;
+  border-top: 1px solid var(--secondary) !important;
+  border-right: 1px solid var(--secondary) !important;
+  border-left: 1px solid var(--secondary) !important;
 }
 
 .landing__platform-header {
   font-weight: bold;
   font-size: 35px;
-  color: #000;
+  color: var(--text);
   padding: 0 20px;
 }
 
@@ -1483,7 +1506,8 @@ $green-font-color: #19B028;
 }
 
 .landing__echo {
-  background-color: #F5F5F5;
+  background-color: var(--background);
+  border-top: 1px solid var(--secondary);
   padding: 50px 0;
 }
 
@@ -1674,6 +1698,11 @@ $green-font-color: #19B028;
   color: $important-text-color;
   font-size: $normal-text-size;
 }
+.form-control {
+  color: var(--text) !important;
+  background: var(--formbg) !important;
+  border-color: var(--border) !important;
+}
 .normal-text {
   color: $text-color;
   font-size: $normal-text-size;
@@ -1698,8 +1727,8 @@ input {
 }
 textarea {
   background-color: transparent;
-  border: 1px solid $border-color;
-  color: $important-text-color;
+  border: 1px solid var(--border);
+  color: var(--text);
   padding-left: .5rem;
   padding-right: .5rem;
   max-width: 100%;
@@ -1819,10 +1848,11 @@ input {
 .btn-primary {
   background-color: #005BFF;
   border-color: #005BFF;
+  color: #fff;
 }
 .btn-secondary {
   background-color: #FFFFFF;
-  border-color: $border-grey;
+  border-color: var(--border);
 }
 #foobarxyz p {
   margin: 0;
@@ -1867,4 +1897,56 @@ input {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+// Added BootStrap and Custom CSS for Themeing
+.border-bottom {
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.border-top {
+  border-top: 1px solid var(--border) !important;
+}
+
+.border-left {
+  border-left: 1px solid var(--border) !important;
+}
+
+.border-right {
+  border-right: 1px solid var(--border) !important;
+}
+
+.text-black {
+  color: var(--text) !important;
+}
+
+.table {
+  color: var(--text) !important;
+}
+
+.clout {
+  filter: var(--filter);
+}
+
+.selector {
+  background: var(--secondary);
+  outline: none;
+  border-radius: 5px;
+  padding: 5px;
+  color: var(--text);
+}
+
+.selector option:active, .selector option:hover {
+  outline-color: blue;
+}
+
+.notification {
+  border-radius: 3px;
+  background-color: var(--background);
+  color: #fe3537;
+  border: 1px #fe3537 solid;
+  text-align: center;
+  line-height: 18px;
+  height: 20px;
+  padding: 0px 5px;
 }

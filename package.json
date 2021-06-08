@@ -7,7 +7,7 @@
     "build": "ng build",
     "generate": "ng generate",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "ng lint --fix",
     "e2e": "ng e2e",
     "build_prod": "ng build --prod --base-href / --deploy-url /",
     "ngcc": "ngcc --properties es2015"
