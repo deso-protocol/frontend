@@ -69,4 +69,18 @@ export class RightBarCreatorsComponent implements OnInit {
       this.backendApi.SetStorage(RightBarCreatorsComponent.RightBarTabKey, this.activeTab);
     }
   }
+
+  totalValue() {
+    let result = 0;
+
+    for (const holding of this.globalVars.loggedInUser.UsersYouHODL) {
+      result +=
+        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(
+          holding.BalanceNanos,
+          holding.ProfileEntryResponse.CoinEntry
+        ) || 0;
+    }
+
+    return result;
+  }
 }
