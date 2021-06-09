@@ -202,7 +202,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
             confirmButton: "btn btn-light",
             cancelButton: "btn btn-light no",
           },
-          confirmButtonText: lowBalance ? "Buy $Bitclout" : null,
+          confirmButtonText: lowBalance ? "Buy $Clout" : null,
           cancelButtonText: lowBalance ? "Later" : null,
           showCancelButton: lowBalance,
         }).then((res) => {
