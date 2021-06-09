@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
@@ -15,10 +15,13 @@ import { environment } from "../../../environments/environment";
 export class FeedCreatePostComponent implements OnInit {
   static SHOW_POST_LENGTH_WARNING_THRESHOLD = 260; // show warning at 260 characters
 
-  // FeedPostComponent = FeedPostComponent;
   VideoUrlParserService = VideoUrlParserService;
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
+  @Input() parentPost: PostEntryResponse = null;
+  @Input() isQuote: boolean = false;
+
+  isComment: boolean;
 
   @ViewChild("postImage") postImage;
   @ViewChild("autosize") autosize: CdkTextareaAutosize;
@@ -63,6 +66,7 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
   }
 
@@ -79,6 +83,15 @@ export class FeedCreatePostComponent implements OnInit {
 
   characterCountExceedsMaxLength() {
     return this.postInput.length > GlobalVarsService.MAX_POST_LENGTH;
+  }
+
+  getPlaceholderText() {
+    // Creating vanilla post
+    if (!this.parentPost) {
+      return this.randomMovieQuote;
+    }
+    // Creating comment or quote reclout;
+    return this.isQuote ? "Add a quote" : "Post your reply";
   }
 
   _setRandomMovieQuote() {
@@ -117,20 +130,25 @@ export class FeedCreatePostComponent implements OnInit {
         postExtraData["EmbedVideoURL"] = videoURL;
       }
     }
+
+    const bodyObj = {
+      Body: this.postInput,
+      // Submit images if the post is a quoted reclout, comment, or a vanilla post.
+      ImageURLs: [this.postImageSrc].filter((n) => n),
+    };
+    const recloutedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
+    const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
 
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         "" /*PostHashHexToModify*/,
-        "" /*ParentPostHashHex*/,
+        this.isComment ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
         "" /*Title*/,
-        {
-          Body: this.postInput,
-          ImageURLs: [this.postImageSrc].filter((n) => n),
-        } /*BodyObj*/,
-        "",
+        bodyObj /*BodyObj*/,
+        recloutedPostHashHex,
         postExtraData,
         "" /*Sub*/,
         // TODO: Should we have different values for creator basis points and stake multiple?
@@ -140,7 +158,7 @@ export class FeedCreatePostComponent implements OnInit {
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : create");
+          this.globalVars.logEvent(`post : ${postType}`);
 
           this.submittingPost = false;
 
@@ -160,7 +178,7 @@ export class FeedCreatePostComponent implements OnInit {
         (err) => {
           const parsedError = this.backendApi.parsePostError(err);
           this.globalVars._alertError(parsedError);
-          this.globalVars.logEvent("post : create : error", { parsedError });
+          this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
 
           this.submittingPost = false;
           this.changeRef.detectChanges();
@@ -172,23 +190,21 @@ export class FeedCreatePostComponent implements OnInit {
 
   _createPost() {
     // Check if the user has an account.
-    if (!this.globalVars || !this.globalVars.loggedInUser) {
+    if (!this.globalVars?.loggedInUser) {
       this.globalVars.logEvent("alert : post : account");
       SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
       return;
     }
 
     // Check if the user has a profile.
-    else if (this.globalVars && !this.globalVars.doesLoggedInUserHaveProfile()) {
+    if (!this.globalVars?.doesLoggedInUserHaveProfile()) {
       this.globalVars.logEvent("alert : post : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
     }
 
     // The user has an account and a profile. Let's create a post.
-    else {
-      this.submitPost();
-    }
+    this.submitPost();
   }
 
   _handleFileInput(files: FileList) {

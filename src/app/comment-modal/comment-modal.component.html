@@ -4,7 +4,7 @@
   </button>
 </div>
 
-<div class="px-15px pt-15px pb-5px">
+<div class="px-15px pt-15px pb-5px" style="max-height:500px; overflow-y:hidden;">
   <feed-post
     [post]="parentPost"
     [includePaddingOnPost]="false"
@@ -21,40 +21,9 @@
   @{{ parentPost.ProfileEntryResponse.Username }}
 </div>
 
-<div class="pt-25px d-flex align-items-center px-15px pb-15px">
-  <div
-    class="feed-create-comment-form__avatar"
-    [style.background-image]="'url(' + globalVars.loggedInUser.ProfileEntryResponse.ProfilePic + ')'"
-  ></div>
-  <textarea
-    class="form-control fs-18px lh-18px br-12px"
-    [(ngModel)]="postInput"
-    style="border-color: antiquewhite"
-    [placeholder]="isQuote ? 'Add a comment' : 'Post your reply'"
-    cdkTextareaAutosize
-    cdkAutosizeMinRows="3"
-    #autosize="cdkTextareaAutosize"
-  ></textarea>
-</div>
-
-<div class="px-3 pb-3 text-right">
-  <span
-    class="mr-15px roboto-regular feed-create-post__character-counter fs-15px"
-    [ngClass]="{
-      'd-none': postInput.length == 0,
-      'text-grey8A': showCharacterCountIsFine(),
-      'text-warning': showCharacterCountWarning(),
-      'fc-red': characterCountExceedsMaxLength()
-    }"
-  >
-    {{ postInput.length }} / {{ GlobalVarsService.MAX_POST_LENGTH }}
-  </span>
-  <a
-    type="button"
-    class="btn btn-primary br-12px font-weight-bold fs-14px px-20px pb-5px"
-    [ngClass]="{ 'btn-loading': submittingPost, disabled: postInput.length <= 0 || characterCountExceedsMaxLength() }"
-    (click)="submitPost()"
-  >
-    Post
-  </a>
-</div>
+<feed-create-post
+  [parentPost]="parentPost"
+  [isQuote]="isQuote"
+  [postRefreshFunc]="afterCommentCreatedCallback"
+  (postCreated)="bsModalRef.hide()"
+></feed-create-post>
