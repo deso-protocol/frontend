@@ -1169,6 +1169,7 @@ export class BackendApiService {
 
   AdminGetUserAdminData(endpoint: string, AdminPublicKey: string, UserPublicKeyBase58Check: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUserAdminData, AdminPublicKey, {
+      AdminPublicKey,
       UserPublicKeyBase58Check,
     });
   }
