@@ -62,6 +62,7 @@ export class BackendRoutes {
   static RoutePathAdminGrantVerificationBadge = "/api/v0/admin/grant-verification-badge";
   static RoutePathAdminRemoveVerificationBadge = "/api/v0/admin/remove-verification-badge";
   static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
+  static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
@@ -1166,6 +1167,13 @@ export class BackendApiService {
     });
   }
 
+  AdminGetUserAdminData(endpoint: string, AdminPublicKey: string, UserPublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUserAdminData, AdminPublicKey, {
+      AdminPublicKey,
+      UserPublicKeyBase58Check,
+    });
+  }
+
   NodeControl(endpoint: string, AdminPublicKey: string, Address: string, OperationType: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.NodeControlRoute, AdminPublicKey, {
       AdminPublicKey,
@@ -1207,10 +1215,9 @@ export class BackendApiService {
     RemoveFromLeaderboard: boolean,
     IsWhitelistUpdate: boolean,
     WhitelistPosts: boolean,
-    RemovePhoneNumberMetadata: boolean
+    RemovePhoneNumberMetadata: boolean,
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateUserGlobalMetadata, AdminPublicKey, {
-      AdminPublicKey,
       UserPublicKeyBase58Check,
       Username,
       IsBlacklistUpdate,
@@ -1219,6 +1226,7 @@ export class BackendApiService {
       IsWhitelistUpdate,
       WhitelistPosts,
       RemovePhoneNumberMetadata,
+      AdminPublicKey,
     });
   }
 
