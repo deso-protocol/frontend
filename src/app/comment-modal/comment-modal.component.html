@@ -27,9 +27,9 @@
     [style.background-image]="'url(' + globalVars.loggedInUser.ProfileEntryResponse.ProfilePic + ')'"
   ></div>
   <textarea
-    class="form-control fs-18px lh-18px br-12px"
+    class="fs-18px lh-18px br-12px"
+    style="border: 1px solid #777;width:100%;padding:10px;"
     [(ngModel)]="postInput"
-    style="border-color: antiquewhite"
     [placeholder]="isQuote ? 'Add a comment' : 'Post your reply'"
     cdkTextareaAutosize
     cdkAutosizeMinRows="3"

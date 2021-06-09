@@ -898,7 +898,9 @@ $green-font-color: #19B028;
 .modal-header .feed-create-comment-form__close {
   margin: 0;
   padding: 0;
-  float: none
+  float: none;
+  color: var(--text);
+  text-shadow: 0 1px 0 #fff;
 }
 
 .feed-create-post__avatar_default {
@@ -919,8 +921,11 @@ $green-font-color: #19B028;
 }
 
 .feed-post__dropdown-menu-item {
+  background-color: var(--secondary);
+  color: var(--text);
   &:hover {
-    background-color: var(--secondary)
+    background-color: var(--secalt);
+    color: var(--text);
   }
 }
 
@@ -1949,4 +1954,129 @@ input {
   line-height: 18px;
   height: 20px;
   padding: 0px 5px;
+}
+
+.bg-light {
+  background-color: var(--secondary) !important;
+}
+
+// Animations by Carsen Klock @carsenk
+
+.is_animating {
+  animation: pulse-red 2s;
+}
+
+.is_animating_ice {
+  animation: pulse-blue 2s;
+}
+
+@keyframes pulse-red {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+  }
+}
+
+@keyframes pulse-blue {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(52, 172, 224, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(52, 172, 224, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(52, 172, 224, 0);
+  }
+}
+
+.modalinput {
+  border-color: var(--mborder) !important;
+}
+
+.darkmodal {
+  background-color:#202020;
+  color: #FFF;
+  border: 1px solid #484848;
+  background-clip: padding-box;
+  opacity: 1;
+  flex-direction: column;
+  width: 100%;
+  display: flex;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+  outline: 0;
+  position: relative;
+}
+
+.lightmodal {
+  background-color:#f8f8f8;
+  color: #333;
+  border: 1px solid #E5E5E5;
+  background-clip: padding-box;
+  opacity: 1;
+  flex-direction: column;
+  width: 100%;
+  display: flex;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+  outline: 0;
+  position: relative;
+}
+
+.ddropdown {
+  background: var(--background);
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.ddropdown option {
+  background: var(--background);
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-content {
+  position: relative;
+  background-color: var(--secalt);
+  color: var(--text);
+  border: 1px solid var(--mborder);
+  background-clip: padding-box;
+  opacity: 1;
+  flex-direction: column;
+  width: 100%;
+  display: flex;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+  outline: 0;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--mborder) !important;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem 1rem;
+  border-top-left-radius: calc(.3rem - 1px);
+  border-top-right-radius: calc(.3rem - 1px);
 }
