@@ -921,6 +921,7 @@ $green-font-color: #19B028;
 .feed-post__dropdown-menu-item {
   &:hover {
     background-color: var(--secondary)
+    color: var(--norm);
   }
 }
 
