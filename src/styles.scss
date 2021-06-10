@@ -1283,6 +1283,13 @@ $green-font-color: #19B028;
   background-color: var(--unread);
 }
 
+.admin__get-user-admin-data-line {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .admin__add-to-feed-button {
   border: 1px solid lightgrey;
   border-radius: 3px;
