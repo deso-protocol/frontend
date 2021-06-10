@@ -16,6 +16,7 @@ export class MessagesPageComponent {
   intervalsSet = [];
   selectedThread: any;
   selectedThreadDisplayName = "";
+  selectedThreadPublicKey = "";
   selectedThreadProfilePic = "";
   showThreadView = false;
   AppRoutingModule = AppRoutingModule;
@@ -36,6 +37,7 @@ export class MessagesPageComponent {
       return;
     }
     this.selectedThread = thread;
+    this.selectedThreadPublicKey = thread.PublicKeyBase58Check;
     this.selectedThreadProfilePic = "/assets/img/default_profile_pic.png";
     if (thread.ProfileEntryResponse && thread.ProfileEntryResponse.ProfilePic) {
       this.selectedThreadProfilePic = thread.ProfileEntryResponse.ProfilePic;
@@ -82,6 +84,7 @@ export class MessagesPageComponent {
 
   navigateToInbox() {
     this.selectedThread = null;
+    this.selectedThreadPublicKey = "";
     this.showThreadView = false;
   }
 }

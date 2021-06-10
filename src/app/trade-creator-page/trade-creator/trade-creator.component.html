@@ -10,13 +10,7 @@
 
         <a
           class="d-none d-lg-block trade-creator__avatar mr-15px"
-          [style.background-image]="
-            'url(' +
-            (creatorCoinTrade.creatorProfile && creatorCoinTrade.creatorProfile.ProfilePic
-              ? creatorCoinTrade.creatorProfile.ProfilePic
-              : '/assets/img/default_profile_pic.png') +
-            ')'
-          "
+          [avatar]="creatorCoinTrade.creatorProfile.PublicKeyBase58Check"
         ></a>
         <p *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN" class="font-weight-bold fs-18px">
           {{ creatorCoinTrade.tradeVerbString() }}

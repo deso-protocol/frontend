@@ -45,7 +45,7 @@
         >
           <div
             class="holdings__avatar"
-            [style.background-image]="'url(' + creator.ProfileEntryResponse.ProfilePic + ')'"
+            [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"
           ></div>
           <div class="text-truncate holdings__name">
             <span>{{ creator.ProfileEntryResponse.Username }}</span>

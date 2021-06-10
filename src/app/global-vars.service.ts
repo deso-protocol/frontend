@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { PostEntryResponse, User } from "./backend-api.service";
+import {BalanceEntryResponse, PostEntryResponse, User} from "./backend-api.service";
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
@@ -94,8 +94,7 @@ export class GlobalVarsService {
   filterType = "";
   // The coin balance and user profiles of the coins the the user
   // hodls and the users who hodl him.
-  youHodlMap = {};
-  hodlYouMap = {};
+  youHodlMap: { [k: string]: BalanceEntryResponse } = {};
 
   // Map of diamond level to bitclout nanos.
   diamondLevelMap = {};
@@ -160,6 +159,8 @@ export class GlobalVarsService {
 
   // This controls the default text of the countdown timer component.
   timerText: string = "Deflation Bomb:";
+
+  profileUpdateTimestamp: number;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -268,9 +269,6 @@ export class GlobalVarsService {
       // Fix the youHodl / hodlYou maps.
       for (const entry of this.loggedInUser?.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
-      }
-      for (const entry of this.loggedInUser?.UsersWhoHODLYou || []) {
-        this.hodlYouMap[entry.HODLerPublicKeyBase58Check] = entry;
       }
     }
 

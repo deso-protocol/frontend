@@ -22,6 +22,7 @@ export class BackendRoutes {
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
+  static RoutePathGetSingleProfilePicture = "/api/v0/get-single-profile-picture";
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
   static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
@@ -122,8 +123,8 @@ export class User {
   NumActionItems: any;
   NumMessagesToRead: any;
 
-  UsersYouHODL: any;
-  UsersWhoHODLYou: any;
+  UsersYouHODL: BalanceEntryResponse[];
+  UsersWhoHODLYouCount: number;
 
   HasPhoneNumber: boolean;
   CanCreateProfile: boolean;
@@ -740,6 +741,19 @@ export class BackendApiService {
       Username,
     });
   }
+  // We add a ts-ignore here as typescript does not expect responseType to be anything but "json".
+  GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): Observable<any> {
+    return this.httpClient.get<any>(this.GetSingleProfilePictureURL(endpoint, PublicKeyBase58Check, bustCache), {
+      // @ts-ignore
+      responseType: "blob",
+    });
+  }
+  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): string {
+    return this._makeRequestURL(
+      endpoint,
+      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + bustCache
+    );
+  }
   GetPostsForPublicKey(
     endpoint: string,
     PublicKeyBase58Check: string,
@@ -1215,7 +1229,7 @@ export class BackendApiService {
     RemoveFromLeaderboard: boolean,
     IsWhitelistUpdate: boolean,
     WhitelistPosts: boolean,
-    RemovePhoneNumberMetadata: boolean,
+    RemovePhoneNumberMetadata: boolean
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateUserGlobalMetadata, AdminPublicKey, {
       UserPublicKeyBase58Check,

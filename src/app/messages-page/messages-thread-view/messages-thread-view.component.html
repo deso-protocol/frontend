@@ -12,13 +12,7 @@
       [ngClass]="{ 'cursor-auto': !counterpartyUsername() }"
       [routerLink]="counterpartyUsername() ? AppRoutingModule.profilePath(counterpartyUsername()) : []"
       queryParamsHandling="merge"
-      [style.background-image]="
-        'url(' +
-        (messageThread.ProfileEntryResponse && messageThread.ProfileEntryResponse.ProfilePic
-          ? messageThread.ProfileEntryResponse.ProfilePic
-          : '/assets/img/default_profile_pic.png') +
-        ')'
-      "
+      [avatar]="messageThread.PublicKeyBase58Check"
     ></a>
 
     <div *ngIf="messageThread">

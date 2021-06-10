@@ -6,7 +6,7 @@
     ></top-bar-mobile-navigation-control>
   </div>
 
-  <div class="creator-profile__avatar" [style.background-image]="'url(' + profile.ProfilePic + ')'"></div>
+  <div class="creator-profile__avatar" [avatar]="profile.PublicKeyBase58Check"></div>
   <div class="d-flex align-items-center justify-content-end pt-15px mr-15px js-creator-profile-top-card-container">
     <div
       *ngIf="!profileBelongsToLoggedInUser() && globalVars.loggedInUser"
