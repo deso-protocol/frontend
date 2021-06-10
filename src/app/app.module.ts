@@ -108,6 +108,7 @@ import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-pa
 import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamond-posts.component";
 import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
+import { AvatarDirective } from "./avatar/avatar.directive";
 
 // Dark and Light Theme
 import { ThemeModule } from "./theme/theme.module";
@@ -203,6 +204,7 @@ import { darkTheme } from "./theme/dark-theme";
     DiamondPostsPageComponent,
     DiamondPostsComponent,
     CountdownTimerComponent,
+    AvatarDirective,
   ],
   imports: [
     BrowserModule,

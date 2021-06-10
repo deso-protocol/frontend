@@ -18,11 +18,11 @@
       <div *ngIf="item.icon" class="notifications__icon">
         <i class="{{ item.icon }}"></i>
       </div>
-      <img
+      <div
         class="notifications__avatar"
-        src="{{ item.actor.ProfilePic }}"
+        [avatar]="item.actor.PublicKeyBase58Check"
         [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor.Username]"
-      />
+      ></div>
       <div class="notifications__action" [innerHtml]="item.action"></div>
     </div>
   </div>

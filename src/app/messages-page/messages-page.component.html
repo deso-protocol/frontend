@@ -82,7 +82,7 @@
 
       <div
         class="messages-thread__avatar mr-15px"
-        [style.background-image]="'url(' + selectedThreadProfilePic + ')'"
+        [avatar]="selectedThread.PublicKeyBase58Check"
         [ngClass]="{ 'cursor-auto': !selectedThread.ProfileEntryResponse }"
         [routerLink]="
           selectedThread.ProfileEntryResponse ? AppRoutingModule.profilePath(selectedThreadDisplayName) : []

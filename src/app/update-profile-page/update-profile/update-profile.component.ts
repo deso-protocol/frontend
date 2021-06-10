@@ -90,9 +90,23 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _updateFormBasedOnLoggedInUser() {
     if (this.globalVars.loggedInUser) {
-      this.usernameInput = this.globalVars.loggedInUser.ProfileEntryResponse?.Username || "";
-      this.descriptionInput = this.globalVars.loggedInUser.ProfileEntryResponse?.Description || "";
-      this.profilePicInput = this.globalVars.loggedInUser.ProfileEntryResponse?.ProfilePic || "";
+      const profileEntryResponse = this.globalVars.loggedInUser.ProfileEntryResponse;
+      this.usernameInput = profileEntryResponse?.Username || "";
+      this.descriptionInput = profileEntryResponse?.Description || "";
+      if (profileEntryResponse?.PublicKeyBase58Check in this.globalVars.avatarMap) {
+        console.log("found!: ", this.globalVars.avatarMap[profileEntryResponse.PublicKeyBase58Check].slice(5, -2));
+        this.profilePicInput = this.globalVars.avatarMap[profileEntryResponse.PublicKeyBase58Check].slice(5, -2);
+      } else {
+        this.backendApi
+          .GetSingleProfilePicture(this.globalVars.localNode, profileEntryResponse?.PublicKeyBase58Check)
+          .subscribe((res) => {
+            if (res.ProfilePic.startsWith("data:image")) {
+              this.profilePicInput = res.ProfilePic;
+            }
+          });
+      }
+
+      // this.profilePicInput = this.globalVars.loggedInUser.ProfileEntryResponse?.ProfilePic || "";
       // If they don't have CreatorBasisPoints set, use the default.
       if (this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints != null) {
         this.founderRewardInput = this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints / 100;
@@ -183,6 +197,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this._setProfileUpdates();
     this._callBackendUpdateProfile().subscribe(
       (res) => {
+        if (this.profilePicInput) {
+          this.globalVars.avatarMap[
+            this.globalVars.loggedInUser.PublicKeyBase58Check
+          ] = `url('${this.profileUpdates.profilePicUpdate}')`;
+        }
         this.globalVars.logEvent("profile : update");
         // This updates things like the username that shows up in the dropdown.
         this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);

@@ -14,13 +14,7 @@
 >
   <div
     class="messages-thread__avatar"
-    [style.background-image]="
-      'url(' +
-      (thread.ProfileEntryResponse && thread.ProfileEntryResponse.ProfilePic
-        ? thread.ProfileEntryResponse.ProfilePic
-        : '/assets/img/default_profile_pic.png') +
-      ')'
-    "
+    [avatar]="thread.PublicKeyBase58Check"
   ></div>
   <!-- The CSS styles / classes get pretty dense here. Sorry! -->
   <div class="flex-grow-1 fs-15px ml-15px" style="overflow: hidden">

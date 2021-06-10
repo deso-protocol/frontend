@@ -22,6 +22,7 @@ export class BackendRoutes {
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
+  static RoutePathGetSingleProfilePicture = "/api/v0/get-single-profile-picture";
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
   static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
@@ -519,7 +520,7 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
       PublicKeysBase58Check: publicKeys,
       SkipHodlings: skipHodlings,
-    });
+    })
   }
 
   getAllTransactionOutputs(tx: any): Promise<any> {
@@ -739,6 +740,12 @@ export class BackendApiService {
       PublicKeyBase58Check,
       Username,
     });
+  }
+  GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check);
+  }
+  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string): string {
+    return this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check);
   }
   GetPostsForPublicKey(
     endpoint: string,
@@ -1215,7 +1222,7 @@ export class BackendApiService {
     RemoveFromLeaderboard: boolean,
     IsWhitelistUpdate: boolean,
     WhitelistPosts: boolean,
-    RemovePhoneNumberMetadata: boolean,
+    RemovePhoneNumberMetadata: boolean
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateUserGlobalMetadata, AdminPublicKey, {
       UserPublicKeyBase58Check,
