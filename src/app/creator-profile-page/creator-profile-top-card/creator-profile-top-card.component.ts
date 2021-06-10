@@ -25,7 +25,6 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   globalVars: GlobalVarsService;
   followChangeSubscription: Subscription;
   followerCount: number = null;
-  followingCount: number = null;
   refreshFollowingBeingCalled = false;
   publicKeyIsCopied = false;
 
