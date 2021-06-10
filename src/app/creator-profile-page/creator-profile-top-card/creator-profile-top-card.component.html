@@ -106,10 +106,10 @@
 
       <div style="whitespace: nowrap">
         <div class="font-weight-bold" style="display: inline">
-          ~{{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }} (<strong>~<img src="assets/img/cloutlogo.svg" width="15px" class="clout" style="margin-right:-6px;margin-left:-2px;" />
+          ~{{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }} (<strong>~<img src="assets/img/cloutlogo.svg" width="15px" class="clout" style="margin-right:-8px;margin-top:-2px;" />
             {{ globalVars.nanosToBitClout(profile.CoinPriceBitCloutNanos, 2) }}</strong>)
         </div>
-        <div class="fc-muted" style="display: inline">Coin Price&nbsp;&nbsp;</div>
+        <div class="fc-muted" style="display: inline">Price&nbsp;&nbsp;</div>
       </div>
       <span (click)="_copyPublicKey()" class="fs-15px cursor-pointer creator-profile__ellipsis-restriction">
         <i *ngIf="!publicKeyIsCopied" class="fas fa-key"></i>
