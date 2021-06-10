@@ -1,11 +1,11 @@
-import { Directive, ElementRef, Input, OnChanges, OnInit } from "@angular/core";
+import { Directive, ElementRef, Input, OnChanges } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 
 @Directive({
   selector: "[avatar]",
 })
-export class AvatarDirective implements OnInit, OnChanges {
+export class AvatarDirective implements OnChanges {
   @Input() avatar: string = "";
 
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService, private el: ElementRef) {}
@@ -25,12 +25,8 @@ export class AvatarDirective implements OnInit, OnChanges {
     );
   }
 
-  ngOnInit(): void {
-    this.setAvatar();
-  }
-
   ngOnChanges(changes: any) {
-    if (changes.avatar) {
+    if (changes.avatar && changes.avatar !== this.avatar) {
       this.setAvatar();
     }
   }
