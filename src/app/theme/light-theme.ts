@@ -17,5 +17,9 @@ export const lightTheme: Theme = {
     "--mborder": "#E5E5E5",
     "--filter": "",
     "--unread": "#e7effe",
+    "--topbar": "#efefef",
+    "--cblue": "#0058F7",
+    "--cred": "#fe3537",
+    "--cgreen": "#19B028",
   },
 };

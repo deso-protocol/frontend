@@ -159,9 +159,9 @@ $green-font-color: #19B028;
 // Custom font classes.
 .fc-default { color: var(--norm); }
 .fc-muted { color: var(--textalt); }
-.fc-blue { color: $buy-button-blue; }
-.fc-red { color: $red-font-color; }
-.fc-green { color: $green-font-color; }
+.fc-blue { color: var(--cblue); }
+.fc-red { color: var(--cred); }
+.fc-green { color: var(--cgreen); }
 
 .fs-1 { font-size: 2.5rem }
 .fs-2 { font-size: 2rem }
@@ -1069,7 +1069,7 @@ $green-font-color: #19B028;
 }
 
 .creator-profile__top-bar {
-  background-color: #2E2E2E;
+  background-color: var(--topbar);
   @media (max-width: 992px) {
     height: 100px;
     min-height: 100px;

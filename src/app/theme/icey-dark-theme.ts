@@ -1,0 +1,25 @@
+import { Theme } from "./symbols";
+
+export const iceydarkTheme: Theme = {
+  name: "iceydark",
+  properties: {
+    "--background": "#15202b",
+    "--text": "#EFF3F8",
+    "--grey": "#999",
+    "--secondary": "#1C2732",
+    "--secalt": "#111b26",
+    "--textalt": "#eee",
+    "--norm": "#eee",
+    "--formbg": "#111b26",
+    "--link": "#3a9eea",
+    "--hover": "#72b6ff",
+    "--border": "#38444D",
+    "--mborder": "#38444D",
+    "--filter": "invert(98%) sepia(1%) saturate(264%) hue-rotate(181deg) brightness(116%) contrast(100%)",
+    "--unread": "#1a293f",
+    "--topbar": "#041223",
+    "--cblue": "#238eff",
+    "--cred": "#e0245e",
+    "--cgreen": "#17BF63",
+  },
+};
