@@ -1,4 +1,4 @@
-import {Directive, ElementRef, Input, OnChanges, OnInit} from "@angular/core";
+import { Directive, ElementRef, Input, OnChanges, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 
@@ -8,13 +8,10 @@ import { BackendApiService } from "../backend-api.service";
 export class AvatarDirective implements OnInit, OnChanges {
   @Input() avatar: string = "";
 
-  // avatarMap = {};
-
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService, private el: ElementRef) {}
 
   setAvatar() {
     if (this.avatar in this.globalVars.avatarMap) {
-      console.log("seen before");
       this.el.nativeElement.style.backgroundImage = this.globalVars.avatarMap[this.avatar];
       return;
     }
