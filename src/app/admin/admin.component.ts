@@ -124,6 +124,11 @@ export class AdminComponent implements OnInit {
   // This is a variable to track the currently selected time window.
   selectedTimeWindow = 60;
 
+  // Fields for getting user admin data
+  submittingGetUserAdminData = false;
+  getUserAdminDataPublicKey = "";
+  getUserAdminDataResponse = null;
+
   constructor(
     private _globalVars: GlobalVarsService,
     private router: Router,
@@ -894,6 +899,30 @@ export class AdminComponent implements OnInit {
       )
       .add(() => {
         this.submittingVerifyRequest = false;
+      });
+  }
+
+
+  getUserAdminDataClicked() {
+    if (this.getUserAdminDataPublicKey === "") {
+      this.globalVars._alertError("Please enter a valid username.");
+      return;
+    }
+
+    this.submittingGetUserAdminData = true;
+    this.backendApi.AdminGetUserAdminData(
+      this.globalVars.localNode,
+      this.globalVars.loggedInUser.PublicKeyBase58Check,
+      this.getUserAdminDataPublicKey
+    ).subscribe(
+      (res: any) => {
+        this.getUserAdminDataResponse = res;
+      },
+      (error) => {
+        this.globalVars._alertError(this.extractError(error))
+      }
+    ).add(() => {
+        this.submittingGetUserAdminData = false;
       });
   }
 

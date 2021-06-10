@@ -26,6 +26,14 @@ export class CommentModalComponent {
   submittingPost = false;
   postInput = "";
 
+  ngOnInit() {
+    if (localStorage.getItem("theme") == "light") {
+      this.bsModalRef.setClass('lightmodal');
+    } else {
+      this.bsModalRef.setClass('darkmodal');
+    }
+  }
+
   characterCountExceedsMaxLength(): boolean {
     return this.postInput.length > GlobalVarsService.MAX_POST_LENGTH;
   }
