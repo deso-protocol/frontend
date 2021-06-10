@@ -17,14 +17,10 @@ export class AvatarDirective implements OnInit, OnChanges {
     }
     this.backendApi.GetSingleProfilePicture(this.globalVars.localNode, this.avatar).subscribe(
       (res) => {
-        // this.profilePic = res.ProfilePic;
-        const img = `url('${res.ProfilePic}')`;
-        this.el.nativeElement.style.backgroundImage = img;
-        this.globalVars.avatarMap[this.avatar] = img;
+        this.setElementBackground(res.ProfilePic);
       },
       (err) => {
-        this.el.nativeElement.style.backgroundImage = `url('/assets/img/default_profile_pic.png')`;
-        this.globalVars.avatarMap[this.avatar] = `url('/assets/img/default_profile_pic.png')`;
+        this.setElementBackground("/assets/img/default_profile_pic.png");
       }
     );
   }
@@ -37,5 +33,11 @@ export class AvatarDirective implements OnInit, OnChanges {
     if (changes.avatar) {
       this.setAvatar();
     }
+  }
+
+  setElementBackground(profilePic: string): void {
+    const img = `url('${profilePic}')`;
+    this.el.nativeElement.style.backgroundImage = img;
+    this.globalVars.avatarMap[this.avatar] = img;
   }
 }
