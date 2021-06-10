@@ -520,7 +520,7 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
       PublicKeysBase58Check: publicKeys,
       SkipHodlings: skipHodlings,
-    })
+    });
   }
 
   getAllTransactionOutputs(tx: any): Promise<any> {
@@ -743,9 +743,6 @@ export class BackendApiService {
   }
   GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.get(endpoint, BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check);
-  }
-  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string): string {
-    return this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check);
   }
   GetPostsForPublicKey(
     endpoint: string,

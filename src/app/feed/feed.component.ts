@@ -96,9 +96,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnInit() {
     this._initializeFeeds();
     this.titleService.setTitle("Feed - BitClout");
-    this.backendApi
-      .GetSingleProfilePicture(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
-      .subscribe((res) => console.log(res));
   }
 
   ngAfterViewChecked() {
