@@ -32,9 +32,10 @@ export class SettingsComponent implements OnInit {
 
   selectChangeHandler(event: any) {
     //update the ui
-    this.selectedTheme = event.target.value;
-    document.querySelector('[app-theme]').className = 'main global__container'; // clear theme class
-    document.querySelector('[app-theme]').classList.add(this.selectedTheme || 'dark'); // add theme class
+    this.selectedTheme = event.target.value || "dark";
+    document.querySelector("[app-theme]").className = "main global__container"; // clear theme class
+    document.querySelector("[app-theme]").classList.add(this.selectedTheme); // add theme class
+    localStorage.setItem("theme", this.selectedTheme);
     // moved inline styles to styles.scss
   }
 

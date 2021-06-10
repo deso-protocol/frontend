@@ -13,6 +13,7 @@ import { environment } from "../environments/environment";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
+  private theme: String;
   constructor(
     private ref: ChangeDetectorRef,
     private httpClient: HttpClient,
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
     public identityService: IdentityService,
     private router: Router
   ) {
+    this.theme = window.localStorage.getItem("theme") || "dark";
     this.globalVars.Init(
       null, // loggedInUser
       [], // userList
