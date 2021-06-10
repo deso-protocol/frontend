@@ -318,11 +318,6 @@ export class AppComponent implements OnInit {
       this._updateBitCloutExchangeRate();
     }, 5 * 60 * 1000);
 
-    // Clear the avatar map every 5 minutes
-    setInterval(() => {
-      this.globalVars.avatarMap = {};
-    }, 5 * 60 * 1000);
-
     this.globalVars.updateEverything = this._updateEverything;
 
     // We need to fetch this data before we start an import. Can remove once import code is gone.

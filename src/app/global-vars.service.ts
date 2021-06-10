@@ -39,8 +39,6 @@ export class GlobalVarsService {
   static CREATOR_COIN_RESERVE_RATIO = 0.3333333;
   static CREATOR_COIN_TRADE_FEED_BASIS_POINTS = 1;
 
-  avatarMap = {};
-
   // This is set to false immediately after our first attempt to get a loggedInUser.
   loadingInitialAppState = true;
 
@@ -161,6 +159,8 @@ export class GlobalVarsService {
 
   // This controls the default text of the countdown timer component.
   timerText: string = "Deflation Bomb:";
+
+  profileUpdateTimestamp: number;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero

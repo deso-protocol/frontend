@@ -11,29 +11,20 @@ export class AvatarDirective implements OnChanges {
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService, private el: ElementRef) {}
 
   setAvatar() {
-    if (this.avatar in this.globalVars.avatarMap) {
-      this.el.nativeElement.style.backgroundImage = this.globalVars.avatarMap[this.avatar];
-      return;
-    }
-    this.backendApi.GetSingleProfilePicture(this.globalVars.localNode, this.avatar).subscribe(
-      (res) => {
-        this.setElementBackground(res.ProfilePic);
-      },
-      (err) => {
-        this.setElementBackground("/assets/img/default_profile_pic.png");
-      }
-    );
+    this.el.nativeElement.style.backgroundImage = `url(${this.backendApi.GetSingleProfilePictureURL(
+      this.globalVars.localNode,
+      this.avatar,
+      // If fetching the avatar for the current user, use the last timestamp of profile update to bust the cache so
+      // we get the updated avatar.
+      this.avatar === this.globalVars.loggedInUser.PublicKeyBase58Check && this.globalVars.profileUpdateTimestamp
+        ? `?${this.globalVars.profileUpdateTimestamp}`
+        : ""
+    )}), url("/assets/img/default_profile_pic.png")`;
   }
 
   ngOnChanges(changes: any) {
     if (changes.avatar && changes.avatar !== this.avatar) {
       this.setAvatar();
     }
-  }
-
-  setElementBackground(profilePic: string): void {
-    const img = `url('${profilePic}')`;
-    this.el.nativeElement.style.backgroundImage = img;
-    this.globalVars.avatarMap[this.avatar] = img;
   }
 }

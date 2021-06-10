@@ -93,20 +93,16 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       const profileEntryResponse = this.globalVars.loggedInUser.ProfileEntryResponse;
       this.usernameInput = profileEntryResponse?.Username || "";
       this.descriptionInput = profileEntryResponse?.Description || "";
-      if (profileEntryResponse?.PublicKeyBase58Check in this.globalVars.avatarMap) {
-        console.log("found!: ", this.globalVars.avatarMap[profileEntryResponse.PublicKeyBase58Check].slice(5, -2));
-        this.profilePicInput = this.globalVars.avatarMap[profileEntryResponse.PublicKeyBase58Check].slice(5, -2);
-      } else {
-        this.backendApi
-          .GetSingleProfilePicture(this.globalVars.localNode, profileEntryResponse?.PublicKeyBase58Check)
-          .subscribe((res) => {
-            if (res.ProfilePic.startsWith("data:image")) {
-              this.profilePicInput = res.ProfilePic;
-            }
-          });
-      }
+      this.backendApi
+        .GetSingleProfilePicture(
+          this.globalVars.localNode,
+          profileEntryResponse?.PublicKeyBase58Check,
+          this.globalVars.profileUpdateTimestamp ? `?${this.globalVars.profileUpdateTimestamp}` : ""
+        )
+        .subscribe((res) => {
+          this._readImageFileToProfilePicInput(res);
+        });
 
-      // this.profilePicInput = this.globalVars.loggedInUser.ProfileEntryResponse?.ProfilePic || "";
       // If they don't have CreatorBasisPoints set, use the default.
       if (this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints != null) {
         this.founderRewardInput = this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints / 100;
@@ -197,11 +193,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this._setProfileUpdates();
     this._callBackendUpdateProfile().subscribe(
       (res) => {
-        if (this.profilePicInput) {
-          this.globalVars.avatarMap[
-            this.globalVars.loggedInUser.PublicKeyBase58Check
-          ] = `url('${this.profileUpdates.profilePicUpdate}')`;
-        }
+        this.globalVars.profileUpdateTimestamp = Date.now();
         this.globalVars.logEvent("profile : update");
         // This updates things like the username that shows up in the dropdown.
         this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);
@@ -253,17 +245,16 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.globalVars._alertError("Please upload an image that is smaller than 5MB.");
       return;
     }
-    var reader = new FileReader();
-    reader.onload = (event: any) => {
-      let base64Image = btoa(event.target.result);
-      // image/png
-      let fileType = fileToUpload.type;
-      let url = `data:${fileType};base64,${base64Image}`;
-      this.profilePicInput = url;
+    this._readImageFileToProfilePicInput(fileToUpload);
+  }
 
-      return;
+  _readImageFileToProfilePicInput(file: Blob | File) {
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    reader.onload = (event: any) => {
+      const base64Image = btoa(event.target.result);
+      this.profilePicInput = `data:${file.type};base64,${base64Image}`;
     };
-    reader.readAsBinaryString(fileToUpload);
   }
 
   _resetImage() {
