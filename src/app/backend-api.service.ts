@@ -123,8 +123,8 @@ export class User {
   NumActionItems: any;
   NumMessagesToRead: any;
 
-  UsersYouHODL: any;
-  UsersWhoHODLYou: any;
+  UsersYouHODL: BalanceEntryResponse[];
+  UsersWhoHODLYouCount: number;
 
   HasPhoneNumber: boolean;
   CanCreateProfile: boolean;

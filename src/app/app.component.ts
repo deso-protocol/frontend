@@ -138,9 +138,6 @@ export class AppComponent implements OnInit {
         for (const entry of this.globalVars.loggedInUser?.UsersYouHODL || []) {
           this.globalVars.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
         }
-        for (const entry of this.globalVars.loggedInUser?.UsersWhoHODLYou || []) {
-          this.globalVars.hodlYouMap[entry.HODLerPublicKeyBase58Check] = entry;
-        }
 
         this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         this.globalVars.globoMods = res.GloboMods;
