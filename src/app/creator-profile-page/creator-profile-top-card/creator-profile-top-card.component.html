@@ -92,6 +92,11 @@
         <i class="fas fa-check-circle fa-md align-middle"></i>
       </div>
     </div>
+    
+    <div style="font-size:11px">
+      FR <span class="font-weight-bold">{{ getFoundersRewardPercent() | number: "0.0-9" }}%</span>
+    </div>
+
     <div class="fs-15px pt-5px text-break" [innerHTML]="profile.Description | sanitizeAndAutoLink"></div>
     <div class="fs-15px pt-5px d-flex flex-wrap">
       <a

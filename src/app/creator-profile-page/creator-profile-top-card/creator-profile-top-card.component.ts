@@ -5,7 +5,6 @@ import { Subscription } from "rxjs";
 import { FollowChangeObservableResult } from "../../../lib/observable-results/follow-change-observable-result";
 import { AppRoutingModule } from "../../app-routing.module";
 import { FollowButtonComponent } from "../../follow-button/follow-button.component";
-
 @Component({
   selector: "creator-profile-top-card",
   templateUrl: "./creator-profile-top-card.component.html",
@@ -26,6 +25,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   globalVars: GlobalVarsService;
   followChangeSubscription: Subscription;
   followerCount: number = null;
+  followingCount: number = null;
   refreshFollowingBeingCalled = false;
   publicKeyIsCopied = false;
 
@@ -144,5 +144,9 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     if (this._isLoggedInUserFollowing()) {
       this.childFollowComponent.unfollow();
     }
+  }
+
+  getFoundersRewardPercent() {
+    return this.profile.CoinEntry.CreatorBasisPoints / 100;
   }
 }
