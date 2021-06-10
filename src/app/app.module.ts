@@ -111,8 +111,9 @@ import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.compo
 
 // Dark and Light Theme
 import { ThemeModule } from "./theme/theme.module";
-import { lightTheme } from "./theme/light-theme";
-import { darkTheme } from "./theme/dark-theme";
+import { Theme } from "./theme/symbols";
+const lightTheme: Theme = { name: "lightTheme", properties: { "--none": "" } };
+const darkTheme: Theme = { name: "darkTheme", properties: { "--none": "" } };
 
 @NgModule({
   declarations: [
@@ -224,7 +225,7 @@ import { darkTheme } from "./theme/dark-theme";
     RatingModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [lightTheme, darkTheme],
+      themes: [darkTheme, lightTheme],
       active:
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
