@@ -34,18 +34,10 @@ export class SettingsComponent implements OnInit {
     //update the ui
     this.selectedTheme = event.target.value;
 
-    if (this.selectedTheme == "light") {
-      this.themeService.setTheme("light");
-      this.whichTheme = "light";
-      localStorage.setItem("theme", "light");
-    } else if (this.selectedTheme == "dark") {
-      this.themeService.setTheme("dark");
-      this.whichTheme = "dark";
-      localStorage.setItem("theme", "dark");
-    } else if (this.selectedTheme == "iceydark") {
-      this.themeService.setTheme("iceydark");
-      this.whichTheme = "iceydark";
-      localStorage.setItem("theme", "iceydark");
+    if (this.selectedTheme == this.selectedTheme) {
+      this.themeService.setTheme(this.selectedTheme);
+      this.whichTheme = this.selectedTheme;
+      localStorage.setItem("theme", this.selectedTheme);
     }
   }
 
