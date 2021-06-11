@@ -48,7 +48,7 @@ export class RightBarCreatorsComponent implements OnInit {
     poweredBy: null,
   };
 
-  chartMap = {
+  static chartMap = {
     [RightBarCreatorsComponent.GAINERS.name]: RightBarCreatorsComponent.GAINERS,
     [RightBarCreatorsComponent.DIAMONDS.name]: RightBarCreatorsComponent.DIAMONDS,
     [RightBarCreatorsComponent.COMMUNITY.name]: RightBarCreatorsComponent.COMMUNITY,
@@ -57,12 +57,13 @@ export class RightBarCreatorsComponent implements OnInit {
 
   ngOnInit() {
     const defaultTab = this.backendApi.GetStorage(RightBarCreatorsComponent.RightBarTabKey);
-    this.activeTab = defaultTab in this.chartMap ? defaultTab : RightBarCreatorsComponent.ALL_TIME.name;
+    this.activeTab =
+      defaultTab in RightBarCreatorsComponent.chartMap ? defaultTab : RightBarCreatorsComponent.ALL_TIME.name;
     this.selectTab(true);
   }
 
   selectTab(skipStorage: boolean = false) {
-    const rightTabOption = this.chartMap[this.activeTab];
+    const rightTabOption = RightBarCreatorsComponent.chartMap[this.activeTab];
     this.activeRightTabOption = rightTabOption;
     this.selectedOptionWidth = rightTabOption.width + "px";
     if (!skipStorage) {
