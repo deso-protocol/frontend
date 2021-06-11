@@ -114,6 +114,8 @@ import { AvatarDirective } from "./avatar/avatar.directive";
 import { ThemeModule } from "./theme/theme.module";
 import { lightTheme } from "./theme/light-theme";
 import { darkTheme } from "./theme/dark-theme";
+import { TrendsPageComponent } from "./trends-page/trends-page.component";
+import { TrendsComponent } from "./trends-page/trends/trends.component";
 
 @NgModule({
   declarations: [
@@ -205,6 +207,8 @@ import { darkTheme } from "./theme/dark-theme";
     DiamondPostsComponent,
     CountdownTimerComponent,
     AvatarDirective,
+    TrendsPageComponent,
+    TrendsComponent,
   ],
   imports: [
     BrowserModule,

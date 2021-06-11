@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {BalanceEntryResponse, PostEntryResponse, User} from "./backend-api.service";
+import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";

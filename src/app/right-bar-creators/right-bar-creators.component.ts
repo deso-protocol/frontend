@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 
-class RightBarTabOption {
+export class RightBarTabOption {
   name: string;
   width: number;
   poweredBy: {
