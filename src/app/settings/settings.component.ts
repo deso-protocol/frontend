@@ -34,11 +34,9 @@ export class SettingsComponent implements OnInit {
     //update the ui
     this.selectedTheme = event.target.value;
 
-    if (this.selectedTheme == this.selectedTheme) {
-      this.themeService.setTheme(this.selectedTheme);
-      this.whichTheme = this.selectedTheme;
-      localStorage.setItem("theme", this.selectedTheme);
-    }
+    this.themeService.setTheme(this.selectedTheme);
+    this.whichTheme = this.selectedTheme;
+    localStorage.setItem("theme", this.selectedTheme);
   }
 
   ngOnInit() {

@@ -54,16 +54,10 @@
 
       <div class="fs-15px pt-30px">BitClout Theme</div>
       <br />
-      <select name="theme" id="theme" (change)="selectChangeHandler($event)" class="form-control selector">
-        <option *ngIf="whichTheme == 'dark'" value="dark">Dark Theme</option>
-        <option *ngIf="whichTheme == 'dark'" value="iceydark">Icey Dark Theme</option>
-        <option *ngIf="whichTheme == 'light'" value="light">Light Theme</option>
-        <option *ngIf="whichTheme == 'light'" value="dark">Dark Theme</option>
-        <option *ngIf="whichTheme == 'light'" value="iceydark">Icey Dark Theme</option>
-        <option *ngIf="whichTheme == 'dark'" value="light">Light Theme</option>
-        <option *ngIf="whichTheme == 'iceydark'" value="iceydark">Icey Dark Theme</option>
-        <option *ngIf="whichTheme == 'iceydark'" value="dark">Dark Theme</option>
-        <option *ngIf="whichTheme == 'iceydark'" value="light">Light Theme</option>
+      <select [value]="whichTheme" name="theme" id="theme" (change)="selectChangeHandler($event)" class="form-control selector">
+        <option value="dark">Dark Theme</option>
+        <option value="light">Light Theme</option>
+        <option value="iceydark">Icey Dark Theme</option>
       </select>
       <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
       <div class="global__bottom-bar-mobile-height"></div>
