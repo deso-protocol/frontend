@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
 })
 export class CountdownTimerComponent implements OnInit {
   // TODO: Replace with actual date and time this timer should end.
-  @Input() timerEnd: number = new Date("June 12, 2021 9:00:00 PDT").getTime();
+  @Input() timerEnd: number;
   @Input() fontSize: number = 13;
   @Input() borderRadiusSize: number = 0;
   @Input() fontWeight: number = 400;
@@ -26,8 +26,11 @@ export class CountdownTimerComponent implements OnInit {
   hours: string;
   days: string;
 
-  constructor(private globalVars: GlobalVarsService, private router: Router) {
+  constructor(public globalVars: GlobalVarsService, private router: Router) {
     const now = new Date().getTime();
+    const pastDeflationBomb = this.globalVars.pastDeflationBomb;
+    this.timerEnd = pastDeflationBomb ? this.globalVars.announcementTimerEnd : this.globalVars.deflationBombTimerEnd;
+    this.timerText = pastDeflationBomb ? this.globalVars.announcementTimerText : this.globalVars.deflationBombTimerText;
     this.setDaysDiff(now);
     this.setHoursDiff(now);
     this.setMinutesDiff(now);
@@ -35,15 +38,18 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.timerText === undefined) {
-      this.timerText = this.globalVars.timerText;
-    }
     setInterval(() => {
       const now = new Date().getTime();
       this.setDaysDiff(now);
       this.setHoursDiff(now);
       this.setMinutesDiff(now);
       this.setSecondsDiff(now);
+      this.timerEnd = this.globalVars.pastDeflationBomb
+        ? this.globalVars.announcementTimerEnd
+        : this.globalVars.deflationBombTimerEnd;
+      this.timerText = this.globalVars.pastDeflationBomb
+        ? this.globalVars.announcementTimerText
+        : this.globalVars.deflationBombTimerText;
     }, 1000);
   }
 

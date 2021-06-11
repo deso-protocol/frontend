@@ -521,4 +521,9 @@ export class BuyBitcloutComponent implements OnInit {
   _handleTabClick(tab: string): void {
     this.activeTab = tab;
   }
+
+  exchangeSignUpURL = "https://exchange.blockchain.com/trade/signup";
+  _openExchangeSignUp(): void {
+    window.open("https://exchange.blockchain.com/trade/signup");
+  }
 }
