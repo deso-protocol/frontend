@@ -1,7 +1,7 @@
 import { Theme } from "./symbols";
 
-export const iceydarkTheme: Theme = {
-  name: "iceydark",
+export const icydarkTheme: Theme = {
+  name: "icydark",
   properties: {
     "--background": "#15202b",
     "--text": "#EFF3F8",
