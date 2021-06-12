@@ -516,10 +516,10 @@ export class BackendApiService {
   }
 
   // User-related functions.
-  GetUsersStateless(endpoint: string, publicKeys: any[], skipHodlings: boolean = false): Observable<any> {
+  GetUsersStateless(endpoint: string, publicKeys: any[], SkipForLeaderboard: boolean = false): Observable<any> {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
       PublicKeysBase58Check: publicKeys,
-      SkipHodlings: skipHodlings,
+      SkipForLeaderboard,
     });
   }
 
