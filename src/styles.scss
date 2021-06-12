@@ -1766,6 +1766,11 @@ $green-font-color: #19B028;
   color: var(--text) !important;
   background: var(--formbg) !important;
   border-color: var(--border) !important;
+  outline: none;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  background-clip: padding-box;
 }
 .normal-text {
   color: $text-color;
