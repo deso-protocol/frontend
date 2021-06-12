@@ -35,7 +35,7 @@ export class TrendsComponent implements OnInit {
   loading = true;
   loadingNextPage = false;
 
-  static PAGE_SIZE = 10;
+  static PAGE_SIZE = 20;
 
   bithuntService: BithuntService;
   pulseService: PulseService;

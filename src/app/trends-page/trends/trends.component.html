@@ -1,16 +1,16 @@
 <div class="d-flex flex-column">
   <div
-    class="global__top-bar d-flex align-items-center justify-content-between fs-18px font-weight-bold px-15px border-bottom border-color-grey"
+    class="global__top-bar d-flex flex-column justify-content-between fs-18px font-weight-bold px-15px border-bottom border-color-grey"
+    style="align-items: flex-start; height: 80px;"
   >
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center pt-15px">
       <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
       <div>Trends</div>
       <div class="pl-15px fs-15px">
         <select
-          #rightBarSelect
           id="right-bar-chart-select"
-          class="right-bar-select-box cursor-pointer"
+          class="right-bar-select-box cursor-pointer text-grey5 font-weight-bold"
           [ngStyle]="{ width: selectedOptionWidth }"
           (change)="selectTab()"
           [(ngModel)]="activeTab"
@@ -19,41 +19,22 @@
             *ngFor="let option of tabs"
             [value]="option"
             style="background-color: none"
+            class="text-grey5 font-weight-bold"
           >
             {{ option }}
           </option>
         </select>
       </div>
     </div>
+    <div *ngIf="activeRightTabOption.poweredBy" class="pb-10px">
+      <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
+        <i class="fas fa-external-link-alt"></i>
+        Powered by {{ activeRightTabOption.poweredBy.name }}
+      </a>
+    </div>
   </div>
-  <!--Header Mobile-->
-<!--  <div-->
-<!--    class="d-lg-none fixed-top-bar global__top-bar__height d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey"-->
-<!--  >-->
-<!--    <div class="d-flex align-items-center">-->
-<!--      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>-->
-<!--      Trends-->
-<!--    </div>-->
 
-<!--    <top-bar-mobile-log-in-or-sign-up></top-bar-mobile-log-in-or-sign-up>-->
-<!--  </div>-->
-
-<!--  &lt;!&ndash;Header Desktop&ndash;&gt;-->
-<!--  <div class="d-none d-lg-block w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey">-->
-<!--    <div class="d-flex align-items-center justify-content-between">-->
-<!--      <div class="d-flex align-items-center">Trends</div>-->
-<!--      <search-bar></search-bar>-->
-<!--    </div>-->
-<!--  </div>-->
-    <div class="global__top-bar__height"></div>
-<!--  <div>-->
-<!--  <div-->
-<!--    class="global__top-bar d-flex align-items-center justify-content-between fs-18px font-weight-bold px-15px border-bottom border-color-grey"-->
-<!--  >-->
-<!--    <tab-selector [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_tabClicked($event)"></tab-selector>-->
-<!--  </div>-->
-<!--  </div>-->
-<!--  <div class="global__top-bar__height"></div>-->
+  <div style="height: 80px;"></div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
 
     <div #uiScroll *uiScroll="let profileEntryResponse of datasource" class="row no-gutters px-15px border-bottom fs-15px" >
