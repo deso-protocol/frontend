@@ -16,11 +16,11 @@
           [(ngModel)]="activeTab"
         >
           <option
-            *ngFor="let option of RightBarCreatorsComponent.chartMap | keyvalue"
-            [value]="option.key"
+            *ngFor="let option of tabs"
+            [value]="option"
             style="background-color: none"
           >
-            {{ option.key }}
+            {{ option }}
           </option>
         </select>
       </div>
@@ -55,7 +55,6 @@
 <!--  </div>-->
 <!--  <div class="global__top-bar__height"></div>-->
   <simple-center-loader *ngIf="loading"></simple-center-loader>
-  <div *ngIf="!loading">
 
     <div #uiScroll *uiScroll="let profileEntryResponse of datasource" class="row no-gutters px-15px border-bottom fs-15px" >
       <a
@@ -129,7 +128,7 @@
         </div>
       </a>
     </div>
-  </div>
+<!--  <simple-center-loader [height]="120" *ngIf="loadingNextPage"></simple-center-loader>-->
 
   <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
     <div class="global__bottom-bar-mobile-height"></div>

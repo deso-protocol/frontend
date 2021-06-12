@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService, DiamondsPost, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { HttpClient } from "@angular/common/http";
 import { PulseService } from "../../../lib/services/pulse/pulse-service";
 import { BithuntService } from "../../../lib/services/bithunt/bithunt-service";
@@ -16,12 +16,12 @@ import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 export class TrendsComponent implements OnInit {
   RightBarCreatorsComponent = RightBarCreatorsComponent;
 
-  tabs: string[] = Object.keys(RightBarCreatorsComponent.chartMap);
-  activeTab: string;
+  tabs: string[] = Object.keys(RightBarCreatorsComponent.chartMap).filter(
+    (tab: string) => tab !== RightBarCreatorsComponent.ALL_TIME.name
+  );
+  activeTab: string = RightBarCreatorsComponent.GAINERS.name;
   activeRightTabOption: RightBarTabOption;
   selectedOptionWidth: string;
-
-  defaultTab: RightBarTabOption = RightBarCreatorsComponent.GAINERS;
 
   pagedRequests = {
     "-1": new Promise((resolve) => {
@@ -29,22 +29,16 @@ export class TrendsComponent implements OnInit {
     }),
   };
 
-  // stores a mapping of page number to public key to fetch
-  // pagedKeys = {
-  //   0: "",
-  // };
-
   pagedRequestsByTab = {};
-  // pagedKeysByTab = {};
   lastPageByTab = {};
   lastPage = null;
-  loading = false;
+  loading = true;
+  loadingNextPage = false;
 
-  static PAGE_SIZE = 20;
+  static PAGE_SIZE = 10;
 
   bithuntService: BithuntService;
   pulseService: PulseService;
-  bithuntProjectsLoaded = false;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -60,19 +54,10 @@ export class TrendsComponent implements OnInit {
         }),
       };
       this.lastPageByTab[tab] = null;
-      // this.pagedKeysByTab[tab] = {
-      //   0: "",
-      // };
-    });
-    this.route.queryParams.subscribe((params) => {
-      this.activeTab = params.tab && params.tab in this.tabs ? params.tab : this.tabs[0];
-      this.pagedRequests = this.pagedRequestsByTab[this.activeTab];
-      this.lastPage = this.lastPageByTab[this.activeTab];
-      this.selectTab();
-      // this.pagedKeys = this.pagedKeys[this.activeTab];
     });
     this.bithuntService = new BithuntService(this.httpClient, this.backendApi, this.globalVars);
     this.pulseService = new PulseService(this.httpClient, this.backendApi, this.globalVars);
+    this.selectTab();
   }
 
   selectTab() {
@@ -80,85 +65,17 @@ export class TrendsComponent implements OnInit {
     this.activeRightTabOption = rightTabOption;
     this.selectedOptionWidth = rightTabOption.width + "px";
     this.pagedRequests = this.pagedRequestsByTab[this.activeTab];
-    // this.loading = true;
+    this.loading = true;
     this.datasource.adapter.reset().then(() => (this.loading = false));
   }
 
   ngOnInit() {
     if (this.globalVars.allCommunityProjectsLeaderboard.length === 0) {
-      this.bithuntService
-        .getCommunityProjectsLeaderboard()
-        .subscribe((res) => {
-          this.globalVars.allCommunityProjectsLeaderboard = res;
-          this.globalVars.topCommunityProjectsLeaderboard = this.globalVars.allCommunityProjectsLeaderboard.slice(
-            0,
-            10
-          );
-        })
-        .add(() => (this.bithuntProjectsLoaded = true));
-    } else {
-      this.bithuntProjectsLoaded = true;
+      this.bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
+        this.globalVars.allCommunityProjectsLeaderboard = res;
+        this.globalVars.topCommunityProjectsLeaderboard = this.globalVars.allCommunityProjectsLeaderboard.slice(0, 10);
+      });
     }
-    // if (!this.activeTab) {
-    //   this.activeTab = this.defaultTab.name;
-    // }
-    // if (this.globalVars.rightBarLeaderboard.length > 0) {
-    //   return;
-    // }
-    //
-    // const pulseService = new PulseService(this.httpClient, this.backendApi, this.globalVars);
-    //
-    // if (this.globalVars.topGainerLeaderboard.length === 0) {
-    //   pulseService.getBitCloutLockedLeaderboard().subscribe((res) => (this.globalVars.topGainerLeaderboard = res));
-    // }
-    // if (this.globalVars.topDiamondedLeaderboard.length === 0) {
-    //   pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.globalVars.topDiamondedLeaderboard = res));
-    // }
-    //
-    // const bithuntService = new BithuntService(this.httpClient, this.backendApi, this.globalVars);
-    // if (this.globalVars.topCommunityProjectsLeaderboard.length === 0) {
-    //   bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
-    //     this.globalVars.allCommunityProjectsLeaderboard = res;
-    //     this.globalVars.topCommunityProjectsLeaderboard = this.globalVars.allCommunityProjectsLeaderboard.slice(0, 10);
-    //   });
-    // }
-
-    // if (this.globalVars.topCreatorsAllTimeLeaderboard.length === 0) {
-    //   let readerPubKey = "";
-    //   if (this.globalVars.loggedInUser) {
-    //     readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
-    //   }
-    //   this.backendApi
-    //     .GetProfiles(
-    //       this.globalVars.localNode,
-    //       null /*PublicKeyBase58Check*/,
-    //       null /*Username*/,
-    //       null /*UsernamePrefix*/,
-    //       null /*Description*/,
-    //       BackendApiService.GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE /*Order by*/,
-    //       10 /*NumEntriesToReturn*/,
-    //       readerPubKey /*ReaderPublicKeyBase58Check*/,
-    //       "leaderboard" /*ModerationType*/,
-    //       false /*FetchUsersThatHODL*/,
-    //       false /*AddGlobalFeedBool*/
-    //     )
-    //     .subscribe(
-    //       (response) => {
-    //         this.globalVars.topCreatorsAllTimeLeaderboard = response.ProfilesFound.slice(
-    //           0,
-    //           TrendsComponent.MAX_PROFILE_ENTRIES
-    //         ).map((profile) => {
-    //           return {
-    //             Profile: profile,
-    //           };
-    //         });
-    //       },
-    //       (err) => {
-    //         console.error(err);
-    //         this.globalVars._alertError("Error loading profiles: " + this.backendApi.stringifyError(err));
-    //       }
-    //     );
-    // }
   }
 
   datasource: IDatasource<IAdapter<any>> = this.getDatasource();
@@ -200,15 +117,16 @@ export class TrendsComponent implements OnInit {
         minIndex: 0,
         bufferSize: 10,
         windowViewport: true,
+        infinite: true,
       },
     });
   }
 
   getPage(page: number) {
     if (this.activeTab === RightBarCreatorsComponent.GAINERS.name) {
-      console.log("get gainers");
+      this.loadingNextPage = page !== 0;
       return this.pulseService
-        .getBitCloutLockedPage(page, TrendsComponent.PAGE_SIZE)
+        .getBitCloutLockedPage(page + 1, TrendsComponent.PAGE_SIZE, true)
         .toPromise()
         .then(
           (res) => {
@@ -217,6 +135,7 @@ export class TrendsComponent implements OnInit {
               this.lastPageByTab[this.activeTab] = page;
               this.lastPage = page;
             }
+            this.loadingNextPage = false;
             return res;
           },
           (err) => {
@@ -225,17 +144,17 @@ export class TrendsComponent implements OnInit {
         );
     }
     if (this.activeTab === RightBarCreatorsComponent.DIAMONDS.name) {
-      console.log("get diamonds");
+      this.loadingNextPage = page !== 0;
       return this.pulseService
-        .getDiamondsReceivedPage(page, TrendsComponent.PAGE_SIZE)
+        .getDiamondsReceivedPage(page + 1, TrendsComponent.PAGE_SIZE, true)
         .toPromise()
         .then(
           (res) => {
-            // this.pagedKeys[page + 1] = ;
             if (res.length < TrendsComponent.PAGE_SIZE) {
               this.lastPageByTab[this.activeTab] = page;
               this.lastPage = page;
             }
+            this.loadingNextPage = true;
             return res;
           },
           (err) => {
@@ -244,7 +163,6 @@ export class TrendsComponent implements OnInit {
         );
     }
     if (this.activeTab === RightBarCreatorsComponent.COMMUNITY.name) {
-      console.log("community projects");
       const start = TrendsComponent.PAGE_SIZE * page;
       let end = start + TrendsComponent.PAGE_SIZE;
       if (end > this.globalVars.allCommunityProjectsLeaderboard.length) {
@@ -252,13 +170,5 @@ export class TrendsComponent implements OnInit {
       }
       return this.globalVars.allCommunityProjectsLeaderboard.slice(TrendsComponent.PAGE_SIZE * page, end);
     }
-  }
-
-  _tabClicked(event: string) {
-    this.activeTab = event;
-    this.pagedRequests = this.pagedRequestsByTab[this.activeTab];
-    this.loading = true;
-    this.datasource.adapter.reset(this.getDatasource()).then(() => (this.loading = false));
-    console.log(event);
   }
 }

@@ -46,7 +46,6 @@ export const LeaderboardToDataAttribute = {
 export class PulseService {
   static pulseApiURL = "https://pulse.bitclout.com/api/bitclout/leaderboard";
   static pulseRef = "ref=bcl";
-  // static pulsePageSize = "page_size=20";
   static pulsePageSize = 20;
   constructor(
     private httpClient: HttpClient,
@@ -66,10 +65,14 @@ export class PulseService {
     return this.getDiamondsReceivedPage(0);
   }
 
-  getDiamondsReceivedPage(pageNumber: number, pageSize: number = PulseService.pulsePageSize): Observable<any> {
+  getDiamondsReceivedPage(
+    pageNumber: number,
+    pageSize: number = PulseService.pulsePageSize,
+    skipFilters = false
+  ): Observable<any> {
     return this.httpClient.get(this.constructPulseURL(PulseLeaderboardType.Diamonds, pageNumber, pageSize)).pipe(
       switchMap((res: PulseLeaderboardResponse) => {
-        return this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.Diamonds, true);
+        return this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.Diamonds, skipFilters);
       })
     );
   }
@@ -78,12 +81,16 @@ export class PulseService {
     return this.getBitCloutLockedPage(0);
   }
 
-  getBitCloutLockedPage(pageNumber: number, pageSize: number = PulseService.pulsePageSize): Observable<any> {
+  getBitCloutLockedPage(
+    pageNumber: number,
+    pageSize: number = PulseService.pulsePageSize,
+    skipFilters = false
+  ): Observable<any> {
     return this.httpClient
       .get(this.constructPulseURL(PulseLeaderboardType.BitCloutLocked, pageNumber, pageSize))
       .pipe(
         switchMap((res: PulseLeaderboardResponse) =>
-          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.BitCloutLocked, true)
+          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.BitCloutLocked, skipFilters)
         )
       );
   }
