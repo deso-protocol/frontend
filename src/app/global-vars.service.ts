@@ -30,7 +30,12 @@ export class GlobalVarsService {
     private sanitizer: DomSanitizer,
     private identityService: IdentityService,
     private router: Router
-  ) {}
+  ) {
+    this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
+    setInterval(() => {
+      this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
+    }, 1000);
+  }
 
   static MAX_POST_LENGTH = 280;
 
@@ -64,7 +69,7 @@ export class GlobalVarsService {
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
 
-  // Whether or not to show processig spinners in the UI for unmined transactions.
+  // Whether or not to show processing spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
@@ -157,10 +162,16 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
+  deflationBombTimerEnd = new Date("June 12, 2021 9:00:00 PDT").getTime();
+  announcementTimerEnd = new Date("June 15, 2021 3:00:00 PDT").getTime();
+
   // This controls the default text of the countdown timer component.
-  timerText: string = "Deflation Bomb:";
+  deflationBombTimerText = "Deflation Bomb:";
+  announcementTimerText = "Big Announcement:";
 
   profileUpdateTimestamp: number;
+
+  pastDeflationBomb: boolean;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
