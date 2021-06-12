@@ -105,8 +105,9 @@ export class PostThreadComponent {
       settings: {
         startIndex: 0,
         minIndex: 0,
-        bufferSize: 5,
+        bufferSize: 10,
         windowViewport: true,
+        infinite: true,
       },
     });
   }
