@@ -69,7 +69,7 @@ export class GlobalVarsService {
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
 
-  // Whether or not to show processig spinners in the UI for unmined transactions.
+  // Whether or not to show processing spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
@@ -163,7 +163,7 @@ export class GlobalVarsService {
   amplitude: AmplitudeClient;
 
   deflationBombTimerEnd = new Date("June 12, 2021 9:00:00 PDT").getTime();
-  announcementTimerEnd = new Date("June 15, 2021 6:00:00 PDT").getTime();
+  announcementTimerEnd = new Date("June 15, 2021 3:00:00 PDT").getTime();
 
   // This controls the default text of the countdown timer component.
   deflationBombTimerText = "Deflation Bomb:";
