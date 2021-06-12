@@ -56,7 +56,7 @@ export class CountdownTimerComponent implements OnInit {
 
   navigateToURL(): void {
     this.router.navigate([
-      "/" + this.globalVars.RouteNames.POSTS + "/" + "3bc11727c5dc6721c5b5a4ce183f53a7b0bfc5e57de333a29009ad24db483149",
+      "/" + this.globalVars.RouteNames.POSTS + "/" + "3a13a7e4342148e76e1de957f22775a4f6916ed809a90e77a035bb7cefaaaf44",
     ]);
   }
 
