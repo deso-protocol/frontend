@@ -110,10 +110,11 @@ import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/mess
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
 import { AvatarDirective } from "./avatar/avatar.directive";
 
-// Dark and Light Theme
+// Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { lightTheme } from "./theme/light-theme";
 import { darkTheme } from "./theme/dark-theme";
+import { icydarkTheme } from "./theme/icy-dark-theme";
 
 @NgModule({
   declarations: [
@@ -226,7 +227,7 @@ import { darkTheme } from "./theme/dark-theme";
     RatingModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [lightTheme, darkTheme],
+      themes: [lightTheme, darkTheme, icydarkTheme],
       active:
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),

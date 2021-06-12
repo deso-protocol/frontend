@@ -139,11 +139,11 @@
           *ngIf="!submittingGraylistUpdate"
           (click)="updateProfileModerationLevel('graylist')"
           class="btn btn-secondary fs-15px ml-5px"
-          style="width: 150px"
+          style="width: 150px;background-color:#606060 !important;"
         >
           Graylist&nbsp;
         </button>
-        <button *ngIf="submittingGraylistUpdate" class="btn btn-secondary fs-15px ml-5px" disabled>Working...</button>
+        <button *ngIf="submittingGraylistUpdate" class="btn btn-secondary fs-15px ml-5px" style="background-color:#606060 !important;" disabled>Working...</button>
       </div>
       <div *ngIf="updateProfileSuccessType === 'graylist'" class="font-weight-normal fs-12px" style="color: green">
         <i class="far fa-check-circle"></i>
