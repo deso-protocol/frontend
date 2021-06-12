@@ -50,6 +50,7 @@ export class CountdownTimerComponent implements OnInit {
       this.timerText = this.globalVars.pastDeflationBomb
         ? this.globalVars.announcementTimerText
         : this.globalVars.deflationBombTimerText;
+      this.celebrateIfTimeEnd();
     }, 1000);
   }
 
@@ -106,6 +107,12 @@ export class CountdownTimerComponent implements OnInit {
           CountdownTimerComponent.milliPerSecond
       )
     );
+  }
+
+  celebrateIfTimeEnd(): void {
+    if (this.days == "0" && this.hours == "0" && this.minutes == "0" && this.seconds == "0") {
+      this.globalVars.celebrate(false, true);
+    }
   }
 
   formatNumber(val: number): string {

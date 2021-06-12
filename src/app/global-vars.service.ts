@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {BalanceEntryResponse, PostEntryResponse, User} from "./backend-api.service";
+import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
@@ -582,7 +582,7 @@ export class GlobalVarsService {
     });
   }
 
-  celebrate(dropDiamonds: boolean = false) {
+  celebrate(dropDiamonds: boolean = false, dropBomb: boolean = false) {
     const canvasID = "my-canvas-" + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
@@ -597,6 +597,10 @@ export class GlobalVarsService {
     };
     if (dropDiamonds) {
       confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 10 }];
+      confettiSettings.max = 200;
+      confettiSettings.clock = 150;
+    } else if (dropBomb) {
+      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/bomb.svg", size: 10 }];
       confettiSettings.max = 200;
       confettiSettings.clock = 150;
     }
