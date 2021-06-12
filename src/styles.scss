@@ -2080,3 +2080,8 @@ input {
   border-top-left-radius: calc(.3rem - 1px);
   border-top-right-radius: calc(.3rem - 1px);
 }
+
+.btn-create {
+  background-color: var(--secondary);
+  color: var(--text);
+}
