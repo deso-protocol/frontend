@@ -79,6 +79,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
       minIndex: 0,
       bufferSize: 5,
       windowViewport: true,
+      infinite: true,
     },
   });
 

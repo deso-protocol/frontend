@@ -82,9 +82,10 @@ export class CreatorProfilePostsComponent {
       settings: {
         startIndex: 0,
         minIndex: 0,
-        bufferSize: 5,
+        bufferSize: 10,
         padding: 0.25,
         windowViewport: true,
+        infinite: true,
       },
     });
   }

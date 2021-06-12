@@ -63,7 +63,7 @@
       <div class="manage-follows__avatar-container">
         <a
           class="manage-follows__avatar br-12px"
-          [style.background-image]="'url(' + profileEntry.ProfilePic + ')'"
+          [avatar]="profileEntry.PublicKeyBase58Check"
           [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntry.Username]"
           queryParamsHandling="merge"
         ></a>
