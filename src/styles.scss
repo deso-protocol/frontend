@@ -73,6 +73,57 @@ pre, code{
     white-space:normal;
 }
 
+.countdown-timer {
+  text-align: center;
+  color: #252B37;
+  animation: textColor 4s ease infinite;
+
+  @keyframes textColor {
+    0% {
+    color: #d6b6fc;
+    }
+    50% {
+      color: #0fffc1;
+    }
+    100% {
+      color: #d6b6fc;
+    }
+  }
+}
+
+.countdown-timer-emoji-left {
+  animation: leftToRight 4s linear infinite;
+
+  @keyframes leftToRight {
+      0% {
+        margin-left: 0px;
+      }
+      50% {
+        margin-left: 40px;
+      }
+      100% {
+        margin-left: 0px;
+      }
+  }
+}
+
+.countdown-timer-emoji-right {
+  animation: rightToLeft 4s linear infinite;
+
+  @keyframes rightToLeft {
+    0% {
+      margin-right: 0px;
+    }
+    50% {
+      margin-right: 40px;
+    }
+    100% {
+      margin-right: 0px;
+    }
+  }
+}
+
+
 //
 // v0 styles (start)
 //
