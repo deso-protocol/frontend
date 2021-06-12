@@ -5,7 +5,7 @@
   >
     <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
     Wallet
-    <div style="position:absolute;right:15px;">≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }} <small>USD Total</small></div>
+    <div style="margin-left:15px;">≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }} <small>USD Total</small></div>
   </div>
 
   <div class="global__top-bar__height"></div>
@@ -74,7 +74,7 @@
           </div>
           <div class="fs-14px">
             <span class="font-weight-bold">≈ {{ globalVars.nanosToUSD(totalValue(), 2) }}</span>
-            USD Value<br>
+            USD<br>
             <span class="font-weight-bold" style="font-size:13px;">≈ {{ globalVars.nanosToBitClout(totalValue(), 4) }}</span>
             CLOUT
           </div>
