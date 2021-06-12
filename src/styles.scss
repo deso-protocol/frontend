@@ -73,6 +73,57 @@ pre, code{
     white-space:normal;
 }
 
+.countdown-timer {
+  text-align: center;
+  color: #252B37;
+  animation: textColor 4s ease infinite;
+
+  @keyframes textColor {
+    0% {
+    color: #d6b6fc;
+    }
+    50% {
+      color: #0fffc1;
+    }
+    100% {
+      color: #d6b6fc;
+    }
+  }
+}
+
+.countdown-timer-emoji-left {
+  animation: leftToRight 4s linear infinite;
+
+  @keyframes leftToRight {
+      0% {
+        margin-left: 0px;
+      }
+      50% {
+        margin-left: 40px;
+      }
+      100% {
+        margin-left: 0px;
+      }
+  }
+}
+
+.countdown-timer-emoji-right {
+  animation: rightToLeft 4s linear infinite;
+
+  @keyframes rightToLeft {
+    0% {
+      margin-right: 0px;
+    }
+    50% {
+      margin-right: 40px;
+    }
+    100% {
+      margin-right: 0px;
+    }
+  }
+}
+
+
 //
 // v0 styles (start)
 //
@@ -1256,6 +1307,13 @@ $green-font-color: #19B028;
   background-color: var(--unread);
 }
 
+.admin__get-user-admin-data-line {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .admin__add-to-feed-button {
   border: 1px solid lightgrey;
   border-radius: 3px;
@@ -1359,6 +1417,7 @@ $green-font-color: #19B028;
    height: 28px;
    width: 28px;
    border-radius: 3px;
+   background-size: auto 100%;
 }
 
 .notifications__action {
@@ -1707,6 +1766,11 @@ $green-font-color: #19B028;
   color: var(--text) !important;
   background: var(--formbg) !important;
   border-color: var(--border) !important;
+  outline: none;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  background-clip: padding-box;
 }
 .normal-text {
   color: $text-color;

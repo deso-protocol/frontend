@@ -24,7 +24,7 @@
 <div class="pt-25px d-flex align-items-center px-15px pb-15px">
   <div
     class="feed-create-comment-form__avatar"
-    [style.background-image]="'url(' + globalVars.loggedInUser.ProfileEntryResponse.ProfilePic + ')'"
+    [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
   ></div>
   <textarea
     class="fs-18px lh-18px br-12px"

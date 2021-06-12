@@ -6,7 +6,7 @@
     ></top-bar-mobile-navigation-control>
   </div>
 
-  <div class="creator-profile__avatar" [style.background-image]="'url(' + profile.ProfilePic + ')'"></div>
+  <div class="creator-profile__avatar" [avatar]="profile.PublicKeyBase58Check"></div>
   <div class="d-flex align-items-center justify-content-end pt-15px mr-15px js-creator-profile-top-card-container">
     <div
       *ngIf="!profileBelongsToLoggedInUser() && globalVars.loggedInUser"
@@ -92,6 +92,11 @@
         <i class="fas fa-check-circle fa-md align-middle"></i>
       </div>
     </div>
+    
+    <div style="font-size:11px" class="pt-2px">
+      FR <span class="font-weight-bold">{{ getFoundersRewardPercent() | number: "0.0-9" }}%</span>
+    </div>
+
     <div class="fs-15px pt-5px text-break" [innerHTML]="profile.Description | sanitizeAndAutoLink"></div>
     <div class="fs-15px pt-5px d-flex flex-wrap">
       <a

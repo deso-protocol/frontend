@@ -22,7 +22,7 @@
 >
   <div
     class="right-bar-creators-leaderboard__creator-avatar"
-    [ngStyle]="{ 'background-image': 'url(' + profileEntryResponse.Profile.ProfilePic + ')' }"
+    [avatar]="profileEntryResponse.Profile.PublicKeyBase58Check"
   ></div>
 
   <div style="flex-grow: 1">

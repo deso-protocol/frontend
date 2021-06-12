@@ -299,7 +299,7 @@
     </div>
 
     <!-- PUBLIC KEYS IN THE DB -->
-    <div (click)="_toggleDbDetails()" class="fs-15px px-15px pt-15px cursor-pointer">
+    <div (click)="_toggleDbDetails()" class="fs-15px px-15px py-15px cursor-pointer">
       <i *ngIf="!dbDetailsOpen" class="fas fa-caret-right"></i>
       <i *ngIf="dbDetailsOpen" class="fas fa-caret-down"></i>
       <span class="ml-15px">
@@ -336,6 +336,88 @@
         </div>
       </div>
     </div>
+
+    <div
+      class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+    >
+      🚀 Get User Admin Data.
+    </div>
+
+    <!-- Get User Admin Data -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Check Admin Data for Public Key:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="getUserAdminDataPublicKey"
+          (keydown.enter)="getUserAdminDataClicked()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a public key."
+        />
+        <button
+          *ngIf="!submittingGetUserAdminData"
+          (click)="getUserAdminDataClicked()"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+          style="width: 150px"
+        >
+          Search
+        </button>
+        <button
+          *ngIf="submittingGetUserAdminData"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+          disabled
+        >
+          Working...
+        </button>
+      </div>
+      <div *ngIf="getUserAdminDataResponse" class="font-weight-normal fs-12px">
+        <div class="admin__get-user-admin-data-line pt-15px">
+          <span>Username: </span> {{ getUserAdminDataResponse.Username }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Currently Verified: </span> {{ getUserAdminDataResponse.IsVerified }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Last Verifier: </span> {{ getUserAdminDataResponse.LastVerifierPublicKey }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Last Verify Remover: </span> {{ getUserAdminDataResponse.LastVerifyRemoverPublicKey }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-15px">
+          <span>Currently Whitelisted: </span> {{ getUserAdminDataResponse.IsWhitelisted }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Last Whitelister: </span> {{ getUserAdminDataResponse.LastWhitelisterPublicKey }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Last Whitelist Remover: </span> {{ getUserAdminDataResponse.LastWhitelistRemoverPublicKey }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-15px">
+          <span>Currently Graylisted: </span> {{ getUserAdminDataResponse.IsGraylisted }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Last Graylister: </span> {{ getUserAdminDataResponse.LastGraylisterPublicKey }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Last Graylist Remover: </span> {{ getUserAdminDataResponse.LastGraylistRemoverPublicKey }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-15px">
+          <span>Currently Blacklisted: </span> {{ getUserAdminDataResponse.IsBlacklisted }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Last Blacklister: </span> {{ getUserAdminDataResponse.LastBlacklisterPublicKey }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Last Blacklist Remover: </span> {{ getUserAdminDataResponse.LastBlacklistRemoverPublicKey }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-15px">
+          <span>PhoneNumber: </span> {{ getUserAdminDataResponse.PhoneNumber }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Email: </span> {{ getUserAdminDataResponse.Email }}
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Network Info -->

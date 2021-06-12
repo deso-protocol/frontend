@@ -125,43 +125,21 @@ export class TradeCreatorComponent implements OnInit {
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
-    this.backendApi
-      .GetProfiles(
-        this.appData.localNode,
-        "" /*ProfilePublicKeyBase58Check*/,
-        creatorUsername /*Username*/,
-        "" /*UsernamePrefix*/,
-        "" /*Description*/,
-        "newest" /*OrderBy*/,
-        1 /*NumToFetch*/,
-        readerPubKey /*ReaderPublicKeyBase58Check*/,
-        "unrestricted" /*ModerationType*/,
-        false /*FetchUsersThatHODL*/,
-        false /*AddGlobalFeed*/
-      )
-      .subscribe(
-        (response) => {
-          if (!response || !response.ProfilesFound || response.ProfilesFound.length === 0) {
-            this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
-            return;
-          }
-          let profilesFound = response.ProfilesFound;
-          this.creatorCoinTrade.creatorProfile = profilesFound[0];
-          this.creatorProfile = profilesFound[0];
-
-          if (profilesFound.length > 1) {
-            console.error(
-              `Unexpected: found more than one profile matching username ${this.creatorProfile.Username}`,
-              profilesFound
-            );
-            // TODO: creator coin buys: rollbar
-          }
-        },
-        (err) => {
-          console.error(err);
-          console.log("This profile was not found. It either does not exist or it was deleted."); // this.backendApi.parsePostError(err)
+    this.backendApi.GetSingleProfile(this.globalVars.localNode, "", creatorUsername).subscribe(
+      (response) => {
+        if (!response || !response.Profile) {
+          this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          return;
         }
-      );
+        let profile = response.Profile;
+        this.creatorCoinTrade.creatorProfile = profile;
+        this.creatorProfile = profile;
+      },
+      (err) => {
+        console.error(err);
+        console.log("This profile was not found. It either does not exist or it was deleted."); // this.backendApi.parsePostError(err)
+      }
+    );
   }
 
   constructor(
