@@ -1,29 +1,63 @@
-<div class="modal-header">
-  <button type="button" class="close feed-create-comment-form__close" (click)="bsModalRef.hide()">
-    <span>&times;</span>
-  </button>
-</div>
+  
+<div app-theme class="comment-modal">
+  <div class="modal-header">
+    <button type="button" class="close feed-create-comment-form__close" (click)="bsModalRef.hide()">
+      <span>&times;</span>
+    </button>
+  </div>
 
-<div class="px-15px pt-15px pb-5px" style="max-height:500px; overflow-y:hidden;">
-  <feed-post
-    [post]="parentPost"
-    [includePaddingOnPost]="false"
-    [contentShouldLinkToThread]="false"
-    [showIconRow]="false"
-    [showDropdown]="false"
-    [showReplyingToContent]="false"
-    [hoverable]="false"
-  ></feed-post>
-</div>
+  <div class="px-15px pt-15px pb-5px">
+    <feed-post
+      [post]="parentPost"
+      [includePaddingOnPost]="false"
+      [contentShouldLinkToThread]="false"
+      [showIconRow]="false"
+      [showDropdown]="false"
+      [showReplyingToContent]="false"
+      [hoverable]="false"
+    ></feed-post>
+  </div>
 
-<div class="fs-12px text-muted feed-create-comment-form__reply-container">
-  {{ isQuote ? "Quoting " : "Replying to " }}
-  @{{ parentPost.ProfileEntryResponse.Username }}
-</div>
+  <div class="fs-12px text-muted feed-create-comment-form__reply-container">
+    {{ isQuote ? "Quoting " : "Replying to " }}
+    @{{ parentPost.ProfileEntryResponse.Username }}
+  </div>
 
-<feed-create-post
-  [parentPost]="parentPost"
-  [isQuote]="isQuote"
-  [postRefreshFunc]="afterCommentCreatedCallback"
-  (postCreated)="bsModalRef.hide()"
-></feed-create-post>
+  <div class="pt-25px d-flex align-items-center px-15px pb-15px">
+    <div
+      class="feed-create-comment-form__avatar"
+      [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+    ></div>
+    <textarea
+      class="fs-18px lh-18px br-12px form-control"
+      style="border: 1px solid #777; width: 100%; padding: 10px"
+      [(ngModel)]="postInput"
+      [placeholder]="isQuote ? 'Add a comment' : 'Add your quote'"
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="3"
+      #autosize="cdkTextareaAutosize"
+    ></textarea>
+  </div>
+
+  <div class="px-3 pb-3 text-right">
+  <span
+    class="mr-15px roboto-regular feed-create-post__character-counter fs-15px"
+    [ngClass]="{
+      'd-none': postInput.length == 0,
+      'text-grey8A': showCharacterCountIsFine(),
+      'text-warning': showCharacterCountWarning(),
+      'fc-red': characterCountExceedsMaxLength()
+    }"
+  >
+    {{ postInput.length }} / {{ GlobalVarsService.MAX_POST_LENGTH }}
+  </span>
+    <a
+      type="button"
+      class="btn btn-primary br-12px font-weight-bold fs-14px px-20px pb-5px"
+      [ngClass]="{ 'btn-loading': submittingPost, disabled: postInput.length <= 0 || characterCountExceedsMaxLength() }"
+      (click)="submitPost()"
+    >
+      Post
+    </a>
+  </div>
+</div>

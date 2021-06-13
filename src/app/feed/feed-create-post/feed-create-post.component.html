@@ -1,31 +1,32 @@
 <!-- Be careful when modifying this.
      It's used by both the feed and that "create post page."-->
 
-<!-- Avatar + Input -->
-<div class="d-flex align-items-top pt-15px pr-15px pl-15px">
-  <div>
-    <div
-      *ngIf="globalVars.userList && (!globalVars.loggedInUser || !globalVars.loggedInUser.ProfileEntryResponse)"
-      class="feed-create-post__avatar feed-create-post__avatar_default"
-    ></div>
-    <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
+<div style="background-color: var(--formbg)">
+  <!-- Avatar + Input -->
+  <div class="d-flex align-items-top pt-15px pr-15px pl-15px">
+    <div>
       <div
-        class="feed-create-post__avatar"
-        [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+        *ngIf="globalVars.userList && (!globalVars.loggedInUser || !globalVars.loggedInUser.ProfileEntryResponse)"
+        class="feed-create-post__avatar feed-create-post__avatar_default"
       ></div>
+      <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
+        <div
+          class="feed-create-post__avatar"
+          [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+        ></div>
+      </div>
     </div>
-  </div>
-  <div class="flex-fill">
-    <textarea
-      [(ngModel)]="postInput"
-      rows="{{ numberOfRowsInTextArea }}"
-      class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
-      placeholder="{{ randomMovieQuote }}"
-      (paste)="onPaste($event)"
-      cdkTextareaAutosize
-      #autosize="cdkTextareaAutosize"
-    ></textarea>
-
+    <div class="flex-fill">
+      <textarea
+        [(ngModel)]="postInput"
+        rows="{{ numberOfRowsInTextArea }}"
+        class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
+        placeholder="{{ randomMovieQuote }}"
+        (paste)="onPaste($event)"
+        cdkTextareaAutosize
+        #autosize="cdkTextareaAutosize"
+      ></textarea>
+      
     <!-- Post image -->
     <div class="feed-post__image-container" *ngIf="postImageSrc">
       <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
@@ -94,4 +95,4 @@
   >
     Post
   </button>
-</div>
+  </div>

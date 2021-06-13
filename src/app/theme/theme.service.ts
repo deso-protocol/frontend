@@ -7,7 +7,7 @@ export class ThemeService {
 
   constructor(@Inject(THEMES) public themes: Theme[], @Inject(ACTIVE_THEME) public theme: string) {}
 
-  getActiveTheme() {
+  getActiveTheme(): Theme {
     const theme = this.themes.find((t) => t.key === this.theme);
     if (!theme) {
       throw new Error(`Theme not found: '${this.theme}'`);
@@ -15,7 +15,7 @@ export class ThemeService {
     return theme;
   }
 
-  setTheme(key: string) {
+  setTheme(key: string): void {
     this.theme = key;
     this.themeChange.emit(this.getActiveTheme());
   }
