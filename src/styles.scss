@@ -1449,6 +1449,10 @@ $green-font-color: #19B028;
   background-repeat: no-repeat;
   background-position: center center;
   text-indent: -9999px;
+
+  @media (max-width: 992px) {
+    flex: 0 0 100px;
+  }
 }
 
 .landing__nav-link {
