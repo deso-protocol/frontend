@@ -77,14 +77,14 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   founderRewardTooltip() {
     return (
-      "When someone purchases your coin, a percentage " +
-      "is allocated to you as a 'founder reward'.\n\n" +
-      "A value of 0% means no value gets rewarded to you for each coin purchased, " +
-      "whereas a value of 100% means no one other than you gets the value because 100% " +
-      "goes to you.\n\nSetting it too high will deter others from " +
-      "buying your coin. Setting it too low risks 'rug-pullers' profitting off of " +
-      "your hard work. It's a balance, so be careful. After you've bought what you'd " +
-      "like of your own coin, consider setting this value to 10-20%."
+      "When someone purchases your coin, a percentage is allocated to you as a 'founder reward'.\n\n" +
+      "A FR of 0% means no value gets rewarded to you for each coin purchased, " +
+      "whereas a FR of 100% means no one other than you gets the value because 100% goes to you.\n\n" +
+      "Setting you FR too high will deter others from " +
+      "buying your coin. Setting it too low risks automated bots profitting at your " +
+      "expense. It's a balance, so be careful.\n\n" +
+      "Please consider keeping your FR at 100% until you've " +
+      "bought what you'd like of your own coin. After that, many in the community use a value of 10-20%."
     );
   }
 
