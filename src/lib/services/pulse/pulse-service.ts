@@ -110,15 +110,10 @@ export class PulseService {
       .pipe(
         map((res: any) => {
           if (!skipFilters) {
-            res.UserList = _.filter(res.UserList, function (o) {
-              return o.ProfileEntryResponse !== null;
-            });
-            res.UserList = _.filter(res.UserList, function (o) {
-              return !o.IsGraylisted;
-            });
-            res.UserList = _.filter(res.UserList, function (o) {
-              return !o.IsBlacklisted;
-            });
+            res.UserList = _.filter(
+              res.UserList,
+              (o) => o.ProfileEntryResponse !== null && !o.IsGraylisted && !o.IsBlacklisted
+            );
             if (res.UserList.length > 10) {
               res.UserList = res.UserList.slice(0, 10);
             }

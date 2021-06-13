@@ -82,12 +82,7 @@ export class BithuntService {
       .pipe(
         map((res: any) => {
           if (!skipFilters) {
-            res.UserList = _.filter(res.UserList, function (o) {
-              return !o.IsGraylisted;
-            });
-            res.UserList = _.filter(res.UserList, function (o) {
-              return !o.IsBlacklisted;
-            });
+            res.UserList = _.filter(res.UserList, (o) => !o.IsGraylisted && !o.IsBlacklisted);
           }
 
           return res.UserList.map((user: User, index: number) => {
