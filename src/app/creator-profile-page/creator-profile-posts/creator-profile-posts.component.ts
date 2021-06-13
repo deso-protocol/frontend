@@ -83,8 +83,9 @@ export class CreatorProfilePostsComponent {
         startIndex: 0,
         minIndex: 0,
         bufferSize: 5,
-        padding: 0.25,
+        padding: 0.5,
         windowViewport: true,
+        infinite: true,
       },
     });
   }

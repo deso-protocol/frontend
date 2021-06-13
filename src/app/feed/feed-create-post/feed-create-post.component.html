@@ -10,31 +10,18 @@
     ></div>
     <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
       <div
-        *ngIf="globalVars.loggedInUser.ProfileEntryResponse.ProfilePic"
         class="feed-create-post__avatar"
-        [style.background-image]="'url(' + globalVars.loggedInUser.ProfileEntryResponse.ProfilePic + ')'"
-      ></div>
-      <div
-        *ngIf="!globalVars.loggedInUser.ProfileEntryResponse.ProfilePic"
-        class="feed-create-post__avatar feed-create-post__avatar_default"
+        [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
       ></div>
     </div>
   </div>
   <div class="flex-fill">
     <textarea
       [(ngModel)]="postInput"
-      [ngStyle]="{ 'border-color': parentPost ? 'antiquewhite' : ''}"
-      rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
-      [ngClass]="{
-      'border-0': !parentPost,
-      'feed-create-post__textarea': !parentPost,
-      'm-5px': !parentPost,
-      'p-0': !parentPost,
-      'br-12px': parentPost,
-      'lh-18px': parentPost
-       }"
-      class="form-control fs-18px"
-      [placeholder]="getPlaceholderText()"
+      rows="{{ numberOfRowsInTextArea }}"
+      class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
+      placeholder="{{ randomMovieQuote }}"
+      (paste)="onPaste($event)"
       cdkTextareaAutosize
       #autosize="cdkTextareaAutosize"
     ></textarea>
@@ -89,14 +76,12 @@
     style="font-size: 18px"
     (click)="showEmbedVideoURL = !showEmbedVideoURL"
   ></i>
-  <div>
-    <input  #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFileInput($event.target.files)" />
-    <i
-       class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
-       (click)="imageInput.click()"
-    ></i>
-  </div>
 
+  <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
+  <i
+    class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
+    (click)="imageInput.click()"
+  ></i>
 
   <button
     class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"

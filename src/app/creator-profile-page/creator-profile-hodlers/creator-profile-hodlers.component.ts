@@ -81,6 +81,7 @@ export class CreatorProfileHodlersComponent {
         minIndex: 0,
         padding: 0.5,
         windowViewport: true,
+        infinite: true,
       },
     });
   }

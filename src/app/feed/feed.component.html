@@ -31,8 +31,9 @@
   <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-grey py-5px px-15px fs-12px">
     <div>$BitClout Price&nbsp;&nbsp;&nbsp;</div>
     <div>
-      ~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}
-      <span class="text-muted">USD per coin</span>
+      <span *ngIf="!globalVars.pastDeflationBomb">~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
+      <span *ngIf="globalVars.pastDeflationBomb">🚀🚀🚀</span>
+      <span class="text-muted">&nbsp;USD per coin</span>
     </div>
   </div>
 

@@ -73,6 +73,57 @@ pre, code{
     white-space:normal;
 }
 
+.countdown-timer {
+  text-align: center;
+  color: #252B37;
+  animation: textColor 4s ease infinite;
+
+  @keyframes textColor {
+    0% {
+    color: #d6b6fc;
+    }
+    50% {
+      color: #0fffc1;
+    }
+    100% {
+      color: #d6b6fc;
+    }
+  }
+}
+
+.countdown-timer-emoji-left {
+  animation: leftToRight 4s linear infinite;
+
+  @keyframes leftToRight {
+      0% {
+        margin-left: 0px;
+      }
+      50% {
+        margin-left: 40px;
+      }
+      100% {
+        margin-left: 0px;
+      }
+  }
+}
+
+.countdown-timer-emoji-right {
+  animation: rightToLeft 4s linear infinite;
+
+  @keyframes rightToLeft {
+    0% {
+      margin-right: 0px;
+    }
+    50% {
+      margin-right: 40px;
+    }
+    100% {
+      margin-right: 0px;
+    }
+  }
+}
+
+
 //
 // v0 styles (start)
 //
@@ -159,9 +210,9 @@ $green-font-color: #19B028;
 // Custom font classes.
 .fc-default { color: var(--norm); }
 .fc-muted { color: var(--textalt); }
-.fc-blue { color: $buy-button-blue; }
-.fc-red { color: $red-font-color; }
-.fc-green { color: $green-font-color; }
+.fc-blue { color: var(--cblue); }
+.fc-red { color: var(--cred); }
+.fc-green { color: var(--cgreen); }
 
 .fs-1 { font-size: 2.5rem }
 .fs-2 { font-size: 2rem }
@@ -811,7 +862,7 @@ $green-font-color: #19B028;
   font-size: 19px;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
-  background-color: var(--background);
+  background-color: var(--formbg);
   border-color: var(--border);
   border-right-color: rgba(0,0,0,0);
 }
@@ -1069,7 +1120,7 @@ $green-font-color: #19B028;
 }
 
 .creator-profile__top-bar {
-  background-color: #2E2E2E;
+  background-color: var(--topbar);
   @media (max-width: 992px) {
     height: 100px;
     min-height: 100px;
@@ -1256,6 +1307,13 @@ $green-font-color: #19B028;
   background-color: var(--unread);
 }
 
+.admin__get-user-admin-data-line {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .admin__add-to-feed-button {
   border: 1px solid lightgrey;
   border-radius: 3px;
@@ -1359,6 +1417,7 @@ $green-font-color: #19B028;
    height: 28px;
    width: 28px;
    border-radius: 3px;
+   background-size: auto 100%;
 }
 
 .notifications__action {
@@ -1390,6 +1449,10 @@ $green-font-color: #19B028;
   background-repeat: no-repeat;
   background-position: center center;
   text-indent: -9999px;
+
+  @media (max-width: 992px) {
+    flex: 0 0 100px;
+  }
 }
 
 .landing__nav-link {
@@ -1707,6 +1770,11 @@ $green-font-color: #19B028;
   color: var(--text) !important;
   background: var(--formbg) !important;
   border-color: var(--border) !important;
+  outline: none;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  background-clip: padding-box;
 }
 .normal-text {
   color: $text-color;
@@ -2029,6 +2097,23 @@ input {
   background-color:#f8f8f8;
   color: #333;
   border: 1px solid #E5E5E5;
+  background-clip: padding-box;
+  opacity: 1;
+  flex-direction: column;
+  width: 100%;
+  display: flex;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+  outline: 0;
+  position: relative;
+}
+
+.icydarkmodal {
+  background-color:#1C2732;
+  color: #EFF3F8;
+  border: 1px solid #38444D;
   background-clip: padding-box;
   opacity: 1;
   flex-direction: column;
