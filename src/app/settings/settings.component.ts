@@ -25,18 +25,16 @@ export class SettingsComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
-    private themeService: ThemeService
+    public themeService: ThemeService
   ) {}
-
-  selectedTheme: string = "";
 
   selectChangeHandler(event: any) {
     //update the ui
-    this.selectedTheme = event.target.value;
+    const selectedTheme = event.target.value;
 
-    this.themeService.setTheme(this.selectedTheme);
-    this.whichTheme = this.selectedTheme;
-    localStorage.setItem("theme", this.selectedTheme);
+    this.themeService.setTheme(selectedTheme);
+    this.whichTheme = selectedTheme;
+    localStorage.setItem("theme", selectedTheme);
   }
 
   ngOnInit() {

@@ -1,7 +1,8 @@
 import { Theme } from "./symbols";
 
 export const darkTheme: Theme = {
-  name: "dark",
+  key: "dark",
+  name: "Dark Theme",
   properties: {
     "--background": "#121212",
     "--text": "#EFF3F8",
