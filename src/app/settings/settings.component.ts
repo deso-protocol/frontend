@@ -18,8 +18,6 @@ export class SettingsComponent implements OnInit {
   updatingSettings = false;
   showSuccessMessage = false;
   successMessageTimeout: any;
-  whichTheme =
-    localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -33,7 +31,6 @@ export class SettingsComponent implements OnInit {
     const selectedTheme = event.target.value;
 
     this.themeService.setTheme(selectedTheme);
-    this.whichTheme = selectedTheme;
     localStorage.setItem("theme", selectedTheme);
   }
 
