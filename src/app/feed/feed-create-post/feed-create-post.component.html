@@ -1,95 +1,97 @@
 <!-- Be careful when modifying this.
      It's used by both the feed and that "create post page."-->
 
-<!-- Avatar + Input -->
-<div class="d-flex align-items-top pt-15px pr-15px pl-15px">
-  <div>
-    <div
-      *ngIf="globalVars.userList && (!globalVars.loggedInUser || !globalVars.loggedInUser.ProfileEntryResponse)"
-      class="feed-create-post__avatar feed-create-post__avatar_default"
-    ></div>
-    <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
+<div style="background-color: var(--formbg)">
+  <!-- Avatar + Input -->
+  <div class="d-flex align-items-top pt-15px pr-15px pl-15px">
+    <div>
       <div
-        class="feed-create-post__avatar"
-        [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+        *ngIf="globalVars.userList && (!globalVars.loggedInUser || !globalVars.loggedInUser.ProfileEntryResponse)"
+        class="feed-create-post__avatar feed-create-post__avatar_default"
       ></div>
+      <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
+        <div
+          class="feed-create-post__avatar"
+          [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+        ></div>
+      </div>
+    </div>
+    <div class="flex-fill">
+      <textarea
+        [(ngModel)]="postInput"
+        rows="{{ numberOfRowsInTextArea }}"
+        class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
+        placeholder="{{ randomMovieQuote }}"
+        (paste)="onPaste($event)"
+        cdkTextareaAutosize
+        #autosize="cdkTextareaAutosize"
+      ></textarea>
+
+      <!-- Post image -->
+      <div class="feed-post__image-container">
+        <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
+        <img class="feed-post__image" src="{{ postImageSrc }}" />
+      </div>
+      <!-- Embedded Video -->
+      <div class="feed-post__video-embed-container" *ngIf="getEmbedVideoURL()">
+        <i
+          class="icon-close feed-post__image-delete"
+          (click)="embedVideoURL = ''; showEmbedVideoURL = false; constructedEmbedVideoURL = ''"
+        ></i>
+        <iframe
+          [height]="VideoUrlParserService.getEmbedHeight(getEmbedVideoURL())"
+          class="feed-post__image"
+          [src]="getEmbedVideoURL() | sanitizeVideoEmbed"
+          frameborder="0"
+          allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
+          allowfullscreen
+        ></iframe>
+      </div>
     </div>
   </div>
-  <div class="flex-fill">
-    <textarea
-      [(ngModel)]="postInput"
-      rows="{{ numberOfRowsInTextArea }}"
-      class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
-      placeholder="{{ randomMovieQuote }}"
-      (paste)="onPaste($event)"
-      cdkTextareaAutosize
-      #autosize="cdkTextareaAutosize"
-    ></textarea>
-
-    <!-- Post image -->
-    <div class="feed-post__image-container">
-      <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
-      <img class="feed-post__image" src="{{ postImageSrc }}" />
-    </div>
-    <!-- Embedded Video -->
-    <div class="feed-post__video-embed-container" *ngIf="getEmbedVideoURL()">
-      <i
-        class="icon-close feed-post__image-delete"
-        (click)="embedVideoURL = ''; showEmbedVideoURL = false; constructedEmbedVideoURL = ''"
-      ></i>
-      <iframe
-        [height]="VideoUrlParserService.getEmbedHeight(getEmbedVideoURL())"
-        class="feed-post__image"
-        [src]="getEmbedVideoURL() | sanitizeVideoEmbed"
-        frameborder="0"
-        allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
-        allowfullscreen
-      ></iframe>
-    </div>
+  <div class="flex-fill px-15px br-10px" [ngClass]="{ 'd-none': !showEmbedVideoURL }">
+    <input
+      class="br-3px"
+      type="url"
+      [(ngModel)]="embedVideoURL"
+      (ngModelChange)="setEmbedVideoURL()"
+      placeholder="Enter a url to a youtube, vimeo, or tiktok video"
+    />
   </div>
-</div>
-<div class="flex-fill px-15px br-10px" [ngClass]="{ 'd-none': !showEmbedVideoURL }">
-  <input
-    class="br-3px"
-    type="url"
-    [(ngModel)]="embedVideoURL"
-    (ngModelChange)="setEmbedVideoURL()"
-    placeholder="Enter a url to a youtube, vimeo, or tiktok video"
-  />
-</div>
-<!-- Image Upload + Post Buttons -->
-<div class="d-flex justify-content-end align-items-center pr-15px pb-15px mt-10px">
-  <span
-    class="mr-15px roboto-regular feed-create-post__character-counter fs-15px"
-    [ngClass]="{
-      'd-none': postInput.length == 0,
-      'text-grey8A': showCharacterCountIsFine(),
-      'text-warning': showCharacterCountWarning(),
-      'fc-red': characterCountExceedsMaxLength()
-    }"
-  >
-    {{ postInput.length }} / {{ GlobalVarsService.MAX_POST_LENGTH }}
-  </span>
-  <i
-    class="fas fa-video fa-lg text-grey8A cursor-pointer px-15px"
-    style="font-size: 18px"
-    (click)="showEmbedVideoURL = !showEmbedVideoURL"
-  ></i>
-  <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
-  <i
-    class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
-    (click)="imageInput.click()"
-  ></i>
+  <!-- Image Upload + Post Buttons -->
+  <div class="d-flex justify-content-end align-items-center pr-15px pb-15px mt-10px">
+    <span
+      class="mr-15px roboto-regular feed-create-post__character-counter fs-15px"
+      [ngClass]="{
+        'd-none': postInput.length == 0,
+        'text-grey8A': showCharacterCountIsFine(),
+        'text-warning': showCharacterCountWarning(),
+        'fc-red': characterCountExceedsMaxLength()
+      }"
+    >
+      {{ postInput.length }} / {{ GlobalVarsService.MAX_POST_LENGTH }}
+    </span>
+    <i
+      class="fas fa-video fa-lg text-grey8A cursor-pointer px-15px"
+      style="font-size: 18px"
+      (click)="showEmbedVideoURL = !showEmbedVideoURL"
+    ></i>
+    <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
+    <i
+      class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
+      (click)="imageInput.click()"
+    ></i>
 
-  <button
-    class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
-    style="height: 36px; width: 75px; line-height: 15px"
-    [ngClass]="{
-      disabled: (postInput.length <= 0 && !postImageSrc) || characterCountExceedsMaxLength(),
-      'btn-loading': submittingPost
-    }"
-    (click)="_createPost()"
-  >
-    Post
-  </button>
+    <button
+      class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
+      style="height: 36px; width: 75px; line-height: 15px"
+      [ngClass]="{
+        disabled: (postInput.length <= 0 && !postImageSrc) || characterCountExceedsMaxLength(),
+        'btn-loading': submittingPost
+      }"
+      (click)="_createPost()"
+    >
+      Post
+    </button>
+  </div>
 </div>
