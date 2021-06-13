@@ -10,7 +10,7 @@ import { CdkTextareaAutosize } from "@angular/cdk/text-field";
   templateUrl: "./comment-modal.component.html",
   styleUrls: ["./comment-modal.component.scss"],
 })
-export class CommentModalComponent {
+export class CommentModalComponent implements OnInit {
   static SHOW_POST_LENGTH_WARNING_THRESHOLD = 260; // show warning at 260 characters
 
   @Input() parentPost;
@@ -27,11 +27,7 @@ export class CommentModalComponent {
   postInput = "";
 
   ngOnInit() {
-    if (localStorage.getItem("theme") == "light") {
-      this.bsModalRef.setClass("lightmodal");
-    } else {
-      this.bsModalRef.setClass("darkmodal");
-    }
+    this.bsModalRef.setClass(localStorage.getItem("theme") + "modal");
   }
 
   characterCountExceedsMaxLength(): boolean {
