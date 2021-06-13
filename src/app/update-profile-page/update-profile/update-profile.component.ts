@@ -169,7 +169,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.profileUpdates.usernameUpdate /*NewUsername*/,
       this.profileUpdates.descriptionUpdate /*NewDescription*/,
       this.profileUpdates.profilePicUpdate /*NewProfilePic*/,
-      this.founderRewardInput * 1000 /*NewCreatorBasisPoints*/,
+      this.founderRewardInput * 100 /*NewCreatorBasisPoints*/,
       1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
       false /*IsHidden*/,
       // End params
