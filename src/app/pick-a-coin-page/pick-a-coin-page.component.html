@@ -43,10 +43,7 @@
           [routerLink]="[AppRoutingModule.transferCreatorPath(creator.ProfileEntryResponse.Username)]"
           queryParamsHandling="merge"
         >
-          <div
-            class="holdings__avatar"
-            [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"
-          ></div>
+          <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"></div>
           <div class="text-truncate holdings__name">
             <span>{{ creator.ProfileEntryResponse.Username }}</span>
 

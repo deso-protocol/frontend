@@ -902,7 +902,6 @@ export class AdminComponent implements OnInit {
       });
   }
 
-
   getUserAdminDataClicked() {
     if (this.getUserAdminDataPublicKey === "") {
       this.globalVars._alertError("Please enter a valid username.");
@@ -910,18 +909,21 @@ export class AdminComponent implements OnInit {
     }
 
     this.submittingGetUserAdminData = true;
-    this.backendApi.AdminGetUserAdminData(
-      this.globalVars.localNode,
-      this.globalVars.loggedInUser.PublicKeyBase58Check,
-      this.getUserAdminDataPublicKey
-    ).subscribe(
-      (res: any) => {
-        this.getUserAdminDataResponse = res;
-      },
-      (error) => {
-        this.globalVars._alertError(this.extractError(error))
-      }
-    ).add(() => {
+    this.backendApi
+      .AdminGetUserAdminData(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.getUserAdminDataPublicKey
+      )
+      .subscribe(
+        (res: any) => {
+          this.getUserAdminDataResponse = res;
+        },
+        (error) => {
+          this.globalVars._alertError(this.extractError(error));
+        }
+      )
+      .add(() => {
         this.submittingGetUserAdminData = false;
       });
   }

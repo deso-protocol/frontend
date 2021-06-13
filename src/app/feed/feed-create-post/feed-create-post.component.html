@@ -9,9 +9,10 @@
       class="feed-create-post__avatar feed-create-post__avatar_default"
     ></div>
     <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
-      <div class="feed-create-post__avatar" [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check">
-      </div>
-
+      <div
+        class="feed-create-post__avatar"
+        [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+      ></div>
     </div>
   </div>
   <div class="flex-fill">

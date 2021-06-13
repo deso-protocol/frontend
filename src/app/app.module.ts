@@ -109,6 +109,8 @@ import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamon
 import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
 import { AvatarDirective } from "./avatar/avatar.directive";
+import { TrendsPageComponent } from "./trends-page/trends-page.component";
+import { TrendsComponent } from "./trends-page/trends/trends.component";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -206,6 +208,8 @@ import { icydarkTheme } from "./theme/icy-dark-theme";
     DiamondPostsComponent,
     CountdownTimerComponent,
     AvatarDirective,
+    TrendsPageComponent,
+    TrendsComponent,
   ],
   imports: [
     BrowserModule,

@@ -28,9 +28,9 @@ export class CommentModalComponent {
 
   ngOnInit() {
     if (localStorage.getItem("theme") == "light") {
-      this.bsModalRef.setClass('lightmodal');
+      this.bsModalRef.setClass("lightmodal");
     } else {
-      this.bsModalRef.setClass('darkmodal');
+      this.bsModalRef.setClass("darkmodal");
     }
   }
 
