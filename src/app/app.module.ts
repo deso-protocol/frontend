@@ -109,13 +109,14 @@ import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamon
 import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
 import { AvatarDirective } from "./avatar/avatar.directive";
+import { TrendsPageComponent } from "./trends-page/trends-page.component";
+import { TrendsComponent } from "./trends-page/trends/trends.component";
 
-// Dark and Light Theme
+// Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { lightTheme } from "./theme/light-theme";
 import { darkTheme } from "./theme/dark-theme";
-import { TrendsPageComponent } from "./trends-page/trends-page.component";
-import { TrendsComponent } from "./trends-page/trends/trends.component";
+import { icydarkTheme } from "./theme/icy-dark-theme";
 
 @NgModule({
   declarations: [
@@ -230,7 +231,7 @@ import { TrendsComponent } from "./trends-page/trends/trends.component";
     RatingModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [lightTheme, darkTheme],
+      themes: [lightTheme, darkTheme, icydarkTheme],
       active:
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
