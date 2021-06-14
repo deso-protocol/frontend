@@ -86,7 +86,7 @@
   </div>
 
   <ng-template #popTemplate>
-    <div id="diamond-popover">
+    <div id="diamond-popover" app-theme>
       <div *ngIf="!sendingDiamonds; else sendingDiamondSpinner">
         <div (click)="expandDiamondInfo($event)">
           Give a diamond.
@@ -94,8 +94,7 @@
           will receive the amount shown as
           <b>a tip</b>
           from you, paid in
-          <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>
-          .
+          <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>.
           <i class="fas fa-info-circle"></i>
         </div>
         <div
@@ -150,7 +149,7 @@
       [popover]="popTemplate"
       triggers=""
       placement="top"
-      [containerClass]="globalVars.isMobile() ? 'diamond-popover-container-mobile' : 'diamond-popover-container'"
+      [containerClass]="getPopoverContainerClass()"
       container="body"
       [outsideClick]="true"
       #diamondPopover="bs-popover"

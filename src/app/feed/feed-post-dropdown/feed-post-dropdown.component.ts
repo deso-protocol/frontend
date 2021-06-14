@@ -22,7 +22,7 @@ export class FeedPostDropdownComponent {
     public globalVars: GlobalVarsService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private platformLocation: PlatformLocation
+    private platformLocation: PlatformLocation,
   ) {}
 
   reportPost() {

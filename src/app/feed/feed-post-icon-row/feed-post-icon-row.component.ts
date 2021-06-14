@@ -9,6 +9,7 @@ import { RouteNames } from "../../app-routing.module";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
+import {ThemeService} from "../../theme/theme.service";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -47,7 +48,8 @@ export class FeedPostIconRowComponent {
     private activatedRoute: ActivatedRoute,
     private platformLocation: PlatformLocation,
     private ref: ChangeDetectorRef,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private themeService: ThemeService
   ) {}
 
   _detectChanges() {
@@ -469,5 +471,11 @@ export class FeedPostIconRowComponent {
 
   getCurrentDiamondLevel(): number {
     return this.postContent.PostEntryReaderState?.DiamondLevelBestowed || 0;
+  }
+
+  getPopoverContainerClass() {
+    const mobileClass = this.globalVars.isMobile() ? "diamond-popover-container-mobile " : "";
+    const popoverTheme = "diamond-popover-" + this.themeService.getActiveTheme().key;
+    return "diamond-popover-container " + mobileClass + popoverTheme;
   }
 }
