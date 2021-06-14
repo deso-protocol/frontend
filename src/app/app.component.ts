@@ -169,11 +169,13 @@ export class AppComponent implements OnInit {
           if (res.USD != null && res.USD.last != null) {
             this.globalVars.usdPerBitcoinExchangeRate = res.USD.last;
           } else {
+            // We divide by 100 to convert from cents to dollars. usdPerBitcoinExchangeRate is expected to be in dollars.
             this.globalVars.usdPerBitcoinExchangeRate = this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate / 100;
           }
         },
         (error) => {
           console.error(error);
+          // We divide by 100 to convert from cents to dollars. usdPerBitcoinExchangeRate is expected to be in dollars.
           this.globalVars.usdPerBitcoinExchangeRate = this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate / 100;
         }
       )
