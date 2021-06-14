@@ -1417,7 +1417,9 @@ $green-font-color: #19B028;
    height: 28px;
    width: 28px;
    border-radius: 3px;
-   background-size: auto 100%;
+   background-size: cover;
+   background-repeat: no-repeat;
+   background-position: center center;
 }
 
 .notifications__action {

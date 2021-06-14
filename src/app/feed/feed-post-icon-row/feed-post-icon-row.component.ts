@@ -435,7 +435,7 @@ export class FeedPostIconRowComponent {
       SwalHelper.fire({
         icon: "info",
         title: `Sending ${this.diamondSelected} diamonds to ${this.postContent.ProfileEntryResponse?.Username}`,
-        html: `Clicking confirm will send ${this.getUSDForDiamond(
+        html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
           this.diamondSelected
         )} worth of your creator coin to @${this.postContent.ProfileEntryResponse?.Username}`,
         showCancelButton: true,
@@ -456,15 +456,6 @@ export class FeedPostIconRowComponent {
     } else {
       await this.sendDiamonds(this.diamondSelected);
     }
-  }
-
-  getUSDForDiamond(index: number): string {
-    const bitcloutNanos = this.globalVars.diamondLevelMap[index];
-    const val = this.globalVars.nanosToUSDNumber(bitcloutNanos);
-    if (val < 1) {
-      return this.globalVars.formatUSD(val, 2);
-    }
-    return this.globalVars.abbreviateNumber(val, 0, true);
   }
 
   getCurrentDiamondLevel(): number {
