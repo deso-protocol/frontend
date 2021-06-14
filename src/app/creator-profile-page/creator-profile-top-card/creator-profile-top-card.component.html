@@ -110,6 +110,16 @@
         <span class="fc-muted">Followers&nbsp;&nbsp;</span>
       </a>
 
+      <a
+        class="link--unstyled"
+        *ngIf="followingCount != null"
+        [routerLink]="AppRoutingModule.userFollowingPath(profile.Username)"
+        queryParamsHandling="merge"
+      >
+        <span class="font-weight-bold">{{ followingCount }}&nbsp;</span>
+        <span class="fc-muted">Following&nbsp;&nbsp;</span>
+      </a>
+
       <div style="whitespace: nowrap">
         <div class="font-weight-bold" style="display: inline">
           ~{{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}

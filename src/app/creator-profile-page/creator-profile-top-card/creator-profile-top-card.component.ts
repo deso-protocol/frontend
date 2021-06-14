@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild, OnDestroy } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
-import { Subscription } from "rxjs";
+import { Subscription, zip } from "rxjs";
+import { map } from "rxjs/operators";
 import { FollowChangeObservableResult } from "../../../lib/observable-results/follow-change-observable-result";
 import { AppRoutingModule } from "../../app-routing.module";
 import { FollowButtonComponent } from "../../follow-button/follow-button.component";
@@ -25,6 +26,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   globalVars: GlobalVarsService;
   followChangeSubscription: Subscription;
   followerCount: number = null;
+  followingCount: number = null;
   refreshFollowingBeingCalled = false;
   publicKeyIsCopied = false;
 
@@ -98,9 +100,9 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  // Here we're fetching all followers (and their profiles), but we only need the followers
-  // for the follower count. Maybe we should just put the follower count as an attribute on
-  // the GetUsers response. Not sure
+  // Here we're making two calls to fetch one follower and one followed user (and their profiles),
+  // but we only need the counts. Maybe we should allow the GetFollows response to return only
+  // the counts, and maybe both at once.
   _refreshFollowing() {
     if (this.refreshFollowingBeingCalled) {
       return;
@@ -110,24 +112,40 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
     // TODO: need a loading treatment while loading OR need to obtain all follows on pageload
 
-    this.backendApi
+    const getFollowers = this.backendApi
       .GetFollows(
         this.globalVars.localNode,
         this.profile.Username,
         "" /* PublicKeyBase58Check */,
-        true /* get followers */
+        true /* get followers */,
+        "" /* GetEntriesFollowingUsername */,
+        0 /* NumToFetch */
       )
-      .subscribe(
-        (response) => {
-          this.followerCount = response.NumFollowers;
-          this.refreshFollowingBeingCalled = false;
-        },
-        (error) => {
-          this.refreshFollowingBeingCalled = false;
-          // fail silently
-          console.error(error);
-        }
-      );
+      .pipe(map((res) => res.NumFollowers));
+
+    const getFollowing = this.backendApi
+      .GetFollows(
+        this.globalVars.localNode,
+        this.profile.Username,
+        "" /* PublicKeyBase58Check */,
+        false /* get following */,
+        "" /* GetEntriesFollowingUsername */,
+        0 /* NumToFetch */
+      )
+      .pipe(map((res) => res.NumFollowers));
+
+    zip(getFollowers, getFollowing).subscribe(
+      (res) => {
+        this.followerCount = res[0];
+        this.followingCount = res[1];
+        this.refreshFollowingBeingCalled = false;
+      },
+      (error) => {
+        this.refreshFollowingBeingCalled = false;
+        // fail silently
+        console.error(error);
+      }
+    );
   }
 
   _isLoggedInUserFollowing() {
