@@ -2131,3 +2131,6 @@ input {
   border-top-left-radius: calc(.3rem - 1px);
   border-top-right-radius: calc(.3rem - 1px);
 }
+
+.diamond-popover-legends {  background-color: #14110e;  border-color: #382418;}
+.diamond-popover-legends .arrow::after, .diamond-popover-legends .arrow::before {  border-top-color: #14110e;}
