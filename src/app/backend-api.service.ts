@@ -741,6 +741,7 @@ export class BackendApiService {
       Username,
     });
   }
+
   // We add a ts-ignore here as typescript does not expect responseType to be anything but "json".
   GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): Observable<any> {
     return this.httpClient.get<any>(this.GetSingleProfilePictureURL(endpoint, PublicKeyBase58Check, bustCache), {
@@ -748,12 +749,16 @@ export class BackendApiService {
       responseType: "blob",
     });
   }
-  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): string {
+  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback: string = "", bustCache: string = ""): string {
     return this._makeRequestURL(
       endpoint,
-      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + bustCache
+      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + fallback + bustCache
     );
   }
+  GetDefaultProfilePictureURL(endpoint: string): string {
+    return this._makeRequestURL(endpoint, "/assets/img/default_profile_pic.png");
+  }
+
   GetPostsForPublicKey(
     endpoint: string,
     PublicKeyBase58Check: string,
