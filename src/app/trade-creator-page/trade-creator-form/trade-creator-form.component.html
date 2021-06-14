@@ -1,5 +1,5 @@
 <!-- Available Bitclout Box -->
-<div class="w-100 bg-light text-grey6">
+<div class="w-100 bg-light text-grey5">
   <div class="p-3 fs-14px d-flex justify-content-between flex-wrap">
     <div class="d-flex flex-wrap">
       {{ creatorCoinTrade.assetToSellBalance() }} {{ creatorCoinTrade.assetToSellString() }} available&nbsp;
@@ -13,7 +13,7 @@
       *ngIf="creatorCoinTrade.isBuyingCreatorCoin"
       [routerLink]="['/' + this.globalVars.RouteNames.BUY_BITCLOUT]"
       queryParamsHandling="merge"
-      class="text-grey6"
+      class="text-grey5"
     >
       <u>Buy BitClout</u>
     </a>
@@ -140,7 +140,7 @@
     </div>
   </div>
   <ng-template #isUpdatingAmountsElseBlock>
-    <div class="fs-14px mt-10px text-grey6">
+    <div class="fs-14px mt-10px text-grey5">
       <trade-creator-table [displayForCreatorForm]="true" [creatorCoinTrade]="creatorCoinTrade"></trade-creator-table>
     </div>
   </ng-template>
