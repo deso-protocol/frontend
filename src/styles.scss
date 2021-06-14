@@ -2131,3 +2131,32 @@ input {
   border-top-left-radius: calc(.3rem - 1px);
   border-top-right-radius: calc(.3rem - 1px);
 }
+
+[class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {
+  color: var(--text);
+}
+
+.mat-option, option {
+  background-color: var(--formbg);
+  color: var(--text);
+}
+
+.mat-option:hover:not(.mat-option-disabled), .mat-option:focus:not(.mat-option-disabled) {
+  background-color: var(--secondary);
+}
+
+.mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
+  background-color: var(--unread);
+}
+
+.mat-form-field-appearance-fill .mat-form-field-underline::before {
+  background-color: var(--border);
+}
+
+.mat-form-field-ripple {
+  background-color: var(--link);
+}
+
+.mat-form-field.mat-focused .mat-form-field-ripple {
+  background-color: var(--hover);
+}
