@@ -44,7 +44,7 @@
         <div #uiScroll *uiScroll="let row of datasource">
           <div *ngIf="!row.totalRow">
             <div
-              class="link--unstyled"
+              class="link--unstyled cursor-pointer"
               [routerLink]="[
               '/' + globalVars.RouteNames.USER_PREFIX,
               showDiamondsGiven ? row.ProfileEntryResponse.Username : profile.Username,
