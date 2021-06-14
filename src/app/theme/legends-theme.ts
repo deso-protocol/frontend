@@ -22,5 +22,6 @@ export const legendsTheme: Theme = {
     "--cblue": "#238eff",
     "--cred": "#e0245e",
     "--cgreen": "#17BF63",
+    "--loading": "#999",
   },
 };
