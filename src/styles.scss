@@ -482,6 +482,14 @@ $green-font-color: #19B028;
   border-top-color: #111b26;
 }
 
+.diamond-popover-legends {  
+  background-color: #14110e;  
+  border-color: #382418;
+}
+.diamond-popover-legends .arrow::after, .diamond-popover-legends .arrow::before {  
+  border-top-color: #14110e;
+}
+
 #diamond-popover {
   color: var(--text)
 }
@@ -2163,6 +2171,7 @@ input {
   border-top-left-radius: calc(.3rem - 1px);
   border-top-right-radius: calc(.3rem - 1px);
 }
+
 
 [class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {
   color: var(--text);

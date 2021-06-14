@@ -117,6 +117,7 @@ import { ThemeModule } from "./theme/theme.module";
 import { lightTheme } from "./theme/light-theme";
 import { darkTheme } from "./theme/dark-theme";
 import { icydarkTheme } from "./theme/icy-dark-theme";
+import { legendsTheme } from "./theme/legends-theme";
 
 @NgModule({
   declarations: [
@@ -231,7 +232,7 @@ import { icydarkTheme } from "./theme/icy-dark-theme";
     RatingModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [lightTheme, darkTheme, icydarkTheme],
+      themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme],
       active:
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
