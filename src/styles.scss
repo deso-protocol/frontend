@@ -185,6 +185,8 @@ $green-font-color: #19B028;
 .text-greyE5 { color: #E5E5E5 } // mocks call this G3
 .text-greyF5 { color: #F5F5F5 } // mocks call this G4
 
+
+.text-grey-loading { color: var(--loading) }
 // Set toast-info to use system blue
 .toast-info { background-color: $buy-button-blue}
 
@@ -210,9 +212,9 @@ $green-font-color: #19B028;
 // Custom font classes.
 .fc-default { color: var(--norm); }
 .fc-muted { color: var(--textalt); }
-.fc-blue { color: $buy-button-blue; }
-.fc-red { color: $red-font-color; }
-.fc-green { color: $green-font-color; }
+.fc-blue { color: var(--cblue); }
+.fc-red { color: var(--cred); }
+.fc-green { color: var(--cgreen); }
 
 .fs-1 { font-size: 2.5rem }
 .fs-2 { font-size: 2rem }
@@ -450,10 +452,46 @@ $green-font-color: #19B028;
 }
 
 .diamond-popover-container-mobile {
-  max-width: 100% !important;
   width: auto;
-  margin-right: 10px;
-  margin-left: 10px;
+}
+
+.diamond-popover-light {
+  background-color: #FFFFFF;
+  border-color: #E5E5E5;
+}
+
+.diamond-popover-light .arrow::after, .diamond-popover-light .arrow::before {
+  border-top-color: #FFFFFF;
+}
+
+.diamond-popover-dark {
+  background-color: #111;
+  border-color: #484848;
+}
+
+.diamond-popover-dark .arrow::after, .diamond-popover-dark .arrow::before {
+  border-top-color: #111;
+}
+
+.diamond-popover-icydark {
+  background-color: #111b26;
+  border-color: #38444D;
+}
+
+.diamond-popover-icydark .arrow::after, .diamond-popover-icydark .arrow::before {
+  border-top-color: #111b26;
+}
+
+.diamond-popover-legends {  
+  background-color: #14110e;  
+  border-color: #382418;
+}
+.diamond-popover-legends .arrow::after, .diamond-popover-legends .arrow::before {  
+  border-top-color: #14110e;
+}
+
+#diamond-popover {
+  color: var(--text)
 }
 
 .fixed-top-bar {
@@ -862,7 +900,7 @@ $green-font-color: #19B028;
   font-size: 19px;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
-  background-color: var(--background);
+  background-color: var(--formbg);
   border-color: var(--border);
   border-right-color: rgba(0,0,0,0);
 }
@@ -973,10 +1011,10 @@ $green-font-color: #19B028;
 
 .feed-post__dropdown-menu-item {
   background-color: var(--secondary);
-  color: var(--text);
+  color: var(--gray);
   &:hover {
     background-color: var(--secalt);
-    color: var(--text);
+    color: var(--gray);
   }
 }
 
@@ -1120,7 +1158,7 @@ $green-font-color: #19B028;
 }
 
 .creator-profile__top-bar {
-  background-color: #2E2E2E;
+  background-color: var(--topbar);
   @media (max-width: 992px) {
     height: 100px;
     min-height: 100px;
@@ -1417,7 +1455,9 @@ $green-font-color: #19B028;
    height: 28px;
    width: 28px;
    border-radius: 3px;
-   background-size: auto 100%;
+   background-size: cover;
+   background-repeat: no-repeat;
+   background-position: center center;
 }
 
 .notifications__action {
@@ -1449,6 +1489,10 @@ $green-font-color: #19B028;
   background-repeat: no-repeat;
   background-position: center center;
   text-indent: -9999px;
+
+  @media (max-width: 992px) {
+    flex: 0 0 100px;
+  }
 }
 
 .landing__nav-link {
@@ -2072,27 +2116,10 @@ input {
   border-color: var(--mborder) !important;
 }
 
-.darkmodal {
-  background-color:#202020;
-  color: #FFF;
-  border: 1px solid #484848;
-  background-clip: padding-box;
-  opacity: 1;
-  flex-direction: column;
-  width: 100%;
-  display: flex;
-  border-top-left-radius: 0.3rem;
-  border-top-right-radius: 0.3rem;
-  border-bottom-right-radius: 0.3rem;
-  border-bottom-left-radius: 0.3rem;
-  outline: 0;
-  position: relative;
-}
-
-.lightmodal {
-  background-color:#f8f8f8;
-  color: #333;
-  border: 1px solid #E5E5E5;
+.comment-modal {
+  color: var(--text);
+  border: 1px solid var(--mborder);
+  background-color: var(--secondary);
   background-clip: padding-box;
   opacity: 1;
   flex-direction: column;
@@ -2149,3 +2176,33 @@ input {
   background-color: var(--secondary);
   color: var(--text);
 }
+
+[class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {
+  color: var(--text);
+}
+
+.mat-option, option {
+  background-color: var(--formbg);
+  color: var(--text);
+}
+
+.mat-option:hover:not(.mat-option-disabled), .mat-option:focus:not(.mat-option-disabled) {
+  background-color: var(--secondary);
+}
+
+.mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
+  background-color: var(--unread);
+}
+
+.mat-form-field-appearance-fill .mat-form-field-underline::before {
+  background-color: var(--border);
+}
+
+.mat-form-field-ripple {
+  background-color: var(--link);
+}
+
+.mat-form-field.mat-focused .mat-form-field-ripple {
+  background-color: var(--hover);
+}
+

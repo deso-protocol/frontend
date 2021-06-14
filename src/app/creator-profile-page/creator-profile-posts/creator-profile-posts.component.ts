@@ -82,8 +82,8 @@ export class CreatorProfilePostsComponent {
       settings: {
         startIndex: 0,
         minIndex: 0,
-        bufferSize: 10,
-        padding: 0.25,
+        bufferSize: 5,
+        padding: 0.5,
         windowViewport: true,
         infinite: true,
       },

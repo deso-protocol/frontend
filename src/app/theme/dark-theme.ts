@@ -1,7 +1,8 @@
 import { Theme } from "./symbols";
 
 export const darkTheme: Theme = {
-  name: "dark",
+  key: "dark",
+  name: "Dark Theme",
   properties: {
     "--background": "#121212",
     "--text": "#EFF3F8",
@@ -17,5 +18,10 @@ export const darkTheme: Theme = {
     "--mborder": "#484848",
     "--filter": "invert(98%) sepia(1%) saturate(264%) hue-rotate(181deg) brightness(116%) contrast(100%)",
     "--unread": "#1a293f",
+    "--topbar": "#2E2E2E",
+    "--cblue": "#0058F7",
+    "--cred": "#fe3537",
+    "--cgreen": "#19B028",
+    "--loading": "#999",
   },
 };

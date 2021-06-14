@@ -2,7 +2,7 @@
 <div class="container fs-15px" style="max-width: inherit">
   <trade-creator-table [creatorCoinTrade]="creatorCoinTrade"></trade-creator-table>
 
-  <div *ngIf="showHighLoadWarning" class="bg-light mt-15px p-15px roboto-regular br-12px text-grey6">
+  <div *ngIf="showHighLoadWarning" class="bg-light mt-15px p-15px roboto-regular br-12px text-grey5">
     Due to high load, {{ creatorCoinTrade.tradeVerbString() | lowercase }}s may take several minutes to process. Please
     keep your browser open. If you refresh the page and resubmit, your next
     {{ creatorCoinTrade.tradeVerbString() | lowercase }} will still likely be slow, and you may end up making multiple

@@ -14,7 +14,7 @@
 
   <div *ngIf="!isMobile">
     <!-- Create Post -->
-    <div class="border-bottom border-color-grey">
+    <div class="border-bottom border-color-grey" style="background-color: var(--formbg)">
       <feed-create-post
         [numberOfRowsInTextArea]="2"
         [postRefreshFunc]="prependPostToFeed.bind(this)"

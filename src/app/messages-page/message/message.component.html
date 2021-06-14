@@ -48,7 +48,6 @@
     *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
     class="message__avatar mr-15px"
     [avatar]="message.SenderPublicKeyBase58Check"
-
   ></div>
   <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
   <div

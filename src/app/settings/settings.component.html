@@ -54,11 +54,15 @@
 
       <div class="fs-15px pt-30px">BitClout Theme</div>
       <br />
-      <select name="theme" id="theme" (change)="selectChangeHandler($event)" class="form-control selector">
-        <option *ngIf="whichTheme == 'dark'" value="dark">Dark Theme</option>
-        <option *ngIf="whichTheme == 'light'" value="light">Light Theme</option>
-        <option *ngIf="whichTheme == 'light'" value="dark">Dark Theme</option>
-        <option *ngIf="whichTheme == 'dark'" value="light">Light Theme</option>
+      <select
+        [(ngModel)]="themeService.theme"
+        name="theme"
+        id="theme"
+        (change)="selectChangeHandler($event)"
+        class="form-control selector">
+        <option
+          *ngFor="let theme of themeService.themes"
+          [value]="theme.key">{{ theme.name }}</option>
       </select>
       <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
       <div class="global__bottom-bar-mobile-height"></div>
