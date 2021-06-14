@@ -302,6 +302,15 @@ export class GlobalVarsService {
     return this.isTestnet ? "testnet" : "mainnet";
   }
 
+  getUSDForDiamond(index: number): string {
+    const bitcloutNanos = this.diamondLevelMap[index];
+    const val = this.nanosToUSDNumber(bitcloutNanos);
+    if (val < 1) {
+      return this.formatUSD(val, 2);
+    }
+    return this.abbreviateNumber(val, 0, true);
+  }
+
   nanosToBitClout(nanos: number, maximumFractionDigits?: number): string {
     if (this.nanosToBitCloutMemo[nanos] && this.nanosToBitCloutMemo[nanos][maximumFractionDigits]) {
       return this.nanosToBitCloutMemo[nanos][maximumFractionDigits];

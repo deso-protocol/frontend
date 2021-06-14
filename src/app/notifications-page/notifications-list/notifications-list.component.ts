@@ -224,7 +224,7 @@ export class NotificationsListComponent implements OnInit {
         }
         result.action = `${actorName} gave <b>${cctMeta.DiamondLevel.toString()} diamond${
           cctMeta.DiamondLevel > 1 ? "s" : ""
-        }</b> ${postText}`;
+        }</b> (~${this.globalVars.getUSDForDiamond(cctMeta.DiamondLevel)}) ${postText}`;
       } else {
         result.icon = "fas fa-paper-plane fc-blue";
         result.action = `${actorName} sent you <b>${this.globalVars.nanosToBitClout(

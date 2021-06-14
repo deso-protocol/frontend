@@ -131,7 +131,7 @@
                 class="icon-diamond fs-25px d-block"
                 [ngStyle]="{ color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555' }"
               ></i>
-              <div class="d-block fc-muted fs-12px" style="text-align: center">{{ getUSDForDiamond(index + 1) }}</div>
+              <div class="d-block fc-muted fs-12px" style="text-align: center">{{ globalVars.getUSDForDiamond(index + 1) }}</div>
             </div>
           </ng-template>
         </div>
