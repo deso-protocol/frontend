@@ -108,12 +108,16 @@ import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-pa
 import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamond-posts.component";
 import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
+import { AvatarDirective } from "./avatar/avatar.directive";
+import { TrendsPageComponent } from "./trends-page/trends-page.component";
+import { TrendsComponent } from "./trends-page/trends/trends.component";
 
-// Dark and Light Theme
+// Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 const lightTheme: Theme = { name: "lightTheme", properties: { "--none": "" } };
 const darkTheme: Theme = { name: "darkTheme", properties: { "--none": "" } };
+const icydarkTheme: Theme = { name: "icydarkTheme", properties: { "--none": "" } };
 
 @NgModule({
   declarations: [
@@ -204,6 +208,9 @@ const darkTheme: Theme = { name: "darkTheme", properties: { "--none": "" } };
     DiamondPostsPageComponent,
     DiamondPostsComponent,
     CountdownTimerComponent,
+    AvatarDirective,
+    TrendsPageComponent,
+    TrendsComponent,
   ],
   imports: [
     BrowserModule,
@@ -225,7 +232,7 @@ const darkTheme: Theme = { name: "darkTheme", properties: { "--none": "" } };
     RatingModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [darkTheme, lightTheme],
+      themes: [lightTheme, darkTheme, icydarkTheme],
       active:
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),

@@ -42,7 +42,7 @@
       >
         <div
           class="creator-profile-details__hodler-avatar mr-10px"
-          [style.background-image]="'url(' + row.ProfileEntryResponse.ProfilePic + ')'"
+          [avatar]="row.ProfileEntryResponse.PublicKeyBase58Check"
         ></div>
         <div class="d-flex flex-column">
           <div class="d-flex align-items-center">

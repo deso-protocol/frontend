@@ -18,25 +18,20 @@ export class SettingsComponent implements OnInit {
   updatingSettings = false;
   showSuccessMessage = false;
   successMessageTimeout: any;
-  whichTheme =
-    localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
 
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
-    private themeService: ThemeService
+    public themeService: ThemeService
   ) {}
-
-  selectedTheme: string = "";
 
   selectChangeHandler(event: any) {
     //update the ui
-    this.selectedTheme = event.target.value || "dark";
-    document.querySelector("[app-theme]").className = "main global__container"; // clear theme class
-    document.querySelector("[app-theme]").classList.add(this.selectedTheme); // add theme class
-    localStorage.setItem("theme", this.selectedTheme);
-    // moved inline styles to styles.scss
+    const selectedTheme = event.target.value;
+
+    this.themeService.setTheme(selectedTheme);
+    localStorage.setItem("theme", selectedTheme);
   }
 
   ngOnInit() {

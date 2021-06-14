@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { PostEntryResponse, User } from "./backend-api.service";
+import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
@@ -30,7 +30,12 @@ export class GlobalVarsService {
     private sanitizer: DomSanitizer,
     private identityService: IdentityService,
     private router: Router
-  ) {}
+  ) {
+    this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
+    setInterval(() => {
+      this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
+    }, 1000);
+  }
 
   static MAX_POST_LENGTH = 280;
 
@@ -64,7 +69,7 @@ export class GlobalVarsService {
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
 
-  // Whether or not to show processig spinners in the UI for unmined transactions.
+  // Whether or not to show processing spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
@@ -94,8 +99,7 @@ export class GlobalVarsService {
   filterType = "";
   // The coin balance and user profiles of the coins the the user
   // hodls and the users who hodl him.
-  youHodlMap = {};
-  hodlYouMap = {};
+  youHodlMap: { [k: string]: BalanceEntryResponse } = {};
 
   // Map of diamond level to bitclout nanos.
   diamondLevelMap = {};
@@ -158,8 +162,16 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
+  deflationBombTimerEnd = new Date("June 12, 2021 9:00:00 PDT").getTime();
+  announcementTimerEnd = new Date("June 15, 2021 3:00:00 PDT").getTime();
+
   // This controls the default text of the countdown timer component.
-  timerText: string = "Deflation Bomb:";
+  deflationBombTimerText = "Deflation Bomb:";
+  announcementTimerText = "Big Announcement:";
+
+  profileUpdateTimestamp: number;
+
+  pastDeflationBomb: boolean;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -269,9 +281,6 @@ export class GlobalVarsService {
       for (const entry of this.loggedInUser?.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
-      for (const entry of this.loggedInUser?.UsersWhoHODLYou || []) {
-        this.hodlYouMap[entry.HODLerPublicKeyBase58Check] = entry;
-      }
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
@@ -291,6 +300,15 @@ export class GlobalVarsService {
 
   networkName(): string {
     return this.isTestnet ? "testnet" : "mainnet";
+  }
+
+  getUSDForDiamond(index: number): string {
+    const bitcloutNanos = this.diamondLevelMap[index];
+    const val = this.nanosToUSDNumber(bitcloutNanos);
+    if (val < 1) {
+      return this.formatUSD(val, 2);
+    }
+    return this.abbreviateNumber(val, 0, true);
   }
 
   nanosToBitClout(nanos: number, maximumFractionDigits?: number): string {
@@ -573,7 +591,7 @@ export class GlobalVarsService {
     });
   }
 
-  celebrate(dropDiamonds: boolean = false) {
+  celebrate(dropDiamonds: boolean = false, dropBomb: boolean = false) {
     const canvasID = "my-canvas-" + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
@@ -588,6 +606,10 @@ export class GlobalVarsService {
     };
     if (dropDiamonds) {
       confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 10 }];
+      confettiSettings.max = 200;
+      confettiSettings.clock = 150;
+    } else if (dropBomb) {
+      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/bomb.svg", size: 10 }];
       confettiSettings.max = 200;
       confettiSettings.clock = 150;
     }

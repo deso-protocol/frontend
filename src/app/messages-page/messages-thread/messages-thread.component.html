@@ -12,16 +12,7 @@
       globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] === true
   }"
 >
-  <div
-    class="messages-thread__avatar"
-    [style.background-image]="
-      'url(' +
-      (thread.ProfileEntryResponse && thread.ProfileEntryResponse.ProfilePic
-        ? thread.ProfileEntryResponse.ProfilePic
-        : '/assets/img/default_profile_pic.png') +
-      ')'
-    "
-  ></div>
+  <div class="messages-thread__avatar" [avatar]="thread.PublicKeyBase58Check"></div>
   <!-- The CSS styles / classes get pretty dense here. Sorry! -->
   <div class="flex-grow-1 fs-15px ml-15px" style="overflow: hidden">
     <div class="d-flex align-items-center" style="overflow: hidden; white-space: pre">

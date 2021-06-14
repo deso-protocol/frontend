@@ -6,42 +6,11 @@ $info: #689eff;
 $feed-border-radius: 12px;
 
 @import 'variables.scss';
+@import 'app/theme/themes/index';
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
 
 // regular style toast
 @import '~ngx-toastr/toastr';
-
-// theme overrides 
-// TODO: move to folder import, one theme per file (just add file)
-.dark[app-theme] {
-	--background:#121212;
-	--text:#EFF3F8;
-	--grey:#999;
-	--secondary:#202020;
-	--secalt:#111;
-	--textalt:#eee;
-	--norm:#eee;
-	--formbg:#111;
-	--link:#4DA3FF;
-	--hover:#72b6ff;
-	--border:#484848;
-	--unread:#1a293f;
-	--filter:invert(98%) sepia(1%) saturate(264%) hue-rotate(181deg) brightness(116%) contrast(100%);
-}
-.light[app-theme] {
-	--background:#fff; 
-	--text:#333333; 
-	--grey:#555555; 
-	--secondary:#f8f8f8; 
-	--secalt:#eee; 
-	--textalt:#777; 
-	--norm:#222; 
-	--formbg:#FFFFFF; 
-	--link:#007BFF; 
-	--hover:#0056b3; 
-	--border:#E5E5E5; 
-	--unread:#e7effe;
-}
 
 // New themeing class
 .main {
@@ -105,6 +74,57 @@ pre, code{
     white-space:normal;
 }
 
+.countdown-timer {
+  text-align: center;
+  color: #252B37;
+  animation: textColor 4s ease infinite;
+
+  @keyframes textColor {
+    0% {
+    color: #d6b6fc;
+    }
+    50% {
+      color: #0fffc1;
+    }
+    100% {
+      color: #d6b6fc;
+    }
+  }
+}
+
+.countdown-timer-emoji-left {
+  animation: leftToRight 4s linear infinite;
+
+  @keyframes leftToRight {
+      0% {
+        margin-left: 0px;
+      }
+      50% {
+        margin-left: 40px;
+      }
+      100% {
+        margin-left: 0px;
+      }
+  }
+}
+
+.countdown-timer-emoji-right {
+  animation: rightToLeft 4s linear infinite;
+
+  @keyframes rightToLeft {
+    0% {
+      margin-right: 0px;
+    }
+    50% {
+      margin-right: 40px;
+    }
+    100% {
+      margin-right: 0px;
+    }
+  }
+}
+
+
 //
 // v0 styles (start)
 //
@@ -166,6 +186,8 @@ $green-font-color: #19B028;
 .text-greyE5 { color: #E5E5E5 } // mocks call this G3
 .text-greyF5 { color: #F5F5F5 } // mocks call this G4
 
+
+.text-grey-loading { color: var(--loading) }
 // Set toast-info to use system blue
 .toast-info { background-color: $buy-button-blue}
 
@@ -191,9 +213,9 @@ $green-font-color: #19B028;
 // Custom font classes.
 .fc-default { color: var(--norm); }
 .fc-muted { color: var(--textalt); }
-.fc-blue { color: $buy-button-blue; }
-.fc-red { color: $red-font-color; }
-.fc-green { color: $green-font-color; }
+.fc-blue { color: var(--cblue); }
+.fc-red { color: var(--cred); }
+.fc-green { color: var(--cgreen); }
 
 .fs-1 { font-size: 2.5rem }
 .fs-2 { font-size: 2rem }
@@ -431,10 +453,38 @@ $green-font-color: #19B028;
 }
 
 .diamond-popover-container-mobile {
-  max-width: 100% !important;
   width: auto;
-  margin-right: 10px;
-  margin-left: 10px;
+}
+
+.diamond-popover-light {
+  background-color: #FFFFFF;
+  border-color: #E5E5E5;
+}
+
+.diamond-popover-light .arrow::after, .diamond-popover-light .arrow::before {
+  border-top-color: #FFFFFF;
+}
+
+.diamond-popover-dark {
+  background-color: #111;
+  border-color: #484848;
+}
+
+.diamond-popover-dark .arrow::after, .diamond-popover-dark .arrow::before {
+  border-top-color: #111;
+}
+
+.diamond-popover-icydark {
+  background-color: #111b26;
+  border-color: #38444D;
+}
+
+.diamond-popover-icydark .arrow::after, .diamond-popover-icydark .arrow::before {
+  border-top-color: #111b26;
+}
+
+#diamond-popover {
+  color: var(--text)
 }
 
 .fixed-top-bar {
@@ -843,7 +893,7 @@ $green-font-color: #19B028;
   font-size: 19px;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
-  background-color: var(--background);
+  background-color: var(--formbg);
   border-color: var(--border);
   border-right-color: rgba(0,0,0,0);
 }
@@ -954,10 +1004,10 @@ $green-font-color: #19B028;
 
 .feed-post__dropdown-menu-item {
   background-color: var(--secondary);
-  color: var(--text);
+  color: var(--gray);
   &:hover {
     background-color: var(--secalt);
-    color: var(--text);
+    color: var(--gray);
   }
 }
 
@@ -1101,7 +1151,7 @@ $green-font-color: #19B028;
 }
 
 .creator-profile__top-bar {
-  background-color: #2E2E2E;
+  background-color: var(--topbar);
   @media (max-width: 992px) {
     height: 100px;
     min-height: 100px;
@@ -1398,6 +1448,9 @@ $green-font-color: #19B028;
    height: 28px;
    width: 28px;
    border-radius: 3px;
+   background-size: cover;
+   background-repeat: no-repeat;
+   background-position: center center;
 }
 
 .notifications__action {
@@ -1429,6 +1482,10 @@ $green-font-color: #19B028;
   background-repeat: no-repeat;
   background-position: center center;
   text-indent: -9999px;
+
+  @media (max-width: 992px) {
+    flex: 0 0 100px;
+  }
 }
 
 .landing__nav-link {
@@ -1746,6 +1803,11 @@ $green-font-color: #19B028;
   color: var(--text) !important;
   background: var(--formbg) !important;
   border-color: var(--border) !important;
+  outline: none;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  background-clip: padding-box;
 }
 .normal-text {
   color: $text-color;
@@ -2047,27 +2109,10 @@ input {
   border-color: var(--mborder) !important;
 }
 
-.darkmodal {
-  background-color:#202020;
-  color: #FFF;
-  border: 1px solid #484848;
-  background-clip: padding-box;
-  opacity: 1;
-  flex-direction: column;
-  width: 100%;
-  display: flex;
-  border-top-left-radius: 0.3rem;
-  border-top-right-radius: 0.3rem;
-  border-bottom-right-radius: 0.3rem;
-  border-bottom-left-radius: 0.3rem;
-  outline: 0;
-  position: relative;
-}
-
-.lightmodal {
-  background-color:#f8f8f8;
-  color: #333;
-  border: 1px solid #E5E5E5;
+.comment-modal {
+  color: var(--text);
+  border: 1px solid var(--mborder);
+  background-color: var(--secondary);
   background-clip: padding-box;
   opacity: 1;
   flex-direction: column;
@@ -2118,4 +2163,33 @@ input {
   padding: 1rem 1rem;
   border-top-left-radius: calc(.3rem - 1px);
   border-top-right-radius: calc(.3rem - 1px);
+}
+
+[class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {
+  color: var(--text);
+}
+
+.mat-option, option {
+  background-color: var(--formbg);
+  color: var(--text);
+}
+
+.mat-option:hover:not(.mat-option-disabled), .mat-option:focus:not(.mat-option-disabled) {
+  background-color: var(--secondary);
+}
+
+.mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
+  background-color: var(--unread);
+}
+
+.mat-form-field-appearance-fill .mat-form-field-underline::before {
+  background-color: var(--border);
+}
+
+.mat-form-field-ripple {
+  background-color: var(--link);
+}
+
+.mat-form-field.mat-focused .mat-form-field-ripple {
+  background-color: var(--hover);
 }
