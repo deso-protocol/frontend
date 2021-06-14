@@ -749,10 +749,10 @@ export class BackendApiService {
       responseType: "blob",
     });
   }
-  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback: string = "", bustCache: string = ""): string {
+  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback, bustCache: string = ""): string {
     return this._makeRequestURL(
       endpoint,
-      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + fallback + bustCache
+      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + "?" + fallback + bustCache
     );
   }
   GetDefaultProfilePictureURL(endpoint: string): string {

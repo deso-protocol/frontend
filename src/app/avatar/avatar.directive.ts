@@ -13,7 +13,7 @@ export class AvatarDirective implements OnChanges {
 
   setAvatar() {
     // The fallback route is the route to the pic we use if we can't find an avatar for the user.
-    let fallbackRoute = `?fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
+    let fallbackRoute = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
 
     // If fetching the avatar for the current user, use the last timestamp of profile update to bust
     // the cache so we get the updated avatar.
