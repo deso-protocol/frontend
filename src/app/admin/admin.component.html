@@ -27,25 +27,33 @@
     ></tab-selector>
     <div
       *ngIf="activePostTab == POSTS_BY_CLOUT_TAB"
-      class="w-100 justify-content-sm-around px-15px py-5px fs-15px border-bottom border-color-grey d-block"
+      class="w-100 px-15px py-5px fs-15px border-bottom border-color-grey d-flex"
+      style="justify-content: flex-start; align-items: center;"
     >
-      <mat-form-field appearance="fill" class="pb-0">
-        <mat-label for="time-window" class="pr-10px mb-0" style="height: auto; vertical-align: middle">
-          Time Window:
-        </mat-label>
-        <mat-select id="time-window" style="height: auto; vertical-align: middle" [(value)]="selectedTimeWindow">
-          <mat-option *ngFor="let timeWindow of timeWindowOptions | keyvalue" [value]="timeWindow.value">
-            {{ timeWindow.key }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <a
-        class="btn btn-primary"
-        style="vertical-align: middle; float: right; text-align: center"
-        (click)="_searchPostsByClout()"
-      >
-        Search
-      </a>
+      <div>
+        <mat-form-field appearance="fill" class="pb-0" app-theme>
+          <mat-label for="time-window" class="pr-10px mb-0" style="height: auto; vertical-align: middle;">
+            Time Window:
+          </mat-label>
+          <mat-select id="time-window" style="height: auto; vertical-align: middle;" [(value)]="selectedTimeWindow">
+            <mat-option app-theme
+                        *ngFor="let timeWindow of timeWindowOptions | keyvalue"
+                        [value]="timeWindow.value">
+              {{ timeWindow.key }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="p-15px">
+        <a
+          class="btn btn-primary"
+          style="vertical-align: middle; float: right; text-align: center;"
+          (click)="_searchPostsByClout()"
+        >
+          Search
+        </a>
+      </div>
+
     </div>
     <simple-center-loader *ngIf="searchingForPostsByClout; else showPosts"></simple-center-loader>
     <ng-template #showPosts>

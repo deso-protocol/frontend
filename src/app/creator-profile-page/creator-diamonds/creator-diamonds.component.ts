@@ -1,12 +1,8 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import {
-  BackendApiService,
-  ProfileEntryResponse,
-  BalanceEntryResponse,
-  PostEntryResponse,
-} from "../../backend-api.service";
-import * as _ from "lodash";
+import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
+import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "creator-diamonds",
@@ -25,6 +21,8 @@ export class CreatorDiamondsComponent implements OnInit {
   showDiamondsGiven = false;
   activeTab = CreatorDiamondsComponent.RECEIVED;
   CreatorDiamondsComponent = CreatorDiamondsComponent;
+  datasource: IDatasource<IAdapter<any>> = this.getDatasource();
+  loadingNewSelection = false;
 
   constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
     this.globalVars = _globalVars;
@@ -34,13 +32,16 @@ export class CreatorDiamondsComponent implements OnInit {
     this.fetchDiamonds();
   }
 
-  fetchDiamonds(): void {
+  fetchDiamonds(): Subscription {
     this.isLoading = true;
-    this.backendApi
+    return this.backendApi
       .GetDiamondsForPublicKey(this.globalVars.localNode, this.profile.PublicKeyBase58Check, this.showDiamondsGiven)
       .subscribe(
         (res) => {
           this.diamondSummaryList = res.DiamondSenderSummaryResponses;
+          if (this.diamondSummaryList.length) {
+            this.diamondSummaryList.push({ totalRow: true });
+          }
           this.totalDiamonds = res.TotalDiamonds;
         },
         (err) => {
@@ -55,26 +56,12 @@ export class CreatorDiamondsComponent implements OnInit {
     return Array(num);
   }
 
-  getNoDiamondsMessage() {
-    return this.showDiamondsGiven
-      ? `@${this.profile.Username} has not given any diamonds yet.`
-      : `@${this.profile.Username} has not received any diamonds yet.`;
-  }
-
-  getDiamondPostsLink(row): string[] {
-    return [
-      "/" + this.globalVars.RouteNames.USER_PREFIX,
-      this.showDiamondsGiven ? row.ProfileEntryResponse.Username : this.profile.Username,
-      this.globalVars.RouteNames.DIAMONDS,
-      this.showDiamondsGiven ? this.profile.Username : row.ProfileEntryResponse.Username,
-    ];
-  }
-
   onChange(event): void {
     if (this.activeTab !== event) {
       this.activeTab = event;
       this.showDiamondsGiven = this.activeTab === CreatorDiamondsComponent.GIVEN;
-      this.fetchDiamonds();
+      this.loadingNewSelection = true;
+      this.fetchDiamonds().add(() => this.datasource.adapter.reset().then(() => (this.loadingNewSelection = false)));
     }
   }
 
@@ -88,5 +75,32 @@ export class CreatorDiamondsComponent implements OnInit {
       }
     });
     return this.globalVars.nanosToUSDNumber(total);
+  }
+
+  getDatasource(): IDatasource<IAdapter<any>> {
+    return new Datasource<IAdapter>({
+      get: (index, count, success) => {
+        const startIdx = Math.max(index, 0);
+        const endIdx = index + count - 1;
+        if (startIdx > endIdx) {
+          success([]);
+          return;
+        }
+        if (endIdx + 1 > this.diamondSummaryList.length) {
+          success(this.diamondSummaryList.slice(startIdx, this.diamondSummaryList.length));
+          return;
+        }
+        success(this.diamondSummaryList.slice(startIdx, endIdx + 1));
+        return;
+      },
+      settings: {
+        startIndex: 0,
+        minIndex: 0,
+        bufferSize: 5,
+        padding: 0.5,
+        windowViewport: true,
+        infinite: true,
+      },
+    });
   }
 }

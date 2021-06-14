@@ -13,8 +13,10 @@ import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
-import { CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse } from "../lib/services/pulse/pulse-service";
+import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
+import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
+import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
@@ -29,7 +31,8 @@ export class GlobalVarsService {
     private backendApi: BackendApiService,
     private sanitizer: DomSanitizer,
     private identityService: IdentityService,
-    private router: Router
+    private router: Router,
+    private httpClient: HttpClient
   ) {
     this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
     setInterval(() => {
@@ -300,6 +303,15 @@ export class GlobalVarsService {
 
   networkName(): string {
     return this.isTestnet ? "testnet" : "mainnet";
+  }
+
+  getUSDForDiamond(index: number): string {
+    const bitcloutNanos = this.diamondLevelMap[index];
+    const val = this.nanosToUSDNumber(bitcloutNanos);
+    if (val < 1) {
+      return this.formatUSD(val, 2);
+    }
+    return this.abbreviateNumber(val, 0, true);
   }
 
   nanosToBitClout(nanos: number, maximumFractionDigits?: number): string {
@@ -739,5 +751,57 @@ export class GlobalVarsService {
       this.feeRateBitCloutPerKB = this.defaultFeeRateNanosPerKB / 1e9;
       return true;
     });
+  }
+
+  updateLeaderboard(forceRefresh: boolean = false): void {
+    const pulseService = new PulseService(this.httpClient, this.backendApi, this);
+
+    if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
+      pulseService.getBitCloutLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+    }
+    if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
+      pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
+    }
+
+    if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
+      const bithuntService = new BithuntService(this.httpClient, this.backendApi, this);
+      bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
+        this.allCommunityProjectsLeaderboard = res;
+        this.topCommunityProjectsLeaderboard = this.allCommunityProjectsLeaderboard.slice(0, 10);
+      });
+    }
+
+    if (this.topCreatorsAllTimeLeaderboard.length === 0 || forceRefresh) {
+      const readerPubKey = this.loggedInUser?.PublicKeyBase58Check ?? "";
+      this.backendApi
+        .GetProfiles(
+          this.localNode,
+          null /*PublicKeyBase58Check*/,
+          null /*Username*/,
+          null /*UsernamePrefix*/,
+          null /*Description*/,
+          BackendApiService.GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE /*Order by*/,
+          10 /*NumEntriesToReturn*/,
+          readerPubKey /*ReaderPublicKeyBase58Check*/,
+          "leaderboard" /*ModerationType*/,
+          false /*FetchUsersThatHODL*/,
+          false /*AddGlobalFeedBool*/
+        )
+        .subscribe(
+          (response) => {
+            this.topCreatorsAllTimeLeaderboard = response.ProfilesFound.slice(
+              0,
+              RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES
+            ).map((profile) => {
+              return {
+                Profile: profile,
+              };
+            });
+          },
+          (err) => {
+            console.error(err);
+          }
+        );
+    }
   }
 }
