@@ -27,11 +27,11 @@ export class AvatarDirective implements OnChanges {
     let profPicURL = _.escape(this.backendApi.GetSingleProfilePictureURL(
       this.globalVars.localNode,
       this.avatar,
-      cacheBuster
+      fallbackRoute
     ))
 
     // Set the URL on the element.
-    this.el.nativeElement.style.backgroundImage = `url(${profPicURL})`;
+    this.el.nativeElement.style.backgroundImage = `url(${profPicURL + cacheBuster})`;
   }
 
   ngOnChanges(changes: any) {
