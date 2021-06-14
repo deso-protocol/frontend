@@ -115,7 +115,8 @@ export class TrendsComponent implements OnInit {
       settings: {
         startIndex: 0,
         minIndex: 0,
-        bufferSize: 10,
+        bufferSize: 5,
+        padding: 0.25,
         windowViewport: true,
         infinite: true,
       },
