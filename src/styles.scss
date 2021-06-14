@@ -185,6 +185,8 @@ $green-font-color: #19B028;
 .text-greyE5 { color: #E5E5E5 } // mocks call this G3
 .text-greyF5 { color: #F5F5F5 } // mocks call this G4
 
+
+.text-grey-loading { color: var(--loading) }
 // Set toast-info to use system blue
 .toast-info { background-color: $buy-button-blue}
 

@@ -9,7 +9,7 @@ import { RouteNames } from "../../app-routing.module";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
-import {ThemeService} from "../../theme/theme.service";
+import { ThemeService } from "../../theme/theme.service";
 
 @Component({
   selector: "feed-post-icon-row",
