@@ -13,9 +13,9 @@ class Messages {
   static SEND_BITCLOUT_MIN = `You must send a non-zero amount of BitClout`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
   static CONFIRM_TRANSFER_TO_PUBKEY =
-    "Send %s $BitClout with a fee of %s BitClout for a total of %s BitClout to public key %s";
+    "Send %s $CLOUT with a fee of %s BitClout for a total of %s BitClout to public key %s";
   static CONFIRM_TRANSFER_TO_USERNAME =
-    "Send %s $BitClout with a fee of %s BitClout for a total of %s BitClout to username %s";
+    "Send %s $CLOUT with a fee of %s BitClout for a total of %s BitClout to username %s";
 }
 
 @Component({
@@ -44,7 +44,7 @@ export class TransferBitcloutComponent implements OnInit {
 
   ngOnInit() {
     this.feeRateBitCloutPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
-    this.titleService.setTitle("Send $BitClout - BitClout");
+    this.titleService.setTitle("Send $CLOUT - BitClout");
   }
 
   _clickMaxBitClout() {
@@ -85,7 +85,7 @@ export class TransferBitcloutComponent implements OnInit {
     }
 
     if (this.payToPublicKey == null || this.payToPublicKey === "") {
-      this.globalVars._alertError("A valid pay-to public key or username must be set before you can send $BitClout");
+      this.globalVars._alertError("A valid pay-to public key or username must be set before you can send $CLOUT");
       return;
     }
 
