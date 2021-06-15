@@ -41,6 +41,12 @@ export class FeedPostIconRowComponent {
   // Threshold above which user must confirm before sending diamonds
   static DiamondWarningThreshold = 3;
 
+  // Boolean for animation on whether a heart is clicked or not
+  clicklike = false;
+
+  // Boolean for animation on whether a diamond is clicked or not
+  clickDiamond = false;
+
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,

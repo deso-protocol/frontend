@@ -77,9 +77,11 @@
   >
     <i
       [ngClass]="{
+        'is_animating': clicklike,
         'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
         'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
       }"
+      (click)="clicklike = !clicklike"
       class="feed-post-icon-row__icon"
     ></i>
     {{ postContent.LikeCount }}
@@ -143,7 +145,7 @@
   </ng-template>
   <div
     class="cursor-pointer d-flex align-items-center"
-    [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
+    [ngClass]="{'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
   >
     <i
       [popover]="popTemplate"
@@ -156,6 +158,8 @@
       class="icon-diamond feed-post-icon-row__icon p-2px"
       style="font-size: 20px !important; padding-right: 5px"
       (click)="diamondClickHandler($event)"
+      (click)="clickDiamond = !clickDiamond"
+      [ngClass]="{'is_animating_ice': clickDiamond}"
     ></i>
     {{ postContent.DiamondCount }}
   </div>
