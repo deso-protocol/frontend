@@ -2212,6 +2212,12 @@ input {
   border: var(--mborder);
 }
 
+.interaction-detail {
+  &:hover, &:active, &:focus {
+    text-decoration: inherit; // I prefer no underline when you hover over links
+    color: var(--grey);
+  }
+}
 
 [class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {
   color: var(--text);
