@@ -210,6 +210,8 @@ $green-font-color: #19B028;
 .w-90 { width: 90% }
 .w-100 { width: 100% }
 
+.max-width-420px { max-width: 420px }
+
 // Custom font classes.
 .fc-default { color: var(--norm); }
 .fc-muted { color: var(--textalt); }
@@ -221,6 +223,8 @@ $green-font-color: #19B028;
 .fs-2 { font-size: 2rem }
 .fs-3 { font-size: 1.75rem }
 
+.fs-35px { font-size: 35px; }
+.fs-32px { font-size: 32px; }
 .fs-25px { font-size: 25px; }
 .fs-24px { font-size: 24px; }
 .fs-22px { font-size: 22px; }
@@ -481,6 +485,14 @@ $green-font-color: #19B028;
 
 .diamond-popover-icydark .arrow::after, .diamond-popover-icydark .arrow::before {
   border-top-color: #111b26;
+}
+
+.diamond-popover-legends {
+  background-color: #14110e;
+  border-color: #382418;
+}
+.diamond-popover-legends .arrow::after, .diamond-popover-legends .arrow::before {
+  border-top-color: #14110e;
 }
 
 #diamond-popover {
@@ -947,6 +959,16 @@ $green-font-color: #19B028;
 .post-thread__container {
   display: flex;
   flex-flow: column;
+}
+
+.interaction-modal__header {
+  height: 25px;
+}
+
+.interaction-modal__close-button {
+  margin: 0;
+  padding: 0;
+  float: none;
 }
 
 .feed-create-comment-form__reply-container {
@@ -1685,6 +1707,26 @@ $green-font-color: #19B028;
 
 
 //
+// Simple profile card (for likes, reclouts, diamonds modal)
+//
+
+.simple-profile-card__avatar {
+  display: block;
+  height: 50px;
+  width: 50px;
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.simple-profile-card__avatar-container {
+  width: 56px; // TODO: figure out why chrome doesn't render this as 50px
+  margin-right: 15px;
+}
+
+
+//
 // (end) v0 styles
 //
 
@@ -2073,34 +2115,28 @@ input {
 
 @keyframes pulse-red {
   0% {
-    transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
   }
 
   70% {
-    transform: scale(1);
     box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
   }
 
   100% {
-    transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
   }
 }
 
 @keyframes pulse-blue {
   0% {
-    transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(52, 172, 224, 0.7);
   }
 
   70% {
-    transform: scale(1);
     box-shadow: 0 0 0 10px rgba(52, 172, 224, 0);
   }
 
   100% {
-    transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(52, 172, 224, 0);
   }
 }
@@ -2163,6 +2199,19 @@ input {
   padding: 1rem 1rem;
   border-top-left-radius: calc(.3rem - 1px);
   border-top-right-radius: calc(.3rem - 1px);
+}
+
+.likes-modal-container, .quote-reclouts-modal-container, .reclouts-modal-container, .diamonds-modal-container {
+  background-color: var(--background);
+  color: var(--text);
+  border: var(--mborder);
+}
+
+.interaction-detail {
+  &:hover, &:active, &:focus {
+    text-decoration: inherit; // I prefer no underline when you hover over links
+    color: var(--grey);
+  }
 }
 
 [class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {

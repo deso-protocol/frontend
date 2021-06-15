@@ -70,12 +70,7 @@ export class TrendsComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.globalVars.allCommunityProjectsLeaderboard.length === 0) {
-      this.bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
-        this.globalVars.allCommunityProjectsLeaderboard = res;
-        this.globalVars.topCommunityProjectsLeaderboard = this.globalVars.allCommunityProjectsLeaderboard.slice(0, 10);
-      });
-    }
+    this.globalVars.updateLeaderboard(true);
   }
 
   datasource: IDatasource<IAdapter<any>> = this.getDatasource();
@@ -115,7 +110,8 @@ export class TrendsComponent implements OnInit {
       settings: {
         startIndex: 0,
         minIndex: 0,
-        bufferSize: 10,
+        bufferSize: 5,
+        padding: 0.25,
         windowViewport: true,
         infinite: true,
       },
@@ -130,7 +126,6 @@ export class TrendsComponent implements OnInit {
         .toPromise()
         .then(
           (res) => {
-            // this.pagedKeys[page + 1] = ;
             if (res.length < TrendsComponent.PAGE_SIZE) {
               this.lastPageByTab[this.activeTab] = page;
               this.lastPage = page;

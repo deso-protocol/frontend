@@ -6,7 +6,7 @@ export const ACTIVE_THEME = new InjectionToken("ACTIVE_THEME");
 export interface Theme {
   key: string;
   name: string;
-  properties: {
+  properties?: {
     "--background": string;
     "--text": string;
     "--grey": string;

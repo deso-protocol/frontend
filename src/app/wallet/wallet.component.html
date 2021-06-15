@@ -5,6 +5,7 @@
   >
     <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
     Wallet
+    <div style="margin-left:15px;">≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }} <small>USD Total</small></div>
   </div>
 
   <div class="global__top-bar__height"></div>
@@ -12,11 +13,11 @@
   <div class="d-flex flex-column" *ngIf="globalVars.loggedInUser">
     <div style="flex-grow: 1">
       <div class="global__mobile-scrollable-section">
-        <!-- $BitClout Divider Bar -->
+        <!-- $CLOUT Divider Bar -->
         <div
           class="d-flex align-items-center justify-content-between fs-18px font-weight-bold p-15px holdings__divider border-bottom border-color-grey"
         >
-          <div>$BitClout</div>
+          <div>$CLOUT</div>
           <div class="fs-15px" style="margin-top: 2px">
             <a
               *ngIf="globalVars.loggedInUser"
@@ -32,14 +33,14 @@
           </div>
         </div>
 
-        <!-- $BitClout Holdings -->
+        <!-- $CLOUT Holdings -->
         <!-- Override .container's max-width property with max-width: inherit-->
         <div class="container fs-15px p-15px border-bottom border-color-grey" style="max-width: inherit">
           <div class="row pt-5px">
             <div class="col-3 font-weight-bold">Balance</div>
             <div class="col-9">
               <div>
-                {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos, 9) }}
+                {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos, 9) }} $CLOUT
                 <i
                   *ngIf="globalVars.loggedInUser.UnminedBalanceNanos != 0 && globalVars.showProcessingSpinners"
                   class="fa fa-spinner fc-muted"
@@ -69,10 +70,13 @@
         <div
           class="d-flex align-items-center justify-content-between fs-18px p-15px holdings__divider border-bottom border-color-grey"
         >
-          <div class="font-weight-bold">Creator Coins</div>
+          <div class="font-weight-bold">Creator Coins  <span style="font-size:13px;">({{ this.globalVars.loggedInUser.UsersYouHODL.length }} Held)</span>
+          </div>
           <div class="fs-14px">
             <span class="font-weight-bold">≈ {{ globalVars.nanosToUSD(totalValue(), 2) }}</span>
-            USD Value
+            USD<br>
+            <span class="font-weight-bold" style="font-size:13px;">≈ {{ globalVars.nanosToBitClout(totalValue(), 4) }}</span>
+            $CLOUT
           </div>
         </div>
 

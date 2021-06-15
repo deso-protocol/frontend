@@ -18,17 +18,19 @@ export class AvatarDirective implements OnChanges {
     // If fetching the avatar for the current user, use the last timestamp of profile update to bust
     // the cache so we get the updated avatar.
     let cacheBuster = "";
-    if(this.avatar === this.globalVars.loggedInUser.PublicKeyBase58Check && this.globalVars.profileUpdateTimestamp) {
+    if (
+      this.globalVars.loggedInUser &&
+      this.avatar === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+      this.globalVars.profileUpdateTimestamp
+    ) {
       cacheBuster = `&${this.globalVars.profileUpdateTimestamp}`;
     }
 
     // Although it would be hard for an attacker to inject a malformed public key into the app,
     // we do a basic _.escape anyways just to be extra safe.
-    let profPicURL = _.escape(this.backendApi.GetSingleProfilePictureURL(
-      this.globalVars.localNode,
-      this.avatar,
-      fallbackRoute
-    ))
+    const profPicURL = _.escape(
+      this.backendApi.GetSingleProfilePictureURL(this.globalVars.localNode, this.avatar, fallbackRoute)
+    );
 
     // Set the URL on the element.
     this.el.nativeElement.style.backgroundImage = `url(${profPicURL + cacheBuster})`;
