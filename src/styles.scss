@@ -486,11 +486,11 @@ $green-font-color: #19B028;
   border-top-color: #111b26;
 }
 
-.diamond-popover-legends {  
-  background-color: #14110e;  
+.diamond-popover-legends {
+  background-color: #14110e;
   border-color: #382418;
 }
-.diamond-popover-legends .arrow::after, .diamond-popover-legends .arrow::before {  
+.diamond-popover-legends .arrow::after, .diamond-popover-legends .arrow::before {
   border-top-color: #14110e;
 }
 
@@ -2204,6 +2204,12 @@ input {
   padding: 1rem 1rem;
   border-top-left-radius: calc(.3rem - 1px);
   border-top-right-radius: calc(.3rem - 1px);
+}
+
+.likes-modal-container, .quote-reclouts-modal-container, .reclouts-modal-container, .diamonds-modal-container {
+  background-color: var(--background);
+  color: var(--text);
+  border: var(--mborder);
 }
 
 

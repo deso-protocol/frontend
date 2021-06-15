@@ -8,7 +8,7 @@
       <div class="simple-profile-card__avatar-container">
         <div
           class="simple-profile-card__avatar br-12px"
-          [style.background-image]="'url(' + profile.ProfilePic + ')'"
+          [avatar]="profile.PublicKeyBase58Check"
         ></div>
       </div>
       <div class="text-truncate holdings__name" style="font-size: 15px">
