@@ -1,7 +1,7 @@
 <script src="../../environments/environment.prod.ts"></script>
 <div class="w-100">
   <div class="container d-sm-none">
-    <div class="row d-flex justify-content-center landing__ticker">
+    <div class="row d-flex justify-content-center landing__ticker" *ngIf="!globalVars.hideTimer">
       <div class="input-group w-auto pb-5px">
         <div style="min-width: 260px !important;">
           <countdown-timer [borderRadiusSize]="10"></countdown-timer>
@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col landing__logo clout">BitClout</div>
       <div class="col d-flex justify-content-end align-items-center">
-        <div class="d-none d-sm-flex w-auto">
+        <div class="d-none d-sm-flex w-auto" *ngIf="!globalVars.hideTimer">
           <div style="min-width: 260px !important">
             <countdown-timer [borderRadiusSize]="10"></countdown-timer>
           </div>

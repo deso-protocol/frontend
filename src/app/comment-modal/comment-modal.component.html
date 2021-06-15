@@ -31,7 +31,7 @@
       class="fs-18px lh-18px br-12px form-control"
       style="border: 1px solid #777; width: 100%; padding: 10px"
       [(ngModel)]="postInput"
-      [placeholder]="isQuote ? 'Add a comment' : 'Add your quote'"
+      [placeholder]="!isQuote ? 'Add a comment' : 'Add your quote'"
       cdkTextareaAutosize
       cdkAutosizeMinRows="3"
       #autosize="cdkTextareaAutosize"

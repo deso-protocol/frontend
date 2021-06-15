@@ -4,7 +4,7 @@
 
   <div class="pt-10px"></div>
 
-  <div class="pb-10px">
+  <div class="pb-10px" *ngIf="!globalVars.hideTimer">
     <countdown-timer [borderRadiusSize]="12" [fontWeight]="700"></countdown-timer>
   </div>
 

@@ -1,6 +1,5 @@
 <div
-  class="js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between"
-  style="margin-top: 8px; max-width: 420px"
+  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px"
 >
   <!-- TODO: post threads: needs hover treatment-->
   <!--     [routerLink]="router.url"-->
@@ -11,7 +10,7 @@
     data-target=".js-feed-post-icon-row__comment-modal"
   >
     <i class="icon-reply feed-post-icon-row__icon"></i>
-    <span>{{ postContent.CommentCount }}</span>
+    <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
   </div>
 
   <div
@@ -67,7 +66,7 @@
         </a>
       </ng-template>
     </div>
-    {{ postContent.RecloutCount }}
+    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount }}</span>
   </div>
 
   <div
@@ -82,7 +81,7 @@
       }"
       class="feed-post-icon-row__icon"
     ></i>
-    {{ postContent.LikeCount }}
+    <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
   </div>
 
   <ng-template #popTemplate>
@@ -157,7 +156,7 @@
       style="font-size: 20px !important; padding-right: 5px"
       (click)="diamondClickHandler($event)"
     ></i>
-    {{ postContent.DiamondCount }}
+    <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
   </div>
 
   <div class="d-none d-lg-flex cursor-pointer align-items-center">
