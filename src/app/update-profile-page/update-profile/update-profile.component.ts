@@ -204,6 +204,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.globalVars.logEvent("profile : update : error", { parsedError, lowBalance });
         this.updateProfileBeingCalled = false;
         SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
           icon: "error",
           title: `An Error Occurred`,
           html: parsedError,

@@ -729,6 +729,7 @@ export class AdminComponent implements OnInit {
     const minimumNetworkFeeNanosPerKBMessage =
       minimumNetworkFeeNanosPerKB >= 0 ? `Minimum Network Fee Nanos Per KB: ${minimumNetworkFeeNanosPerKB}` : "";
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
       html: `${updateBitcoinMessage}${createProfileFeeNanosMessage}${minimumNetworkFeeNanosPerKBMessage}`,
       showConfirmButton: true,
@@ -827,6 +828,7 @@ export class AdminComponent implements OnInit {
 
   evictBitcoinExchangeTxns(dryRun: boolean) {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
       html: `About to evict ${this.evictBitcoinTxnHashes} with DryRun=${dryRun}`,
       showConfirmButton: true,
@@ -1014,6 +1016,7 @@ export class AdminComponent implements OnInit {
   updateUsername() {
     if (!this.searchedForPubKey) {
       return SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
         icon: "warning",
         title: "Search for public key before updating username",
       });
@@ -1022,6 +1025,7 @@ export class AdminComponent implements OnInit {
       ? `Change ${this.userProfileEntryResponseToUpdate.Username} to ${this.usernameTarget}`
       : `Set username to ${this.usernameTarget} for public key ${this.changeUsernamePublicKey}`;
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       icon: "info",
       title: `Updating Username`,
       html: infoMsg,

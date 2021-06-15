@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
-import { Router, ActivatedRoute, Params } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
@@ -10,9 +10,8 @@ import { FollowChangeObservableResult } from "../lib/observable-results/follow-c
 import { SwalHelper } from "../lib/helpers/swal-helper";
 import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
-import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import { DomSanitizer } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
-import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
@@ -557,6 +556,7 @@ export class GlobalVarsService {
       title = altTitle;
     }
     SwalHelper.fire({
+      target: this.getTargetComponentSelector(),
       icon: "success",
       title,
       html: val,
@@ -575,6 +575,7 @@ export class GlobalVarsService {
 
   _alertError(err: any, showBuyBitClout: boolean = false) {
     SwalHelper.fire({
+      target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
@@ -803,5 +804,23 @@ export class GlobalVarsService {
           }
         );
     }
+  }
+
+  // Get the highest level parent component that has the app-theme styling.
+  getTargetComponentSelector(): string {
+    return GlobalVarsService.getTargetComponentSelectorFromRouter(this.router);
+  }
+
+  static getTargetComponentSelectorFromRouter(router: Router): string {
+    if (router.url.startsWith("/" + RouteNames.BROWSE)) {
+      return "browse-page";
+    }
+    if (router.url.startsWith("/" + RouteNames.LANDING)) {
+      return "landing-page";
+    }
+    if (router.url.startsWith("/" + RouteNames.INBOX_PREFIX)) {
+      return "messages-page";
+    }
+    return "app-page";
   }
 }

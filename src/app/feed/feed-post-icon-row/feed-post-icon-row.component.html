@@ -150,7 +150,7 @@
       triggers=""
       placement="top"
       [containerClass]="getPopoverContainerClass()"
-      container="body"
+      [container]="globalVars.getTargetComponentSelector()"
       [outsideClick]="true"
       #diamondPopover="bs-popover"
       class="icon-diamond feed-post-icon-row__icon p-2px"

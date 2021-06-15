@@ -7,6 +7,7 @@ const RouteNames = RouteNamesService;
 export class SharedDialogs {
   static showCreateAccountToPostDialog(globalVars: GlobalVarsService) {
     return SwalHelper.fire({
+      target: globalVars.getTargetComponentSelector(),
       icon: "info",
       title: `Create an account to post`,
       html: `It's totally anonymous and takes under a minute.`,
@@ -29,6 +30,7 @@ export class SharedDialogs {
 
   static showCreateProfileToPostDialog(router: Router) {
     SwalHelper.fire({
+      target: GlobalVarsService.getTargetComponentSelectorFromRouter(router),
       icon: "info",
       title: `Complete your profile to post`,
       html: `You can be whoever you want to be.`,
@@ -51,6 +53,7 @@ export class SharedDialogs {
 
   static showCreateProfileToPerformActionDialog(router: Router, action: string) {
     SwalHelper.fire({
+      target: GlobalVarsService.getTargetComponentSelectorFromRouter(router),
       icon: "info",
       title: `Complete your profile to ${action}`,
       html: `You can be whoever you want to be.`,
