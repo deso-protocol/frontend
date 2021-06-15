@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
+import { ConfettiSvg, GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 
 @Component({
@@ -50,7 +50,7 @@ export class CountdownTimerComponent implements OnInit {
       this.timerText = this.globalVars.pastDeflationBomb
         ? this.globalVars.announcementTimerText
         : this.globalVars.deflationBombTimerText;
-      this.celebrateIfTimeEnd();
+      this.celebrateIfTimeEnd(now);
     }, 1000);
   }
 
@@ -109,9 +109,10 @@ export class CountdownTimerComponent implements OnInit {
     );
   }
 
-  celebrateIfTimeEnd(): void {
-    if (this.days == "0" && this.hours == "0" && this.minutes == "0" && this.seconds == "0") {
-      this.globalVars.celebrate(false, true);
+  celebrateIfTimeEnd(now: number): void {
+    const diff = (now - this.timerEnd) / 1000;
+    if (diff > 0 && diff < 3) {
+      this.globalVars.celebrate([ConfettiSvg.ROCKET, ConfettiSvg.LAMBO]);
     }
   }
 

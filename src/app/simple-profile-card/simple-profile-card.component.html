@@ -1,0 +1,34 @@
+<a
+  class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey link--unstyled"
+  (click)="onClick()"
+>
+  <div class="row no-gutters w-100">
+    <div class="col-6 d-flex align-items-center" style="margin-bottom: 0px">
+      <!-- Avatar -->
+      <div class="simple-profile-card__avatar-container">
+        <div
+          class="simple-profile-card__avatar br-12px"
+          [avatar]="profile.PublicKeyBase58Check"
+        ></div>
+      </div>
+      <div class="text-truncate holdings__name" style="font-size: 15px">
+        <a class="fc-default font-weight-bold">{{ profile.Username }}</a>
+        <div class="text-grey9">
+          {{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 d-flex align-items-center justify-content-center" style="margin-bottom: 0px">
+      <div *ngIf="diamondLevel > 0" class="d-flex">
+        <i *ngFor="let diamond of counter(diamondLevel)" class="icon-diamond fs-20px d-block"></i>
+      </div>
+      <div *ngIf="showHeartIcon">
+        <i class="icon-heart-fill fs-32px d-block fc-red"></i>
+      </div>
+      <div *ngIf="showRecloutIcon">
+        <i class="icon-repost fs-32px d-block fc-green"></i>
+      </div>
+    </div>
+  </div>
+</a>

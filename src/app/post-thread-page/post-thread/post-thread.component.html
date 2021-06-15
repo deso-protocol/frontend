@@ -39,6 +39,7 @@
       [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
       [isParentPostInThread]="true"
       [showLeftSelectedBorder]="true"
+      [showInteractionDetails]="true"
       [blocked]="isPostBlocked(currentPost)"
       (postDeleted)="onPostHidden(currentPost, null, null)"
       (userBlocked)="afterUserBlocked($event)"
