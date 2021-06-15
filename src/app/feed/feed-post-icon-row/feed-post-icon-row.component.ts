@@ -42,10 +42,10 @@ export class FeedPostIconRowComponent {
   static DiamondWarningThreshold = 3;
 
   // Boolean for animation on whether a heart is clicked or not
-  clicklike = false;
+  animateLike = false;
 
   // Boolean for animation on whether a diamond is clicked or not
-  clickDiamond = false;
+  animateDiamond = false;
 
   constructor(
     public globalVars: GlobalVarsService,

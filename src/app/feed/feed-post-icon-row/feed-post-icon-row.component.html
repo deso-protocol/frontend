@@ -77,11 +77,11 @@
   >
     <i
       [ngClass]="{
-        'is_animating': clicklike,
+        'is_animating': animateLike,
         'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
         'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
       }"
-      (click)="clicklike = !clicklike"
+      (click)="animateLike = !animateLike"
       class="feed-post-icon-row__icon"
     ></i>
     {{ postContent.LikeCount }}
@@ -158,8 +158,8 @@
       class="icon-diamond feed-post-icon-row__icon p-2px"
       style="font-size: 20px !important; padding-right: 5px"
       (click)="diamondClickHandler($event)"
-      (click)="clickDiamond = !clickDiamond"
-      [ngClass]="{'is_animating_ice': clickDiamond}"
+      (click)="animateDiamond = !animateDiamond"
+      [ngClass]="{'is_animating_ice': animateDiamond}"
     ></i>
     {{ postContent.DiamondCount }}
   </div>
