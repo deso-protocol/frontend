@@ -10,18 +10,31 @@
 
         <a
           class="d-none d-lg-block trade-creator__avatar mr-15px"
-          [style.background-image]="
-            'url(' +
-            (creatorCoinTrade.creatorProfile && creatorCoinTrade.creatorProfile.ProfilePic
-              ? creatorCoinTrade.creatorProfile.ProfilePic
-              : '/assets/img/default_profile_pic.png') +
-            ')'
-          "
+          [avatar]="creatorCoinTrade.creatorProfile.PublicKeyBase58Check"
         ></a>
-
-        <div *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN" class="font-weight-bold fs-18px">
-          {{ creatorCoinTrade.tradeVerbString() }} {{ creatorCoinTrade.creatorProfile.Username }} coin
-        </div>
+        <p *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN" class="font-weight-bold fs-18px">
+          {{ creatorCoinTrade.tradeVerbString() }}
+          <span>{{ creatorCoinTrade.creatorProfile.Username }}</span>
+          <span
+            *ngIf="creatorCoinTrade.creatorProfile.IsReserved && !creatorCoinTrade.creatorProfile.IsVerified"
+            class="ml-5px d-inline-block cursor-pointer lh-12px fc-muted"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
+          >
+            <i class="far fa-clock fa-md"></i>
+          </span>
+          <span
+            *ngIf="creatorCoinTrade.creatorProfile.IsVerified"
+            (click)="tooltip.toggle()"
+            class="ml-5px cursor-pointer text-primary"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="'This account is verified'"
+            #tooltip="matTooltip"
+          >
+            <i class="fas fa-check-circle fa-md"></i>
+          </span>
+          coin
+        </p>
 
         <span *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
           Confirm Coin

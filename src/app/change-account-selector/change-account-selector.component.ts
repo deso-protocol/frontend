@@ -40,6 +40,8 @@ export class ChangeAccountSelectorComponent {
 
   _switchToUser(user) {
     this.globalVars.setLoggedInUser(user);
+    this.globalVars.messageResponse = null;
+    this.globalVars.SetupMessages();
 
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
       queryParamsHandling: "merge",

@@ -133,7 +133,7 @@
       <div class="feed-post__avatar-container">
         <a
           class="feed-post__avatar br-12px"
-          [style.background-image]="'url(' + postContent.ProfileEntryResponse.ProfilePic + ')'"
+          [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
           [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
           queryParamsHandling="merge"
         ></a>

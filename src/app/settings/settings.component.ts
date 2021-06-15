@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { CountryISO } from "ngx-intl-tel-input";
+import { Title } from "@angular/platform-browser";
+import { ThemeService } from "../theme/theme.service";
 
 @Component({
   selector: "settings",
@@ -17,10 +19,24 @@ export class SettingsComponent implements OnInit {
   showSuccessMessage = false;
   successMessageTimeout: any;
 
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private titleService: Title,
+    public themeService: ThemeService
+  ) {}
+
+  selectChangeHandler(event: any) {
+    //update the ui
+    const selectedTheme = event.target.value;
+
+    this.themeService.setTheme(selectedTheme);
+    localStorage.setItem("theme", selectedTheme);
+  }
 
   ngOnInit() {
     this._getUserMetadata();
+    this.titleService.setTitle("Settings - BitClout");
   }
 
   _getUserMetadata() {

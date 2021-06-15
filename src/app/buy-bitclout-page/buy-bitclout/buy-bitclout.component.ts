@@ -7,6 +7,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import Swal from "sweetalert2";
 import { IdentityService } from "../../identity.service";
+import { WyreService } from "../../../lib/services/wyre/wyre";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -32,9 +33,16 @@ export class BuyBitcloutComponent implements OnInit {
   showPendingTransactions = true;
   waitingOnTxnConfirmation = false;
   queryingBitcoinAPI = false;
-
+  wyreService: WyreService;
   showBuyComplete: boolean = false;
 
+  BuyBitcloutComponent = BuyBitcloutComponent;
+
+  static BUY_WITH_USD = "Buy with USD";
+  static BUY_WITH_BTC = "Buy with Bitcoin";
+
+  buyTabs = [BuyBitcloutComponent.BUY_WITH_USD, BuyBitcloutComponent.BUY_WITH_BTC];
+  activeTab = BuyBitcloutComponent.BUY_WITH_USD;
   constructor(
     private ref: ChangeDetectorRef,
     private globalVars: GlobalVarsService,
@@ -45,13 +53,15 @@ export class BuyBitcloutComponent implements OnInit {
     private httpClient: HttpClient
   ) {
     this.appData = globalVars;
-
     this.route.queryParams.subscribe((params: Params) => {
-      // Block people from purchasing $BitClout until they enter this magic string.
+      if (params.btc) {
+        this.activeTab = BuyBitcloutComponent.BUY_WITH_BTC;
+        this.router.navigate([], { queryParams: {} });
+      }
     });
   }
 
-  btcDepositAddress() {
+  btcDepositAddress(): string {
     const pubKey = this.appData.loggedInUser.PublicKeyBase58Check;
     return this.identityService.identityServiceUsers[pubKey]?.btcDepositAddress;
   }
@@ -506,5 +516,13 @@ export class BuyBitcloutComponent implements OnInit {
     );
 
     this._queryBitcoinAPI();
+  }
+
+  _handleTabClick(tab: string): void {
+    this.activeTab = tab;
+  }
+
+  _openExchangeSignUp(): void {
+    window.open("https://exchange.blockchain.com/trade/signup");
   }
 }

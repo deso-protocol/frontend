@@ -88,6 +88,7 @@ export class DiamondPostsComponent {
         minIndex: 0,
         bufferSize: 10,
         windowViewport: true,
+        infinite: true,
       },
     });
   }

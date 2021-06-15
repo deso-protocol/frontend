@@ -34,7 +34,7 @@
           (click)="_updateSettings()"
           class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
         >
-          Update Settings
+          Update Email
         </button>
         <button
           *ngIf="
@@ -44,7 +44,7 @@
           class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
           disabled
         >
-          Update Settings
+          Update Email
         </button>
         <button *ngIf="updatingSettings" class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px" disabled>
           Updating...
@@ -52,6 +52,18 @@
         <div *ngIf="showSuccessMessage" style="color: green" class="fs-15px ml-10px">Success!</div>
       </div>
 
+      <div class="fs-15px pt-30px">BitClout Theme</div>
+      <br />
+      <select
+        [(ngModel)]="themeService.theme"
+        name="theme"
+        id="theme"
+        (change)="selectChangeHandler($event)"
+        class="form-control selector">
+        <option
+          *ngFor="let theme of themeService.themes"
+          [value]="theme.key">{{ theme.name }}</option>
+      </select>
       <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
       <div class="global__bottom-bar-mobile-height"></div>
       <div class="global__bottom-bar-mobile-height"></div>

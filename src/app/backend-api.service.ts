@@ -22,6 +22,7 @@ export class BackendRoutes {
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
+  static RoutePathGetSingleProfilePicture = "/api/v0/get-single-profile-picture";
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
   static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
@@ -66,12 +67,18 @@ export class BackendRoutes {
   static RoutePathAdminGrantVerificationBadge = "/api/v0/admin/grant-verification-badge";
   static RoutePathAdminRemoveVerificationBadge = "/api/v0/admin/remove-verification-badge";
   static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
+  static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
+  static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
+
+  // Wyre routes.
+  static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
+  static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
 }
 
 export class Transaction {
@@ -120,14 +127,15 @@ export class User {
   NumActionItems: any;
   NumMessagesToRead: any;
 
-  UsersYouHODL: any;
-  UsersWhoHODLYou: any;
+  UsersYouHODL: BalanceEntryResponse[];
+  UsersWhoHODLYouCount: number;
 
   HasPhoneNumber: boolean;
   CanCreateProfile: boolean;
   BlockedPubKeys: { [key: string]: object };
 
   IsAdmin?: boolean;
+  IsSuperAdmin?: boolean;
 }
 
 export class PostEntryResponse {
@@ -357,7 +365,7 @@ export class BackendApiService {
 
   // Use empty string to return all top categories.
   GetBitcoinFeeRateSatoshisPerKB(): Observable<any> {
-    return this.httpClient.get<any>("https://api.blockchain.info/mempool/fees").pipe(catchError(this._handleError));
+    return this.httpClient.get<any>("https://api.blockchain.com/mempool/fees").pipe(catchError(this._handleError));
   }
 
   SendPhoneNumberVerificationText(
@@ -513,10 +521,10 @@ export class BackendApiService {
   }
 
   // User-related functions.
-  GetUsersStateless(endpoint: string, publicKeys: any[], skipHodlings: boolean = false): Observable<any> {
+  GetUsersStateless(endpoint: string, publicKeys: any[], SkipForLeaderboard: boolean = false): Observable<any> {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
       PublicKeysBase58Check: publicKeys,
-      SkipHodlings: skipHodlings,
+      SkipForLeaderboard,
     });
   }
 
@@ -666,6 +674,7 @@ export class BackendApiService {
     GetPostsForFollowFeed: boolean,
     GetPostsForGlobalWhitelist: boolean,
     GetPostsByClout: boolean,
+    MediaRequired: boolean,
     PostsByCloutMinutesLookback: number,
     AddGlobalFeedBool: boolean
   ): Observable<any> {
@@ -680,6 +689,7 @@ export class BackendApiService {
       GetPostsForFollowFeed,
       GetPostsForGlobalWhitelist,
       GetPostsByClout,
+      MediaRequired,
       PostsByCloutMinutesLookback,
       AddGlobalFeedBool,
     });
@@ -736,13 +746,32 @@ export class BackendApiService {
       Username,
     });
   }
+
+  // We add a ts-ignore here as typescript does not expect responseType to be anything but "json".
+  GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): Observable<any> {
+    return this.httpClient.get<any>(this.GetSingleProfilePictureURL(endpoint, PublicKeyBase58Check, bustCache), {
+      // @ts-ignore
+      responseType: "blob",
+    });
+  }
+  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
+    return this._makeRequestURL(
+      endpoint,
+      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + "?" + fallback
+    );
+  }
+  GetDefaultProfilePictureURL(endpoint: string): string {
+    return this._makeRequestURL(endpoint, "/assets/img/default_profile_pic.png");
+  }
+
   GetPostsForPublicKey(
     endpoint: string,
     PublicKeyBase58Check: string,
     Username: string,
     ReaderPublicKeyBase58Check: string,
     LastPostHashHex: string,
-    NumToFetch: number
+    NumToFetch: number,
+    MediaRequired: boolean
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetPostsForPublicKey, {
       PublicKeyBase58Check,
@@ -750,6 +779,7 @@ export class BackendApiService {
       ReaderPublicKeyBase58Check,
       LastPostHashHex,
       NumToFetch,
+      MediaRequired,
     });
   }
 
@@ -1221,6 +1251,13 @@ export class BackendApiService {
     });
   }
 
+  AdminGetUserAdminData(endpoint: string, AdminPublicKey: string, UserPublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUserAdminData, AdminPublicKey, {
+      AdminPublicKey,
+      UserPublicKeyBase58Check,
+    });
+  }
+
   NodeControl(endpoint: string, AdminPublicKey: string, Address: string, OperationType: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.NodeControlRoute, AdminPublicKey, {
       AdminPublicKey,
@@ -1265,7 +1302,6 @@ export class BackendApiService {
     RemovePhoneNumberMetadata: boolean
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateUserGlobalMetadata, AdminPublicKey, {
-      AdminPublicKey,
       UserPublicKeyBase58Check,
       Username,
       IsBlacklistUpdate,
@@ -1274,6 +1310,7 @@ export class BackendApiService {
       IsWhitelistUpdate,
       WhitelistPosts,
       RemovePhoneNumberMetadata,
+      AdminPublicKey,
     });
   }
 
@@ -1397,6 +1434,48 @@ export class BackendApiService {
         return res.FullTikTokURL;
       })
     );
+  }
+
+  GetWyreWalletOrderForPublicKey(
+    endpoint: string,
+    AdminPublicKeyBase58Check,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetWyreWalletOrdersForPublicKey, AdminPublicKeyBase58Check, {
+      AdminPublicKey: AdminPublicKeyBase58Check,
+      PublicKeyBase58Check,
+      Username,
+    });
+  }
+
+  // Wyre
+  GetWyreWalletOrderQuotation(
+    endpoint: string,
+    SourceAmount: number,
+    Country: string,
+    SourceCurrency: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderQuotation, {
+      SourceAmount,
+      Country,
+      SourceCurrency,
+    });
+  }
+
+  GetWyreWalletOrderReservation(
+    endpoint: string,
+    ReferenceId: string,
+    SourceAmount: number,
+    Country: string,
+    SourceCurrency: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderReservation, {
+      ReferenceId,
+      SourceAmount,
+      Country,
+      SourceCurrency,
+    });
   }
 
   // Error parsing

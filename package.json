@@ -7,7 +7,7 @@
     "build": "ng build",
     "generate": "ng generate",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "ng lint --fix",
     "e2e": "ng e2e",
     "build_prod": "ng build --prod --base-href / --deploy-url /",
     "ngcc": "ngcc --properties es2015"
@@ -33,6 +33,7 @@
     "cipher-base": "^1.0.4",
     "confetti-js": "github:bitclout/confetti-js",
     "core-js": "^2.5.4",
+    "currency-symbol-map": "^5.0.1",
     "fs": "0.0.1-security",
     "google-libphonenumber": "^3.2.16",
     "hash-base": "^3.0.4",

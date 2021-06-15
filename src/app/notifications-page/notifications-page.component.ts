@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "app-notifications-page",
@@ -6,5 +7,9 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./notifications-page.component.scss"],
 })
 export class NotificationsPageComponent {
-  constructor() {}
+  constructor(private titleService: Title) {}
+
+  ngOnInit() {
+    this.titleService.setTitle("Notifications - BitClout");
+  }
 }

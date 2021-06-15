@@ -4,6 +4,7 @@ import { BackendApiService, ProfileEntryResponse, User } from "../../../app/back
 import { GlobalVarsService } from "../../../app/global-vars.service";
 import { map, switchMap } from "rxjs/operators";
 import { flatten } from "lodash";
+import * as _ from "lodash";
 
 class BithuntLeaderboardResponse {
   projects: BithuntProject[];
@@ -30,6 +31,7 @@ export class CommunityProject {
 const bithuntURL = "https://bithunt.bitclout.com/public/projects";
 
 export class BithuntService {
+  static bithuntPageSize = 25
   constructor(
     private httpClient: HttpClient,
     private backendApi: BackendApiService,
@@ -50,17 +52,24 @@ export class BithuntService {
     );
   }
 
-  getCommunityProjectsLeaderboardPage(page: number): Observable<CommunityProject[]> {
+  getCommunityProjectsLeaderboardPage(
+    page: number,
+    limit: number = BithuntService.bithuntPageSize,
+    skipFilters: boolean = false
+  ): Observable<CommunityProject[]> {
     return this.httpClient
-      .get(`${bithuntURL}?page=${page + 1}`, {
+      .get(`${bithuntURL}?page=${page + 1}&limit=${limit}`, {
         headers: {
           Accept: "application/json",
         },
       })
-      .pipe(switchMap((res: BithuntLeaderboardResponse) => this.getProfilesForBithuntLeaderboard(res)));
+      .pipe(switchMap((res: BithuntLeaderboardResponse) => this.getProfilesForBithuntLeaderboard(res, skipFilters)));
   }
 
-  getProfilesForBithuntLeaderboard(projects: BithuntLeaderboardResponse): Observable<CommunityProject[]> {
+  getProfilesForBithuntLeaderboard(
+    projects: BithuntLeaderboardResponse,
+    skipFilters: boolean = false
+  ): Observable<CommunityProject[]> {
     if (projects.projects.length === 0) {
       return of([]);
     }
@@ -72,8 +81,13 @@ export class BithuntService {
       )
       .pipe(
         map((res: any) => {
+          if (!skipFilters) {
+            res.UserList = _.filter(res.UserList, (o) => !o.IsGraylisted && !o.IsBlacklisted);
+          }
+
           return res.UserList.map((user: User, index: number) => {
             return {
+              User: user,
               Profile: user.ProfileEntryResponse,
               BithuntProject: projects.projects[index],
             };

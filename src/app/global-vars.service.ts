@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { PostEntryResponse, User } from "./backend-api.service";
+import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
@@ -13,8 +13,10 @@ import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
-import { CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse } from "../lib/services/pulse/pulse-service";
+import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
+import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
+import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
@@ -29,8 +31,14 @@ export class GlobalVarsService {
     private backendApi: BackendApiService,
     private sanitizer: DomSanitizer,
     private identityService: IdentityService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private httpClient: HttpClient
+  ) {
+    this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
+    setInterval(() => {
+      this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
+    }, 1000);
+  }
 
   static MAX_POST_LENGTH = 280;
 
@@ -58,12 +66,13 @@ export class GlobalVarsService {
   messagesSortAlgorithm = "time";
   messagesPerFetch = 25;
   openSettingsTray = false;
+  newMessagesFromPage = 0;
   messagesRequestsHoldersOnly = true;
   messagesRequestsHoldingsOnly = false;
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
 
-  // Whether or not to show processig spinners in the UI for unmined transactions.
+  // Whether or not to show processing spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
@@ -81,6 +90,7 @@ export class GlobalVarsService {
   globoMods: any;
   feeRateBitCloutPerKB = 0.0;
   postsToShow = [];
+  followFeedPosts = [];
   messageResponse = null;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
@@ -92,8 +102,7 @@ export class GlobalVarsService {
   filterType = "";
   // The coin balance and user profiles of the coins the the user
   // hodls and the users who hodl him.
-  youHodlMap = {};
-  hodlYouMap = {};
+  youHodlMap: { [k: string]: BalanceEntryResponse } = {};
 
   // Map of diamond level to bitclout nanos.
   diamondLevelMap = {};
@@ -125,6 +134,9 @@ export class GlobalVarsService {
   // Whether or not to show the Verify phone number flow.
   showPhoneNumberVerification = false;
 
+  // Whether or not to show the Buy BitClout with USD flow.
+  showBuyWithUSD = false;
+
   // Whether or not this node comps profile creation.
   isCompProfileCreation = false;
 
@@ -153,35 +165,92 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  _setNumMessagesToRead() {
-    if (
-      !this.loggedInUser ||
-      !this.messageResponse ||
-      !this.messageResponse.OrderedContactsWithMessages ||
-      !this.messageResponse.TotalMessagesByContact ||
-      !this.messageResponse.MessageReadStateByContact
-    ) {
+  deflationBombTimerEnd = new Date("June 12, 2021 9:00:00 PDT").getTime();
+  announcementTimerEnd = new Date("June 15, 2021 3:00:00 PDT").getTime();
+
+  // This controls the default text of the countdown timer component.
+  deflationBombTimerText = "Deflation Bomb:";
+  announcementTimerText = "Big Announcement:";
+
+  profileUpdateTimestamp: number;
+
+  pastDeflationBomb: boolean;
+
+  SetupMessages() {
+    // If there's no loggedInUser, we set the notification count to zero
+    if (!this.loggedInUser) {
       this.messageNotificationCount = 0;
       return;
     }
-    let totalMessages = 0;
-    let totalRead = 0;
-    for (let contact of this.messageResponse.OrderedContactsWithMessages) {
-      if (contact.Messages.length > 0) {
-        if (this.messageResponse.TotalMessagesByContact[contact.PublicKeyBase58Check]) {
-          totalMessages += this.messageResponse.TotalMessagesByContact[contact.PublicKeyBase58Check];
-        }
-        if (this.messageResponse.MessageReadStateByContact[contact.PublicKeyBase58Check]) {
-          totalRead += this.messageResponse.MessageReadStateByContact[contact.PublicKeyBase58Check];
-        }
-      }
+
+    // If a message response already exists, we skip this step
+    if (this.messageResponse) {
+      return;
     }
-    let notificationCount = totalMessages - totalRead;
-    if (notificationCount >= 0) {
-      this.messageNotificationCount = notificationCount;
+
+    let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab");
+    if (storedTab === null) {
+      storedTab = "My Holders";
+      this.backendApi.SetStorage("mostRecentMessagesTab", storedTab);
+    }
+
+    // Set the filters most recently used and load the messages
+    this.SetMessagesFilter(storedTab);
+    this.LoadInitialMessages();
+  }
+
+  SetMessagesFilter(tabName: any) {
+    // Set the request parameters if it's a known tab.
+    // Custom is set in the filter menu component and saved in local storage.
+    if (tabName !== "Custom") {
+      this.messagesRequestsHoldersOnly = tabName === "My Holders";
+      this.messagesRequestsHoldingsOnly = false;
+      this.messagesRequestsFollowersOnly = false;
+      this.messagesRequestsFollowedOnly = false;
+      this.messagesSortAlgorithm = "time";
     } else {
-      this.messageNotificationCount = 0;
+      this.messagesRequestsHoldersOnly = this.backendApi.GetStorage("customMessagesRequestsHoldersOnly");
+      this.messagesRequestsHoldingsOnly = this.backendApi.GetStorage("customMessagesRequestsHoldingsOnly");
+      this.messagesRequestsFollowersOnly = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");
+      this.messagesRequestsFollowedOnly = this.backendApi.GetStorage("customMessagesRequestsFollowedOnly");
+      this.messagesSortAlgorithm = this.backendApi.GetStorage("customMessagesSortAlgorithm");
     }
+  }
+
+  LoadInitialMessages() {
+    if (!this.loggedInUser) {
+      return;
+    }
+
+    this.backendApi
+      .GetMessages(
+        this.localNode,
+        this.loggedInUser.PublicKeyBase58Check,
+        "",
+        this.messagesPerFetch,
+        this.messagesRequestsHoldersOnly,
+        this.messagesRequestsHoldingsOnly,
+        this.messagesRequestsFollowersOnly,
+        this.messagesRequestsFollowedOnly,
+        this.messagesSortAlgorithm
+      )
+      .subscribe(
+        (res) => {
+          if (this.pauseMessageUpdates) {
+            // We pause message updates when a user sends a messages so that we can
+            // wait for it to be sent before updating the thread.  If we do not do this the
+            // temporary message place holder would disappear until "GetMessages()" finds it.
+          } else {
+            this.messageResponse = res;
+
+            // Update the number of new messages so we know when to stop scrolling
+            this.newMessagesFromPage = res.OrderedContactsWithMessages.length;
+          }
+        },
+        (err) => {
+          console.error(this.backendApi.stringifyError(err));
+        }
+      );
   }
 
   _notifyLoggedInUserObservers(newLoggedInUser: User, isSameUserAsBefore: boolean) {
@@ -215,9 +284,6 @@ export class GlobalVarsService {
       for (const entry of this.loggedInUser?.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
-      for (const entry of this.loggedInUser?.UsersWhoHODLYou || []) {
-        this.hodlYouMap[entry.HODLerPublicKeyBase58Check] = entry;
-      }
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
@@ -228,11 +294,24 @@ export class GlobalVarsService {
   }
 
   showAdminTools(): boolean {
-    return this.loggedInUser?.IsAdmin;
+    return this.loggedInUser?.IsAdmin || this.loggedInUser?.IsSuperAdmin;
+  }
+
+  showSuperAdminTools(): boolean {
+    return this.loggedInUser?.IsSuperAdmin;
   }
 
   networkName(): string {
     return this.isTestnet ? "testnet" : "mainnet";
+  }
+
+  getUSDForDiamond(index: number): string {
+    const bitcloutNanos = this.diamondLevelMap[index];
+    const val = this.nanosToUSDNumber(bitcloutNanos);
+    if (val < 1) {
+      return this.formatUSD(val, 2);
+    }
+    return this.abbreviateNumber(val, 0, true);
   }
 
   nanosToBitClout(nanos: number, maximumFractionDigits?: number): string {
@@ -494,21 +573,28 @@ export class GlobalVarsService {
     });
   }
 
-  _alertError(err: any) {
+  _alertError(err: any, showBuyBitClout: boolean = false) {
     SwalHelper.fire({
       icon: "error",
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
+      showCancelButton: showBuyBitClout,
       focusConfirm: true,
       customClass: {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
+      confirmButtonText: showBuyBitClout ? "Buy BitClout" : "Ok",
+      reverseButtons: true,
+    }).then((res) => {
+      if (showBuyBitClout && res.isConfirmed) {
+        this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+      }
     });
   }
 
-  celebrate(dropDiamonds: boolean = false) {
+  celebrate(dropDiamonds: boolean = false, dropBomb: boolean = false) {
     const canvasID = "my-canvas-" + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
@@ -523,6 +609,10 @@ export class GlobalVarsService {
     };
     if (dropDiamonds) {
       confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 10 }];
+      confettiSettings.max = 200;
+      confettiSettings.clock = 150;
+    } else if (dropBomb) {
+      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/bomb.svg", size: 10 }];
       confettiSettings.max = 200;
       confettiSettings.clock = 150;
     }
@@ -600,7 +690,7 @@ export class GlobalVarsService {
 
   launchSignupFlow() {
     this.logEvent("account : create : launch");
-    this.identityService.launch("/sign-up").subscribe((res) => {
+    this.identityService.launch("/log-in").subscribe((res) => {
       this.logEvent("account : create : success");
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().subscribe(() => {
@@ -661,5 +751,57 @@ export class GlobalVarsService {
       this.feeRateBitCloutPerKB = this.defaultFeeRateNanosPerKB / 1e9;
       return true;
     });
+  }
+
+  updateLeaderboard(forceRefresh: boolean = false): void {
+    const pulseService = new PulseService(this.httpClient, this.backendApi, this);
+
+    if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
+      pulseService.getBitCloutLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+    }
+    if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
+      pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
+    }
+
+    if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
+      const bithuntService = new BithuntService(this.httpClient, this.backendApi, this);
+      bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
+        this.allCommunityProjectsLeaderboard = res;
+        this.topCommunityProjectsLeaderboard = this.allCommunityProjectsLeaderboard.slice(0, 10);
+      });
+    }
+
+    if (this.topCreatorsAllTimeLeaderboard.length === 0 || forceRefresh) {
+      const readerPubKey = this.loggedInUser?.PublicKeyBase58Check ?? "";
+      this.backendApi
+        .GetProfiles(
+          this.localNode,
+          null /*PublicKeyBase58Check*/,
+          null /*Username*/,
+          null /*UsernamePrefix*/,
+          null /*Description*/,
+          BackendApiService.GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE /*Order by*/,
+          10 /*NumEntriesToReturn*/,
+          readerPubKey /*ReaderPublicKeyBase58Check*/,
+          "leaderboard" /*ModerationType*/,
+          false /*FetchUsersThatHODL*/,
+          false /*AddGlobalFeedBool*/
+        )
+        .subscribe(
+          (response) => {
+            this.topCreatorsAllTimeLeaderboard = response.ProfilesFound.slice(
+              0,
+              RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES
+            ).map((profile) => {
+              return {
+                Profile: profile,
+              };
+            });
+          },
+          (err) => {
+            console.error(err);
+          }
+        );
+    }
   }
 }

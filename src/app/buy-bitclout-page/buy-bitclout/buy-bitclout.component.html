@@ -10,22 +10,21 @@
 
   <div class="global__top-bar__height"></div>
 
-  <div class="d-flex flex-column">
+  <div class="d-flex flex-column" *ngIf="!globalVars.pastDeflationBomb; else pastDeflationBomb">
     <div style="flex-grow: 1">
       <div class="global__mobile-scrollable-section" *ngIf="!waitingOnTxnConfirmation">
-        <!-- Description -->
-        <div class="fc-muted fs-15px mt-30px ml-15px">
-          $BitClout is a
-          <span style="color: black">cryptocurrency</span>
-          like Bitcoin, only it powers the first
-          <span style="color: black">decentralized social network</span>
-          .
+        <div style="height: 60px" *ngIf="!globalVars.showBuyWithUSD"></div>
+        <div
+          class="pb-15px"
+          *ngIf="globalVars.showBuyWithUSD"
+          [ngClass]="{ 'mb-10px': activeTab === BuyBitcloutComponent.BUY_WITH_BTC }"
+        >
+          <tab-selector [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
         </div>
-
-        <!-- Spacer -->
-        <div style="height: 60px"></div>
-
-        <div>
+        <div *ngIf="activeTab === BuyBitcloutComponent.BUY_WITH_USD && globalVars.showBuyWithUSD">
+          <buy-bitclout-usd></buy-bitclout-usd>
+        </div>
+        <div *ngIf="activeTab === BuyBitcloutComponent.BUY_WITH_BTC || !globalVars.showBuyWithUSD">
           <!-- Step One Box -->
           <div class="w-100 border-top border-color-grey">
             <div
@@ -299,6 +298,17 @@
       ></simple-center-loader>
     </div>
   </div>
+  <ng-template #pastDeflationBomb>
+    <div (click)="_openExchangeSignUp()" class="cursor-pointer">
+      <div class="p-15px">Sorry, the BitClout faucet has run dry and you can't buy BitClout right now.</div>
+      <div class="p-15px">The supply of BitClout is now fixed at <b>~10.8 million coins.</b></div>
+      <div class="p-15px">
+        <span class="font-weight-bold">
+          <a class="--link">Click here</a> to create an Exchange Account, deposit funds, and prepare for our big announcement.
+        </span>
+      </div>
+    </div>
+  </ng-template>
 </div>
 
 <ng-template #showBuyCompleteElseBlock>

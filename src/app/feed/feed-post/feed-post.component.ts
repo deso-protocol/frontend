@@ -164,7 +164,7 @@ export class FeedPostComponent implements OnInit {
   openImgModal(event, imageURL) {
     event.stopPropagation();
     this.modalService.show(FeedPostImageModalComponent, {
-      class: "modal-dialog-centered",
+      class: "modal-dialog-centered modal-lg",
       initialState: {
         imageURL,
       },

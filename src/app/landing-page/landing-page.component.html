@@ -2,6 +2,11 @@
 <div class="w-100">
   <div class="container d-sm-none">
     <div class="row d-flex justify-content-center landing__ticker">
+      <div class="input-group w-auto pb-5px">
+        <div style="min-width: 260px !important;">
+          <countdown-timer [borderRadiusSize]="10"></countdown-timer>
+        </div>
+      </div>
       <div class="input-group w-auto">
         <div class="input-group-prepend">
           <label class="landing__nav-buy input-group-text">
@@ -25,9 +30,14 @@
 <div class="w-100 border-bottom">
   <div class="container-lg landing__header">
     <div class="row">
-      <div class="col landing__logo">BitClout</div>
+      <div class="col landing__logo clout">BitClout</div>
       <div class="col d-flex justify-content-end align-items-center">
-        <div class="input-group w-auto d-none d-sm-flex">
+        <div class="d-none d-sm-flex w-auto">
+          <div style="min-width: 260px !important">
+            <countdown-timer [borderRadiusSize]="10"></countdown-timer>
+          </div>
+        </div>
+        <div class="input-group w-auto d-none d-sm-flex" style="margin-left: 25px">
           <div class="input-group-prepend">
             <label class="landing__nav-buy input-group-text">
               {{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD
@@ -45,6 +55,7 @@
         </div>
         <a class="landing__nav-link" href="https://docs.bitclout.com/" target="_blank">About</a>
         <a class="landing__nav-link" href="https://docs.bitclout.com/the-vision" target="_blank">Vision</a>
+        <a class="landing__nav-link" href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
         <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">Sign Up</a>
       </div>
     </div>
@@ -78,6 +89,9 @@
         <br />
         <br />
         <a href="https://docs.bitclout.com/" target="_blank">Learn More</a>
+        &nbsp;
+        &nbsp;
+        <a href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
         <div class="col-sm-10 col-xs-12 mb-0 landing__example">
@@ -157,6 +171,9 @@
         <br />
         <br />
         <a href="https://docs.bitclout.com/the-vision" target="_blank">Learn More</a>
+        &nbsp;
+        &nbsp;
+        <a href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
         <div class="col-sm-10 col-xs-12 mb-0 landing__example">
@@ -240,7 +257,7 @@
   <div class="container">
     <div class="row d-flex justify-content-center">
       <div class="col mb-0 text-center">
-        <p class="text-grey9 fs-12px">The future is decentralized.</p>
+        <p class="text-grey9 fs-16px">The future is decentralized.</p>
       </div>
     </div>
   </div>

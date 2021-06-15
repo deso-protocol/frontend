@@ -90,23 +90,6 @@ export class AppComponent implements OnInit {
     const userCopy = JSON.parse(JSON.stringify(user));
   }
 
-  _numMessagesToRead(messageResponse: any) {
-    if (!this.globalVars.loggedInUser || !messageResponse || !messageResponse.OrderedContactsWithMessages) {
-      return;
-    }
-    let totalMessages = 0;
-    let totalRead = 0;
-    for (const contact of messageResponse.OrderedContactsWithMessages) {
-      totalMessages += contact.Messages.length;
-      const numRead = this.globalVars.messageMeta.notificationMap[
-        this.globalVars.loggedInUser.PublicKeyBase58Check + contact.PublicKeyBase58Check
-      ];
-      totalRead += numRead ? numRead : 0;
-    }
-    const numNotifications = totalMessages - totalRead;
-    return numNotifications > 0 ? numNotifications : "";
-  }
-
   _updateTopLevelData() {
     if (this.callingUpdateTopLevelData) {
       return;
@@ -145,15 +128,15 @@ export class AppComponent implements OnInit {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
+        // Setup messages for the logged in user
+        this.globalVars.SetupMessages();
+
         // Convert the lists of coin balance entries into maps.
         // TODD: I've intermittently seen errors here where UsersYouHODL is null.
         // That's why I added this || [] thing. We should figure
         // out the root cause.
         for (const entry of this.globalVars.loggedInUser?.UsersYouHODL || []) {
           this.globalVars.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
-        }
-        for (const entry of this.globalVars.loggedInUser?.UsersWhoHODLYou || []) {
-          this.globalVars.hodlYouMap[entry.HODLerPublicKeyBase58Check] = entry;
         }
 
         this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
@@ -179,7 +162,7 @@ export class AppComponent implements OnInit {
     }
 
     // The exchange rate requires getting the current Bitcoin price in USD.
-    this.httpClient.get<any>("https://blockchain.info/ticker").subscribe(
+    this.httpClient.get<any>("https://api.blockchain.com/ticker").subscribe(
       (res: any) => {
         if (res.USD != null && res.USD.last != null) {
           this.globalVars.usdPerBitcoinExchangeRate = res.USD.last;
@@ -229,6 +212,7 @@ export class AppComponent implements OnInit {
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
+        this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
 
         // Setup amplitude on first run
         if (!this.globalVars.amplitude && res.AmplitudeKey) {

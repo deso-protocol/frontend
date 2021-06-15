@@ -5,6 +5,7 @@ import { BackendApiService, ProfileEntryResponse } from "../backend-api.service"
 import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import * as _ from "lodash";
+import { Title } from "@angular/platform-browser";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -95,7 +96,7 @@ export class AdminComponent implements OnInit {
   usernameVerificationAuditLogs: any = [];
   loadingVerifiedUsers = false;
   loadingVerifiedUsersAuditLog = false;
-  adminTabs = ["Posts", "Profiles", "Network", "Mempool"];
+  adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Wyre", "Super"];
   POSTS_TAB = "Posts";
   POSTS_BY_CLOUT_TAB = "Posts By Clout";
   adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_CLOUT_TAB];
@@ -123,11 +124,17 @@ export class AdminComponent implements OnInit {
   // This is a variable to track the currently selected time window.
   selectedTimeWindow = 60;
 
+  // Fields for getting user admin data
+  submittingGetUserAdminData = false;
+  getUserAdminDataPublicKey = "";
+  getUserAdminDataResponse = null;
+
   constructor(
     private _globalVars: GlobalVarsService,
     private router: Router,
     private route: ActivatedRoute,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private titleService: Title
   ) {
     this.globalVars = _globalVars;
   }
@@ -138,10 +145,6 @@ export class AdminComponent implements OnInit {
         this.activeTab = queryParams.adminTab;
       } else {
         this.activeTab = "Posts";
-      }
-
-      if (queryParams.super && queryParams.super === "true") {
-        this.adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Super"];
       }
     });
     // load data
@@ -157,6 +160,8 @@ export class AdminComponent implements OnInit {
     this._loadMempoolStats();
     this._loadNextBlockStats();
     this._loadGlobalParams();
+
+    this.titleService.setTitle("Admin - BitClout");
   }
 
   _updateNodeInfo() {
@@ -227,6 +232,7 @@ export class AdminComponent implements OnInit {
         false /*GetPostsForFollowFeed*/,
         false /*GetPostsForGlobalWhitelist*/,
         true,
+        false /*MediaRequired*/,
         this.selectedTimeWindow,
         true /*AddGlobalFeedBool*/
       )
@@ -275,6 +281,7 @@ export class AdminComponent implements OnInit {
         false /*GetPostsForFollowFeed*/,
         false /*GetPostsForGlobalWhitelist*/,
         false,
+        false /*MediaRequired*/,
         0,
         true /*AddGlobalFeedBool*/
       )
@@ -892,6 +899,32 @@ export class AdminComponent implements OnInit {
       )
       .add(() => {
         this.submittingVerifyRequest = false;
+      });
+  }
+
+  getUserAdminDataClicked() {
+    if (this.getUserAdminDataPublicKey === "") {
+      this.globalVars._alertError("Please enter a valid username.");
+      return;
+    }
+
+    this.submittingGetUserAdminData = true;
+    this.backendApi
+      .AdminGetUserAdminData(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.getUserAdminDataPublicKey
+      )
+      .subscribe(
+        (res: any) => {
+          this.getUserAdminDataResponse = res;
+        },
+        (error) => {
+          this.globalVars._alertError(this.extractError(error));
+        }
+      )
+      .add(() => {
+        this.submittingGetUserAdminData = false;
       });
   }
 

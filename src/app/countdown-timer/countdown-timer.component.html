@@ -1,0 +1,22 @@
+<div
+  style="background-color: #222; color: #39ff14"
+  class="cursor-pointer"
+  [ngStyle]="{
+    'font-size': fontSize + 'px',
+    'border-radius': borderRadiusSize + 'px',
+    'font-weight': fontWeight
+  }"
+  [ngClass]="{'countdown-timer': globalVars.pastDeflationBomb }"
+  (click)="navigateToURL()"
+>
+  <div
+    class="px-15px py-5px d-flex font-weight-bold justify-content-around"
+    [ngClass]="{ 'justify-content-between': !justifyLeft && !globalVars.pastDeflationBomb, 'justify-left': justifyLeft && !globalVars.pastDeflationBomb, 'justify-content-around': globalVars.pastDeflationBomb }">
+    <div *ngIf="!globalVars.pastDeflationBomb">
+      {{ timerText }}&nbsp;
+    </div>
+    <di *ngIf="globalVars.pastDeflationBomb" class="countdown-timer-emoji-left" >🎉&nbsp;</di>
+    <div>{{ days + "d " + hours + "h " + minutes + "m " + seconds + "s" }}</div>
+    <div *ngIf="globalVars.pastDeflationBomb" class="countdown-timer-emoji-right">&nbsp;🎉</div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import { BackendApiService } from "../../backend-api.service";
 import { FeedComponent } from "../../feed/feed.component";
 import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
 import { ToastrService } from "ngx-toastr";
+import { Title } from "@angular/platform-browser";
 
 import * as _ from "lodash";
 
@@ -27,7 +28,8 @@ export class PostThreadComponent {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private titleService: Title
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -37,6 +39,10 @@ export class PostThreadComponent {
     this.route.params.subscribe((params) => {
       this._setStateFromActivatedRoute(route);
     });
+  }
+
+  ngOnInit() {
+    this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
   }
 
   _rerenderThread() {
@@ -99,8 +105,9 @@ export class PostThreadComponent {
       settings: {
         startIndex: 0,
         minIndex: 0,
-        bufferSize: 5,
+        bufferSize: 10,
         windowViewport: true,
+        infinite: true,
       },
     });
   }

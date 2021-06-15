@@ -83,8 +83,9 @@ export class CreatorProfilePostsComponent {
         startIndex: 0,
         minIndex: 0,
         bufferSize: 5,
-        padding: 0.25,
+        padding: 0.5,
         windowViewport: true,
+        infinite: true,
       },
     });
   }
@@ -102,7 +103,8 @@ export class CreatorProfilePostsComponent {
         this.profile.Username,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         lastPostHashHex,
-        CreatorProfilePostsComponent.PAGE_SIZE
+        CreatorProfilePostsComponent.PAGE_SIZE,
+        false /*MediaRequired*/
       )
       .toPromise()
       .then((res) => {
@@ -146,11 +148,10 @@ export class CreatorProfilePostsComponent {
     this.blockUser.emit();
   }
 
-  profileBelongsToLoggedInUser() {
-    if (this.globalVars.loggedInUser && this.globalVars.loggedInUser.ProfileEntryResponse) {
-      return this.globalVars.loggedInUser.ProfileEntryResponse.Username === this.profile.Username;
-    } else {
-      return false;
-    }
+  profileBelongsToLoggedInUser(): boolean {
+    return (
+      this.globalVars.loggedInUser?.ProfileEntryResponse &&
+      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
+    );
   }
 }
