@@ -120,10 +120,10 @@ import { TrendsComponent } from "./trends-page/trends/trends.component";
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
-const lightTheme: Theme = { key: "light", name: "lightTheme" };
-const darkTheme: Theme = { key: "dark", name: "darkTheme" };
-const icydarkTheme: Theme = { key: "icydark", name: "icydarkTheme" };
-const legendsTheme: Theme = { key: "legends", name: "legendsTheme" };
+const lightTheme: Theme = { key: "light", name: "Light Theme" };
+const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
+const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
+const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
 
 @NgModule({
   declarations: [
