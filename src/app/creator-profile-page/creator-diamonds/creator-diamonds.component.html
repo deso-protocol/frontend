@@ -69,6 +69,16 @@
                       [ngStyle]="{ 'max-width': globalVars.isMobile() ? '100px' : '200px' }"
                     >
                       <span>{{ row.ProfileEntryResponse.Username }}</span>
+                      <span
+                        *ngIf="row.ProfileEntryResponse.IsVerified"
+                        (click)="tooltip.toggle()"
+                        class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
+                        matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                        [matTooltip]="'This account is verified'"
+                        #tooltip="matTooltip"
+                      >
+                        <i class="fas fa-check-circle fa-md align-middle"></i>
+                      </span>
                       <div class="text-grey9 fs-12px">
                         {{ globalVars.nanosToUSD(row.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
                       </div>
