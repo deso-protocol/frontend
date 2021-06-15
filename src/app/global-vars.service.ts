@@ -48,10 +48,10 @@ export class GlobalVarsService {
     private httpClient: HttpClient
   ) {
     this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
-    this.hideTimer = Date.now() >= this.announcementTimerEnd + 60 * 1000;
+    this.hideTimer = Date.now() >= this.announcementTimerEnd + 10 * 1000;
     setInterval(() => {
       this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
-      this.hideTimer = Date.now() >= this.announcementTimerEnd + 60 * 1000;
+      this.hideTimer = Date.now() >= this.announcementTimerEnd + 10 * 1000;
     }, 1000);
   }
 
@@ -181,7 +181,7 @@ export class GlobalVarsService {
   amplitude: AmplitudeClient;
 
   deflationBombTimerEnd = new Date("June 12, 2021 9:00:00 PDT").getTime();
-  announcementTimerEnd = new Date("June 15, 2021 3:00:00 PDT").getTime();
+  announcementTimerEnd = new Date("June 14, 2021 23:52:00 PDT").getTime();
 
   // This controls the default text of the countdown timer component.
   deflationBombTimerText = "Deflation Bomb:";

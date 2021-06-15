@@ -299,7 +299,7 @@
     </div>
   </div>
   <ng-template #pastDeflationBomb>
-    <div (click)="_openExchangeSignUp()" class="cursor-pointer" *ngIf="!hideTimer">
+    <div (click)="_openExchangeSignUp()" class="cursor-pointer" *ngIf="!globalVars.hideTimer">
       <div class="p-15px">Sorry, the BitClout faucet has run dry and you can't buy BitClout right now.</div>
       <div class="p-15px">The supply of BitClout is now fixed at <b>~10.8 million coins.</b></div>
       <div class="p-15px">
@@ -308,18 +308,18 @@
         </span>
       </div>
     </div>
-      <div (click)="_openExchangeSignUp()" class="cursor-pointer" *ngIf="hideTimer">
+    <div (click)="_openExchangeSignUp()" class="cursor-pointer" *ngIf="globalVars.hideTimer">
       <div class="p-15px">
         <span style="text-decoration:underline;">Click here</span> to create an Exchange Account on blockchain.com and buy BitClout once it's listed.
         <div class="p-15px d-flex justify-content-center align-items-center">
-        <img
-          height="100"
-          src="assets/img/blockchain-logo-cropped.png"/>
-        <i class="fas fa-times px-10px" style="font-size: 24px;"></i>
-        <img src="assets/img/logo-cropped.png" height="100"/>
+          <img
+            height="100"
+            src="assets/img/blockchain-logo-cropped.png"/>
+          <i class="fas fa-times px-10px" style="font-size: 24px;"></i>
+          <img src="assets/img/logo-cropped.png" height="100"/>
+        </div>
       </div>
     </div>
-      </div>
   </ng-template>
 </div>
 
