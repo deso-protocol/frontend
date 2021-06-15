@@ -12,7 +12,19 @@
         ></div>
       </div>
       <div class="text-truncate holdings__name" style="font-size: 15px">
-        <a class="fc-default font-weight-bold">{{ profile.Username }}</a>
+        <div>
+          <a class="fc-default font-weight-bold">{{ profile.Username }}</a>
+          <span
+            *ngIf="profile.IsVerified"
+            (click)="tooltip.toggle()"
+            class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="'This account is verified'"
+            #tooltip="matTooltip"
+          >
+            <i class="fas fa-check-circle fa-md align-middle"></i>
+          </span>
+        </div>
         <div class="text-grey9">
           {{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}
         </div>
