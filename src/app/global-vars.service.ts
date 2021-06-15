@@ -38,6 +38,13 @@ export class GlobalVarsService {
     setInterval(() => {
       this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
     }, 1000);
+
+    // Every 5 seconds, we empty the queue of diamonds.
+    setInterval(() => {
+      if (this.diamondQueue.length) {
+        this.emptyDiamondsQueue().then(() => this.updateEverything());
+      }
+    }, 5000);
   }
 
   static MAX_POST_LENGTH = 280;
@@ -803,5 +810,65 @@ export class GlobalVarsService {
           }
         );
     }
+  }
+
+  // We queue up the diamonds and then every 10 seconds we create the transactions so user's won't hit the
+  // Bitclout is under heavy load error.
+  diamondQueue: {
+    diamonds: number;
+    postHashHex: string;
+    posterPublicKeyBase58Check: string;
+    userPublicKeyBase58Check: string;
+  }[] = [];
+
+  emptyDiamondsQueue(): Promise<void> {
+    let sequence = Promise.resolve();
+    let ii = this.diamondQueue.length;
+    while (ii--) {
+      let diamondQueueItem = this.diamondQueue.shift();
+      sequence = sequence.then(() =>
+        this.sendDiamonds(
+          diamondQueueItem.diamonds,
+          diamondQueueItem.postHashHex,
+          diamondQueueItem.posterPublicKeyBase58Check,
+          diamondQueueItem.userPublicKeyBase58Check
+        )
+      );
+    }
+
+    return sequence;
+  }
+
+  sendDiamonds(
+    diamonds: number,
+    postHashHex: string,
+    posterPublicKeyBase58Check: string,
+    userPublicKeyBase58Check: string
+  ): Promise<void> {
+    return this.backendApi
+      .SendDiamonds(
+        this.localNode,
+        userPublicKeyBase58Check,
+        posterPublicKeyBase58Check,
+        postHashHex,
+        diamonds,
+        this.feeRateBitCloutPerKB * 1e9
+      )
+      .toPromise()
+      .then(
+        (res) => {},
+        (err) => {
+          // If there was an error sending diamonds, we add it back to the queue.
+          this.diamondQueue.push({
+            diamonds,
+            postHashHex,
+            posterPublicKeyBase58Check,
+            userPublicKeyBase58Check,
+          });
+          console.error(err);
+          const parsedError = this.backendApi.parseProfileError(err);
+          this.logEvent("diamonds: send: error", { parsedError });
+        }
+      );
   }
 }

@@ -1,11 +1,10 @@
-import { Component, Input, ChangeDetectorRef, ViewChild } from "@angular/core";
+import { Component, Input, ChangeDetectorRef, ViewChild, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { RouteNames } from "../../app-routing.module";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
@@ -16,7 +15,7 @@ import { ThemeService } from "../../theme/theme.service";
   templateUrl: "./feed-post-icon-row.component.html",
   styleUrls: ["./feed-post-icon-row.component.sass"],
 })
-export class FeedPostIconRowComponent {
+export class FeedPostIconRowComponent implements OnInit {
   @ViewChild("diamondPopover", { static: false }) diamondPopover: PopoverDirective;
 
   @Input() post: PostEntryResponse;
@@ -51,6 +50,25 @@ export class FeedPostIconRowComponent {
     private modalService: BsModalService,
     private themeService: ThemeService
   ) {}
+
+  ngOnInit() {
+    // We check the diamond queue to see if the user has an unprocessed diamond transaction and update the diamondCount
+    // and diamondLevelBestowed accordingly.
+    let highestDiamondInQueue = 0;
+    this.globalVars.diamondQueue.forEach((diamondQueueItem) => {
+      if (
+        diamondQueueItem.postHashHex === this.postContent.PostHashHex &&
+        diamondQueueItem.diamonds > highestDiamondInQueue
+      ) {
+        highestDiamondInQueue = diamondQueueItem.diamonds;
+      }
+    });
+    if (highestDiamondInQueue && this.postContent.PostEntryReaderState?.DiamondLevelBestowed < highestDiamondInQueue) {
+      this.postContent.DiamondCount +=
+        highestDiamondInQueue - (this.postContent.PostEntryReaderState?.DiamondLevelBestowed || 0);
+      this.postContent.PostEntryReaderState.DiamondLevelBestowed = highestDiamondInQueue;
+    }
+  }
 
   _detectChanges() {
     this.ref.detectChanges();
@@ -293,50 +311,26 @@ export class FeedPostIconRowComponent {
     );
   }
 
-  sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
-    this.sendingDiamonds = true;
-    return this.backendApi
-      .SendDiamonds(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.postContent.PosterPublicKeyBase58Check,
-        this.postContent.PostHashHex,
-        diamonds,
-        this.globalVars.feeRateBitCloutPerKB * 1e9
-      )
-      .toPromise()
-      .then(
-        (res) => {
-          this.openDiamondPopover();
-          this.globalVars.logEvent("diamond: send", {
-            SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
-            ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
-            DiamondPostHashHex: this.postContent.PostHashHex,
-            DiamondLevel: diamonds,
-          });
-          this.diamondSelected = diamonds;
-          this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
-          this.postContent.PostEntryReaderState.DiamondLevelBestowed = diamonds;
-          let successFunction = this.sendDiamondsSuccess;
-          if (skipCelebration) {
-            successFunction = this.sendDiamondSuccessSkipCelebration;
-          } else {
-            // Celebrate when the SendDiamonds call completes
-            this.globalVars.celebrate(true);
-          }
-          this.globalVars.updateEverything(res.TxnHashHex, successFunction, this.sendDiamondsFailure, this);
-        },
-        (err) => {
-          if (err.status === 0) {
-            return this.globalVars._alertError("BitClout is under heavy load. Please try again in one minute.");
-          }
-          this.sendingDiamonds = false;
-          const parsedError = this.backendApi.parseProfileError(err);
-          this.globalVars.logEvent("diamonds: send: error", { parsedError });
-          this.globalVars._alertError(parsedError);
-        }
-      )
-      .finally(() => this.closeDiamondPopover());
+  queueDiamonds(diamonds: number): void {
+    this.globalVars.logEvent("diamond: send", {
+      SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
+      DiamondPostHashHex: this.postContent.PostHashHex,
+      DiamondLevel: diamonds,
+    });
+    this.diamondSelected = diamonds;
+    this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
+    this.postContent.PostEntryReaderState.DiamondLevelBestowed = diamonds;
+    this.globalVars.diamondQueue.push({
+      diamonds,
+      postHashHex: this.postContent.PostHashHex,
+      posterPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
+      userPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+    });
+    this.openDiamondPopover();
+    // Celebrate when the diamond is queued.
+    this.globalVars.celebrate(true);
+    this.closeDiamondPopover();
   }
 
   async diamondClickHandler(event: any): Promise<void> {
@@ -359,8 +353,7 @@ export class FeedPostIconRowComponent {
         if (this.clickCounter === 1 && !this.showDiamondModal()) {
           // Handle single click case when the user has interacted with the diamond feature before and this post has not
           // received a diamond from the user yet.
-          this.globalVars.celebrate(true);
-          this.sendDiamonds(1, true);
+          this.queueDiamonds(1);
         } else {
           // Either this is a double tap event, a single tap on an already diamonded post, or the first time a user is
           // interacting with the diamond feature.
@@ -424,7 +417,7 @@ export class FeedPostIconRowComponent {
     this.collapseDiamondInfo = isCollapse;
   }
 
-  async onDiamondSelected(event: any, index: number): Promise<void> {
+  onDiamondSelected(event: any, index: number): void {
     if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
       this.globalVars._alertError("You cannot downgrade a diamond");
       this.closeDiamondPopover();
@@ -450,13 +443,13 @@ export class FeedPostIconRowComponent {
         confirmButtonText: "Confirm",
         cancelButtonText: "Cancel",
         reverseButtons: true,
-      }).then(async (res: any) => {
+      }).then((res: any) => {
         if (res.isConfirmed) {
-          await this.sendDiamonds(this.diamondSelected);
+          this.queueDiamonds(this.diamondSelected);
         }
       });
     } else {
-      await this.sendDiamonds(this.diamondSelected);
+      this.queueDiamonds(this.diamondSelected);
     }
   }
 
