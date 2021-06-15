@@ -1,7 +1,3 @@
-// FYI: any request that needs the HttpOnly cookie to be sent (e.g. b/c the server
-// needs the seed phrase) needs the {withCredentials: true} option. It may also needed to
-// get the browser to save the cookie in the response.
-// https://github.com/github/fetch#sending-cookies
 import { Injectable } from "@angular/core";
 import { Observable, of, throwError } from "rxjs";
 import { map, switchMap, catchError, mapTo } from "rxjs/operators";
@@ -9,16 +5,9 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 
 export class BackendRoutes {
-  static ExchangeRateRoute = "/api/v0/get-exchange-rate";
-  static BurnBitcoinRoute = "/api/v0/burn-bitcoin";
-  static SendBitCloutRoute = "/api/v0/send-bitclout";
-  static MinerControlRoute = "/api/v0/miner-control";
-
-  static GetUsersStatelessRoute = "/api/v0/get-users-stateless";
-  static RoutePathSubmitPost = "/api/v0/submit-post";
+  static RoutePathGetExchangeRate = "/api/v0/get-exchange-rate";
+  static RoutePathGetUsersStateless = "/api/v0/get-users-stateless";
   static RoutePathUploadImage = "/api/v0/upload-image";
-  static RoutePathSubmitTransaction = "/api/v0/submit-transaction";
-  static RoutePathUpdateProfile = "/api/v0/update-profile";
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
@@ -26,15 +15,10 @@ export class BackendRoutes {
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
   static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
-  static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
   static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
   static RoutePathMarkAllMessagesRead = "/api/v0/mark-all-messages-read";
   static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
-  static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
-  static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
-  static RoutePathBuyOrSellCreatorCoin = "/api/v0/buy-or-sell-creator-coin";
-  static RoutePathTransferCreatorCoin = "/api/v0/transfer-creator-coin";
   static RoutePathUpdateUserGlobalMetadata = "/api/v0/update-user-global-metadata";
   static RoutePathGetUserGlobalMetadata = "/api/v0/get-user-global-metadata";
   static RoutePathGetNotifications = "/api/v0/get-notifications";
@@ -46,12 +30,24 @@ export class BackendRoutes {
   static RoutePathGetBlockTemplate = "/api/v0/get-block-template";
   static RoutePathGetTxn = "/api/v0/get-txn";
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
-  static RoutePathSendDiamonds = "/api/v0/send-diamonds";
   static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
   static RoutePathGetLikesForPost = "/api/v0/get-likes-for-post";
   static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
   static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
   static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
+
+  // Transaction construction and submission endpoints
+  static RoutePathSubmitTransaction = "/api/v0/submit-transaction";
+  static RoutePathBurnBitcoin = "/api/v0/burn-bitcoin";
+  static RoutePathUpdateProfile = "/api/v0/update-profile";
+  static RoutePathSendBitClout = "/api/v0/send-bitclout";
+  static RoutePathSubmitPost = "/api/v0/submit-post";
+  static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
+  static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
+  static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
+  static RoutePathBuyOrSellCreatorCoin = "/api/v0/buy-or-sell-creator-coin";
+  static RoutePathTransferCreatorCoin = "/api/v0/transfer-creator-coin";
+  static RoutePathSendDiamonds = "/api/v0/send-diamonds";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -360,7 +356,7 @@ export class BackendApiService {
   }
 
   GetExchangeRate(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.ExchangeRateRoute);
+    return this.get(endpoint, BackendRoutes.RoutePathGetExchangeRate);
   }
 
   // Use empty string to return all top categories.
@@ -424,7 +420,7 @@ export class BackendApiService {
     FeeRateSatoshisPerKB: number,
     Broadcast: boolean
   ): Observable<any> {
-    let req = this.post(endpoint, BackendRoutes.BurnBitcoinRoute, {
+    let req = this.post(endpoint, BackendRoutes.RoutePathBurnBitcoin, {
       PublicKeyBase58Check,
       BurnAmountSatoshis,
       LatestBitcionAPIResponse,
@@ -447,7 +443,7 @@ export class BackendApiService {
 
       req = req.pipe(
         switchMap((res) =>
-          this.post(endpoint, BackendRoutes.BurnBitcoinRoute, {
+          this.post(endpoint, BackendRoutes.RoutePathBurnBitcoin, {
             PublicKeyBase58Check,
             BurnAmountSatoshis,
             LatestBitcionAPIResponse,
@@ -471,7 +467,7 @@ export class BackendApiService {
     AmountNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.SendBitCloutRoute, {
+    return this.post(endpoint, BackendRoutes.RoutePathSendBitClout, {
       SenderPublicKeyBase58Check,
       RecipientPublicKeyOrUsername,
       AmountNanos: Math.floor(AmountNanos),
@@ -522,7 +518,7 @@ export class BackendApiService {
 
   // User-related functions.
   GetUsersStateless(endpoint: string, publicKeys: any[], SkipForLeaderboard: boolean = false): Observable<any> {
-    return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetUsersStateless, {
       PublicKeysBase58Check: publicKeys,
       SkipForLeaderboard,
     });
