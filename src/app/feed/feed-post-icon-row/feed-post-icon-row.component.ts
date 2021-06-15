@@ -67,6 +67,7 @@ export class FeedPostIconRowComponent {
     this.globalVars.logEvent(`alert : ${action} : account`);
 
     return SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       icon: "info",
       title: `Create an account to ${action}`,
       html: `It's totally anonymous and takes under a minute`,
@@ -442,6 +443,7 @@ export class FeedPostIconRowComponent {
     if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
       this.closeDiamondPopover();
       SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
         title: `Sending ${this.diamondSelected} diamonds to ${this.postContent.ProfileEntryResponse?.Username}`,
         html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
@@ -473,7 +475,6 @@ export class FeedPostIconRowComponent {
 
   getPopoverContainerClass() {
     const mobileClass = this.globalVars.isMobile() ? "diamond-popover-container-mobile " : "";
-    const popoverTheme = "diamond-popover-" + this.themeService.getActiveTheme().key;
-    return "diamond-popover-container " + mobileClass + popoverTheme;
+    return "diamond-popover-container " + mobileClass;
   }
 }

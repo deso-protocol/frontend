@@ -429,6 +429,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       ) {
         const hodlersCount = this.globalVars.loggedInUser.UsersWhoHODLYouCount;
         SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
           title: "Warning!",
           html: `You have ${hodlersCount} supporter${hodlersCount > 1 ? "s" : ""}  who own${
             hodlersCount > 1 ? "" : "s"

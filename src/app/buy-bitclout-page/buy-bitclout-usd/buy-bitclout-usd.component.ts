@@ -59,6 +59,7 @@ export class BuyBitcloutUSDComponent implements OnInit {
         const btcPurchased = queryParams.destAmount;
         this.globalVars.celebrate();
         SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
           icon: "success",
           title: `Purchase Completed`,
           html: `Your purchase of approximately ${this.getBitCloutReceived(btcPurchased).toFixed(
@@ -101,6 +102,7 @@ export class BuyBitcloutUSDComponent implements OnInit {
         const wyreUrl = res.url;
         if (res.url) {
           Swal.fire({
+            target: this.globalVars.getTargetComponentSelector(),
             title: "Purchase BitClout",
             html: `You will complete your purchase through Wyre. Your ${this.selectedFiatCurrency} will be converted to <b>Bitcoin</b> and then into <b>BitClout</b> automatically.`,
             showCancelButton: true,
