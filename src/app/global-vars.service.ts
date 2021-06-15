@@ -636,7 +636,6 @@ export class GlobalVarsService {
         confettiSettings.clock = 75;
       }
       confettiSettings.max = 200;
-      // confettiSettings.clock = 150;
     }
     this.confetti = new ConfettiGenerator(confettiSettings);
     this.confetti.render();
