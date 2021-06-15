@@ -48,14 +48,7 @@ export class GlobalVarsService {
     private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient
-  ) {
-    this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
-    this.hideTimer = Date.now() >= this.announcementTimerEnd + 10 * 1000;
-    setInterval(() => {
-      this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
-      this.hideTimer = Date.now() >= this.announcementTimerEnd + 10 * 1000;
-    }, 1000);
-  }
+  ) {}
 
   static MAX_POST_LENGTH = 280;
 
@@ -182,18 +175,10 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  deflationBombTimerEnd = new Date("June 12, 2021 9:00:00 PDT").getTime();
-  announcementTimerEnd = new Date("June 15, 2021 3:00:00 PDT").getTime();
-
-  // This controls the default text of the countdown timer component.
-  deflationBombTimerText = "Deflation Bomb:";
-  announcementTimerText = "Big Announcement:";
-
   profileUpdateTimestamp: number;
 
-  pastDeflationBomb: boolean;
-
-  hideTimer: boolean;
+  // This is currently set to true until we have a price to display in the web app.
+  pastDeflationBomb: boolean = true;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
