@@ -40,7 +40,7 @@
             <div class="col-3 font-weight-bold">Balance</div>
             <div class="col-9">
               <div>
-                {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos, 9) }} CLOUT
+                {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos, 9) }} $CLOUT
                 <i
                   *ngIf="globalVars.loggedInUser.UnminedBalanceNanos != 0 && globalVars.showProcessingSpinners"
                   class="fa fa-spinner fc-muted"
@@ -76,7 +76,7 @@
             <span class="font-weight-bold">≈ {{ globalVars.nanosToUSD(totalValue(), 2) }}</span>
             USD<br>
             <span class="font-weight-bold" style="font-size:13px;">≈ {{ globalVars.nanosToBitClout(totalValue(), 4) }}</span>
-            CLOUT
+            $CLOUT
           </div>
         </div>
 
