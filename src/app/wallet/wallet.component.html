@@ -1,7 +1,7 @@
 <app-page>
   <!-- Top Bar -->
   <div
-    class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+    class="global__top-bar  global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey w-100"
   >
     <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
     <div class="d-flex align-items-center w-100" style="justify-content: space-between;">
@@ -9,6 +9,9 @@
       <div class="p-15px fs-14px"><span>≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}&nbsp;</span><small>USD Total</small></div>
     </div>
   </div>
+
+  <div class="global__top-bar__height"></div>
+
   <div class="d-flex flex-column" *ngIf="globalVars.loggedInUser">
     <div style="flex-grow: 1">
       <div class="global__mobile-scrollable-section">
