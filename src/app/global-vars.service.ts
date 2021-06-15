@@ -630,7 +630,7 @@ export class GlobalVarsService {
       confettiSettings["props"] = svgList.map((svg) => {
         return { ...{ type: "svg", src: `/assets/img/${svg}.svg` }, ...svgToProps[svg] };
       });
-      if (ConfettiSvg.DIAMOND in svgList) {
+      if (svgList.indexOf(ConfettiSvg.DIAMOND) >= 0) {
         confettiSettings.clock = 150;
       } else {
         confettiSettings.clock = 75;
