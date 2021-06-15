@@ -22,6 +22,7 @@ export enum ConfettiSvg {
   BOMB = "bomb",
   ROCKET = "rocket",
   COMET = "comet",
+  LAMBO = "lambo",
 }
 
 const svgToProps = {
@@ -29,6 +30,7 @@ const svgToProps = {
   [ConfettiSvg.ROCKET]: { size: 18, weight: 1 },
   [ConfettiSvg.BOMB]: { size: 18, weight: 1 },
   [ConfettiSvg.COMET]: { size: 18, weight: 1 },
+  [ConfettiSvg.LAMBO]: { size: 18, weight: 1 },
 };
 
 @Injectable({
@@ -181,7 +183,7 @@ export class GlobalVarsService {
   amplitude: AmplitudeClient;
 
   deflationBombTimerEnd = new Date("June 12, 2021 9:00:00 PDT").getTime();
-  announcementTimerEnd = new Date("June 14, 2021 23:52:00 PDT").getTime();
+  announcementTimerEnd = new Date("June 15, 2021 3:00:00 PDT").getTime();
 
   // This controls the default text of the countdown timer component.
   deflationBombTimerText = "Deflation Bomb:";
@@ -628,8 +630,13 @@ export class GlobalVarsService {
       confettiSettings["props"] = svgList.map((svg) => {
         return { ...{ type: "svg", src: `/assets/img/${svg}.svg` }, ...svgToProps[svg] };
       });
+      if (ConfettiSvg.DIAMOND in svgList) {
+        confettiSettings.clock = 150;
+      } else {
+        confettiSettings.clock = 75;
+      }
       confettiSettings.max = 200;
-      confettiSettings.clock = 150;
+      // confettiSettings.clock = 150;
     }
     this.confetti = new ConfettiGenerator(confettiSettings);
     this.confetti.render();

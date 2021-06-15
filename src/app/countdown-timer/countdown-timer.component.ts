@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { ConfettiSvg, GlobalVarsService } from "../global-vars.service";
-import { Router } from "@angular/router";
+import {Component, Input, OnInit} from "@angular/core";
+import {ConfettiSvg, GlobalVarsService} from "../global-vars.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: "countdown-timer",
@@ -112,7 +112,7 @@ export class CountdownTimerComponent implements OnInit {
   celebrateIfTimeEnd(now: number): void {
     const diff = (now - this.timerEnd) / 1000;
     if (diff > 0 && diff < 3) {
-      this.globalVars.celebrate([ConfettiSvg.ROCKET, ConfettiSvg.COMET]);
+      this.globalVars.celebrate([ConfettiSvg.ROCKET, ConfettiSvg.LAMBO]);
     }
   }
 
