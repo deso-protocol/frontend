@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectorRef, ViewChild } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
+import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -323,7 +323,7 @@ export class FeedPostIconRowComponent {
             successFunction = this.sendDiamondSuccessSkipCelebration;
           } else {
             // Celebrate when the SendDiamonds call completes
-            this.globalVars.celebrate(true);
+            this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           }
           this.globalVars.updateEverything(res.TxnHashHex, successFunction, this.sendDiamondsFailure, this);
         },
@@ -360,7 +360,7 @@ export class FeedPostIconRowComponent {
         if (this.clickCounter === 1 && !this.showDiamondModal()) {
           // Handle single click case when the user has interacted with the diamond feature before and this post has not
           // received a diamond from the user yet.
-          this.globalVars.celebrate(true);
+          this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           this.sendDiamonds(1, true);
         } else {
           // Either this is a double tap event, a single tap on an already diamonded post, or the first time a user is

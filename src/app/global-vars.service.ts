@@ -12,11 +12,26 @@ import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
-import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
+
+export enum ConfettiSvg {
+  DIAMOND = "diamond",
+  BOMB = "bomb",
+  ROCKET = "rocket",
+  COMET = "comet",
+  LAMBO = "lambo",
+}
+
+const svgToProps = {
+  [ConfettiSvg.DIAMOND]: { size: 10, weight: 1 },
+  [ConfettiSvg.ROCKET]: { size: 18, weight: 1 },
+  [ConfettiSvg.BOMB]: { size: 18, weight: 1 },
+  [ConfettiSvg.COMET]: { size: 18, weight: 1 },
+  [ConfettiSvg.LAMBO]: { size: 18, weight: 1 },
+};
 
 @Injectable({
   providedIn: "root",
@@ -35,8 +50,10 @@ export class GlobalVarsService {
     private httpClient: HttpClient
   ) {
     this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
+    this.hideTimer = Date.now() >= this.announcementTimerEnd + 10 * 1000;
     setInterval(() => {
       this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
+      this.hideTimer = Date.now() >= this.announcementTimerEnd + 10 * 1000;
     }, 1000);
   }
 
@@ -175,6 +192,8 @@ export class GlobalVarsService {
   profileUpdateTimestamp: number;
 
   pastDeflationBomb: boolean;
+
+  hideTimer: boolean;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -594,7 +613,7 @@ export class GlobalVarsService {
     });
   }
 
-  celebrate(dropDiamonds: boolean = false, dropBomb: boolean = false) {
+  celebrate(svgList: ConfettiSvg[] = []) {
     const canvasID = "my-canvas-" + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
@@ -607,14 +626,16 @@ export class GlobalVarsService {
       rotate: true,
       clock: 100,
     };
-    if (dropDiamonds) {
-      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 10 }];
+    if (svgList.length > 0) {
+      confettiSettings["props"] = svgList.map((svg) => {
+        return { ...{ type: "svg", src: `/assets/img/${svg}.svg` }, ...svgToProps[svg] };
+      });
+      if (ConfettiSvg.DIAMOND in svgList) {
+        confettiSettings.clock = 150;
+      } else {
+        confettiSettings.clock = 75;
+      }
       confettiSettings.max = 200;
-      confettiSettings.clock = 150;
-    } else if (dropBomb) {
-      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/bomb.svg", size: 10 }];
-      confettiSettings.max = 200;
-      confettiSettings.clock = 150;
     }
     this.confetti = new ConfettiGenerator(confettiSettings);
     this.confetti.render();
