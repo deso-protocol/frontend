@@ -124,6 +124,7 @@ export class TransferBitcloutComponent implements OnInit {
         }
 
         SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
           title: "Are you ready?",
           html: sprintf(
             isUsername ? Messages.CONFIRM_TRANSFER_TO_USERNAME : Messages.CONFIRM_TRANSFER_TO_PUBKEY,
