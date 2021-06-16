@@ -746,6 +746,7 @@ export class AdminComponent implements OnInit {
 
   updateUSDToBitCloutReserveExchangeRate(): void {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
       html: `You are about to update the reserve exchange rate of USD to BitClout to be $${this.usdToBitCloutReserveExchangeRate}`,
       showConfirmButton: true,
@@ -782,6 +783,7 @@ export class AdminComponent implements OnInit {
 
   updateBuyBitCloutFeeRate(): void {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
       html: `You are about to update the Buy BitClout Fee to be ${this.buyBitCloutFeeRate}%`,
       showConfirmButton: true,

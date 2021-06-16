@@ -181,9 +181,6 @@ export class GlobalVarsService {
   BuyBitCloutFeeBasisPoints: number;
   profileUpdateTimestamp: number;
 
-  // This is currently set to true until we have a price to display in the web app.
-  pastDeflationBomb: boolean = true;
-
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {

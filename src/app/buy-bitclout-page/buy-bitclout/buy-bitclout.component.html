@@ -10,7 +10,7 @@
 
   <div class="global__top-bar__height"></div>
 
-  <div class="d-flex flex-column" *ngIf="!globalVars.pastDeflationBomb; else pastDeflationBomb">
+  <div class="d-flex flex-column">
     <div style="flex-grow: 1">
       <div class="global__mobile-scrollable-section" *ngIf="!waitingOnTxnConfirmation">
         <div style="height: 60px" *ngIf="!globalVars.showBuyWithUSD"></div>
@@ -191,6 +191,9 @@
                   </a>
                 </div>
               </div>
+              <div class="fs-12px mt-5px text-grey7" *ngIf="globalVars.BuyBitCloutFeeBasisPoints">
+                <i>Includes {{ globalVars.BuyBitCloutFeeBasisPoints / 100 }}% slippage</i>
+              </div>
 
               <!-- Bitcoin to exchange input-->
               <div class="fs-15px mt-15px font-weight-bold">Bitcoin to swap</div>
@@ -298,20 +301,6 @@
       ></simple-center-loader>
     </div>
   </div>
-  <ng-template #pastDeflationBomb>
-    <div (click)="_openExchangeSignUp()" class="cursor-pointer">
-      <div class="p-15px">
-        <span style="text-decoration:underline;">Click here</span> to create an Exchange Account on blockchain.com and buy BitClout.
-        <div class="p-15px d-flex justify-content-center align-items-center">
-          <img
-            height="100"
-            src="assets/img/blockchain-logo-cropped.png"/>
-          <i class="fas fa-times px-10px" style="font-size: 24px;"></i>
-          <img src="assets/img/logo-cropped.png" height="100"/>
-        </div>
-      </div>
-    </div>
-  </ng-template>
 </div>
 
 <ng-template #showBuyCompleteElseBlock>
