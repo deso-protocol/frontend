@@ -175,10 +175,13 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  profileUpdateTimestamp: number;
+  // Price of BitClout values
+  ExchangeUSDCentsPerBitClout: number;
+  USDCentsPerBitCloutReservePrice: number;
+  BuyBitCloutFeeBasisPoints: number = 0;
 
-  // This is currently set to true until we have a price to display in the web app.
-  pastDeflationBomb: boolean = true;
+  // Timestamp of last profile update
+  profileUpdateTimestamp: number;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero

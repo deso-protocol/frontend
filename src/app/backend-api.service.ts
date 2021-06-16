@@ -10,7 +10,7 @@ import { IdentityService } from "./identity.service";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
-  static BurnBitcoinRoute = "/api/v0/burn-bitcoin";
+  static ExchangeBitcoinRoute = "/api/v0/exchange-bitcoin";
   static SendBitCloutRoute = "/api/v0/send-bitclout";
   static MinerControlRoute = "/api/v0/miner-control";
 
@@ -70,6 +70,12 @@ export class BackendRoutes {
   static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
+  static RoutePathSetUSDCentsToBitCloutReserveExchangeRate =
+    "/api/v0/admin/set-usd-cents-to-bitclout-reserve-exchange-rate";
+  static RoutePathGetUSDCentsToBitCloutReserveExchangeRate =
+    "/api/v0/admin/get-usd-cents-to-bitclout-reserve-exchange-rate";
+  static RoutePathSetBuyBitCloutFeeBasisPoints = "/api/v0/admin/set-buy-bitclout-fee-basis-points";
+  static RoutePathGetBuyBitCloutFeeBasisPoints = "/api/v0/admin/get-buy-bitclout-fee-basis-points";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
   static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
@@ -415,7 +421,7 @@ export class BackendApiService {
       .pipe(catchError(this._handleError));
   }
 
-  BurnBitcoin(
+  ExchangeBitcoin(
     endpoint: string,
     LatestBitcionAPIResponse: any,
     BTCDepositAddress: string,
@@ -424,7 +430,7 @@ export class BackendApiService {
     FeeRateSatoshisPerKB: number,
     Broadcast: boolean
   ): Observable<any> {
-    let req = this.post(endpoint, BackendRoutes.BurnBitcoinRoute, {
+    let req = this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
       PublicKeyBase58Check,
       BurnAmountSatoshis,
       LatestBitcionAPIResponse,
@@ -447,7 +453,7 @@ export class BackendApiService {
 
       req = req.pipe(
         switchMap((res) =>
-          this.post(endpoint, BackendRoutes.BurnBitcoinRoute, {
+          this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
             PublicKeyBase58Check,
             BurnAmountSatoshis,
             LatestBitcionAPIResponse,
@@ -1386,6 +1392,36 @@ export class BackendApiService {
     });
 
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  SetUSDCentsToBitCloutReserveExchangeRate(
+    endpoint: string,
+    AdminPublicKey: string,
+    USDCentsPerBitClout: number
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToBitCloutReserveExchangeRate, AdminPublicKey, {
+      AdminPublicKey,
+      USDCentsPerBitClout,
+    });
+  }
+
+  GetUSDCentsToBitCloutReserveExchangeRate(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToBitCloutReserveExchangeRate);
+  }
+
+  SetBuyBitCloutFeeBasisPoints(
+    endpoint: string,
+    AdminPublicKey: string,
+    BuyBitCloutFeeBasisPoints: number
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyBitCloutFeeBasisPoints, AdminPublicKey, {
+      AdminPublicKey,
+      BuyBitCloutFeeBasisPoints,
+    });
+  }
+
+  GetBuyBitCloutFeeBasisPoints(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetBuyBitCloutFeeBasisPoints);
   }
 
   UpdateGlobalParams(

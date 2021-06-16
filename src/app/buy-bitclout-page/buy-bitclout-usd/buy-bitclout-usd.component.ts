@@ -167,7 +167,10 @@ export class BuyBitcloutUSDComponent implements OnInit {
   }
 
   getBitCloutReceived(btcReceived: number): number {
-    return (btcReceived * 1e8) / (this.globalVars.satoshisPerBitCloutExchangeRate * 1.01);
+    return (
+      (btcReceived * 1e8) /
+      (this.globalVars.satoshisPerBitCloutExchangeRate * (1 + this.globalVars.BuyBitCloutFeeBasisPoints / (100 * 100)))
+    );
   }
 
   onSelectFiatCurrency(event): void {

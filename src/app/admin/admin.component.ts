@@ -58,6 +58,8 @@ export class AdminComponent implements OnInit {
   submittingWhitelistUpdate = false;
   submittingUnwhitelistUpdate = false;
   submittingEvictUnminedBitcoinTxns = false;
+  submittingUSDToBitCloutReserveExchangeRateUpdate = false;
+  submittingBuyBitCloutFeeRate = false;
 
   submittingRemovePhone = false;
   dbDetailsOpen = false;
@@ -68,6 +70,8 @@ export class AdminComponent implements OnInit {
   mempoolSummaryStats: any = {};
   mempoolTxnCount = 0;
   bitcoinExchangeRate: number;
+  usdToBitCloutReserveExchangeRate: number;
+  buyBitCloutFeeRate: number;
   updatingBitcoinExchangeRate = false;
   updatingGlobalParams = false;
   updatingUSDToBitcoin = false;
@@ -160,6 +164,10 @@ export class AdminComponent implements OnInit {
     this._loadMempoolStats();
     this._loadNextBlockStats();
     this._loadGlobalParams();
+
+    // Get current fee percentage and reserve USD to BitClout exchange price.
+    this._loadBuyBitCloutFeeRate();
+    this._loadUSDToBitCloutReserveExchangeRate();
 
     this.titleService.setTitle("Admin - BitClout");
   }
@@ -418,6 +426,20 @@ export class AdminComponent implements OnInit {
       .add(() => {
         this.loadingGlobalParams = false;
       });
+  }
+
+  _loadBuyBitCloutFeeRate(): void {
+    this.backendApi.GetBuyBitCloutFeeBasisPoints(this.globalVars.localNode).subscribe(
+      (res) => (this.buyBitCloutFeeRate = res.BuyBitCloutFeeBasisPoints / 100),
+      (err) => console.log(err)
+    );
+  }
+
+  _loadUSDToBitCloutReserveExchangeRate(): void {
+    this.backendApi.GetUSDCentsToBitCloutReserveExchangeRate(this.globalVars.localNode).subscribe(
+      (res) => (this.usdToBitCloutReserveExchangeRate = res.USDCentsPerBitClout / 100),
+      (err) => console.log(err)
+    );
   }
 
   _toggleDbDetails() {
@@ -720,6 +742,80 @@ export class AdminComponent implements OnInit {
   updateGlobalParamMinimumNetworkFee() {
     this.updatingMinimumNetworkFee = true;
     this.updateGlobalParams(-1, -1, this.updateGlobalParamsValues.MinimumNetworkFeeNanosPerKB);
+  }
+
+  updateUSDToBitCloutReserveExchangeRate(): void {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Are you ready?",
+      html: `You are about to update the reserve exchange rate of USD to BitClout to be $${this.usdToBitCloutReserveExchangeRate}`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.submittingUSDToBitCloutReserveExchangeRateUpdate = true;
+        this.backendApi
+          .SetUSDCentsToBitCloutReserveExchangeRate(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.usdToBitCloutReserveExchangeRate * 100
+          )
+          .subscribe(
+            (res: any) => {
+              console.log(res);
+              this.globalVars._alertSuccess(
+                sprintf("Successfully updated the reserve exchange to $%d/BitClout", res.USDCentsPerBitClout / 100)
+              );
+            },
+            (err: any) => {
+              this.globalVars._alertError(this.extractError(err));
+            }
+          )
+          .add(() => (this.submittingUSDToBitCloutReserveExchangeRateUpdate = false));
+      }
+    });
+  }
+
+  updateBuyBitCloutFeeRate(): void {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Are you ready?",
+      html: `You are about to update the Buy BitClout Fee to be ${this.buyBitCloutFeeRate}%`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.submittingBuyBitCloutFeeRate = true;
+        this.backendApi
+          .SetBuyBitCloutFeeBasisPoints(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.buyBitCloutFeeRate * 100
+          )
+          .subscribe(
+            (res: any) => {
+              console.log(res);
+              this.globalVars._alertSuccess(
+                sprintf("Successfully updated the Buy BitClout Fee to %d%", res.USDCentsPerBitClout / 100)
+              );
+            },
+            (err: any) => {
+              this.globalVars._alertError(this.extractError(err));
+            }
+          )
+          .add(() => (this.submittingBuyBitCloutFeeRate = false));
+      }
+    });
   }
 
   updateGlobalParams(usdPerBitcoin: number, createProfileFeeNanos: number, minimumNetworkFeeNanosPerKB: number) {

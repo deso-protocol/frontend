@@ -155,56 +155,23 @@ export class AppComponent implements OnInit {
     return observable;
   }
 
-  _updateBitCloutDisplayExchangeRate() {
-    // Don't show a value until we've fetched the protocol's exchange rate.
-    if (!this.globalVars.satoshisPerBitCloutExchangeRate) {
-      return;
-    }
-
-    // The exchange rate requires getting the current Bitcoin price in USD.
-    this.httpClient
-      .get<any>("https://api.blockchain.com/ticker")
-      .subscribe(
-        (res: any) => {
-          if (res.USD != null && res.USD.last != null) {
-            this.globalVars.usdPerBitcoinExchangeRate = res.USD.last;
-          } else {
-            // We divide by 100 to convert from cents to dollars. usdPerBitcoinExchangeRate is expected to be in dollars.
-            this.globalVars.usdPerBitcoinExchangeRate = this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate / 100;
-          }
-        },
-        (error) => {
-          console.error(error);
-          // We divide by 100 to convert from cents to dollars. usdPerBitcoinExchangeRate is expected to be in dollars.
-          this.globalVars.usdPerBitcoinExchangeRate = this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate / 100;
-        }
-      )
-      .add(() => {
-        // nanoperunit / satoshiperunit / usdperbitcoin * satoshiperbitcoin
-        const nanosPerUnit = 1e9;
-        const satoshisPerBitcoin = 1e8;
-        this.globalVars.nanosPerUSDExchangeRate =
-          (nanosPerUnit / this.globalVars.satoshisPerBitCloutExchangeRate / this.globalVars.usdPerBitcoinExchangeRate) *
-          satoshisPerBitcoin;
-        this.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, null);
-        // TODO: When we get rid of the old app, we will only use the globalVars version of this.
-        this.globalVars.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, 2);
-
-        this.ref.detectChanges();
-      });
-  }
-
   _updateBitCloutExchangeRate() {
     this.backendApi.GetExchangeRate(this.globalVars.localNode).subscribe(
       (res: any) => {
-        // TODO: Delete these fields. They're no longer used.
         this.globalVars.satoshisPerBitCloutExchangeRate = res.SatoshisPerBitCloutExchangeRate;
 
         this.globalVars.NanosSold = res.NanosSold;
         this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
 
-        // The exchange rate requires getting the current Bitcoin price in USD.
-        this._updateBitCloutDisplayExchangeRate();
+        this.globalVars.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
+        this.globalVars.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
+        this.globalVars.BuyBitCloutFeeBasisPoints = res.BuyBitCloutFeeBasisPoints;
+
+        const nanosPerUnit = 1e9;
+        this.globalVars.nanosPerUSDExchangeRate = nanosPerUnit / (this.globalVars.ExchangeUSDCentsPerBitClout / 100);
+        this.globalVars.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
+        this.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, null);
+        this.globalVars.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, 2);
       },
       (error) => {
         console.error(error);
@@ -220,7 +187,6 @@ export class AppComponent implements OnInit {
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
-
         // Setup amplitude on first run
         if (!this.globalVars.amplitude && res.AmplitudeKey) {
           this.globalVars.amplitude = require("amplitude-js");
