@@ -163,8 +163,7 @@ export class AppComponent implements OnInit {
         this.globalVars.NanosSold = res.NanosSold;
         this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
 
-        this.globalVars.ExchangeUSDCentsPerBitClout =
-          res.USDCentsPerBitCloutExchangeRate * (1 + res.BuyBitCloutFeeBasisPoints / (100 * 100));
+        this.globalVars.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
         this.globalVars.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
         this.globalVars.BuyBitCloutFeeBasisPoints = res.BuyBitCloutFeeBasisPoints;
 

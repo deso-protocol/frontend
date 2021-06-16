@@ -175,10 +175,12 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  //
+  // Price of BitClout values
   ExchangeUSDCentsPerBitClout: number;
   USDCentsPerBitCloutReservePrice: number;
-  BuyBitCloutFeeBasisPoints: number;
+  BuyBitCloutFeeBasisPoints: number = 0;
+
+  // Timestamp of last profile update
   profileUpdateTimestamp: number;
 
   SetupMessages() {

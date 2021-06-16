@@ -375,7 +375,7 @@ export class BuyBitcloutComponent implements OnInit {
   }
 
   _computeSatoshisToBurnGivenBitCloutNanos(amountNanos: number) {
-    if (!this.appData.ExchangeUSDCentsPerBitClout) {
+    if (!this.appData.satoshisPerBitCloutExchangeRate) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "error",
@@ -404,7 +404,7 @@ export class BuyBitcloutComponent implements OnInit {
   _computeNanosToCreateGivenSatoshisToBurn(satoshisToBurn: number): number {
     // Account for the case where we haven't fetched the protocol exchange rate yet.
     // For some reason this was taking 20 seconds in prod...
-    if (!this.appData.ExchangeUSDCentsPerBitClout) {
+    if (!this.appData.satoshisPerBitCloutExchangeRate) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "error",
