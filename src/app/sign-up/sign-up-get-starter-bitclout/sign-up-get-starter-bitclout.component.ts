@@ -203,20 +203,34 @@ export class SignUpGetStarterBitcloutComponent implements OnInit {
       .subscribe(
         (res) => {
           // Pull the CanCreateProfile boolean from the server
-          this.globalVars.updateEverything();
-
-          this.phoneNumberVerified.emit();
-          this.screenToShow = SignUpGetStarterBitcloutComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
-
+          this.globalVars.updateEverything(
+            res.TxnHashHex,
+            this._getStarterBitCloutSuccess,
+            this._getStarterBitCloutFailure,
+            this
+          );
           this.globalVars.logEvent("account : create : submit-verification-code: success");
         },
         (err) => {
           this._parseSubmitPhoneNumberVerificationCodeServerErrors(err);
+          this.submittingPhoneNumberVerificationCode = false;
         }
-      )
-      .add(() => {
-        this.submittingPhoneNumberVerificationCode = false;
-      });
+      );
+  }
+
+  _getStarterBitCloutSuccess(comp: any): void {
+    comp.screenToShow = SignUpGetStarterBitcloutComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
+    comp.submittingPhoneNumberVerificationCode = false;
+    comp.phoneNumberVerified.emit();
+  }
+
+  _getStarterBitCloutFailure(comp: any): void {
+    comp.globalVars._alertError(
+      "Your starter BitClout is on it's way.  The transaction broadcast successfully but read node timeout exceeded. Please refresh."
+    );
+    comp.screenToShow = SignUpGetStarterBitcloutComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
+    comp.submittingPhoneNumberVerificationCode = false;
+    comp.phoneNumberVerified.emit();
   }
 }
 

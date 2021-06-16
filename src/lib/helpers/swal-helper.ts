@@ -14,6 +14,7 @@ export class SwalHelper {
     "confirmButtonText",
     "cancelButtonText",
     "denyButtonText",
+    "target",
   ];
 
   // These are booleans, so they don't need to be escaped

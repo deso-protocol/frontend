@@ -55,7 +55,7 @@
       >
         <div
           class="creators-leaderboard__avatar d-inline-block align-top rounded"
-          [ngStyle]="{ 'background-image': 'url(' + item.ProfilePic + ')' }"
+          [avatar]="item.PublicKeyBase58Check"
         ></div>
         <a class="d-inline-block mt-2 ml-3 fc-default">{{ item.Username }}</a>
 

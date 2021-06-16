@@ -6,7 +6,7 @@
     ></top-bar-mobile-navigation-control>
   </div>
 
-  <div class="creator-profile__avatar" [style.background-image]="'url(' + profile.ProfilePic + ')'"></div>
+  <div class="creator-profile__avatar" [avatar]="profile.PublicKeyBase58Check"></div>
   <div class="d-flex align-items-center justify-content-end pt-15px mr-15px js-creator-profile-top-card-container">
     <div
       *ngIf="!profileBelongsToLoggedInUser() && globalVars.loggedInUser"
@@ -17,7 +17,7 @@
       <a class="link--unstyled text-grey9 link--unstyled text-grey9" dropdownToggle>
         <i class="fas fa-ellipsis-h"></i>
       </a>
-      <div class="dropdown-menu dropdown-menu-right text-danger p-0" *dropdownMenu>
+      <div class="dropdown-menu dropdown-menu-right text-danger p-0" *dropdownMenu app-theme>
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
@@ -92,6 +92,12 @@
         <i class="fas fa-check-circle fa-md align-middle"></i>
       </div>
     </div>
+
+    <div style="font-size: 11px" class="pt-2px">
+      FR
+      <span class="font-weight-bold">{{ getFoundersRewardPercent() | number: "0.0-9" }}%</span>
+    </div>
+
     <div class="fs-15px pt-5px text-break" [innerHTML]="profile.Description | sanitizeAndAutoLink"></div>
     <div class="fs-15px pt-5px d-flex flex-wrap">
       <a
@@ -104,9 +110,20 @@
         <span class="fc-muted">Followers&nbsp;&nbsp;</span>
       </a>
 
+      <a
+        class="link--unstyled"
+        *ngIf="followingCount != null"
+        [routerLink]="AppRoutingModule.userFollowingPath(profile.Username)"
+        queryParamsHandling="merge"
+      >
+        <span class="font-weight-bold">{{ followingCount }}&nbsp;</span>
+        <span class="fc-muted">Following&nbsp;&nbsp;</span>
+      </a>
+
       <div style="whitespace: nowrap">
         <div class="font-weight-bold" style="display: inline">
-          ~{{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}
+          ~{{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }} (<strong><img src="assets/img/cloutlogo.svg" width="15px" class="clout" style="margin-right:-8px;margin-top:-2px;" />
+            {{ globalVars.nanosToBitClout(profile.CoinPriceBitCloutNanos, 2) }}</strong>)
         </div>
         <div class="fc-muted" style="display: inline">Coin Price&nbsp;&nbsp;</div>
       </div>

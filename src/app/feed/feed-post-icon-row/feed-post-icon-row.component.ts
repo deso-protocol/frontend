@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectorRef, ViewChild } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
+import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -9,6 +9,7 @@ import { RouteNames } from "../../app-routing.module";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
+import { ThemeService } from "../../theme/theme.service";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -23,6 +24,7 @@ export class FeedPostIconRowComponent {
   @Input() parentPost: PostEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
   @Input() afterRecloutCreatedCallback: any = null;
+  @Input() hideNumbers: boolean = false;
 
   sendingRecloutRequest = false;
 
@@ -40,6 +42,12 @@ export class FeedPostIconRowComponent {
   // Threshold above which user must confirm before sending diamonds
   static DiamondWarningThreshold = 3;
 
+  // Boolean for animation on whether a heart is clicked or not
+  animateLike = false;
+
+  // Boolean for animation on whether a diamond is clicked or not
+  animateDiamond = false;
+
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
@@ -47,7 +55,8 @@ export class FeedPostIconRowComponent {
     private activatedRoute: ActivatedRoute,
     private platformLocation: PlatformLocation,
     private ref: ChangeDetectorRef,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private themeService: ThemeService
   ) {}
 
   _detectChanges() {
@@ -58,6 +67,7 @@ export class FeedPostIconRowComponent {
     this.globalVars.logEvent(`alert : ${action} : account`);
 
     return SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       icon: "info",
       title: `Create an account to ${action}`,
       html: `It's totally anonymous and takes under a minute`,
@@ -320,7 +330,7 @@ export class FeedPostIconRowComponent {
             successFunction = this.sendDiamondSuccessSkipCelebration;
           } else {
             // Celebrate when the SendDiamonds call completes
-            this.globalVars.celebrate(true);
+            this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           }
           this.globalVars.updateEverything(res.TxnHashHex, successFunction, this.sendDiamondsFailure, this);
         },
@@ -357,7 +367,7 @@ export class FeedPostIconRowComponent {
         if (this.clickCounter === 1 && !this.showDiamondModal()) {
           // Handle single click case when the user has interacted with the diamond feature before and this post has not
           // received a diamond from the user yet.
-          this.globalVars.celebrate(true);
+          this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           this.sendDiamonds(1, true);
         } else {
           // Either this is a double tap event, a single tap on an already diamonded post, or the first time a user is
@@ -433,9 +443,10 @@ export class FeedPostIconRowComponent {
     if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
       this.closeDiamondPopover();
       SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
         title: `Sending ${this.diamondSelected} diamonds to ${this.postContent.ProfileEntryResponse?.Username}`,
-        html: `Clicking confirm will send ${this.getUSDForDiamond(
+        html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
           this.diamondSelected
         )} worth of your creator coin to @${this.postContent.ProfileEntryResponse?.Username}`,
         showCancelButton: true,
@@ -458,16 +469,12 @@ export class FeedPostIconRowComponent {
     }
   }
 
-  getUSDForDiamond(index: number): string {
-    const bitcloutNanos = this.globalVars.diamondLevelMap[index];
-    const val = this.globalVars.nanosToUSDNumber(bitcloutNanos);
-    if (val < 1) {
-      return this.globalVars.formatUSD(val, 2);
-    }
-    return this.globalVars.abbreviateNumber(val, 0, true);
-  }
-
   getCurrentDiamondLevel(): number {
     return this.postContent.PostEntryReaderState?.DiamondLevelBestowed || 0;
+  }
+
+  getPopoverContainerClass() {
+    const mobileClass = this.globalVars.isMobile() ? "diamond-popover-container-mobile " : "";
+    return "diamond-popover-container " + mobileClass;
   }
 }

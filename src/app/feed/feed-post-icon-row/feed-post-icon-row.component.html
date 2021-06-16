@@ -1,6 +1,5 @@
 <div
-  class="js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between"
-  style="margin-top: 8px; max-width: 420px"
+  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px"
 >
   <!-- TODO: post threads: needs hover treatment-->
   <!--     [routerLink]="router.url"-->
@@ -11,7 +10,7 @@
     data-target=".js-feed-post-icon-row__comment-modal"
   >
     <i class="icon-reply feed-post-icon-row__icon"></i>
-    <span>{{ postContent.CommentCount }}</span>
+    <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
   </div>
 
   <div
@@ -67,7 +66,7 @@
         </a>
       </ng-template>
     </div>
-    {{ postContent.RecloutCount }}
+    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount }}</span>
   </div>
 
   <div
@@ -77,16 +76,18 @@
   >
     <i
       [ngClass]="{
+        'is_animating': animateLike,
         'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
         'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
       }"
+      (click)="animateLike = !animateLike"
       class="feed-post-icon-row__icon"
     ></i>
-    {{ postContent.LikeCount }}
+    <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
   </div>
 
   <ng-template #popTemplate>
-    <div id="diamond-popover">
+    <div id="diamond-popover" app-theme>
       <div *ngIf="!sendingDiamonds; else sendingDiamondSpinner">
         <div (click)="expandDiamondInfo($event)">
           Give a diamond.
@@ -94,8 +95,7 @@
           will receive the amount shown as
           <b>a tip</b>
           from you, paid in
-          <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>
-          .
+          <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>.
           <i class="fas fa-info-circle"></i>
         </div>
         <div
@@ -131,7 +131,7 @@
                 class="icon-diamond fs-25px d-block"
                 [ngStyle]="{ color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555' }"
               ></i>
-              <div class="d-block fc-muted fs-12px" style="text-align: center">{{ getUSDForDiamond(index + 1) }}</div>
+              <div class="d-block fc-muted fs-12px" style="text-align: center">{{ globalVars.getUSDForDiamond(index + 1) }}</div>
             </div>
           </ng-template>
         </div>
@@ -144,21 +144,23 @@
   </ng-template>
   <div
     class="cursor-pointer d-flex align-items-center"
-    [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
+    [ngClass]="{'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
   >
     <i
       [popover]="popTemplate"
       triggers=""
       placement="top"
-      [containerClass]="globalVars.isMobile() ? 'diamond-popover-container-mobile' : 'diamond-popover-container'"
-      container="body"
+      [containerClass]="getPopoverContainerClass()"
+      [container]="globalVars.getTargetComponentSelector()"
       [outsideClick]="true"
       #diamondPopover="bs-popover"
       class="icon-diamond feed-post-icon-row__icon p-2px"
       style="font-size: 20px !important; padding-right: 5px"
       (click)="diamondClickHandler($event)"
+      (click)="animateDiamond = !animateDiamond"
+      [ngClass]="{'is_animating_ice': animateDiamond}"
     ></i>
-    {{ postContent.DiamondCount }}
+    <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
   </div>
 
   <div class="d-none d-lg-flex cursor-pointer align-items-center">

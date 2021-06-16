@@ -5,6 +5,10 @@ import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
+import { DiamondsModalComponent } from "../../diamonds-modal/diamonds-modal.component";
+import { LikesModalComponent } from "../../likes-modal/likes-modal.component";
+import { RecloutsModalComponent } from "../../reclouts-modal/reclouts-modal.component";
+import { QuoteRecloutsModalComponent } from "../../quote-reclouts-modal/quote-reclouts-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
 import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
@@ -71,6 +75,7 @@ export class FeedPostComponent implements OnInit {
   @Input() isParentPostInThread = false;
   @Input() showThreadConnectionLine = false;
   @Input() showLeftSelectedBorder = false;
+  @Input() showInteractionDetails = false;
 
   @Input() showDropdown = true;
   @Input() hideFollowLink = false;
@@ -81,6 +86,9 @@ export class FeedPostComponent implements OnInit {
   @Input() hoverable = true;
 
   @Input() showReplyingTo = false;
+
+  // If the post is shown in a modal, this is used to hide the modal on post click.
+  @Input() containerModalRef: any = null;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
@@ -115,6 +123,10 @@ export class FeedPostComponent implements OnInit {
   }
 
   onPostClicked(event) {
+    if (this.containerModalRef !== null) {
+      this.containerModalRef.hide();
+    }
+
     // if we shouldn't be navigating the user to a new page, just return
     if (!this.contentShouldLinkToThread) {
       return true;
@@ -152,11 +164,43 @@ export class FeedPostComponent implements OnInit {
   openImgModal(event, imageURL) {
     event.stopPropagation();
     this.modalService.show(FeedPostImageModalComponent, {
-      class: "modal-dialog-centered",
+      class: "modal-dialog-centered modal-lg",
       initialState: {
         imageURL,
       },
     });
+  }
+
+  openInteractionModal(event, component): void {
+    event.stopPropagation();
+    this.modalService.show(component, {
+      class: "modal-dialog-centered",
+      initialState: { postHashHex: this.post.PostHashHex },
+    });
+  }
+
+  openDiamondsModal(event): void {
+    if (this.postContent.DiamondCount) {
+      this.openInteractionModal(event, DiamondsModalComponent);
+    }
+  }
+
+  openLikesModal(event): void {
+    if (this.postContent.LikeCount) {
+      this.openInteractionModal(event, LikesModalComponent);
+    }
+  }
+
+  openRecloutsModal(event): void {
+    if (this.postContent.RecloutCount) {
+      this.openInteractionModal(event, RecloutsModalComponent);
+    }
+  }
+
+  openQuoteRecloutsModal(event): void {
+    if (this.postContent.QuoteRecloutCount) {
+      this.openInteractionModal(event, QuoteRecloutsModalComponent);
+    }
   }
 
   hidePost() {

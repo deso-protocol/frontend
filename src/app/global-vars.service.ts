@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { PostEntryResponse, User } from "./backend-api.service";
-import { Router, ActivatedRoute, Params } from "@angular/router";
+import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
+import { Router, ActivatedRoute } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
@@ -10,11 +10,28 @@ import { FollowChangeObservableResult } from "../lib/observable-results/follow-c
 import { SwalHelper } from "../lib/helpers/swal-helper";
 import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
-import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import { DomSanitizer } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
-import { configFromArray } from "ngx-bootstrap/chronos/create/from-array";
-import { CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse } from "../lib/services/pulse/pulse-service";
+import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
+import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
+import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import { HttpClient } from "@angular/common/http";
+
+export enum ConfettiSvg {
+  DIAMOND = "diamond",
+  BOMB = "bomb",
+  ROCKET = "rocket",
+  COMET = "comet",
+  LAMBO = "lambo",
+}
+
+const svgToProps = {
+  [ConfettiSvg.DIAMOND]: { size: 10, weight: 1 },
+  [ConfettiSvg.ROCKET]: { size: 18, weight: 1 },
+  [ConfettiSvg.BOMB]: { size: 18, weight: 1 },
+  [ConfettiSvg.COMET]: { size: 18, weight: 1 },
+  [ConfettiSvg.LAMBO]: { size: 18, weight: 1 },
+};
 
 @Injectable({
   providedIn: "root",
@@ -29,7 +46,8 @@ export class GlobalVarsService {
     private backendApi: BackendApiService,
     private sanitizer: DomSanitizer,
     private identityService: IdentityService,
-    private router: Router
+    private router: Router,
+    private httpClient: HttpClient
   ) {}
 
   static MAX_POST_LENGTH = 280;
@@ -64,7 +82,7 @@ export class GlobalVarsService {
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
 
-  // Whether or not to show processig spinners in the UI for unmined transactions.
+  // Whether or not to show processing spinners in the UI for unmined transactions.
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
@@ -94,8 +112,7 @@ export class GlobalVarsService {
   filterType = "";
   // The coin balance and user profiles of the coins the the user
   // hodls and the users who hodl him.
-  youHodlMap = {};
-  hodlYouMap = {};
+  youHodlMap: { [k: string]: BalanceEntryResponse } = {};
 
   // Map of diamond level to bitclout nanos.
   diamondLevelMap = {};
@@ -158,14 +175,14 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  // This controls the default text of the countdown timer component.
-  timerText: string = "Deflation Bomb:";
-  pastDeflationBomb: boolean;
-
   //
   ExchangeUSDCentsPerBitClout: number;
   USDCentsPerBitCloutReservePrice: number;
   BuyBitCloutFeeBasisPoints: number;
+  profileUpdateTimestamp: number;
+
+  // This is currently set to true until we have a price to display in the web app.
+  pastDeflationBomb: boolean = true;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -275,9 +292,6 @@ export class GlobalVarsService {
       for (const entry of this.loggedInUser?.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
-      for (const entry of this.loggedInUser?.UsersWhoHODLYou || []) {
-        this.hodlYouMap[entry.HODLerPublicKeyBase58Check] = entry;
-      }
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
@@ -288,11 +302,24 @@ export class GlobalVarsService {
   }
 
   showAdminTools(): boolean {
-    return this.loggedInUser?.IsAdmin;
+    return this.loggedInUser?.IsAdmin || this.loggedInUser?.IsSuperAdmin;
+  }
+
+  showSuperAdminTools(): boolean {
+    return this.loggedInUser?.IsSuperAdmin;
   }
 
   networkName(): string {
     return this.isTestnet ? "testnet" : "mainnet";
+  }
+
+  getUSDForDiamond(index: number): string {
+    const bitcloutNanos = this.diamondLevelMap[index];
+    const val = this.nanosToUSDNumber(bitcloutNanos);
+    if (val < 1) {
+      return this.formatUSD(val, 2);
+    }
+    return this.abbreviateNumber(val, 0, true);
   }
 
   nanosToBitClout(nanos: number, maximumFractionDigits?: number): string {
@@ -538,6 +565,7 @@ export class GlobalVarsService {
       title = altTitle;
     }
     SwalHelper.fire({
+      target: this.getTargetComponentSelector(),
       icon: "success",
       title,
       html: val,
@@ -556,6 +584,7 @@ export class GlobalVarsService {
 
   _alertError(err: any, showBuyBitClout: boolean = false) {
     SwalHelper.fire({
+      target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
@@ -575,7 +604,7 @@ export class GlobalVarsService {
     });
   }
 
-  celebrate(dropDiamonds: boolean = false) {
+  celebrate(svgList: ConfettiSvg[] = []) {
     const canvasID = "my-canvas-" + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
@@ -588,10 +617,16 @@ export class GlobalVarsService {
       rotate: true,
       clock: 100,
     };
-    if (dropDiamonds) {
-      confettiSettings["props"] = [{ type: "svg", src: "/assets/img/diamond.svg", size: 10 }];
+    if (svgList.length > 0) {
+      confettiSettings["props"] = svgList.map((svg) => {
+        return { ...{ type: "svg", src: `/assets/img/${svg}.svg` }, ...svgToProps[svg] };
+      });
+      if (svgList.indexOf(ConfettiSvg.DIAMOND) >= 0) {
+        confettiSettings.clock = 150;
+      } else {
+        confettiSettings.clock = 75;
+      }
       confettiSettings.max = 200;
-      confettiSettings.clock = 150;
     }
     this.confetti = new ConfettiGenerator(confettiSettings);
     this.confetti.render();
@@ -728,5 +763,75 @@ export class GlobalVarsService {
       this.feeRateBitCloutPerKB = this.defaultFeeRateNanosPerKB / 1e9;
       return true;
     });
+  }
+
+  updateLeaderboard(forceRefresh: boolean = false): void {
+    const pulseService = new PulseService(this.httpClient, this.backendApi, this);
+
+    if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
+      pulseService.getBitCloutLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+    }
+    if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
+      pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
+    }
+
+    if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
+      const bithuntService = new BithuntService(this.httpClient, this.backendApi, this);
+      bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
+        this.allCommunityProjectsLeaderboard = res;
+        this.topCommunityProjectsLeaderboard = this.allCommunityProjectsLeaderboard.slice(0, 10);
+      });
+    }
+
+    if (this.topCreatorsAllTimeLeaderboard.length === 0 || forceRefresh) {
+      const readerPubKey = this.loggedInUser?.PublicKeyBase58Check ?? "";
+      this.backendApi
+        .GetProfiles(
+          this.localNode,
+          null /*PublicKeyBase58Check*/,
+          null /*Username*/,
+          null /*UsernamePrefix*/,
+          null /*Description*/,
+          BackendApiService.GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE /*Order by*/,
+          10 /*NumEntriesToReturn*/,
+          readerPubKey /*ReaderPublicKeyBase58Check*/,
+          "leaderboard" /*ModerationType*/,
+          false /*FetchUsersThatHODL*/,
+          false /*AddGlobalFeedBool*/
+        )
+        .subscribe(
+          (response) => {
+            this.topCreatorsAllTimeLeaderboard = response.ProfilesFound.slice(
+              0,
+              RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES
+            ).map((profile) => {
+              return {
+                Profile: profile,
+              };
+            });
+          },
+          (err) => {
+            console.error(err);
+          }
+        );
+    }
+  }
+
+  // Get the highest level parent component that has the app-theme styling.
+  getTargetComponentSelector(): string {
+    return GlobalVarsService.getTargetComponentSelectorFromRouter(this.router);
+  }
+
+  static getTargetComponentSelectorFromRouter(router: Router): string {
+    if (router.url.startsWith("/" + RouteNames.BROWSE)) {
+      return "browse-page";
+    }
+    if (router.url.startsWith("/" + RouteNames.LANDING)) {
+      return "landing-page";
+    }
+    if (router.url.startsWith("/" + RouteNames.INBOX_PREFIX)) {
+      return "messages-page";
+    }
+    return "app-page";
   }
 }

@@ -2,9 +2,6 @@
 <div class="w-100">
   <div class="container d-sm-none">
     <div class="row d-flex justify-content-center landing__ticker">
-      <div class="input-group w-auto pb-5px">
-        <countdown-timer [borderRadiusSize]="10"></countdown-timer>
-      </div>
       <div class="input-group w-auto">
         <div class="input-group-prepend">
           <label class="landing__nav-buy input-group-text">
@@ -17,7 +14,7 @@
             [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
             queryParamsHandling="merge"
           >
-            Buy $BitClout
+            Buy $CLOUT
           </a>
         </div>
       </div>
@@ -30,9 +27,6 @@
     <div class="row">
       <div class="col landing__logo clout">BitClout</div>
       <div class="col d-flex justify-content-end align-items-center">
-        <div class="d-none d-sm-flex w-auto">
-          <countdown-timer [borderRadiusSize]="10"></countdown-timer>
-        </div>
         <div class="input-group w-auto d-none d-sm-flex" style="margin-left: 25px">
           <div class="input-group-prepend">
             <label class="landing__nav-buy input-group-text">
@@ -45,12 +39,13 @@
               [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
               queryParamsHandling="merge"
             >
-              Buy $BitClout
+              Buy $CLOUT
             </a>
           </div>
         </div>
         <a class="landing__nav-link" href="https://docs.bitclout.com/" target="_blank">About</a>
         <a class="landing__nav-link" href="https://docs.bitclout.com/the-vision" target="_blank">Vision</a>
+        <a class="landing__nav-link" href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
         <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">Sign Up</a>
       </div>
     </div>
@@ -84,6 +79,9 @@
         <br />
         <br />
         <a href="https://docs.bitclout.com/" target="_blank">Learn More</a>
+        &nbsp;
+        &nbsp;
+        <a href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
         <div class="col-sm-10 col-xs-12 mb-0 landing__example">
@@ -159,10 +157,13 @@
         <b>BitClout is not a company.</b>
         It's an open-source blockchain like Bitcoin.
         <br class="d-none d-md-block" />
-        You can own a piece by buying the $BitClout coin.
+        You can own a piece by buying the BitClout coin $CLOUT.
         <br />
         <br />
         <a href="https://docs.bitclout.com/the-vision" target="_blank">Learn More</a>
+        &nbsp;
+        &nbsp;
+        <a href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
         <div class="col-sm-10 col-xs-12 mb-0 landing__example">
@@ -246,7 +247,7 @@
   <div class="container">
     <div class="row d-flex justify-content-center">
       <div class="col mb-0 text-center">
-        <p class="text-grey9 fs-12px">The future is decentralized.</p>
+        <p class="text-grey9 fs-16px">The future is decentralized.</p>
       </div>
     </div>
   </div>

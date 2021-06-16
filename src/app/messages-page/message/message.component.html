@@ -22,15 +22,7 @@
   <div
     *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
     class="message__avatar ml-15px"
-    [style.background-image]="
-      'url(' +
-      (globalVars.loggedInUser &&
-      globalVars.loggedInUser.ProfileEntryResponse &&
-      globalVars.loggedInUser.ProfileEntryResponse.ProfilePic
-        ? globalVars.loggedInUser.ProfileEntryResponse.ProfilePic
-        : '/assets/img/default_profile_pic.png') +
-      ')'
-    "
+    [avatar]="globalVars.loggedInUser.PublicKeyBase58Check"
   ></div>
 
   <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
@@ -55,9 +47,7 @@
   <div
     *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
     class="message__avatar mr-15px"
-    [style.background-image]="
-      'url(' + (profile && profile.ProfilePic ? profile.ProfilePic : '/assets/img/default_profile_pic.png') + ')'
-    "
+    [avatar]="message.SenderPublicKeyBase58Check"
   ></div>
   <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
   <div

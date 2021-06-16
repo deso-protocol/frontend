@@ -12,13 +12,7 @@
       [ngClass]="{ 'cursor-auto': !counterpartyUsername() }"
       [routerLink]="counterpartyUsername() ? AppRoutingModule.profilePath(counterpartyUsername()) : []"
       queryParamsHandling="merge"
-      [style.background-image]="
-        'url(' +
-        (messageThread.ProfileEntryResponse && messageThread.ProfileEntryResponse.ProfilePic
-          ? messageThread.ProfileEntryResponse.ProfilePic
-          : '/assets/img/default_profile_pic.png') +
-        ')'
-      "
+      [avatar]="messageThread.PublicKeyBase58Check"
     ></a>
 
     <div *ngIf="messageThread">
@@ -82,7 +76,7 @@
     <textarea
       (keypress)="_messageTextChanged($event)"
       [(ngModel)]="messageText"
-      class="py-5px fs-15px messages-thread__border-radius flex-grow-1"
+      class="py-5px fs-15px messages-thread__border-radius flex-grow-1 form-control"
       style="height: 50px"
     ></textarea>
     <button

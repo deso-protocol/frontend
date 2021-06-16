@@ -32,6 +32,7 @@ export class LeaderboardResponse {
   Profile: ProfileEntryResponse;
   BitCloutLockedGained: number;
   DiamondsReceived: number;
+  User: User;
 }
 
 export const LeaderboardToDataAttribute = {
@@ -45,39 +46,59 @@ export const LeaderboardToDataAttribute = {
 export class PulseService {
   static pulseApiURL = "https://pulse.bitclout.com/api/bitclout/leaderboard";
   static pulseRef = "ref=bcl";
-  static pulsePageSize = "page_size=20";
-
+  static pulsePageSize = 20;
   constructor(
     private httpClient: HttpClient,
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService
   ) {}
 
-  constructPulseURL(leaderboardType: string): string {
-    return `${PulseService.pulseApiURL}/${leaderboardType}?${PulseService.pulseRef}&${PulseService.pulsePageSize}`;
+  constructPulseURL(
+    leaderboardType: string,
+    pageIndex: number = 0,
+    pageSize: number = PulseService.pulsePageSize
+  ): string {
+    return `${PulseService.pulseApiURL}/${leaderboardType}?${PulseService.pulseRef}&page_size=${pageSize}&page_index=${pageIndex}`;
   }
 
   getDiamondsReceivedLeaderboard(): Observable<any> {
-    return this.httpClient.get(this.constructPulseURL(PulseLeaderboardType.Diamonds)).pipe(
+    return this.getDiamondsReceivedPage(0);
+  }
+
+  getDiamondsReceivedPage(
+    pageNumber: number,
+    pageSize: number = PulseService.pulsePageSize,
+    skipFilters = false
+  ): Observable<any> {
+    return this.httpClient.get(this.constructPulseURL(PulseLeaderboardType.Diamonds, pageNumber, pageSize)).pipe(
       switchMap((res: PulseLeaderboardResponse) => {
-        return this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.Diamonds);
+        return this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.Diamonds, skipFilters);
       })
     );
   }
 
   getBitCloutLockedLeaderboard(): Observable<LeaderboardResponse[]> {
+    return this.getBitCloutLockedPage(0);
+  }
+
+  getBitCloutLockedPage(
+    pageNumber: number,
+    pageSize: number = PulseService.pulsePageSize,
+    skipFilters = false
+  ): Observable<any> {
     return this.httpClient
-      .get(this.constructPulseURL(PulseLeaderboardType.BitCloutLocked))
+      .get(this.constructPulseURL(PulseLeaderboardType.BitCloutLocked, pageNumber, pageSize))
       .pipe(
         switchMap((res: PulseLeaderboardResponse) =>
-          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.BitCloutLocked)
+          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.BitCloutLocked, skipFilters)
         )
       );
   }
 
   getProfilesForPulseLeaderboard(
     res: PulseLeaderboardResponse,
-    leaderboardType: PulseLeaderboardType
+    leaderboardType: PulseLeaderboardType,
+    skipFilters: boolean = false
   ): Observable<LeaderboardResponse[]> {
     const results = res.results;
     return this.backendApi
@@ -88,21 +109,19 @@ export class PulseService {
       )
       .pipe(
         map((res: any) => {
-          res.UserList = _.filter(res.UserList, function (o) {
-            return o.ProfileEntryResponse !== null;
-          });
-          res.UserList = _.filter(res.UserList, function (o) {
-            return !o.IsGraylisted;
-          });
-          res.UserList = _.filter(res.UserList, function (o) {
-            return !o.IsBlacklisted;
-          });
-          if (res.UserList.length > 10) {
-            res.UserList = res.UserList.slice(0, 10);
+          if (!skipFilters) {
+            res.UserList = _.filter(
+              res.UserList,
+              (o) => o.ProfileEntryResponse !== null && !o.IsGraylisted && !o.IsBlacklisted
+            );
+            if (res.UserList.length > 10) {
+              res.UserList = res.UserList.slice(0, 10);
+            }
           }
 
           return res.UserList.map((user: User, index: number) => {
             return {
+              User: user,
               Profile: user.ProfileEntryResponse,
               BitCloutLockedGained:
                 leaderboardType === PulseLeaderboardType.BitCloutLocked

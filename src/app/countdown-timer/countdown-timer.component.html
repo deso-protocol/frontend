@@ -9,12 +9,11 @@
   (click)="navigateToURL()"
 >
   <div
-    class="px-15px py-5px d-flex font-weight-bold"
-    [ngClass]="{ 'justify-content-between': !justifyLeft, 'justify-left': justifyLeft }"
-  >
+    class="px-15px py-5px d-flex font-weight-bold justify-content-around"
+    [ngClass]="{ 'justify-content-between': !justifyLeft, 'justify-left': justifyLeft }">
     <div>
-      {{ timerText }}
+      {{ timerText }}&nbsp;
     </div>
-    <div>&nbsp;{{ days + "d " + hours + "h " + minutes + "m " + seconds + "s" }}</div>
+    <div>{{ days + "d " + hours + "h " + minutes + "m " + seconds + "s" }}</div>
   </div>
 </div>

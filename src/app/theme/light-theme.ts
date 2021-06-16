@@ -1,7 +1,8 @@
 import { Theme } from "./symbols";
 
 export const lightTheme: Theme = {
-  name: "light",
+  key: "light",
+  name: "Light Theme",
   properties: {
     "--background": "#fff",
     "--text": "#333333",
@@ -14,7 +15,13 @@ export const lightTheme: Theme = {
     "--link": "#007BFF",
     "--hover": "#0056b3",
     "--border": "#E5E5E5",
+    "--mborder": "#E5E5E5",
     "--filter": "",
     "--unread": "#e7effe",
+    "--topbar": "#2e2e2e",
+    "--cblue": "#0058F7",
+    "--cred": "#fe3537",
+    "--cgreen": "#19B028",
+    "--loading": "#777777",
   },
 };

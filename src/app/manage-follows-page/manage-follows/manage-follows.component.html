@@ -1,7 +1,7 @@
 <!--TODO: need loading skeleton ?-->
 <div class="flex-grow-1">
   <!--Header Mobile-->
-  <div class="fixed-top-bar w-100">
+  <div class="d-lg-none d-block w-100">
     <div
       class="global__top-bar__height d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey"
     >
@@ -23,7 +23,7 @@
   </div>
 
   <!--Header Desktop-->
-  <div class="d-lg-block">
+  <div class="d-lg-block d-none">
     <div
       class="d-flex w-100 px-15px global__top-bar__height align-items-center justify-content-between fs-18px font-weight-bold fc-default border-bottom border-color-grey"
     >
@@ -63,7 +63,7 @@
       <div class="manage-follows__avatar-container">
         <a
           class="manage-follows__avatar br-12px"
-          [style.background-image]="'url(' + profileEntry.ProfilePic + ')'"
+          [avatar]="profileEntry.PublicKeyBase58Check"
           [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntry.Username]"
           queryParamsHandling="merge"
         ></a>

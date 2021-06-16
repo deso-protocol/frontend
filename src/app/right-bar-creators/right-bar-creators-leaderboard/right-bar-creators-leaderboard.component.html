@@ -22,7 +22,7 @@
 >
   <div
     class="right-bar-creators-leaderboard__creator-avatar"
-    [ngStyle]="{ 'background-image': 'url(' + profileEntryResponse.Profile.ProfilePic + ')' }"
+    [avatar]="profileEntryResponse.Profile.PublicKeyBase58Check"
   ></div>
 
   <div style="flex-grow: 1">
@@ -50,7 +50,6 @@
   <div class="d-flex flex-column" style="align-items: flex-end">
     <div class="fc-green" *ngIf="activeTab === RightBarCreatorsComponent.GAINERS.name">
       +${{ globalVars.abbreviateNumber(globalVars.nanosToUSDNumber(profileEntryResponse.BitCloutLockedGained), 2) }}
-      <img src="assets/img/logo-192.png" style="height: 20px; margin-left: -10px" />
     </div>
     <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
       {{ globalVars.abbreviateNumber(profileEntryResponse.DiamondsReceived, 0) }}

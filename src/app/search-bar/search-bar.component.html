@@ -39,7 +39,7 @@
         (click)="_handleCreatorSelect(creators[selectedCreatorIndex])"
         (mouseover)="_handleMouseOver(creator.Username, ii)"
       >
-        <div class="search-bar__avatar m-10px" [style.background-image]="'url(' + creator.ProfilePic + ')'"></div>
+        <div class="search-bar__avatar m-10px" [avatar]="creator.PublicKeyBase58Check"></div>
         <div>
           <span>{{ creator.Username }}</span>
           <span

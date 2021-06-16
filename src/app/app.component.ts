@@ -138,9 +138,6 @@ export class AppComponent implements OnInit {
         for (const entry of this.globalVars.loggedInUser?.UsersYouHODL || []) {
           this.globalVars.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
         }
-        for (const entry of this.globalVars.loggedInUser?.UsersWhoHODLYou || []) {
-          this.globalVars.hodlYouMap[entry.HODLerPublicKeyBase58Check] = entry;
-        }
 
         this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         this.globalVars.globoMods = res.GloboMods;
@@ -163,31 +160,40 @@ export class AppComponent implements OnInit {
     if (!this.globalVars.satoshisPerBitCloutExchangeRate) {
       return;
     }
-
+    const nanosPerUnit = 1e9;
+    const satoshisPerBitcoin = 1e8;
+    this.globalVars.nanosPerUSDExchangeRate = 1e9
     // The exchange rate requires getting the current Bitcoin price in USD.
-    this.httpClient.get<any>("https://api.blockchain.com/ticker").subscribe(
-      (res: any) => {
-        if (res.USD != null && res.USD.last != null) {
-          this.globalVars.usdPerBitcoinExchangeRate = res.USD.last;
-          // nonaperunit / satoshiperunit / usdperbitcoin * satoshiperbitcoin
-          const nanosPerUnit = 1e9;
-          const satoshisPerBitcoin = 1e8;
-          this.globalVars.nanosPerUSDExchangeRate =
-            (nanosPerUnit /
-              this.globalVars.satoshisPerBitCloutExchangeRate /
-              this.globalVars.usdPerBitcoinExchangeRate) *
-            satoshisPerBitcoin;
-          this.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, null);
-          // TODO: When we get rid of the old app, we will only use the globalVars version of this.
-          this.globalVars.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, 2);
-
-          this.ref.detectChanges();
+    this.httpClient
+      .get<any>("https://api.blockchain.com/ticker")
+      .subscribe(
+        (res: any) => {
+          if (res.USD != null && res.USD.last != null) {
+            this.globalVars.usdPerBitcoinExchangeRate = res.USD.last;
+          } else {
+            // We divide by 100 to convert from cents to dollars. usdPerBitcoinExchangeRate is expected to be in dollars.
+            this.globalVars.usdPerBitcoinExchangeRate = this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate / 100;
+          }
+        },
+        (error) => {
+          console.error(error);
+          // We divide by 100 to convert from cents to dollars. usdPerBitcoinExchangeRate is expected to be in dollars.
+          this.globalVars.usdPerBitcoinExchangeRate = this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate / 100;
         }
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+      )
+      .add(() => {
+        // nanoperunit / satoshiperunit / usdperbitcoin * satoshiperbitcoin
+        const nanosPerUnit = 1e9;
+        const satoshisPerBitcoin = 1e8;
+        this.globalVars.nanosPerUSDExchangeRate =
+          (nanosPerUnit / this.globalVars.satoshisPerBitCloutExchangeRate / this.globalVars.usdPerBitcoinExchangeRate) *
+          satoshisPerBitcoin;
+        this.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, null);
+        // TODO: When we get rid of the old app, we will only use the globalVars version of this.
+        this.globalVars.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, 2);
+
+        this.ref.detectChanges();
+      });
   }
 
   _updateBitCloutExchangeRate() {

@@ -22,6 +22,7 @@ export class BackendRoutes {
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
+  static RoutePathGetSingleProfilePicture = "/api/v0/get-single-profile-picture";
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
   static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
@@ -47,6 +48,10 @@ export class BackendRoutes {
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
   static RoutePathSendDiamonds = "/api/v0/send-diamonds";
   static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
+  static RoutePathGetLikesForPost = "/api/v0/get-likes-for-post";
+  static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
+  static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
+  static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -62,6 +67,7 @@ export class BackendRoutes {
   static RoutePathAdminGrantVerificationBadge = "/api/v0/admin/grant-verification-badge";
   static RoutePathAdminRemoveVerificationBadge = "/api/v0/admin/remove-verification-badge";
   static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
+  static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathSetUSDCentsToBitCloutReserveExchangeRate =
@@ -127,14 +133,15 @@ export class User {
   NumActionItems: any;
   NumMessagesToRead: any;
 
-  UsersYouHODL: any;
-  UsersWhoHODLYou: any;
+  UsersYouHODL: BalanceEntryResponse[];
+  UsersWhoHODLYouCount: number;
 
   HasPhoneNumber: boolean;
   CanCreateProfile: boolean;
   BlockedPubKeys: { [key: string]: object };
 
   IsAdmin?: boolean;
+  IsSuperAdmin?: boolean;
 }
 
 export class PostEntryResponse {
@@ -160,6 +167,7 @@ export class PostEntryResponse {
   Comments: PostEntryResponse[];
   LikeCount: number;
   RecloutCount: number;
+  QuoteRecloutCount: number;
   DiamondCount: number;
   // Information about the reader's state w/regard to this post (e.g. if they liked it).
   PostEntryReaderState?: PostEntryReaderState;
@@ -519,10 +527,10 @@ export class BackendApiService {
   }
 
   // User-related functions.
-  GetUsersStateless(endpoint: string, publicKeys: any[], skipHodlings: boolean = false): Observable<any> {
+  GetUsersStateless(endpoint: string, publicKeys: any[], SkipForLeaderboard: boolean = false): Observable<any> {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
       PublicKeysBase58Check: publicKeys,
-      SkipHodlings: skipHodlings,
+      SkipForLeaderboard,
     });
   }
 
@@ -744,6 +752,24 @@ export class BackendApiService {
       Username,
     });
   }
+
+  // We add a ts-ignore here as typescript does not expect responseType to be anything but "json".
+  GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): Observable<any> {
+    return this.httpClient.get<any>(this.GetSingleProfilePictureURL(endpoint, PublicKeyBase58Check, bustCache), {
+      // @ts-ignore
+      responseType: "blob",
+    });
+  }
+  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
+    return this._makeRequestURL(
+      endpoint,
+      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + "?" + fallback
+    );
+  }
+  GetDefaultProfilePictureURL(endpoint: string): string {
+    return this._makeRequestURL(endpoint, "/assets/img/default_profile_pic.png");
+  }
+
   GetPostsForPublicKey(
     endpoint: string,
     PublicKeyBase58Check: string,
@@ -980,6 +1006,66 @@ export class BackendApiService {
     });
   }
 
+  GetLikesForPost(
+    endpoint: string,
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetLikesForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetDiamondsForPost(
+    endpoint: string,
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetRecloutsForPost(
+    endpoint: string,
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetRecloutsForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetQuoteRecloutsForPost(
+    endpoint: string,
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetQuoteRecloutsForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
   BuyOrSellCreatorCoin(
     endpoint: string,
 
@@ -1171,6 +1257,13 @@ export class BackendApiService {
     });
   }
 
+  AdminGetUserAdminData(endpoint: string, AdminPublicKey: string, UserPublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUserAdminData, AdminPublicKey, {
+      AdminPublicKey,
+      UserPublicKeyBase58Check,
+    });
+  }
+
   NodeControl(endpoint: string, AdminPublicKey: string, Address: string, OperationType: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.NodeControlRoute, AdminPublicKey, {
       AdminPublicKey,
@@ -1215,7 +1308,6 @@ export class BackendApiService {
     RemovePhoneNumberMetadata: boolean
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateUserGlobalMetadata, AdminPublicKey, {
-      AdminPublicKey,
       UserPublicKeyBase58Check,
       Username,
       IsBlacklistUpdate,
@@ -1224,6 +1316,7 @@ export class BackendApiService {
       IsWhitelistUpdate,
       WhitelistPosts,
       RemovePhoneNumberMetadata,
+      AdminPublicKey,
     });
   }
 

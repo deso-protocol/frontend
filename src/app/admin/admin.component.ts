@@ -100,7 +100,7 @@ export class AdminComponent implements OnInit {
   usernameVerificationAuditLogs: any = [];
   loadingVerifiedUsers = false;
   loadingVerifiedUsersAuditLog = false;
-  adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Wyre"];
+  adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Wyre", "Super"];
   POSTS_TAB = "Posts";
   POSTS_BY_CLOUT_TAB = "Posts By Clout";
   adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_CLOUT_TAB];
@@ -128,6 +128,11 @@ export class AdminComponent implements OnInit {
   // This is a variable to track the currently selected time window.
   selectedTimeWindow = 60;
 
+  // Fields for getting user admin data
+  submittingGetUserAdminData = false;
+  getUserAdminDataPublicKey = "";
+  getUserAdminDataResponse = null;
+
   constructor(
     private _globalVars: GlobalVarsService,
     private router: Router,
@@ -144,10 +149,6 @@ export class AdminComponent implements OnInit {
         this.activeTab = queryParams.adminTab;
       } else {
         this.activeTab = "Posts";
-      }
-
-      if (queryParams.super && queryParams.super === "true") {
-        this.adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Super"];
       }
     });
     // load data
@@ -822,6 +823,7 @@ export class AdminComponent implements OnInit {
     const minimumNetworkFeeNanosPerKBMessage =
       minimumNetworkFeeNanosPerKB >= 0 ? `Minimum Network Fee Nanos Per KB: ${minimumNetworkFeeNanosPerKB}` : "";
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
       html: `${updateBitcoinMessage}${createProfileFeeNanosMessage}${minimumNetworkFeeNanosPerKBMessage}`,
       showConfirmButton: true,
@@ -920,6 +922,7 @@ export class AdminComponent implements OnInit {
 
   evictBitcoinExchangeTxns(dryRun: boolean) {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
       html: `About to evict ${this.evictBitcoinTxnHashes} with DryRun=${dryRun}`,
       showConfirmButton: true,
@@ -992,6 +995,32 @@ export class AdminComponent implements OnInit {
       )
       .add(() => {
         this.submittingVerifyRequest = false;
+      });
+  }
+
+  getUserAdminDataClicked() {
+    if (this.getUserAdminDataPublicKey === "") {
+      this.globalVars._alertError("Please enter a valid username.");
+      return;
+    }
+
+    this.submittingGetUserAdminData = true;
+    this.backendApi
+      .AdminGetUserAdminData(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.getUserAdminDataPublicKey
+      )
+      .subscribe(
+        (res: any) => {
+          this.getUserAdminDataResponse = res;
+        },
+        (error) => {
+          this.globalVars._alertError(this.extractError(error));
+        }
+      )
+      .add(() => {
+        this.submittingGetUserAdminData = false;
       });
   }
 
@@ -1081,6 +1110,7 @@ export class AdminComponent implements OnInit {
   updateUsername() {
     if (!this.searchedForPubKey) {
       return SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
         icon: "warning",
         title: "Search for public key before updating username",
       });
@@ -1089,6 +1119,7 @@ export class AdminComponent implements OnInit {
       ? `Change ${this.userProfileEntryResponseToUpdate.Username} to ${this.usernameTarget}`
       : `Set username to ${this.usernameTarget} for public key ${this.changeUsernamePublicKey}`;
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       icon: "info",
       title: `Updating Username`,
       html: infoMsg,
