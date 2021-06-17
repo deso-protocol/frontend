@@ -11,13 +11,13 @@
           [avatar]="profile.PublicKeyBase58Check"
         ></div>
       </div>
-      <div class="text-truncate holdings__name" style="font-size: 15px">
+      <div class="text-truncate holdings__name fs-15px">
         <div>
           <a class="fc-default font-weight-bold">{{ profile.Username }}</a>
           <span
             *ngIf="profile.IsVerified"
             (click)="tooltip.toggle()"
-            class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
+            class="ml-1 mb-1 cursor-pointer text-primary"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
             [matTooltip]="'This account is verified'"
             #tooltip="matTooltip"

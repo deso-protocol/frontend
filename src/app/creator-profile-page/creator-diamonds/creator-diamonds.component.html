@@ -25,8 +25,8 @@
         class="row no-gutters border-bottom border-color-grey fc-muted"
         *ngIf="!isLoading && diamondSummaryList.length > 0"
       >
-        <div class="col-lg-4 col-5 d-flex align-items-center py-15px mb-0">Username</div>
-        <div class="col-lg-5 col-4 text-left d-flex align-items-center py-15px mb-0">Most Diamonds</div>
+        <div class="col-5 d-flex align-items-center py-15px mb-0">Username</div>
+        <div class="col-4 text-left d-flex align-items-center py-15px mb-0">Most Diamonds</div>
         <div class="col-3 text-center d-flex align-items-center py-15px mb-0">Total Diamonds</div>
       </div>
       <div *ngIf="!isLoading && diamondSummaryList.length == 0" class="row no-gutters pt-10px">
@@ -53,7 +53,7 @@
             ]"
             >
               <div class="row no-gutters py-10px border-bottom mb-0">
-                <div class="col-lg-4 col-5 d-flex align-items-left mb-0">
+                <div class="col-5 d-flex align-items-left mb-0">
                   <div
                     *ngIf="row.ProfileEntryResponse"
                     [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, row.ProfileEntryResponse.Username]"
@@ -72,7 +72,7 @@
                       <span
                         *ngIf="row.ProfileEntryResponse.IsVerified"
                         (click)="tooltip.toggle()"
-                        class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
+                        class="ml-1 mb-1 cursor-pointer text-primary"
                         matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
                         [matTooltip]="'This account is verified'"
                         #tooltip="matTooltip"
@@ -85,7 +85,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-5 col-4 mb-0 d-flex align-items-center justify-flex-start">
+                <div class="col-4 mb-0 d-flex align-items-center justify-flex-start">
                   <i
                     *ngFor="let diamond of counter(row.HighestDiamondLevel)"
                     class="icon-diamond fs-20px d-block"
