@@ -205,6 +205,7 @@ export class FeedPostComponent implements OnInit {
 
   hidePost() {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Hide post?",
       html: `This can’t be undone. The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`,
       showCancelButton: true,
@@ -257,6 +258,7 @@ export class FeedPostComponent implements OnInit {
 
   blockUser() {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Block user?",
       html: `This will hide all comments from this user on your posts as well as hide them from your view on your feed and other threads.`,
       showCancelButton: true,
