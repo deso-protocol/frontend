@@ -4,7 +4,7 @@ import { BackendApiService } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
-import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
+import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { environment } from "../../../environments/environment";
 
 @Component({
@@ -16,7 +16,7 @@ export class FeedCreatePostComponent implements OnInit {
   static SHOW_POST_LENGTH_WARNING_THRESHOLD = 260; // show warning at 260 characters
 
   // FeedPostComponent = FeedPostComponent;
-  VideoUrlParserService = VideoUrlParserService;
+  EmbedUrlParserService = EmbedUrlParserService;
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
 
@@ -43,9 +43,9 @@ export class FeedCreatePostComponent implements OnInit {
   postInput = "";
   postImageSrc = null;
 
-  showEmbedVideoURL = false;
-  embedVideoURL = "";
-  constructedEmbedVideoURL: any;
+  showEmbedURL = false;
+  embedURL = "";
+  constructedEmbedURL: any;
   // Emits a PostEntryResponse. It would be better if this were typed.
   @Output() postCreated = new EventEmitter();
 
@@ -101,14 +101,10 @@ export class FeedCreatePostComponent implements OnInit {
     this.randomMovieQuote = this.randomMovieQuotes[randomInt];
   }
 
-  setEmbedVideoURL() {
-    VideoUrlParserService.getEmbedVideoURL(this.backendApi, this.globalVars, this.embedVideoURL).subscribe(
-      (res) => (this.constructedEmbedVideoURL = res)
+  setEmbedURL() {
+    EmbedUrlParserService.getEmbedURL(this.backendApi, this.globalVars, this.embedURL).subscribe(
+      (res) => (this.constructedEmbedURL = res)
     );
-  }
-
-  getEmbedVideoURL() {
-    return this.constructedEmbedVideoURL;
   }
 
   submitPost() {
@@ -126,63 +122,63 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     const postExtraData = {};
-    if (this.embedVideoURL) {
-      const videoURL = this.getEmbedVideoURL();
-      if (VideoUrlParserService.isValidEmbedURL(videoURL)) {
-        postExtraData["EmbedVideoURL"] = videoURL;
+    if (this.embedURL) {
+      const embedURL = this.constructedEmbedURL;
+      if (EmbedUrlParserService.isValidEmbedURL(embedURL)) {
+        postExtraData["EmbedVideoURL"] = embedURL;
       }
-    }
-    this.submittingPost = true;
+      this.submittingPost = true;
 
-    this.backendApi
-      .SubmitPost(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        "" /*PostHashHexToModify*/,
-        "" /*ParentPostHashHex*/,
-        "" /*Title*/,
-        {
-          Body: this.postInput,
-          ImageURLs: [this.postImageSrc].filter((n) => n),
-        } /*BodyObj*/,
-        "",
-        postExtraData,
-        "" /*Sub*/,
-        // TODO: Should we have different values for creator basis points and stake multiple?
-        // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
-        false /*IsHidden*/,
-        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/
-      )
-      .subscribe(
-        (response) => {
-          this.globalVars.logEvent("post : create");
+      this.backendApi
+        .SubmitPost(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          "" /*PostHashHexToModify*/,
+          "" /*ParentPostHashHex*/,
+          "" /*Title*/,
+          {
+            Body: this.postInput,
+            ImageURLs: [this.postImageSrc].filter((n) => n),
+          } /*BodyObj*/,
+          "",
+          postExtraData,
+          "" /*Sub*/,
+          // TODO: Should we have different values for creator basis points and stake multiple?
+          // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
+          false /*IsHidden*/,
+          this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/
+        )
+        .subscribe(
+          (response) => {
+            this.globalVars.logEvent("post : create");
 
-          this.submittingPost = false;
+            this.submittingPost = false;
 
-          this.postInput = "";
-          this.postImageSrc = null;
-          this.embedVideoURL = "";
-          this.constructedEmbedVideoURL = "";
-          this.changeRef.detectChanges();
+            this.postInput = "";
+            this.postImageSrc = null;
+            this.embedURL = "";
+            this.constructedEmbedURL = "";
+            this.changeRef.detectChanges();
 
-          // Refresh the post page.
-          if (this.postRefreshFunc) {
-            this.postRefreshFunc(response.PostEntryResponse);
+            // Refresh the post page.
+            if (this.postRefreshFunc) {
+              this.postRefreshFunc(response.PostEntryResponse);
+            }
+
+            this.postCreated.emit(response.PostEntryResponse);
+          },
+          (err) => {
+            const parsedError = this.backendApi.parsePostError(err);
+            this.globalVars._alertError(parsedError);
+            this.globalVars.logEvent("post : create : error", { parsedError });
+
+            this.submittingPost = false;
+            this.changeRef.detectChanges();
           }
+        );
 
-          this.postCreated.emit(response.PostEntryResponse);
-        },
-        (err) => {
-          const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars._alertError(parsedError);
-          this.globalVars.logEvent("post : create : error", { parsedError });
-
-          this.submittingPost = false;
-          this.changeRef.detectChanges();
-        }
-      );
-
-    return;
+      return;
+    }
   }
 
   _createPost() {

@@ -11,7 +11,7 @@ import { RecloutsModalComponent } from "../../reclouts-modal/reclouts-modal.comp
 import { QuoteRecloutsModalComponent } from "../../quote-reclouts-modal/quote-reclouts-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
-import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
+import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 
 @Component({
   selector: "feed-post",
@@ -109,7 +109,7 @@ export class FeedPostComponent implements OnInit {
   hidingPost = false;
   quotedContent: any;
   _blocked: boolean;
-  constructedEmbedVideoURL: any;
+  constructedEmbedURL: any;
 
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
@@ -119,7 +119,7 @@ export class FeedPostComponent implements OnInit {
     if (!this.post.RecloutCount) {
       this.post.RecloutCount = 0;
     }
-    this.setEmbedVideoURLForPostContent();
+    this.setEmbedURLForPostContent();
   }
 
   onPostClicked(event) {
@@ -438,25 +438,25 @@ export class FeedPostComponent implements OnInit {
       });
   }
 
-  getEmbedVideoURLForPostContent(): any {
-    return this.constructedEmbedVideoURL;
+  getEmbedURLForPostContent(): any {
+    return this.constructedEmbedURL;
   }
 
-  setEmbedVideoURLForPostContent(): void {
-    VideoUrlParserService.getEmbedVideoURL(
+  setEmbedURLForPostContent(): void {
+    EmbedUrlParserService.getEmbedURL(
       this.backendApi,
       this.globalVars,
       this.postContent.PostExtraData["EmbedVideoURL"]
-    ).subscribe((res) => (this.constructedEmbedVideoURL = res));
+    ).subscribe((res) => (this.constructedEmbedURL = res));
   }
 
-  getEmbedVideoHeight(): number {
-    return VideoUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
+  getEmbedHeight(): number {
+    return EmbedUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
 
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.
   setNegativeMargins(link: string, globalVars: GlobalVarsService) {
-    return globalVars.isMobile() && VideoUrlParserService.isVimeoLink(link);
+    return globalVars.isMobile() && EmbedUrlParserService.isVimeoLink(link);
   }
 
   mapImageURLs(imgURL: string): string {

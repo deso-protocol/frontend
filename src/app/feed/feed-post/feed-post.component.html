@@ -255,17 +255,17 @@
           />
         </div>
 
-        <!-- Embedded Videos -->
-        <div *ngIf="getEmbedVideoURLForPostContent()" class="feed-post__video-embed-container">
+        <!-- Embedded Content -->
+        <div *ngIf="getEmbedURLForPostContent()" class="feed-post__embed-container">
           <iframe
-            id="embed-video-player"
-            [height]="getEmbedVideoHeight()"
+            id="embed-iframe"
+            [height]="getEmbedHeight()"
             class="feed-post__image"
             [ngStyle]="{
-              'margin-top': setNegativeMargins(getEmbedVideoURLForPostContent(), globalVars) ? '-65px' : '',
-              'margin-bottom': setNegativeMargins(getEmbedVideoURLForPostContent(), globalVars) ? '-65px' : ''
+              'margin-top': setNegativeMargins(getEmbedURLForPostContent(), globalVars) ? '-65px' : '',
+              'margin-bottom': setNegativeMargins(getEmbedURLForPostContent(), globalVars) ? '-65px' : ''
             }"
-            [src]="getEmbedVideoURLForPostContent() | sanitizeVideoEmbed"
+            [src]="getEmbedURLForPostContent() | sanitizeEmbed"
             frameborder="0"
             allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
             allowfullscreen

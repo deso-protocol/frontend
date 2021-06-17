@@ -7,7 +7,7 @@ import { map } from "rxjs/operators";
 @Injectable({
   providedIn: "root",
 })
-export class VideoUrlParserService {
+export class EmbedUrlParserService {
   // This regex helps extract the correct videoID from the various forms of URLs that identify a youtube video.
   static youtubeParser(url): string | boolean {
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([A-Za-z0-9_-]{11}).*/;
@@ -78,21 +78,21 @@ export class VideoUrlParserService {
     );
   }
 
-  static getEmbedVideoURL(
+  static getEmbedURL(
     backendApi: BackendApiService,
     globalVars: GlobalVarsService,
-    embedVideoURL: string
+    embedURL: string
   ): Observable<string> {
-    if (!embedVideoURL) {
+    if (!embedURL) {
       return of("");
     }
     let url;
     try {
-      url = new URL(embedVideoURL);
+      url = new URL(embedURL);
     } catch (e) {
       // If the embed video URL doesn't start with http(s), try the url with that as a prefix.
-      if (!embedVideoURL.startsWith("https://") && !embedVideoURL.startsWith("http://")) {
-        return this.getEmbedVideoURL(backendApi, globalVars, `https://${embedVideoURL}`);
+      if (!embedURL.startsWith("https://") && !embedURL.startsWith("http://")) {
+        return this.getEmbedURL(backendApi, globalVars, `https://${embedURL}`);
       }
       return of("");
     }

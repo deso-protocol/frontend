@@ -32,16 +32,16 @@
         <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
         <img class="feed-post__image" src="{{ postImageSrc }}" />
       </div>
-      <!-- Embedded Video -->
-      <div class="feed-post__video-embed-container" *ngIf="getEmbedVideoURL()">
+      <!-- Embedded Content -->
+      <div class="feed-post__embed-container" *ngIf="constructedEmbedURL">
         <i
           class="icon-close feed-post__image-delete"
-          (click)="embedVideoURL = ''; showEmbedVideoURL = false; constructedEmbedVideoURL = ''"
+          (click)="embedURL = ''; showEmbedURL = false; constructedEmbedURL = ''"
         ></i>
         <iframe
-          [height]="VideoUrlParserService.getEmbedHeight(getEmbedVideoURL())"
+          [height]="EmbedUrlParserService.getEmbedHeight(constructedEmbedURL)"
           class="feed-post__image"
-          [src]="getEmbedVideoURL() | sanitizeVideoEmbed"
+          [src]="constructedEmbedURL | sanitizeEmbed"
           frameborder="0"
           allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
           allowfullscreen
@@ -49,12 +49,12 @@
       </div>
     </div>
   </div>
-  <div class="flex-fill px-15px br-10px" [ngClass]="{ 'd-none': !showEmbedVideoURL }">
+  <div class="flex-fill px-15px br-10px" [ngClass]="{ 'd-none': !showEmbedURL }">
     <input
       class="br-3px"
       type="url"
-      [(ngModel)]="embedVideoURL"
-      (ngModelChange)="setEmbedVideoURL()"
+      [(ngModel)]="embedURL"
+      (ngModelChange)="setEmbedURL()"
       placeholder="Enter a url to a youtube, vimeo, or tiktok video"
     />
   </div>
@@ -74,7 +74,7 @@
     <i
       class="fas fa-video fa-lg text-grey8A cursor-pointer px-15px"
       style="font-size: 18px"
-      (click)="showEmbedVideoURL = !showEmbedVideoURL"
+      (click)="showEmbedURL = !showEmbedURL"
     ></i>
     <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
     <i
