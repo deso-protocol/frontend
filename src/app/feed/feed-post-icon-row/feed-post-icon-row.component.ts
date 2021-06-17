@@ -325,14 +325,11 @@ export class FeedPostIconRowComponent {
           this.diamondSelected = diamonds;
           this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
           this.postContent.PostEntryReaderState.DiamondLevelBestowed = diamonds;
-          let successFunction = this.sendDiamondsSuccess;
-          if (skipCelebration) {
-            successFunction = this.sendDiamondSuccessSkipCelebration;
-          } else {
+          if (!skipCelebration) {
             // Celebrate when the SendDiamonds call completes
             this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           }
-          this.globalVars.updateEverything(res.TxnHashHex, successFunction, this.sendDiamondsFailure, this);
+          this.globalVars.updateEverything(res.TxnHashHex, this.sendDiamondsSuccess, this.sendDiamondsFailure, this);
         },
         (err) => {
           if (err.status === 0) {
@@ -381,10 +378,6 @@ export class FeedPostIconRowComponent {
   }
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
-    comp.sendingDiamonds = false;
-  }
-
-  sendDiamondSuccessSkipCelebration(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
   }
 
