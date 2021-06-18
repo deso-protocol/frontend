@@ -171,6 +171,11 @@ export class CreatorProfileDetailsComponent {
           this.loading = false;
           return;
         }
+        if (res.IsBlacklisted) {
+          this.loading = false;
+          this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          return;
+        }
         this.profile = res.Profile;
         this.loading = false;
       },
