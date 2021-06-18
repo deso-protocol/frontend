@@ -256,7 +256,7 @@ export class EmbedUrlParserService {
       return 700;
     }
     if (this.isValidSpotifyEmbedURL(link)) {
-      return 232;
+      return link.indexOf("embed-podcast") > -1 ? 232 : 380;
     }
     return 315;
   }
