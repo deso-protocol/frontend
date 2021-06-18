@@ -1,7 +1,7 @@
 <!-- Be careful when modifying this.
      It's used by both the feed and that "create post page."-->
 
-<div style="background-color: var(--formbg)">
+<div [ngStyle]="{'background-color': !parentPost ? 'var(--formbg)' : ''}">
   <!-- Avatar + Input -->
   <div class="d-flex align-items-top pt-15px pr-15px pl-15px">
     <div>
@@ -19,7 +19,6 @@
     <div class="flex-fill">
       <textarea
         [(ngModel)]="postInput"
-        [ngStyle]="{ 'border-color': parentPost ? 'antiquewhite' : '' }"
         rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
         [ngClass]="{
           'border-0': !parentPost,
