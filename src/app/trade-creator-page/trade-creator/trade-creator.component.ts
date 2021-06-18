@@ -94,7 +94,7 @@ export class TradeCreatorComponent implements OnInit {
     let creatorUsername = route.snapshot.params.username;
     let tradeType = route.snapshot.params.tradeType;
     if (!this.creatorProfile || creatorUsername != this.creatorProfile.Username) {
-      this._getCreatorProfile(creatorUsername);
+      this._getCreatorProfile(creatorUsername, tradeType);
     }
 
     switch (tradeType) {
@@ -120,15 +120,37 @@ export class TradeCreatorComponent implements OnInit {
     }
   }
 
-  _getCreatorProfile(creatorUsername) {
+  _getCreatorProfile(creatorUsername, tradeType) {
+    console.log("in here");
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
     this.backendApi.GetSingleProfile(this.globalVars.localNode, "", creatorUsername).subscribe(
       (response) => {
-        if (!response || !response.Profile) {
+        console.log("got response");
+        if (!response) {
           this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          return;
+        }
+        // If the profile returned is null, that means this profile is blacklisted.
+        if (!response.Profile) {
+          // Set the bare minimum required to render the sell and transfer pages.
+          this.creatorCoinTrade.creatorProfile = { Description: "", Username: creatorUsername };
+          this.creatorProfile = { Description: "", Username: creatorUsername };
+          // Remove the "Buy" tab from the display
+          this.tabList = [CreatorCoinTrade.SELL_VERB, CreatorCoinTrade.TRANSFER_VERB];
+          // If trying to buy a blacklisted profile, automatically redirect to the sell page.
+          if (tradeType === this.appData.RouteNames.BUY_CREATOR) {
+            this.router.navigateByUrl(
+              "/" +
+                this.appData.RouteNames.USER_PREFIX +
+                "/" +
+                creatorUsername +
+                "/" +
+                this.appData.RouteNames.SELL_CREATOR
+            );
+          }
           return;
         }
         let profile = response.Profile;
