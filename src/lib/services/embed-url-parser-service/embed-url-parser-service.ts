@@ -7,7 +7,7 @@ import { map } from "rxjs/operators";
 @Injectable({
   providedIn: "root",
 })
-export class VideoUrlParserService {
+export class EmbedUrlParserService {
   // This regex helps extract the correct videoID from the various forms of URLs that identify a youtube video.
   static youtubeParser(url): string | boolean {
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([A-Za-z0-9_-]{11}).*/;
@@ -31,6 +31,36 @@ export class VideoUrlParserService {
   static constructVimeoEmbedURL(url: URL): string {
     const vimeoVideoID = this.vimeoParser(url.toString());
     return vimeoVideoID ? `https://player.vimeo.com/video/${vimeoVideoID}` : "";
+  }
+
+  static giphyParser(url: string): string | boolean {
+    const regExp = /^.*((media\.)?giphy\.com\/(gifs|media|embed|clips)\/)([A-Za-z0-9]+-)*([A-Za-z0-9]{0,20}).*/;
+    const match = url.match(regExp);
+    return match && match[5] ? match[5] : false;
+  }
+
+  static constructGiphyEmbedURL(url: URL): string {
+    const giphyId = this.giphyParser(url.toString());
+    return giphyId ? `https://giphy.com/embed/${giphyId}` : "";
+  }
+
+  static spotifyParser(url: string): string | boolean {
+    const regExp = /^.*(open\.)?spotify\.com\/(((embed\/)?(track|artist|playlist|album))|((embed-podcast\/)?(episode|show)))\/([A-Za-z0-9]{0,25}).*/;
+    const match = url.match(regExp);
+    if (match && match[9]) {
+      if (match[8]) {
+        return `embed-podcast/${match[8]}/${match[9]}`;
+      }
+      if (match[5]) {
+        return `embed/${match[5]}/${match[9]}`;
+      }
+    }
+    return false;
+  }
+
+  static constructSpotifyEmbedURL(url: URL): string {
+    const spotifyEmbedSuffix = this.spotifyParser(url.toString());
+    return spotifyEmbedSuffix ? `https://open.spotify.com/${spotifyEmbedSuffix}` : "";
   }
 
   static extractTikTokVideoID(fullTikTokURL: string): string | boolean {
@@ -78,21 +108,21 @@ export class VideoUrlParserService {
     );
   }
 
-  static getEmbedVideoURL(
+  static getEmbedURL(
     backendApi: BackendApiService,
     globalVars: GlobalVarsService,
-    embedVideoURL: string
+    embedURL: string
   ): Observable<string> {
-    if (!embedVideoURL) {
+    if (!embedURL) {
       return of("");
     }
     let url;
     try {
-      url = new URL(embedVideoURL);
+      url = new URL(embedURL);
     } catch (e) {
       // If the embed video URL doesn't start with http(s), try the url with that as a prefix.
-      if (!embedVideoURL.startsWith("https://") && !embedVideoURL.startsWith("http://")) {
-        return this.getEmbedVideoURL(backendApi, globalVars, `https://${embedVideoURL}`);
+      if (!embedURL.startsWith("https://") && !embedURL.startsWith("http://")) {
+        return this.getEmbedURL(backendApi, globalVars, `https://${embedURL}`);
       }
       return of("");
     }
@@ -104,6 +134,12 @@ export class VideoUrlParserService {
     }
     if (this.isTiktokFromURL(url)) {
       return this.constructTikTokEmbedURL(backendApi, globalVars, url);
+    }
+    if (this.isGiphyFromURL(url)) {
+      return of(this.constructGiphyEmbedURL(url));
+    }
+    if (this.isSpotifyFromURL(url)) {
+      return of(this.constructSpotifyEmbedURL(url));
     }
     return of("");
   }
@@ -150,26 +186,68 @@ export class VideoUrlParserService {
     return pattern.test(url.hostname);
   }
 
-  static isValidVimeoEmbedURL(link: string) {
-    const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))/;
+  static isGiphyLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isGiphyFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isGiphyFromURL(url: URL): boolean {
+    const pattern = /\bgiphy\.com$/;
+    return pattern.test(url.hostname);
+  }
+
+  static isSpotifyLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isSpotifyFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isSpotifyFromURL(url: URL): boolean {
+    const pattern = /\bspotify\.com$/;
+    return pattern.test(url.hostname);
+  }
+
+  static isValidVimeoEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))$/;
     return !!link.match(regExp);
   }
 
-  static isValidYoutubeEmbedURL(link: string) {
-    const regExp = /(https:\/\/www\.youtube\.com\/embed\/[A-Za-z0-9_-]{11})/;
+  static isValidYoutubeEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/www\.youtube\.com\/embed\/[A-Za-z0-9_-]{11})$/;
     return !!link.match(regExp);
   }
 
-  // https://www.tiktok.com/oembed?url=https://www.tiktok.com/@thelavignes/video/6958254201961057542
-  static isValidTiktokEmbedURL(link: string) {
-    // `https://www.tiktok.com/embed/v2/${tiktokVideoID}
-    const regExp = /(https:\/\/www\.tiktok\.com\/embed\/v2\/(\d{0,30}))/;
+  static isValidTiktokEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/www\.tiktok\.com\/embed\/v2\/(\d{0,30}))$/;
+    return !!link.match(regExp);
+  }
+
+  static isValidGiphyEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/giphy\.com\/embed\/([A-Za-z0-9]{0,20}))$/;
+    return !!link.match(regExp);
+  }
+
+  static isValidSpotifyEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/open.spotify.com\/(((embed\/)(track|artist|playlist|album))|((embed-podcast\/)(episode|show)))\/[A-Za-z0-9]{0,25})$/;
     return !!link.match(regExp);
   }
 
   static isValidEmbedURL(link: string): boolean {
     if (link) {
-      return this.isValidVimeoEmbedURL(link) || this.isValidYoutubeEmbedURL(link) || this.isValidTiktokEmbedURL(link);
+      return (
+        this.isValidVimeoEmbedURL(link) ||
+        this.isValidYoutubeEmbedURL(link) ||
+        this.isValidTiktokEmbedURL(link) ||
+        this.isValidGiphyEmbedURL(link) ||
+        this.isValidSpotifyEmbedURL(link)
+      );
     }
     return false;
   }
@@ -177,6 +255,9 @@ export class VideoUrlParserService {
   static getEmbedHeight(link: string): number {
     if (this.isValidTiktokEmbedURL(link)) {
       return 700;
+    }
+    if (this.isValidSpotifyEmbedURL(link)) {
+      return link.indexOf("embed-podcast") > -1 ? 232 : 380;
     }
     return 315;
   }
