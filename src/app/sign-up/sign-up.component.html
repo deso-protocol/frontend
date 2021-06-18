@@ -75,50 +75,33 @@
           Next
         </button>
       </div>
-
-      <!--Spacer (for mobile)-->
-      <!-- If the "create a post" blue circle is showing, it will overlap the "Next" button. Adding space-->
-      <!-- down here gives the user enough space to scroll down to reveal the next button.-->
-      <!-- This works for now, but we should do something better long term, e.g. hide the blue circle
-           on this page.-->
-      <div style="padding-bottom: 85px"></div>
     </div>
 
     <!-- Finished -->
     <div *ngIf="stepNum == 5">
       <div class="fs-24px font-weight-bold pt-15px">
         <i class=""></i>
-        Are you ready?
-      </div>
-      <div class="fs-18px pt-15px">An account was created with a private key based on your seed phrase.</div>
-      <div class="fs-15px pt-30px mb-10px">What's Next?</div>
-
-      <button
-        [routerLink]="'/' + this.globalVars.RouteNames.BUY_BITCLOUT"
-        [queryParams]="{ stepNum: null }"
-        queryParamsHandling="merge"
-        class="btn btn-primary font-weight-bold fs-15px mt-5px mb-5px mr-15px"
-      >
         Buy BitClout
-      </button>
+      </div>
+      <div class="fs-18px pt-15px">
+        <span>
+          BitClout is a
+          <b>cryptocurrency</b>
+          like Bitcoin, only it powers the first
+          <b>decentralized social network</b>
+          .
+        </span>
+      </div>
+      <div class="fs-18px pt-30px mb-10px">
+        You can use BitClout to trade creator coins, give Diamonds, buy NFTs (coming soon), and much more.
+      </div>
 
-      <button
-        [routerLink]="'/' + this.globalVars.RouteNames.UPDATE_PROFILE"
-        [queryParams]="{ stepNum: null }"
-        queryParamsHandling="merge"
-        class="btn btn-outline-primary font-weight-bold fs-15px mt-5px mr-15px mb-5px"
-      >
-        Complete your Profile
-      </button>
-
-      <button
-        [routerLink]="'/' + this.globalVars.RouteNames.BROWSE"
-        [queryParams]="{ stepNum: null }"
-        queryParamsHandling="merge"
-        class="btn btn-outline-primary font-weight-bold fs-15px mt-5px mr-15px mb-5px"
-      >
-        Browse
-      </button>
+      <div class="d-flex justify-content-end mt-15px pt-10px">
+        <button (click)="buyBitCloutSkipped()" class="btn btn-outline-primary font-weight-bold fs-15px">Skip</button>
+        <button (click)="buyBitCloutClicked()" class="btn btn-primary font-weight-bold fs-15px ml-10px">
+          Buy $CLOUT
+        </button>
+      </div>
     </div>
   </div>
 </app-page>

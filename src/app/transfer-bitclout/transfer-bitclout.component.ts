@@ -3,6 +3,7 @@ import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { Title } from "@angular/platform-browser";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -12,9 +13,9 @@ class Messages {
   static SEND_BITCLOUT_MIN = `You must send a non-zero amount of BitClout`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
   static CONFIRM_TRANSFER_TO_PUBKEY =
-    "Send %s $BitClout with a fee of %s BitClout for a total of %s BitClout to public key %s";
+    "Send %s $CLOUT with a fee of %s BitClout for a total of %s BitClout to public key %s";
   static CONFIRM_TRANSFER_TO_USERNAME =
-    "Send %s $BitClout with a fee of %s BitClout for a total of %s BitClout to username %s";
+    "Send %s $CLOUT with a fee of %s BitClout for a total of %s BitClout to username %s";
 }
 
 @Component({
@@ -33,12 +34,17 @@ export class TransferBitcloutComponent implements OnInit {
   loadingMax = false;
   sendingBitClout = false;
 
-  constructor(private backendApi: BackendApiService, private globalVarsService: GlobalVarsService) {
+  constructor(
+    private backendApi: BackendApiService,
+    private globalVarsService: GlobalVarsService,
+    private titleService: Title
+  ) {
     this.globalVars = globalVarsService;
   }
 
   ngOnInit() {
     this.feeRateBitCloutPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
+    this.titleService.setTitle("Send $CLOUT - BitClout");
   }
 
   _clickMaxBitClout() {
@@ -79,7 +85,7 @@ export class TransferBitcloutComponent implements OnInit {
     }
 
     if (this.payToPublicKey == null || this.payToPublicKey === "") {
-      this.globalVars._alertError("A valid pay-to public key or username must be set before you can send $BitClout");
+      this.globalVars._alertError("A valid pay-to public key or username must be set before you can send $CLOUT");
       return;
     }
 
@@ -118,6 +124,7 @@ export class TransferBitcloutComponent implements OnInit {
         }
 
         SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
           title: "Are you ready?",
           html: sprintf(
             isUsername ? Messages.CONFIRM_TRANSFER_TO_USERNAME : Messages.CONFIRM_TRANSFER_TO_PUBKEY,

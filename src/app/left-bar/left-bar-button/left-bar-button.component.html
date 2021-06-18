@@ -7,7 +7,6 @@
     queryParamsHandling="merge"
     routerLinkActive
     #rla="routerLinkActive"
-    [routerLinkActiveOptions]="{ exact: true }"
     [ngClass]="{
       'left-bar__dot-unread': isUnread,
       'left-bar__dot-inactive': !rla.isActive,
@@ -25,26 +24,19 @@
       [routerLink]="[link]"
       [queryParams]="_queryParamsForLink(link)"
       [routerLinkActive]="['font-weight-bold', 'fc-default']"
-      [routerLinkActiveOptions]="{ exact: true }"
       queryParamsHandling="merge"
     >
       {{ buttonLabel }}
     </a>
     <div
-      *ngIf="hasNotifications && globalVars.messageNotificationCount != 0"
-      class="ml-5px p-5x fs-15px"
-      style="
-        border-radius: 3px;
-        background-color: white;
-        color: #fe3537;
-        border: 1px #fe3537 solid;
-        text-align: center;
-        line-height: 18px;
-        height: 20px;
-        padding: 0px 5px;
-      "
+      *ngIf="hasNotifications && globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
+      class="ml-5px p-5x fs-15px notification"
     >
-      {{ globalVars.messageNotificationCount > 999 ? "999+" : globalVars.messageNotificationCount }}
+      {{
+        globalVars.messageResponse.NumberOfUnreadThreads > 999
+          ? "999+"
+          : globalVars.messageResponse.NumberOfUnreadThreads
+      }}
     </div>
   </div>
 </div>

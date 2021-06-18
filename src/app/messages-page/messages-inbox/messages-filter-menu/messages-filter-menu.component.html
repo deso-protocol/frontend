@@ -1,0 +1,85 @@
+<div class="fs-16px">
+  <div class="mr-15px ml-15px pt-15px pb-5px divtext font-weight-bold border-color-blue border-bottom">
+    Custom Inbox Settings
+  </div>
+
+  <div class="d-flex pt-15px pb-15px flex-row">
+    <div class="divtext w-50 align-middle">Only show:</div>
+
+    <div class="w-100 d-flex pl-5px flex-column">
+      <div class="mt-5px d-flex flex-row align-items-center">
+        <input id="holdsMeCheckbox" type="checkbox" name="holdsMe" class="w-10" [(ngModel)]="messageFilterHoldsMe" />
+        <label for="holdsMeCheckbox" class="cursor-pointer mb-0">Holders</label>
+      </div>
+
+      <div class="mt-5px d-flex flex-row align-items-center">
+        <input
+          id="iHoldCheckbox"
+          type="checkbox"
+          style="vertical-align: middle"
+          name="iHold"
+          class="w-10"
+          [(ngModel)]="messageFilterIHold"
+        />
+        <label for="iHoldCheckbox" class="cursor-pointer mb-0">Holdings</label>
+      </div>
+
+      <div class="mt-5px d-flex flex-row align-items-center">
+        <input
+          id="followingMeCheckbox"
+          type="checkbox"
+          style="vertical-align: middle"
+          name="followingMe"
+          class="w-10"
+          [(ngModel)]="messageFilterFollowingMe"
+        />
+        <label for="followingMeCheckbox" class="cursor-pointer mb-0">Followers</label>
+      </div>
+
+      <div class="mt-5px d-flex flex-row align-items-center">
+        <input id="iFollowCheckbox" type="checkbox" name="iFollow" class="w-10" [(ngModel)]="messageFilterIFollow" />
+        <label for="iFollowCheckbox" class="cursor-pointer mb-0">Following</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-row">
+    <div class="divtext w-40 align-middle">Sort By:</div>
+
+    <div class="w-100">
+      <div class="btn-group pl-25px" dropdown>
+        <button
+          id="button-basic"
+          dropdownToggle
+          type="button"
+          class="btn btn-secondary fs-16px dropdown-toggle text-grey5"
+          aria-controls="dropdown-basic"
+        >
+          {{ sortAlgorithmToText() }}
+          <span class="caret"></span>
+        </button>
+        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+          <li role="menuitem"><a class="dropdown-item fs-16px" (click)="setSortAlgorithm('time')">Most recent</a></li>
+          <li role="menuitem"><a class="dropdown-item fs-16px" (click)="setSortAlgorithm('clout')">Most clout</a></li>
+          <li role="menuitem">
+            <a class="dropdown-item fs-16px" (click)="setSortAlgorithm('followers')">Most followed</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item fs-16px" (click)="setSortAlgorithm('holders')">Largest Holder</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-center w-100 pb-15px border-bottom border-color-grey">
+    <div class="w-100 btn-default">
+      <button
+        (click)="updateGlobalMessagesPreferences()"
+        class="btn btn-primary btn-lg font-weight-bold mr-30px fs-13px mt-5px"
+      >
+        Update
+      </button>
+    </div>
+  </div>
+</div>

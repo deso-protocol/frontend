@@ -10,7 +10,7 @@ import { IdentityService } from "./identity.service";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
-  static BurnBitcoinRoute = "/api/v0/burn-bitcoin";
+  static ExchangeBitcoinRoute = "/api/v0/exchange-bitcoin";
   static SendBitCloutRoute = "/api/v0/send-bitclout";
   static MinerControlRoute = "/api/v0/miner-control";
 
@@ -22,11 +22,14 @@ export class BackendRoutes {
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
+  static RoutePathGetSingleProfilePicture = "/api/v0/get-single-profile-picture";
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
   static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
   static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
+  static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
+  static RoutePathMarkAllMessagesRead = "/api/v0/mark-all-messages-read";
   static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
   static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
   static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
@@ -42,10 +45,13 @@ export class BackendRoutes {
   static RoutePathBlockPublicKey = "/api/v0/block-public-key";
   static RoutePathGetBlockTemplate = "/api/v0/get-block-template";
   static RoutePathGetTxn = "/api/v0/get-txn";
-  static RoutePathGetIdentities = "/api/v0/get-identities";
   static RoutePathDeleteIdentities = "/api/v0/delete-identities";
   static RoutePathSendDiamonds = "/api/v0/send-diamonds";
   static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
+  static RoutePathGetLikesForPost = "/api/v0/get-likes-for-post";
+  static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
+  static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
+  static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -61,12 +67,24 @@ export class BackendRoutes {
   static RoutePathAdminGrantVerificationBadge = "/api/v0/admin/grant-verification-badge";
   static RoutePathAdminRemoveVerificationBadge = "/api/v0/admin/remove-verification-badge";
   static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
+  static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
-  static RoutePathUpdateBitcoinUSDExchangeRate = "/api/v0/admin/update-bitcoin-usd-exchange-rate";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
+  static RoutePathSetUSDCentsToBitCloutReserveExchangeRate =
+    "/api/v0/admin/set-usd-cents-to-bitclout-reserve-exchange-rate";
+  static RoutePathGetUSDCentsToBitCloutReserveExchangeRate =
+    "/api/v0/admin/get-usd-cents-to-bitclout-reserve-exchange-rate";
+  static RoutePathSetBuyBitCloutFeeBasisPoints = "/api/v0/admin/set-buy-bitclout-fee-basis-points";
+  static RoutePathGetBuyBitCloutFeeBasisPoints = "/api/v0/admin/get-buy-bitclout-fee-basis-points";
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
+  static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
+  static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
+
+  // Wyre routes.
+  static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
+  static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
 }
 
 export class Transaction {
@@ -109,22 +127,21 @@ export class User {
   PublicKeysBase58CheckFollowedByUser: string[];
   EncryptedSeedHex: string;
 
-  SeedInfo: any;
   BalanceNanos: number;
   UnminedBalanceNanos: number;
-  LocalState: any;
 
   NumActionItems: any;
   NumMessagesToRead: any;
 
-  UsersYouHODL: any;
-  UsersWhoHODLYou: any;
+  UsersYouHODL: BalanceEntryResponse[];
+  UsersWhoHODLYouCount: number;
 
   HasPhoneNumber: boolean;
   CanCreateProfile: boolean;
   BlockedPubKeys: { [key: string]: object };
 
   IsAdmin?: boolean;
+  IsSuperAdmin?: boolean;
 }
 
 export class PostEntryResponse {
@@ -150,6 +167,7 @@ export class PostEntryResponse {
   Comments: PostEntryResponse[];
   LikeCount: number;
   RecloutCount: number;
+  QuoteRecloutCount: number;
   DiamondCount: number;
   // Information about the reader's state w/regard to this post (e.g. if they liked it).
   PostEntryReaderState?: PostEntryReaderState;
@@ -216,9 +234,6 @@ export class BackendApiService {
 
   // Store sent messages and associated metadata in localStorage
   MessageMetaKey = "messageMetaKey";
-
-  // Store successful identityService.import result in localStorage
-  IdentityImportCompleteKey = "identityImportComplete";
 
   // Store the identity users in localStorage
   IdentityUsersKey = "identityUsers";
@@ -356,7 +371,7 @@ export class BackendApiService {
 
   // Use empty string to return all top categories.
   GetBitcoinFeeRateSatoshisPerKB(): Observable<any> {
-    return this.httpClient.get<any>("https://api.blockchain.info/mempool/fees").pipe(catchError(this._handleError));
+    return this.httpClient.get<any>("https://api.blockchain.com/mempool/fees").pipe(catchError(this._handleError));
   }
 
   SendPhoneNumberVerificationText(
@@ -390,6 +405,7 @@ export class BackendApiService {
   GetBlockTemplate(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetBlockTemplate, {
       PublicKeyBase58Check,
+      HeaderVersion: 1,
     });
   }
 
@@ -399,19 +415,13 @@ export class BackendApiService {
     });
   }
 
-  GetIdentities(endpoint: string): Observable<any> {
-    return this.httpClient
-      .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetIdentities), {}, { withCredentials: true })
-      .pipe(catchError(this._handleError));
-  }
-
   DeleteIdentities(endpoint: string): Observable<any> {
     return this.httpClient
       .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, { withCredentials: true })
       .pipe(catchError(this._handleError));
   }
 
-  BurnBitcoin(
+  ExchangeBitcoin(
     endpoint: string,
     LatestBitcionAPIResponse: any,
     BTCDepositAddress: string,
@@ -420,7 +430,7 @@ export class BackendApiService {
     FeeRateSatoshisPerKB: number,
     Broadcast: boolean
   ): Observable<any> {
-    let req = this.post(endpoint, BackendRoutes.BurnBitcoinRoute, {
+    let req = this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
       PublicKeyBase58Check,
       BurnAmountSatoshis,
       LatestBitcionAPIResponse,
@@ -443,7 +453,7 @@ export class BackendApiService {
 
       req = req.pipe(
         switchMap((res) =>
-          this.post(endpoint, BackendRoutes.BurnBitcoinRoute, {
+          this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
             PublicKeyBase58Check,
             BurnAmountSatoshis,
             LatestBitcionAPIResponse,
@@ -517,9 +527,10 @@ export class BackendApiService {
   }
 
   // User-related functions.
-  GetUsersStateless(endpoint: string, publicKeys: any[]): Observable<any> {
+  GetUsersStateless(endpoint: string, publicKeys: any[], SkipForLeaderboard: boolean = false): Observable<any> {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
       PublicKeysBase58Check: publicKeys,
+      SkipForLeaderboard,
     });
   }
 
@@ -669,6 +680,7 @@ export class BackendApiService {
     GetPostsForFollowFeed: boolean,
     GetPostsForGlobalWhitelist: boolean,
     GetPostsByClout: boolean,
+    MediaRequired: boolean,
     PostsByCloutMinutesLookback: number,
     AddGlobalFeedBool: boolean
   ): Observable<any> {
@@ -683,6 +695,7 @@ export class BackendApiService {
       GetPostsForFollowFeed,
       GetPostsForGlobalWhitelist,
       GetPostsByClout,
+      MediaRequired,
       PostsByCloutMinutesLookback,
       AddGlobalFeedBool,
     });
@@ -739,13 +752,32 @@ export class BackendApiService {
       Username,
     });
   }
+
+  // We add a ts-ignore here as typescript does not expect responseType to be anything but "json".
+  GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): Observable<any> {
+    return this.httpClient.get<any>(this.GetSingleProfilePictureURL(endpoint, PublicKeyBase58Check, bustCache), {
+      // @ts-ignore
+      responseType: "blob",
+    });
+  }
+  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
+    return this._makeRequestURL(
+      endpoint,
+      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + "?" + fallback
+    );
+  }
+  GetDefaultProfilePictureURL(endpoint: string): string {
+    return this._makeRequestURL(endpoint, "/assets/img/default_profile_pic.png");
+  }
+
   GetPostsForPublicKey(
     endpoint: string,
     PublicKeyBase58Check: string,
     Username: string,
     ReaderPublicKeyBase58Check: string,
     LastPostHashHex: string,
-    NumToFetch: number
+    NumToFetch: number,
+    MediaRequired: boolean
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetPostsForPublicKey, {
       PublicKeyBase58Check,
@@ -753,6 +785,7 @@ export class BackendApiService {
       ReaderPublicKeyBase58Check,
       LastPostHashHex,
       NumToFetch,
+      MediaRequired,
     });
   }
 
@@ -862,9 +895,26 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, FollowerPublicKeyBase58Check);
   }
 
-  GetMessages(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+  GetMessages(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    FetchAfterPublicKeyBase58Check: string = "",
+    NumToFetch: number = 25,
+    HoldersOnly: boolean = false,
+    HoldingsOnly: boolean = false,
+    FollowersOnly: boolean = false,
+    FollowingOnly: boolean = false,
+    SortAlgorithm: string = "time"
+  ): Observable<any> {
     let req = this.httpClient.post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetMessagesStateless), {
       PublicKeyBase58Check,
+      FetchAfterPublicKeyBase58Check,
+      NumToFetch,
+      HoldersOnly,
+      HoldingsOnly,
+      FollowersOnly,
+      FollowingOnly,
+      SortAlgorithm,
     });
 
     // create an array of messages to decrypt
@@ -953,6 +1003,66 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPublicKey, {
       PublicKeyBase58Check,
       FetchYouDiamonded,
+    });
+  }
+
+  GetLikesForPost(
+    endpoint: string,
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetLikesForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetDiamondsForPost(
+    endpoint: string,
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetDiamondsForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetRecloutsForPost(
+    endpoint: string,
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetRecloutsForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetQuoteRecloutsForPost(
+    endpoint: string,
+    PostHashHex: string,
+    Offset: number,
+    Limit: number,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetQuoteRecloutsForPost, {
+      PostHashHex,
+      Offset,
+      Limit,
+      ReaderPublicKeyBase58Check,
     });
   }
 
@@ -1051,6 +1161,23 @@ export class BackendApiService {
     });
   }
 
+  MarkContactMessagesRead(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    ContactPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkContactMessagesRead, UserPublicKeyBase58Check, {
+      UserPublicKeyBase58Check,
+      ContactPublicKeyBase58Check,
+    });
+  }
+
+  MarkAllMessagesRead(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkAllMessagesRead, UserPublicKeyBase58Check, {
+      UserPublicKeyBase58Check,
+    });
+  }
+
   // Note that FetchStartIndex < 0 means "fetch me the latest notifications."
   // To implement pagination, all you have to do
   // is set FetchStartIndex to the Index value of the last notification in
@@ -1130,6 +1257,13 @@ export class BackendApiService {
     });
   }
 
+  AdminGetUserAdminData(endpoint: string, AdminPublicKey: string, UserPublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUserAdminData, AdminPublicKey, {
+      AdminPublicKey,
+      UserPublicKeyBase58Check,
+    });
+  }
+
   NodeControl(endpoint: string, AdminPublicKey: string, Address: string, OperationType: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.NodeControlRoute, AdminPublicKey, {
       AdminPublicKey,
@@ -1174,7 +1308,6 @@ export class BackendApiService {
     RemovePhoneNumberMetadata: boolean
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateUserGlobalMetadata, AdminPublicKey, {
-      AdminPublicKey,
       UserPublicKeyBase58Check,
       Username,
       IsBlacklistUpdate,
@@ -1183,6 +1316,7 @@ export class BackendApiService {
       IsWhitelistUpdate,
       WhitelistPosts,
       RemovePhoneNumberMetadata,
+      AdminPublicKey,
     });
   }
 
@@ -1260,19 +1394,34 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
-  UpdateBitcoinUSDExchangeRate(
+  SetUSDCentsToBitCloutReserveExchangeRate(
     endpoint: string,
-    UpdaterPublicKeyBase58Check: string,
-    USDCentsPerBitcoin: number,
-    MinFeeRateNanosPerKB: number
+    AdminPublicKey: string,
+    USDCentsPerBitClout: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateBitcoinUSDExchangeRate, {
-      UpdaterPublicKeyBase58Check,
-      USDCentsPerBitcoin,
-      MinFeeRateNanosPerKB,
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToBitCloutReserveExchangeRate, AdminPublicKey, {
+      AdminPublicKey,
+      USDCentsPerBitClout,
     });
+  }
 
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  GetUSDCentsToBitCloutReserveExchangeRate(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToBitCloutReserveExchangeRate);
+  }
+
+  SetBuyBitCloutFeeBasisPoints(
+    endpoint: string,
+    AdminPublicKey: string,
+    BuyBitCloutFeeBasisPoints: number
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyBitCloutFeeBasisPoints, AdminPublicKey, {
+      AdminPublicKey,
+      BuyBitCloutFeeBasisPoints,
+    });
+  }
+
+  GetBuyBitCloutFeeBasisPoints(endpoint: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetBuyBitCloutFeeBasisPoints);
   }
 
   UpdateGlobalParams(
@@ -1300,6 +1449,19 @@ export class BackendApiService {
     });
   }
 
+  EvictUnminedBitcoinTxns(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check,
+    BitcoinTxnHashes: string[],
+    DryRun: boolean
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathEvictUnminedBitcoinTxns, UpdaterPublicKeyBase58Check, {
+      BitcoinTxnHashes,
+      DryRun,
+      AdminPublicKey: UpdaterPublicKeyBase58Check,
+    });
+  }
+
   GetFullTikTokURL(endpoint: string, TikTokShortVideoID: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetFullTikTokURL, {
       TikTokShortVideoID,
@@ -1308,6 +1470,48 @@ export class BackendApiService {
         return res.FullTikTokURL;
       })
     );
+  }
+
+  GetWyreWalletOrderForPublicKey(
+    endpoint: string,
+    AdminPublicKeyBase58Check,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetWyreWalletOrdersForPublicKey, AdminPublicKeyBase58Check, {
+      AdminPublicKey: AdminPublicKeyBase58Check,
+      PublicKeyBase58Check,
+      Username,
+    });
+  }
+
+  // Wyre
+  GetWyreWalletOrderQuotation(
+    endpoint: string,
+    SourceAmount: number,
+    Country: string,
+    SourceCurrency: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderQuotation, {
+      SourceAmount,
+      Country,
+      SourceCurrency,
+    });
+  }
+
+  GetWyreWalletOrderReservation(
+    endpoint: string,
+    ReferenceId: string,
+    SourceAmount: number,
+    Country: string,
+    SourceCurrency: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderReservation, {
+      ReferenceId,
+      SourceAmount,
+      Country,
+      SourceCurrency,
+    });
   }
 
   // Error parsing

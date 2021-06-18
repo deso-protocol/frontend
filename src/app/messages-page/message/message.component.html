@@ -9,8 +9,7 @@
   <div
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
     style="white-space: pre-wrap; overflow-wrap: anywhere"
-  >
-    {{
+  >{{
       globalVars.messageMeta.decryptedMessgesMap[
         globalVars.loggedInUser.PublicKeyBase58Check + "" + message.TstampNanos
       ]
@@ -23,15 +22,7 @@
   <div
     *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
     class="message__avatar ml-15px"
-    [style.background-image]="
-      'url(' +
-      (globalVars.loggedInUser &&
-      globalVars.loggedInUser.ProfileEntryResponse &&
-      globalVars.loggedInUser.ProfileEntryResponse.ProfilePic
-        ? globalVars.loggedInUser.ProfileEntryResponse.ProfilePic
-        : '/assets/img/default_profile_pic.png') +
-      ')'
-    "
+    [avatar]="globalVars.loggedInUser.PublicKeyBase58Check"
   ></div>
 
   <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
@@ -56,9 +47,7 @@
   <div
     *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
     class="message__avatar mr-15px"
-    [style.background-image]="
-      'url(' + (profile && profile.ProfilePic ? profile.ProfilePic : '/assets/img/default_profile_pic.png') + ')'
-    "
+    [avatar]="message.SenderPublicKeyBase58Check"
   ></div>
   <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
   <div
@@ -70,8 +59,7 @@
   <div
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height background-color-light-grey"
     style="white-space: pre-wrap; overflow-wrap: anywhere"
-  >
-    {{ message.DecryptedText }}
+  >{{ message.DecryptedText }}
   </div>
 </div>
 <!-- Consider whether or not to show the timestamp. -->

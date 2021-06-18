@@ -70,6 +70,21 @@ export class FeedCreatePostComponent implements OnInit {
     this._setRandomMovieQuote();
   }
 
+  onPaste(event: any): void {
+    const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+    let blob = null;
+
+    for (const item of items) {
+      if (item.type.indexOf("image") === 0) {
+        blob = item.getAsFile();
+      }
+    }
+
+    if (blob) {
+      this._handleFileInput(blob);
+    }
+  }
+
   showCharacterCountIsFine() {
     return this.postInput.length < FeedCreatePostComponent.SHOW_POST_LENGTH_WARNING_THRESHOLD;
   }
@@ -207,18 +222,22 @@ export class FeedCreatePostComponent implements OnInit {
     this.submitPost();
   }
 
-  _handleFileInput(files: FileList) {
+  _handleFilesInput(files: FileList) {
     const fileToUpload = files.item(0);
-    if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {
+    this._handleFileInput(fileToUpload);
+  }
+
+  _handleFileInput(file: File) {
+    if (!file.type || !file.type.startsWith("image/")) {
       this.globalVars._alertError("File selected does not have an image file type.");
       return;
     }
-    if (fileToUpload.size > 15 * (1024 * 1024)) {
+    if (file.size > 15 * (1024 * 1024)) {
       this.globalVars._alertError("File is too large. Please choose a file less than 15MB");
       return;
     }
     this.backendApi
-      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, fileToUpload)
+      .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
       .subscribe(
         (res) => {
           this.postImageSrc = res.ImageURL;

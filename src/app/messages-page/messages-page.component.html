@@ -39,7 +39,34 @@
     >
       <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
+      <div class="d-flex justify-content-end align-items-right pr-10px">
+        <div
+          *ngIf="
+            this.globalVars.messageResponse != null && this.globalVars.messageResponse.NumberOfUnreadThreads > 0;
+            then thenEnvelopeBlock;
+            else elseEnvelopeBlock
+          "
+        ></div>
+        <ng-template #thenEnvelopeBlock>
+          <i
+            (click)="_markAllMessagesReadMobile()"
+            class="fc-blue far fa-envelope cursor-pointer messages-header-icon-row__icon pt-2px"
+          ></i>
+        </ng-template>
+        <ng-template #elseEnvelopeBlock>
+          <i class="far fa-envelope cursor-auto fs-20px pt-2px"></i>
+        </ng-template>
+      </div>
+
       Messages
+
+      <!-- Settings -->
+      <div class="d-flex w-100 justify-content-end align-items-right pr-10px">
+        <i
+          (click)="_toggleSettingsTray()"
+          class="fas fa-sliders-h cursor-pointer messages-header-icon-row__icon pt-2px"
+        ></i>
+      </div>
     </div>
 
     <!-- Thread View Header -->
@@ -48,19 +75,14 @@
       class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
     >
       <div class="cursor-pointer color-grey7 mr-15px">
-        <a
-          class="link--unstyled"
-          style="text-align: center"
-          [routerLink]="['/' + globalVars.RouteNames.INBOX_PREFIX]"
-          queryParamsHandling="merge"
-        >
+        <a class="link--unstyled" style="text-align: center" (click)="navigateToInbox()" queryParamsHandling="merge">
           <i class="fa fa-angle-left"></i>
         </a>
       </div>
 
       <div
         class="messages-thread__avatar mr-15px"
-        [style.background-image]="'url(' + selectedThreadProfilePic + ')'"
+        [avatar]="selectedThread.PublicKeyBase58Check"
         [ngClass]="{ 'cursor-auto': !selectedThread.ProfileEntryResponse }"
         [routerLink]="
           selectedThread.ProfileEntryResponse ? AppRoutingModule.profilePath(selectedThreadDisplayName) : []
@@ -104,8 +126,5 @@
       ></messages-thread-view>
     </div>
   </div>
-  <bottom-bar-mobile
-    *ngIf="!showThreadView"
-    class="global__bottom-bar-mobile"
-  ></bottom-bar-mobile>
+  <bottom-bar-mobile *ngIf="!showThreadView" class="global__bottom-bar-mobile"></bottom-bar-mobile>
 </div>

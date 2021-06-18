@@ -88,6 +88,7 @@ export class DiamondPostsComponent {
         minIndex: 0,
         bufferSize: 10,
         windowViewport: true,
+        infinite: true,
       },
     });
   }
@@ -124,7 +125,7 @@ export class DiamondPostsComponent {
           this.senderProfileEntryResponse = res.SenderProfileEntryResponse;
         }
         const diamondPosts = posts.map((post) => {
-          post.ProfileEntryResponse = res.ReceiverProfileEntryResponse
+          post.ProfileEntryResponse = res.ReceiverProfileEntryResponse;
           const diamondPost = new DiamondsPost();
           diamondPost.Post = post;
           return diamondPost;

@@ -14,7 +14,7 @@
             [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
             queryParamsHandling="merge"
           >
-            Buy $BitClout
+            Buy $CLOUT
           </a>
         </div>
       </div>
@@ -25,9 +25,9 @@
 <div class="w-100 border-bottom">
   <div class="container-lg landing__header">
     <div class="row">
-      <div class="col landing__logo">BitClout</div>
+      <div class="col landing__logo clout">BitClout</div>
       <div class="col d-flex justify-content-end align-items-center">
-        <div class="input-group w-auto d-none d-sm-flex">
+        <div class="input-group w-auto d-none d-sm-flex" style="margin-left: 25px">
           <div class="input-group-prepend">
             <label class="landing__nav-buy input-group-text">
               {{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD
@@ -39,12 +39,13 @@
               [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
               queryParamsHandling="merge"
             >
-              Buy $BitClout
+              Buy $CLOUT
             </a>
           </div>
         </div>
-        <a class="landing__nav-link" href="https://docs.bitclout.com/" target="_blank">One-Pager</a>
-        <a class="landing__nav-link" (click)="globalVars.launchLoginFlow()">Login</a>
+        <a class="landing__nav-link" href="https://docs.bitclout.com/" target="_blank">About</a>
+        <a class="landing__nav-link" href="https://docs.bitclout.com/the-vision" target="_blank">Vision</a>
+        <a class="landing__nav-link" href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
         <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">Sign Up</a>
       </div>
     </div>
@@ -61,7 +62,8 @@
       </h1>
       <div class="slide-up-2">
         <a class="btn btn-primary landing__sign-up" (click)="globalVars.launchSignupFlow()">Sign Up</a>
-        <a class="landing__log-in d-none d-md-block" (click)="globalVars.launchLoginFlow()">Log in</a>
+        <a class="landing__log-in d-none d-sm-block" (click)="globalVars.launchLoginFlow()">Log in</a>
+        <a class="landing__log-in d-block d-sm-none mt-3" (click)="globalVars.launchLoginFlow()">Log in</a>
       </div>
     </div>
   </div>
@@ -77,6 +79,9 @@
         <br />
         <br />
         <a href="https://docs.bitclout.com/" target="_blank">Learn More</a>
+        &nbsp;
+        &nbsp;
+        <a href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
         <div class="col-sm-10 col-xs-12 mb-0 landing__example">
@@ -152,10 +157,13 @@
         <b>BitClout is not a company.</b>
         It's an open-source blockchain like Bitcoin.
         <br class="d-none d-md-block" />
-        You can own a piece by buying the $BitClout coin.
+        You can own a piece by buying the BitClout coin $CLOUT.
         <br />
         <br />
-        <a href="https://docs.bitclout.com/" target="_blank">Learn More</a>
+        <a href="https://docs.bitclout.com/the-vision" target="_blank">Learn More</a>
+        &nbsp;
+        &nbsp;
+        <a href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
         <div class="col-sm-10 col-xs-12 mb-0 landing__example">
@@ -209,8 +217,9 @@
         Bitcoin is decentralizing
         <b>money,</b>
         <br />
+        <br />
         BitClout is decentralizing
-        <b>social.</b>
+        <b>social media.</b>
       </h4>
       <a class="btn btn-sm btn-outline-primary landing__btn-cta" href="https://docs.bitclout.com/" target="_blank">
         Learn More
@@ -238,7 +247,9 @@
   <div class="container">
     <div class="row d-flex justify-content-center">
       <div class="col mb-0 text-center">
-        <p class="text-grey9 fs-12px">Because we deserve a better echo chamber.</p>
+        <p class="text-grey9 fs-20px">The future is decentralized.</p>
+        <br>
+        <a href="mailto:node.admin+contact@protonmail.com" class="fs-12px">Contact Node Admin</a>
       </div>
     </div>
   </div>

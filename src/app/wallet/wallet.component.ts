@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
 import { BalanceEntryResponse } from "../backend-api.service";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "wallet",
@@ -21,7 +22,7 @@ export class WalletComponent implements OnInit {
   tabs = [WalletComponent.coinsPurchasedTab, WalletComponent.coinsReceivedTab];
   activeTab: string = WalletComponent.coinsPurchasedTab;
 
-  constructor(private appData: GlobalVarsService) {
+  constructor(private appData: GlobalVarsService, private titleService: Title) {
     this.globalVars = appData;
   }
 
@@ -42,6 +43,7 @@ export class WalletComponent implements OnInit {
     });
     this.sortHodlings(this.usersYouPurchased);
     this.sortHodlings(this.usersYouReceived);
+    this.titleService.setTitle("Wallet - BitClout");
   }
 
   sortHodlings(hodlings: BalanceEntryResponse[]): void {

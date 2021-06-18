@@ -86,6 +86,7 @@ export class ManageFollowsComponent implements OnDestroy {
       minIndex: 0,
       bufferSize: 50,
       windowViewport: true,
+      infinite: true,
     },
   });
 

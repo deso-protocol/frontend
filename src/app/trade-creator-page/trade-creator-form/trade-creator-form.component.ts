@@ -427,8 +427,9 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       if (
         this.globalVars.loggedInUser.PublicKeyBase58Check === this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check
       ) {
-        const hodlersCount = this.globalVars.loggedInUser.UsersWhoHODLYou.length;
+        const hodlersCount = this.globalVars.loggedInUser.UsersWhoHODLYouCount;
         SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
           title: "Warning!",
           html: `You have ${hodlersCount} supporter${hodlersCount > 1 ? "s" : ""}  who own${
             hodlersCount > 1 ? "" : "s"

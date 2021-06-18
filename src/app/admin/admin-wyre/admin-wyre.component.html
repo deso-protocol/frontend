@@ -1,0 +1,42 @@
+<div>
+  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+    Get Wyre Orders for Public Key or Username:
+    <div class="d-flex mt-5px">
+      <input
+        [(ngModel)]="usernameToFetchWyreOrders"
+        (keydown.enter)="_loadWyreOrders()"
+        class="form-control w-100 fs-15px lh-15px"
+        placeholder="Enter a username or public key."
+      />
+      <button *ngIf="!loadingWyreOrders" (click)="_loadWyreOrders()" class="btn btn-outline-primary fs-15px ml-5px">
+        Fetch
+      </button>
+      <button *ngIf="loadingWyreOrders" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+    </div>
+  </div>
+  <div *ngFor="let order of wyreOrders" class="px-15px">
+    Order {{ order.LatestWyreWalletOrderWebhookPayload.orderId }} --
+    {{ order.LatestWyreWalletOrderWebhookPayload.orderStatus }}
+    <ul>
+      <li>Created at: {{ order.Timestamp }}</li>
+      <li *ngIf="order.LatestWyreWalletOrderWebhookPayload.failedReason">
+        Failed Reason: {{ order.LatestWyreWalletOrderWebhookPayload.failedReason }}
+      </li>
+      <li style="word-break: break-word" *ngIf="order.LatestWyreTrackWalletOrderResponse">
+        btc tx: {{ order.LatestWyreTrackWalletOrderResponse.blockchainNetworkTx }}
+      </li>
+      <li *ngIf="order.LatestWyreTrackWalletOrderResponse">
+        Source amount: {{ order.LatestWyreTrackWalletOrderResponse.sourceAmount }}
+        {{ order.LatestWyreTrackWalletOrderResponse.sourceCurrency }}
+      </li>
+      <li *ngIf="order.LatestWyreTrackWalletOrderResponse">
+        Destination amount: {{ order.LatestWyreTrackWalletOrderResponse.destAmount }}
+        {{ order.LatestWyreTrackWalletOrderResponse.destCurrency }}
+      </li>
+      <li *ngIf="order.BitCloutPurchasedNanos">BitClout Nanos Purchased: {{ order.BitCloutPurchasedNanos }}</li>
+      <li style="word-break: break-word" *ngIf="order.BasicTransferTxnHash">
+        BitClout Basic Transfer Hash: {{ order.BasicTransferTxnHash }}
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DiamondPostsComponent } from "./diamond-posts-page.component";
+import { DiamondPostsComponent } from "./diamond-posts.component";
 
 describe("DiamondPostsPageComponent", () => {
   let component: DiamondPostsComponent;

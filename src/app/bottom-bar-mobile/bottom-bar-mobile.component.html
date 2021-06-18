@@ -12,7 +12,7 @@
       <i class="icon-wallet fs-25px"></i>
     </bottom-bar-mobile-tab>
 
-    <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.CREATORS">
+    <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.TRENDS">
       <i class="icon-up-arrow fs-25px"></i>
     </bottom-bar-mobile-tab>
 
@@ -31,10 +31,14 @@
     >
       <i class="icon-messages fs-25px">
         <div
-          *ngIf="globalVars.messageNotificationCount > 0"
+          *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
           class="bottom-bar__message-notifications-bubble roboto-mono"
         >
-          {{ globalVars.messageNotificationCount > 999 ? "999+" : globalVars.messageNotificationCount }}
+          {{
+            globalVars.messageResponse.NumberOfUnreadThreads > 999
+              ? "999+"
+              : globalVars.messageResponse.NumberOfUnreadThreads
+          }}
         </div>
       </i>
     </bottom-bar-mobile-tab>

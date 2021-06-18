@@ -1,24 +1,16 @@
-# BitClout Frontend
+![BitClout Logo](https://bitclout.com/assets/img/camelcase_logo.svg)
 
-This is the repository for the reference BitClout Angular app. It serves as an
-interface that allows users to interact with the data on the BitClout blockchain.
+# About BitClout
+BitClout is a blockchain built from the ground up to support a fully-featured
+social network. Its architecture is similar to Bitcoin, only it supports complex
+social network data like profiles, posts, follows, creator coin transactions, and
+more.
 
-## Getting started
+[Read about the vision](https://docs.bitclout.com/the-vision)
 
-The Bitclout frontend requires NodeJS.
-
-On MacOS and Linux, install `node` using [Node Version Manager](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-On Windows, download `node` from [nodejs.org](https://nodejs.org/en/download/). You will also need to run: `npm install --global windows-build-tools`
-
-## Development server
-
-Run `npm install` to install all dependencies. Then `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `npm run generate component component-name` to generate a new component. You can also use `npm run generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-After proper configuration of `environment.ts` and `environment.prod.ts`, run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory. Use `npm run build_prod` for a production build.
+# About This Repo
+Documentation for this repo lives on docs.bitclout.com. Specifically, the following
+docs should give you everything you need to get started:
+* [BitClout Code Walkthrough](https://docs.bitclout.com/code/walkthrough)
+* [Setting Up Your Dev Environment](https://docs.bitclout.com/code/dev-setup)
+* [Making Your First Changes](https://docs.bitclout.com/code/making-your-first-changes)
