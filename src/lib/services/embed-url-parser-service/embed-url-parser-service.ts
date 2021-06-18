@@ -45,14 +45,15 @@ export class EmbedUrlParserService {
   }
 
   static spotifyParser(url: string): string | boolean {
-    const regExp = /^.*((open\.)?spotify\.com\/(embed(-podcast)?\/)?(track|artist|playlist|episode|show)\/)([A-Za-z0-9]{0,25}).*/;
+    const regExp = /^.*(open\.)?spotify\.com\/(((embed\/)?(track|artist|playlist|album))|((embed-podcast\/)?(episode|show)))\/([A-Za-z0-9]{0,25}).*/;
     const match = url.match(regExp);
-    if (match && match[5] && match[6]) {
-      let embedString = "embed";
-      if (match[5] === "episode" || match[6] === "podcast") {
-        embedString = "embed-podcast";
+    if (match && match[9]) {
+      if (match[8]) {
+        return `embed-podcast/${match[8]}/${match[9]}`;
       }
-      return `${embedString}/${match[5]}/${match[6]}`;
+      if (match[5]) {
+        return `embed/${match[5]}/${match[9]}`;
+      }
     }
     return false;
   }
@@ -214,27 +215,27 @@ export class EmbedUrlParserService {
   }
 
   static isValidVimeoEmbedURL(link: string): boolean {
-    const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))/;
+    const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))$/;
     return !!link.match(regExp);
   }
 
   static isValidYoutubeEmbedURL(link: string): boolean {
-    const regExp = /(https:\/\/www\.youtube\.com\/embed\/[A-Za-z0-9_-]{11})/;
+    const regExp = /(https:\/\/www\.youtube\.com\/embed\/[A-Za-z0-9_-]{11})$/;
     return !!link.match(regExp);
   }
 
   static isValidTiktokEmbedURL(link: string): boolean {
-    const regExp = /(https:\/\/www\.tiktok\.com\/embed\/v2\/(\d{0,30}))/;
+    const regExp = /(https:\/\/www\.tiktok\.com\/embed\/v2\/(\d{0,30}))$/;
     return !!link.match(regExp);
   }
 
   static isValidGiphyEmbedURL(link: string): boolean {
-    const regExp = /(https:\/\/giphy\.com\/embed\/([A-Za-z0-9]{0,20}))/;
+    const regExp = /(https:\/\/giphy\.com\/embed\/([A-Za-z0-9]{0,20}))$/;
     return !!link.match(regExp);
   }
 
   static isValidSpotifyEmbedURL(link: string): boolean {
-    const regExp = /(https:\/\/open.spotify.com\/embed(-podcast)?\/(track|artist|playlist|episode|show)\/[A-Za-z0-9]{0,25})/;
+    const regExp = /(https:\/\/open.spotify.com\/(((embed\/)(track|artist|playlist|album))|((embed-podcast\/)(episode|show)))\/[A-Za-z0-9]{0,25})$/;
     return !!link.match(regExp);
   }
 

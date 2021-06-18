@@ -46,6 +46,43 @@ describe("EmbedUrlParserService", () => {
   const validShortTikTokURLs = [`https://vm.tiktok.com/${tiktokShortVideoID}`];
 
   const validTikTokEmbedURLs = [`https://www.tiktok.com/embed/v2/${tiktokVideoID}`];
+
+  const giphyID = "J1ABRhlfvQNwIOiAas";
+  const validGiphyURLs = [
+    `https://giphy.com/gifs/memecandy-${giphyID}`,
+    `https://media.giphy.com/media/${giphyID}/giphy.gif`,
+    `https://giphy.com/gifs/memecandy-${giphyID}`,
+    `https://giphy.com/gifs/memecandy-${giphyID}/media`,
+    `https://giphy.com/clips/nataliepalamides-${giphyID}`,
+  ];
+
+  const validGiphyEmbedURLs = [`https://giphy.com/embed/${giphyID}`];
+
+  const spotifyID = "7tBlvnHLTox3S0yB6nIV2Q";
+  const validSpotifyMusicURLs = {
+    track: `https://open.spotify.com/track/${spotifyID}`,
+    artist: `https://open.spotify.com/artist/${spotifyID}`,
+    playlist: `https://open.spotify.com/playlist/${spotifyID}`,
+    album: `https://open.spotify.com/album/${spotifyID}`,
+  };
+
+  const validSpotifyMusicEmbedURLs = {
+    track: `https://open.spotify.com/embed/track/${spotifyID}`,
+    artist: `https://open.spotify.com/embed/artist/${spotifyID}`,
+    playlist: `https://open.spotify.com/embed/playlist/${spotifyID}`,
+    album: `https://open.spotify.com/embed/album/${spotifyID}`,
+  };
+
+  const validSpotifyPodcastURLs = {
+    episode: `https://open.spotify.com/episode/${spotifyID}`,
+    show: `https://open.spotify.com/show/${spotifyID}`,
+  };
+
+  const validSpotifyPodcastEmbedURLs = {
+    episode: `https://open.spotify.com/embed-podcast/episode/${spotifyID}`,
+    show: `https://open.spotify.com/embed-podcast/show/${spotifyID}`,
+  };
+
   const invalidURLs = [
     "https://google.com",
     "facebook.com<script></script>",
@@ -54,6 +91,8 @@ describe("EmbedUrlParserService", () => {
     "123abc.com/1234556",
     `https://wwwzyoutube.com/embed/${youtubeVideoID}`,
     `https://nottiktok.com/embed/v2/${tiktokShortVideoID}`,
+    `https://giphy.com/gifs/abc-def-${giphyID}-;<script></script>`,
+    `https://open.notspotify.com/embed/track/${spotifyID}-?;<script/></script>`,
   ];
 
   it("parses youtube URLs from user input correctly and only validates embed urls", () => {
@@ -113,8 +152,53 @@ describe("EmbedUrlParserService", () => {
     }
   });
 
+  it("parses giphy URLs from user input correctly and only validates embed urls", () => {
+    for (const link of validGiphyURLs) {
+      expect(EmbedUrlParserService.isGiphyLink(link)).toBeTruthy();
+      const embedURL = EmbedUrlParserService.constructGiphyEmbedURL(new URL(link));
+      expect(embedURL).toEqual(`https://giphy.com/embed/${giphyID}`);
+      expect(EmbedUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidEmbedURL(link)).toBeFalsy();
+    }
+    for (const embedLink of validGiphyEmbedURLs) {
+      expect(EmbedUrlParserService.isGiphyLink(embedLink)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidEmbedURL(embedLink)).toBeTruthy();
+      const constructedEmbedURL = EmbedUrlParserService.constructGiphyEmbedURL(new URL(embedLink));
+      expect(EmbedUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
+    }
+  });
+
+  it("parses spotify URLs from user input correctly and only validates embed urls", () => {
+    const testNonEmbedURLs = (embedString: string, urlObj: { [k: string]: string }) => {
+      for (const contentType in urlObj) {
+        const link = urlObj[contentType];
+        expect(EmbedUrlParserService.isSpotifyLink(link)).toBeTruthy();
+        const embedURL = EmbedUrlParserService.constructSpotifyEmbedURL(new URL(link));
+        expect(embedURL).toEqual(`https://open.spotify.com/${embedString}/${contentType}/${spotifyID}`);
+        expect(EmbedUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
+        expect(EmbedUrlParserService.isValidEmbedURL(link)).toBeFalsy();
+      }
+    };
+    testNonEmbedURLs("embed", validSpotifyMusicURLs);
+    testNonEmbedURLs("embed-podcast", validSpotifyPodcastURLs);
+
+    const testEmbedURLs = (embedString: string, urlObj: { [k: string]: string }) => {
+      for (const contentType in urlObj) {
+        const embedLink = urlObj[contentType];
+        expect(EmbedUrlParserService.isSpotifyLink(embedLink)).toBeTruthy();
+        expect(EmbedUrlParserService.isValidEmbedURL(embedLink)).toBeTruthy();
+        const constructedEmbedURL = EmbedUrlParserService.constructSpotifyEmbedURL(new URL(embedLink));
+        expect(EmbedUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
+      }
+    };
+    testEmbedURLs("embed", validSpotifyMusicEmbedURLs);
+    testEmbedURLs("embed-podcast", validSpotifyPodcastEmbedURLs);
+  });
+
   it("invalid URLs return falsy values", async () => {
     for (const link of invalidURLs) {
+      console.log(link);
+      console.log(EmbedUrlParserService.isValidEmbedURL(link));
       expect(EmbedUrlParserService.isValidEmbedURL(link)).toBeFalsy();
       EmbedUrlParserService.getEmbedURL(backendApiService, globalVarsService, link).subscribe((res) =>
         expect(res).toBeFalsy()

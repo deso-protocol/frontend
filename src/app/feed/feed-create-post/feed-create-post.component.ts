@@ -138,65 +138,63 @@ export class FeedCreatePostComponent implements OnInit {
     const postExtraData = {};
     if (this.embedURL) {
       if (EmbedUrlParserService.isValidEmbedURL(this.constructedEmbedURL)) {
-        postExtraData["EmbedVideoURL"] = this.constructedEmbedURL
+        postExtraData["EmbedVideoURL"] = this.constructedEmbedURL;
       }
-
-      const bodyObj = {
-        Body: this.postInput,
-        // Only submit images if the post is a quoted reclout or a vanilla post.
-        ImageURLs: !this.isComment ? [this.postImageSrc].filter((n) => n) : [],
-      };
-      const recloutedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
-      this.submittingPost = true;
-      const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
-
-      this.backendApi
-        .SubmitPost(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser.PublicKeyBase58Check,
-          "" /*PostHashHexToModify*/,
-          this.isComment ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
-          "" /*Title*/,
-          bodyObj /*BodyObj*/,
-          recloutedPostHashHex,
-          postExtraData,
-          "" /*Sub*/,
-          // TODO: Should we have different values for creator basis points and stake multiple?
-          // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
-          false /*IsHidden*/,
-          this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/
-        )
-        .subscribe(
-          (response) => {
-            this.globalVars.logEvent(`post : ${postType}`);
-
-            this.submittingPost = false;
-
-            this.postInput = "";
-            this.postImageSrc = null;
-            this.embedURL = "";
-            this.constructedEmbedURL = "";
-            this.changeRef.detectChanges();
-
-            // Refresh the post page.
-            if (this.postRefreshFunc) {
-              this.postRefreshFunc(response.PostEntryResponse);
-            }
-
-            this.postCreated.emit(response.PostEntryResponse);
-          },
-          (err) => {
-            const parsedError = this.backendApi.parsePostError(err);
-            this.globalVars._alertError(parsedError);
-            this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
-
-            this.submittingPost = false;
-            this.changeRef.detectChanges();
-          }
-        );
-
-      return;
     }
+
+    const bodyObj = {
+      Body: this.postInput,
+      // Only submit images if the post is a quoted reclout or a vanilla post.
+      ImageURLs: !this.isComment ? [this.postImageSrc].filter((n) => n) : [],
+    };
+    const recloutedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
+    this.submittingPost = true;
+    const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
+
+    this.backendApi
+      .SubmitPost(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        "" /*PostHashHexToModify*/,
+        this.isComment ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
+        "" /*Title*/,
+        bodyObj /*BodyObj*/,
+        recloutedPostHashHex,
+        postExtraData,
+        "" /*Sub*/,
+        // TODO: Should we have different values for creator basis points and stake multiple?
+        // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
+        false /*IsHidden*/,
+        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/
+      )
+      .subscribe(
+        (response) => {
+          this.globalVars.logEvent(`post : ${postType}`);
+
+          this.submittingPost = false;
+
+          this.postInput = "";
+          this.postImageSrc = null;
+          this.embedURL = "";
+          this.constructedEmbedURL = "";
+          this.changeRef.detectChanges();
+
+          // Refresh the post page.
+          if (this.postRefreshFunc) {
+            this.postRefreshFunc(response.PostEntryResponse);
+          }
+
+          this.postCreated.emit(response.PostEntryResponse);
+        },
+        (err) => {
+          const parsedError = this.backendApi.parsePostError(err);
+          this.globalVars._alertError(parsedError);
+          this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
+
+          this.submittingPost = false;
+          this.changeRef.detectChanges();
+        }
+      );
   }
 
   _createPost() {
