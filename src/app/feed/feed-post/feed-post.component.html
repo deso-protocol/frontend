@@ -228,6 +228,37 @@
           [routerLink]="['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex]"
           queryParamsHandling="merge"
         ></div>
+
+        <!-- Media, don't show images on comment posts. -->
+        <div
+          *ngIf="postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID"
+          class="feed-post__image-container"
+        >
+          <img
+            (click)="openImgModal($event, postContent.ImageURLs[0])"
+            data-toggle="modal"
+            class="feed-post__image"
+            src="{{ mapImageURLs(postContent.ImageURLs[0]) }}"
+          />
+        </div>
+
+        <!-- Embedded Content -->
+        <div *ngIf="constructedEmbedURL" class="feed-post__embed-container">
+          <iframe
+            id="embed-iframe"
+            [height]="getEmbedHeight()"
+            class="feed-post__image"
+            [ngStyle]="{
+              'margin-top': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
+              'margin-bottom': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : ''
+            }"
+            [src]="constructedEmbedURL | sanitizeEmbed"
+            frameborder="0"
+            allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
+            allowfullscreen
+          ></iframe>
+        </div>
+
         <div
           *ngIf="quotedContent && showQuotedContent"
           class="border border-color-grey p-15px br-12px"
@@ -243,33 +274,6 @@
             [contentShouldLinkToThread]="contentShouldLinkToThread"
             [hoverable]="false"
           ></feed-post>
-        </div>
-
-        <!-- Media -->
-        <div *ngIf="postContent.ImageURLs && postContent.ImageURLs[0]" class="feed-post__image-container">
-          <img
-            (click)="openImgModal($event, postContent.ImageURLs[0])"
-            data-toggle="modal"
-            class="feed-post__image"
-            src="{{ mapImageURLs(postContent.ImageURLs[0]) }}"
-          />
-        </div>
-
-        <!-- Embedded Content -->
-        <div *ngIf="getEmbedURLForPostContent()" class="feed-post__embed-container">
-          <iframe
-            id="embed-iframe"
-            [height]="getEmbedHeight()"
-            class="feed-post__image"
-            [ngStyle]="{
-              'margin-top': setNegativeMargins(getEmbedURLForPostContent(), globalVars) ? '-65px' : '',
-              'margin-bottom': setNegativeMargins(getEmbedURLForPostContent(), globalVars) ? '-65px' : ''
-            }"
-            [src]="getEmbedURLForPostContent() | sanitizeEmbed"
-            frameborder="0"
-            allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
-            allowfullscreen
-          ></iframe>
         </div>
 
         <!-- Bottom Buttons -->
@@ -390,18 +394,19 @@
         </div>
       </div>
     </div>
-
   </div>
-  <div *ngIf="showInteractionDetails"
-       class="feed-post__container d-flex justify-content-left w-100"
-       [ngClass]="{
-        'px-15px': includePaddingOnPost,
-        'pb-15px': includePaddingOnPost,
-        'feed-post__blue-border': showLeftSelectedBorder,
-        'feed-post__parent-post-font-size': isParentPostInThread
-      }">
+  <div
+    *ngIf="showInteractionDetails"
+    class="feed-post__container d-flex justify-content-left w-100"
+    [ngClass]="{
+      'px-15px': includePaddingOnPost,
+      'pb-15px': includePaddingOnPost,
+      'feed-post__blue-border': showLeftSelectedBorder,
+      'feed-post__parent-post-font-size': isParentPostInThread
+    }"
+  >
     <div class="feed-post__avatar-container"></div>
-    <div class="w-100" style="margin-left:-5px">
+    <div class="w-100" style="margin-left: -5px">
       <feed-post-icon-row
         class="mt-2px"
         *ngIf="showIconRow"

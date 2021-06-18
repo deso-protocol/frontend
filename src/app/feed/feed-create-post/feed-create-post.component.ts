@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
@@ -15,10 +15,14 @@ import { environment } from "../../../environments/environment";
 export class FeedCreatePostComponent implements OnInit {
   static SHOW_POST_LENGTH_WARNING_THRESHOLD = 260; // show warning at 260 characters
 
-  // FeedPostComponent = FeedPostComponent;
   EmbedUrlParserService = EmbedUrlParserService;
+
   @Input() postRefreshFunc: any = null;
   @Input() numberOfRowsInTextArea: number = 2;
+  @Input() parentPost: PostEntryResponse = null;
+  @Input() isQuote: boolean = false;
+
+  isComment: boolean;
 
   @ViewChild("postImage") postImage;
   @ViewChild("autosize") autosize: CdkTextareaAutosize;
@@ -63,6 +67,7 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
   }
 
@@ -96,6 +101,15 @@ export class FeedCreatePostComponent implements OnInit {
     return this.postInput.length > GlobalVarsService.MAX_POST_LENGTH;
   }
 
+  getPlaceholderText() {
+    // Creating vanilla post
+    if (!this.parentPost) {
+      return this.randomMovieQuote;
+    }
+    // Creating comment or quote reclout;
+    return this.isQuote ? "Add a quote" : "Post your reply";
+  }
+
   _setRandomMovieQuote() {
     const randomInt = Math.floor(Math.random() * this.randomMovieQuotes.length);
     this.randomMovieQuote = this.randomMovieQuotes[randomInt];
@@ -123,24 +137,28 @@ export class FeedCreatePostComponent implements OnInit {
 
     const postExtraData = {};
     if (this.embedURL) {
-      const embedURL = this.constructedEmbedURL;
-      if (EmbedUrlParserService.isValidEmbedURL(embedURL)) {
-        postExtraData["EmbedVideoURL"] = embedURL;
+      if (EmbedUrlParserService.isValidEmbedURL(this.constructedEmbedURL)) {
+        postExtraData["EmbedVideoURL"] = this.constructedEmbedURL
       }
+
+      const bodyObj = {
+        Body: this.postInput,
+        // Only submit images if the post is a quoted reclout or a vanilla post.
+        ImageURLs: !this.isComment ? [this.postImageSrc].filter((n) => n) : [],
+      };
+      const recloutedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
       this.submittingPost = true;
+      const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
 
       this.backendApi
         .SubmitPost(
           this.globalVars.localNode,
           this.globalVars.loggedInUser.PublicKeyBase58Check,
           "" /*PostHashHexToModify*/,
-          "" /*ParentPostHashHex*/,
+          this.isComment ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
           "" /*Title*/,
-          {
-            Body: this.postInput,
-            ImageURLs: [this.postImageSrc].filter((n) => n),
-          } /*BodyObj*/,
-          "",
+          bodyObj /*BodyObj*/,
+          recloutedPostHashHex,
           postExtraData,
           "" /*Sub*/,
           // TODO: Should we have different values for creator basis points and stake multiple?
@@ -150,7 +168,7 @@ export class FeedCreatePostComponent implements OnInit {
         )
         .subscribe(
           (response) => {
-            this.globalVars.logEvent("post : create");
+            this.globalVars.logEvent(`post : ${postType}`);
 
             this.submittingPost = false;
 
@@ -170,7 +188,7 @@ export class FeedCreatePostComponent implements OnInit {
           (err) => {
             const parsedError = this.backendApi.parsePostError(err);
             this.globalVars._alertError(parsedError);
-            this.globalVars.logEvent("post : create : error", { parsedError });
+            this.globalVars.logEvent(`post : ${postType} : error`, { parsedError });
 
             this.submittingPost = false;
             this.changeRef.detectChanges();
@@ -183,23 +201,21 @@ export class FeedCreatePostComponent implements OnInit {
 
   _createPost() {
     // Check if the user has an account.
-    if (!this.globalVars || !this.globalVars.loggedInUser) {
+    if (!this.globalVars?.loggedInUser) {
       this.globalVars.logEvent("alert : post : account");
       SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
       return;
     }
 
     // Check if the user has a profile.
-    else if (this.globalVars && !this.globalVars.doesLoggedInUserHaveProfile()) {
+    if (!this.globalVars?.doesLoggedInUserHaveProfile()) {
       this.globalVars.logEvent("alert : post : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
     }
 
     // The user has an account and a profile. Let's create a post.
-    else {
-      this.submitPost();
-    }
+    this.submitPost();
   }
 
   _handleFilesInput(files: FileList) {

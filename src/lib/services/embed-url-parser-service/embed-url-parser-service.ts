@@ -34,7 +34,7 @@ export class EmbedUrlParserService {
   }
 
   static giphyParser(url: string): string | boolean {
-    const regExp = /^.*((media\.)?giphy\.com\/(gifs|media|embed|clips)\/)([A-Za-z]+-)*([A-Za-z0-9]{0,20}).*/;
+    const regExp = /^.*((media\.)?giphy\.com\/(gifs|media|embed|clips)\/)([A-Za-z0-9]+-)*([A-Za-z0-9]{0,20}).*/;
     const match = url.match(regExp);
     return match && match[5] ? match[5] : false;
   }

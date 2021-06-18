@@ -440,10 +440,6 @@ export class FeedPostComponent implements OnInit {
       });
   }
 
-  getEmbedURLForPostContent(): any {
-    return this.constructedEmbedURL;
-  }
-
   setEmbedURLForPostContent(): void {
     EmbedUrlParserService.getEmbedURL(
       this.backendApi,
