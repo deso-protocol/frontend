@@ -33,6 +33,17 @@ export class EmbedUrlParserService {
     return vimeoVideoID ? `https://player.vimeo.com/video/${vimeoVideoID}` : "";
   }
 
+  static giphyParser(url: string): string | boolean {
+    const regExp = /^.*((media\.)?giphy\.com\/(gifs|media|embed|clips)\/)([A-Za-z]+-)*([A-Za-z0-9]{0,20}).*/;
+    const match = url.match(regExp);
+    return match && match[5] ? match[5] : false;
+  }
+
+  static constructGiphyEmbedURL(url: URL): string {
+    const giphyId = this.giphyParser(url.toString());
+    return giphyId ? `https://giphy.com/embed/${giphyId}` : "";
+  }
+
   static extractTikTokVideoID(fullTikTokURL: string): string | boolean {
     const regExp = /^.*((tiktok\.com\/)(v\/)|(@[A-Za-z0-9_-]{2,24}\/video\/)|(embed\/v2\/))(\d{0,30}).*/;
     const match = fullTikTokURL.match(regExp);
@@ -105,6 +116,9 @@ export class EmbedUrlParserService {
     if (this.isTiktokFromURL(url)) {
       return this.constructTikTokEmbedURL(backendApi, globalVars, url);
     }
+    if (this.isGiphyFromURL(url)) {
+      return of(this.constructGiphyEmbedURL(url));
+    }
     return of("");
   }
 
@@ -150,6 +164,20 @@ export class EmbedUrlParserService {
     return pattern.test(url.hostname);
   }
 
+  static isGiphyLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isGiphyFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isGiphyFromURL(url: URL): boolean {
+    const pattern = /\bgiphy\.com$/;
+    return pattern.test(url.hostname);
+  }
+
   static isValidVimeoEmbedURL(link: string) {
     const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))/;
     return !!link.match(regExp);
@@ -160,16 +188,24 @@ export class EmbedUrlParserService {
     return !!link.match(regExp);
   }
 
-  // https://www.tiktok.com/oembed?url=https://www.tiktok.com/@thelavignes/video/6958254201961057542
   static isValidTiktokEmbedURL(link: string) {
-    // `https://www.tiktok.com/embed/v2/${tiktokVideoID}
     const regExp = /(https:\/\/www\.tiktok\.com\/embed\/v2\/(\d{0,30}))/;
+    return !!link.match(regExp);
+  }
+
+  static isValidGiphyEmbedURL(link: string) {
+    const regExp = /(https:\/\/giphy\.com\/embed\/([A-Za-z0-9]{0,20}))/;
     return !!link.match(regExp);
   }
 
   static isValidEmbedURL(link: string): boolean {
     if (link) {
-      return this.isValidVimeoEmbedURL(link) || this.isValidYoutubeEmbedURL(link) || this.isValidTiktokEmbedURL(link);
+      return (
+        this.isValidVimeoEmbedURL(link) ||
+        this.isValidYoutubeEmbedURL(link) ||
+        this.isValidTiktokEmbedURL(link) ||
+        this.isValidGiphyEmbedURL(link)
+      );
     }
     return false;
   }
