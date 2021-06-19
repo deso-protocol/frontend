@@ -63,6 +63,19 @@ export class EmbedUrlParserService {
     return spotifyEmbedSuffix ? `https://open.spotify.com/${spotifyEmbedSuffix}` : "";
   }
 
+  static soundCloudParser(url: string): string | boolean {
+    const regExp = /^.*(soundcloud.com\/([a-z0-9-_]+)\/(sets\/)?([a-z0-9-_]+)).*/;
+    const match = url.match(regExp);
+    return match && match[1] ? match[1] : false;
+  }
+
+  static constructSoundCloudEmbedURL(url: URL): string {
+    const soundCloudURL = this.soundCloudParser(url.toString());
+    return soundCloudURL
+      ? `https://w.soundcloud.com/player/?url=https://${soundCloudURL}?hide_related=true&show_comments=false`
+      : "";
+  }
+
   static extractTikTokVideoID(fullTikTokURL: string): string | boolean {
     const regExp = /^.*((tiktok\.com\/)(v\/)|(@[A-Za-z0-9_-]{2,24}\/video\/)|(embed\/v2\/))(\d{0,30}).*/;
     const match = fullTikTokURL.match(regExp);
@@ -141,6 +154,9 @@ export class EmbedUrlParserService {
     if (this.isSpotifyFromURL(url)) {
       return of(this.constructSpotifyEmbedURL(url));
     }
+    if (this.isSoundCloudFromURL(url)) {
+      return of(this.constructSoundCloudEmbedURL(url));
+    }
     return of("");
   }
 
@@ -214,6 +230,20 @@ export class EmbedUrlParserService {
     return pattern.test(url.hostname);
   }
 
+  static isSoundCloudLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isSoundCloudFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isSoundCloudFromURL(url: URL): boolean {
+    const pattern = /\bsoundcloud\.com$/;
+    return pattern.test(url.hostname);
+  }
+
   static isValidVimeoEmbedURL(link: string): boolean {
     const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))$/;
     return !!link.match(regExp);
@@ -239,6 +269,11 @@ export class EmbedUrlParserService {
     return !!link.match(regExp);
   }
 
+  static isValidSoundCloudEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/w\.soundcloud\.com\/player\/\?url=https:\/\/soundcloud.com\/([a-z0-9-_]+)\/(sets\/)?([a-z0-9-_]+))\?hide_related=true&show_comments=false$/;
+    return !!link.match(regExp);
+  }
+
   static isValidEmbedURL(link: string): boolean {
     if (link) {
       return (
@@ -246,7 +281,8 @@ export class EmbedUrlParserService {
         this.isValidYoutubeEmbedURL(link) ||
         this.isValidTiktokEmbedURL(link) ||
         this.isValidGiphyEmbedURL(link) ||
-        this.isValidSpotifyEmbedURL(link)
+        this.isValidSpotifyEmbedURL(link) ||
+        this.isValidSoundCloudEmbedURL(link)
       );
     }
     return false;
@@ -258,6 +294,9 @@ export class EmbedUrlParserService {
     }
     if (this.isValidSpotifyEmbedURL(link)) {
       return link.indexOf("embed-podcast") > -1 ? 232 : 380;
+    }
+    if (this.isValidSoundCloudEmbedURL(link)) {
+      return link.indexOf("/sets/") > -1 ? 350 : 180;
     }
     return 315;
   }
