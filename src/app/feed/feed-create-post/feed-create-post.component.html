@@ -31,6 +31,8 @@
         class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
         [placeholder]="getPlaceholderText()"
         (paste)="onPaste($event)"
+        dropUpload
+        (onFileDropped)="uploadFile($event)"
         cdkTextareaAutosize
         #autosize="cdkTextareaAutosize"
       ></textarea>
