@@ -218,6 +218,8 @@ $green-font-color: #19B028;
 .fc-red { color: var(--cred); }
 .fc-green { color: var(--cgreen); }
 
+.font-weight-500 { font-weight: 500 }
+
 .fs-1 { font-size: 2.5rem }
 .fs-2 { font-size: 2rem }
 .fs-3 { font-size: 1.75rem }
@@ -2177,6 +2179,34 @@ input {
   background-color: var(--background);
   color: var(--text);
   border: var(--mborder);
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+}
+
+.mint-nft-modal-container {
+	background-color: #f3f3f3;
+  color: #222222;
+  border: #E5E5E5;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+
+	& .form-control {
+		background-color: #fff !important;
+		border-color: #aaa !important;
+	}
+}
+
+.mint-nft-radio-size {
+  height: 15px;
+  width: 15px;
+}
+
+.mint-nft-separator {
+  border-bottom: #AAAAAA solid 1px;
 }
 
 .interaction-detail {
@@ -2218,4 +2248,62 @@ input {
 .swal2-popup {
   background-color: var(--background) !important;
   color: var(--text);
+}
+
+//
+// Bootstrap switch custom styling
+//
+
+// Add class `.custom-switch-lg` to a `custom-switch`
+.custom-switch.custom-switch-lg {
+  padding-bottom: 1rem;
+	padding-left: 2.25rem;
+
+  & .custom-control-label {
+    padding-left: .75rem;
+    padding-top: 0.15rem;
+
+    &::before {
+      border-radius: 1rem;
+      height: 1.5rem;
+      width: 2.5rem;
+    }
+
+    &::after {
+			border-radius: .65rem;
+      height: calc(1.5rem - 4px);
+      width: calc(1.5rem - 4px);
+    }
+  }
+
+	.custom-control-input:checked ~ .custom-control-label::after{
+  	transform: translateX(1rem);
+	}
+}
+
+// Add class `.custom-switch-xl` to a `custom-switch`
+.custom-switch.custom-switch-xl {
+  padding-bottom: 1rem;
+	padding-left: 2.25rem;
+
+  & .custom-control-label {
+    padding-left: 2rem;
+  	padding-top: 0.5rem;
+
+    &::before {
+      border-radius: 1rem;
+      height: 2rem;
+      width: 3.5rem;
+    }
+
+    &::after {
+      border-radius: 2rem;
+      height: calc(2rem - 4px);
+      width: calc(2rem - 4px);
+    }
+  }
+
+	.custom-control-input:checked ~ .custom-control-label::after {
+  	transform: translateX(1.5rem);
+	}
 }

@@ -123,6 +123,7 @@ import { lightTheme } from "./theme/light-theme";
 import { darkTheme } from "./theme/dark-theme";
 import { icydarkTheme } from "./theme/icy-dark-theme";
 import { legendsTheme } from "./theme/legends-theme";
+import { MintNftModalComponent } from './mint-nft-modal/mint-nft-modal.component';
 
 @NgModule({
   declarations: [
@@ -221,6 +222,7 @@ import { legendsTheme } from "./theme/legends-theme";
     AvatarDirective,
     TrendsPageComponent,
     TrendsComponent,
+    MintNftModalComponent,
   ],
   imports: [
     BrowserModule,

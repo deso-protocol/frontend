@@ -14,6 +14,16 @@
       Link to Post
     </a>
     <a
+      *ngIf="globalVars.loggedInUser 
+        && globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check
+        && !post.IsNFT"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
+      (click)="openMintNftModal($event)"
+    >
+      <i class="fas fa-stamp"></i>
+      Mint NFT
+    </a>
+    <a
       *ngIf="post.InMempool"
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
       style="cursor: default"

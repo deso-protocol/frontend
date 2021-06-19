@@ -3,6 +3,8 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { PostEntryResponse } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.component";
 
 @Component({
   selector: "feed-post-dropdown",
@@ -22,6 +24,7 @@ export class FeedPostDropdownComponent {
     public globalVars: GlobalVarsService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
+    private modalService: BsModalService,
     private platformLocation: PlatformLocation
   ) {}
 
@@ -111,5 +114,13 @@ export class FeedPostDropdownComponent {
     const origin = (this.platformLocation as any).location.origin;
 
     return origin + path;
+  }
+
+  openMintNftModal(event, component): void {
+    event.stopPropagation();
+    this.modalService.show(MintNftModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { postHashHex: this.post.PostHashHex },
+    });
   }
 }

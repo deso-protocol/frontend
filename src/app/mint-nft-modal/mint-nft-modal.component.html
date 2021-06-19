@@ -1,0 +1,88 @@
+<div app-theme class="mint-nft-modal-container p-15px">
+  <div class="w-100 d-flex justify-content-between py-15px">
+    <div class="fs-20px d-flex align-items-center font-weight-500">Collectible Settings</div>
+    <div class="fs-25px cursor-pointer pr-15px" (click)="bsModalRef.hide()">&times;</div>
+  </div>
+
+  <!-- Type of Collectible -->
+  <div class="d-flex align-items-center fs-15px text-grey7">
+    <div class="pr-5px">Type of Collectible</div>
+    <div class="flex-grow-1 mint-nft-separator"></div>
+  </div>
+  <div class="py-30px font-weight-500">
+    <div class="d-flex align-items-center fs-15px">
+      <input type="radio" class="mr-15px mint-nft-radio-size">
+      Single
+    </div>
+    <div class="d-flex justify-content-between align-items-center fs-15px">
+      <div class="d-flex align-items-center">
+        <input type="radio" class="mr-15px mint-nft-radio-size">
+        Multiple copies
+      </div>
+      <input 
+         class="form-control fs-15px text-right d-inline-block" 
+         style="max-width: 200px"
+         placeholder="0"/>
+    </div>
+  </div>
+
+  <!-- Price and Royalties -->
+  <div class="d-flex align-items-center fs-15px text-grey7">
+    <div class="pr-5px">Price and Royalties</div>
+    <div class="flex-grow-1 mint-nft-separator"></div>
+  </div>
+  <div class="pt-20px pb-30px font-weight-500">
+    <div class="d-flex justify-content-between align-items-center fs-15px">
+      <div>Put it on sale</div>
+      <div class="custom-control custom-switch custom-switch-lg">
+        <input type="checkbox" class="custom-control-input" id="customSwitch1">
+        <label class="custom-control-label" for="customSwitch1"></label>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center fs-15px pt-10px">
+      <div>
+        % Creator Royalty
+      </div>
+      <input 
+         class="form-control fs-15px text-right d-inline-block" 
+         style="max-width: 200px"
+         placeholder="0%"/>
+    </div>
+    <div class="d-flex justify-content-between align-items-center fs-15px pt-10px">
+      <div>
+        % Coin-holder Royalty
+      </div>
+      <input 
+         class="form-control fs-15px text-right d-inline-block" 
+         style="max-width: 200px; background-color: white"
+         placeholder="0%"/>
+    </div>
+  </div>
+
+  <!-- Price and Royalties -->
+  <div class="d-flex align-items-center fs-15px text-grey7">
+    <div class="pr-5px">Unlockable Content</div>
+    <div class="flex-grow-1 mint-nft-separator"></div>
+  </div>
+  <div class="d-flex justify-content-between align-items-center py-30px">
+    <div class="fs-15px">
+      <div class="font-weight-500">Enable Unlockable Content</div>
+      <div class="fs-15px text-grey7">
+        Include encrypted text for NFT purchasers
+      </div>
+    </div>
+    <div class="custom-control custom-switch custom-switch-lg">
+      <input type="checkbox" class="custom-control-input" id="customSwitch2">
+      <label class="custom-control-label" for="customSwitch2"></label>
+    </div>
+  </div>
+
+    <button
+      class="btn btn-primary font-weight-bold fs-15px br-12px"
+      style="height: 36px; width: 120px; line-height: 15px"
+    >
+      Mint NFT
+    </button>
+
+  <simple-center-loader *ngIf="loading"></simple-center-loader>
+</div>
