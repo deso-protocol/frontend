@@ -87,9 +87,9 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   uploadFile(event: any): void {
-    console.log("Dropped Image");
-
-    this._handleFileInput(event[0]);
+    if (!this.isComment) {
+      this._handleFileInput(event[0]);
+    }
   }
 
   showCharacterCountIsFine() {
