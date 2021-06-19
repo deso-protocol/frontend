@@ -86,7 +86,7 @@
     (click)="showEmbedURL = !showEmbedURL"
   ></i>
   <div *ngIf="!isComment">
-    <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFileInput($event.target.files)" />
+    <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
     <i
       class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
       (click)="imageInput.click()"
