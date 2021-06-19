@@ -7,14 +7,12 @@ export class UploadDirective {
   @Output() onFileDropped = new EventEmitter<any>();
   @HostBinding("style.opacity") public opacity = "1";
 
-  //Dragover listener, when something is dragged over our host element
   @HostListener("dragover", ["$event"]) onDragOver(evt) {
     evt.preventDefault();
     evt.stopPropagation();
     this.opacity = "0.5";
   }
 
-  //Dragleave listener, when something is dragged away from our host element
   @HostListener("dragleave", ["$event"]) public onDragLeave(evt) {
     evt.preventDefault();
     evt.stopPropagation();
