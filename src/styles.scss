@@ -2220,3 +2220,7 @@ input {
   background-color: var(--background) !important;
   color: var(--text);
 }
+
+.emoji-picker__search-icon {
+  top: calc(50% - 0.6em) !important;
+}
