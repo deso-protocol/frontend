@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.component";
+import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
 
 @Component({
   selector: "feed-post-dropdown",
@@ -27,6 +28,12 @@ export class FeedPostDropdownComponent {
     private modalService: BsModalService,
     private platformLocation: PlatformLocation
   ) {}
+
+  ngOnInit(): void {
+    this.modalService.show(CreateNftAuctionModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+    });
+  }
 
   reportPost() {
     window.open(

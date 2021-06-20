@@ -1,0 +1,82 @@
+<div app-theme class="nft-modal-container p-15px">
+  <div class="w-100 d-flex justify-content-between py-15px">
+    <div class="fs-20px d-flex align-items-center font-weight-500">Create an Auction</div>
+    <div class="fs-25px cursor-pointer pr-15px" (click)="bsModalRef.hide()">&times;</div>
+  </div>
+
+
+  <!-- Pricing -->
+  <div class="pb-30px font-weight-500">
+    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
+      <div>
+        Minimum price <span class="text-grey7">(Optional)</span>
+      </div>
+      <div class="d-flex justify-content-between pt-5px" style="width: 305px">
+        <input 
+           class="form-control fs-15px text-right d-inline-block" 
+           style="width: 150px"
+           placeholder="0 USD"/>
+        <input 
+           class="form-control fs-15px text-right d-inline-block" 
+           style="width: 150px"
+           placeholder="0 CLOUT"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- NFTs to sell -->
+  <div class="d-flex align-items-center fs-15px text-grey7">
+    <div class="pr-5px">NFTs to sell</div>
+    <div class="flex-grow-1 nft-modal-separator"></div>
+  </div>
+  <div class="py-30px font-weight-500">
+    <div class="d-flex align-items-center fs-15px">
+      <input type="radio" class="mr-15px nft-modal-radio-size">
+      All items
+    </div>
+    <div class="d-flex align-items-center fs-15px">
+      <div class="d-flex align-items-center">
+        <input type="radio" class="mr-15px nft-modal-radio-size">
+        Specific serial numbers
+      </div>
+    </div>
+  </div>
+
+  <div class="container fs-15px pb-30px px-0px">
+    <div class="row no-gutters background-color-white p-15px create-nft-auction-row-border"
+         style="opacity: 50%">
+      <div class="col-5 mb-0px">
+        <input type="checkbox" class="w-10"/>
+        Select All
+      </div>
+      <div class="col-7 mb-0px">Last Price</div>
+    </div>
+    <div style="max-height: 250px; overflow-y: scroll">
+      <div *ngFor="let nft of sampleNftData"
+           class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border">
+        <div class="col-5 mb-0px d-flex align-items-center">
+          <input type="checkbox" class="w-10"/>
+          <span class="lh-15px">&nbsp;#{{nft.SerialNumber}}</span>
+        </div>
+        <div class="col-7 mb-0px d-flex justify-content-between align-items-center">
+          <div>
+            {{globalVars.nanosToBitClout(nft.LastPrice)}} CLOUT
+            <span class="text-grey7">(~{{globalVars.nanosToUSD(nft.LastPrice, 2)}})</span>
+          </div>
+          <div class="d-flex justify-content-center cursor-pointer" style="width: 50px">
+            <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button
+    class="btn btn-primary font-weight-bold fs-15px br-12px mb-15px"
+    style="height: 36px; width: 170px; line-height: 15px"
+  >
+    Create auction
+  </button>
+
+  <simple-center-loader *ngIf="loading"></simple-center-loader>
+</div>
