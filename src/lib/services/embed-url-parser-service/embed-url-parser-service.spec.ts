@@ -83,6 +83,21 @@ describe("EmbedUrlParserService", () => {
     show: `https://open.spotify.com/embed-podcast/show/${spotifyID}`,
   };
 
+  const validSoundCloudURLs = [
+    "https://soundcloud.com/artistname/artistsong",
+    "https://soundcloud.com/artistname/sets/setname",
+    "https://www.soundcloud.com/artistname/artistsong?somequeryparams",
+  ];
+
+  const validSoundCloudEmbedURLs = validSoundCloudURLs.map((url) => {
+    const queryParamIdx = url.indexOf("?");
+    if (queryParamIdx > -1) {
+      url = url.slice(0, queryParamIdx);
+    }
+    url = url.replace("www.", "");
+    return `https://w.soundcloud.com/player/?url=${url}?hide_related=true&show_comments=false`;
+  });
+
   const invalidURLs = [
     "https://google.com",
     "facebook.com<script></script>",
@@ -93,6 +108,7 @@ describe("EmbedUrlParserService", () => {
     `https://nottiktok.com/embed/v2/${tiktokShortVideoID}`,
     `https://giphy.com/gifs/abc-def-${giphyID}-;<script></script>`,
     `https://open.notspotify.com/embed/track/${spotifyID}-?;<script/></script>`,
+    `https://w.soundcloud.com/player/<script>?url=maliciousscript</script>?hide_related=true&show_comments=false`,
   ];
 
   it("parses youtube URLs from user input correctly and only validates embed urls", () => {
@@ -195,10 +211,25 @@ describe("EmbedUrlParserService", () => {
     testEmbedURLs("embed-podcast", validSpotifyPodcastEmbedURLs);
   });
 
+  it("parses SoundCloud URLs from user input correctly and only validates embed urls", () => {
+    for (let i = 0; i < validSoundCloudURLs.length; i++) {
+      const link = validSoundCloudURLs[i];
+      const embedLink = validSoundCloudEmbedURLs[i];
+      expect(EmbedUrlParserService.isSoundCloudLink(link)).toBeTruthy();
+      const embedURL = EmbedUrlParserService.constructSoundCloudEmbedURL(new URL(link));
+      expect(embedURL).toEqual(embedLink);
+      expect(EmbedUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidEmbedURL(link)).toBeFalsy();
+
+      expect(EmbedUrlParserService.isSoundCloudLink(embedLink));
+      expect(EmbedUrlParserService.isValidEmbedURL(embedLink));
+      const constructedEmbedUrl = EmbedUrlParserService.constructSoundCloudEmbedURL(new URL(embedLink));
+      expect(EmbedUrlParserService.isValidSoundCloudEmbedURL(constructedEmbedUrl)).toBeTruthy();
+    }
+  });
+
   it("invalid URLs return falsy values", async () => {
     for (const link of invalidURLs) {
-      console.log(link);
-      console.log(EmbedUrlParserService.isValidEmbedURL(link));
       expect(EmbedUrlParserService.isValidEmbedURL(link)).toBeFalsy();
       EmbedUrlParserService.getEmbedURL(backendApiService, globalVarsService, link).subscribe((res) =>
         expect(res).toBeFalsy()
