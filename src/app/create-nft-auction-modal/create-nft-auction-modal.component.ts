@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { BsModalRef } from "ngx-bootstrap/modal";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../global-vars.service";
+import { AuctionCreatedModalComponent } from "../auction-created-modal/auction-created-modal.component";
 
 @Component({
   selector: 'app-create-nft-auction',
@@ -21,10 +22,18 @@ export class CreateNftAuctionModalComponent implements OnInit {
 
   constructor(
     public globalVars: GlobalVarsService,
+    private modalService: BsModalService,
     public bsModalRef: BsModalRef
   ) { }
 
   ngOnInit(): void {
   }
 
+  createAuction() {
+    // Hide this modal and open the next one.
+    this.bsModalRef.hide();
+    this.modalService.show(AuctionCreatedModalComponent, {
+      class: "modal-dialog-centered modal-sm",
+    });
+  }
 }

@@ -125,6 +125,7 @@ import { icydarkTheme } from "./theme/icy-dark-theme";
 import { legendsTheme } from "./theme/legends-theme";
 import { MintNftModalComponent } from './mint-nft-modal/mint-nft-modal.component';
 import { CreateNftAuctionModalComponent } from './create-nft-auction-modal/create-nft-auction-modal.component';
+import { AuctionCreatedModalComponent } from './auction-created-modal/auction-created-modal.component';
 
 @NgModule({
   declarations: [
@@ -225,6 +226,7 @@ import { CreateNftAuctionModalComponent } from './create-nft-auction-modal/creat
     TrendsComponent,
     MintNftModalComponent,
     CreateNftAuctionModalComponent,
+    AuctionCreatedModalComponent,
   ],
   imports: [
     BrowserModule,

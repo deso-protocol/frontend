@@ -6,6 +6,7 @@ import { PlatformLocation } from "@angular/common";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.component";
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
+import { AuctionCreatedModalComponent } from "../../auction-created-modal/auction-created-modal.component";
 
 @Component({
   selector: "feed-post-dropdown",
@@ -30,8 +31,8 @@ export class FeedPostDropdownComponent {
   ) {}
 
   ngOnInit(): void {
-    this.modalService.show(CreateNftAuctionModalComponent, {
-      class: "modal-dialog-centered modal-lg",
+    this.modalService.show(AuctionCreatedModalComponent, {
+      class: "modal-dialog-centered modal-sm",
     });
   }
 
@@ -128,6 +129,12 @@ export class FeedPostDropdownComponent {
     this.modalService.show(MintNftModalComponent, {
       class: "modal-dialog-centered modal-lg",
       initialState: { postHashHex: this.post.PostHashHex },
+    });
+  }
+
+  openCreateAuctionModal() {
+    this.modalService.show(CreateNftAuctionModalComponent, {
+      class: "modal-dialog-centered modal-lg",
     });
   }
 }
