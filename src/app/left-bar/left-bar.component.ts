@@ -46,6 +46,6 @@ export class LeftBarComponent {
   }
 
   logHelp(): void {
-    this.globalVars.logEvent("help");
+    this.globalVars.logEvent("help : click");
   }
 }
