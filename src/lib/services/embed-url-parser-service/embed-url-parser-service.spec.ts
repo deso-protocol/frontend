@@ -108,6 +108,7 @@ describe("EmbedUrlParserService", () => {
     `https://nottiktok.com/embed/v2/${tiktokShortVideoID}`,
     `https://giphy.com/gifs/abc-def-${giphyID}-;<script></script>`,
     `https://open.notspotify.com/embed/track/${spotifyID}-?;<script/></script>`,
+    `https://w.soundcloud.com/player/<script>?url=maliciousscript</script>?hide_related=true&show_comments=false`,
   ];
 
   it("parses youtube URLs from user input correctly and only validates embed urls", () => {
