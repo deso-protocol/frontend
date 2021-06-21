@@ -124,7 +124,7 @@ export class FeedCreatePostComponent implements OnInit {
   setEmbedURL() {
     EmbedUrlParserService.getEmbedURL(this.backendApi, this.globalVars, this.embedURL).subscribe(
       (res) => (this.constructedEmbedURL = res)
-    );
+    ).add(() => console.log(this.constructedEmbedURL));
   }
 
   submitPost() {
