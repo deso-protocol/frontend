@@ -2252,3 +2252,11 @@ button.emoji-picker__category-button.active {
   color: var(--cblue) !important;
   border-bottom-color: var(--cblue);
 }
+
+.emoji-picker__emoji:focus, .emoji-picker__emoji:hover {
+  background-color: var(--link) !important;
+}
+
+.emoji-picker__variant-popup {
+  background-color: var(--background) !important;
+}
