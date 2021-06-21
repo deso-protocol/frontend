@@ -2222,7 +2222,33 @@ input {
 }
 
 .emoji-picker__search-icon {
-  top: calc(50% - 0.6em) !important;
+  background-color: var(--background) !important;
+  color: var(--text);
+  top: calc(50% - 0.7em) !important;
+}
+.emoji-picker__search-container {
+  background-color: var(--background) !important;
+  color: var(--text);
 }
 
+.emoji-picker__search {
+  background-color: var(--background) !important;
+  color: var(--text);
+}
 
+.emoji-picker {
+  background-color: var(--background) !important;
+  color: var(--text);
+  border-color: var(--border) !important;
+}
+.emoji-picker__search, .emoji-picker__search-icon {
+  border-color: var(--border) !important;
+  color: var(--grey) !important;
+}
+button.emoji-picker__category-button {
+  color: var(--grey) !important;
+}
+button.emoji-picker__category-button.active {
+  color: var(--cblue) !important;
+  border-bottom-color: var(--cblue);
+}

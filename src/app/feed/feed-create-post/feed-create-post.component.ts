@@ -75,7 +75,7 @@ export class FeedCreatePostComponent implements OnInit {
   emojiClick(event: any): void {
     const trigger = event.currentTarget;
     const picker = new EmojiButton({
-      rootElement: document.body,
+      rootElement: document.getElementById("feed-post-input-container"),
       theme: window.localStorage.getItem("theme") == "light" ? "light" : "dark",
       position: "auto",
       autoHide: false,
