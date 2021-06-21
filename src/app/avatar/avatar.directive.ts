@@ -12,6 +12,10 @@ export class AvatarDirective implements OnChanges {
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService, private el: ElementRef) {}
 
   setAvatar() {
+    if (!this.avatar) {
+      this.setURLOnElement(this.backendApi.GetDefaultProfilePictureURL(window.location.host));
+      return;
+    }
     // The fallback route is the route to the pic we use if we can't find an avatar for the user.
     let fallbackRoute = `fallback=${this.backendApi.GetDefaultProfilePictureURL(window.location.host)}`;
 
@@ -33,12 +37,16 @@ export class AvatarDirective implements OnChanges {
     );
 
     // Set the URL on the element.
-    this.el.nativeElement.style.backgroundImage = `url(${profPicURL + cacheBuster})`;
+    this.setURLOnElement(profPicURL + cacheBuster);
   }
 
   ngOnChanges(changes: any) {
     if (changes.avatar && changes.avatar !== this.avatar) {
       this.setAvatar();
     }
+  }
+
+  setURLOnElement(profilePicURL: string) {
+    this.el.nativeElement.style.backgroundImage = `url(${profilePicURL})`;
   }
 }
