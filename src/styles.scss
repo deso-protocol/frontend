@@ -641,7 +641,7 @@ $green-font-color: #19B028;
 .global__top-bar {
   position: fixed;
   background: var(--background);
-  // z-index: 30; Should not float above anything like emoji picker
+  z-index: 30;
   width: $global__center__width - 2; // subtract 2 for borders
 
   @media (min-width: 992px) {
@@ -2224,3 +2224,5 @@ input {
 .emoji-picker__search-icon {
   top: calc(50% - 0.6em) !important;
 }
+
+

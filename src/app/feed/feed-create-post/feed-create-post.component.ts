@@ -75,12 +75,14 @@ export class FeedCreatePostComponent implements OnInit {
   emojiClick(event: any): void {
     const trigger = event.currentTarget;
     const picker = new EmojiButton({
+      rootElement: document.body,
       theme: window.localStorage.getItem("theme") == "light" ? "light" : "dark",
       position: "auto",
       autoHide: false,
       emojiSize: "1.3em",
       emojisPerRow: 6,
       rows: 3,
+      zIndex: 33,
       initialCategory: "smileys",
       showPreview: false,
     });
