@@ -116,6 +116,7 @@ import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.compo
 import { AvatarDirective } from "./avatar/avatar.directive";
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { TrendsComponent } from "./trends-page/trends/trends.component";
+import { UploadDirective } from "./directives/upload.directive";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -127,6 +128,7 @@ import { legendsTheme } from "./theme/legends-theme";
 @NgModule({
   declarations: [
     AppComponent,
+    UploadDirective,
     TermsOfServiceComponent,
     ManageFollowsComponent,
     ManageFollowsPageComponent,

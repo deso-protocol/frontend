@@ -86,6 +86,12 @@ export class FeedCreatePostComponent implements OnInit {
     }
   }
 
+  uploadFile(event: any): void {
+    if (!this.isComment) {
+      this._handleFileInput(event[0]);
+    }
+  }
+
   showCharacterCountIsFine() {
     return this.postInput.length < FeedCreatePostComponent.SHOW_POST_LENGTH_WARNING_THRESHOLD;
   }
