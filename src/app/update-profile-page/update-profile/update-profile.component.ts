@@ -184,8 +184,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this.usernameInput = this.usernameInput.trim();
 
     const hasErrors = this._setProfileErrors();
-    this.globalVars.logEvent("profile : update : error", this.profileUpdateErrors);
     if (hasErrors) {
+      this.globalVars.logEvent("profile : update : has-errors", this.profileUpdateErrors);
       return;
     }
 
