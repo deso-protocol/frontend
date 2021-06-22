@@ -3,8 +3,9 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { RouteNames } from "../../app-routing.module";
+import {AppRoutingModule, RouteNames} from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
+import Swal from "sweetalert2";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -187,6 +188,32 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     if (hasErrors) {
       this.globalVars.logEvent("profile : update : has-errors", this.profileUpdateErrors);
       return;
+    }
+
+    // We check to make sure a user owns their own coin before lowering their founder reward.
+    if (this.founderRewardInput < 100 && this.globalVars.loggedInUser.UsersWhoHODLYouCount === 0) {
+      return SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
+        icon: "warning",
+        title: "Keep your founder reward at 100% until you buy your own coin",
+        html: !!this.globalVars.loggedInUser.ProfileEntryResponse
+          ? "You need to purchase your own creator coin before lowering your founder reward. This ensures that you get your own coins at the best price."
+          : "Set your founder reward to 100% and buy your creator coin before lowering your Founder reward",
+        showConfirmButton: true,
+        showCancelButton: !!this.globalVars.loggedInUser.ProfileEntryResponse,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+          cancelButton: "btn btn-light no",
+        },
+        confirmButtonText: this.globalVars.loggedInUser.ProfileEntryResponse ? "Buy Your Coin" : "Update Profile",
+      }).then((res) => {
+        if (res.isConfirmed && this.globalVars.loggedInUser.ProfileEntryResponse) {
+          this.router.navigate([
+            AppRoutingModule.buyCreatorPath(this.globalVars.loggedInUser.ProfileEntryResponse.Username),
+          ]);
+        }
+      });
     }
 
     this.updateProfileBeingCalled = true;
