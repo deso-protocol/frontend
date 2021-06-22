@@ -65,5 +65,8 @@ header @html Content-Security-Policy "
     https://www.youtube.com
     https://player.vimeo.com
     https://www.tiktok.com
+    https://giphy.com
+    https://open.spotify.com
+    https://w.soundcloud.com
     pay.testwyre.com
     pay.sendwyre.com;"

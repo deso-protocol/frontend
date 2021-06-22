@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
-import { Router, ActivatedRoute, Params } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
@@ -10,7 +10,7 @@ import { FollowChangeObservableResult } from "../lib/observable-results/follow-c
 import { SwalHelper } from "../lib/helpers/swal-helper";
 import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
-import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import { DomSanitizer } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
 import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
@@ -48,14 +48,7 @@ export class GlobalVarsService {
     private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient
-  ) {
-    this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
-    this.hideTimer = Date.now() >= this.announcementTimerEnd + 10 * 1000;
-    setInterval(() => {
-      this.pastDeflationBomb = Date.now() >= this.deflationBombTimerEnd;
-      this.hideTimer = Date.now() >= this.announcementTimerEnd + 10 * 1000;
-    }, 1000);
-  }
+  ) {}
 
   static MAX_POST_LENGTH = 280;
 
@@ -182,18 +175,13 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  deflationBombTimerEnd = new Date("June 12, 2021 9:00:00 PDT").getTime();
-  announcementTimerEnd = new Date("June 15, 2021 3:00:00 PDT").getTime();
+  // Price of BitClout values
+  ExchangeUSDCentsPerBitClout: number;
+  USDCentsPerBitCloutReservePrice: number;
+  BuyBitCloutFeeBasisPoints: number = 0;
 
-  // This controls the default text of the countdown timer component.
-  deflationBombTimerText = "Deflation Bomb:";
-  announcementTimerText = "Big Announcement:";
-
+  // Timestamp of last profile update
   profileUpdateTimestamp: number;
-
-  pastDeflationBomb: boolean;
-
-  hideTimer: boolean;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -576,6 +564,7 @@ export class GlobalVarsService {
       title = altTitle;
     }
     SwalHelper.fire({
+      target: this.getTargetComponentSelector(),
       icon: "success",
       title,
       html: val,
@@ -594,6 +583,7 @@ export class GlobalVarsService {
 
   _alertError(err: any, showBuyBitClout: boolean = false) {
     SwalHelper.fire({
+      target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
@@ -824,5 +814,23 @@ export class GlobalVarsService {
           }
         );
     }
+  }
+
+  // Get the highest level parent component that has the app-theme styling.
+  getTargetComponentSelector(): string {
+    return GlobalVarsService.getTargetComponentSelectorFromRouter(this.router);
+  }
+
+  static getTargetComponentSelectorFromRouter(router: Router): string {
+    if (router.url.startsWith("/" + RouteNames.BROWSE)) {
+      return "browse-page";
+    }
+    if (router.url.startsWith("/" + RouteNames.LANDING)) {
+      return "landing-page";
+    }
+    if (router.url.startsWith("/" + RouteNames.INBOX_PREFIX)) {
+      return "messages-page";
+    }
+    return "app-page";
   }
 }

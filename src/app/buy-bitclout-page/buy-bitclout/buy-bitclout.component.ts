@@ -166,6 +166,7 @@ export class BuyBitcloutComponent implements OnInit {
   _updateBitcoinFee(bitcoinToExchange: number): Promise<any> {
     if (this.appData == null || this.appData.loggedInUser == null || this.appData.latestBitcoinAPIResponse == null) {
       SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
         icon: "error",
         title: `Oops...`,
         html: `Please wait for at least one balance update before hitting this button.`,
@@ -183,7 +184,7 @@ export class BuyBitcloutComponent implements OnInit {
 
     // Update the total fee to account for the extra Bitcoin.
     return this.backendApi
-      .BurnBitcoin(
+      .ExchangeBitcoin(
         this.appData.localNode,
         this.appData.latestBitcoinAPIResponse,
         this.btcDepositAddress(),
@@ -251,6 +252,7 @@ export class BuyBitcloutComponent implements OnInit {
     );
 
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
       html: confirmBuyBitCloutString,
       showCancelButton: true,
@@ -264,7 +266,7 @@ export class BuyBitcloutComponent implements OnInit {
         // Execute the buy
         this.waitingOnTxnConfirmation = true;
         return this.backendApi
-          .BurnBitcoin(
+          .ExchangeBitcoin(
             this.appData.localNode,
             this.appData.latestBitcoinAPIResponse,
             this.btcDepositAddress(),
@@ -338,6 +340,7 @@ export class BuyBitcloutComponent implements OnInit {
       // do this rather than creating a potentially-insecure if statement as
       // we do here.
       Swal.fire({
+        target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
         title: `Almost there!`,
         html: errString,
@@ -372,8 +375,38 @@ export class BuyBitcloutComponent implements OnInit {
   }
 
   _computeSatoshisToBurnGivenBitCloutNanos(amountNanos: number) {
-    if (!this.appData.ProtocolUSDCentsPerBitcoinExchangeRate) {
+    if (!this.appData.satoshisPerBitCloutExchangeRate) {
       SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
+        icon: "error",
+        title: `Oops...`,
+        html: `We're still fetching some exchange rate data. Try again in about ten seconds.`,
+        showConfirmButton: true,
+        showCancelButton: false,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+          cancelButton: "btn btn-light no",
+        },
+      });
+
+      return 0;
+    }
+
+    const amountClout = amountNanos / 1e9;
+
+    return (
+      amountClout *
+      (this.globalVars.satoshisPerBitCloutExchangeRate * (1 + this.globalVars.BuyBitCloutFeeBasisPoints / (100 * 100)))
+    );
+  }
+
+  _computeNanosToCreateGivenSatoshisToBurn(satoshisToBurn: number): number {
+    // Account for the case where we haven't fetched the protocol exchange rate yet.
+    // For some reason this was taking 20 seconds in prod...
+    if (!this.appData.satoshisPerBitCloutExchangeRate) {
+      SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
         icon: "error",
         title: `Oops...`,
         html: `We're still fetching some exchange rate data. Try again in about ten seconds.`,
@@ -389,44 +422,11 @@ export class BuyBitcloutComponent implements OnInit {
       return 0;
     }
     return (
-      (((1000000 / Math.log(2)) * 50 * 1e8) / this.appData.ProtocolUSDCentsPerBitcoinExchangeRate / 0.999) *
-      (Math.pow(2, (this.appData.NanosSold + amountNanos) / 1000000e9) -
-        Math.pow(2, this.appData.NanosSold / 1000000e9))
+      (satoshisToBurn /
+        (this.globalVars.satoshisPerBitCloutExchangeRate *
+          (1 + this.globalVars.BuyBitCloutFeeBasisPoints / (100 * 100)))) *
+      1e9
     );
-  }
-
-  _computeNanosToCreateGivenSatoshisToBurn(satoshisToBurn: number): number {
-    // Account for the case where we haven't fetched the protocol exchange rate yet.
-    // For some reason this was taking 20 seconds in prod...
-    if (!this.appData.ProtocolUSDCentsPerBitcoinExchangeRate) {
-      SwalHelper.fire({
-        icon: "error",
-        title: `Oops...`,
-        html: `We're still fetching some exchange rate data. Try again in about ten seconds.`,
-        showConfirmButton: true,
-        showCancelButton: false,
-        focusConfirm: true,
-        customClass: {
-          confirmButton: "btn btn-light",
-          cancelButton: "btn btn-light no",
-        },
-      });
-
-      return 0;
-    }
-    let nanosPerUnit = 1e9;
-    let trancheSizeNanos = 1000000000000000;
-    let startPriceSatoshisPerBitClout = (50 * 1e8) / this.appData.ProtocolUSDCentsPerBitcoinExchangeRate;
-    let nanosComponent = nanosPerUnit / trancheSizeNanos;
-    let bitcoinComponent = satoshisToBurn / startPriceSatoshisPerBitClout;
-    let finalBitCloutNanos =
-      trancheSizeNanos *
-      Math.log2(
-        nanosComponent * bitcoinComponent * Math.log(2) + Math.pow(2, this.appData.NanosSold / trancheSizeNanos)
-      );
-
-    // We allocate 10bps to BitClout miners which is where the .999 comes from.
-    return (finalBitCloutNanos - this.appData.NanosSold) * 0.999;
   }
 
   _updateBitCloutToBuy(newVal) {

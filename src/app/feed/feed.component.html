@@ -11,7 +11,6 @@
   </div>
 
   <div class="global__top-bar__height"></div>
-
   <div *ngIf="!isMobile">
     <!-- Create Post -->
     <div class="border-bottom border-color-grey" style="background-color: var(--formbg)">
@@ -25,14 +24,11 @@
     <div class="w-100 border-bottom border-color-grey light-grey-divider" style="min-height: 10px"></div>
   </div>
 
-  <!-- Mobile Countdown Timer -->
-  <countdown-timer *ngIf="isMobile && !globalVars.hideTimer" [justifyLeft]="true"></countdown-timer>
   <!-- Mobile BitClout Price -->
   <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-grey py-5px px-15px fs-12px">
     <div>$CLOUT Price&nbsp;&nbsp;&nbsp;</div>
     <div>
-      <span *ngIf="!globalVars.pastDeflationBomb">~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
-      <span *ngIf="globalVars.pastDeflationBomb">🚀🚀🚀</span>
+      <span>~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
       <span class="text-muted">&nbsp;USD per coin</span>
     </div>
   </div>

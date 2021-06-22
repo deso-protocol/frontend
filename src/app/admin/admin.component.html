@@ -805,6 +805,50 @@
       </ul>
     </ul>
 
+    <!-- USD Cents Per BitClout Reserve Price  -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update USD to BitClout Reserve Price ($)
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="usdToBitCloutReserveExchangeRate"
+          (keydown.enter)="updateUSDToBitCloutReserveExchangeRate()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter the new USD to BitClout Reserve Exchange Rate"
+          type="number"
+        />
+        <button
+          *ngIf="!submittingUSDToBitCloutReserveExchangeRateUpdate"
+          (click)="updateUSDToBitCloutReserveExchangeRate()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
+         Update
+        </button>
+        <button *ngIf="submittingUSDToBitCloutReserveExchangeRateUpdate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+      </div>
+    </div>
+
+    <!-- Buy BitClout Fee Rate-->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update Buy BitClout Fee Rate (%)
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="buyBitCloutFeeRate"
+          (keydown.enter)="updateBuyBitCloutFeeRate()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter Buy BitClout Fee Rate"
+          type="number"
+        />
+        <button
+          *ngIf="!submittingBuyBitCloutFeeRate"
+          (click)="updateBuyBitCloutFeeRate()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
+          Update
+        </button>
+        <button *ngIf="submittingBuyBitCloutFeeRate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+      </div>
+    </div>
+
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Remove nil posts from global feed:
       <div class="d-flex mt-5px">

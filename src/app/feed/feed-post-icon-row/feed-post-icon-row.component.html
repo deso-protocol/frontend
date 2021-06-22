@@ -1,6 +1,4 @@
-<div
-  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px"
->
+<div class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px">
   <!-- TODO: post threads: needs hover treatment-->
   <!--     [routerLink]="router.url"-->
   <div
@@ -76,7 +74,7 @@
   >
     <i
       [ngClass]="{
-        'is_animating': animateLike,
+        is_animating: animateLike,
         'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
         'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
       }"
@@ -131,7 +129,9 @@
                 class="icon-diamond fs-25px d-block"
                 [ngStyle]="{ color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555' }"
               ></i>
-              <div class="d-block fc-muted fs-12px" style="text-align: center">{{ globalVars.getUSDForDiamond(index + 1) }}</div>
+              <div class="d-block fc-muted fs-12px" style="text-align: center">
+                {{ globalVars.getUSDForDiamond(index + 1) }}
+              </div>
             </div>
           </ng-template>
         </div>
@@ -144,21 +144,21 @@
   </ng-template>
   <div
     class="cursor-pointer d-flex align-items-center"
-    [ngClass]="{'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
+    [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
   >
     <i
       [popover]="popTemplate"
       triggers=""
       placement="top"
       [containerClass]="getPopoverContainerClass()"
-      container="body"
+      [container]="globalVars.getTargetComponentSelector()"
       [outsideClick]="true"
       #diamondPopover="bs-popover"
       class="icon-diamond feed-post-icon-row__icon p-2px"
       style="font-size: 20px !important; padding-right: 5px"
       (click)="diamondClickHandler($event)"
       (click)="animateDiamond = !animateDiamond"
-      [ngClass]="{'is_animating_ice': animateDiamond}"
+      [ngClass]="{ is_animating_ice: animateDiamond }"
     ></i>
     <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
   </div>

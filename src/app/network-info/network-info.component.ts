@@ -90,6 +90,7 @@ export class NetworkInfoComponent implements OnInit {
       .subscribe(
         (res: any) => {
           SwalHelper.fire({
+            target: this.globalVars.getTargetComponentSelector(),
             title: "Successfully stopped mining!",
             customClass: {
               confirmButton: "btn btn-light",
@@ -251,6 +252,7 @@ export class NetworkInfoComponent implements OnInit {
       .subscribe(
         (res: any) => {
           SwalHelper.fire({
+            target: this.globalVars.getTargetComponentSelector(),
             title: "Successfully updated miners!",
             customClass: {
               confirmButton: "btn btn-light",
@@ -269,6 +271,7 @@ export class NetworkInfoComponent implements OnInit {
 
   notImplemented() {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Implement me please :)",
       customClass: {
         confirmButton: "btn btn-light",

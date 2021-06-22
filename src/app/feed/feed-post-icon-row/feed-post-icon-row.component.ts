@@ -67,6 +67,7 @@ export class FeedPostIconRowComponent {
     this.globalVars.logEvent(`alert : ${action} : account`);
 
     return SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       icon: "info",
       title: `Create an account to ${action}`,
       html: `It's totally anonymous and takes under a minute`,
@@ -324,14 +325,11 @@ export class FeedPostIconRowComponent {
           this.diamondSelected = diamonds;
           this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
           this.postContent.PostEntryReaderState.DiamondLevelBestowed = diamonds;
-          let successFunction = this.sendDiamondsSuccess;
-          if (skipCelebration) {
-            successFunction = this.sendDiamondSuccessSkipCelebration;
-          } else {
+          if (!skipCelebration) {
             // Celebrate when the SendDiamonds call completes
             this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           }
-          this.globalVars.updateEverything(res.TxnHashHex, successFunction, this.sendDiamondsFailure, this);
+          this.globalVars.updateEverything(res.TxnHashHex, this.sendDiamondsSuccess, this.sendDiamondsFailure, this);
         },
         (err) => {
           if (err.status === 0) {
@@ -380,10 +378,6 @@ export class FeedPostIconRowComponent {
   }
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
-    comp.sendingDiamonds = false;
-  }
-
-  sendDiamondSuccessSkipCelebration(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
   }
 
@@ -442,6 +436,7 @@ export class FeedPostIconRowComponent {
     if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
       this.closeDiamondPopover();
       SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
         title: `Sending ${this.diamondSelected} diamonds to ${this.postContent.ProfileEntryResponse?.Username}`,
         html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
@@ -473,7 +468,6 @@ export class FeedPostIconRowComponent {
 
   getPopoverContainerClass() {
     const mobileClass = this.globalVars.isMobile() ? "diamond-popover-container-mobile " : "";
-    const popoverTheme = "diamond-popover-" + this.themeService.getActiveTheme().key;
-    return "diamond-popover-container " + mobileClass + popoverTheme;
+    return "diamond-popover-container " + mobileClass;
   }
 }

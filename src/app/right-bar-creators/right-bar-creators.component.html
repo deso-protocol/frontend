@@ -4,17 +4,12 @@
 
   <div class="pt-10px"></div>
 
-  <div class="pb-10px" *ngIf="!globalVars.hideTimer">
-    <countdown-timer [borderRadiusSize]="12" [fontWeight]="700"></countdown-timer>
-  </div>
-
   <!-- BitClout Price / Balance -->
   <div class="right-bar-creators__balance-box br-12px p-15px mb-30px fs-13px text-grey5 font-weight-bold">
     <div class="d-flex justify-content-between">
       <div>$CLOUT Price</div>
       <div>
-        <span *ngIf="!globalVars.pastDeflationBomb;">~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
-        <span *ngIf="globalVars.pastDeflationBomb">🚀🚀🚀</span>
+        <span>~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
         <span class="text-muted">&nbsp;USD per coin</span>
       </div>
     </div>
@@ -30,10 +25,9 @@
           <!-- Amount in USD-->
           <div class="ml-10px mr-10px">≈</div>
           <div *ngIf="globalVars.satoshisPerBitCloutExchangeRate">
-            <span *ngIf="!globalVars.pastDeflationBomb">
+            <span>
               {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }} USD
             </span>
-            <span *ngIf="globalVars.pastDeflationBomb">🚀🚀🚀</span>
           </div>
           <div *ngIf="!globalVars.satoshisPerBitCloutExchangeRate">Fetching... USD</div>
         </div>

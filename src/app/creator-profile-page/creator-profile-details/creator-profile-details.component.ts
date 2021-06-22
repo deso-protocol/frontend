@@ -71,6 +71,7 @@ export class CreatorProfileDetailsComponent {
 
   unblock() {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Unblock user",
       html: `This user will appear in your feed and on your threads again`,
       showCancelButton: true,
@@ -115,6 +116,7 @@ export class CreatorProfileDetailsComponent {
 
   blockUser() {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Block user?",
       html: `This will hide all comments from this user on your posts as well as hide them from your view on other threads.`,
       showCancelButton: true,
@@ -164,9 +166,9 @@ export class CreatorProfileDetailsComponent {
     this.loading = true;
     this.backendApi.GetSingleProfile(this.globalVars.localNode, "", this.userName).subscribe(
       (res) => {
-        if (!res) {
-          console.log("This profile was not found. It either does not exist or it was deleted.");
+        if (!res || res.IsBlacklisted) {
           this.loading = false;
+          this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
           return;
         }
         this.profile = res.Profile;

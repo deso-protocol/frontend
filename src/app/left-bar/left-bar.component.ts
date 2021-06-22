@@ -26,7 +26,7 @@ export class LeftBarComponent {
 
   // send logged out users to the landing page
   // send logged in users to browse
-  homeLink() {
+  homeLink(): string {
     if (this.globalVars.showLandingPage()) {
       return "/" + this.globalVars.RouteNames.LANDING;
     } else {
@@ -34,7 +34,7 @@ export class LeftBarComponent {
     }
   }
 
-  getHelpMailToAttr() {
+  getHelpMailToAttr(): string {
     const loggedInUser = this.globalVars.loggedInUser;
     const pubKey = loggedInUser?.PublicKeyBase58Check;
     const btcAddress = this.identityService.identityServiceUsers[pubKey]?.btcDepositAddress;
@@ -43,5 +43,9 @@ export class LeftBarComponent {
     );
     const body = loggedInUser ? `?body=${bodyContent}` : "";
     return `mailto:${this.globalVars.supportEmail}${body}`;
+  }
+
+  logHelp(): void {
+    this.globalVars.logEvent("help : click");
   }
 }
