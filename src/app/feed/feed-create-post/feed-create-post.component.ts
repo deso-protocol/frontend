@@ -124,7 +124,7 @@ export class FeedCreatePostComponent implements OnInit {
   setEmbedURL() {
     EmbedUrlParserService.getEmbedURL(this.backendApi, this.globalVars, this.embedURL).subscribe(
       (res) => (this.constructedEmbedURL = res)
-    ).add(() => console.log(this.constructedEmbedURL));
+    );
   }
 
   submitPost() {
@@ -183,6 +183,7 @@ export class FeedCreatePostComponent implements OnInit {
           this.postImageSrc = null;
           this.embedURL = "";
           this.constructedEmbedURL = "";
+          this.showEmbedURL = false;
           this.changeRef.detectChanges();
 
           // Refresh the post page.

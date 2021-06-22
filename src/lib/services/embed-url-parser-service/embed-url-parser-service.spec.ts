@@ -98,6 +98,25 @@ describe("EmbedUrlParserService", () => {
     return `https://w.soundcloud.com/player/?url=${url}?hide_related=true&show_comments=false`;
   });
 
+  const twitchVideoID = "1234567890";
+  const twitchChannelID = "chann3lId";
+  const twitchClipID = "SomeClipId-123iuMA32-m0";
+  const twitchCollectionID = "M123k88lskjqi";
+
+  const validTwitchURLs = [
+    `https://www.twitch.tv/${twitchChannelID}`,
+    `https://www.twitch.tv/videos/${twitchVideoID}`,
+    `https://www.twitch.tv/collections/${twitchCollectionID}`,
+    `https://www.twitch.tv/${twitchChannelID}/clip/${twitchClipID}`,
+  ];
+
+  const validTwitchEmbedURLs = [
+    `https://player.twitch.tv/?channel=${twitchChannelID}`,
+    `https://player.twitch.tv/?video=${twitchVideoID}`,
+    `https://player.twitch.tv/?collection=${twitchCollectionID}`,
+    `https://clips.twitch.tv/embed?clip=${twitchClipID}`,
+  ];
+
   const invalidURLs = [
     "https://google.com",
     "facebook.com<script></script>",
@@ -109,6 +128,10 @@ describe("EmbedUrlParserService", () => {
     `https://giphy.com/gifs/abc-def-${giphyID}-;<script></script>`,
     `https://open.notspotify.com/embed/track/${spotifyID}-?;<script/></script>`,
     `https://w.soundcloud.com/player/<script>?url=maliciousscript</script>?hide_related=true&show_comments=false`,
+    `https://player.twitch.tv/?video=aaa${twitchVideoID}`,
+    `https://player.twitch.tv/<script>maliciousscript</script>?channel=${twitchChannelID}`,
+    `https://clips.twitch.tv<script>evilstuff</script>/embed?clip=${twitchClipID}`,
+    `https://player.twitch.tv/?collections=!@#&*!)@#${twitchCollectionID}`,
   ];
 
   it("parses youtube URLs from user input correctly and only validates embed urls", () => {
@@ -225,6 +248,40 @@ describe("EmbedUrlParserService", () => {
       expect(EmbedUrlParserService.isValidEmbedURL(embedLink));
       const constructedEmbedUrl = EmbedUrlParserService.constructSoundCloudEmbedURL(new URL(embedLink));
       expect(EmbedUrlParserService.isValidSoundCloudEmbedURL(constructedEmbedUrl)).toBeTruthy();
+    }
+  });
+
+  it("parses Twitch URLs from user input correctly and only validates embed urls", () => {
+    for (let i = 0; i < validTwitchURLs.length; i++) {
+      const link = validTwitchURLs[i];
+      const embedLink = validTwitchEmbedURLs[i];
+      expect(EmbedUrlParserService.isTwitchLink(link)).toBeTruthy();
+      const embedURL = EmbedUrlParserService.constructTwitchEmbedURL(new URL(link));
+      expect(embedURL).toEqual(embedLink);
+      expect(EmbedUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidTwitchEmbedURL(embedURL)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidTwitchEmbedURLWithParent(embedURL)).toBeFalsy();
+      expect(EmbedUrlParserService.isValidEmbedURL(link)).toBeFalsy();
+
+      EmbedUrlParserService.getEmbedURL(backendApiService, globalVarsService, link).subscribe((res) => {
+        expect(res).toEqual(embedLink + `&parent=${location.hostname}`);
+        expect(EmbedUrlParserService.isValidEmbedURL(res)).toBeTruthy();
+        expect(EmbedUrlParserService.isValidTwitchEmbedURLWithParent(res)).toBeTruthy();
+        expect(EmbedUrlParserService.isValidTwitchEmbedURL(res)).toBeFalsy();
+      });
+
+      expect(EmbedUrlParserService.isTwitchLink(embedLink));
+      expect(EmbedUrlParserService.isValidEmbedURL(embedLink));
+      const constructedEmbedUrl = EmbedUrlParserService.constructTwitchEmbedURL(new URL(embedLink));
+      expect(EmbedUrlParserService.isValidTwitchEmbedURL(constructedEmbedUrl)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidTwitchEmbedURLWithParent(constructedEmbedUrl)).toBeFalsy();
+
+      EmbedUrlParserService.getEmbedURL(backendApiService, globalVarsService, embedLink).subscribe((res) => {
+        expect(res).toEqual(embedLink + `&parent=${location.hostname}`);
+        expect(EmbedUrlParserService.isValidEmbedURL(res)).toBeTruthy();
+        expect(EmbedUrlParserService.isValidTwitchEmbedURLWithParent(res)).toBeTruthy();
+        expect(EmbedUrlParserService.isValidTwitchEmbedURL(res)).toBeFalsy();
+      });
     }
   });
 

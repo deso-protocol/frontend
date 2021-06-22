@@ -77,39 +77,38 @@ export class EmbedUrlParserService {
   }
 
   static twitchParser(url: string): string | boolean {
-    const regExp = /^.*((player\.|clips\.)?twitch\.tv)\/(videos\/(\d{8,12})|\?video=(\d{8,12})|\?channel=([A-Za-z0-9_]{1,30})|collections\/([A-Za-z0-9]{10,20})|\?collection=([A-Za-z0-9]{10,20})|embed\?clip=([A-Za-z0-9_]{1,50}-[A-Za-z0-9]{1,30})|([A-Za-z0-9_]{1,30}(\/clip\/([A-Za-z0-9_]{1,50}-[A-Za-z0-9_]{1,30}))?)).*/;
-    // const regExp = /^.*((player\.|clips\.)?twitch\.tv)\/(videos\/(\d{8,12})|\?video=(\d{8,12})|\?channel=([A-Za-z0-9_]{1,30})|(embed\?clip=([A-Za-z0-9_]{1,50}-[A-Za-z0-9]{1,30}))|([A-Za-z0-9_]{1,30}(\?|$))|([A-Za-z0-9_]{1,30}(\/clip\/([A-Za-z0-9_]{1,50}-[A-Za-z0-9_]{1,30}))?)).*/;
+    const regExp = /^.*((player\.|clips\.)?twitch\.tv)\/(videos\/(\d{8,12})|\?video=(\d{8,12})|\?channel=([A-Za-z0-9_]{1,30})|collections\/([A-Za-z0-9]{10,20})|\?collection=([A-Za-z0-9]{10,20}(&video=\d{8,12})?)|embed\?clip=([A-Za-z0-9_-]{1,80})|([A-Za-z0-9_]{1,30}(\/clip\/([A-Za-z0-9_-]{1,80}))?)).*/;
     const match = url.match(regExp);
     if (match && match[3]) {
-      // https://www.twitch.tv/videos/1052085725
+      // https://www.twitch.tv/videos/1234567890
       if (match[3].startsWith("videos") && match[4]) {
         return `player.twitch.tv/?video=${match[4]}`;
       }
-      // https://player.twitch.tv/?video=1052085725&parent=www.example.com
+      // https://player.twitch.tv/?video=1234567890&parent=www.example.com
       if (match[3].startsWith("?video=") && match[5]) {
         return `player.twitch.tv/?video=${match[5]}`;
       }
-      // https://player.twitch.tv/?channel=kindafunnygames&parent=www.example.com
+      // https://player.twitch.tv/?channel=xxxyyy123&parent=www.example.com
       if (match[3].startsWith("?channel=") && match[6]) {
         return `player.twitch.tv/?channel=${match[6]}`;
       }
-      // https://www.twitch.tv/kindafunnygames
-      if (match[3] && match[10] && match[3] === match[10]) {
-        return `player.twitch.tv/?channel=${match[10]}`;
+      // https://www.twitch.tv/xxxyyy123
+      if (match[3] && match[11] && match[3] === match[11] && !match[12] && !match[13]) {
+        return `player.twitch.tv/?channel=${match[11]}`;
       }
-      // https://www.twitch.tv/silfy_star/clip/BadPunchyMangetoutPlanking-rrZQEE5Vib02ZvG7
-      if (match[11] && match[12]) {
-        return `clips.twitch.tv/embed?clip=${match[12]}`;
+      // https://www.twitch.tv/xxyy_1234m/clip/AbCD123JMn-rrMMSj1239G7
+      if (match[12] && match[13]) {
+        return `clips.twitch.tv/embed?clip=${match[13]}`;
       }
-      // https://clips.twitch.tv/embed?clip=BadPunchyMangetoutPlanking-rrZQEE5Vib02ZvG7&parent=www.example.com
-      if (match[9]) {
-        return `clips.twitch.tv/embed?clip=${match[9]}`;
+      // https://clips.twitch.tv/embed?clip=AbCD123JMn-rrMMSj1239G7&parent=www.example.com
+      if (match[10]) {
+        return `clips.twitch.tv/embed?clip=${match[10]}`;
       }
-      // https://www.twitch.tv/collections/88mjamlm4xT7nQ?filter=collections
+      // https://www.twitch.tv/collections/11jaabbcc2yM989x?filter=collections
       if (match[7]) {
         return `player.twitch.tv/?collection=${match[7]}`;
       }
-      // https://player.twitch.tv/?collection=88mjamlm4xT7nQ&video=529592821&parent=www.example.com
+      // https://player.twitch.tv/?collection=11jaabbcc2yM989x&video=1234567890&parent=www.example.com
       if (match[8]) {
         return `player.twitch.tv/?collection=${match[8]}`;
       }
@@ -340,13 +339,13 @@ export class EmbedUrlParserService {
   }
 
   static isValidTwitchEmbedURL(link: string): boolean {
-    const regExp = /(https:\/\/(player|clips)\.twitch\.tv\/(\?channel=[A-Za-z0-9_]{1,30}|\?video=\d{8,12}|embed\?clip=[A-Za-z0-9_]{1,50}-[A-Za-z0-9]{1,30}|\?collection=[A-Za-z0-9]{10,20}))$/;
+    const regExp = /(https:\/\/(player|clips)\.twitch\.tv\/(\?channel=[A-Za-z0-9_]{1,30}|\?video=\d{8,12}|embed\?clip=[A-Za-z0-9_-]{1,80}|\?collection=[A-Za-z0-9]{10,20}(&video=\d{8,12})?))$/;
     return !!link.match(regExp);
   }
 
   static isValidTwitchEmbedURLWithParent(link: string): boolean {
     const regExp = new RegExp(
-      `https:\/\/(player|clips)\.twitch\.tv\/(\\?channel\=[A-Za-z0-9_]{1,30}|\\?video=\\d{8,12}|embed\\?clip=[A-Za-z0-9_]{1,50}-[A-Za-z0-9]{1,30}|\\?collection=[A-Za-z0-9]{10,20})\&parent=${location.hostname}$`
+      `https:\/\/(player|clips)\.twitch\.tv\/(\\?channel\=[A-Za-z0-9_]{1,30}|\\?video=\\d{8,12}|embed\\?clip=[A-Za-z0-9_-]{1,80}|\\?collection=[A-Za-z0-9]{10,20}(\&video=\\d{8,12})\?)\&parent=${location.hostname}$`
     );
     return !!link.match(regExp);
   }
