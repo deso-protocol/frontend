@@ -8,6 +8,7 @@ import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.compo
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
 import { AuctionCreatedModalComponent } from "../../auction-created-modal/auction-created-modal.component";
 import { BidPlacedModalComponent } from "../../bid-placed-modal/bid-placed-modal.component";
+import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
 
 @Component({
   selector: "feed-post-dropdown",
@@ -32,8 +33,8 @@ export class FeedPostDropdownComponent {
   ) {}
 
   ngOnInit(): void {
-    this.modalService.show(BidPlacedModalComponent, {
-      class: "modal-dialog-centered modal-sm",
+    this.modalService.show(PlaceBidModalComponent, {
+      class: "modal-dialog-centered modal-lg",
     });
   }
 

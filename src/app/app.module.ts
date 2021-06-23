@@ -127,6 +127,7 @@ import { MintNftModalComponent } from './mint-nft-modal/mint-nft-modal.component
 import { CreateNftAuctionModalComponent } from './create-nft-auction-modal/create-nft-auction-modal.component';
 import { AuctionCreatedModalComponent } from './auction-created-modal/auction-created-modal.component';
 import { BidPlacedModalComponent } from './bid-placed-modal/bid-placed-modal.component';
+import { PlaceBidModalComponent } from './place-bid-modal/place-bid-modal.component';
 
 @NgModule({
   declarations: [
@@ -229,6 +230,7 @@ import { BidPlacedModalComponent } from './bid-placed-modal/bid-placed-modal.com
     CreateNftAuctionModalComponent,
     AuctionCreatedModalComponent,
     BidPlacedModalComponent,
+    PlaceBidModalComponent,
   ],
   imports: [
     BrowserModule,
