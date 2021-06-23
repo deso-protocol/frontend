@@ -4,6 +4,9 @@ import { GlobalVarsService } from "../global-vars.service";
 import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { Title } from "@angular/platform-browser";
+import { NgxQrcodeElementTypes, NgxQrcodeErrorCorrectionLevels } from "@techiediaries/ngx-qrcode";
+import { RouteNames } from "../app-routing.module";
+import { ActivatedRoute } from "@angular/router";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -34,17 +37,30 @@ export class TransferBitcloutComponent implements OnInit {
   loadingMax = false;
   sendingBitClout = false;
 
+  elementType = NgxQrcodeElementTypes.URL;
+  errorCorrectionLevel = NgxQrcodeErrorCorrectionLevels.HIGH;
+  sendBitCloutValue: string;
+
   constructor(
     private backendApi: BackendApiService,
     private globalVarsService: GlobalVarsService,
-    private titleService: Title
+    private titleService: Title,
+    private route: ActivatedRoute,
   ) {
     this.globalVars = globalVarsService;
+    this.route.queryParams.subscribe((queryParams) => {
+      if (queryParams.public_key) {
+        this.payToPublicKey = queryParams.public_key;
+      }
+    });
   }
 
   ngOnInit() {
     this.feeRateBitCloutPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
     this.titleService.setTitle("Send $CLOUT - BitClout");
+    this.sendBitCloutValue =
+      this.backendApi._makeRequestURL(location.host, "/" + RouteNames.SEND_BITCLOUT) +
+      `?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`;
   }
 
   _clickMaxBitClout() {
