@@ -3,8 +3,9 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { RouteNames } from "../../app-routing.module";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
+import Swal from "sweetalert2";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -227,8 +228,28 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   }
 
   _updateProfileSuccess(comp: UpdateProfileComponent) {
+    comp.globalVars.celebrate();
     comp.updateProfileBeingCalled = false;
     comp.profileUpdated = true;
+    if (comp.globalVars.loggedInUser.UsersWhoHODLYouCount === 0) {
+      SwalHelper.fire({
+        target: comp.globalVars.getTargetComponentSelector(),
+        icon: "success",
+        title: "Buy your creator coin",
+        showConfirmButton: true,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+        },
+        confirmButtonText: "Buy Your Coin",
+      }).then((res) => {
+        if (res.isConfirmed) {
+          comp.router.navigate([
+            AppRoutingModule.buyCreatorPath(comp.globalVars.loggedInUser.ProfileEntryResponse.Username),
+          ]);
+        }
+      });
+    }
   }
 
   _updateProfileFailure(comp: UpdateProfileComponent) {
