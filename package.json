@@ -26,7 +26,6 @@
     "@angular/platform-browser": "^11.2.12",
     "@angular/platform-browser-dynamic": "^11.2.12",
     "@angular/router": "^11.2.12",
-    "@techiediaries/ngx-qrcode": "^9.1.0",
     "amplitude-js": "^7.4.3",
     "autolinker": "^3.14.2",
     "bs58": "^4.0.1",

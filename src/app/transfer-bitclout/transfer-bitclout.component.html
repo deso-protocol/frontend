@@ -86,7 +86,7 @@
 
 <div class="p-15px d-flex flex-column align-items-center">
   <p>Share to receive $CLOUT</p>
-  <ngx-qrcode [elementType]="elementType" [errorCorrectionLevel]="errorCorrectionLevel" [value]="sendBitCloutValue"></ngx-qrcode>
+  <img [src]="sendBitCloutQRCode | sanitizeQRCode"/>
 </div>
 
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
