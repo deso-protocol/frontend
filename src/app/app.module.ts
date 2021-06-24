@@ -117,6 +117,7 @@ import { AvatarDirective } from "./avatar/avatar.directive";
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { TrendsComponent } from "./trends-page/trends/trends.component";
 import { UploadDirective } from "./directives/upload.directive";
+import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -223,6 +224,7 @@ import { legendsTheme } from "./theme/legends-theme";
     AvatarDirective,
     TrendsPageComponent,
     TrendsComponent,
+    SanitizeQRCodePipe,
   ],
   imports: [
     BrowserModule,
