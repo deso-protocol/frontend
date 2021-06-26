@@ -84,5 +84,10 @@
   Working...
 </button>
 
-<!--Spacer (for mobile)-->
-<div class="pb-15px"></div>
+<div class="p-15px d-flex flex-column align-items-center">
+  <p>Share to receive $CLOUT</p>
+  <img [src]="sendBitCloutQRCode | sanitizeQRCode"/>
+</div>
+
+<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+<div class="global__bottom-bar-mobile-height"></div>

@@ -189,7 +189,7 @@ export class NotificationsListComponent implements OnInit {
       }
       result.icon = "fas fa-money-bill-wave-alt fc-green";
       result.action = `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
-        `BitClout!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
+        `$CLOUT!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
       return result;
     } else if (txnMeta.TxnType === "CREATOR_COIN") {
       // If we don't have the corresponding metadata then return null.
