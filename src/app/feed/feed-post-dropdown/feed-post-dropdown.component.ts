@@ -9,6 +9,7 @@ import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/c
 import { AuctionCreatedModalComponent } from "../../auction-created-modal/auction-created-modal.component";
 import { BidPlacedModalComponent } from "../../bid-placed-modal/bid-placed-modal.component";
 import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
+import { SelectSerialNumberModalComponent } from "../../select-serial-number-modal/select-serial-number-modal.component";
 
 @Component({
   selector: "feed-post-dropdown",
@@ -33,7 +34,7 @@ export class FeedPostDropdownComponent {
   ) {}
 
   ngOnInit(): void {
-    this.modalService.show(PlaceBidModalComponent, {
+    this.modalService.show(SelectSerialNumberModalComponent, {
       class: "modal-dialog-centered modal-lg",
     });
   }

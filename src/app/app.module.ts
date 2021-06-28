@@ -128,6 +128,7 @@ import { CreateNftAuctionModalComponent } from './create-nft-auction-modal/creat
 import { AuctionCreatedModalComponent } from './auction-created-modal/auction-created-modal.component';
 import { BidPlacedModalComponent } from './bid-placed-modal/bid-placed-modal.component';
 import { PlaceBidModalComponent } from './place-bid-modal/place-bid-modal.component';
+import { SelectSerialNumberModalComponent } from './select-serial-number-modal/select-serial-number-modal.component';
 
 @NgModule({
   declarations: [
@@ -231,6 +232,7 @@ import { PlaceBidModalComponent } from './place-bid-modal/place-bid-modal.compon
     AuctionCreatedModalComponent,
     BidPlacedModalComponent,
     PlaceBidModalComponent,
+    SelectSerialNumberModalComponent,
   ],
   imports: [
     BrowserModule,

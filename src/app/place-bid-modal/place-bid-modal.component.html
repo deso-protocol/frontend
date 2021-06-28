@@ -16,7 +16,10 @@
   <!-- Availability metadata -->
   <div class="fs-15px">
     <div>Highest bid 0.24 CLOUT | From 0.04 CLOUT</div>
-    <div class="pt-15px">4 of 4 available <span class="font-weight-500" style="text-decoration: underline">Select a serial number</span></div>
+    <div class="pt-15px">4 of 4 available 
+      <span class="font-weight-500 cursor-pointer" style="text-decoration: underline">
+        Select a serial number</span>
+    </div>
   </div>
 
   <!-- Second separator line -->
@@ -75,7 +78,7 @@
       <div class="row no-gutters background-color-white p-15px create-nft-auction-row-border"
            style="opacity: 50%">
         <div class="col-5 mb-0px">
-          <input type="checkbox" class="w-10"/>
+          <input type="checkbox" style="width: 15px"/>
           Select All
         </div>
         <div class="col-7 mb-0px">Last Price</div>
@@ -84,7 +87,7 @@
         <div *ngFor="let nft of sampleNftData"
              class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border">
           <div class="col-5 mb-0px d-flex align-items-center">
-            <input type="checkbox" class="w-10"/>
+            <input type="checkbox" style="width: 15px"/>
             <span class="lh-15px">&nbsp;#{{nft.SerialNumber}}</span>
           </div>
           <div class="col-7 mb-0px d-flex justify-content-between align-items-center">
