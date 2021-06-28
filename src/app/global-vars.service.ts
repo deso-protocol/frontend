@@ -849,8 +849,8 @@ export class GlobalVarsService {
         const nanosPerUnit = 1e9;
         this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerBitClout / 100);
         this.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
-        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(1e9, null);
-        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(1e9, 2);
+        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, null);
+        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, 2);
       },
       (error) => {
         console.error(error);
