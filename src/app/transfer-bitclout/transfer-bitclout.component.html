@@ -16,11 +16,16 @@
 
 <div class="fs-15px font-weight-bold mt-15px px-15px">
   Public key or username to pay:
-  <input
-    class="form-control w-100 fs-15px lh-15px mt-5px"
-    placeholder="Enter a public key or username."
-    [(ngModel)]="payToPublicKey"
-  />
+  <!-- Search Bar -->
+  <search-bar
+    [startingSearchText]="startingSearchText"
+    [isSearchForUsersToSendClout]="true"
+    (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+  ></search-bar>
+</div>
+
+<div class="px-5px">
+  <simple-profile-card [profile]="payToCreator" [singleColumn]="true" *ngIf="payToCreator"></simple-profile-card>
 </div>
 
 <div class="fs-15px font-weight-bold mt-15px px-15px">Amount of $CLOUT to send:</div>

@@ -12,6 +12,7 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() showHeartIcon = false;
   @Input() showRecloutIcon = false;
   @Input() containerModalRef: any = null;
+  @Input() singleColumn = false;
 
   constructor(public globalVars: GlobalVarsService, private router: Router) {}
 

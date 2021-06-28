@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { BackendApiService } from "../backend-api.service";
+import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
@@ -28,7 +28,9 @@ class Messages {
 export class TransferBitcloutComponent implements OnInit {
   globalVars: GlobalVarsService;
   transferBitCloutError = "";
+  startingSearchText = "";
   payToPublicKey = "";
+  payToCreator: ProfileEntryResponse;
   transferAmount = 0;
   networkFee = 0;
   feeRateBitCloutPerKB: string;
@@ -47,7 +49,7 @@ export class TransferBitcloutComponent implements OnInit {
     this.globalVars = globalVarsService;
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.public_key) {
-        this.payToPublicKey = queryParams.public_key;
+        this.startingSearchText = queryParams.public_key;
       }
     });
   }
@@ -310,5 +312,10 @@ export class TransferBitcloutComponent implements OnInit {
     // If we get here we have no idea what went wrong so just alert the
     // errorString.
     return JSON.stringify(err);
+  }
+
+  _handleCreatorSelectedInSearch(creator: ProfileEntryResponse) {
+    this.payToCreator = creator;
+    this.payToPublicKey = creator?.Username || creator?.PublicKeyBase58Check || "";
   }
 }

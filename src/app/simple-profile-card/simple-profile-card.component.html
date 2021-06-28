@@ -1,9 +1,10 @@
 <a
-  class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey link--unstyled"
+  class="container d-flex align-items-center fs-15px p-10px border-color-grey link--unstyled"
+  [ngClass]="{ 'border-bottom': !singleColumn }"
   (click)="onClick()"
 >
   <div class="row no-gutters w-100">
-    <div class="col-6 d-flex align-items-center" style="margin-bottom: 0px">
+    <div class="d-flex align-items-center mb-0" [ngClass]="{ 'col-6': !singleColumn }">
       <!-- Avatar -->
       <div class="simple-profile-card__avatar-container">
         <div
@@ -12,8 +13,8 @@
         ></div>
       </div>
       <div class="text-truncate holdings__name fs-15px">
-        <div>
-          <a class="fc-default font-weight-bold">{{ profile.Username }}</a>
+        <div class="d-flex">
+          <div class="fc-default font-weight-bold text-truncate holdings__name link--unstyled">{{ profile.Username || profile.PublicKeyBase58Check }}</div>
           <span
             *ngIf="profile.IsVerified"
             (click)="tooltip.toggle()"
@@ -25,13 +26,13 @@
             <i class="fas fa-check-circle fa-md align-middle"></i>
           </span>
         </div>
-        <div class="text-grey9">
+        <div class="text-grey9" *ngIf="profile.CoinPriceBitCloutNanos">
           {{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}
         </div>
       </div>
     </div>
 
-    <div class="col-6 d-flex align-items-center justify-content-center" style="margin-bottom: 0px">
+    <div class="col-6 d-flex align-items-center justify-content-center mb-0">
       <div *ngIf="diamondLevel > 0" class="d-flex">
         <i *ngFor="let diamond of counter(diamondLevel)" class="icon-diamond fs-20px d-block"></i>
       </div>

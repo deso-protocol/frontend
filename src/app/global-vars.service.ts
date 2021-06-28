@@ -646,7 +646,7 @@ export class GlobalVarsService {
   // Does some basic checks on a public key.
   isMaybePublicKey(pk: string) {
     // Test net public keys start with 'tBC', regular public keys start with 'BC'.
-    return pk.startsWith("tBC") || pk.startsWith("BC");
+    return (pk.startsWith("tBC") && pk.length == 54) || (pk.startsWith("BC") && pk.length == 55);
   }
 
   isVanillaReclout(post: PostEntryResponse): boolean {
