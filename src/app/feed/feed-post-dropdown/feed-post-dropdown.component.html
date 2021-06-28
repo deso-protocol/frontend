@@ -5,7 +5,7 @@
   <a class="js-feed-post__dropdown-toggle link--unstyled text-grey9" role="button" dropdownToggle>
     <i class="fas fa-ellipsis-h"></i>
   </a>
-  <div class="dropdown-menu dropdown-menu-right p-0" *dropdownMenu app-theme>
+  <div class="dropdown-menu dropdown-menu-right p-0" style="min-width: 11rem" *dropdownMenu app-theme>
     <a
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
       (click)="copyPostLinkToClipboard($event)"
@@ -75,6 +75,22 @@
     >
       <i class="fas fa-undo"></i>
       Unpin From Feed
+    </a>
+    <a
+      *ngIf="showPinToProfileDropdownItem()"
+      class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success fs-12px"
+      (click)="_pinPostToProfile($event)"
+    >
+      <i class="fas fa-thumbtack"></i>
+      Pin To Profile
+    </a>
+    <a
+      *ngIf="showUnpinFromProfileDropdownItem()"
+      class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger fs-12px"
+      (click)="_pinPostToProfile($event)"
+    >
+      <i class="fas fa-undo"></i>
+      Unpin From Profile
     </a>
   </div>
 </div>

@@ -77,6 +77,16 @@ export class FeedPostDropdownComponent {
     return this.globalFeedEligible() && this.post.IsPinned;
   }
 
+  showPinToProfileDropdownItem(): boolean {
+    return this.globalVars.loggedInUser.PublicKeyBase58Check == this.post.PosterPublicKeyBase58Check
+      && !this.post.IsPinned;
+  }
+
+  showUnpinFromProfileDropdownItem(): boolean {
+    return this.globalVars.loggedInUser.PublicKeyBase58Check == this.post.PosterPublicKeyBase58Check
+      && this.post.IsPinned;
+  }
+
   hidePost() {
     this.postHidden.emit();
   }
