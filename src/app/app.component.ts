@@ -189,27 +189,6 @@ export class AppComponent implements OnInit {
       });
   }
 
-  repeatForXInterval: number;
-  _repeatForX(
-    funcToRepeat: () => void,
-    timeoutMillis,
-    numTries = 10,
-    triesExceededCallback: (comp: any) => void,
-    comp: any = ""
-  ) {
-    let attempts = 0;
-
-    // Set an interval to repeat
-    this.repeatForXInterval = setInterval(() => {
-      if (attempts >= numTries) {
-        triesExceededCallback(comp);
-        clearInterval(this.repeatForXInterval);
-      }
-      funcToRepeat();
-      attempts++;
-    }, timeoutMillis) as any;
-  }
-
   _updateEverything = (
     waitTxn: string = "",
     successCallback: (comp: any) => void = () => {},
@@ -228,9 +207,18 @@ export class AppComponent implements OnInit {
     // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
     // There is a success and error callback so that the caller gets feedback on the polling.
     if (waitTxn !== "") {
-      this._repeatForX(
-        () => {
-          return this.backendApi.GetTxn(this.globalVars.localNode, waitTxn).subscribe(
+      let attempts = 0;
+      let numTries = 160;
+      let timeoutMillis = 750;
+      // Set an interval to repeat
+      let interval = setInterval(() => {
+        if (attempts >= numTries) {
+          errorCallback(comp);
+          clearInterval(interval);
+        }
+        this.backendApi
+          .GetTxn(this.globalVars.localNode, waitTxn)
+          .subscribe(
             (res: any) => {
               if (!res.TxnFound) {
                 return;
@@ -240,20 +228,16 @@ export class AppComponent implements OnInit {
               this._updateBitCloutExchangeRate();
               this._updateAppState();
 
-              clearInterval(this.repeatForXInterval);
+              clearInterval(interval);
               successCallback(comp);
             },
             (error) => {
-              clearInterval(this.repeatForXInterval);
+              clearInterval(interval);
               errorCallback(comp);
             }
-          );
-        },
-        750,
-        160,
-        errorCallback,
-        comp
-      );
+          )
+          .add(() => attempts++);
+      }, timeoutMillis) as any;
     } else {
       if (this.globalVars.pausePolling) {
         return;
