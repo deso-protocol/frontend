@@ -55,10 +55,7 @@ export class SearchBarComponent implements OnInit {
     }
 
     // If we are searching for a public key, call get single profile with the public key.
-    if (
-      (requestedSearchText.startsWith("BC") && requestedSearchText.length == 55) ||
-      (requestedSearchText.startsWith("tBC") && requestedSearchText.length == 54)
-    ) {
+    if (this.globalVars.isMaybePublicKey(requestedSearchText)) {
       return this.backendApi.GetSingleProfile(this.globalVars.localNode, requestedSearchText, "").subscribe(
         (res) => {
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
