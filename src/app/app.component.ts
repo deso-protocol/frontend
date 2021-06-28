@@ -189,27 +189,6 @@ export class AppComponent implements OnInit {
       });
   }
 
-  repeatForXInterval: number;
-  _repeatForX(
-    funcToRepeat: () => void,
-    timeoutMillis,
-    numTries = 10,
-    triesExceededCallback: (comp: any) => void,
-    comp: any = ""
-  ) {
-    let attempts = 0;
-
-    // Set an interval to repeat
-    this.repeatForXInterval = setInterval(() => {
-      if (attempts >= numTries) {
-        triesExceededCallback(comp);
-        clearInterval(this.repeatForXInterval);
-      }
-      funcToRepeat();
-      attempts++;
-    }, timeoutMillis) as any;
-  }
-
   _updateEverything = (
     waitTxn: string = "",
     successCallback: (comp: any) => void = () => {},
