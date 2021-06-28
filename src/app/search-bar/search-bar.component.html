@@ -8,7 +8,13 @@
   <div class="d-flex align-items-center w-100 text-grey8A fs-15px global__top-bar__height">
     <div class="input-group">
       <div class="input-group-prepend">
-        <span class="input-group-text search-bar__icon">
+        <span
+          class="input-group-text search-bar__icon"
+          [ngStyle]="{
+          'border-top-left-radius': isSearchForUsersToSendClout ? '0.25rem' : '',
+          'border-bottom-left-radius': isSearchForUsersToSendClout ? '0.25rem' : ''
+          }"
+        >
           <i class="icon-search"></i>
         </span>
       </div>
@@ -20,9 +26,9 @@
         (keyup.enter)="_handleCreatorSelect(creators[selectedCreatorIndex])"
         (keyup.escape)="_exitSearch()"
         type="text"
-        class="form-control shadow-none search-bar__fix-active br-12px"
-        style="border-radius: 3px"
+        class="form-control shadow-none search-bar__fix-active"
         style="font-size: 15px; padding-left: 0; border-left-color: rgba(0, 0, 0, 0)"
+        [ngClass]="{ 'br-12px': !isSearchForUsersToSendClout }"
         placeholder="Search"
       />
     </div>
@@ -41,7 +47,7 @@
       >
         <div class="search-bar__avatar m-10px" [avatar]="creator.PublicKeyBase58Check"></div>
         <div>
-          <span>{{ creator.Username }}</span>
+          <span>{{ creator.Username || creator.PublicKeyBase58Check }}</span>
           <span
             *ngIf="creator.IsReserved && !creator.IsVerified"
             class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
@@ -60,9 +66,9 @@
           >
             <i class="fas fa-check-circle fa-md align-middle"></i>
           </span>
-          <span>&nbsp;&middot;&nbsp;</span>
+          <span *ngIf="creator.CoinPriceBitCloutNanos">&nbsp;&middot;&nbsp;</span>
         </div>
-        <div class="fc-muted">~{{ globalVars.nanosToUSD(creator.CoinPriceBitCloutNanos, 2) }}</div>
+        <div class="fc-muted" *ngIf="creator.CoinPriceBitCloutNanos">~{{ globalVars.nanosToUSD(creator.CoinPriceBitCloutNanos, 2) }}</div>
       </div>
     </div>
   </div>
