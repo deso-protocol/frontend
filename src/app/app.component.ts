@@ -156,27 +156,7 @@ export class AppComponent implements OnInit {
   }
 
   _updateBitCloutExchangeRate() {
-    this.backendApi.GetExchangeRate(this.globalVars.localNode).subscribe(
-      (res: any) => {
-        this.globalVars.satoshisPerBitCloutExchangeRate = res.SatoshisPerBitCloutExchangeRate;
-
-        this.globalVars.NanosSold = res.NanosSold;
-        this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
-
-        this.globalVars.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
-        this.globalVars.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
-        this.globalVars.BuyBitCloutFeeBasisPoints = res.BuyBitCloutFeeBasisPoints;
-
-        const nanosPerUnit = 1e9;
-        this.globalVars.nanosPerUSDExchangeRate = nanosPerUnit / (this.globalVars.ExchangeUSDCentsPerBitClout / 100);
-        this.globalVars.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
-        this.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, null);
-        this.globalVars.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, 2);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+    this.globalVars._updateBitCloutExchangeRate();
   }
 
   _updateAppState() {
