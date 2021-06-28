@@ -833,4 +833,28 @@ export class GlobalVarsService {
     }
     return "app-page";
   }
+
+  _updateBitCloutExchangeRate() {
+    this.backendApi.GetExchangeRate(this.localNode).subscribe(
+      (res: any) => {
+        this.satoshisPerBitCloutExchangeRate = res.SatoshisPerBitCloutExchangeRate;
+
+        this.NanosSold = res.NanosSold;
+        this.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
+
+        this.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
+        this.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
+        this.BuyBitCloutFeeBasisPoints = res.BuyBitCloutFeeBasisPoints;
+
+        const nanosPerUnit = 1e9;
+        this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerBitClout / 100);
+        this.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
+        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, null);
+        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, 2);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
 }
