@@ -1,6 +1,7 @@
 <a
   class="container d-flex align-items-center fs-15px p-10px border-color-grey link--unstyled"
   [ngClass]="{ 'border-bottom': !singleColumn }"
+  [ngStyle]="{ 'cursor': !profile.Username ? 'default' : '' }"
   (click)="onClick()"
 >
   <div class="row no-gutters w-100">
