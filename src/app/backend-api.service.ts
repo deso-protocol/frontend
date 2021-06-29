@@ -112,6 +112,7 @@ export class ProfileEntryResponse {
     CoinsInCirculationNanos: number;
     CreatorBasisPoints: number;
   };
+  CoinPriceBitCloutNanos?: number;
   StakeMultipleBasisPoints?: number;
   PublicKeyBase58Check?: string;
   UsersThatHODL?: any;

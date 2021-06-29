@@ -74,7 +74,7 @@ export class SearchBarComponent implements OnInit {
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
             this.loading = false;
             // a 404 occurs for anonymous public keys.
-            if (err.status === 404 && this.startingSearchText) {
+            if (err.status === 404 && this.globalVars.isMaybePublicKey(requestedSearchText)) {
               const anonProfile = { PublicKeyBase58Check: requestedSearchText, Username: "", Description: "" };
               this.creators = [anonProfile];
               // If starting search text is set, we handle the selection of the creator.
