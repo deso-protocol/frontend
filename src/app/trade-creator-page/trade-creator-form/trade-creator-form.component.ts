@@ -425,7 +425,9 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       // of this component (computing the max), it's 0
       this.creatorCoinTrade.currentFeeForSellNanos = 0;
       if (
-        this.globalVars.loggedInUser.PublicKeyBase58Check === this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check
+        this.globalVars.loggedInUser.PublicKeyBase58Check ===
+          this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
+        !this.creatorCoinTrade.isCreatorCoinTransfer()
       ) {
         const hodlersCount = this.globalVars.loggedInUser.UsersWhoHODLYouCount;
         SwalHelper.fire({
