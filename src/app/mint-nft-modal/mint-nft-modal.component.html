@@ -1,11 +1,8 @@
 <div app-theme class="nft-modal-container p-15px">
-  <div class="w-100 d-flex justify-content-between py-15px">
-    <div class="fs-20px d-flex align-items-center font-weight-500">Collectible Settings</div>
-    <div class="fs-25px cursor-pointer pr-15px" (click)="bsModalRef.hide()">&times;</div>
-  </div>
+  <nft-modal-header [header]="'Collectible Settings'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
   <!-- Type of Collectible -->
-  <div class="d-flex align-items-center fs-15px text-grey7">
+  <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
     <div class="pr-5px">Type of Collectible</div>
     <div class="flex-grow-1 nft-modal-separator"></div>
   </div>

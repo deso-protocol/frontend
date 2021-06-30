@@ -7,7 +7,7 @@
   <!-- The messages are received from the backend encrypted. If we have the unencrypted
        text stored we use that instead. -->
   <div
-    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
+    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color disable-scrollbars"
     style="white-space: pre-wrap; overflow-wrap: anywhere"
   >{{
       globalVars.messageMeta.decryptedMessgesMap[
@@ -57,7 +57,7 @@
   <!--"Pre-wrap" allows us to render new lines properly-->
   <!-- Messages that the user receives can be returned from the backend unencrypted. -->
   <div
-    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height background-color-light-grey"
+    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height background-color-light-grey disable-scrollbars"
     style="white-space: pre-wrap; overflow-wrap: anywhere"
   >{{ message.DecryptedText }}
   </div>

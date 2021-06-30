@@ -1,13 +1,9 @@
 <div app-theme class="nft-modal-container p-15px">
-  <div class="w-100 d-flex justify-content-between py-15px">
-    <div class="fs-20px d-flex align-items-center font-weight-500">Create an Auction</div>
-    <div class="fs-25px cursor-pointer pr-15px" (click)="bsModalRef.hide()">&times;</div>
-  </div>
-
+  <nft-modal-header [header]="'Create an Auction'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
   <!-- Pricing -->
-  <div class="pb-30px font-weight-500">
-    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
+  <div class="pt-15px pb-30px font-weight-500">
+    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
       <div>
         Minimum price <span class="text-grey7">(Optional)</span>
       </div>

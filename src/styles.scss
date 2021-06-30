@@ -240,6 +240,7 @@ $green-font-color: #19B028;
 .fs-10px { font-size: 10px !important; }
 // line heights
 .lh-24px { line-height: 24px; }
+.lh-20px { line-height: 20px; }
 .lh-18px { line-height: 18px; }
 .lh-16px { line-height: 16px; }
 .lh-15px { line-height: 15px; }
@@ -344,7 +345,7 @@ $green-font-color: #19B028;
 .px-0px { padding-left: 0px; padding-right: 0px;}
 
 // Custom margin classes.
-.m-0px { margin: 0px; }
+.m-0px { margin: 0px !important; }
 .mt-0px { margin-top: 0px; }
 .mr-0px { margin-right: 0px; }
 .mb-0px { margin-bottom: 0px !important; }
@@ -369,6 +370,8 @@ $green-font-color: #19B028;
 .mr-15px { margin-right: 15px; }
 .mb-15px { margin-bottom: 15px; }
 .ml-15px { margin-left: 15px; }
+.mx-15px { margin-left: 15px; margin-right: 15px; }
+.my-15px { margin-top: 15px; margin-bottom: 15px; }
 
 .m-20px { margin: 20px; }
 .mt-20px { margin-top: 20px; }
@@ -395,6 +398,7 @@ $green-font-color: #19B028;
 .my-30px { margin-top: 30px; margin-bottom: 30px; }
 
 .br-3px { border-radius: 3px; }
+.br-8px { border-radius: 8px; }
 .br-12px { border-radius: $feed-border-radius; }
 
 .vh-100 { height: 100vh !important; }

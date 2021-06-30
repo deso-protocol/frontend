@@ -10,6 +10,10 @@ import { AuctionCreatedModalComponent } from "../../auction-created-modal/auctio
 import { BidPlacedModalComponent } from "../../bid-placed-modal/bid-placed-modal.component";
 import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
 import { SelectSerialNumberModalComponent } from "../../select-serial-number-modal/select-serial-number-modal.component";
+import { NftSoldModalComponent } from "../../nft-sold-modal/nft-sold-modal.component";
+import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
+import { SellNftModalComponent } from "../../sell-nft-modal/sell-nft-modal.component";
+import { AddUnlockableModalComponent } from "../../add-unlockable-modal/add-unlockable-modal.component";
 
 @Component({
   selector: "feed-post-dropdown",
@@ -33,11 +37,7 @@ export class FeedPostDropdownComponent {
     private platformLocation: PlatformLocation
   ) {}
 
-  ngOnInit(): void {
-    this.modalService.show(SelectSerialNumberModalComponent, {
-      class: "modal-dialog-centered modal-lg",
-    });
-  }
+  ngOnInit(): void {}
 
   reportPost() {
     window.open(
@@ -132,12 +132,6 @@ export class FeedPostDropdownComponent {
     this.modalService.show(MintNftModalComponent, {
       class: "modal-dialog-centered modal-lg",
       initialState: { postHashHex: this.post.PostHashHex },
-    });
-  }
-
-  openCreateAuctionModal() {
-    this.modalService.show(CreateNftAuctionModalComponent, {
-      class: "modal-dialog-centered modal-lg",
     });
   }
 }

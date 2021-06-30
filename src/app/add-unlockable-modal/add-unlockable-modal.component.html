@@ -1,0 +1,25 @@
+<div app-theme class="nft-modal-container p-15px">
+  <nft-modal-header [header]="'Add unlockable content'" [bsModalRef]="bsModalRef"></nft-modal-header>
+ 
+  <div class="fs-15px pt-15px pb-30px text-grey5">
+    This NFT includes unlockable content. Enter it below to share it with <span class="font-weight-500">@lazynina</span>.
+  </div>
+
+    <textarea
+      class="fs-15px lh-18px br-8px form-control mb-30px"
+      style="border: 1px solid #777; width: 100%; padding: 10px"
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="5"
+      #autosize="cdkTextareaAutosize"
+      placeholder="Enter URL, code to redeem, link, etc... "
+    ></textarea>
+
+  <div class="d-flex align-items-center mb-15px">
+    <button
+      class="btn btn-primary font-weight-bold fs-15px br-8px"
+      style="height: 36px; width: 100px; line-height: 15px"
+    >
+      Add
+    </button>
+  </div>
+</div>
