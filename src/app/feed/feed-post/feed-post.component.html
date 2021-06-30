@@ -174,11 +174,15 @@
           <!-- Desktop follow button-->
           <follow-button
             *ngIf="!hideFollowLink"
-            class="ml-10px fs-12px d-lg-block d-none text-grey5"
+            class="ml-10px fs-12px d-lg-block d-none text-grey5 pr-5px"
             [displayAsLink]="true"
             [followLinkClass]="'link--unstyled'"
             [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
           ></follow-button>
+
+          <span *ngIf="post.IsPinned && includeVisualPin" class="ml-1 text-primary pl-5px">
+            <i class="fas fa-thumbtack fa-md align-middle"></i>
+          </span>
 
           <feed-post-dropdown
             *ngIf="showDropdown && !reclouterProfile"
@@ -188,7 +192,8 @@
             (postHidden)="hidePost()"
             (userBlocked)="blockUser()"
             (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
-            (togglePostPin)="_pinPostToGlobalFeed($event)"
+            (toggleFeedPostPin)="_pinPostToGlobalFeed($event)"
+            (toggleProfilePostPin)="pinPostToProfile($event)"
           ></feed-post-dropdown>
         </div>
 

@@ -56,7 +56,7 @@
           [showReplyingToContent]="!!post.parentPost"
           [parentPost]="post.parentPost"
           [contentShouldLinkToThread]="true"
-          [showLeftSelectedBorder]="post.IsPinned"
+          [showLeftSelectedBorder]="post.IsGlobalPinned"
           [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
           (postDeleted)="onPostHidden($event)"
           (userBlocked)="userBlocked()"

@@ -13,6 +13,7 @@ import * as _ from "lodash";
 })
 export class CreatorProfilePostsComponent {
   static PAGE_SIZE = 10;
+  static MAX_PINNED_POSTS = 5;
   @Input() profile: ProfileEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
   @Input() showProfileAsReserved: boolean;
@@ -104,7 +105,8 @@ export class CreatorProfilePostsComponent {
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         lastPostHashHex,
         CreatorProfilePostsComponent.PAGE_SIZE,
-        false /*MediaRequired*/
+        false /*MediaRequired*/,
+        CreatorProfilePostsComponent.MAX_PINNED_POSTS,
       )
       .toPromise()
       .then((res) => {

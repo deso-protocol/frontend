@@ -122,6 +122,7 @@ export class FeedPostIconRowComponent {
         {},
         "" /*Sub*/,
         false /*IsHidden*/,
+        false,
         // What should the fee rate be for this?
         this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
       )
@@ -171,6 +172,7 @@ export class FeedPostIconRowComponent {
         {},
         "" /*Sub*/,
         true /*IsHidden*/,
+        false,
         // What should the fee rate be for this?
         this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
       )

@@ -16,7 +16,8 @@ export class FeedPostDropdownComponent {
   @Output() postHidden = new EventEmitter();
   @Output() userBlocked = new EventEmitter();
   @Output() toggleGlobalFeed = new EventEmitter();
-  @Output() togglePostPin = new EventEmitter();
+  @Output() toggleFeedPostPin = new EventEmitter();
+  @Output() toggleProfilePostPin = new EventEmitter();
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -70,11 +71,11 @@ export class FeedPostDropdownComponent {
   }
 
   showPinPostToGlobalFeedDropdownItem(): boolean {
-    return this.globalFeedEligible() && !this.post.IsPinned;
+    return this.globalFeedEligible() && !this.post.IsGlobalPinned;
   }
 
   showUnpinPostFromGlobalFeedDropdownItem(): boolean {
-    return this.globalFeedEligible() && this.post.IsPinned;
+    return this.globalFeedEligible() && this.post.IsGlobalPinned;
   }
 
   showPinToProfileDropdownItem(): boolean {
@@ -100,7 +101,11 @@ export class FeedPostDropdownComponent {
   }
 
   _pinPostToGlobalFeed(event: any) {
-    this.togglePostPin.emit(event);
+    this.toggleFeedPostPin.emit(event);
+  }
+
+  _pinPostToProfile(event: any) {
+    this.toggleProfilePostPin.emit(event);
   }
 
   copyPostLinkToClipboard(event) {

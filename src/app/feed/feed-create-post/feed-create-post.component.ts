@@ -171,6 +171,7 @@ export class FeedCreatePostComponent implements OnInit {
         // TODO: Should we have different values for creator basis points and stake multiple?
         // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
         false /*IsHidden*/,
+        false,
         this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/
       )
       .subscribe(
