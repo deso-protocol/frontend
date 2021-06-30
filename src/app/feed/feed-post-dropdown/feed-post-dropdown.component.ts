@@ -131,7 +131,7 @@ export class FeedPostDropdownComponent {
     event.stopPropagation();
     this.modalService.show(MintNftModalComponent, {
       class: "modal-dialog-centered modal-lg",
-      initialState: { postHashHex: this.post.PostHashHex },
+      initialState: { post: this.post },
     });
   }
 }
