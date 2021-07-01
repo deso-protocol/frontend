@@ -63,6 +63,7 @@ header @html Content-Security-Policy "
     identity.bitclout.green
     https://geo.captcha-delivery.com
     https://www.youtube.com
+    https://youtube.com
     https://player.vimeo.com
     https://www.tiktok.com
     https://giphy.com
