@@ -53,6 +53,9 @@ export class BackendRoutes {
   static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
   static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
 
+  // NFT routes.
+  static RoutePathCreateNft = "/api/v0/create-nft";
+
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
   static ReprocessBitcoinBlockRoute = "/api/v0/admin/reprocess-bitcoin-block";
@@ -637,6 +640,33 @@ export class BackendApiService {
         return this.post(endpoint, BackendRoutes.RoutePathUploadImage, formData);
       })
     );
+  }
+
+  CreateNft(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    NumCopies: number,
+    NFTRoyaltyToCreatorBasisPoints: number,
+    NFTRoyaltyToCoinBasisPoints: number,
+    HasUnlockable: boolean,
+    IsForSale: boolean,
+    MinBidAmountNanos: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCreateNft, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      NumCopies,
+      NFTRoyaltyToCreatorBasisPoints,
+      NFTRoyaltyToCoinBasisPoints,
+      HasUnlockable,
+      IsForSale,
+      MinBidAmountNanos,
+      MinFeeRateNanosPerKB
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
   SubmitPost(

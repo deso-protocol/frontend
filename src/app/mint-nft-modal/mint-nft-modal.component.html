@@ -28,7 +28,7 @@
          [(ngModel)]="numCopies"
          *ngIf="copiesRadioValue === IS_MULTIPLE_COPIES"
          class="form-control fs-15px text-right d-inline-block" 
-         style="max-width: 200px"
+         style="max-width: 190px"
          type="number"
          min=1 max=1000
          placeholder="0"/>
@@ -36,7 +36,7 @@
       <input 
          *ngIf="copiesRadioValue === IS_SINGLE_COPY"
          class="form-control fs-15px text-right d-inline-block" 
-         style="max-width: 200px; background-color: #e9ecef !important;"
+         style="max-width: 190px; background-color: #e9ecef !important;"
          placeholder="0"
          disabled/>
     </div>
@@ -46,12 +46,12 @@
     </div>
   </div>
 
-  <!-- Price and Royalties -->
+  <!-- Sale Status and Price -->
   <div class="d-flex align-items-center fs-15px text-grey7">
-    <div class="pr-5px">Price and Royalties</div>
+    <div class="pr-5px">Sale Status and Price</div>
     <div class="flex-grow-1 nft-modal-separator"></div>
   </div>
-  <div class="pt-20px pb-30px font-weight-500">
+  <div class="pb-30px pt-15px font-weight-500">
     <div class="d-flex justify-content-between align-items-center fs-15px">
       <div>Put it on sale</div>
       <div class="custom-control custom-switch custom-switch-lg">
@@ -59,6 +59,51 @@
         <label class="custom-control-label" for="customSwitch1"></label>
       </div>
     </div>
+    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
+      <div>
+        Minimum Bid
+      </div>
+      <div class="d-flex flex-wrap">
+        <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
+             [ngStyle]="{'max-width': !globalVars.isMobile() ? '250px' : 'none'}">
+          <div class="input-group-prepend" id="usd-label">
+            <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
+          </div>
+          <input 
+             [(ngModel)]="minBidAmountUSD"
+             (ngModelChange)="updateMinBidAmountCLOUT($event)"
+             [ngStyle]="{'max-width': !globalVars.isMobile() ? '250px' : 'none'}"
+             aria-describedby="usd-label"
+             class="form-control fs-15px text-right d-inline-block" 
+             type="number" min="0"
+             placeholder="0"/>
+        </div>
+        <div class="input-group py-5px"
+             [ngStyle]="{'max-width': !globalVars.isMobile() ? '250px' : 'none'}">
+          <div class="input-group-prepend" id="clout-label">
+            <span class="input-group-text fs-15px">CLOUT</span>
+          </div>
+          <input 
+             [(ngModel)]="minBidAmountCLOUT"
+             (ngModelChange)="updateMinBidAmountUSD($event)"
+             aria-describedby="clout-label"
+             class="form-control fs-15px text-right d-inline-block" 
+             type="number" min="0"
+             placeholder="0"/>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="hasUnreasonableMinBidAmount()" class="fs-15px fc-red pt-15px">
+      The minimum bid must be greater than or equal to zero.
+    </div>
+  </div>
+
+  <!-- Royalties -->
+  <div class="d-flex align-items-center fs-15px text-grey7">
+    <div class="pr-5px">Royalties</div>
+    <div class="flex-grow-1 nft-modal-separator"></div>
+  </div>
+  <div class="pt-20px pb-30px font-weight-500">
     <div class="d-flex justify-content-between align-items-center fs-15px pt-10px">
       <div>
         % Creator Royalty
@@ -66,7 +111,7 @@
       <input 
          [(ngModel)]="creatorRoyaltyPercent"
          class="form-control fs-15px text-right d-inline-block" 
-         style="max-width: 200px"
+         style="max-width: 190px"
          type="number"
          min="0" max="100"
          placeholder="0%"/>
@@ -78,7 +123,7 @@
       <input 
          [(ngModel)]="coinRoyaltyPercent"
          class="form-control fs-15px text-right d-inline-block" 
-         style="max-width: 200px; background-color: white"
+         style="max-width: 190px; background-color: white"
          type="number"
          min="0" max="100"
          placeholder="0%"/>
@@ -88,7 +133,7 @@
     </div>
   </div>
 
-  <!-- Price and Royalties -->
+  <!-- Unlockable Content -->
   <div class="d-flex align-items-center fs-15px text-grey7">
     <div class="pr-5px">Unlockable Content</div>
     <div class="flex-grow-1 nft-modal-separator"></div>
@@ -106,14 +151,16 @@
     </div>
   </div>
 
-    <button
-      [disabled]="hasUnreasonableRoyalties() || hasUnreasonableNumCopies()"
-      class="btn btn-primary font-weight-bold fs-15px br-12px mb-15px"
-      style="height: 36px; width: 120px; line-height: 15px"
-    >
-      Mint NFT
-    </button>
-    <div *ngIf="hasUnreasonableRoyalties() || hasUnreasonableNumCopies()" class="fs-15px fc-red">
-      Please correct the errors above.
-    </div>
+  <button
+    [disabled]="hasUnreasonableRoyalties() || hasUnreasonableNumCopies() || hasUnreasonableMinBidAmount()"
+    (click)="mintNft()"
+    class="btn btn-primary font-weight-bold fs-15px br-12px mb-15px"
+    style="height: 36px; width: 120px; line-height: 15px"
+  >
+    Mint NFT
+  </button>
+  <div *ngIf="successfulMinting">success</div>
+  <div *ngIf="failedMinting">failure</div>
+
+  <simple-center-loader *ngIf="minting"></simple-center-loader>
 </div>

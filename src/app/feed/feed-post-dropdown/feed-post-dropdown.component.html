@@ -15,8 +15,7 @@
     </a>
     <a
       *ngIf="globalVars.loggedInUser 
-        && globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check
-        && !post.IsNFT"
+        && globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check"
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
       (click)="openMintNftModal($event)"
     >

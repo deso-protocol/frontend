@@ -396,6 +396,10 @@ export class GlobalVarsService {
     return nanos / this.nanosPerUSDExchangeRate;
   }
 
+  usdToNanosNumber(usdAmount: number): number {
+    return usdAmount * this.nanosPerUSDExchangeRate;
+  }
+
   nanosToUSD(nanos: number, decimal?: number): string {
     if (decimal == null) {
       decimal = 4;

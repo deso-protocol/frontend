@@ -4,6 +4,8 @@ import { PostEntryResponse } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
 import { BsModalService } from "ngx-bootstrap/modal";
+
+// RPH Modals
 import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.component";
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
 import { AuctionCreatedModalComponent } from "../../auction-created-modal/auction-created-modal.component";
