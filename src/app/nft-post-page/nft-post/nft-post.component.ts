@@ -1,11 +1,13 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { ToastrService } from "ngx-toastr";
+import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { Title } from "@angular/platform-browser";
-import {BsModalService} from "ngx-bootstrap/modal";
-import {PlaceBidModalComponent} from "../../place-bid-modal/place-bid-modal.component";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
+import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { RouteNames } from "../../app-routing.module";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "nft-post",
@@ -13,7 +15,7 @@ import {PlaceBidModalComponent} from "../../place-bid-modal/place-bid-modal.comp
   styleUrls: ["./nft-post.component.scss"],
 })
 export class NftPostComponent implements OnInit {
-  nftPost;
+  nftPost: PostEntryResponse;
   nftPostHashHex: string;
   scrollingDisabled = false;
   commentLimit = 20;
@@ -34,7 +36,8 @@ export class NftPostComponent implements OnInit {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private modalService: BsModalService,
-    private titleService: Title
+    private titleService: Title,
+    private location: Location
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -72,6 +75,28 @@ export class NftPostComponent implements OnInit {
       (res) => {
         if (!res || !res.PostFound) {
           this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          return;
+        }
+        if (!res.PostFound.IsNFT) {
+          SwalHelper.fire({
+            target: this.globalVars.getTargetComponentSelector(),
+            title: "This post is not an NFT",
+            showConfirmButton: true,
+            showCancelButton: true,
+            customClass: {
+              confirmButton: "btn btn-light",
+              cancelButton: "btn btn-light no",
+            },
+            confirmButtonText: "View Post",
+            cancelButtonText: "Go back",
+            reverseButtons: true,
+          }).then((res) => {
+            if (res.isConfirmed) {
+              this.router.navigate(["/" + RouteNames.POSTS + "/" + this.nftPost.PostHashHex]);
+              return;
+            }
+            this.location.back();
+          });
           return;
         }
         // Set current post
