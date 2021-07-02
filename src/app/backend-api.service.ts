@@ -55,6 +55,9 @@ export class BackendRoutes {
 
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
+  static RoutePathUpdateNFT = "/api/v0/update-nft";
+  static RoutePathCreateNFTBid = "/api/v0/create-nft-bid";
+  static RoutePathAcceptNFTBid = "/api/v0/accept-nft-bid";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -182,6 +185,11 @@ export class PostEntryResponse {
   InMempool: boolean;
   IsPinned: boolean;
   DiamondsFromSender?: number;
+  NumNFTCopies: number;
+  HasUnlockable: boolean;
+  IsNFT: boolean;
+  NFTRoyaltyToCoinBasisPoints: number;
+  NFTRoyaltyToCreatorBasisPoints: number;
 }
 
 export class DiamondsPost {
@@ -663,9 +671,27 @@ export class BackendApiService {
       HasUnlockable,
       IsForSale,
       MinBidAmountNanos,
-      MinFeeRateNanosPerKB
+      MinFeeRateNanosPerKB,
     });
 
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  CreateNFTBid(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    BidAmountNanos: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCreateNFTBid, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
+      BidAmountNanos,
+      MinFeeRateNanosPerKB,
+    });
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
