@@ -279,7 +279,7 @@ export class FeedPostComponent implements OnInit {
       .subscribe(
         (response) => {
           this._post.IsPinned = !this._post.IsPinned
-          this.globalVars.logEvent("post : profile pin");
+          this.globalVars.logEvent("post : profile-pin");
           },
         (err) => {
           console.error(err);
