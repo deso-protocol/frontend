@@ -284,7 +284,7 @@ export class FeedPostComponent implements OnInit {
         (err) => {
           console.error(err);
           const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars.logEvent("post : profile pin : error", { parsedError });
+          this.globalVars.logEvent("post : profile-pin : error", { parsedError });
           this.globalVars._alertError(parsedError);
         }
         );
