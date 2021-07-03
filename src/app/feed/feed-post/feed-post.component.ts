@@ -261,7 +261,6 @@ export class FeedPostComponent implements OnInit {
   }
 
   pinPostToProfile() {
-    this.ref.detectChanges();
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
