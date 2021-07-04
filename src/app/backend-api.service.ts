@@ -4,7 +4,7 @@
 // https://github.com/github/fetch#sending-cookies
 import { Injectable } from "@angular/core";
 import { Observable, of, throwError } from "rxjs";
-import { map, switchMap, catchError, mapTo } from "rxjs/operators";
+import { map, mergeMap, switchMap, catchError, mapTo } from "rxjs/operators";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 
@@ -517,14 +517,30 @@ export class BackendApiService {
     MessageText: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
-      SenderPublicKeyBase58Check,
-      RecipientPublicKeyBase58Check,
-      MessageText,
-      MinFeeRateNanosPerKB,
-    });
-
-    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+    //First encrypt message in identity
+    //Then pipe ciphertext to RoutePathSendMessageStateless
+    let req = this.identityService
+      .encrypt({
+        ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
+        recipientPubkey: RecipientPublicKeyBase58Check,
+        message: MessageText,
+      })
+      .pipe(
+        switchMap((encrypted) => {
+          const EncryptedMessageText = encrypted.encryptedMessage;
+          return this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
+            SenderPublicKeyBase58Check,
+            RecipientPublicKeyBase58Check,
+            EncryptedMessageText,
+            MinFeeRateNanosPerKB,
+          }).pipe(
+            map((request) => {
+              return { ...request };
+            })
+          );
+        })
+      );
+    return this.signAndSubmitTransaction(endpoint, req, SenderPublicKeyBase58Check);
   }
 
   // User-related functions.
@@ -921,27 +937,34 @@ export class BackendApiService {
     // create an array of messages to decrypt
     req = req.pipe(
       map((res) => {
-        const encryptedHexes = [];
+        // This array contains encrypted messages with public keys
+        // Public keys of the other party involved in the correspondence
+        const encryptedHexesAndPublicKeys = [];
         for (const threads of res.OrderedContactsWithMessages) {
           for (const message of threads.Messages) {
+            let payload = {
+              EncryptedHex: message.EncryptedText,
+              PublicKey: message.SenderPublicKeyBase58Check,
+              IsSender: message.IsSender,
+              V2: message.V2,
+            };
             if (message.IsSender) {
-              continue;
+              payload.PublicKey = message.RecipientPublicKeyBase58Check;
             }
-
-            encryptedHexes.push(message.EncryptedText);
+            encryptedHexesAndPublicKeys.push(payload);
           }
         }
-        return { ...res, encryptedHexes };
+        return { ...res, encryptedHexesAndPublicKeys };
       })
     );
 
     // decrypt all the messages
     req = req.pipe(
-      switchMap((res) =>
-        this.identityService
+      switchMap((res) => {
+        return this.identityService
           .decrypt({
             ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-            encryptedHexes: res.encryptedHexes,
+            encryptedHexesAndPublicKeys: res.encryptedHexesAndPublicKeys,
           })
           .pipe(
             map((decrypted) => {
@@ -953,8 +976,8 @@ export class BackendApiService {
 
               return { ...res, ...decrypted };
             })
-          )
-      )
+          );
+      })
     );
 
     return req.pipe(catchError(this._handleError));
