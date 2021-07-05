@@ -5,7 +5,7 @@
   <div class="pt-10px"></div>
 
   <!-- BitClout Price / Balance -->
-  <div class="right-bar-creators__balance-box br-12px p-15px mb-30px fs-13px text-grey5 font-weight-bold">
+  <div class="right-bar-creators__balance-box br-4px p-15px mb-30px fs-13px text-grey5 font-weight-bold">
     <div class="d-flex justify-content-between">
       <div>$CLOUT Price</div>
       <div>
@@ -49,7 +49,7 @@
       <select
         #rightBarSelect
         id="right-bar-chart-select"
-        class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer"
+        class="right-bar-select-box fs-15px text-grey5 font-weight-semibold cursor-pointer"
         [ngStyle]="{ width: selectedOptionWidth }"
         (change)="selectTab()"
         [(ngModel)]="activeTab"
@@ -57,7 +57,7 @@
         <option
           *ngFor="let option of RightBarCreatorsComponent.chartMap | keyvalue"
           [value]="option.key"
-          class="fs-15px text-grey5 font-weight-bold"
+          class="fs-14px pt-5px pb-5px pl-10px pr-10px text-grey5 font-weight-semibold"
         >
           {{ option.key }}
         </option>

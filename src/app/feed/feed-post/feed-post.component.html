@@ -132,7 +132,7 @@
       <!-- Avatar -->
       <div class="feed-post__avatar-container">
         <a
-          class="feed-post__avatar br-12px"
+          class="feed-post__avatar br-4px"
           [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
           [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
           queryParamsHandling="merge"
@@ -159,11 +159,11 @@
           <!-- Coin price-->
           <a
             style="padding: 3px"
-            class="ml-2 fs-12px font-weight-bold px-2 feed-post__coin-price-holder br-12px"
+            class="ml-2 fs-12px px-2 font-weight-semibold feed-post__coin-price-holder br-12px"
             [routerLink]="AppRoutingModule.buyCreatorPath(postContent.ProfileEntryResponse.Username)"
             queryParamsHandling="merge"
           >
-            <span class="text-grey5">
+            <span class="font-weight-bold text-grey5">
               ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
             </span>
 
@@ -261,7 +261,7 @@
 
         <div
           *ngIf="quotedContent && showQuotedContent"
-          class="border border-color-grey p-15px br-12px"
+          class="border border-color-grey p-15px br-4px"
           [ngClass]="{ 'feed-post__quoted-content': hoverable }"
         >
           <feed-post

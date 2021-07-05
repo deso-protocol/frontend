@@ -19,7 +19,7 @@
       </a>
       <div class="dropdown-menu dropdown-menu-right text-danger p-0" *dropdownMenu app-theme>
         <a
-          class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+          class="dropdown-menu-item d-block br-4px link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
         >
           <i class="fas fa-ban"></i>
@@ -43,22 +43,22 @@
         <!-- Show follow button-->
         <follow-button
           *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
-          [displayAsLink]="true"
+          [displayAsLink]="false"
           [followedPubKeyBase58Check]="profile.PublicKeyBase58Check"
         ></follow-button>
       </ng-template>
     </div>
 
     <a
-      class="btn btn-primary font-weight-bold ml-15px fs-14px"
-      style="height: 36px; width: 75px"
+      class="btn btn-primary pl-15px pr-15px  ml-15px fs-14px"
+      
       [routerLink]="AppRoutingModule.buyCreatorPath(profile.Username)"
       queryParamsHandling="merge"
     >
       Buy
     </a>
     <a
-      class="btn btn-danger font-weight-bold ml-15px fs-14px creator-profile-top-card__block-btn"
+      class="btn btn-danger pl-15px pr-15px ml-15px fs-14px creator-profile-top-card__block-btn"
       *ngIf="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
       (click)="unblock()"
     >

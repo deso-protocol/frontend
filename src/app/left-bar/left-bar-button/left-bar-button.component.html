@@ -1,6 +1,6 @@
-<div class="w-100 d-flex pt-15px pl-15px">
+<div class="w-100 d-flex" style="margin-left:-10px">
   <!-- I couldn't get "open in new tab" to work without the "; true" in (click) -->
-  <a
+  <!-- <a
     (click)="globalVars.isLeftBarMobileOpen = false; (true)"
     [routerLink]="[link]"
     [queryParams]="_queryParamsForLink(link)"
@@ -14,16 +14,16 @@
     }"
   >
     ·
-  </a>
+  </a> -->
 
-  <div class="d-flex justify-content-center align-items-center">
+  <div class="d-flex justify-content-center w-100 align-items-center">
     <!-- I couldn't get "open in new tab" to work without the "; true" in (click) -->
     <a
-      class="cursor-pointer fs-15px text-grey5"
+      class="left-bar-button__link br-4px d-block w-100 cursor-pointer fs-15px text-grey5"
       (click)="globalVars.isLeftBarMobileOpen = false; (true)"
       [routerLink]="[link]"
       [queryParams]="_queryParamsForLink(link)"
-      [routerLinkActive]="['font-weight-bold', 'fc-default']"
+      [routerLinkActive]="['font-weight-bold', 'fc-default', 'left-bar-button__link-active']"
       queryParamsHandling="merge"
     >
       {{ buttonLabel }}

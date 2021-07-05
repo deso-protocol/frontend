@@ -25,7 +25,7 @@
           'feed-create-post__textarea': !parentPost,
           'm-5px': !parentPost,
           'p-0': !parentPost,
-          'br-12px': parentPost,
+          'br-4px': parentPost,
           'lh-18px': parentPost
         }"
         class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
@@ -38,13 +38,13 @@
       ></textarea>
       <!-- Post image -->
       <div class="feed-post__image-container" *ngIf="!isComment && postImageSrc">
-        <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
+        <i class="icon-close feed-create-post__icon feed-post__image-delete" (click)="postImageSrc = null"></i>
         <img class="feed-post__image" src="{{ postImageSrc }}" />
       </div>
       <!-- Embedded Content -->
-      <div class="feed-post__embed-container" *ngIf="constructedEmbedURL">
+      <div class="feed-post__embed-container mb-20px" *ngIf="constructedEmbedURL">
         <i
-          class="icon-close feed-post__image-delete"
+          class="icon-close br-4px feed-post__image-delete"
           (click)="embedURL = ''; showEmbedURL = false; constructedEmbedURL = ''"
         ></i>
         <iframe
@@ -61,7 +61,7 @@
 </div>
 <div class="flex-fill px-15px br-10px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showEmbedURL">
   <input
-    class="br-3px"
+    class="br-4px feed-create-post__embed-url p-10px"
     type="url"
     [(ngModel)]="embedURL"
     (ngModelChange)="setEmbedURL()"
@@ -82,21 +82,21 @@
     {{ postInput.length }} / {{ GlobalVarsService.MAX_POST_LENGTH }}
   </span>
   <i
-    class="fas fa-code fa-lg text-grey8A cursor-pointer"
-    style="font-size: 18px"
-    [ngClass]="{'pr-15px': !isComment}"
+    class="fas fa-code br-4px feed-create-post__icon fa-lg text-dark cursor-pointer"
+    style="font-size: 16px"
+    [ngClass]="{'mr-15px': !isComment}"
     (click)="showEmbedURL = !showEmbedURL"
   ></i>
   <div *ngIf="!isComment">
     <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
     <i
-      class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
+      class="far fa-image fa-lg text-dark feed-create-post__icon cursor-pointer br-4px feed-create-post__image-icon"
       (click)="imageInput.click()"
     ></i>
   </div>
   <button
-    class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
-    style="height: 36px; width: 75px; line-height: 15px"
+    class="btn btn-dark ml-15px pl-15px pr-15px fs-14px br-4px"
+    style="line-height: 15px"
     [ngClass]="{
       disabled: (postInput.length <= 0 && !postImageSrc) || characterCountExceedsMaxLength(),
       'btn-loading': submittingPost
