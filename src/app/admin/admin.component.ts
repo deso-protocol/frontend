@@ -36,27 +36,27 @@ export class AdminComponent implements OnInit {
   searchingForPostsByClout = false;
   @Input() isMobile = false;
 
-  blacklistPubKeyOrUsername = "";
-  graylistPubKeyOrUsername = "";
+  banlistPubKeyOrUsername = "";
+  restrictPubKeyOrUsername = "";
   unrestrictPubKeyOrUsername = "";
-  whitelistPubKeyOrUsername = "";
-  unwhitelistPubKeyOrUsername = "";
+  grantlistPubKeyOrUsername = "";
+  ungrantlistPubKeyOrUsername = "";
   removePhonePubKeyorUsername = "";
 
   updateProfileSuccessType = "";
-  whitelistUpdateSuccess = false;
-  unwhitelistUpdateSuccess = false;
+  grantlistUpdateSuccess = false;
+  ungrantlistUpdateSuccess = false;
 
   clearSuccessTimeout: any;
-  whitelistSuccessTimeout: any;
-  unwhitelistSuccessTimeout: any;
+  grantlistSuccessTimeout: any;
+  ungrantlistSuccessTimeout: any;
 
   submittingProfileUpdateType = "";
-  submittingBlacklistUpdate = false;
-  submittingGraylistUpdate = false;
+  submittingBanlistUpdate = false;
+  submittingRestrictUpdate = false;
   submittingUnrestrictUpdate = false;
-  submittingWhitelistUpdate = false;
-  submittingUnwhitelistUpdate = false;
+  submittingGrantlistUpdate = false;
+  submittingUngrantlistUpdate = false;
   submittingEvictUnminedBitcoinTxns = false;
   submittingUSDToBitCloutReserveExchangeRateUpdate = false;
   submittingBuyBitCloutFeeRate = false;
@@ -503,18 +503,18 @@ export class AdminComponent implements OnInit {
     clearTimeout(this.clearSuccessTimeout);
 
     // Determine what variables to set based on the button pressed.
-    if (level === "blacklist") {
-      console.log("Blacklisting Pub Key: " + this.blacklistPubKeyOrUsername);
-      targetPubKeyOrUsername = this.blacklistPubKeyOrUsername;
+    if (level === "banlist") {
+      console.log("Banlisting Pub Key: " + this.banlistPubKeyOrUsername);
+      targetPubKeyOrUsername = this.banlistPubKeyOrUsername;
       removeEverywhere = true;
       removeFromLeaderboard = true;
-      this.submittingBlacklistUpdate = true;
-    } else if (level === "graylist") {
-      console.log("Graylisting Pub Key: " + this.graylistPubKeyOrUsername);
-      targetPubKeyOrUsername = this.graylistPubKeyOrUsername;
+      this.submittingBanlistUpdate = true;
+    } else if (level === "restrict") {
+      console.log("Restricting Pub Key: " + this.restrictPubKeyOrUsername);
+      targetPubKeyOrUsername = this.restrictPubKeyOrUsername;
       removeEverywhere = false;
       removeFromLeaderboard = true;
-      this.submittingGraylistUpdate = true;
+      this.submittingRestrictUpdate = true;
     } else if (level === "unrestrict") {
       console.log("Unrestricting Pub Key: " + this.unrestrictPubKeyOrUsername);
       targetPubKeyOrUsername = this.unrestrictPubKeyOrUsername;
@@ -560,12 +560,12 @@ export class AdminComponent implements OnInit {
         }
       )
       .add(() => {
-        if (level === "blacklist") {
-          this.submittingBlacklistUpdate = false;
-          this.blacklistPubKeyOrUsername = "";
-        } else if (level === "graylist") {
-          this.submittingGraylistUpdate = false;
-          this.graylistPubKeyOrUsername = "";
+        if (level === "banlist") {
+          this.submittingBanlistUpdate = false;
+          this.banlistPubKeyOrUsername = "";
+        } else if (level === "restrict") {
+          this.submittingRestrictUpdate = false;
+          this.banlistPubKeyOrUsername = "";
         } else if (level === "unrestrict") {
           this.submittingUnrestrictUpdate = false;
           this.unrestrictPubKeyOrUsername = "";
@@ -573,17 +573,17 @@ export class AdminComponent implements OnInit {
       });
   }
 
-  whitelistClicked() {
+  grantlistClicked() {
     let pubKey = "";
     let username = "";
-    this.submittingWhitelistUpdate = true;
-    clearTimeout(this.whitelistSuccessTimeout);
+    this.submittingGrantlistUpdate = true;
+    clearTimeout(this.grantlistSuccessTimeout);
 
     // Decipher whether the target string is a pub key or username.
-    if (this.globalVars.isMaybePublicKey(this.whitelistPubKeyOrUsername)) {
-      pubKey = this.whitelistPubKeyOrUsername;
+    if (this.globalVars.isMaybePublicKey(this.grantlistPubKeyOrUsername)) {
+      pubKey = this.grantlistPubKeyOrUsername;
     } else {
-      username = this.whitelistPubKeyOrUsername;
+      username = this.grantlistPubKeyOrUsername;
     }
 
     this.backendApi
@@ -601,9 +601,9 @@ export class AdminComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.whitelistUpdateSuccess = true;
-          this.whitelistSuccessTimeout = setTimeout(() => {
-            this.whitelistUpdateSuccess = false;
+          this.grantlistUpdateSuccess = true;
+          this.grantlistSuccessTimeout = setTimeout(() => {
+            this.grantlistUpdateSuccess = false;
           }, 1000);
         },
         (err) => {
@@ -611,22 +611,22 @@ export class AdminComponent implements OnInit {
         }
       )
       .add(() => {
-        this.submittingWhitelistUpdate = false;
-        this.whitelistPubKeyOrUsername = "";
+        this.submittingGrantlistUpdate = false;
+        this.grantlistPubKeyOrUsername = "";
       });
   }
 
-  unwhitelistClicked() {
+  ungrantlistClicked() {
     let pubKey = "";
     let username = "";
-    this.submittingUnwhitelistUpdate = true;
-    clearTimeout(this.unwhitelistSuccessTimeout);
+    this.submittingUngrantlistUpdate = true;
+    clearTimeout(this.ungrantlistSuccessTimeout);
 
     // Decipher whether the target string is a pub key or username.
-    if (this.globalVars.isMaybePublicKey(this.unwhitelistPubKeyOrUsername)) {
-      pubKey = this.unwhitelistPubKeyOrUsername;
+    if (this.globalVars.isMaybePublicKey(this.ungrantlistPubKeyOrUsername)) {
+      pubKey = this.ungrantlistPubKeyOrUsername;
     } else {
-      username = this.unwhitelistPubKeyOrUsername;
+      username = this.ungrantlistPubKeyOrUsername;
     }
 
     this.backendApi
@@ -644,9 +644,9 @@ export class AdminComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.unwhitelistUpdateSuccess = true;
-          this.unwhitelistSuccessTimeout = setTimeout(() => {
-            this.unwhitelistUpdateSuccess = false;
+          this.ungrantlistUpdateSuccess = true;
+          this.ungrantlistSuccessTimeout = setTimeout(() => {
+            this.ungrantlistUpdateSuccess = false;
           }, 1000);
         },
         (err) => {
@@ -654,8 +654,8 @@ export class AdminComponent implements OnInit {
         }
       )
       .add(() => {
-        this.submittingUnwhitelistUpdate = false;
-        this.unwhitelistPubKeyOrUsername = "";
+        this.submittingUngrantlistUpdate = false;
+        this.ungrantlistPubKeyOrUsername = "";
       });
   }
 
