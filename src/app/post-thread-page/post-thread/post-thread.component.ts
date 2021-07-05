@@ -41,10 +41,6 @@ export class PostThreadComponent {
     });
   }
 
-  ngOnInit() {
-    this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
-  }
-
   _rerenderThread() {
     // Force angular to re-render the whole thread tree by cloning currentPost
     // If we don't do this, the parent's commentCount won't always update (angular won't
@@ -307,6 +303,7 @@ export class PostThreadComponent {
         }
         // Set current post
         this.currentPost = res.PostFound;
+        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
       },
       (err) => {
         // TODO: post threads: rollbar

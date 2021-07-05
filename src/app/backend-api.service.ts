@@ -58,6 +58,7 @@ export class BackendRoutes {
   static RoutePathUpdateNFT = "/api/v0/update-nft";
   static RoutePathCreateNFTBid = "/api/v0/create-nft-bid";
   static RoutePathAcceptNFTBid = "/api/v0/accept-nft-bid";
+  static RoutePathGetNFTBidsForNFTPost = "/api/v0/get-nft-bids-for-nft-post";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -227,6 +228,29 @@ export class BalanceEntryResponse {
   NetBalanceInMempool: number;
 
   ProfileEntryResponse: ProfileEntryResponse;
+}
+
+export class NFTEntryResponse {
+  PostEntryResponse: PostEntryResponse | undefined;
+  SerialNumber: number;
+  IsForSale: boolean;
+  MinBidAmountNanos: number;
+  LastPrice?: number;
+}
+
+export class NFTBidEntryResponse {
+  PublicKeyBase58Check: string;
+  ProfileEntryResponse: ProfileEntryResponse;
+  PostEntryResponse: PostEntryResponse | undefined;
+  SerialNumber: number;
+  BidAmountNanos: number;
+  selected?: boolean;
+}
+
+export class NFTBidData {
+  PostEntryResponse: PostEntryResponse;
+  NFTEntryResponses: NFTEntryResponse[];
+  BidEntryResponses: NFTBidEntryResponse[];
 }
 
 @Injectable({
@@ -693,6 +717,39 @@ export class BackendApiService {
       MinFeeRateNanosPerKB,
     });
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  AcceptNFTBid(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    BidderPublicKeyBase58Check: string,
+    BidAmountNanos: number,
+    UnencryptedUnlockableText: string,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathAcceptNFTBid, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
+      BidderPublicKeyBase58Check,
+      BidAmountNanos,
+      UnencryptedUnlockableText,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  GetNFTBidsForNFTPost(
+    endpoint: string,
+    ReaderPublicKeyBase58Check: string,
+    PostHashHex: string
+  ): Observable<NFTBidData> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTBidsForNFTPost, {
+      ReaderPublicKeyBase58Check,
+      PostHashHex,
+    });
   }
 
   SubmitPost(
@@ -1486,12 +1543,14 @@ export class BackendApiService {
     USDCentsPerBitcoin: number,
     CreateProfileFeeNanos: number,
     MinimumNetworkFeeNanosPerKB: number,
+    MaxCopiesPerNFT: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateGlobalParams, UpdaterPublicKeyBase58Check, {
       UpdaterPublicKeyBase58Check,
       USDCentsPerBitcoin,
       CreateProfileFeeNanos,
+      MaxCopiesPerNFT,
       MinimumNetworkFeeNanosPerKB,
       MinFeeRateNanosPerKB,
       AdminPublicKey: UpdaterPublicKeyBase58Check,

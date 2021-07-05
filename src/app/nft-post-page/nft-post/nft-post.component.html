@@ -13,22 +13,6 @@
 
   <div class="global__top-bar__height"></div>
 
-<!--  <div *ngFor="let parentPost of nftPost.ParentPosts">-->
-<!--    &lt;!&ndash;  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a &ndash;&gt;-->
-<!--    &lt;!&ndash;  top-level post should be prepended to the post's list of comments &ndash;&gt;-->
-<!--    <feed-post-->
-<!--      [post]="parentPost"-->
-<!--      [includePaddingOnPost]="true"-->
-<!--      [contentShouldLinkToThread]="true"-->
-<!--      [afterCommentCreatedCallback]="updateCommentCountAndShowToast.bind(this, parentPost)"-->
-<!--      [isParentPostInThread]="true"-->
-<!--      [showThreadConnectionLine]="true"-->
-<!--      [blocked]="isPostBlocked(parentPost)"-->
-<!--      (postDeleted)="onPostHidden(nftPost, null, null)"-->
-<!--      (userBlocked)="afterUserBlocked($event)"-->
-<!--    ></feed-post>-->
-<!--  </div>-->
-
   <div class="border-bottom border-color-grey">
     <!--  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a -->
     <!--  top-level post should be prepended to the post's list of comments -->
@@ -46,8 +30,8 @@
   <div style="background-color: var(--border) !important" class="p-15px fs-15px pb-0">
     <div class="d-flex justify-content-between align-items-center" style="line-height: 24px">
       <div>
-        <span><b>{{ nftPost.NumNFTCopies }} of {{ nftPost.NumNFTCopies }} available &nbsp;</b></span>
-        <span *ngIf="!nftPost.HasUnlockable">|&nbsp;<i class="fas fa-lock"></i> Unlockable content</span>
+        <span><b>{{ availableSerialNumbers?.length }} of {{ nftPost.NumNFTCopies }} available &nbsp;</b></span>
+        <span *ngIf="nftPost.HasUnlockable">|&nbsp;<i class="fas fa-lock"></i> Unlockable content</span>
       </div>
       <div>
         <button
@@ -58,14 +42,78 @@
         </button>
       </div>
     </div>
-    <div style="line-height: 24px;">
-      Highest: x.xx $CLOUT ~$xx
+    <div style="line-height: 24px;" *ngIf="highBid">
+      Highest: {{ highBid / 1e9 }} $CLOUT ~{{ globalVars.nanosToUSD(highBid, 2) }}
     </div>
-    <div class="pt-5px" style="line-height: 24px;">
-      From: x.xx $CLOUT ~$xx
+    <div class="pt-5px" style="line-height: 24px;" *ngIf="lowBid">
+      From: {{ lowBid / 1e9 }} $CLOUT ~{{ globalVars.nanosToUSD(lowBid, 2) }}
     </div>
   </div>
   <div style="background-color: var(--border) !important;">
     <tab-selector [tabs]="tabs" [activeTab]="activeTab"></tab-selector>
+  </div>
+  <div *ngIf="!loading && !nftBidData.BidEntryResponses?.length" class="p-15px">
+    There are no bids yet.
+  </div>
+  <div *ngIf="!loading && nftBidData.BidEntryResponses?.length">
+    <div class="container d-flex align-items-center fs-15px p-15px border-bottom border-color-grey link--unstyled">
+      <div class="col-5 p-0">Bidder</div>
+      <div class="col-2 p-0" *ngIf="nftPost.NumNFTCopies > 1">Edition</div>
+      <div class="p-0" [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }">Bid Amount</div>
+    </div>
+    <div
+      class="container d-flex align-items-center fs-15px p-15px border-bottom border-color-grey link--unstyled"
+      *ngFor="let bidEntry of nftBidData.BidEntryResponses; let i = index">
+      <div class="row no-gutters w-100">
+        <div class="col-5 d-flex align-items-center mb-0 p-0">
+          <!-- checkbox or radio button -->
+          <input type="checkbox" style="width: 35px" *ngIf="nftPost.NumNFTCopies > 1" [(ngModel)]="bidEntry.selected" (ngModelChange)="checkSelectedBidEntries(bidEntry)"/> <!-- [(ngModel)]="selectedSerialNumbers[nft.SerialNumber]" (ngModelChange)="checkSelectionStatus($event)" -->
+          <input type="radio" style="width: 35px" *ngIf="nftPost.NumNFTCopies === 1" [value]="bidEntry" [(ngModel)]="selectedBid" (ngModelChange)="selectBidEntry(bidEntry)"/> <!-- [(ngModel)]/> -->
+          <!-- Avatar -->
+          <div class="simple-profile-card__avatar-container pl-10px">
+            <div
+              class="simple-profile-card__avatar br-12px"
+              [avatar]="bidEntry.PublicKeyBase58Check"
+            ></div>
+          </div>
+          <div class="text-truncate holdings__name fs-15px">
+            <div>
+              <div class="fc-default font-weight-bold text-truncate holdings__name fs-15px">{{ bidEntry.ProfileEntryResponse?.Username || bidEntry.PublicKeyBase58Check }}</div>
+              <span
+                *ngIf="bidEntry.ProfileEntryResponse?.IsVerified"
+                (click)="tooltip.toggle()"
+                class="ml-1 mb-1 cursor-pointer text-primary"
+                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                [matTooltip]="'This account is verified'"
+                #tooltip="matTooltip"
+              >
+            <i class="fas fa-check-circle fa-md align-middle"></i>
+          </span>
+            </div>
+            <div class="text-grey9" *ngIf="bidEntry.ProfileEntryResponse">
+              {{ globalVars.nanosToUSD(bidEntry.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+            </div>
+          </div>
+        </div>
+        <div class="col-2 d-flex align-items-center mb-0 p-0" *ngIf="nftPost.NumNFTCopies > 1">{{ bidEntry.SerialNumber > 0 && "#" + bidEntry.SerialNumber.toString() }}</div>
+        <div
+          class="d-flex align-items-center mb-0 justify-content-between p-0"
+          [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }"
+        >
+          <span>{{ bidEntry.BidAmountNanos / 1e9 }} $CLOUT</span>
+          <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 2) }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center p-15px">
+      <button
+        class="btn btn-primary font-weight-bold fs-15px br-12px"
+        style="height: 36px; width: 160px; line-height: 15px"
+        [disabled]="sellNFTDisabled"
+        (click)="sellNFT()"
+      >
+        Sell NFT
+      </button>
+    </div>
   </div>
 </div>

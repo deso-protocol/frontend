@@ -1,98 +1,122 @@
 <div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="'Place a bid'" [bsModalRef]="bsModalRef"></nft-modal-header>
+  <nft-modal-header [header]="isSelectingSerialNumber ? 'Select a serial number' : 'Place a bid'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
-  <div class="fs-15px text-grey5">
-    You are about to place a bid for an NFT auctioned by @{{ post.ProfileEntryResponse.Username}}.
-  </div>
+  <div *ngIf="!isSelectingSerialNumber">
+    <div class="fs-15px text-grey5">
+      You are about to place a bid for an NFT auctioned by @{{ post.ProfileEntryResponse.Username}}.
+    </div>
 
-  <!-- First separator line -->
-  <div class="py-15px d-flex align-items-center fs-15px text-grey7">
-    <div class="flex-grow-1 nft-modal-separator-2"></div>
-  </div>
+    <!-- First separator line -->
+    <div class="py-15px d-flex align-items-center fs-15px text-grey7">
+      <div class="flex-grow-1 nft-modal-separator-2"></div>
+    </div>
 
-  <!-- Availability metadata -->
-  <div class="fs-15px">
-    <div>Highest bid 0.24 CLOUT | From 0.04 CLOUT</div>
-    <div class="pt-15px">4 of {{ post.NumNFTCopies }} available
-      <span class="font-weight-500 cursor-pointer" style="text-decoration: underline" *ngIf="post.NumNFTCopies > 0">
+    <!-- Availability metadata -->
+    <div class="fs-15px" *ngIf="!loading">
+      <div *ngIf="nftBidData?.BidEntryResponses?.length">Highest bid {{ highBid / 1e9 }} CLOUT | From {{ lowBid / 1e9 }} CLOUT</div>
+      <div [ngClass]="{'pt-15px': nftBidData?.BidEntryResponses?.length }">{{ availableCount }} of {{ post.NumNFTCopies }} available
+        <span
+          class="font-weight-500 cursor-pointer pl-20px"
+          style="text-decoration: underline"
+          *ngIf="post.NumNFTCopies > 1"
+          (click)="isSelectingSerialNumber = true"
+        >
         Select a serial number</span>
-    </div>
-  </div>
-
-  <!-- Second separator line -->
-  <div class="py-15px d-flex align-items-center fs-15px text-grey7">
-    <div class="flex-grow-1 nft-modal-separator-2"></div>
-  </div>
-
-  <!-- The bid -->
-  <div class="pb-30px font-weight-500">
-    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
-      <div>
-        Your Bid
       </div>
-      <div class="d-flex justify-content-between pt-5px" style="width: 355px">
-        <input
-          [(ngModel)]="bidAmountUSD"
-          (ngModelChange)="updateBidAmountCLOUT($event)"
-           class="form-control fs-15px text-right d-inline-block"
-           style="width: 175px"
-          type="number"
-          min="0"
-           placeholder="0 USD"/>
-        <input
-          [(ngModel)]="bidAmountCLOUT"
-          (ngModelChange)="updateBidAmountUSD($event)"
-           class="form-control fs-15px text-right d-inline-block"
-           style="width: 175px"
-          type="number"
-          min="0"
-          placeholder="0 CLOUT"/>
+      <div class="pt-15px d-flex justify-content-between align-items-center" *ngIf="showSelectedSerialNumbers">
+        <div>
+          <span>Edition Numbers</span>
+        </div>
+        <div class="d-flex align-items-center">
+          <div *ngFor="let selection of selectedSerialNumbers; let i = index" [ngClass]="{'pr-5px': selection }">
+            <span class="badge bg-secondary" *ngIf="selection">#{{ i }}<i class="fas fa-times pl-5px" (click)="selectedSerialNumbers[i] = false"></i></span>
+          </div>
+        </div>
+
       </div>
     </div>
+
+    <!-- Second separator line -->
+    <div class="py-15px d-flex align-items-center fs-15px text-grey7">
+      <div class="flex-grow-1 nft-modal-separator-2"></div>
+    </div>
+
+    <!-- The bid -->
+    <div class="pb-30px font-weight-500">
+      <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
+        <div>
+          Your Bid
+        </div>
+        <div class="d-flex justify-content-between pt-5px" style="width: 355px">
+          <input
+            [(ngModel)]="bidAmountUSD"
+            (ngModelChange)="updateBidAmountCLOUT($event)"
+            class="form-control fs-15px text-right d-inline-block"
+            style="width: 175px"
+            type="number"
+            min="0"
+            placeholder="0 USD"/>
+          <input
+            [(ngModel)]="bidAmountCLOUT"
+            (ngModelChange)="updateBidAmountUSD($event)"
+            class="form-control fs-15px text-right d-inline-block"
+            style="width: 175px"
+            type="number"
+            min="0"
+            placeholder="0 CLOUT"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary data -->
+    <div class="fs-15px mb-30px" style="background-color: var(--formbg)">
+      <div class="p-10px d-flex justify-content-between">
+        <div>Your balance</div>
+        <div>{{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }} $CLOUT</div>
+      </div>
+      <div class="px-10px pb-10px d-flex justify-content-between">
+        <div>Service fee</div>
+        <div>0.01 $CLOUT</div>
+      </div>
+      <div class="px-10px pb-10px d-flex justify-content-between">
+        <div>Total bid amount</div>
+        <div>{{ bidAmountCLOUT }} $CLOUT</div>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center mb-15px">
+      <button
+        class="btn btn-primary font-weight-bold fs-15px br-12px"
+        style="height: 36px; width: 140px; line-height: 15px"
+        [disabled]="placeBidDisabled() || placingBids"
+        (click)="placeBid()"
+      >
+        {{ placingBids ? "Placing Bids" : "Place Bid" }}
+      </button>
+      <div class="fs-15px ml-30px cursor-pointer text-grey7" (click)="navigateToBuyCLOUT()">Buy $CLOUT</div>
+    </div>
+
   </div>
 
-  <!-- Summary data -->
-  <div class="fs-15px mb-30px" style="background-color: white">
-    <div class="p-10px d-flex justify-content-between">
-      <div>Your balance</div>
-      <div>{{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }} $CLOUT</div>
-    </div>
-    <div class="px-10px pb-10px d-flex justify-content-between">
-      <div>Service fee</div>
-      <div>0.01 $CLOUT</div>
-    </div>
-    <div class="px-10px pb-10px d-flex justify-content-between">
-      <div>Total bid amount</div>
-      <div>{{ bidAmountCLOUT }} $CLOUT</div>
-    </div>
-  </div>
-
-  <div class="d-flex align-items-center mb-15px">
-    <button
-      class="btn btn-primary font-weight-bold fs-15px br-12px"
-      style="height: 36px; width: 140px; line-height: 15px"
-      (click)="placeBid()"
-    >
-      Place Bid
-    </button>
-    <div class="fs-15px ml-30px cursor-pointer text-grey7">Buy Bitclout</div>
-  </div>
 
   <div *ngIf="isSelectingSerialNumber">
+    <div class="fs-15px text-grey5 pb-15px">
+     Select an edition to start bidding
+    </div>
     <div class="container fs-15px pb-30px px-0px">
       <div class="row no-gutters background-color-white p-15px create-nft-auction-row-border"
            style="opacity: 50%">
         <div class="col-5 mb-0px">
-          <input type="checkbox" style="width: 15px"/>
+          <input type="checkbox" style="width: 15px" [(ngModel)]="selectAll" (ngModelChange)="toggleSelectAll($event)"/>
           Select All
         </div>
         <div class="col-7 mb-0px">Last Price</div>
       </div>
-      <div style="max-height: 250px; overflow-y: scroll">
-        <div *ngFor="let nft of sampleNftData"
+      <div style="max-height: 250px; overflow-y: scroll" class="mb-30px">
+        <div *ngFor="let nft of availableSerialNumbers"
              class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border">
           <div class="col-5 mb-0px d-flex align-items-center">
-            <input type="checkbox" style="width: 15px"/>
+            <input type="checkbox" style="width: 15px" [(ngModel)]="selectedSerialNumbers[nft.SerialNumber]" (ngModelChange)="checkSelectionStatus($event)"/>
             <span class="lh-15px">&nbsp;#{{nft.SerialNumber}}</span>
           </div>
           <div class="col-7 mb-0px d-flex justify-content-between align-items-center">
@@ -105,6 +129,16 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="d-flex align-items-center">
+        <button
+          class="btn btn-primary font-weight-bold fs-15px br-12px"
+          style="height: 36px; width: 160px; line-height: 15px"
+          [disabled]="saveSelectionDisabled"
+          (click)="saveSelection()"
+        >
+          Save Selection
+        </button>
       </div>
     </div>
   </div>

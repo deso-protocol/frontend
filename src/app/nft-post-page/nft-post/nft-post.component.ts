@@ -1,24 +1,38 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import {
+  BackendApiService,
+  NFTBidData,
+  NFTBidEntryResponse,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from "../../backend-api.service";
 import { Title } from "@angular/platform-browser";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
 import { Location } from "@angular/common";
+import * as _ from "lodash";
+import { SellNftModalComponent } from "../../sell-nft-modal/sell-nft-modal.component";
 
 @Component({
   selector: "nft-post",
   templateUrl: "./nft-post.component.html",
   styleUrls: ["./nft-post.component.scss"],
 })
-export class NftPostComponent implements OnInit {
+export class NftPostComponent {
   nftPost: PostEntryResponse;
   nftPostHashHex: string;
-  scrollingDisabled = false;
-  commentLimit = 20;
+  nftBidData: NFTBidData;
+  availableSerialNumbers: NFTEntryResponse[];
+  loading = true;
+  sellNFTDisabled = true;
+  highBid: number;
+  lowBid: number;
+  selectedBids: boolean[];
+  selectedBid: NFTBidEntryResponse;
 
   activeTab = NftPostComponent.MY_AUCTION;
 
@@ -48,11 +62,7 @@ export class NftPostComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on BitClout");
-  }
-
-  getPost(fetchParents: boolean = true, commentOffset: number = 0, commentLimit: number = this.commentLimit) {
+  getPost(fetchParents: boolean = true) {
     // Hit the Get Single Post endpoint with specific parameters
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
@@ -101,26 +111,60 @@ export class NftPostComponent implements OnInit {
         }
         // Set current post
         this.nftPost = res.PostFound;
+        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on BitClout");
+        this.backendApi
+          .GetNFTBidsForNFTPost(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.nftPost.PostHashHex
+          )
+          .subscribe(
+            (res) => {
+              this.nftBidData = res;
+              this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
+                (nftEntryResponse) => nftEntryResponse.IsForSale
+              );
+              this.highBid = this.getMaxBidAmountFromList(this.nftBidData.BidEntryResponses);
+              this.lowBid = this.getMinBidAmountFromList(this.nftBidData.BidEntryResponses);
+            },
+            (err) => {
+              console.error(err);
+              this.globalVars._alertError(err);
+            }
+          )
+          .add(() => (this.loading = false));
       },
       (err) => {
         // TODO: post threads: rollbar
         console.error(err);
         this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+        this.loading = false;
       }
     );
   }
 
-  _setStateFromActivatedRoute(route) {
-    // get the username of the target user (user whose followers / following we're obtaining)
-    this.nftPostHashHex = route.snapshot.params.postHashHex;
+  getMaxBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
+    return _.maxBy(bidEntryResponses, (bidEntryResponse) => bidEntryResponse.BidAmountNanos)?.BidAmountNanos;
+  }
 
-    // it's important that we call this here and not in ngOnInit. Angular does not reload components when only a param changes.
-    // We are responsible for refreshing the components.
-    // if the user is on a thread page and clicks on a comment, the nftPostHashHex will change, but angular won't "load a new
-    // page" and re-render the whole component using the new post hash. instead, angular will
-    // continue using the current component and merely change the URL. so we need to explictly
-    // refresh the posts every time the route changes.
-    this.refreshPosts();
+  getMinBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
+    return _.minBy(bidEntryResponses, (bidEntryResponses) => bidEntryResponses.BidAmountNanos)?.BidAmountNanos;
+  }
+
+  _setStateFromActivatedRoute(route) {
+    if (this.nftPostHashHex !== route.snapshot.params.postHashHex) {
+      // get the username of the target user (user whose followers / following we're obtaining)
+      this.nftPostHashHex = route.snapshot.params.postHashHex;
+
+      // it's important that we call this here and not in ngOnInit. Angular does not reload components when only a param changes.
+      // We are responsible for refreshing the components.
+      // if the user is on a thread page and clicks on a comment, the nftPostHashHex will change, but angular won't "load a new
+      // page" and re-render the whole component using the new post hash. instead, angular will
+      // continue using the current component and merely change the URL. so we need to explictly
+      // refresh the posts every time the route changes.
+      this.loading = true;
+      this.refreshPosts();
+    }
   }
 
   isPostBlocked(post: any): boolean {
@@ -137,5 +181,43 @@ export class NftPostComponent implements OnInit {
       class: "modal-dialog-centered modal-lg",
       initialState: { post: this.nftPost },
     });
+  }
+
+  sellNFT(): void {
+    if (this.sellNFTDisabled) {
+      return;
+    }
+    this.modalService.show(SellNftModalComponent, {
+      class: "modal-dialog-center",
+      initialState: {
+        post: this.nftPost,
+        nftEntries: this.nftBidData.NFTEntryResponses,
+        selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
+      },
+    });
+  }
+
+  checkSelectedBidEntries(bidEntry: NFTBidEntryResponse): void {
+    console.log(bidEntry);
+    if (bidEntry.selected) {
+      // De-select any bid entries for the same serial number.
+      this.nftBidData.BidEntryResponses.forEach((bidEntryResponse) => {
+        if (
+          bidEntryResponse.SerialNumber === bidEntry.SerialNumber &&
+          bidEntry !== bidEntryResponse &&
+          bidEntryResponse.selected
+        ) {
+          bidEntryResponse.selected = false;
+        }
+      });
+    }
+    // enabled / disable the Sell NFT button based on the count of bid entries that are selected.
+    this.sellNFTDisabled = !this.nftBidData.BidEntryResponses.filter((bidEntryResponse) => bidEntryResponse.selected)
+      ?.length;
+  }
+
+  selectBidEntry(bidEntry: NFTBidEntryResponse): void {
+    bidEntry.selected = true;
+    this.sellNFTDisabled = false;
   }
 }

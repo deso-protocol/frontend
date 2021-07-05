@@ -23,7 +23,7 @@ export class MintNftModalComponent implements OnInit {
   copiesRadioValue = this.IS_SINGLE_COPY;
   numCopies: number = 1;
   putOnSale: boolean = true;
-  minBidAmountUSD: number = 0;
+  minBidAmountUSD: string = "0";
   minBidAmountCLOUT: number = 0;
   creatorRoyaltyPercent: number;
   coinRoyaltyPercent: number;
@@ -60,11 +60,11 @@ export class MintNftModalComponent implements OnInit {
   }
 
   hasUnreasonableMinBidAmount() {
-    return this.minBidAmountUSD < 0 || this.minBidAmountCLOUT < 0;
+    return parseFloat(this.minBidAmountUSD) < 0 || this.minBidAmountCLOUT < 0;
   }
 
   updateMinBidAmountUSD(cloutAmount) {
-    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(cloutAmount * 1e9);
+    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2);
   }
 
   updateMinBidAmountCLOUT(usdAmount) {
