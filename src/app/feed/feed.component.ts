@@ -16,8 +16,9 @@ import { Title } from "@angular/platform-browser";
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   static GLOBAL_TAB = "Global";
   static FOLLOWING_TAB = "Following";
+  static RECENT_TAB = "Recent";
   static MARKET_TAB = "Market";
-  static TABS = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB];
+  static TABS = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.RECENT_TAB, FeedComponent.MARKET_TAB];
   static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
   static PULL_TO_REFRESH_MARKER_ID = "pull-to-refresh-marker";
@@ -38,6 +39,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   // We load the first batch of global feed posts on page load
   loadingFirstBatchOfGlobalFeedPosts = false;
 
+  loadingFirstBatchOfRecentFeedPosts = false;
+
   // We load the user's following on page load. This boolean tracks whether we're currently loading
   // or whether we've finished.
   isLoadingFollowingOnPageLoad;
@@ -45,8 +48,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   globalVars: GlobalVarsService;
   serverHasMoreFollowFeedPosts = true;
   serverHasMoreGlobalFeedPosts = true;
+  serverHasMoreRecentFeedPosts = true;
   loadingMoreFollowFeedPosts = false;
   loadingMoreGlobalFeedPosts = false;
+  loadingMoreRecentFeedPosts = false;
 
   pullToRefreshHandler;
 
@@ -111,8 +116,15 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         mainElement: `#${this.getPullToRefreshMarkerId()}`,
         onRefresh: () => {
           const globalPostsPromise = this._loadPosts(true);
+          const recentPostsPromise = this._loadRecentFeedPosts(true);
           const followPostsPromise = this._loadFollowFeedPosts(true);
-          return this.activeTab === FeedComponent.FOLLOWING_TAB ? followPostsPromise : globalPostsPromise;
+          if(this.activeTab === FeedComponent.FOLLOWING_TAB){
+            return followPostsPromise;
+          } else if(this.activeTab === FeedComponent.RECENT_TAB){
+            return recentPostsPromise;
+          } else{
+            return globalPostsPromise;
+          }
         },
       });
     }
@@ -130,6 +142,13 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     return this._loadFollowFeedPosts();
   }
 
+  _reloadRecentFeed() {
+    // Reload the follow feed from scratch
+    this.globalVars.RecentFeedPosts = [];
+    this.loadingFirstBatchOfRecentFeedPosts = true;
+    return this._loadRecentFeedPosts();
+  }
+
   _initializeFeeds() {
     if (this.globalVars.postsToShow.length === 0) {
       // Get some posts to show the user.
@@ -144,6 +163,12 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.globalVars.followFeedPosts.length === 0) {
       this.loadingFirstBatchOfFollowFeedPosts = true;
       this._reloadFollowFeed();
+    }
+
+    // Request the follow feed (so we have it ready for display if needed)
+    if (this.globalVars.RecentFeedPosts.length === 0) {
+      this.loadingFirstBatchOfRecentFeedPosts = true;
+      this._reloadRecentFeed();
     }
 
     // The activeTab is set after we load the following based on whether the user is
@@ -196,6 +221,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       // No need to delay on the Following tab. It handles the "slow switching" issue itself.
       return this.globalVars.followFeedPosts;
+    } else if (this.activeTab === FeedComponent.RECENT_TAB) {
+      // No need to delay on the Following tab. It handles the "slow switching" issue itself.
+      return this.globalVars.RecentFeedPosts;
     } else {
       return this.globalVars.postsToShow;
     }
@@ -210,6 +238,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       // No need to delay on the Following tab. It handles the "slow switching" issue itself.
       return this.loadingMoreFollowFeedPosts;
+    } else if(this.activeTab === FeedComponent.RECENT_TAB) {
+      return this.loadingMoreRecentFeedPosts;
     } else {
       return this.loadingMoreGlobalFeedPosts;
     }
@@ -223,7 +253,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   loadingFirstBatchOfActiveTabPosts() {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       return this.loadingFirstBatchOfFollowFeedPosts;
-    } else {
+    } else if(this.activeTab === FeedComponent.RECENT_TAB){
+      return this.loadingFirstBatchOfRecentFeedPosts; 
+    }
+      else {
       return this.loadingFirstBatchOfGlobalFeedPosts;
     }
   }
@@ -231,7 +264,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   showGlobalOrFollowingPosts() {
     return (
       this.postsToShow().length > 0 &&
-      (this.activeTab === FeedComponent.GLOBAL_TAB || this.activeTab === FeedComponent.FOLLOWING_TAB)
+      (this.activeTab === FeedComponent.GLOBAL_TAB || this.activeTab === FeedComponent.FOLLOWING_TAB || this.activeTab === FeedComponent.RECENT_TAB)
     );
   }
 
@@ -239,7 +272,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // activeTab == FeedComponent.GLOBAL_TAB && globalVars.postsToShow.length == 0 && !loadingPosts
     return (
       this.postsToShow().length === 0 &&
-      (this.activeTab === FeedComponent.GLOBAL_TAB || this.activeTab === FeedComponent.FOLLOWING_TAB) &&
+      (this.activeTab === FeedComponent.GLOBAL_TAB || this.activeTab === FeedComponent.FOLLOWING_TAB || this.activeTab === FeedComponent.RECENT_TAB) &&
       !this.loadingFirstBatchOfActiveTabPosts()
     );
   }
@@ -247,6 +280,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   loadMorePosts() {
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       this._loadFollowFeedPosts();
+    } else if(this.activeTab === FeedComponent.RECENT_TAB) {
+      this._loadRecentFeedPosts();
     } else {
       this._loadPosts();
     }
@@ -259,6 +294,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     if (this.activeTab === FeedComponent.FOLLOWING_TAB) {
       return this.serverHasMoreFollowFeedPosts;
+    } else if (this.activeTab === FeedComponent.RECENT_TAB) {
+      return this.serverHasMoreRecentFeedPosts;
     } else {
       return this.serverHasMoreGlobalFeedPosts;
     }
@@ -329,6 +366,71 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         finalize(() => {
           this.loadingFirstBatchOfGlobalFeedPosts = false;
           this.loadingMoreGlobalFeedPosts = false;
+        }),
+        first()
+      )
+      .toPromise();
+  }
+
+  _loadRecentFeedPosts(reload: boolean = false) {
+    this.loadingMoreRecentFeedPosts = true;
+
+    // Get the reader's public key for the request.
+    let readerPubKey = "";
+    if (this.globalVars.loggedInUser) {
+      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    }
+
+    // Get the last post hash in case this is a "load more" request.
+    let lastPostHash = "";
+    if (this.globalVars.RecentFeedPosts.length > 0 && !reload) {
+      lastPostHash = this.globalVars.RecentFeedPosts[this.globalVars.RecentFeedPosts.length - 1].PostHashHex;
+    }
+    return this.backendApi
+      .GetPostsStateless(
+        this.globalVars.localNode,
+        lastPostHash /*PostHash*/,
+        readerPubKey /*ReaderPublicKeyBase58Check*/,
+        "" /*OrderBy*/,
+        parseInt(this.globalVars.filterType) /*StartTstampSecs*/,
+        "",
+        FeedComponent.NUM_TO_FETCH /*NumToFetch*/,
+        false /*FetchSubcomments*/,
+        false /*GetPostsForFollowFeed*/,
+        false /*GetPostsForGlobalWhitelist*/,
+        false,
+        false /*MediaRequired*/,
+        0,
+        this.globalVars.showAdminTools() /*AddGlobalFeedBool*/
+      )
+      .pipe(
+        tap(
+          (res) => {
+            
+            if (lastPostHash !== "") {
+              this.globalVars.RecentFeedPosts = this.globalVars.RecentFeedPosts.concat(res.PostsFound);
+            } else {
+              this.globalVars.RecentFeedPosts = res.PostsFound;
+            }
+            if (res.PostsFound.length < FeedComponent.NUM_TO_FETCH) {
+              this.serverHasMoreRecentFeedPosts = false;
+              // Note: the server may be out of posts even if res.PostsFond == NUM_TO_FETCH.
+              // This can happen if the server returns the last NUM_TO_FETCH posts exactly.
+              // In that case, the user will click the load more button one more time, and then
+              // the server will return 0. Obviously this isn't great behavior, but hopefully
+              // we'll swap out the load more button for infinite scroll soon anyway.
+            }
+            this.loadingFirstBatchOfRecentFeedPosts = false;
+            this.loadingMoreRecentFeedPosts = false;
+          },
+          (err) => {
+            console.error(err);
+            this.globalVars._alertError("Error loading posts: " + this.backendApi.stringifyError(err));
+          }
+        ),
+        finalize(() => {
+          this.loadingFirstBatchOfRecentFeedPosts = false;
+          this.loadingMoreRecentFeedPosts = false;
         }),
         first()
       )
@@ -432,7 +534,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       defaultActiveTab = FeedComponent.GLOBAL_TAB;
     }
 
-    this.feedTabs = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB];
+    this.feedTabs = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.RECENT_TAB];
 
     if (!this.activeTab) {
       this.activeTab = defaultActiveTab;
