@@ -3,7 +3,7 @@ $danger: #E63946;
 $secondary: #ecf0f1;
 $success: #32ED4B;
 $info: #689eff;
-$feed-border-radius: 12px;
+$feed-border-radius: 4px;
 
 @import 'variables.scss';
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
@@ -26,7 +26,7 @@ html {
 }
 
 html, body {
-  font-family: 'Roboto Mono';
+  font-family: 'Roboto';
   min-height: 100%; // allows for scrolling
 }
 
@@ -46,7 +46,7 @@ h1 {
 h2,h3,h4,h5,h6,p {
   margin: 0;
   color: var(--text);
-  font-family: 'Roboto Mono';
+  font-family: 'Roboto';
   font-weight: normal;
 }
 
@@ -130,7 +130,7 @@ pre, code{
 
 $global__top-bar__height: 60px;
 $global__top-bar__desktop-height: 80px;
-$global__nav__width: 245px;
+$global__nav__width: 260px;
 $global__center__width: 600px;
 $global__sidebar__width: 375px;
 $global__content__width: $global__center__width + $global__sidebar__width;
@@ -194,6 +194,7 @@ $green-font-color: #19B028;
 // font-weight-light: 300
 // font-weight-normal: 400
 .font-weight-semibold { font-weight: 500 }
+.font-weight-normal { font-weight: 400 }
 // font-weight-bold: 700
 
 
@@ -250,7 +251,7 @@ $green-font-color: #19B028;
 // Custom border classes.
 .border-color-grey { border-color: var(--border) !important; }
 .border-color-blue { border-color: $buy-button-blue; }
-.tab-underline-active { border-bottom: solid $buy-button-blue 3px; }
+.tab-underline-active { border-bottom: solid $normal-font-color 3px; }
 .tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
 
 .background-color-grey { background-color: var(--border); } // mocks call this G4
@@ -386,7 +387,8 @@ $green-font-color: #19B028;
 .my-30px { margin-top: 30px; margin-bottom: 30px; }
 
 .br-3px { border-radius: 3px; }
-.br-12px { border-radius: $feed-border-radius; }
+.br-4px { border-radius: 4px; }
+.br-12px { border-radius: 12px; }
 
 .vh-100 { height: 100vh !important; }
 
@@ -658,8 +660,12 @@ $green-font-color: #19B028;
   margin-top: 2px;
 }
 
-.feed-create-post__image-icon {
-  margin-top: 2px;
+.feed-create-post__icon {
+	background-color: var(--secondary);
+	width: 34px;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
 }
 
 .global__top-bar__height {
@@ -695,8 +701,9 @@ $green-font-color: #19B028;
 .right-bar-select-box {
   border: none;
   background: none;
+  padding-bottom:10px;
   outline: none;
-  border-bottom: solid 1px;
+  border-bottom: solid 1px var(--border);
 }
 
 .update-profile__image {
@@ -836,14 +843,21 @@ $green-font-color: #19B028;
   font-size: 15px !important;
 }
 
+// Changed Dropdown Css
 .change-account-selector {
-  margin-left: -10px;
-  position: relative;
-  z-index: 30;
-  background-color: var(--secondary);
-  width: 185px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+	margin-left: -10px;
+	position: relative;
+	z-index: 30;
+	background-color: white;
+	width: 100%;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	border: 1px solid var(--border);
+	box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.10);
+}
+
+.change-account-selector_list__inner {
+	border-bottom: 1px solid var(--border);
 }
 
 .change-account-selector__down-arrow {
@@ -852,15 +866,15 @@ $green-font-color: #19B028;
 }
 
 .change-account-selector__hover:hover {
-  background-color: var(--secondary);
+	border: 1px solid rgba(101, 119, 134, 0.55);
 }
 
 .change-account-selector__shadow {
-  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+ box-shadow: rgba(101, 119, 134, 0) 0px 0px 15px, rgba(101, 119, 134, 0) 0px 0px 3px 1px;
 }
 
 .change-account-selector__ellipsis-restriction {
-  max-width: 150px;
+  max-width: 100%;
   display: block;
   overflow: hidden;
   white-space: nowrap;
@@ -871,12 +885,27 @@ $green-font-color: #19B028;
   opacity: 0;
 }
 
+// Changed Dropdown List Css
+.change-account-selector_list {
+	background-color: white;
+	padding: 0px 0px 10px;
+	margin-top: 10px;
+	width: 100%;
+  margin-left:-10px;
+	border: 1px solid var(--border);
+	box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.10);
+}
+
+.change-account-selector_list__inner:hover{
+  background-color:var(--secondary);
+}
+
 .search-bar__icon {
   padding: 2px;
   padding-left: 5px;
   font-size: 19px;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
+  border-top-left-radius:4px;
+  border-bottom-left-radius: 4px;
   background-color: var(--formbg);
   border-color: var(--border);
   border-right-color: rgba(0,0,0,0);
@@ -971,6 +1000,17 @@ $green-font-color: #19B028;
   background-position: center;
 }
 
+.change-account-selector__acount-image {
+	height: 24px;
+	width: 24px;
+	margin-right: 15px;
+	border-radius:  $feed-border-radius;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	vertical-align: middle;
+}
+
 .modal-header .feed-create-comment-form__close {
   margin: 0;
   padding: 0;
@@ -988,6 +1028,10 @@ $green-font-color: #19B028;
   box-shadow: none;
 }
 
+.feed-create-post__textarea {
+  min-height: 80px;
+}
+
 .js-feed-post-hover:hover {
   background-color: var(--secondary);
 }
@@ -997,8 +1041,9 @@ $green-font-color: #19B028;
 }
 
 .feed-post__dropdown-menu-item {
-  background-color: var(--secondary);
+  background-color: white;
   color: var(--gray);
+  box-shadow: 2px 2px 1px rgba(0,0,0,0.1);
   &:hover {
     background-color: var(--secalt);
     color: var(--gray);
@@ -1014,7 +1059,7 @@ $green-font-color: #19B028;
   max-height: 700px;
   border-radius: 20px;
   margin-top: 10px;
-  margin-bottom: 5px;
+  margin-bottom: 20px;
 }
 
 .feed-post__image-container {
@@ -1097,6 +1142,15 @@ $green-font-color: #19B028;
   border-right: 2px solid var(--secondary);
   border-color: var(--secondary);
   width: 55%;
+}
+
+.left-bar-button__link {
+	padding: 8px 10px;
+	margin-left: 10px;
+}
+
+.left-bar-button__link-active{
+  background-color: var(--secondary);
 }
 
 .left-bar__dot-active {
@@ -2217,4 +2271,10 @@ input {
 .swal2-popup {
   background-color: var(--background) !important;
   color: var(--text);
+}
+
+.btn {
+  line-height: 18px;
+  padding-left:20px;
+  padding-right: 20px;
 }
