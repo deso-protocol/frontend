@@ -5,6 +5,8 @@ $success: #32ED4B;
 $info: #689eff;
 $feed-border-radius: 12px;
 
+
+
 @import 'variables.scss';
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
 
@@ -1060,8 +1062,43 @@ $green-font-color: #19B028;
 
 .feed-post-icon-row__icon.icon-reply {
   margin-left: -6px;
+  &:hover {
+    background-color: $comment-hover;
+    color: $comment-color;
+  }
 }
 
+/* reclout hover animation */
+.feed-post-icon-row__icon.icon-repost { 
+  &:hover {
+    background-color: $reclout-hover;
+    color: $reclout-color;
+  }
+}
+/* like button hover animation */
+.icon-heart, .icon-heart-fill{
+  &:hover{
+    background-color: $like-hover;
+    color: $like-color;
+  }
+}
+
+/* diamond button hover animation */
+.icon-diamond{
+  &:hover{
+    background-color: $diamond-hover;
+    color: $diamond-color;
+  }
+}
+
+/* copy link button hover animation */
+.icon-link{
+  &:hover{
+    background-color: $link-btn-hover;
+    color: $link-btn-color;
+
+  }
+}
 .feed-post__icon-row-holder {
 }
 
