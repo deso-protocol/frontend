@@ -14,6 +14,13 @@ export class WalletComponent implements OnInit {
   hasUnminedCreatorCoins: boolean;
   showTransferredCoins: boolean = false;
 
+  //sortedFromHighToLow: boolean = true;
+  // sortedPriceFromHighToLow: boolean = undefined;
+  // sortedUsernameFromHighToLow: boolean = undefined;
+  sortedFromHighToLow: number = 1;
+  sortedPriceFromHighToLow: number = -1;
+  sortedUsernameFromHighToLow: number = -1;  
+
   usersYouReceived: BalanceEntryResponse[] = [];
   usersYouPurchased: BalanceEntryResponse[] = [];
 
@@ -54,6 +61,106 @@ export class WalletComponent implements OnInit {
       );
     });
   }
+
+
+  // brootle update start
+
+  sortHodlingsToHigh(hodlings: BalanceEntryResponse[]): void {
+    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
+      return (
+        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry) -
+        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) 
+      );
+    });
+  }  
+
+  toggleSortCoins(){
+    if(this.sortedFromHighToLow){
+      this.sortHodlingsToHigh(this.usersYouPurchased);
+      this.sortHodlingsToHigh(this.usersYouReceived);   
+      this.sortedFromHighToLow = 0;   
+    } else {
+      this.sortHodlings(this.usersYouPurchased);
+      this.sortHodlings(this.usersYouReceived);     
+      this.sortedFromHighToLow = 1;    
+    }
+    this.sortedPriceFromHighToLow = -1;
+    this.sortedUsernameFromHighToLow = -1;
+  }
+
+  //
+
+  sortHodlingsPriceToHigh(hodlings: BalanceEntryResponse[]): void {
+
+    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
+      return (
+        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.ProfileEntryResponse.CoinPriceBitCloutNanos, a.ProfileEntryResponse.CoinEntry) -
+        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.ProfileEntryResponse.CoinPriceBitCloutNanos, b.ProfileEntryResponse.CoinEntry) 
+      );
+    });
+  }  
+
+  sortHodlingsPriceToLow(hodlings: BalanceEntryResponse[]): void {
+
+    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
+      return (
+        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.ProfileEntryResponse.CoinPriceBitCloutNanos, b.ProfileEntryResponse.CoinEntry) -
+        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.ProfileEntryResponse.CoinPriceBitCloutNanos, a.ProfileEntryResponse.CoinEntry)
+      );
+    });
+  }    
+
+  toggleSortPrice(){
+    if(this.sortedPriceFromHighToLow){
+      this.sortHodlingsPriceToHigh(this.usersYouPurchased);
+      this.sortHodlingsPriceToHigh(this.usersYouReceived);      
+      this.sortedPriceFromHighToLow = 0;
+    } else {
+      this.sortHodlingsPriceToLow(this.usersYouPurchased);
+      this.sortHodlingsPriceToLow(this.usersYouReceived);  
+      this.sortedPriceFromHighToLow = 1;    
+    }
+    this.sortedFromHighToLow = - 1;
+    this.sortedUsernameFromHighToLow = -1;   
+  }
+
+  // sort by username
+  sortHodlingsUsernameToHigh(hodlings: BalanceEntryResponse[]): void {
+
+    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
+      return(
+        a.ProfileEntryResponse.Username.localeCompare(b.ProfileEntryResponse.Username)
+      )
+    });
+
+  }  
+
+  sortHodlingsUsernameToLow(hodlings: BalanceEntryResponse[]): void {
+
+    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
+      return(
+        b.ProfileEntryResponse.Username.localeCompare(a.ProfileEntryResponse.Username)
+      )
+    });    
+
+  }    
+
+  toggleSortUsername(){
+    if(this.sortedUsernameFromHighToLow){
+      this.sortHodlingsUsernameToHigh(this.usersYouPurchased);
+      this.sortHodlingsUsernameToHigh(this.usersYouReceived);      
+      this.sortedUsernameFromHighToLow = 0;
+    } else {
+      this.sortHodlingsUsernameToLow(this.usersYouPurchased);
+      this.sortHodlingsUsernameToLow(this.usersYouReceived);  
+      this.sortedUsernameFromHighToLow = 1;    
+    }
+    this.sortedFromHighToLow = - 1;
+    this.sortedPriceFromHighToLow = -1;  
+  }
+
+  // brootle update end
+
 
   totalValue() {
     let result = 0;

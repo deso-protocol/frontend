@@ -6,6 +6,7 @@ import { map } from "rxjs/operators";
 import { FollowChangeObservableResult } from "../../../lib/observable-results/follow-change-observable-result";
 import { AppRoutingModule } from "../../app-routing.module";
 import { FollowButtonComponent } from "../../follow-button/follow-button.component";
+import { BsModalService } from "ngx-bootstrap/modal";
 @Component({
   selector: "creator-profile-top-card",
   templateUrl: "./creator-profile-top-card.component.html",
@@ -38,7 +39,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
       this._handleFollowChangeObservableResult(followChangeObservableResult);
     });
   }
-
+  
   profileBelongsToLoggedInUser(): boolean {
     return (
       this.globalVars.loggedInUser?.ProfileEntryResponse &&
