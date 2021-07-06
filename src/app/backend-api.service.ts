@@ -522,7 +522,7 @@ export class BackendApiService {
     let req = this.identityService
       .encrypt({
         ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
-        recipientPubkey: RecipientPublicKeyBase58Check,
+        recipientPublicKey: RecipientPublicKeyBase58Check,
         message: MessageText,
       })
       .pipe(
@@ -939,22 +939,19 @@ export class BackendApiService {
       map((res) => {
         // This array contains encrypted messages with public keys
         // Public keys of the other party involved in the correspondence
-        const encryptedHexesAndPublicKeys = [];
+        const encryptedMessages = [];
         for (const threads of res.OrderedContactsWithMessages) {
           for (const message of threads.Messages) {
-            let payload = {
+            const payload = {
               EncryptedHex: message.EncryptedText,
-              PublicKey: message.SenderPublicKeyBase58Check,
+              PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
               IsSender: message.IsSender,
               V2: message.V2,
             };
-            if (message.IsSender) {
-              payload.PublicKey = message.RecipientPublicKeyBase58Check;
-            }
-            encryptedHexesAndPublicKeys.push(payload);
+            encryptedMessages.push(payload);
           }
         }
-        return { ...res, encryptedHexesAndPublicKeys };
+        return { ...res, encryptedMessages };
       })
     );
 
@@ -964,7 +961,7 @@ export class BackendApiService {
         return this.identityService
           .decrypt({
             ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-            encryptedHexesAndPublicKeys: res.encryptedHexesAndPublicKeys,
+            encryptedMessages: res.encryptedMessages,
           })
           .pipe(
             map((decrypted) => {

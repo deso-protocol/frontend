@@ -100,7 +100,7 @@ export class IdentityService {
     accessLevel: number;
     accessLevelHmac: string;
     encryptedSeedHex: string;
-    recipientPubkey: string;
+    recipientPublicKey: string;
     message: string;
   }): Observable<any> {
     return this.send("encrypt", payload);
@@ -110,7 +110,7 @@ export class IdentityService {
     accessLevel: number;
     accessLevelHmac: string;
     encryptedSeedHex: string;
-    encryptedHexesAndPublicKeys: any;
+    encryptedMessages: any;
   }): Observable<any> {
     return this.send("decrypt", payload);
   }
