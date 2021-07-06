@@ -14,7 +14,7 @@ export class WalletComponent implements OnInit {
   hasUnminedCreatorCoins: boolean;
   showTransferredCoins: boolean = false;
 
-  sortedFromHighToLow: number = 1;
+  sortedFromHighToLow: number = 0;
   sortedPriceFromHighToLow: number = -1;
   sortedUsernameFromHighToLow: number = -1;  
 
@@ -72,13 +72,13 @@ export class WalletComponent implements OnInit {
   }  
 
   toggleSortCoins(){
-    if(this.sortedFromHighToLow){
-      this.sortHodlingsToHigh(this.usersYouPurchased);
-      this.sortHodlingsToHigh(this.usersYouReceived);   
+    if(this.sortedFromHighToLow){ 
+      this.sortHodlings(this.usersYouPurchased);
+      this.sortHodlings(this.usersYouReceived);        
       this.sortedFromHighToLow = 0;   
     } else {
-      this.sortHodlings(this.usersYouPurchased);
-      this.sortHodlings(this.usersYouReceived);     
+      this.sortHodlingsToHigh(this.usersYouPurchased);
+      this.sortHodlingsToHigh(this.usersYouReceived);           
       this.sortedFromHighToLow = 1;    
     }
     this.sortedPriceFromHighToLow = -1;
@@ -109,12 +109,12 @@ export class WalletComponent implements OnInit {
 
   toggleSortPrice(){
     if(this.sortedPriceFromHighToLow){
-      this.sortHodlingsPriceToHigh(this.usersYouPurchased);
-      this.sortHodlingsPriceToHigh(this.usersYouReceived);      
+      this.sortHodlingsPriceToLow(this.usersYouPurchased);
+      this.sortHodlingsPriceToLow(this.usersYouReceived);         
       this.sortedPriceFromHighToLow = 0;
     } else {
-      this.sortHodlingsPriceToLow(this.usersYouPurchased);
-      this.sortHodlingsPriceToLow(this.usersYouReceived);  
+      this.sortHodlingsPriceToHigh(this.usersYouPurchased);
+      this.sortHodlingsPriceToHigh(this.usersYouReceived);          
       this.sortedPriceFromHighToLow = 1;    
     }
     this.sortedFromHighToLow = - 1;

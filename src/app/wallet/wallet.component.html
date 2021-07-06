@@ -81,18 +81,18 @@
             class="row no-gutters d-flex align-items-center fc-muted border-bottom border-color-grey pl-15px py-15px">
             <div class="col mb-0" (click)="toggleSortUsername()">
               <i class="fas fs-15px"
-                [ngClass]="{'fa-arrows-alt-v':sortedUsernameFromHighToLow === -1, 'fa-sort-amount-down':sortedUsernameFromHighToLow === 1, 'fa-sort-amount-up-alt':sortedUsernameFromHighToLow === 0}"></i>
+                [ngClass]="{'fa-arrows-alt-v':sortedUsernameFromHighToLow === -1, 'fa-sort-amount-down':sortedUsernameFromHighToLow === 0, 'fa-sort-amount-up-alt':sortedUsernameFromHighToLow === 1}"></i>
               Name
             </div>
             <div class="col-2 d-lg-block d-none mb-0" style="text-align: end" (click)="toggleSortPrice()">
               <i class="fas fs-15px"
-                [ngClass]="{'fa-arrows-alt-v':sortedPriceFromHighToLow === -1, 'fa-sort-amount-down':sortedPriceFromHighToLow === 1, 'fa-sort-amount-up-alt':sortedPriceFromHighToLow === 0}"></i>
+                [ngClass]="{'fa-arrows-alt-v':sortedPriceFromHighToLow === -1, 'fa-sort-amount-down':sortedPriceFromHighToLow === 0, 'fa-sort-amount-up-alt':sortedPriceFromHighToLow === 1}"></i>
               Price
             </div>
             <div class="col-4 mb-0" style="text-align: end">
               <span (click)="toggleSortCoins()">
                 <i class="fas fs-15px"
-                  [ngClass]="{'fa-arrows-alt-v':sortedFromHighToLow === -1, 'fa-sort-amount-down':sortedFromHighToLow === 1, 'fa-sort-amount-up-alt':sortedFromHighToLow === 0}"></i>
+                  [ngClass]="{'fa-arrows-alt-v':sortedFromHighToLow === -1, 'fa-sort-amount-down':sortedFromHighToLow === 0, 'fa-sort-amount-up-alt':sortedFromHighToLow === 1}"></i>
                 USD Value
               </span>
               <i class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
