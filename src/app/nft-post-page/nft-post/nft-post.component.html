@@ -37,6 +37,7 @@
         <button
           class="btn btn-primary font-weight-bold br-8px fs-13px"
           (click)="openPlaceBidModal($event)"
+          *ngIf="showPlaceABid"
         >
           Place a bid
         </button>
@@ -67,10 +68,23 @@
       <div class="row no-gutters w-100">
         <div class="col-5 d-flex align-items-center mb-0 p-0">
           <!-- checkbox or radio button -->
-          <input type="checkbox" style="width: 35px" *ngIf="nftPost.NumNFTCopies > 1" [(ngModel)]="bidEntry.selected" (ngModelChange)="checkSelectedBidEntries(bidEntry)"/> <!-- [(ngModel)]="selectedSerialNumbers[nft.SerialNumber]" (ngModelChange)="checkSelectionStatus($event)" -->
-          <input type="radio" style="width: 35px" *ngIf="nftPost.NumNFTCopies === 1" [value]="bidEntry" [(ngModel)]="selectedBid" (ngModelChange)="selectBidEntry(bidEntry)"/> <!-- [(ngModel)]/> -->
+          <input
+            class="pr-10px"
+            type="checkbox"
+            style="width: 35px"
+            *ngIf="nftPost.NumNFTCopies > 1 && userOwnsSerialNumber(bidEntry.SerialNumber)"
+            [(ngModel)]="bidEntry.selected"
+            (ngModelChange)="checkSelectedBidEntries(bidEntry)"/>
+          <input
+            class="pr-10px"
+            type="radio"
+            style="width: 35px"
+            *ngIf="nftPost.NumNFTCopies === 1 && userOwnsSerialNumber(bidEntry.SerialNumber)"
+            [value]="bidEntry"
+            [(ngModel)]="selectedBid"
+            (ngModelChange)="selectBidEntry(bidEntry)"/>
           <!-- Avatar -->
-          <div class="simple-profile-card__avatar-container pl-10px">
+          <div class="simple-profile-card__avatar-container">
             <div
               class="simple-profile-card__avatar br-12px"
               [avatar]="bidEntry.PublicKeyBase58Check"
@@ -105,15 +119,16 @@
         </div>
       </div>
     </div>
-    <div class="d-flex align-items-center p-15px">
+    <div class="d-flex align-items-center p-15px" *ngIf="mySerialNumbersAvailable">
       <button
         class="btn btn-primary font-weight-bold fs-15px br-12px"
-        style="height: 36px; width: 160px; line-height: 15px"
+        style="height: 36px; width: 115px; line-height: 15px"
         [disabled]="sellNFTDisabled"
         (click)="sellNFT()"
       >
         Sell NFT
       </button>
+      <span (click)="closeAuction()" class="fc-red pl-20px cursor-pointer">Close my auction</span>
     </div>
   </div>
 </div>

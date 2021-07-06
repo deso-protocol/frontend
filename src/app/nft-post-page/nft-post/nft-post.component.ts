@@ -16,6 +16,10 @@ import { RouteNames } from "../../app-routing.module";
 import { Location } from "@angular/common";
 import * as _ from "lodash";
 import { SellNftModalComponent } from "../../sell-nft-modal/sell-nft-modal.component";
+import { of } from "rxjs";
+import { concatMap, last } from "rxjs/operators";
+import { NftSoldModalComponent } from "../../nft-sold-modal/nft-sold-modal.component";
+import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
 
 @Component({
   selector: "nft-post",
@@ -27,8 +31,10 @@ export class NftPostComponent {
   nftPostHashHex: string;
   nftBidData: NFTBidData;
   availableSerialNumbers: NFTEntryResponse[];
+  myAvailableSerialNumbers: NFTEntryResponse[];
   loading = true;
   sellNFTDisabled = true;
+  showPlaceABid: boolean;
   highBid: number;
   lowBid: number;
   selectedBids: boolean[];
@@ -124,6 +130,11 @@ export class NftPostComponent {
               this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
                 (nftEntryResponse) => nftEntryResponse.IsForSale
               );
+              this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
+                (nftEntryResponse) =>
+                  nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+              );
+              this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
               this.highBid = this.getMaxBidAmountFromList(this.nftBidData.BidEntryResponses);
               this.lowBid = this.getMinBidAmountFromList(this.nftBidData.BidEntryResponses);
             },
@@ -198,7 +209,6 @@ export class NftPostComponent {
   }
 
   checkSelectedBidEntries(bidEntry: NFTBidEntryResponse): void {
-    console.log(bidEntry);
     if (bidEntry.selected) {
       // De-select any bid entries for the same serial number.
       this.nftBidData.BidEntryResponses.forEach((bidEntryResponse) => {
@@ -219,5 +229,23 @@ export class NftPostComponent {
   selectBidEntry(bidEntry: NFTBidEntryResponse): void {
     bidEntry.selected = true;
     this.sellNFTDisabled = false;
+  }
+
+  closeAuction(): void {
+    this.modalService.show(CloseNftAuctionModalComponent, {
+      class: "modal-dialog-centered",
+      initialState: {
+        post: this.nftPost,
+        myAvailableSerialNumbers: this.myAvailableSerialNumbers,
+      },
+    });
+  }
+
+  userOwnsSerialNumber(serialNumber: number): boolean {
+    const loggedInPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    return !!this.nftBidData.NFTEntryResponses.filter(
+      (nftEntryResponse) =>
+        nftEntryResponse.SerialNumber === serialNumber && nftEntryResponse.OwnerPublicKeyBase58Check === loggedInPubKey
+    ).length;
   }
 }

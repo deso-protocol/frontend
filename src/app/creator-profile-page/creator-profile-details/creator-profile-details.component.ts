@@ -21,11 +21,13 @@ export class CreatorProfileDetailsComponent {
     "creator-coin": "Creator Coin",
     "coin-purchasers": "Creator Coin",
     diamonds: "Diamonds",
+    nfts: "NFTs",
   };
   static TABS_LOOKUP = {
     Posts: "posts",
     "Creator Coin": "creator-coin",
     Diamonds: "diamonds",
+    NFTs: "nfts",
   };
   appData: GlobalVarsService;
   userName: string;
