@@ -4,11 +4,12 @@
   <div class="py-15px fs-15px">
     You are going to close your auction. It will cancel all bids on your NFT and prevent new bids from being submitted.
   </div>
-
   <button
     class="btn btn-danger fs-15px br-12px my-15px"
-    style="height: 36px; width: 185px; line-height: 15px"
+    style="height: 36px; width: 175px; line-height: 15px"
+    (click)="closeAuction()"
+    [disabled]="closingAuction"
   >
-    Close my auction
+    {{ closingAuction ? "Closing auction" : "Close my auction" }}
   </button>
 </div>

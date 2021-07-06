@@ -727,6 +727,37 @@
       </div>
     </div>
 
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Max Copies per NFT
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="updateGlobalParamsValues.MaxCopiesPerNFT"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          style="width: 250px"
+          placeholder="Set max copies per NFT"
+        />
+        <button
+          *ngIf="!updatingMaxCopiesPerNFT"
+          (click)="updateGlobalParamMaxCopiesPerNFT()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+          [ngStyle]="{ disabled: updatingGlobalParams }"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingMaxCopiesPerNFT"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content"
+          disabled
+        >
+          Updating...
+        </button>
+      </div>
+    </div>
+
     <!-- Verify User -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Grant Verification Badge:

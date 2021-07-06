@@ -1,40 +1,40 @@
 <div app-theme class="nft-modal-container p-15px">
   <nft-modal-header [header]="'Sell NFT'" [bsModalRef]="bsModalRef"></nft-modal-header>
- 
+
   <div class="fs-15px pt-15px pb-30px text-grey5">
     You are about to sell your NFT to <span class="font-weight-500">@lazynina</span>. Are you sure?
   </div>
 
   <!-- Summary data -->
-  <div class="content fs-15px mb-30px py-5px" style="background-color: white">
+  <div class="content fs-15px mb-30px py-5px" style="background-color: var(--formbg)">
     <div class="row p-10px">
       <div class="col-6 m-0px">Selling Price</div>
-      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{sellingPrice}} CLOUT 
-        <div class="text-grey7">(~{{globalVars.nanosToUSD(sellingPrice*1e9, 2)}})</div>
+      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{sellingPrice}} $CLOUT
+<!--        <div class="text-grey7">(~{{globalVars.nanosToUSD(sellingPrice*1e9, 2)}})</div>-->
       </div>
     </div>
     <div class="row px-10px pb-10px">
       <div class="col-6 m-0px">Earnings</div>
-      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{earnings}} CLOUT
-        <span class="text-grey7">(~{{globalVars.nanosToUSD(earnings*1e9, 2)}})</span>
+      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{earnings}} $CLOUT
+<!--        <span class="text-grey7">(~{{globalVars.nanosToUSD(earnings*1e9, 2)}})</span>-->
       </div>
     </div>
     <div class="row px-10px pb-10px">
       <div class="col-6 m-0px">Creator royalty</div>
-      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{creatorRoyalty}} CLOUT
-        <span class="text-grey7">(~{{globalVars.nanosToUSD(creatorRoyalty*1e9, 2)}})</span>
+      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{creatorRoyalty}} $CLOUT
+<!--        <span class="text-grey7">(~{{globalVars.nanosToUSD(creatorRoyalty*1e9, 2)}})</span>-->
       </div>
     </div>
     <div class="row px-10px pb-10px">
       <div class="col-6 m-0px">Coin-holder royalty</div>
-      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{coinRoyalty}} CLOUT
-        <span class="text-grey7">(~{{globalVars.nanosToUSD(coinRoyalty*1e9, 2)}})</span>
+      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{coinRoyalty}} $CLOUT
+<!--        <span class="text-grey7">(~{{globalVars.nanosToUSD(coinRoyalty*1e9, 2)}})</span>-->
       </div>
     </div>
     <div class="row px-10px pb-10px">
       <div class="col-6 m-0px">Service fee</div>
-      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{serviceFee}} CLOUT
-        <span class="text-grey7">(~{{globalVars.nanosToUSD(serviceFee*1e9, 2)}})</span>
+      <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{serviceFee}} $CLOUT
+<!--        <span class="text-grey7">(~{{globalVars.nanosToUSD(serviceFee*1e9, 2)}})</span>-->
       </div>
     </div>
   </div>
@@ -43,6 +43,8 @@
     <button
       class="btn btn-primary font-weight-bold fs-15px br-12px"
       style="height: 36px; width: 140px; line-height: 15px"
+      (click)="sellNFT()"
+      [disabled]="sellNFTDisabled"
     >
       Sell NFT
     </button>

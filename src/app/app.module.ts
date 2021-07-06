@@ -134,6 +134,8 @@ import { NftModalHeaderComponent } from './nft-modal-header/nft-modal-header.com
 import { CloseNftAuctionModalComponent } from './close-nft-auction-modal/close-nft-auction-modal.component';
 import { SellNftModalComponent } from './sell-nft-modal/sell-nft-modal.component';
 import { AddUnlockableModalComponent } from './add-unlockable-modal/add-unlockable-modal.component';
+import {NftPostPageComponent} from "./nft-post-page/nft-post-page.component";
+import {NftPostComponent} from "./nft-post-page/nft-post/nft-post.component";
 
 @NgModule({
   declarations: [
@@ -243,6 +245,8 @@ import { AddUnlockableModalComponent } from './add-unlockable-modal/add-unlockab
     CloseNftAuctionModalComponent,
     SellNftModalComponent,
     AddUnlockableModalComponent,
+    NftPostPageComponent,
+    NftPostComponent,
   ],
   imports: [
     BrowserModule,
