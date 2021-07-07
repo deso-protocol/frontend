@@ -251,7 +251,7 @@ $green-font-color: #19B028;
 // Custom border classes.
 .border-color-grey { border-color: var(--border) !important; }
 .border-color-blue { border-color: $buy-button-blue; }
-.tab-underline-active { border-bottom: solid $normal-font-color 3px; }
+.tab-underline-active { border-bottom: solid $buy-button-blue 3px; }
 .tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
 
 .background-color-grey { background-color: var(--border); } // mocks call this G4
