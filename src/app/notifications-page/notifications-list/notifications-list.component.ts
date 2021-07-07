@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
 import { InfiniteScroller } from "src/app/infinite-scroller";
@@ -11,10 +11,12 @@ import { InfiniteScroller } from "src/app/infinite-scroller";
   templateUrl: "./notifications-list.component.html",
   styleUrls: ["./notifications-list.component.scss"],
 })
-export class NotificationsListComponent implements OnInit {
+export class NotificationsListComponent {
   static BUFFER_SIZE = 10;
   static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = true;
+
+  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   // stores a mapping of page number to notification index
   pagedIndexes = {
@@ -32,10 +34,6 @@ export class NotificationsListComponent implements OnInit {
   // Track the total number of items for our empty state
   // null means we're loading items
   totalItems = null;
-
-  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
-
-  ngOnInit() {}
 
   getPage(page: number) {
     if (this.lastPage && page > this.lastPage) {
