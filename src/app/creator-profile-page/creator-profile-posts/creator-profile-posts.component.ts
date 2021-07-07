@@ -16,6 +16,7 @@ export class CreatorProfilePostsComponent {
   static PAGE_SIZE = 10;
   static BUFFER_SIZE = 5;
   static WINDOW_VIEWPORT = true;
+  static PADDING = 0.5;
 
   @Input() profile: ProfileEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
@@ -114,6 +115,6 @@ export class CreatorProfilePostsComponent {
     );
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(CreatorProfilePostsComponent.PAGE_SIZE, this.getPage, CreatorProfilePostsComponent.WINDOW_VIEWPORT, CreatorProfilePostsComponent.BUFFER_SIZE);
-  datasource: IDatasource<IAdapter<PostEntryResponse>> = this.infiniteScroller.getDatasource();
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(CreatorProfilePostsComponent.PAGE_SIZE, this.getPage, CreatorProfilePostsComponent.WINDOW_VIEWPORT, CreatorProfilePostsComponent.BUFFER_SIZE, CreatorProfilePostsComponent.PADDING);
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
