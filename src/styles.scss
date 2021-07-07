@@ -130,7 +130,7 @@ pre, code{
 
 $global__top-bar__height: 60px;
 $global__top-bar__desktop-height: 80px;
-$global__nav__width: 260px;
+$global__nav__width: 245px;
 $global__center__width: 600px;
 $global__sidebar__width: 375px;
 $global__content__width: $global__center__width + $global__sidebar__width;
@@ -388,7 +388,7 @@ $green-font-color: #19B028;
 
 .br-3px { border-radius: 3px; }
 .br-4px { border-radius: 4px; }
-.br-12px { border-radius: 12px; }
+.br-12px { border-radius: $feed-border-radius; }
 
 .vh-100 { height: 100vh !important; }
 
@@ -1021,10 +1021,6 @@ $green-font-color: #19B028;
   box-shadow: none;
 }
 
-.feed-create-post__textarea {
-  min-height: 80px;
-}
-
 .js-feed-post-hover:hover {
   background-color: var(--secondary);
 }
@@ -1036,7 +1032,6 @@ $green-font-color: #19B028;
 .feed-post__dropdown-menu-item {
   background-color: var(--secondary);
   color: var(--gray);
-  box-shadow: 2px 2px 1px rgba(0,0,0,0.1);
   &:hover {
     background-color: var(--secalt);
     color: var(--gray);
@@ -1052,7 +1047,7 @@ $green-font-color: #19B028;
   max-height: 700px;
   border-radius: 20px;
   margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 .feed-post__image-container {
@@ -1140,16 +1135,6 @@ $green-font-color: #19B028;
 .left-bar-button__link {
 	padding: 8px 10px;
 	margin-left: 10px;
-}
-
-.left-bar-button__link-active{
-  background-color: var(--secondary);
-}
-
-.left-bar__dot-active {
-  font-size: 50px;
-  line-height: 18px;
-  color: $buy-button-blue !important;
 }
 
 .left-bar__dot-unread {
