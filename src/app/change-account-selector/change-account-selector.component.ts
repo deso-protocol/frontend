@@ -43,9 +43,8 @@ export class ChangeAccountSelectorComponent {
     this.globalVars.messageResponse = null;
     this.globalVars.SetupMessages();
 
-    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
-      queryParamsHandling: "merge",
-    });
+    this.router.onSameUrlNavigation = 'reload'
+    this.router.navigateByUrl(this.router.url);
 
     this.globalVars.isLeftBarMobileOpen = false;
   }
