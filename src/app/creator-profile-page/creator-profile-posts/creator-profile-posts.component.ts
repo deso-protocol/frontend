@@ -23,7 +23,6 @@ export class CreatorProfilePostsComponent {
   @Input() showProfileAsReserved: boolean;
 
   // Infinite scroll metadata.
-  pageOffset = 0;
   lastPage = null;
 
   loadingFirstPage = true;

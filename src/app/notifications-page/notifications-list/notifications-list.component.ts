@@ -22,7 +22,6 @@ export class NotificationsListComponent implements OnInit {
   };
 
   // Infinite scroll metadata.
-  pageOffset = 0;
   lastPage = null; 
 
   // stores a cache of all profiles and posts we've seen
