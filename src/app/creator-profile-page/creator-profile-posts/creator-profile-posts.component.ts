@@ -3,7 +3,7 @@ import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../.
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller  } from "src/app/infinite-scroller";
 import * as _ from "lodash";
 
