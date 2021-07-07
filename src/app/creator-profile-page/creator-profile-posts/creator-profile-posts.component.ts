@@ -26,17 +26,11 @@ export class CreatorProfilePostsComponent {
   pageOffset = 0;
   lastPage = null;
 
-  // todo anna: figure out if we need these
   loadingFirstPage = true;
   loadingNextPage = false;
+
   pagedKeys = {
     0: "",
-  };
-
-  pagedRequests = {
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
   };
 
   @Output() blockUser = new EventEmitter();
@@ -54,6 +48,7 @@ export class CreatorProfilePostsComponent {
     if (this.lastPage != null && page > this.lastPage) {
       return [];
     }
+    debugger
     this.loadingNextPage = true;
     const lastPostHashHex = this.pagedKeys[page];
     return this.backendApi
@@ -115,6 +110,6 @@ export class CreatorProfilePostsComponent {
     );
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(CreatorProfilePostsComponent.PAGE_SIZE, this.getPage, CreatorProfilePostsComponent.WINDOW_VIEWPORT, CreatorProfilePostsComponent.BUFFER_SIZE, CreatorProfilePostsComponent.PADDING);
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(CreatorProfilePostsComponent.PAGE_SIZE, this.getPage.bind(this), CreatorProfilePostsComponent.WINDOW_VIEWPORT, CreatorProfilePostsComponent.BUFFER_SIZE, CreatorProfilePostsComponent.PADDING);
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
