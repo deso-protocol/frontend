@@ -19,9 +19,9 @@ export class InfiniteScroller {
     bufferSize: this.bufferSize,
     infinite: true,
     minIndex: 0,
+    padding: this.padding,
     startIndex: 0,
     windowViewport: this.windowViewport,
-    padding: this.padding,
   };
 
   getDatasource(): IDatasource<IAdapter<any>> {
