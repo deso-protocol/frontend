@@ -33,11 +33,8 @@ export class NotificationsListComponent implements OnInit {
   // null means we're loading items
   totalItems = null;
 
-  // Track if we're loading notifications for the first time
-  isLoading = true;
-
-  // Track if we're loading the next page of notifications
-  loadingMoreNotifications = false;
+  loadingFirstPage = true;
+  loadingNextPage = false;
 
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
@@ -48,8 +45,8 @@ export class NotificationsListComponent implements OnInit {
       return [];
     }
 
+    this.loadingNextPage = true;
     const fetchStartIndex = this.pagedIndexes[page];
-    this.loadingMoreNotifications = true;
     return this.backendApi
       .GetNotifications(
         this.globalVars.localNode,
@@ -89,8 +86,8 @@ export class NotificationsListComponent implements OnInit {
         }
       )
       .finally(() => {
-        this.loadingMoreNotifications = false;
-        this.isLoading = false;
+        this.loadingFirstPage = false;
+        this.loadingNextPage = false;
       });
   }
 
