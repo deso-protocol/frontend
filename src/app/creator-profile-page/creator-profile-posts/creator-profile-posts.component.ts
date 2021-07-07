@@ -4,7 +4,7 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { InfiniteScroller  } from "src/app/infinite-scroller";
+import { InfiniteScroller } from "src/app/infinite-scroller";
 import * as _ from "lodash";
 
 @Component({
@@ -22,9 +22,7 @@ export class CreatorProfilePostsComponent {
   @Input() afterCommentCreatedCallback: any = null;
   @Input() showProfileAsReserved: boolean;
 
-  // Infinite scroll metadata.
   lastPage = null;
-
   loadingFirstPage = true;
   loadingNextPage = false;
 
@@ -108,6 +106,12 @@ export class CreatorProfilePostsComponent {
     );
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(CreatorProfilePostsComponent.PAGE_SIZE, this.getPage.bind(this), CreatorProfilePostsComponent.WINDOW_VIEWPORT, CreatorProfilePostsComponent.BUFFER_SIZE, CreatorProfilePostsComponent.PADDING);
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    CreatorProfilePostsComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    CreatorProfilePostsComponent.WINDOW_VIEWPORT,
+    CreatorProfilePostsComponent.BUFFER_SIZE,
+    CreatorProfilePostsComponent.PADDING
+  );
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }

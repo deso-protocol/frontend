@@ -21,9 +21,7 @@ export class NotificationsListComponent implements OnInit {
     0: -1,
   };
 
-  // Infinite scroll metadata.
   lastPage = null;
-
   loadingFirstPage = true;
   loadingNextPage = false;
 
