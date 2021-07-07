@@ -307,5 +307,5 @@ export class NotificationsListComponent implements OnInit {
     NotificationsListComponent.WINDOW_VIEWPORT,
     NotificationsListComponent.BUFFER_SIZE
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<IAdapter<PostEntryResponse>> = this.infiniteScroller.getDatasource();
 }

@@ -51,7 +51,7 @@ export class InfiniteScroller {
       },
       settings: {
         bufferSize: this.bufferSize,
-        infinite: true, // todo anna: do we need this?
+        infinite: true, // todo anna: do we need this? or should we pass this in?
         minIndex: 0,
         padding: this.padding, // todo anna: is this used?
         startIndex: 0,
