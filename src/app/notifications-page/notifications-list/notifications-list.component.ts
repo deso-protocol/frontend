@@ -4,7 +4,7 @@ import { BackendApiService, PostEntryResponse } from "../../backend-api.service"
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
-import { InfiniteScroller  } from "src/app/infinite-scroller";
+import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
   selector: "app-notifications-list",
@@ -22,7 +22,10 @@ export class NotificationsListComponent implements OnInit {
   };
 
   // Infinite scroll metadata.
-  lastPage = null; 
+  lastPage = null;
+
+  loadingFirstPage = true;
+  loadingNextPage = false;
 
   // stores a cache of all profiles and posts we've seen
   profileMap = {};
@@ -31,9 +34,6 @@ export class NotificationsListComponent implements OnInit {
   // Track the total number of items for our empty state
   // null means we're loading items
   totalItems = null;
-
-  loadingFirstPage = true;
-  loadingNextPage = false;
 
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
@@ -133,7 +133,8 @@ export class NotificationsListComponent implements OnInit {
         }
       }
       result.icon = "fas fa-money-bill-wave-alt fc-green";
-      result.action = `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
+      result.action =
+        `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
         `$CLOUT!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
       return result;
     } else if (txnMeta.TxnType === "CREATOR_COIN") {
@@ -300,6 +301,11 @@ export class NotificationsListComponent implements OnInit {
     });
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(NotificationsListComponent.PAGE_SIZE, this.getPage.bind(this), NotificationsListComponent.WINDOW_VIEWPORT, NotificationsListComponent.BUFFER_SIZE);
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    NotificationsListComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    NotificationsListComponent.WINDOW_VIEWPORT,
+    NotificationsListComponent.BUFFER_SIZE
+  );
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
