@@ -16,7 +16,7 @@ export const cakeTheme: Theme = {
     "--hover": "#008cad",
     "--border": "#fae1dd",
     "--mborder": "#fae1dd",
-    "--filter": "blur(0.6px) grayscale(0.5) sepia(1) hue-rotate(227deg) saturate(9.2) opacity(0.78)",
+    "--filter": "grayscale(0.5) sepia(1) hue-rotate(227deg) saturate(9.2) opacity(0.78)",
     "--unread": "#f3e1e1",
     "--topbar": "#ead8d8",
     "--cblue": "#457b9d",
