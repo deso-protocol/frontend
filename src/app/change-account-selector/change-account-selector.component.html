@@ -7,7 +7,6 @@
   <!-- Selector (unopened state) -->
   <div class="d-flex align-items-center justify-content-between pl-10px pr-10px">
     <div *ngIf="globalVars.loggedInUser" class="change-account-selector__ellipsis-restriction cursor-pointer">
-      <!-- Added User Image -->
       <div class="feed-create-post__avatar d-inline-block align-items-center change-account-selector__acount-image" [avatar]="globalVars.loggedInUser.PublicKeyBase58Check"></div>
       <div class="d-inline-block change-account-selector__acount-name">
       {{
