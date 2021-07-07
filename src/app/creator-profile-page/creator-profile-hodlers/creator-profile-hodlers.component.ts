@@ -42,7 +42,7 @@ export class CreatorProfileHodlersComponent {
     this.datasource = this.getDatasource();
   }
 
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
+  // TODO: Cleanup - Use InfiniteScroller class to de-duplicate this logic
   getDatasource() {
     return new Datasource<IAdapter<any>>({
       get: (index, count, success) => {
