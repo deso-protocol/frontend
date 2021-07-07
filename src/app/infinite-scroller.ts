@@ -11,7 +11,8 @@ export class InfiniteScroller {
     private pageSize: number,
     private getPage: (page: number) => any[] | Promise<any>,
     private windowViewport: boolean,
-    private bufferSize: number = 50
+    private bufferSize: number = 50,
+    private padding: number = 0
   ) {}
 
   getDatasource(): IDatasource<IAdapter<any>> {
@@ -49,9 +50,11 @@ export class InfiniteScroller {
         });
       },
       settings: {
-        startIndex: 0,
-        minIndex: 0,
         bufferSize: this.bufferSize,
+        infinite: true, // todo anna: do we need this?
+        minIndex: 0,
+        padding: this.padding, // todo anna: is this used?
+        startIndex: 0,
         windowViewport: this.windowViewport,
       },
     });
