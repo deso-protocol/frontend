@@ -3,7 +3,7 @@ $danger: #E63946;
 $secondary: #ecf0f1;
 $success: #32ED4B;
 $info: #689eff;
-$feed-border-radius: 4px;
+$feed-border-radius: 12px;
 
 @import 'variables.scss';
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
@@ -26,7 +26,7 @@ html {
 }
 
 html, body {
-  font-family: 'Roboto';
+  font-family: 'Roboto Mono';
   min-height: 100%; // allows for scrolling
 }
 
@@ -46,7 +46,7 @@ h1 {
 h2,h3,h4,h5,h6,p {
   margin: 0;
   color: var(--text);
-  font-family: 'Roboto';
+  font-family: 'Roboto Mono';
   font-weight: normal;
 }
 
@@ -251,7 +251,7 @@ $green-font-color: #19B028;
 // Custom border classes.
 .border-color-grey { border-color: var(--border) !important; }
 .border-color-blue { border-color: $buy-button-blue; }
-.tab-underline-active { border-bottom: solid $normal-font-color 3px; }
+.tab-underline-active { border-bottom: solid $buy-button-blue 3px; }
 .tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
 
 .background-color-grey { background-color: var(--border); } // mocks call this G4
@@ -660,14 +660,6 @@ $green-font-color: #19B028;
   margin-top: 2px;
 }
 
-.feed-create-post__icon {
-	background-color: var(--secondary);
-	width: 34px;
-	height: 30px;
-	text-align: center;
-	line-height: 30px;
-}
-
 .global__top-bar__height {
   @media (min-width: 992px) {
     height: $global__top-bar__desktop-height;
@@ -843,12 +835,11 @@ $green-font-color: #19B028;
   font-size: 15px !important;
 }
 
-// Changed Dropdown Css
 .change-account-selector {
 	margin-left: -10px;
 	position: relative;
 	z-index: 30;
-	background-color: white;
+	background-color: var(--secondary);
 	width: 100%;
 	padding-top: 8px;
 	padding-bottom: 8px;
@@ -866,7 +857,21 @@ $green-font-color: #19B028;
 }
 
 .change-account-selector__hover:hover {
-	border: 1px solid rgba(101, 119, 134, 0.55);
+	box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.10);
+}
+
+.change-account-selector_list {
+	position: absolute;
+	background-color: var(--secondary);
+	padding: 0px 0px 10px;
+	margin-top: 10px;
+	width: 100%;
+  margin-left:-10px;
+	border: 1px solid var(--border);
+}
+
+.change-account-selector_list__inner:hover{
+  background-color:var(--formbg);
 }
 
 .change-account-selector__shadow {
@@ -885,27 +890,16 @@ $green-font-color: #19B028;
   opacity: 0;
 }
 
-// Changed Dropdown List Css
-.change-account-selector_list {
-	background-color: white;
-	padding: 0px 0px 10px;
-	margin-top: 10px;
-	width: 100%;
-  margin-left:-10px;
-	border: 1px solid var(--border);
-	box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.10);
-}
-
-.change-account-selector_list__inner:hover{
-  background-color:var(--secondary);
+.text-link_hover:hover{
+  color:var(--hover);
 }
 
 .search-bar__icon {
   padding: 2px;
   padding-left: 5px;
   font-size: 19px;
-  border-top-left-radius:4px;
-  border-bottom-left-radius: 4px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
   background-color: var(--formbg);
   border-color: var(--border);
   border-right-color: rgba(0,0,0,0);
@@ -1002,13 +996,9 @@ $green-font-color: #19B028;
 
 .change-account-selector__acount-image {
 	height: 24px;
-	width: 24px;
-	margin-right: 15px;
-	border-radius:  $feed-border-radius;
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-position: center;
-	vertical-align: middle;
+	min-width: 24px;
+	max-width: 24px;
+	margin-right: 10px;
 }
 
 .modal-header .feed-create-comment-form__close {
@@ -1041,7 +1031,7 @@ $green-font-color: #19B028;
 }
 
 .feed-post__dropdown-menu-item {
-  background-color: white;
+  background-color: var(--secondary);
   color: var(--gray);
   box-shadow: 2px 2px 1px rgba(0,0,0,0.1);
   &:hover {
@@ -2271,10 +2261,4 @@ input {
 .swal2-popup {
   background-color: var(--background) !important;
   color: var(--text);
-}
-
-.btn {
-  line-height: 18px;
-  padding-left:20px;
-  padding-right: 20px;
 }
