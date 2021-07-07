@@ -10,7 +10,7 @@
       <div>$CLOUT Price</div>
       <div>
         <span>~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
-        <span class="text-muted">&nbsp;USD per coin</span>
+        <span class="text-grey5">&nbsp;USD per coin</span>
       </div>
     </div>
     <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
@@ -21,7 +21,7 @@
           {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }}
         </div>
 
-        <div class="d-flex text-muted">
+        <div class="d-flex text-grey5">
           <!-- Amount in USD-->
           <div class="ml-10px mr-10px">≈</div>
           <div *ngIf="globalVars.satoshisPerBitCloutExchangeRate">

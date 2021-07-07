@@ -22,6 +22,7 @@ export const icydarkTheme: Theme = {
     "--cblue": "#238eff",
     "--cred": "#e0245e",
     "--cgreen": "#17BF63",
+    "--button": "#3a9eea",
     "--loading": "#999",
   },
 };

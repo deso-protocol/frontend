@@ -12,8 +12,8 @@ export const cakeTheme: Theme = {
     "--textalt": "#a97aa2",
     "--norm": "#47205c",
     "--formbg": "#fff5f3",
-    "--link": "#009aff",
-    "--hover": "#008cad",
+    "--link": "#47205c",
+    "--hover": "#6d4e75",
     "--border": "#fae1dd",
     "--mborder": "#fae1dd",
     "--filter": "grayscale(0.5) sepia(1) hue-rotate(227deg) saturate(9.2) opacity(0.78)",
@@ -22,6 +22,7 @@ export const cakeTheme: Theme = {
     "--cblue": "#457b9d",
     "--cred": "#ff3298",
     "--cgreen": "#69ab4f",
+    "--button": "#6d4e75",
     "--loading": "#d2a59d",
   },
 };

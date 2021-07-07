@@ -25,6 +25,7 @@ export interface Theme {
     "--cblue": string;
     "--cred": string;
     "--cgreen": string;
+    "--button": string;
     "--loading": string;
   };
 }
