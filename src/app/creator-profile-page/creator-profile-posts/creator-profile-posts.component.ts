@@ -48,7 +48,6 @@ export class CreatorProfilePostsComponent {
     if (this.lastPage != null && page > this.lastPage) {
       return [];
     }
-    debugger
     this.loadingNextPage = true;
     const lastPostHashHex = this.pagedKeys[page];
     return this.backendApi
