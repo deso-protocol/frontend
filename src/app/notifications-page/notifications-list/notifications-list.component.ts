@@ -1,9 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { Datasource, IDatasource } from "ngx-ui-scroll";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
+import { InfiniteScroller  } from "src/app/infinite-scroller";
 
 @Component({
   selector: "app-notifications-list",
@@ -11,27 +12,22 @@ import { AppRoutingModule } from "../../app-routing.module";
   styleUrls: ["./notifications-list.component.scss"],
 })
 export class NotificationsListComponent implements OnInit {
-  // stores a mapping of page number to promises
-  pagedRequests = {
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
-  };
+  static BUFFER_SIZE = 10;
+  static PAGE_SIZE = 50;
+  static WINDOW_VIEWPORT = true;
 
   // stores a mapping of page number to notification index
   pagedIndexes = {
     0: -1,
   };
 
+  // Infinite scroll metadata.
+  pageOffset = 0;
+  lastPage = null; 
+
   // stores a cache of all profiles and posts we've seen
   profileMap = {};
   postMap = {};
-
-  // tracks if we've reached the end of all notifications
-  lastPage = null;
-
-  // constants
-  pageSize = 50;
 
   // Track the total number of items for our empty state
   // null means we're loading items
@@ -42,56 +38,6 @@ export class NotificationsListComponent implements OnInit {
 
   // Track if we're loading the next page of notifications
   loadingMoreNotifications = false;
-  // NOTE: I'm not super thrilled with how pagination turned out.
-  // we juggle promises and indexes around in a bit of a weird fashion
-  // and i'm sure there's a cleaner way to do this. for now, it works,
-  // but it's begging to be refactored in the future.
-
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
-  datasource: IDatasource = new Datasource({
-    get: (index, count, success) => {
-      const startIndex = Math.max(index, 0);
-      const endIndex = index + count - 1;
-      if (startIndex > endIndex) {
-        this.isLoading = false;
-        success([]); // empty result
-        return;
-      }
-
-      const startPage = Math.floor(startIndex / this.pageSize);
-      const endPage = Math.floor(endIndex / this.pageSize);
-
-      const pageRequests: any[] = [];
-      for (let i = startPage; i <= endPage; i++) {
-        const existingRequest = this.pagedRequests[i];
-        if (existingRequest) {
-          pageRequests.push(existingRequest);
-        } else {
-          // we need to wait for the previous page before we can fetch the next one
-          const newRequest = this.pagedRequests[i - 1].then((_) => {
-            return this.getPage(i);
-          });
-          this.pagedRequests[i] = newRequest;
-          pageRequests.push(newRequest);
-        }
-      }
-
-      return Promise.all(pageRequests).then((pageResults) => {
-        pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
-        const start = startIndex - startPage * this.pageSize;
-        const end = start + endIndex - startIndex + 1;
-        this.isLoading = false;
-        return pageResults.slice(start, end);
-      });
-    },
-    settings: {
-      startIndex: 0,
-      minIndex: 0,
-      bufferSize: 10,
-      windowViewport: true,
-      infinite: true,
-    },
-  });
 
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
@@ -109,7 +55,7 @@ export class NotificationsListComponent implements OnInit {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
-        this.pageSize /*NumToFetch*/
+        NotificationsListComponent.PAGE_SIZE /*NumToFetch*/
       )
       .toPromise()
       .then(
@@ -129,7 +75,7 @@ export class NotificationsListComponent implements OnInit {
           this.pagedIndexes[page + 1] = res.Notifications[res.Notifications.length - 1]?.Index - 1 || 0;
 
           // if the chunk was incomplete or the Index was zero we're done
-          if (chunk.length < this.pageSize || this.pagedIndexes[page + 1] === 0) {
+          if (chunk.length < NotificationsListComponent.PAGE_SIZE || this.pagedIndexes[page + 1] === 0) {
             this.lastPage = page;
           }
 
@@ -142,7 +88,10 @@ export class NotificationsListComponent implements OnInit {
           console.error(this.backendApi.stringifyError(err));
         }
       )
-      .finally(() => (this.loadingMoreNotifications = false));
+      .finally(() => {
+        this.loadingMoreNotifications = false;
+        this.isLoading = false;
+      });
   }
 
   // NOTE: the outputs of this function are inserted directly into the DOM
@@ -354,4 +303,7 @@ export class NotificationsListComponent implements OnInit {
       },
     });
   }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(NotificationsListComponent.PAGE_SIZE, this.getPage.bind(this), NotificationsListComponent.WINDOW_VIEWPORT, NotificationsListComponent.BUFFER_SIZE);
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
