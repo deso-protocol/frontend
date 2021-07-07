@@ -20,9 +20,11 @@
         *ngIf="post.ProfileEntryResponse"
         [contentShouldLinkToThread]="true"
         [includePaddingOnPost]="true"
+        [includeVisualPin]="true"
         [post]="post"
         [afterCommentCreatedCallback]="_prependComment.bind(this, post, index)"
         [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+        [showLeftSelectedBorder]="post.IsPinned"
         (userBlocked)="userBlocked()"
       ></feed-post>
       <div *ngFor="let comment of post.Comments">

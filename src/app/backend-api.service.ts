@@ -180,6 +180,7 @@ export class PostEntryResponse {
   InMempool: boolean;
   IsPinned: boolean;
   DiamondsFromSender?: number;
+  IsGlobalPinned: boolean;
 }
 
 export class DiamondsPost {
@@ -667,6 +668,7 @@ export class BackendApiService {
     PostExtraData: any,
     Sub: string,
     IsHidden: boolean,
+    IsPinned: boolean,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathSubmitPost, {
@@ -679,6 +681,7 @@ export class BackendApiService {
       PostExtraData,
       Sub,
       IsHidden,
+      IsPinned,
       MinFeeRateNanosPerKB,
     });
 
@@ -794,7 +797,8 @@ export class BackendApiService {
     ReaderPublicKeyBase58Check: string,
     LastPostHashHex: string,
     NumToFetch: number,
-    MediaRequired: boolean
+    MediaRequired: boolean,
+    MaxPinnedPosts: number,
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetPostsForPublicKey, {
       PublicKeyBase58Check,
@@ -803,6 +807,7 @@ export class BackendApiService {
       LastPostHashHex,
       NumToFetch,
       MediaRequired,
+      MaxPinnedPosts,
     });
   }
 

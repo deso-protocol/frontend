@@ -35,6 +35,7 @@
     <feed-post
       [post]="currentPost"
       [includePaddingOnPost]="true"
+      [includeVisualPin]="true"
       [contentShouldLinkToThread]="true"
       [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
       [isParentPostInThread]="true"

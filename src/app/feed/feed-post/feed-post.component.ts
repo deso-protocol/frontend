@@ -87,11 +87,14 @@ export class FeedPostComponent implements OnInit {
 
   @Input() showReplyingTo = false;
 
+  @Input() includeVisualPin = false;
+
   // If the post is shown in a modal, this is used to hide the modal on post click.
   @Input() containerModalRef: any = null;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
+  @Output() postPinnedToProfile = new EventEmitter();
 
   // emits the UserBlocked event
   @Output() userBlocked = new EventEmitter();
@@ -231,13 +234,14 @@ export class FeedPostComponent implements OnInit {
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
             this._post.PostHashHex /*PostHashHexToModify*/,
-            "" /*ParentPostHashHex*/,
+            this._post.ParentStakeID /*ParentPostHashHex*/,
             "" /*Title*/,
             { Body: this._post.Body, ImageURLs: this._post.ImageURLs } /*BodyObj*/,
             this._post.RecloutedPostEntryResponse?.PostHashHex || "",
             {},
             "" /*Sub*/,
             true /*IsHidden*/,
+            this._post.IsPinned,
             this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
           )
           .subscribe(
@@ -255,6 +259,37 @@ export class FeedPostComponent implements OnInit {
       }
     });
   }
+
+  pinPostToProfile() {
+    this.backendApi
+      .SubmitPost(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this._post.PostHashHex /*PostHashHexToModify*/,
+        this._post.ParentStakeID /*ParentPostHashHex*/,
+        "" /*Title*/,
+        { Body: this._post.Body, ImageURLs: this._post.ImageURLs } /*BodyObj*/,
+        this._post.RecloutedPostEntryResponse?.PostHashHex || "",
+        {},
+        "" /*Sub*/,
+        this._post.IsHidden /*IsHidden*/,
+        !this._post.IsPinned, /* We toggle whatever is set already */
+        this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
+      )
+      .subscribe(
+        (response) => {
+          this._post.IsPinned = !this._post.IsPinned
+          this.globalVars.logEvent("post : profile-pin");
+          },
+        (err) => {
+          console.error(err);
+          const parsedError = this.backendApi.parsePostError(err);
+          this.globalVars.logEvent("post : profile-pin : error", { parsedError });
+          this.globalVars._alertError(parsedError);
+        }
+        );
+  }
+
 
   blockUser() {
     SwalHelper.fire({

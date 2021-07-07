@@ -180,6 +180,10 @@
             [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
           ></follow-button>
 
+          <span *ngIf="post.IsPinned && includeVisualPin" class="ml-1 text-primary pl-5px">
+            <i class="fas fa-thumbtack fa-md align-middle"></i>
+          </span>
+
           <feed-post-dropdown
             *ngIf="showDropdown && !reclouterProfile"
             class="ml-auto"
@@ -188,7 +192,8 @@
             (postHidden)="hidePost()"
             (userBlocked)="blockUser()"
             (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
-            (togglePostPin)="_pinPostToGlobalFeed($event)"
+            (toggleFeedPostPin)="_pinPostToGlobalFeed($event)"
+            (toggleProfilePostPin)="pinPostToProfile($event)"
           ></feed-post-dropdown>
         </div>
 
