@@ -12,19 +12,15 @@ export class InfiniteScroller {
     private getPage: (page: number) => any[] | Promise<any>,
     private windowViewport: boolean,
     private bufferSize: number = 50,
-    private padding: number = undefined
+    private padding: number = 0.5
   ) {}
 
-  settingsWithoutPadding = {
+  settings = {
     bufferSize: this.bufferSize,
     infinite: true,
     minIndex: 0,
     startIndex: 0,
     windowViewport: this.windowViewport,
-  };
-
-  settingsWithPadding = {
-    ...this.settingsWithoutPadding,
     padding: this.padding,
   };
 
@@ -62,7 +58,7 @@ export class InfiniteScroller {
           return pageResults.slice(start, end);
         });
       },
-      settings: Boolean(this.padding) ? this.settingsWithPadding : this.settingsWithoutPadding,
+      settings: this.settings,
     });
   }
 }
