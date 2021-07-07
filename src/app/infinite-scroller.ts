@@ -17,7 +17,7 @@ export class InfiniteScroller {
 
   settingsWithoutPadding = {
     bufferSize: this.bufferSize,
-    infinite: true, // todo anna: do we need this? or should we pass this in?
+    infinite: true,
     minIndex: 0,
     startIndex: 0,
     windowViewport: this.windowViewport,

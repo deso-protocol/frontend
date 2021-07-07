@@ -1,8 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { CreatorProfilePostsComponent } from "./creator-profile-posts.component";
 
-// todo anna: add UTs
 describe("CreatorProfilePostsComponent", () => {
   let component: CreatorProfilePostsComponent;
   let fixture: ComponentFixture<CreatorProfilePostsComponent>;
