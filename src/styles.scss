@@ -886,7 +886,7 @@ $green-font-color: #19B028;
 
 // Changed Dropdown List Css
 .change-account-selector_list {
-	background-color: white;
+	background-color: var(--secondary);
 	padding: 0px 0px 10px;
 	margin-top: 10px;
 	width: 100%;
