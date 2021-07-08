@@ -22,7 +22,7 @@ export const legendsTheme: Theme = {
     "--cblue": "#238eff",
     "--cred": "#e0245e",
     "--cgreen": "#17BF63",
-    "--button": "#005BFF", 
+    "--button": "#007BFF",
     "--loading": "#999",
   },
 };

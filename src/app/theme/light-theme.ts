@@ -24,5 +24,6 @@ export const lightTheme: Theme = {
     "--cgreen": "#19B028",
     "--button": "#005BFF",
     "--loading": "#777777",
+    "--button": "#0058F7",
   },
 };

@@ -35,17 +35,24 @@
 
   <div *ngIf="creatorCoinTrade.amount">
     <div class="mt-15px">
-      <input
-        class="form-control w-100 fs-15px text-left d-inline-block"
-        [formControl]="creatorCoinTrade.transferRecipient"
-        placeholder="Enter a bitclout public key or recipient"
-      />
+      <search-bar
+        [isSearchForUsersToSendClout]="true"
+        (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+      ></search-bar>
     </div>
+  </div>
+
+  <div class="px-5px">
+    <simple-profile-card
+      [profile]="creatorCoinTrade.transferRecipient.value"
+      [singleColumn]="true"
+      [hideFollowLink]="true"
+      *ngIf="creatorCoinTrade.transferRecipient.value"></simple-profile-card>
   </div>
 
   <div class="text-danger text-left fs-14px mt-2">
     <div *ngIf="creatorCoinTrade.showUsernameError" class="mt-10px">
-      Username "{{ creatorCoinTrade.transferRecipient.value }}" could not be found.
+      Username "{{ creatorCoinTrade.transferRecipient.value.Username }}" could not be found.
     </div>
     <div *ngIf="creatorCoinTrade.showPubKeyError" class="mt-10px">Please enter a valid username or public key.</div>
     <div *ngIf="creatorCoinTrade.showCannotSendToSelfError" class="mt-10px">

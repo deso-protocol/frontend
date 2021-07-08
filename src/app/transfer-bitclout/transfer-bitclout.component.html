@@ -25,7 +25,12 @@
 </div>
 
 <div class="px-5px">
-  <simple-profile-card [profile]="payToCreator" [singleColumn]="true" *ngIf="payToCreator"></simple-profile-card>
+  <simple-profile-card
+    [profile]="payToCreator"
+    [singleColumn]="true"
+    [hideFollowLink]="true"
+    *ngIf="payToCreator"
+  ></simple-profile-card>
 </div>
 
 <div class="fs-15px font-weight-bold mt-15px px-15px">Amount of $CLOUT to send:</div>
@@ -90,7 +95,7 @@
 </button>
 
 <div class="p-15px d-flex flex-column align-items-center">
-  <p>Share to receive $CLOUT</p>
+  <p>Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $CLOUT</p>
   <img [src]="sendBitCloutQRCode | sanitizeQRCode"/>
 </div>
 

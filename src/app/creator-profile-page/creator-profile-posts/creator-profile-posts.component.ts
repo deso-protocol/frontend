@@ -3,7 +3,8 @@ import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../.
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { InfiniteScroller } from "src/app/infinite-scroller";
 import * as _ from "lodash";
 
 @Component({
@@ -13,24 +14,21 @@ import * as _ from "lodash";
 })
 export class CreatorProfilePostsComponent {
   static PAGE_SIZE = 10;
+  static BUFFER_SIZE = 5;
+  static WINDOW_VIEWPORT = true;
+  static PADDING = 0.5;
+
   @Input() profile: ProfileEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
   @Input() showProfileAsReserved: boolean;
 
-  datasource: IDatasource<IAdapter<PostEntryResponse>> = this.getDatasource();
+  lastPage = null;
   loadingFirstPage = true;
   loadingNextPage = false;
+
   pagedKeys = {
     0: "",
   };
-
-  pagedRequests = {
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
-  };
-
-  lastPage = null;
 
   @Output() blockUser = new EventEmitter();
 
@@ -41,54 +39,7 @@ export class CreatorProfilePostsComponent {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private location: Location
-  ) {
-    // this.datasource = this.getDatasource();
-  }
-
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
-  getDatasource() {
-    return new Datasource<IAdapter<PostEntryResponse>>({
-      get: (index, count, success) => {
-        const startIdx = Math.max(index, 0);
-        const endIdx = index + count - 1;
-        if (startIdx > endIdx) {
-          success([]);
-          return;
-        }
-        const startPage = Math.floor(startIdx / CreatorProfilePostsComponent.PAGE_SIZE);
-        const endPage = Math.floor(endIdx / CreatorProfilePostsComponent.PAGE_SIZE);
-
-        const pageRequests: any[] = [];
-        for (let i = startPage; i <= endPage; i++) {
-          const existingRequest = this.pagedRequests[i];
-          if (existingRequest) {
-            pageRequests.push(existingRequest);
-          } else {
-            const newRequest = this.pagedRequests[i - 1].then((_) => {
-              return this.getPage(i);
-            });
-            this.pagedRequests[i] = newRequest;
-            pageRequests.push(newRequest);
-          }
-        }
-
-        return Promise.all(pageRequests).then((pageResults) => {
-          pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
-          const start = startIdx - startPage * CreatorProfilePostsComponent.PAGE_SIZE;
-          const end = start + endIdx - startIdx + 1;
-          return pageResults.slice(start, end);
-        });
-      },
-      settings: {
-        startIndex: 0,
-        minIndex: 0,
-        bufferSize: 5,
-        padding: 0.5,
-        windowViewport: true,
-        infinite: true,
-      },
-    });
-  }
+  ) {}
 
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
@@ -154,4 +105,13 @@ export class CreatorProfilePostsComponent {
       this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
     );
   }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    CreatorProfilePostsComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    CreatorProfilePostsComponent.WINDOW_VIEWPORT,
+    CreatorProfilePostsComponent.BUFFER_SIZE,
+    CreatorProfilePostsComponent.PADDING
+  );
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }

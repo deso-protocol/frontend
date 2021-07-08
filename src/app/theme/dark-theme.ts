@@ -22,7 +22,7 @@ export const darkTheme: Theme = {
     "--cblue": "#0058F7",
     "--cred": "#fe3537",
     "--cgreen": "#19B028",
-    "--button": "#005BFF", 
+    "--button": "#0058F7",
     "--loading": "#999",
   },
 };
