@@ -39,7 +39,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
   // tracks if we've reached the end of all notifications
   lastPage = null;
 
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
+  // TODO: Cleanup - Use InfiniteScroller class to de-duplicate this logic
   datasource: IDatasource = new Datasource({
     get: (index, count, success) => {
       const startIndex = Math.max(index, 0);

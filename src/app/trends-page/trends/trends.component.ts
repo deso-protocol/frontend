@@ -73,6 +73,7 @@ export class TrendsComponent implements OnInit {
     this.globalVars.updateLeaderboard(true);
   }
 
+  // TODO: Cleanup - Use InfiniteScroller class to de-duplicate this logic
   datasource: IDatasource<IAdapter<any>> = this.getDatasource();
   getDatasource() {
     return new Datasource<IAdapter<any>>({

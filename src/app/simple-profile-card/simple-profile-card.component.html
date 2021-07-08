@@ -5,7 +5,7 @@
   (click)="onClick()"
 >
   <div class="row no-gutters w-100">
-    <div class="d-flex align-items-center mb-0" [ngClass]="{ 'col-6': !singleColumn }">
+    <div class="d-flex flex-grow-1 align-items-center mb-0">
       <!-- Avatar -->
       <div class="simple-profile-card__avatar-container">
         <div
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="col-6 d-flex align-items-center justify-content-center mb-0">
+    <div class="d-flex align-items-center justify-content-center mb-0">
       <div *ngIf="diamondLevel > 0" class="d-flex">
         <i *ngFor="let diamond of counter(diamondLevel)" class="icon-diamond fs-20px d-block"></i>
       </div>

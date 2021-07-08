@@ -11,8 +11,18 @@ export class InfiniteScroller {
     private pageSize: number,
     private getPage: (page: number) => any[] | Promise<any>,
     private windowViewport: boolean,
-    private bufferSize: number = 50
+    private bufferSize: number = 50,
+    private padding: number = 0.5
   ) {}
+
+  settings = {
+    bufferSize: this.bufferSize,
+    infinite: true,
+    minIndex: 0,
+    padding: this.padding,
+    startIndex: 0,
+    windowViewport: this.windowViewport,
+  };
 
   getDatasource(): IDatasource<IAdapter<any>> {
     return new Datasource<IAdapter<any>>({
@@ -48,12 +58,7 @@ export class InfiniteScroller {
           return pageResults.slice(start, end);
         });
       },
-      settings: {
-        startIndex: 0,
-        minIndex: 0,
-        bufferSize: this.bufferSize,
-        windowViewport: this.windowViewport,
-      },
+      settings: this.settings,
     });
   }
 }

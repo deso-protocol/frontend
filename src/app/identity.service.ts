@@ -96,11 +96,21 @@ export class IdentityService {
     return this.send("sign", payload);
   }
 
+  encrypt(payload: {
+    accessLevel: number;
+    accessLevelHmac: string;
+    encryptedSeedHex: string;
+    recipientPublicKey: string;
+    message: string;
+  }): Observable<any> {
+    return this.send("encrypt", payload);
+  }
+
   decrypt(payload: {
     accessLevel: number;
     accessLevelHmac: string;
     encryptedSeedHex: string;
-    encryptedHexes: string[];
+    encryptedMessages: any;
   }): Observable<any> {
     return this.send("decrypt", payload);
   }

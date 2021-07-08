@@ -50,6 +50,7 @@ export class DiamondPostsComponent {
 
   static PAGE_SIZE = 10;
 
+  // TODO: Cleanup - Use InfiniteScroller class to de-duplicate this logic
   getDatasource() {
     return new Datasource<IAdapter<DiamondsPost>>({
       get: (index, count, success) => {

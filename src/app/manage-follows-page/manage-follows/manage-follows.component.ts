@@ -47,7 +47,7 @@ export class ManageFollowsComponent implements OnDestroy {
 
   lastPage = null;
 
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
+  // TODO: Cleanup - Use InfiniteScroller class to de-duplicate this logic
   datasource: IDatasource<IAdapter<any>> = new Datasource<IAdapter<any>>({
     get: (index, count, success) => {
       const startIdx = Math.max(index, 0);
