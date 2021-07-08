@@ -150,7 +150,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
         this.appData.localNode,
         this.appData.loggedInUser.PublicKeyBase58Check /*SenderPublicKeyBase58Check*/,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
-        this.creatorCoinTrade.transferRecipient.value /*ReceiverPublicKeyBase58Check*/,
+        this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
         this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
         this.appData.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/,
         true
@@ -161,7 +161,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
           this.globalVars.logEvent("coins : transfer", {
             Creator: this.creatorCoinTrade.creatorProfile.Username,
             SenderPublicKeyBase58Check: this.appData.loggedInUser.PublicKeyBase58Check,
-            ReceiverUsernameOrPublicKeyBase58Check: this.creatorCoinTrade.transferRecipient,
+            ReceiverUsernameOrPublicKeyBase58Check: this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check,
             CreatorCoinToTransferNanos: this.creatorCoinTrade.amount.value * 1e9,
             SpendAmountNanos,
             TotalInputNanos,
