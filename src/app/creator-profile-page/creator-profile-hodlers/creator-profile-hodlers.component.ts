@@ -1,8 +1,6 @@
-import { ChangeDetectorRef, Component, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { BackendApiService, ProfileEntryResponse, BalanceEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
 import { IDatasource, IAdapter } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 
