@@ -8,7 +8,7 @@
   <div class="d-flex align-items-center justify-content-between pl-5px pr-5px">
     <div *ngIf="globalVars.loggedInUser" class="change-account-selector__ellipsis-restriction d-flex flex-row align-items-center cursor-pointer">
       <div class="feed-create-post__avatar align-items-center change-account-selector__account-image" [avatar]="globalVars.loggedInUser.PublicKeyBase58Check"></div>
-      <div class="change-account-selector__acount-name">
+      <div class="change-account-selector__acount-name change-account-selector__ellipsis-restriction">
       {{
         globalVars.loggedInUser.ProfileEntryResponse?.Username
           ?  globalVars.loggedInUser.ProfileEntryResponse.Username
