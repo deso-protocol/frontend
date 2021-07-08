@@ -2041,16 +2041,19 @@ input {
   border-color: $buy-button-blue;
   color: #fff;
 }
+
 .btn-primary:hover {
 	color: #fff;
 	background-color: var(--hover);
 	border-color: var(--hover);
 }
+
 .btn-primary.disabled, .btn-primary:disabled {
 	color: #fff;
 	background-color: $buy-button-blue;
 	border-color: $buy-button-blue;
 }
+
 .btn-secondary {
   background-color: #FFFFFF;
   border-color: var(--border);
