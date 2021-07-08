@@ -2,7 +2,7 @@ import { Theme } from "./symbols";
 
 export const greenishTheme: Theme = {
   key: "greenish",
-  name: "Greenish Theme",
+  name: "Green Theme",
   properties: {
     "--background": "#03353E",
     "--text": "#ffffff",
