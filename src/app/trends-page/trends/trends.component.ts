@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
 import { BackendApiService } from "../../backend-api.service";
 import { HttpClient } from "@angular/common/http";
 import { PulseService } from "../../../lib/services/pulse/pulse-service";
