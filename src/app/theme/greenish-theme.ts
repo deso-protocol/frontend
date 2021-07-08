@@ -25,5 +25,3 @@ export const greenishTheme: Theme = {
     "--loading": "#ffffff", 
   },
 };
-//"--button": "#03A8BB",
- 
