@@ -43,8 +43,8 @@ export class ChangeAccountSelectorComponent {
     this.globalVars.messageResponse = null;
     this.globalVars.SetupMessages();
 
-    this.router.onSameUrlNavigation = 'reload'
-    this.router.navigateByUrl(this.router.url);
+    const currentUrl = this.router.url
+    this.router.navigate(['/']).then(() => { this.router.navigateByUrl(currentUrl); })
 
     this.globalVars.isLeftBarMobileOpen = false;
   }
