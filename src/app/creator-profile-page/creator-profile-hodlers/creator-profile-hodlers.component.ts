@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, Input } from "@angular/core";
 import { BackendApiService, ProfileEntryResponse, BalanceEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -16,14 +16,7 @@ export class CreatorProfileHodlersComponent {
   static WINDOW_VIEWPORT = true;
   static BUFFER_SIZE = 5; // todo anna: do we want 5 or default?
 
-  constructor(
-    private globalVars: GlobalVarsService,
-    private backendApi: BackendApiService,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-    private location: Location
-  ) {}
+  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   @Input() profile: ProfileEntryResponse;
 
