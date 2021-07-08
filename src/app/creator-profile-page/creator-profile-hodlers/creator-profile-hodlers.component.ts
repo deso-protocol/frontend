@@ -3,7 +3,8 @@ import { BackendApiService, ProfileEntryResponse, BalanceEntryResponse } from ".
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
-import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
+import { IDatasource, IAdapter } from "ngx-ui-scroll";
+import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
   selector: "creator-profile-hodlers",
@@ -11,26 +12,10 @@ import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
   styleUrls: ["./creator-profile-hodlers.component.scss"],
 })
 export class CreatorProfileHodlersComponent {
-  showTotal = false;
-
-  @Input() profile: ProfileEntryResponse;
-
-  datasource: IDatasource<IAdapter<any>>;
-  loadingFirstPage = true;
-  loadingNextPage = false;
-  pagedKeys = {
-    0: "",
-  };
-
-  pagedRequests = {
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
-  };
-
-  lastPage = null;
-
   static PAGE_SIZE = 100;
+  static WINDOW_VIEWPORT = true;
+  static BUFFER_SIZE = 5; // todo anna: do we want 5 or default?
+
   constructor(
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
@@ -38,53 +23,17 @@ export class CreatorProfileHodlersComponent {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private location: Location
-  ) {
-    this.datasource = this.getDatasource();
-  }
+  ) {}
 
-  // TODO: Cleanup - Use InfiniteScroller class to de-duplicate this logic
-  getDatasource() {
-    return new Datasource<IAdapter<any>>({
-      get: (index, count, success) => {
-        const startIdx = Math.max(index, 0);
-        const endIdx = index + count - 1;
-        if (startIdx > endIdx) {
-          success([]);
-          return;
-        }
-        const startPage = Math.floor(startIdx / CreatorProfileHodlersComponent.PAGE_SIZE);
-        const endPage = Math.floor(endIdx / CreatorProfileHodlersComponent.PAGE_SIZE);
+  @Input() profile: ProfileEntryResponse;
 
-        const pageRequests: any[] = [];
-        for (let i = startPage; i <= endPage; i++) {
-          const existingRequest = this.pagedRequests[i];
-          if (existingRequest) {
-            pageRequests.push(existingRequest);
-          } else {
-            const newRequest = this.pagedRequests[i - 1].then((_) => {
-              return this.getPage(i);
-            });
-            this.pagedRequests[i] = newRequest;
-            pageRequests.push(newRequest);
-          }
-        }
-
-        return Promise.all(pageRequests).then((pageResults) => {
-          pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
-          const start = startIdx - startPage * CreatorProfileHodlersComponent.PAGE_SIZE;
-          const end = start + endIdx - startIdx + 1;
-          return pageResults.slice(start, end);
-        });
-      },
-      settings: {
-        startIndex: 0,
-        minIndex: 0,
-        padding: 0.5,
-        windowViewport: true,
-        infinite: true,
-      },
-    });
-  }
+  showTotal = false;
+  lastPage = null;
+  loadingFirstPage = true;
+  loadingNextPage = false;
+  pagedKeys = {
+    0: "",
+  };
 
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
@@ -151,4 +100,12 @@ export class CreatorProfileHodlersComponent {
     event.stopPropagation();
     event.preventDefault();
   }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    CreatorProfileHodlersComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    CreatorProfileHodlersComponent.WINDOW_VIEWPORT,
+    CreatorProfileHodlersComponent.BUFFER_SIZE
+  );
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
