@@ -1,11 +1,12 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { RouteNames, AppRoutingModule } from "../../app-routing.module";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
   selector: "manage-follows",
@@ -16,6 +17,8 @@ export class ManageFollowsComponent implements OnDestroy {
   static FOLLOWING = "Following";
   static FOLLOWERS = "Followers";
   static PAGE_SIZE = 50;
+  static BUFFER_SIZE = 50;
+  static WINDOW_VIEWPORT = true;
 
   ManageFollowsComponent = ManageFollowsComponent;
   AppRoutingModule = AppRoutingModule;
@@ -34,61 +37,11 @@ export class ManageFollowsComponent implements OnDestroy {
   profileFollowerCount: number = 0;
   loadingFirstPage = true;
   loadingNextPage = false;
+  lastPage = null;
 
   pagedKeys = {
     0: "",
   };
-
-  pagedRequests = {
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
-  };
-
-  lastPage = null;
-
-  // TODO: Cleanup - Use InfiniteScroller class to de-duplicate this logic
-  datasource: IDatasource<IAdapter<any>> = new Datasource<IAdapter<any>>({
-    get: (index, count, success) => {
-      const startIdx = Math.max(index, 0);
-      const endIdx = index + count - 1;
-      if (startIdx > endIdx) {
-        success([]);
-        return;
-      }
-
-      const startPage = Math.floor(startIdx / ManageFollowsComponent.PAGE_SIZE);
-      const endPage = Math.floor(endIdx / ManageFollowsComponent.PAGE_SIZE);
-
-      const pageRequests: any[] = [];
-      for (let i = startPage; i <= endPage; i++) {
-        const existingRequest = this.pagedRequests[i];
-        if (existingRequest) {
-          pageRequests.push(existingRequest);
-        } else {
-          const newRequest = this.pagedRequests[i - 1].then((_) => {
-            return this.getPage(i);
-          });
-          this.pagedRequests[i] = newRequest;
-          pageRequests.push(newRequest);
-        }
-      }
-
-      return Promise.all(pageRequests).then((pageResults) => {
-        pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
-        const start = startIdx - startPage * ManageFollowsComponent.PAGE_SIZE;
-        const end = start + endIdx - startIdx + 1;
-        return pageResults.slice(start, end);
-      });
-    },
-    settings: {
-      startIndex: 0,
-      minIndex: 0,
-      bufferSize: 50,
-      windowViewport: true,
-      infinite: true,
-    },
-  });
 
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
@@ -247,4 +200,12 @@ export class ManageFollowsComponent implements OnDestroy {
   ngOnDestroy() {
     this.loggedInUserSubscription.unsubscribe();
   }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    ManageFollowsComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    ManageFollowsComponent.WINDOW_VIEWPORT,
+    ManageFollowsComponent.BUFFER_SIZE
+  );
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }
