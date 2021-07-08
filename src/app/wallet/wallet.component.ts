@@ -14,9 +14,9 @@ export class WalletComponent implements OnInit {
   hasUnminedCreatorCoins: boolean;
   showTransferredCoins: boolean = false;
 
-  sortedFromHighToLow: number = 0;
-  sortedPriceFromHighToLow: number = -1;
-  sortedUsernameFromHighToLow: number = -1;  
+  sortedUSDValueFromHighToLow: number = 0;
+  sortedPriceFromHighToLow: number = 0;
+  sortedUsernameFromHighToLow: number = 0;
 
   usersYouReceived: BalanceEntryResponse[] = [];
   usersYouPurchased: BalanceEntryResponse[] = [];
@@ -45,119 +45,75 @@ export class WalletComponent implements OnInit {
         this.usersYouReceived.push(balanceEntryResponse);
       }
     });
-    this.sortHodlings(this.usersYouPurchased);
-    this.sortHodlings(this.usersYouReceived);
+    this.sortWallet("value")
     this.titleService.setTitle("Wallet - BitClout");
   }
 
-  sortHodlings(hodlings: BalanceEntryResponse[]): void {
+  // sort by USD value
+  sortHodlingsCoins(hodlings: BalanceEntryResponse[], descending: boolean): void {
+    this.sortedUsernameFromHighToLow = 0;
+    this.sortedPriceFromHighToLow = 0;
+    this.sortedUSDValueFromHighToLow = descending ? -1 : 1;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) -
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry)
+        this.sortedUSDValueFromHighToLow * (
+          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry) -
+          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) 
+        )
       );
     });
-  }
-
-
-  // brootle update start
-
-  sortHodlingsToHigh(hodlings: BalanceEntryResponse[]): void {
-    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
-      return (
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry) -
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) 
-      );
-    });
-  }  
-
-  toggleSortCoins(){
-    if(this.sortedFromHighToLow){ 
-      this.sortHodlings(this.usersYouPurchased);
-      this.sortHodlings(this.usersYouReceived);        
-      this.sortedFromHighToLow = 0;   
-    } else {
-      this.sortHodlingsToHigh(this.usersYouPurchased);
-      this.sortHodlingsToHigh(this.usersYouReceived);           
-      this.sortedFromHighToLow = 1;    
-    }
-    this.sortedPriceFromHighToLow = -1;
-    this.sortedUsernameFromHighToLow = -1;
   }
 
   // sort by coin price
-
-  sortHodlingsPriceToHigh(hodlings: BalanceEntryResponse[]): void {
-
+  sortHodlingsPrice(hodlings: BalanceEntryResponse[], descending: boolean): void {
+    this.sortedUsernameFromHighToLow = 0;
+    this.sortedPriceFromHighToLow = descending ? -1 : 1;
+    this.sortedUSDValueFromHighToLow = 0;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.ProfileEntryResponse.CoinPriceBitCloutNanos, a.ProfileEntryResponse.CoinEntry) -
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.ProfileEntryResponse.CoinPriceBitCloutNanos, b.ProfileEntryResponse.CoinEntry) 
+        this.sortedPriceFromHighToLow * (
+          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.ProfileEntryResponse.CoinPriceBitCloutNanos, a.ProfileEntryResponse.CoinEntry) -
+          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.ProfileEntryResponse.CoinPriceBitCloutNanos, b.ProfileEntryResponse.CoinEntry)
+        )
       );
     });
-  }  
-
-  sortHodlingsPriceToLow(hodlings: BalanceEntryResponse[]): void {
-
-    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
-      return (
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.ProfileEntryResponse.CoinPriceBitCloutNanos, b.ProfileEntryResponse.CoinEntry) -
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.ProfileEntryResponse.CoinPriceBitCloutNanos, a.ProfileEntryResponse.CoinEntry)
-      );
-    });
-  }    
-
-  toggleSortPrice(){
-    if(this.sortedPriceFromHighToLow){
-      this.sortHodlingsPriceToLow(this.usersYouPurchased);
-      this.sortHodlingsPriceToLow(this.usersYouReceived);         
-      this.sortedPriceFromHighToLow = 0;
-    } else {
-      this.sortHodlingsPriceToHigh(this.usersYouPurchased);
-      this.sortHodlingsPriceToHigh(this.usersYouReceived);          
-      this.sortedPriceFromHighToLow = 1;    
-    }
-    this.sortedFromHighToLow = - 1;
-    this.sortedUsernameFromHighToLow = -1;   
   }
 
   // sort by username
-  sortHodlingsUsernameToHigh(hodlings: BalanceEntryResponse[]): void {
-
+  sortHodlingsUsername(hodlings: BalanceEntryResponse[], descending: boolean): void{
+    this.sortedUsernameFromHighToLow = descending ? -1 : 1;
+    this.sortedPriceFromHighToLow = 0;
+    this.sortedUSDValueFromHighToLow = 0;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
-      return(
-        a.ProfileEntryResponse.Username.localeCompare(b.ProfileEntryResponse.Username)
+      return (
+        this.sortedUsernameFromHighToLow * b.ProfileEntryResponse.Username.localeCompare(a.ProfileEntryResponse.Username)
       )
     });
-
-  }  
-
-  sortHodlingsUsernameToLow(hodlings: BalanceEntryResponse[]): void {
-
-    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
-      return(
-        b.ProfileEntryResponse.Username.localeCompare(a.ProfileEntryResponse.Username)
-      )
-    });    
-
-  }    
-
-  toggleSortUsername(){
-    if(this.sortedUsernameFromHighToLow){
-      this.sortHodlingsUsernameToHigh(this.usersYouPurchased);
-      this.sortHodlingsUsernameToHigh(this.usersYouReceived);      
-      this.sortedUsernameFromHighToLow = 0;
-    } else {
-      this.sortHodlingsUsernameToLow(this.usersYouPurchased);
-      this.sortHodlingsUsernameToLow(this.usersYouReceived);  
-      this.sortedUsernameFromHighToLow = 1;    
-    }
-    this.sortedFromHighToLow = - 1;
-    this.sortedPriceFromHighToLow = -1;  
   }
 
-  // brootle update end
-
+  sortWallet(column: string){
+    let descending: boolean;
+    switch (column) {
+      case "username":
+        // code block
+        descending = this.sortedUsernameFromHighToLow === - 1 ? false : true;
+        this.sortHodlingsUsername(this.usersYouPurchased, descending);
+        this.sortHodlingsUsername(this.usersYouReceived, descending);
+        break;
+      case "price":
+        descending = this.sortedPriceFromHighToLow === - 1 ? false : true;
+        this.sortHodlingsPrice(this.usersYouPurchased, descending);
+        this.sortHodlingsPrice(this.usersYouReceived, descending);
+        break;
+      case "value":
+        descending = this.sortedUSDValueFromHighToLow === - 1 ? false : true;
+        this.sortHodlingsCoins(this.usersYouPurchased, descending);
+        this.sortHodlingsCoins(this.usersYouReceived, descending);
+        break;
+      default:
+      // do nothing
+    }
+  }
 
   totalValue() {
     let result = 0;
