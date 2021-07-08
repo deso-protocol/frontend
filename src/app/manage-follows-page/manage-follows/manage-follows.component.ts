@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { RouteNames, AppRoutingModule } from "../../app-routing.module";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
