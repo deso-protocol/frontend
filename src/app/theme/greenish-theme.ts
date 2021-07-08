@@ -22,8 +22,8 @@ export const greenishTheme: Theme = {
     "--cblue": "#238eff",
     "--cred": "#e0245e",
     "--cgreen": "#17BF63",
-    "--button": "#03A8BB",
     "--loading": "#ffffff", 
   },
 };
+//"--button": "#03A8BB",
  
