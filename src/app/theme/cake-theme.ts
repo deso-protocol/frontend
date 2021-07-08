@@ -21,8 +21,8 @@ export const cakeTheme: Theme = {
     "--topbar": "#ead8d8",
     "--cblue": "#457b9d",
     "--cred": "#ff3298",
-    "--text": "#47205c",
-    "--button": "#69ab4f",
+    "--cgreen": "#69ab4f",
+    "--button": "#47205c",
     "--loading": "#d2a59d",
   },
 };
