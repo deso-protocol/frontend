@@ -139,7 +139,7 @@ $border-grey: #E5E5E5;
 $staking-grey: #F0F0F0;
 $light-grey-for-divider: #F8F8F8;
 $light-grey-for-divider-2: #FAFAFA;
-$buy-button-blue: #0058F7;
+$buy-button-blue: var(--button);
 // Font colors.
 $light-font-color: #777777;
 $normal-font-color: #222222;
@@ -147,7 +147,7 @@ $red-font-color: #fe3537;
 $green-font-color: #19B028;
 
 // For when you want a finger instead of an arrow.
-.cursor-pointer {
+.cursor-pointer { 
   cursor: pointer;
 }
 
@@ -2037,9 +2037,19 @@ input {
   background-color: $profile-button;
 }
 .btn-primary {
-  background-color: #005BFF;
-  border-color: #005BFF;
+  background-color: $buy-button-blue;
+  border-color: $buy-button-blue;
   color: #fff;
+}
+.btn-primary:hover {
+	color: #fff;
+	background-color: var(--hover);
+	border-color: var(--hover);
+}
+.btn-primary.disabled, .btn-primary:disabled {
+	color: #fff;
+	background-color: $buy-button-blue;
+	border-color: $buy-button-blue;
 }
 .btn-secondary {
   background-color: #FFFFFF;
