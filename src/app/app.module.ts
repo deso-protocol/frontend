@@ -125,6 +125,7 @@ import { lightTheme } from "./theme/light-theme";
 import { darkTheme } from "./theme/dark-theme";
 import { icydarkTheme } from "./theme/icy-dark-theme";
 import { legendsTheme } from "./theme/legends-theme";
+import { GraphQLModule } from './graphql.module';
 
 @NgModule({
   declarations: [
@@ -251,6 +252,7 @@ import { legendsTheme } from "./theme/legends-theme";
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
     }),
+    GraphQLModule,
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],
