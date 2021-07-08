@@ -194,6 +194,7 @@ $green-font-color: #19B028;
 // font-weight-light: 300
 // font-weight-normal: 400
 .font-weight-semibold { font-weight: 500 }
+.font-weight-normal { font-weight: 400 }
 // font-weight-bold: 700
 
 
@@ -386,6 +387,7 @@ $green-font-color: #19B028;
 .my-30px { margin-top: 30px; margin-bottom: 30px; }
 
 .br-3px { border-radius: 3px; }
+.br-4px { border-radius: 4px; }
 .br-12px { border-radius: $feed-border-radius; }
 
 .vh-100 { height: 100vh !important; }
@@ -836,14 +838,27 @@ $green-font-color: #19B028;
   font-size: 15px !important;
 }
 
+.feed-create-post__avatar.change-account-selector__account-image {
+	width: 24px;
+	height: 24px;
+	min-width: 24px;
+	margin-right: 10px;
+	border-radius: 100%;
+}
+
 .change-account-selector {
-  margin-left: -10px;
-  position: relative;
-  z-index: 30;
-  background-color: var(--secondary);
-  width: 185px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+	margin-left: -10px;
+	position: relative;
+	z-index: 30;
+	background-color: var(--secondary);
+	width: 100%;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	border: 1px solid var(--border);
+}
+
+.change-account-selector_list__inner {
+	border-bottom: 1px solid var(--border);
 }
 
 .change-account-selector__down-arrow {
@@ -852,11 +867,30 @@ $green-font-color: #19B028;
 }
 
 .change-account-selector__hover:hover {
-  background-color: var(--secondary);
+	box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.10);
+}
+
+.change-account-selector_list {
+	position: absolute;
+	background-color: var(--secondary);
+	padding: 0px 0px 10px;
+	margin-top: 15px;
+	width: 100%;
+	margin-left: -4px;
+	z-index: 11;
+	border: 1px solid var(--border);
+}
+
+.change-account-selector_list-item{
+  overflow: hidden;
+}
+
+.change-account-selector_list__inner:hover{
+  background-color:var(--formbg);
 }
 
 .change-account-selector__shadow {
-  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+  box-shadow: rgba(101, 119, 134, 0) 0px 0px 15px, rgba(101, 119, 134, 0) 0px 0px 3px 1px;
 }
 
 .change-account-selector__ellipsis-restriction {
@@ -869,6 +903,10 @@ $green-font-color: #19B028;
 
 .change-account-selector__trash {
   opacity: 0;
+}
+
+.text-link_hover:hover{
+  color:var(--hover);
 }
 
 .search-bar__icon {
