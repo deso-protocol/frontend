@@ -1,7 +1,7 @@
 <div class="w-100">
   <div class="px-15px">
-    <div class="fs-18px font-weight-bold mb-10px">Enter an amount in USD to convert to $Clout</div>
-    <p class="mb-5px">You can purchase up to ${{ maxUsdAmount }} of $Clout per week using USD.</p>
+    <div class="fs-18px font-weight-bold mb-10px">Enter an amount in USD to convert to $CLOUT</div>
+    <p class="mb-5px">You can purchase up to ${{ maxUsdAmount }} of $CLOUT per week using USD.</p>
     <p class="mb-10px">
       For larger purchases,
       <a [routerLink]="['', 'buy-bitclout']" [queryParams]="{ btc: true }">buy with Bitcoin.</a>
@@ -72,7 +72,7 @@
       (click)="onBuyClicked()"
       [ngClass]="{ disabled: quotationError }"
     >
-      Buy $Clout
+      Buy $CLOUT
     </button>
   </div>
 </div>
