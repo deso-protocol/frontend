@@ -140,7 +140,7 @@ $border-grey: #E5E5E5;
 $staking-grey: #F0F0F0;
 $light-grey-for-divider: #F8F8F8;
 $light-grey-for-divider-2: #FAFAFA;
-$buy-button-blue: #0058F7;
+$buy-button-blue: var(--button);
 // Font colors.
 $light-font-color: #777777;
 $normal-font-color: #222222;
@@ -148,7 +148,7 @@ $red-font-color: #fe3537;
 $green-font-color: #19B028;
 
 // For when you want a finger instead of an arrow.
-.cursor-pointer {
+.cursor-pointer { 
   cursor: pointer;
 }
 
@@ -195,6 +195,7 @@ $green-font-color: #19B028;
 // font-weight-light: 300
 // font-weight-normal: 400
 .font-weight-semibold { font-weight: 500 }
+.font-weight-normal { font-weight: 400 }
 // font-weight-bold: 700
 
 
@@ -387,6 +388,7 @@ $green-font-color: #19B028;
 .my-30px { margin-top: 30px; margin-bottom: 30px; }
 
 .br-3px { border-radius: 3px; }
+.br-4px { border-radius: 4px; }
 .br-12px { border-radius: $feed-border-radius; }
 
 .vh-100 { height: 100vh !important; }
@@ -837,14 +839,27 @@ $green-font-color: #19B028;
   font-size: 15px !important;
 }
 
+.feed-create-post__avatar.change-account-selector__account-image {
+	width: 24px;
+	height: 24px;
+	min-width: 24px;
+	margin-right: 10px;
+	border-radius: 100%;
+}
+
 .change-account-selector {
-  margin-left: -10px;
-  position: relative;
-  z-index: 30;
-  background-color: var(--secondary);
-  width: 185px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+	margin-left: -10px;
+	position: relative;
+	z-index: 30;
+	background-color: var(--secondary);
+	width: 100%;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	border: 1px solid var(--border);
+}
+
+.change-account-selector_list__inner {
+	border-bottom: 1px solid var(--border);
 }
 
 .change-account-selector__down-arrow {
@@ -853,11 +868,30 @@ $green-font-color: #19B028;
 }
 
 .change-account-selector__hover:hover {
-  background-color: var(--secondary);
+	box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.10);
+}
+
+.change-account-selector_list {
+	position: absolute;
+	background-color: var(--secondary);
+	padding: 0px 0px 10px;
+	margin-top: 15px;
+	width: 100%;
+	margin-left: -4px;
+	z-index: 11;
+	border: 1px solid var(--border);
+}
+
+.change-account-selector_list-item{
+  overflow: hidden;
+}
+
+.change-account-selector_list__inner:hover{
+  background-color:var(--formbg);
 }
 
 .change-account-selector__shadow {
-  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+  box-shadow: rgba(101, 119, 134, 0) 0px 0px 15px, rgba(101, 119, 134, 0) 0px 0px 3px 1px;
 }
 
 .change-account-selector__ellipsis-restriction {
@@ -870,6 +904,10 @@ $green-font-color: #19B028;
 
 .change-account-selector__trash {
   opacity: 0;
+}
+
+.text-link_hover:hover{
+  color:var(--hover);
 }
 
 .search-bar__icon {
@@ -1061,8 +1099,43 @@ $green-font-color: #19B028;
 
 .feed-post-icon-row__icon.icon-reply {
   margin-left: -6px;
+  &:hover {
+    background-color: $comment-hover;
+    color: $comment-color;
+  }
 }
 
+/* reclout hover animation */
+.feed-post-icon-row__icon.icon-repost { 
+  &:hover {
+    background-color: $reclout-hover;
+    color: $reclout-color;
+  }
+}
+/* like button hover animation */
+.icon-heart, .icon-heart-fill{
+  &:hover{
+    background-color: $like-hover;
+    color: $like-color;
+  }
+}
+
+/* diamond button hover animation */
+.icon-diamond{
+  &:hover{
+    background-color: $diamond-hover;
+    color: $diamond-color;
+  }
+}
+
+/* copy link button hover animation */
+.icon-link{
+  &:hover{
+    background-color: $link-btn-hover;
+    color: $link-btn-color;
+
+  }
+}
 .feed-post__icon-row-holder {
 }
 
@@ -1694,10 +1767,9 @@ $green-font-color: #19B028;
 }
 
 .simple-profile-card__avatar-container {
-  width: 56px; // TODO: figure out why chrome doesn't render this as 50px
+  width: 50px; 
   margin-right: 15px;
 }
-
 
 //
 // (end) v0 styles
@@ -1818,11 +1890,9 @@ $green-font-color: #19B028;
   color: var(--text) !important;
   background: var(--formbg) !important;
   border-color: var(--border) !important;
-  outline: none;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  box-shadow: none !important;
-  background-clip: padding-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 .normal-text {
   color: $text-color;
@@ -1968,10 +2038,23 @@ input {
   background-color: $profile-button;
 }
 .btn-primary {
-  background-color: #005BFF;
-  border-color: #005BFF;
+  background-color: $buy-button-blue;
+  border-color: $buy-button-blue;
   color: #fff;
 }
+
+.btn-primary:hover {
+	color: #fff;
+	background-color: var(--hover);
+	border-color: var(--hover);
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+	color: #fff;
+	background-color: $buy-button-blue;
+	border-color: $buy-button-blue;
+}
+
 .btn-secondary {
   background-color: #FFFFFF;
   border-color: var(--border);

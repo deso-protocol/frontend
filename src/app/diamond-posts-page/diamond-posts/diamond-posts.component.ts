@@ -1,9 +1,10 @@
-import { Component, Input } from "@angular/core";
+import { Component } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService, DiamondsPost, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import * as _ from "lodash";
+import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
   selector: "diamond-posts",
@@ -11,6 +12,10 @@ import * as _ from "lodash";
   styleUrls: ["./diamond-posts.component.sass"],
 })
 export class DiamondPostsComponent {
+  static BUFFER_SIZE = 10;
+  static PAGE_SIZE = 10;
+  static WINDOW_VIEWPORT = true;
+
   constructor(
     public globalVars: GlobalVarsService,
     private router: Router,
@@ -29,7 +34,6 @@ export class DiamondPostsComponent {
   receiverProfileEntryResponse: ProfileEntryResponse;
   senderProfileEntryResponse: ProfileEntryResponse;
 
-  datasource: IDatasource<IAdapter<any>> = this.getDatasource();
   loadingFirstPage = true;
   loadingNextPage = false;
   pagedKeys = {
@@ -40,58 +44,7 @@ export class DiamondPostsComponent {
     0: 0,
   };
 
-  pagedRequests = {
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
-  };
-
   lastPage = null;
-
-  static PAGE_SIZE = 10;
-
-  getDatasource() {
-    return new Datasource<IAdapter<DiamondsPost>>({
-      get: (index, count, success) => {
-        const startIdx = Math.max(index, 0);
-        const endIdx = index + count - 1;
-        if (startIdx > endIdx) {
-          success([]);
-          return;
-        }
-        const startPage = Math.floor(startIdx / DiamondPostsComponent.PAGE_SIZE);
-        const endPage = Math.floor(endIdx / DiamondPostsComponent.PAGE_SIZE);
-
-        const pageRequests: any[] = [];
-        for (let i = startPage; i <= endPage; i++) {
-          const existingRequest = this.pagedRequests[i];
-          if (existingRequest) {
-            pageRequests.push(existingRequest);
-          } else {
-            const newRequest = this.pagedRequests[i - 1].then((_) => {
-              return this.getPage(i);
-            });
-            this.pagedRequests[i] = newRequest;
-            pageRequests.push(newRequest);
-          }
-        }
-
-        return Promise.all(pageRequests).then((pageResults) => {
-          pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
-          const start = startIdx - startPage * DiamondPostsComponent.PAGE_SIZE;
-          const end = start + endIdx - startIdx + 1;
-          return pageResults.slice(start, end);
-        });
-      },
-      settings: {
-        startIndex: 0,
-        minIndex: 0,
-        bufferSize: 10,
-        windowViewport: true,
-        infinite: true,
-      },
-    });
-  }
 
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
@@ -168,4 +121,12 @@ export class DiamondPostsComponent {
       },
     });
   }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    DiamondPostsComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    DiamondPostsComponent.WINDOW_VIEWPORT,
+    DiamondPostsComponent.BUFFER_SIZE
+  );
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }

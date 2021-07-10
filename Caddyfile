@@ -51,7 +51,7 @@ header @html Content-Security-Policy "
     'unsafe-inline'
     https://fonts.googleapis.com
     https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css;
-  img-src 'self' data: i.imgur.com images.bitclout.com;
+  img-src 'self' data: i.imgur.com images.bitclout.com quickchart.io;
   font-src 'self'
     https://fonts.googleapis.com
     https://fonts.gstatic.com
@@ -63,10 +63,12 @@ header @html Content-Security-Policy "
     identity.bitclout.green
     https://geo.captcha-delivery.com
     https://www.youtube.com
+    https://youtube.com
     https://player.vimeo.com
     https://www.tiktok.com
     https://giphy.com
     https://open.spotify.com
     https://w.soundcloud.com
     pay.testwyre.com
-    pay.sendwyre.com;"
+    pay.sendwyre.com;
+  frame-ancestor 'self';"

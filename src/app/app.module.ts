@@ -117,6 +117,7 @@ import { AvatarDirective } from "./avatar/avatar.directive";
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { TrendsComponent } from "./trends-page/trends/trends.component";
 import { UploadDirective } from "./directives/upload.directive";
+import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -125,6 +126,8 @@ const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
 const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
+const cakeTheme: Theme = { key: "cake", name: "Cake Theme" };
+const greenishTheme: Theme = { key: "legends", name: "Greenish Theme" };
 
 @NgModule({
   declarations: [
@@ -224,6 +227,7 @@ const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
     AvatarDirective,
     TrendsPageComponent,
     TrendsComponent,
+    SanitizeQRCodePipe,
   ],
   imports: [
     BrowserModule,
@@ -245,7 +249,7 @@ const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
     RatingModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme],
+      themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme, cakeTheme, greenishTheme],
       active:
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),

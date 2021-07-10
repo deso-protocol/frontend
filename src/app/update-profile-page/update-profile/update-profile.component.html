@@ -112,6 +112,7 @@
                 max="100"
                 type="number"
                 class="form-control fs-15px lh-15px p-10px w-25 text-right"
+                [disabled]="globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
               />
               <i
                 (click)="tooltip.toggle()"
@@ -121,10 +122,13 @@
                 #tooltip="matTooltip"
               ></i>
             </div>
+            <div *ngIf="this.globalVars.loggedInUser.UsersWhoHODLYouCount === 0" class="fc-muted font-italic fs-13px pt-5px">
+              * You must purchase your own coin before lowering your founder reward.
+            </div>
             <div
               *ngIf="profileUpdateErrors.founderRewardError"
               [ngClass]="{ 'fc-red': profileUpdateErrors.founderRewardError }"
-              class="fs-13px font-italic"
+              class="fs-13px font-italic pt-5px"
             >
               Please set a founder reward between 0-100.
             </div>

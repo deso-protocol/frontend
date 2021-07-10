@@ -516,6 +516,9 @@ export class BuyBitcloutComponent implements OnInit {
     );
 
     this._queryBitcoinAPI();
+    // Force an update of the exchange rate when loading the Buy BitClout page to ensure our computations are using the
+    // latest rates.
+    this.globalVars._updateBitCloutExchangeRate();
   }
 
   _handleTabClick(tab: string): void {

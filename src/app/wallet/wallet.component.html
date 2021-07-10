@@ -89,10 +89,20 @@
           <div
             class="row no-gutters d-flex align-items-center fc-muted border-bottom border-color-grey pl-15px py-15px"
           >
-            <div class="col mb-0">Name</div>
-            <div class="col-2 d-lg-block d-none mb-0" style="text-align: end">Price</div>
+            <div class="col mb-0" (click)="sortWallet('username')">
+              <i class="fas fs-15px" [ngClass]="{'fa-arrows-alt-v':sortedUsernameFromHighToLow === 0, 'fa-sort-alpha-up-alt':sortedUsernameFromHighToLow === 1, 'fa-sort-alpha-down':sortedUsernameFromHighToLow === -1}"></i>
+              Name
+            </div>
+            <div class="col-2 d-lg-block d-none mb-0" style="text-align: end" (click)="sortWallet('price')">
+              <i class="fas fs-15px" [ngClass]="{'fa-arrows-alt-v':sortedPriceFromHighToLow === 0, 'fa-sort-amount-down':sortedPriceFromHighToLow === -1, 'fa-sort-amount-up-alt':sortedPriceFromHighToLow === 1}"></i>
+              Price
+            </div>
             <div class="col-4 mb-0" style="text-align: end">
-              USD Value
+              <span (click)="sortWallet('value')">
+                <i class="fas fs-15px"
+                  [ngClass]="{'fa-arrows-alt-v':sortedUSDValueFromHighToLow === 0, 'fa-sort-amount-down':sortedUSDValueFromHighToLow === -1, 'fa-sort-amount-up-alt':sortedUSDValueFromHighToLow === 1}"></i>
+                USD Value
+              </span>
               <i
                 class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
                 matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
