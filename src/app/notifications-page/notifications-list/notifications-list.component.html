@@ -13,20 +13,22 @@
 </div>
 
 <div #uiScroll *uiScroll="let item of datasource; let index = index" class="border-bottom border-color-grey">
-  <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
+  <div class="pt-10px pl-10px pr-10px pb-15px cursor-pointer notifications__item" *ngIf="item.action" [routerLink]="item.link">
     <div class="d-flex flex-row align-items-center">
-      <div *ngIf="item.icon" class="notifications__icon">
-        <i class="{{ item.icon }}"></i>
+      <div class="position-relative">
+        <div *ngIf="item.icon" class="notifications__icon">
+          <i class="{{ item.icon }}"></i>
+        </div>
+        <div
+          class="notifications__avatar"
+          [avatar]="item.actor.PublicKeyBase58Check"
+          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor.Username]"
+        ></div>
       </div>
-      <div
-        class="notifications__avatar"
-        [avatar]="item.actor.PublicKeyBase58Check"
-        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor.Username]"
-      ></div>
       <div class="notifications__action" [innerHtml]="item.action"></div>
     </div>
   </div>
-  <div class="cursor-pointer" *ngIf="item.post">
+  <div class="cursor-pointer notifications__item" *ngIf="item.post">
     <feed-post
       [post]="item.post"
       [includePaddingOnPost]="true"
