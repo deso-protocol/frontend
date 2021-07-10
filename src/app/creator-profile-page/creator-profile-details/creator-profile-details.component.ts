@@ -166,7 +166,7 @@ export class CreatorProfileDetailsComponent {
     this.loading = true;
     this.backendApi.GetSingleProfile(this.globalVars.localNode, "", this.userName).subscribe(
       (res) => {
-        if (!res || res.IsBlacklisted) {
+        if (!res) {
           this.loading = false;
           this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
           return;
