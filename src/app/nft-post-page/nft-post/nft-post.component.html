@@ -24,32 +24,35 @@
       [showLeftSelectedBorder]="true"
       [showInteractionDetails]="true"
       [blocked]="isPostBlocked(nftPost)"
+      [nftBidData]="nftBidData"
+      [showNFTDetails]="true"
+      [showExpandedNFTDetails]="true"
       (userBlocked)="afterUserBlocked($event)"
     ></feed-post>
   </div>
-  <div style="background-color: var(--border) !important" class="p-15px fs-15px pb-0">
-    <div class="d-flex justify-content-between align-items-center" style="line-height: 24px">
-      <div>
-        <span><b>{{ availableSerialNumbers?.length }} of {{ nftPost.NumNFTCopies }} available &nbsp;</b></span>
-        <span *ngIf="nftPost.HasUnlockable">|&nbsp;<i class="fas fa-lock"></i> Unlockable content</span>
-      </div>
-      <div>
-        <button
-          class="btn btn-primary font-weight-bold br-8px fs-13px"
-          (click)="openPlaceBidModal($event)"
-          *ngIf="showPlaceABid"
-        >
-          Place a bid
-        </button>
-      </div>
-    </div>
-    <div style="line-height: 24px;" *ngIf="highBid">
-      Highest: {{ highBid / 1e9 }} $CLOUT ~{{ globalVars.nanosToUSD(highBid, 2) }}
-    </div>
-    <div class="pt-5px" style="line-height: 24px;" *ngIf="lowBid">
-      From: {{ lowBid / 1e9 }} $CLOUT ~{{ globalVars.nanosToUSD(lowBid, 2) }}
-    </div>
-  </div>
+<!--  <div style="background-color: var(&#45;&#45;border) !important" class="p-15px fs-15px pb-0">-->
+<!--    <div class="d-flex justify-content-between align-items-center" style="line-height: 24px">-->
+<!--      <div>-->
+<!--        <span><b>{{ availableSerialNumbers?.length }} of {{ nftPost.NumNFTCopies }} available &nbsp;</b></span>-->
+<!--        <span *ngIf="nftPost.HasUnlockable">|&nbsp;<i class="fas fa-lock"></i> Unlockable content</span>-->
+<!--      </div>-->
+<!--      <div>-->
+<!--        <button-->
+<!--          class="btn btn-primary font-weight-bold br-8px fs-13px"-->
+<!--          (click)="openPlaceBidModal($event)"-->
+<!--          *ngIf="showPlaceABid"-->
+<!--        >-->
+<!--          Place a bid-->
+<!--        </button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div style="line-height: 24px;" *ngIf="highBid">-->
+<!--      Highest: {{ highBid / 1e9 }} $CLOUT ~{{ globalVars.nanosToUSD(highBid, 2) }}-->
+<!--    </div>-->
+<!--    <div class="pt-5px" style="line-height: 24px;" *ngIf="lowBid">-->
+<!--      From: {{ lowBid / 1e9 }} $CLOUT ~{{ globalVars.nanosToUSD(lowBid, 2) }}-->
+<!--    </div>-->
+<!--  </div>-->
   <div style="background-color: var(--border) !important;">
     <tab-selector [tabs]="tabs" [activeTab]="activeTab"></tab-selector>
   </div>

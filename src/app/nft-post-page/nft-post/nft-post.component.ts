@@ -186,14 +186,6 @@ export class NftPostComponent {
     this.globalVars.loggedInUser.BlockedPubKeys[blockedPubKey] = {};
   }
 
-  openPlaceBidModal(event: any) {
-    event.stopPropagation();
-    this.modalService.show(PlaceBidModalComponent, {
-      class: "modal-dialog-centered modal-lg",
-      initialState: { post: this.nftPost },
-    });
-  }
-
   sellNFT(): void {
     if (this.sellNFTDisabled) {
       return;

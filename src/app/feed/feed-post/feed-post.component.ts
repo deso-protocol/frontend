@@ -1,7 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import {
+  BackendApiService,
+  NFTBidData,
+  NFTBidEntryResponse,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from "../../backend-api.service";
+import { AppRoutingModule } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
@@ -12,6 +18,8 @@ import { QuoteRecloutsModalComponent } from "../../quote-reclouts-modal/quote-re
 import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
 import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
+import * as _ from "lodash";
+import {PlaceBidModalComponent} from "../../place-bid-modal/place-bid-modal.component";
 
 @Component({
   selector: "feed-post",
@@ -40,7 +48,47 @@ export class FeedPostComponent implements OnInit {
     } else {
       this.postContent = post;
     }
+
+    // if (this.showNFTDetails) {
+    //   this.backendApi
+    //     .GetNFTBidsForNFTPost(
+    //       this.globalVars.localNode,
+    //       this.globalVars.loggedInUser.PublicKeyBase58Check,
+    //       this._post.PostHashHex
+    //     )
+    //     .subscribe(
+    //       (res) => {
+    //         console.log(res);
+    //         this.nftBidData = res;
+    //         this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
+    //           (nftEntryResponse) => nftEntryResponse.IsForSale
+    //         );
+    //         console.log(this.availableSerialNumbers);
+    //         this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
+    //           (nftEntryResponse) =>
+    //             nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+    //         );
+    //         console.log(this.myAvailableSerialNumbers);
+    //         this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
+    //         this.highBid = this.getMaxBidAmountFromList(this.nftBidData.BidEntryResponses);
+    //         this.lowBid = this.getMinBidAmountFromList(this.nftBidData.BidEntryResponses);
+    //       },
+    //       (err) => {
+    //         console.error(err);
+    //         this.globalVars._alertError(err);
+    //       }
+    //     );
+    // }
   }
+
+  getMaxBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
+    return _.maxBy(bidEntryResponses, (bidEntryResponse) => bidEntryResponse.BidAmountNanos)?.BidAmountNanos;
+  }
+
+  getMinBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
+    return _.minBy(bidEntryResponses, (bidEntryResponses) => bidEntryResponses.BidAmountNanos)?.BidAmountNanos;
+  }
+
   @Input() set blocked(value: boolean) {
     this._blocked = value;
     this.ref.detectChanges();
@@ -86,6 +134,28 @@ export class FeedPostComponent implements OnInit {
   @Input() hoverable = true;
 
   @Input() showReplyingTo = false;
+  @Input()
+  get nftBidData(): NFTBidData {
+    return this._nftBidData;
+  }
+
+  set nftBidData(bidData: NFTBidData) {
+    this._nftBidData = bidData;
+    if (bidData) {
+      this.availableSerialNumbers = bidData.NFTEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
+      console.log(this.availableSerialNumbers);
+      this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
+        (nftEntryResponse) =>
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+      );
+      console.log(this.myAvailableSerialNumbers);
+      this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
+      this.highBid = this.getMaxBidAmountFromList(bidData.BidEntryResponses);
+      this.lowBid = this.getMinBidAmountFromList(bidData.BidEntryResponses);
+    }
+  }
+  @Input() showNFTDetails = false;
+  @Input() showExpandedNFTDetails = false;
 
   // If the post is shown in a modal, this is used to hide the modal on post click.
   @Input() containerModalRef: any = null;
@@ -110,6 +180,13 @@ export class FeedPostComponent implements OnInit {
   quotedContent: any;
   _blocked: boolean;
   constructedEmbedVideoURL: any;
+
+  showPlaceABid: boolean;
+  highBid: number;
+  lowBid: number;
+  availableSerialNumbers: NFTEntryResponse[];
+  myAvailableSerialNumbers: NFTEntryResponse[];
+  _nftBidData: NFTBidData;
 
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
@@ -464,5 +541,13 @@ export class FeedPostComponent implements OnInit {
       return imgURL.replace("https://i.imgur.com", "https://images.bitclout.com/i.imgur.com");
     }
     return imgURL;
+  }
+
+  openPlaceBidModal(event: any) {
+    event.stopPropagation();
+    this.modalService.show(PlaceBidModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { post: this._post },
+    });
   }
 }

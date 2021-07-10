@@ -778,11 +778,17 @@ export class BackendApiService {
   GetNFTsForUser(
     endpoint: string,
     UserPublicKeyBase58Check: string,
-    ReaderPublicKeyBase58Check: string
+    ReaderPublicKeyBase58Check: string,
+    IsForSale: boolean | null = null,
+    Offset: number = 0,
+    Limit: number = 10
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNFTsForUser, {
       UserPublicKeyBase58Check,
       ReaderPublicKeyBase58Check,
+      IsForSale,
+      Offset,
+      Limit,
     });
   }
 
