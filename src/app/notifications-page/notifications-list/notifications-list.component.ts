@@ -109,7 +109,7 @@ export class NotificationsListComponent {
     };
     const userProfile = this.profileMap[userPublicKeyBase58Check];
     //const actorName = `<b>${actor.Username}</b>`;
-    const actorName = (actor.IsVerified) ? `<b>${actor.Username}</b><span class="ml-1 d-inline-block align-top text-primary fs-10px">
+    const actorName = (actor.IsVerified) ? `<b>${actor.Username}</b><span class="ml-1 d-inline-block align-center text-primary fs-12px">
     <i class="fas fa-check-circle fa-md align-middle"></i>
   </span>` : `<b>${actor.Username}</b>`;
 
