@@ -16,11 +16,21 @@
 
 <div class="fs-15px font-weight-bold mt-15px px-15px">
   Public key or username to pay:
-  <input
-    class="form-control w-100 fs-15px lh-15px mt-5px"
-    placeholder="Enter a public key or username."
-    [(ngModel)]="payToPublicKey"
-  />
+  <!-- Search Bar -->
+  <search-bar
+    [startingSearchText]="startingSearchText"
+    [isSearchForUsersToSendClout]="true"
+    (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+  ></search-bar>
+</div>
+
+<div class="px-5px">
+  <simple-profile-card
+    [profile]="payToCreator"
+    [singleColumn]="true"
+    [hideFollowLink]="true"
+    *ngIf="payToCreator"
+  ></simple-profile-card>
 </div>
 
 <div class="fs-15px font-weight-bold mt-15px px-15px">Amount of $CLOUT to send:</div>
@@ -84,5 +94,10 @@
   Working...
 </button>
 
-<!--Spacer (for mobile)-->
-<div class="pb-15px"></div>
+<div class="p-15px d-flex flex-column align-items-center">
+  <p>Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $CLOUT</p>
+  <img [src]="sendBitCloutQRCode | sanitizeQRCode"/>
+</div>
+
+<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+<div class="global__bottom-bar-mobile-height"></div>

@@ -1,44 +1,33 @@
 <!-- Posts -->
-<simple-center-loader [height]="200" *ngIf="loadingFirstPage && datasource.adapter.isLoading"></simple-center-loader>
+<simple-center-loader [height]="200" *ngIf="isLoading && datasource.adapter.isLoading"></simple-center-loader>
 <div
   *ngIf="
-    !showProfileAsReserved && !loadingFirstPage && !datasource.adapter.isLoading && datasource.adapter.itemsCount === 0
+    !showProfileAsReserved && !isLoading && !datasource.adapter.isLoading && datasource.adapter.itemsCount === 0
   "
   class="p-15px"
 >
   <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
-    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">Create your first post.</span>
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">Create an NFT.</span>
     <ng-template #elseMissingPostBlock>
-      <span>@{{ profile.Username }} is on the platform but hasn't posted yet.</span>
+      <span>@{{ profile.Username }} is on the platform but doesn't have any NFTs for sale.</span>
     </ng-template>
   </div>
 </div>
-<ng-container *ngIf="!showProfileAsReserved">
+<div *ngIf="!showProfileAsReserved && !isLoading">
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
-    <div #uiScroll *uiScroll="let post of datasource; let index = index" class="border-bottom border-color-grey">
+    <div #uiScroll *uiScroll="let nftEntry of datasource; let index = index" class="border-bottom border-color-grey" style="margin: 20px; border: 1px solid var(--border); border-radius: 12px;">
       <feed-post
-        *ngIf="post.ProfileEntryResponse"
+        *ngIf="nftEntry.PostEntryResponse.ProfileEntryResponse"
         [contentShouldLinkToThread]="true"
         [includePaddingOnPost]="true"
-        [post]="post"
-        [afterCommentCreatedCallback]="_prependComment.bind(this, post, index)"
+        [post]="nftEntry.PostEntryResponse"
+        [afterCommentCreatedCallback]="_prependComment.bind(this, nftEntry.PostEntryResponse, index)"
         [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+        [nftBidData]="nftEntry"
+        [showNFTDetails]="true"
+        [showExpandedNFTDetails]="true"
         (userBlocked)="userBlocked()"
       ></feed-post>
-      <div *ngFor="let comment of post.Comments">
-        <div class="px-15px pb-15px post-thread__subcomment-container">
-          <feed-post
-            [includePaddingOnPost]="false"
-            [post]="comment"
-            [parentPost]="post"
-            [contentShouldLinkToThread]="true"
-            [showIconRow]="false"
-            [showDropdown]="false"
-            [showReplyToContent]="false"
-            [isSubcomment]="true"
-          ></feed-post>
-        </div>
-      </div>
     </div>
   </div>
-</ng-container>
+</div>

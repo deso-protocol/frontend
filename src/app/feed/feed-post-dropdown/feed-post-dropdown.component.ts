@@ -39,9 +39,8 @@ export class FeedPostDropdownComponent {
     private platformLocation: PlatformLocation
   ) {}
 
-  ngOnInit(): void {}
-
-  reportPost() {
+  reportPost(): void {
+    this.globalVars.logEvent("post : report-content");
     window.open(
       `https://report.bitclout.com?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}`
     );

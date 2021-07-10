@@ -168,9 +168,9 @@ export class CreatorProfileDetailsComponent {
     this.loading = true;
     this.backendApi.GetSingleProfile(this.globalVars.localNode, "", this.userName).subscribe(
       (res) => {
-        if (!res) {
-          console.log("This profile was not found. It either does not exist or it was deleted.");
+        if (!res || res.IsBlacklisted) {
           this.loading = false;
+          this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
           return;
         }
         this.profile = res.Profile;

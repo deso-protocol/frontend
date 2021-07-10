@@ -70,8 +70,9 @@
             <!--  afterCommentCreatedCallback explanation: Here, the "post" is a subcomment. A new comment on a -->
             <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
             <feed-post
+              class="p-15px"
               *ngIf="subcommentPost.ProfileEntryResponse != null"
-              [includePaddingOnPost]="false"
+              [includePaddingOnPost]="true"
               [post]="subcommentPost"
               [parentPost]="item"
               [contentShouldLinkToThread]="true"

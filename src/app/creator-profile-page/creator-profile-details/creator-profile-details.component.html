@@ -116,6 +116,16 @@
     <creator-diamonds [profile]="profile"></creator-diamonds>
     <div class="w-100 p-35px"></div>
   </div>
+
+  <!-- NFTs -->
+  <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'NFTs' && !loading">
+    <creator-profile-nfts
+      [profile]="profile"
+      [showProfileAsReserved]="showProfileAsReserved()"
+      (blockUser)="userBlocked()"
+    ></creator-profile-nfts>
+    <div class="w-100 p-35px"></div>
+  </div>
 </div>
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
 <div class="global__bottom-bar-mobile-height"></div>

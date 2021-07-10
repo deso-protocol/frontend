@@ -89,6 +89,7 @@ export class SignUpComponent {
   }
 
   _skipButtonClickedOnStarterBitCloutStep() {
+    this.globalVars.logEvent("account : create : create-phone-number-verification : skip");
     this._nextPage();
   }
 

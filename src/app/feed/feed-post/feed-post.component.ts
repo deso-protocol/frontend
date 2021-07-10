@@ -17,9 +17,9 @@ import { RecloutsModalComponent } from "../../reclouts-modal/reclouts-modal.comp
 import { QuoteRecloutsModalComponent } from "../../quote-reclouts-modal/quote-reclouts-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
-import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
 import * as _ from "lodash";
-import {PlaceBidModalComponent} from "../../place-bid-modal/place-bid-modal.component";
+import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
+import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 
 @Component({
   selector: "feed-post",
@@ -150,8 +150,10 @@ export class FeedPostComponent implements OnInit {
       );
       console.log(this.myAvailableSerialNumbers);
       this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-      this.highBid = this.getMaxBidAmountFromList(bidData.BidEntryResponses);
-      this.lowBid = this.getMinBidAmountFromList(bidData.BidEntryResponses);
+      if (bidData.BidEntryResponses?.length) {
+        this.highBid = this.getMaxBidAmountFromList(bidData.BidEntryResponses);
+        this.lowBid = this.getMinBidAmountFromList(bidData.BidEntryResponses);
+      }
     }
   }
   @Input() showNFTDetails = false;
@@ -179,7 +181,7 @@ export class FeedPostComponent implements OnInit {
   hidingPost = false;
   quotedContent: any;
   _blocked: boolean;
-  constructedEmbedVideoURL: any;
+  constructedEmbedURL: any;
 
   showPlaceABid: boolean;
   highBid: number;
@@ -196,7 +198,7 @@ export class FeedPostComponent implements OnInit {
     if (!this.post.RecloutCount) {
       this.post.RecloutCount = 0;
     }
-    this.setEmbedVideoURLForPostContent();
+    this.setEmbedURLForPostContent();
   }
 
   onPostClicked(event) {
@@ -282,6 +284,7 @@ export class FeedPostComponent implements OnInit {
 
   hidePost() {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Hide post?",
       html: `This can’t be undone. The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`,
       showCancelButton: true,
@@ -334,6 +337,7 @@ export class FeedPostComponent implements OnInit {
 
   blockUser() {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Block user?",
       html: `This will hide all comments from this user on your posts as well as hide them from your view on your feed and other threads.`,
       showCancelButton: true,
@@ -515,25 +519,21 @@ export class FeedPostComponent implements OnInit {
       });
   }
 
-  getEmbedVideoURLForPostContent(): any {
-    return this.constructedEmbedVideoURL;
-  }
-
-  setEmbedVideoURLForPostContent(): void {
-    VideoUrlParserService.getEmbedVideoURL(
+  setEmbedURLForPostContent(): void {
+    EmbedUrlParserService.getEmbedURL(
       this.backendApi,
       this.globalVars,
       this.postContent.PostExtraData["EmbedVideoURL"]
-    ).subscribe((res) => (this.constructedEmbedVideoURL = res));
+    ).subscribe((res) => (this.constructedEmbedURL = res));
   }
 
-  getEmbedVideoHeight(): number {
-    return VideoUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
+  getEmbedHeight(): number {
+    return EmbedUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
 
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.
   setNegativeMargins(link: string, globalVars: GlobalVarsService) {
-    return globalVars.isMobile() && VideoUrlParserService.isVimeoLink(link);
+    return globalVars.isMobile() && EmbedUrlParserService.isVimeoLink(link);
   }
 
   mapImageURLs(imgURL: string): string {

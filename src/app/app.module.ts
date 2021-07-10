@@ -80,7 +80,7 @@ import { AdminComponent } from "./admin/admin.component";
 import { AdminWyreComponent } from "./admin/admin-wyre/admin-wyre.component";
 import { NetworkInfoComponent } from "./network-info/network-info.component";
 import { SanitizeAndAutoLinkPipe } from "../lib/pipes/sanitize-and-auto-link-pipe";
-import { SanitizeVideoEmbedPipe } from "../lib/pipes/sanitize-video-embed-pipe";
+import { SanitizeEmbedPipe } from "../lib/pipes/sanitize-embed-pipe";
 import { NgxIntlTelInputModule } from "ngx-intl-tel-input";
 import { SettingsComponent } from "./settings/settings.component";
 import { NotificationsListComponent } from "./notifications-page/notifications-list/notifications-list.component";
@@ -116,13 +116,8 @@ import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.compo
 import { AvatarDirective } from "./avatar/avatar.directive";
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { TrendsComponent } from "./trends-page/trends/trends.component";
-
-// Modular Themes for BitClout by Carsen Klock @carsenk
-import { ThemeModule } from "./theme/theme.module";
-import { lightTheme } from "./theme/light-theme";
-import { darkTheme } from "./theme/dark-theme";
-import { icydarkTheme } from "./theme/icy-dark-theme";
-import { legendsTheme } from "./theme/legends-theme";
+import { UploadDirective } from "./directives/upload.directive";
+import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 import { MintNftModalComponent } from './mint-nft-modal/mint-nft-modal.component';
 import { CreateNftAuctionModalComponent } from './create-nft-auction-modal/create-nft-auction-modal.component';
 import { AuctionCreatedModalComponent } from './auction-created-modal/auction-created-modal.component';
@@ -134,12 +129,25 @@ import { NftModalHeaderComponent } from './nft-modal-header/nft-modal-header.com
 import { CloseNftAuctionModalComponent } from './close-nft-auction-modal/close-nft-auction-modal.component';
 import { SellNftModalComponent } from './sell-nft-modal/sell-nft-modal.component';
 import { AddUnlockableModalComponent } from './add-unlockable-modal/add-unlockable-modal.component';
-import {NftPostPageComponent} from "./nft-post-page/nft-post-page.component";
-import {NftPostComponent} from "./nft-post-page/nft-post/nft-post.component";
+import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
+import { NftPostComponent } from "./nft-post-page/nft-post/nft-post.component";
+import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-profile-nfts/creator-profile-nfts.component";
+
+// Modular Themes for BitClout by Carsen Klock @carsenk
+import { ThemeModule } from "./theme/theme.module";
+import { lightTheme } from "./theme/light-theme";
+import { darkTheme } from "./theme/dark-theme";
+import { icydarkTheme } from "./theme/icy-dark-theme";
+import { legendsTheme } from "./theme/legends-theme";
+// Themes for BitClout by Brix Boston @brixboston100 for Modular Themes by Carsen Klock @carsenk
+import { cakeTheme } from "./theme/cake-theme";
+//Theme for BitClout by @mrpreet
+import { greenishTheme } from "./theme/greenish-theme";
 
 @NgModule({
   declarations: [
     AppComponent,
+    UploadDirective,
     TermsOfServiceComponent,
     ManageFollowsComponent,
     ManageFollowsPageComponent,
@@ -208,7 +216,7 @@ import {NftPostComponent} from "./nft-post-page/nft-post/nft-post.component";
     AdminWyreComponent,
     NetworkInfoComponent,
     SanitizeAndAutoLinkPipe,
-    SanitizeVideoEmbedPipe,
+    SanitizeEmbedPipe,
     SettingsComponent,
     NotificationsListComponent,
     PageComponent,
@@ -234,6 +242,7 @@ import {NftPostComponent} from "./nft-post-page/nft-post/nft-post.component";
     AvatarDirective,
     TrendsPageComponent,
     TrendsComponent,
+    SanitizeQRCodePipe,
     MintNftModalComponent,
     CreateNftAuctionModalComponent,
     AuctionCreatedModalComponent,
@@ -247,6 +256,7 @@ import {NftPostComponent} from "./nft-post-page/nft-post/nft-post.component";
     AddUnlockableModalComponent,
     NftPostPageComponent,
     NftPostComponent,
+    CreatorProfileNftsComponent,
   ],
   imports: [
     BrowserModule,
@@ -268,7 +278,7 @@ import {NftPostComponent} from "./nft-post-page/nft-post/nft-post.component";
     RatingModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme],
+      themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme, cakeTheme, greenishTheme],
       active:
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),

@@ -1,18 +1,23 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+  ProfileEntryResponse,
+} from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
-import {InfiniteScroller} from "../../infinite-scroller";
+import { InfiniteScroller } from "../../infinite-scroller";
 
 @Component({
   selector: "creator-profile-nfts",
   templateUrl: "./creator-profile-nfts.component.html",
   styleUrls: ["./creator-profile-nfts.component.scss"],
 })
-export class CreatorProfileNftsComponent {
+export class CreatorProfileNftsComponent implements OnInit {
   static PAGE_SIZE = 10;
   static BUFFER_SIZE = 5;
   static WINDOW_VIEWPORT = true;
@@ -22,9 +27,12 @@ export class CreatorProfileNftsComponent {
   @Input() afterCommentCreatedCallback: any = null;
   @Input() showProfileAsReserved: boolean;
 
+  nftResponse: { NFTEntryResponses: NFTEntryResponse[]; PostEntryResponse: PostEntryResponse }[];
+
   lastPage = null;
-  loadingFirstPage = true;
-  loadingNextPage = false;
+  isLoading = true;
+  // loadingFirstPage = true;
+  // loadingNextPage = false;
 
   pagedKeys = {
     0: "",
@@ -41,37 +49,68 @@ export class CreatorProfileNftsComponent {
     private location: Location
   ) {}
 
+  ngOnInit(): void {
+    this.backendApi
+      .GetNFTsForUser(
+        this.globalVars.localNode,
+        this.profile.PublicKeyBase58Check,
+        this.globalVars?.loggedInUser.PublicKeyBase58Check,
+        true
+      )
+      .subscribe(
+        (res: {
+          NFTsMap: { [k: string]: { PostEntryResponse: PostEntryResponse; NFTEntryResponses: NFTEntryResponse[] } };
+        }) => {
+          this.nftResponse = [];
+          for (const k in res.NFTsMap) {
+            const nftEntry = res.NFTsMap[k];
+            nftEntry.PostEntryResponse.ProfileEntryResponse = this.profile;
+            this.nftResponse.push(nftEntry);
+          }
+          this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
+        }
+      )
+      .add(() => {
+        this.isLoading = false;
+      });
+  }
+
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
       return [];
     }
-    this.loadingNextPage = true;
-    const lastPostHashHex = this.pagedKeys[page];
-    return this.backendApi
-      .GetPostsForPublicKey(
-        this.globalVars.localNode,
-        "",
-        this.profile.Username,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        lastPostHashHex,
-        CreatorProfilePostsComponent.PAGE_SIZE,
-        false /*MediaRequired*/
-      )
-      .toPromise()
-      .then((res) => {
-        const posts: PostEntryResponse[] = res.Posts;
-        this.pagedKeys[page + 1] = res.LastPostHashHex || "";
-        if (!posts || posts.length < CreatorProfilePostsComponent.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
-          this.lastPage = page;
-        }
-
-        posts.map((post) => (post.ProfileEntryResponse = this.profile));
-        return posts;
-      })
-      .finally(() => {
-        this.loadingFirstPage = false;
-        this.loadingNextPage = false;
-      });
+    return new Promise((resolve, reject) => {
+      resolve(
+        this.nftResponse.slice(
+          page * CreatorProfileNftsComponent.PAGE_SIZE,
+          Math.min((page + 1) * CreatorProfileNftsComponent.PAGE_SIZE, this.nftResponse.length)
+        )
+      );
+    });
+    // if (this.lastPage != null && page > this.lastPage) {
+    //   return [];
+    // }
+    // this.loadingNextPage = true;
+    // const lastPostHashHex = this.pagedKeys[page];
+    // return this.backendApi
+    //   .GetNFTsForUser(
+    //     this.globalVars.localNode,
+    //     this.profile.Username,
+    //     this.globalVars.loggedInUser?.PublicKeyBase58Check,
+    //     true,
+    //     page * CreatorProfileNftsComponent.PAGE_SIZE,
+    //     CreatorProfileNftsComponent.PAGE_SIZE
+    //   )
+    //   .toPromise()
+    //   .then((res) => {
+    //     const nftEntries: NFTEntryResponse[] = res.NFTEntries;
+    //     nftEntries.map((nftEntry) => (nftEntry.PostEntryResponse.ProfileEntryResponse = this.profile));
+    //     return nftEntries;
+    //   })
+    //   .finally(() => {
+    //     this.loadingFirstPage = false;
+    //     this.loadingNextPage = false;
+    //   });
   }
 
   async _prependComment(uiPostParent, index, newComment) {
