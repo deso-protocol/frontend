@@ -108,7 +108,10 @@ export class NotificationsListComponent {
       ProfilePic: "/assets/img/default_profile_pic.png",
     };
     const userProfile = this.profileMap[userPublicKeyBase58Check];
-    const actorName = `<b>${actor.Username}</b>`;
+    //const actorName = `<b>${actor.Username}</b>`;
+    const actorName = (actor.IsVerified) ? `<b>${actor.Username}</b><span class="ml-1 d-inline-block align-top text-primary fs-10px">
+    <i class="fas fa-check-circle fa-md align-middle"></i>
+  </span>` : `<b>${actor.Username}</b>`;
 
     // We map everything to an easy-to-use object so the template
     // doesn't have to do any hard work
