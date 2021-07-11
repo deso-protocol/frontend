@@ -1,11 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { environment } from "../../../environments/environment";
+import * as _ from "lodash";
 
 @Component({
   selector: "feed-create-post",
@@ -21,8 +22,12 @@ export class FeedCreatePostComponent implements OnInit {
   @Input() numberOfRowsInTextArea: number = 2;
   @Input() parentPost: PostEntryResponse = null;
   @Input() isQuote: boolean = false;
+  @Output() searchTerm = new EventEmitter<any>();
+  @Output() itemSelected = new EventEmitter<any>();
+  items: [];
 
   isComment: boolean;
+  creators: ProfileEntryResponse[] = [];
 
   @ViewChild("postImage") postImage;
   @ViewChild("autosize") autosize: CdkTextareaAutosize;
@@ -69,6 +74,41 @@ export class FeedCreatePostComponent implements OnInit {
   ngOnInit() {
     this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
+  }
+
+  search(term: string) {
+    this.getItems(term);
+  }
+
+  getItems(term) {
+    console.log(term);
+    let readerPubKey = "";
+    if (this.globalVars.loggedInUser) {
+      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    }
+      return this.backendApi
+      .GetProfiles(
+        this.globalVars.localNode,
+        "" /*PublicKeyBase58Check*/,
+        "" /*Username*/,
+        term /*UsernamePrefix*/,
+        "" /*Description*/,
+        "" /*Order by*/,
+        5 /*NumToFetch*/,
+        readerPubKey /*ReaderPublicKeyBase58Check*/,
+        "" /*ModerationType*/,
+        false /*FetchUsersThatHODL*/,
+        false /*AddGlobalFeedBool*/
+      )
+      .subscribe(
+        (response) => {
+            this.items = response.ProfilesFound;
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError("Error loading profiles: " + this.backendApi.stringifyError(err));
+        }
+      );
   }
 
   onPaste(event: any): void {

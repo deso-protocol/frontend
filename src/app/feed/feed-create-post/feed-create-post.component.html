@@ -30,12 +30,30 @@
         }"
         class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
         [placeholder]="getPlaceholderText()"
+        [mention]="items" 
+        (searchTerm)="search($event)"
+        [mentionConfig]="{triggerChar:'@',labelKey:'Username'}"
+        [mentionListTemplate]="mentionListTemplate"
         (paste)="onPaste($event)"
         dropUpload
         (onFileDropped)="uploadFile($event)"
         cdkTextareaAutosize
         #autosize="cdkTextareaAutosize"
       ></textarea>
+      <!-- Mentions Dropdown -->
+      <ng-template class="feed-post__mention-container" #mentionListTemplate let-item="item">
+        <div class="change-account-selector__ellipsis-restriction d-flex w-100 flex-row align-items-top cursor-pointer">
+          <div class="feed-create-post__avatar align-items-center" [avatar]="item.PublicKeyBase58Check"></div>
+          <span *ngIf="item.isVerified" class="ml-1 d-inline-block align-top text-primary fs-10px">
+            <i class="fas fa-check-circle fa-md align-middle"></i>
+          </span>
+          <div>
+            <div class="feed-post__mention-name change-account-selector__ellipsis-restriction font-weight-bold fs-14px" style="line-height: normal;">{{item.Username}}</div>
+            <div class="text-grey5 fs-15px" *ngIf="item.CoinPriceBitCloutNanos" style="line-height: normal;">~{{ globalVars.nanosToUSD(item.CoinPriceBitCloutNanos, 2) }}</div>
+          </div>
+        </div>
+      </ng-template>
+      
       <!-- Post image -->
       <div class="feed-post__image-container" *ngIf="!isComment && postImageSrc">
         <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>

@@ -6,6 +6,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { TextFieldModule } from "@angular/cdk/text-field";
+import { MentionModule } from 'angular-mentions';
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
@@ -244,6 +245,7 @@ import { greenishTheme } from "./theme/greenish-theme";
     TextFieldModule,
     NgxIntlTelInputModule,
     UiScrollModule,
+    MentionModule,
     AnimateOnScrollModule.forRoot(),
     ToastrModule.forRoot(),
     BsDropdownModule.forRoot(),

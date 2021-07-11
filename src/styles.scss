@@ -1090,6 +1090,7 @@ $green-font-color: #19B028;
 .feed-post-icon-row__icon {
   font-size: 25px;
   border-radius: 50%;
+  transition:background-color 0.2s ease-in-out 0s;
   margin-right: 2px;
   &:hover {
     background-color: var(--secondary);
@@ -1134,8 +1135,6 @@ $green-font-color: #19B028;
     color: $link-btn-color;
 
   }
-}
-.feed-post__icon-row-holder {
 }
 
 .feed-post__container {
@@ -2302,4 +2301,46 @@ input {
 .swal2-popup {
   background-color: var(--background) !important;
   color: var(--text);
+}
+
+.mention-menu {
+	min-width: 14em!important;
+  z-index: 1!important;
+	color: var(--text)!important;
+	background-color: var(--background)!important;
+	border: 1px solid var(--border)!important;
+	border-radius: 12px!important;
+	box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+}
+
+.mention-item {
+	padding: 15px 10px !important;
+	color: var(--text)!important;
+}
+
+.mention-item .change-account-selector__ellipsis-restriction{
+  max-width:100%;
+}
+
+.mention-menu > li {
+	border-bottom: 1px solid var(--border);
+}
+
+.mention-menu > li:last-child{
+  border:0px;
+  margin:0px;
+}
+
+.mention-menu .feed-create-post__avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 4px;
+}
+
+.scrollable-menu{
+	max-height: 400px!important;
+}
+
+.mention-menu > li.mention-active > a, .mention-menu > li > a:hover {
+	background-color: var(--secondary) !important
 }
