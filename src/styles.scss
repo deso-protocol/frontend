@@ -2303,3 +2303,43 @@ input {
   background-color: var(--background) !important;
   color: var(--text);
 }
+
+.emoji-picker__search-icon {
+  background-color: var(--background) !important;
+  color: var(--text);
+  top: calc(50% - 0.7em) !important;
+}
+.emoji-picker__search-container {
+  background-color: var(--background) !important;
+  color: var(--text);
+}
+
+.emoji-picker__search {
+  background-color: var(--background) !important;
+  color: var(--text);
+}
+
+.emoji-picker {
+  background-color: var(--background) !important;
+  color: var(--text);
+  border-color: var(--border) !important;
+}
+.emoji-picker__search, .emoji-picker__search-icon {
+  border-color: var(--border) !important;
+  color: var(--grey) !important;
+}
+button.emoji-picker__category-button {
+  color: var(--grey) !important;
+}
+button.emoji-picker__category-button.active {
+  color: var(--cblue) !important;
+  border-bottom-color: var(--cblue);
+}
+
+.emoji-picker__emoji:focus, .emoji-picker__emoji:hover {
+  background-color: var(--link) !important;
+}
+
+.emoji-picker__variant-popup {
+  background-color: var(--background) !important;
+}

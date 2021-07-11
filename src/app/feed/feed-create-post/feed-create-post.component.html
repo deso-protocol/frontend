@@ -1,7 +1,7 @@
 <!-- Be careful when modifying this.
      It's used by both the feed and that "create post page."-->
 
-<div [ngStyle]="{'background-color': !parentPost ? 'var(--formbg)' : ''}">
+<div id="feed-post-input-container" [ngStyle]="{ 'background-color': !parentPost ? 'var(--formbg)' : '' }">
   <!-- Avatar + Input -->
   <div class="d-flex align-items-top pt-15px pr-15px pl-15px">
     <div>
@@ -84,7 +84,7 @@
   <i
     class="fas fa-code fa-lg text-grey8A cursor-pointer"
     style="font-size: 18px"
-    [ngClass]="{'pr-15px': !isComment}"
+    [ngClass]="{ 'pr-15px': !isComment }"
     (click)="showEmbedURL = !showEmbedURL"
   ></i>
   <div *ngIf="!isComment">
@@ -93,6 +93,9 @@
       class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
       (click)="imageInput.click()"
     ></i>
+  </div>
+  <div id="emoji-trigger" (click)="emojiClick($event)">
+    <i class="far fa-smile-beam fa-lg text-grey8A ml-15px cursor-pointer"></i>
   </div>
   <button
     class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
