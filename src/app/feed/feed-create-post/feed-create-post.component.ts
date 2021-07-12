@@ -132,8 +132,8 @@ export class FeedCreatePostComponent implements OnInit {
       return;
     }
 
-    // post can't be blank
-    if (this.postInput.length === 0 && !this.postImageSrc) {
+    // post can't be blank and it can't have just whitespaces
+    if ((this.postInput.length === 0 && !this.postImageSrc) || !this.postInput.trim()) {
       return;
     }
 
