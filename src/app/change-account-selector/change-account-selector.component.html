@@ -23,37 +23,37 @@
     </div>
     <i class="fas fa-angle-down text-grey5 change-account-selector__down-arrow"></i>
   </div>
-
-  <!-- Drop-down (open state) -->
-  <div *ngIf="selectorOpen" class="fs-14px fc-default px-5px cursor-pointer change-account-selector_list br-4px change-account-selector_list__hover">
-    <div *ngFor="let user of globalVars.userList; let rowNum = index">
+</div>
+<!-- Drop-down (open state) -->
+<div *ngIf="selectorOpen" class="fs-14px fc-default px-5px cursor-pointer change-account-selector_list br-4px change-account-selector_list__hover">
+  <div *ngFor="let user of globalVars.userList; let rowNum = index">
+    <div
+      *ngIf="!globalVars.loggedInUser || user.PublicKeyBase58Check != globalVars.loggedInUser.PublicKeyBase58Check"
+      (mouseover)="hoverRow = rowNum"
+      class="change-account-selector_list__inner pt-10px pb-10px pl-10px pr-10px d-flex align-items-center"
+    >
       <div
-        *ngIf="!globalVars.loggedInUser || user.PublicKeyBase58Check != globalVars.loggedInUser.PublicKeyBase58Check"
-        (mouseover)="hoverRow = rowNum"
-        class="change-account-selector_list__inner pt-10px pb-10px pl-10px pr-10px d-flex align-items-center"
+        (click)="_switchToUser(user)"
+        class="align-items-center change-account-selector_list-item d-flex flex-row"
+        style="flex-grow: 1"
       >
-        <div
-          (click)="_switchToUser(user)"
-          class="align-items-center change-account-selector_list-item d-flex flex-row"
-          style="flex-grow: 1"
-        >
         <div class="feed-create-post__avatar d-inline-block change-account-selector__account-image" [avatar]="user.PublicKeyBase58Check"></div>
         <div class="d-inline-block change-account-selector__ellipsis-restriction change-account-selector__acount-name">{{ user.ProfileEntryResponse?.Username ? user.ProfileEntryResponse.Username : user.PublicKeyBase58Check }}</div>
-        </div>
       </div>
     </div>
-    <div
-      (click)="globalVars.launchLoginFlow()"
-      class="pl-15px text-link_hover pr-10px pt-10px"
-    >
-      Add account
-    </div>
-    <div
-      *ngIf="globalVars.loggedInUser"
-      class="pl-15px text-link_hover pr-10px pt-10px"
-      (click)="launchLogoutFlow()"
-    >
-      Logout
-    </div>
+  </div>
+  <div
+    (click)="globalVars.launchLoginFlow()"
+    class="pl-15px text-link_hover pr-10px pt-10px"
+  >
+    Add account
+  </div>
+  <div
+    *ngIf="globalVars.loggedInUser"
+    class="pl-15px text-link_hover pr-10px pt-10px"
+    (click)="launchLogoutFlow()"
+  >
+    Logout
   </div>
 </div>
+
