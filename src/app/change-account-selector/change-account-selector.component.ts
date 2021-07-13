@@ -39,7 +39,6 @@ export class ChangeAccountSelectorComponent {
   }
 
   _switchToUser(user) {
-    console.log(user);
     this.globalVars.setLoggedInUser(user);
     this.globalVars.messageResponse = null;
     this.globalVars.SetupMessages();
