@@ -1,7 +1,8 @@
-<div #changeAccountSelectorRoot  id="changeAccountSelectorRoot">
+<div class="btn-group" dropdown #dropdown="bs-dropdown">
   <div
     class="fs-14px fc-default px-5px cursor-pointer change-account-selector br-4px change-account-selector__hover"
     [ngClass]="{ 'change-account-selector__shadow': selectorOpen }"
+    dropdownToggle id="changeAccountButton" aria-controls="dropdown-basic"
   >
     <!-- Selector (unopened state) -->
     <div class="d-flex align-items-center justify-content-between pl-5px pr-5px">
@@ -24,7 +25,10 @@
     </div>
   </div>
   <!-- Drop-down (open state) -->
-  <div *ngIf="selectorOpen" class="fs-14px fc-default px-5px cursor-pointer change-account-selector_list br-4px change-account-selector_list__hover">
+  <div class="fs-14px fc-default px-5px cursor-pointer change-account-selector_list br-4px change-account-selector_list__hover dropdown-menu"
+       id="dropdown-basic"
+       *dropdownMenu
+       aria-labelledby="changeAccountButton">
     <div *ngFor="let user of globalVars.userList; let rowNum = index">
       <div
         *ngIf="!globalVars.loggedInUser || user.PublicKeyBase58Check != globalVars.loggedInUser.PublicKeyBase58Check"
