@@ -93,7 +93,7 @@ export class SearchBarComponent implements OnInit {
         this.globalVars.localNode,
         "" /*PublicKeyBase58Check*/,
         "" /*Username*/,
-        this.searchText /*UsernamePrefix*/,
+        this.searchText.trim().replace(/^@/, '') /*UsernamePrefix*/,
         "" /*Description*/,
         "" /*Order by*/,
         20 /*NumToFetch*/,
