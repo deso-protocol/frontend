@@ -43,8 +43,10 @@ export class ChangeAccountSelectorComponent {
     this.globalVars.messageResponse = null;
     this.globalVars.SetupMessages();
 
-    const currentUrl = this.router.url
-    this.router.navigate(['/']).then(() => { this.router.navigateByUrl(currentUrl); })
+    const currentUrl = this.router.url;
+    this.router.navigate(["/"]).then(() => {
+      this.router.navigateByUrl(currentUrl);
+    });
 
     this.globalVars.isLeftBarMobileOpen = false;
   }
@@ -61,7 +63,8 @@ export class ChangeAccountSelectorComponent {
           }
           return;
         }
-      } else {
+      }
+      if (e.path?.length) {
         for (let ii = 0; ii < e.path.length; ii++) {
           if (e.path[ii] === this.accountSelectorRoot.nativeElement) {
             if (!this.selectorOpen) {
