@@ -2007,6 +2007,9 @@ em {
 
 @media (max-width: 992px) {
   /* Apply only to screen sizes >= sm */
+  .change-account-selector_list{
+    z-index: 99;
+  }
   div.hide-on-mobile {
     display: none !important;
   }
