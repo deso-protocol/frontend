@@ -276,6 +276,19 @@ export class FeedPostIconRowComponent {
     this.globalVars._copyText(this._getPostUrl());
   }
 
+  onTimestampClickHandler(event) {
+    debugger
+    this.globalVars.logEvent("post : share");
+
+    // Prevent the post from navigating.
+    event.stopPropagation();
+
+    //condition to check whether middle mouse btn is clicked
+    if (event.which == 2) 
+      window.open(this._getPostUrl(), '_blank');
+    
+  }
+  
   // this is a bit of a hacky solution, not sure what the right way to do this is
   //
   // this solution is from https://stackoverflow.com/questions/41447305/how-to-get-an-absolute-url-by-a-route-name-in-angular-2
