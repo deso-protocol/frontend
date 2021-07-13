@@ -1,8 +1,7 @@
+<div #changeAccountSelectorRoot  id="changeAccountSelectorRoot">
 <div
   class="fs-14px fc-default px-5px cursor-pointer change-account-selector br-4px change-account-selector__hover"
   [ngClass]="{ 'change-account-selector__shadow': selectorOpen }"
-  #changeAccountSelectorRoot
-  id="changeAccountSelectorRoot"
 >
   <!-- Selector (unopened state) -->
   <div class="d-flex align-items-center justify-content-between pl-5px pr-5px">
@@ -33,9 +32,9 @@
       class="change-account-selector_list__inner pt-10px pb-10px pl-10px pr-10px d-flex align-items-center"
     >
       <div
-        (click)="_switchToUser(user)"
         class="align-items-center change-account-selector_list-item d-flex flex-row"
         style="flex-grow: 1"
+        (click)="_switchToUser(user)"
       >
         <div class="feed-create-post__avatar d-inline-block change-account-selector__account-image" [avatar]="user.PublicKeyBase58Check"></div>
         <div class="d-inline-block change-account-selector__ellipsis-restriction change-account-selector__acount-name">{{ user.ProfileEntryResponse?.Username ? user.ProfileEntryResponse.Username : user.PublicKeyBase58Check }}</div>
@@ -56,4 +55,4 @@
     Logout
   </div>
 </div>
-
+</div>

@@ -39,12 +39,15 @@ export class ChangeAccountSelectorComponent {
   }
 
   _switchToUser(user) {
+    console.log(user);
     this.globalVars.setLoggedInUser(user);
     this.globalVars.messageResponse = null;
     this.globalVars.SetupMessages();
 
-    const currentUrl = this.router.url
-    this.router.navigate(['/']).then(() => { this.router.navigateByUrl(currentUrl); })
+    const currentUrl = this.router.url;
+    this.router.navigate(["/"]).then(() => {
+      this.router.navigateByUrl(currentUrl);
+    });
 
     this.globalVars.isLeftBarMobileOpen = false;
   }
@@ -54,21 +57,12 @@ export class ChangeAccountSelectorComponent {
     let touched = false;
     this.renderer.listen("window", "touchstart", (e: any) => {
       touched = true;
-      if (e.touches.length > 0 && e.touches[0].target.offsetParent) {
-        if (e.touches[0].target.offsetParent === this.accountSelectorRoot.nativeElement) {
+      for (let ii = 0; ii < e.path.length; ii++) {
+        if (e.path[ii] === this.accountSelectorRoot.nativeElement) {
           if (!this.selectorOpen) {
             this.selectorOpen = true;
           }
           return;
-        }
-      } else {
-        for (let ii = 0; ii < e.path.length; ii++) {
-          if (e.path[ii] === this.accountSelectorRoot.nativeElement) {
-            if (!this.selectorOpen) {
-              this.selectorOpen = true;
-            }
-            return;
-          }
         }
       }
       // If we get here, the user did not click the selector.
