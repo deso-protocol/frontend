@@ -277,7 +277,6 @@ export class FeedPostIconRowComponent {
   }
 
   onTimestampClickHandler(event) {
-    debugger
     this.globalVars.logEvent("post : share");
 
     // Prevent the post from navigating.
