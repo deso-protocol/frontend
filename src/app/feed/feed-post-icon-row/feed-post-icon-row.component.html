@@ -1,94 +1,169 @@
 <div class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px">
-    <!-- TODO: post threads: needs hover treatment-->
-    <!--     [routerLink]="router.url"-->
-    <div class="cursor-pointer d-flex align-items-center" (click)="openModal($event)" data-toggle="modal" data-target=".js-feed-post-icon-row__comment-modal">
-        <i class="icon-reply feed-post-icon-row__icon"></i>
-        <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
-    </div>
+  <!-- TODO: post threads: needs hover treatment-->
+  <!--     [routerLink]="router.url"-->
+  <div
+    class="cursor-pointer d-flex align-items-center"
+    (click)="openModal($event)"
+    data-toggle="modal"
+    data-target=".js-feed-post-icon-row__comment-modal"
+  >
+    <i class="icon-reply feed-post-icon-row__icon"></i>
+    <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
+  </div>
 
-    <div (click)="$event.stopPropagation()" class="btn-group cursor-pointer d-flex align-items-center" dropdown #dropdown="bs-dropdown" [ngClass]="{
+  <div
+    (click)="$event.stopPropagation()"
+    class="btn-group cursor-pointer d-flex align-items-center"
+    dropdown
+    #dropdown="bs-dropdown"
+    [ngClass]="{
       'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RecloutedByReader : false
-    }">
-        <a class="link--unstyled" dropdownToggle id="recloutActionsButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="icon-repost feed-post-icon-row__icon"></i>
+    }"
+  >
+    <a
+      class="link--unstyled"
+      dropdownToggle
+      id="recloutActionsButton"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
+      <i class="icon-repost feed-post-icon-row__icon"></i>
+    </a>
+    <div class="dropdown-menu p-0 fs-12px" style="min-width: 6rem" *dropdownMenu aria-labelledby="recloutActionsButton">
+      <a
+        *ngIf="sendingRecloutRequest; else recloutOptions"
+        class="dropdown-menu-item d-block p-5px feed-post__dropdown-menu-item"
+      >
+        <div class="fc-muted">Loading...</div>
+      </a>
+      <ng-template #recloutOptions>
+        <a
+          *ngIf="userHasReclouted(); else recloutElseBlock"
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+          (click)="_undoReclout($event)"
+        >
+          <i class="icon-repost fs-12px"></i>
+          Hide
         </a>
-        <div class="dropdown-menu p-0 fs-12px" style="min-width: 6rem" *dropdownMenu aria-labelledby="recloutActionsButton">
-            <a *ngIf="sendingRecloutRequest; else recloutOptions" class="dropdown-menu-item d-block p-5px feed-post__dropdown-menu-item">
-                <div class="fc-muted">Loading...</div>
-            </a>
-            <ng-template #recloutOptions>
-                <a *ngIf="userHasReclouted(); else recloutElseBlock" class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item" (click)="_undoReclout($event)">
-                    <i class="icon-repost fs-12px"></i> Hide
-                </a>
-                <ng-template #recloutElseBlock>
-                    <a class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item" (click)="_reclout($event)">
-                        <i class="icon-repost fs-12px"></i> Reclout
-                    </a>
-                </ng-template>
-                <a class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item" (click)="openModal($event, true)">
-                    <i class="fas fa-pencil-alt pl-5px" style="font-size: 10px"></i> Quote
-                </a>
-            </ng-template>
-        </div>
-        <span *ngIf="!hideNumbers">{{ postContent.RecloutCount + postContent.QuoteRecloutCount}}</span>
+        <ng-template #recloutElseBlock>
+          <a
+            class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+            (click)="_reclout($event)"
+          >
+            <i class="icon-repost fs-12px"></i>
+            Reclout
+          </a>
+        </ng-template>
+        <a
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+          (click)="openModal($event, true)"
+        >
+          <i class="fas fa-pencil-alt pl-5px" style="font-size: 10px"></i>
+          Quote
+        </a>
+      </ng-template>
     </div>
+    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount + postContent.QuoteRecloutCount}}</span>
+  </div>
 
-    <div (click)="toggleLike($event)" [ngClass]="{ 'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false }" class="cursor-pointer d-flex align-items-center">
-        <i [ngClass]="{
+  <div
+    (click)="toggleLike($event)"
+    [ngClass]="{ 'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false }"
+    class="cursor-pointer d-flex align-items-center"
+  >
+    <i
+      [ngClass]="{
         is_animating: animateLike,
         'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
         'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
-      }" (click)="animateLike = !animateLike" class="feed-post-icon-row__icon"></i>
-        <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
-    </div>
+      }"
+      (click)="animateLike = !animateLike"
+      class="feed-post-icon-row__icon"
+    ></i>
+    <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
+  </div>
 
-    <ng-template #popTemplate>
-        <div id="diamond-popover" app-theme>
-            <div *ngIf="!sendingDiamonds; else sendingDiamondSpinner">
-                <div (click)="expandDiamondInfo($event)">
-                    Give a diamond.
-                    <b>@{{ postContent.ProfileEntryResponse.Username }}</b> will receive the amount shown as
-                    <b>a tip</b> from you, paid in
-                    <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>.
-                    <i class="fas fa-info-circle"></i>
-                </div>
-                <div class="fs-14px w-100 mt-3 mb-1" id="diamondInfoCollapse" [collapse]="collapseDiamondInfo" [isAnimated]="true">
-                    <div class="mb-2">When you give a diamond:</div>
-                    <ul class="mb-2">
-                        <li>The receiver gets a tip paid in your creator coin</li>
-                        <li>A collectible badge shows up on the receiver's profile</li>
-                        <li>The receiver's comment on your post moves to the top</li>
-                    </ul>
-                    <div>
-                        <a (click)="hideDiamondInfo($event)" class="fc-muted">hide explainer</a>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-center pt-10px">
-                    <rating [max]="6" [(ngModel)]="diamondSelected" [customTemplate]="diamondRating" [readonly]="sendingDiamonds">
-                    </rating>
-                    <ng-template #diamondRating let-index="index" let-value="value">
-                        <div class="d-inline-block px-10px" (click)="onDiamondSelected($event, index)" [ngStyle]="{ disabled: index < getCurrentDiamondLevel() }">
-                            <i class="icon-diamond fs-25px d-block" [ngStyle]="{ color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555' }"></i>
-                            <div class="d-block fc-muted fs-12px" style="text-align: center">
-                                {{ globalVars.getUSDForDiamond(index + 1) }}
-                            </div>
-                        </div>
-                    </ng-template>
-                </div>
-            </div>
-            <ng-template #sendingDiamondSpinner>
-                Sending @{{ postContent.ProfileEntryResponse.Username }} {{ diamondSelected }} diamonds!
-                <simple-center-loader [height]="200"></simple-center-loader>
-            </ng-template>
+  <ng-template #popTemplate>
+    <div id="diamond-popover" app-theme>
+      <div *ngIf="!sendingDiamonds; else sendingDiamondSpinner">
+        <div (click)="expandDiamondInfo($event)">
+          Give a diamond.
+          <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
+          will receive the amount shown as
+          <b>a tip</b>
+          from you, paid in
+          <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>.
+          <i class="fas fa-info-circle"></i>
         </div>
-    </ng-template>
-    <div class="cursor-pointer d-flex align-items-center" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }">
-        <i [popover]="popTemplate" triggers="" placement="top" [containerClass]="getPopoverContainerClass()" [container]="globalVars.getTargetComponentSelector()" [outsideClick]="true" #diamondPopover="bs-popover" class="icon-diamond feed-post-icon-row__icon p-2px"
-            style="font-size: 20px !important; padding-right: 5px" (click)="diamondClickHandler($event)" (click)="animateDiamond = !animateDiamond" [ngClass]="{ is_animating_ice: animateDiamond }"></i>
-        <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
+        <div
+          class="fs-14px w-100 mt-3 mb-1"
+          id="diamondInfoCollapse"
+          [collapse]="collapseDiamondInfo"
+          [isAnimated]="true"
+        >
+          <div class="mb-2">When you give a diamond:</div>
+          <ul class="mb-2">
+            <li>The receiver gets a tip paid in your creator coin</li>
+            <li>A collectible badge shows up on the receiver's profile</li>
+            <li>The receiver's comment on your post moves to the top</li>
+          </ul>
+          <div>
+            <a (click)="hideDiamondInfo($event)" class="fc-muted">hide explainer</a>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center pt-10px">
+          <rating
+            [max]="6"
+            [(ngModel)]="diamondSelected"
+            [customTemplate]="diamondRating"
+            [readonly]="sendingDiamonds"
+          ></rating>
+          <ng-template #diamondRating let-index="index" let-value="value">
+            <div
+              class="d-inline-block px-10px"
+              (click)="onDiamondSelected($event, index)"
+              [ngStyle]="{ disabled: index < getCurrentDiamondLevel() }"
+            >
+              <i
+                class="icon-diamond fs-25px d-block"
+                [ngStyle]="{ color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555' }"
+              ></i>
+              <div class="d-block fc-muted fs-12px" style="text-align: center">
+                {{ globalVars.getUSDForDiamond(index + 1) }}
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+      <ng-template #sendingDiamondSpinner>
+        Sending @{{ postContent.ProfileEntryResponse.Username }} {{ diamondSelected }} diamonds!
+        <simple-center-loader [height]="200"></simple-center-loader>
+      </ng-template>
     </div>
+  </ng-template>
+  <div
+    class="cursor-pointer d-flex align-items-center"
+    [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
+  >
+    <i
+      [popover]="popTemplate"
+      triggers=""
+      placement="top"
+      [containerClass]="getPopoverContainerClass()"
+      [container]="globalVars.getTargetComponentSelector()"
+      [outsideClick]="true"
+      #diamondPopover="bs-popover"
+      class="icon-diamond feed-post-icon-row__icon p-2px"
+      style="font-size: 20px !important; padding-right: 5px"
+      (click)="diamondClickHandler($event)"
+      (click)="animateDiamond = !animateDiamond"
+      [ngClass]="{ is_animating_ice: animateDiamond }"
+    ></i>
+    <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
+  </div>
 
-    <div class="d-none d-lg-flex cursor-pointer align-items-center">
+  <div class="d-none d-lg-flex cursor-pointer align-items-center">
         <i class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon" (click)="copyPostLinkToClipboard($event)"></i>
         <span class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle" matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size" mat-raised-button #tooltip="matTooltip" [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)">{{
       globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}</span>
