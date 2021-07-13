@@ -62,4 +62,12 @@ export class InfiniteScroller {
       settings: this.settings,
     });
   }
+
+  reset(): void {
+    this.pagedRequests = {
+      "-1": new Promise((resolve) => {
+        resolve([]);
+      }),
+    };
+  }
 }

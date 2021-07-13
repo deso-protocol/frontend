@@ -36,15 +36,6 @@ export class PlaceBidModalComponent implements OnInit {
   showSelectedSerialNumbers = false;
   selectAll: boolean = false;
   placingBids: boolean = false;
-  sampleNftData = [
-    { SerialNumber: 1, LastPrice: 0.15 * 1e9 },
-    { SerialNumber: 2, LastPrice: 0.01 * 1e9 },
-    { SerialNumber: 3, LastPrice: 0.04 * 1e9 },
-    { SerialNumber: 4, LastPrice: 0.2 * 1e9 },
-    { SerialNumber: 5, LastPrice: 0.21 * 1e9 },
-    { SerialNumber: 6, LastPrice: 0.22 * 1e9 },
-    { SerialNumber: 7, LastPrice: 0.23 * 1e9 },
-  ];
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -67,7 +58,7 @@ export class PlaceBidModalComponent implements OnInit {
         if (this.nftBidData.NFTEntryResponses.length === 1) {
           this.selectedSerialNumbers[this.nftBidData.NFTEntryResponses[0].SerialNumber] = true;
         }
-        this.nftBidData.NFTEntryResponses.forEach((x) => (x.LastPrice = 101 * 1e9));
+        this.nftBidData.NFTEntryResponses.forEach((x) => (x.LastAcceptedBidAmountNanos = 101 * 1e9));
         this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
           (nftEntryResponse) => nftEntryResponse.IsForSale
         ).sort((a, b) => a.SerialNumber - b.SerialNumber);

@@ -40,6 +40,8 @@ export class SellNftModalComponent implements OnInit {
     this.creatorRoyalty = this.sellingPrice * (creatorRoyaltyBasisPoints / (100 * 100));
     this.coinRoyalty = this.sellingPrice * (coinRoyaltyBasisPoints / (100 * 100));
     this.earnings = this.sellingPrice - this.coinRoyalty - this.creatorRoyalty;
+
+    console.log(this.selectedBidEntries);
   }
 
   sellNFT(): void {

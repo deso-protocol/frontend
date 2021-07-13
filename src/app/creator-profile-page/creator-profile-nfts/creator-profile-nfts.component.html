@@ -1,6 +1,25 @@
 <!-- Posts -->
 <simple-center-loader [height]="200" *ngIf="isLoading && datasource.adapter.isLoading"></simple-center-loader>
 <div
+  class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column px-15px pt-15px"
+>
+  <div>
+    <select
+      class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer"
+      (ngModelChange)="onChange($event)"
+      [ngModel]="activeTab"
+    >
+      <option
+        *ngFor="let option of CreatorProfileNftsComponent.tabs"
+        [value]="option"
+        class="fs-15px text-grey5 font-weight-bold"
+      >
+        {{ option }}
+      </option>
+    </select>
+  </div>
+</div>
+<div
   *ngIf="
     !showProfileAsReserved && !isLoading && !datasource.adapter.isLoading && datasource.adapter.itemsCount === 0
   "
@@ -13,9 +32,9 @@
     </ng-template>
   </div>
 </div>
-<div *ngIf="!showProfileAsReserved && !isLoading">
+<div *ngIf="!showProfileAsReserved && (!isLoading || loadingNewSelection)">
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
-    <div #uiScroll *uiScroll="let nftEntry of datasource; let index = index" class="border-bottom border-color-grey" style="margin: 20px; border: 1px solid var(--border); border-radius: 12px;">
+    <div #uiScroll *uiScroll="let nftEntry of datasource; let index = index" style="margin: 20px;">
       <feed-post
         *ngIf="nftEntry.PostEntryResponse.ProfileEntryResponse"
         [contentShouldLinkToThread]="true"
@@ -26,6 +45,8 @@
         [nftBidData]="nftEntry"
         [showNFTDetails]="true"
         [showExpandedNFTDetails]="true"
+        [setBorder]="true"
+        [linkToNFT]="true"
         (userBlocked)="userBlocked()"
       ></feed-post>
     </div>

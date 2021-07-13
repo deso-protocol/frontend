@@ -11,6 +11,7 @@ import { Location } from "@angular/common";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { InfiniteScroller } from "../../infinite-scroller";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: "creator-profile-nfts",
@@ -31,12 +32,15 @@ export class CreatorProfileNftsComponent implements OnInit {
 
   lastPage = null;
   isLoading = true;
+  loadingNewSelection = false;
+  static FOR_SALE = "For Sale";
+  static NOT_FOR_SALE = "Not For Sale";
+  static tabs = [CreatorProfileNftsComponent.FOR_SALE, CreatorProfileNftsComponent.NOT_FOR_SALE];
+  activeTab: string;
+
+  CreatorProfileNftsComponent = CreatorProfileNftsComponent;
   // loadingFirstPage = true;
   // loadingNextPage = false;
-
-  pagedKeys = {
-    0: "",
-  };
 
   @Output() blockUser = new EventEmitter();
 
@@ -50,12 +54,20 @@ export class CreatorProfileNftsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.backendApi
+    if (!this.activeTab) {
+      this.activeTab = CreatorProfileNftsComponent.FOR_SALE;
+    }
+    this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE);
+  }
+
+  getNFTs(isForSale: boolean | null = null): Subscription {
+    this.isLoading = true;
+    return this.backendApi
       .GetNFTsForUser(
         this.globalVars.localNode,
         this.profile.PublicKeyBase58Check,
         this.globalVars?.loggedInUser.PublicKeyBase58Check,
-        true
+        isForSale
       )
       .subscribe(
         (res: {
@@ -63,9 +75,7 @@ export class CreatorProfileNftsComponent implements OnInit {
         }) => {
           this.nftResponse = [];
           for (const k in res.NFTsMap) {
-            const nftEntry = res.NFTsMap[k];
-            nftEntry.PostEntryResponse.ProfileEntryResponse = this.profile;
-            this.nftResponse.push(nftEntry);
+            this.nftResponse.push(res.NFTsMap[k]);
           }
           this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
         }
@@ -153,4 +163,15 @@ export class CreatorProfileNftsComponent implements OnInit {
     CreatorProfileNftsComponent.PADDING
   );
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+
+  onChange(event): void {
+    if (this.activeTab !== event) {
+      this.activeTab = event;
+      this.loadingNewSelection = true;
+      this.infiniteScroller.reset();
+      this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE).add(() => {
+        this.datasource.adapter.reset().then(() => (this.loadingNewSelection = false));
+      });
+    }
+  }
 }

@@ -12,7 +12,7 @@
      - feed-create-comment-form component (i.e. create comment view)
 
      - market-feed component -->
-<div class="d-flex flex-column">
+<div class="d-flex flex-column" [ngStyle]="{'border': setBorder ? '1px solid var(--border)' : '' }" [ngClass]="{'br-12px': setBorder}">
   <div style="width: 100%"> <!--[ngStyle]="{ 'width': showNFTDetails ? '60%' : '100%' }"-->
     <div
       *ngIf="post.IsHidden"
@@ -47,6 +47,7 @@
       *ngIf="!post.IsHidden && !hidingPost && !globalVars.hasUserBlockedCreator(postContent.PosterPublicKeyBase58Check)"
       class="d-flex flex-column js-feed-post"
       [ngClass]="{ 'js-feed-post-hover': hoverable }"
+      [ngStyle]="{'border-radius': setBorder ? '12px 12px 0 0' : '' }"
     >
       <a
         (click)="onPostClicked($event)"
@@ -92,6 +93,7 @@
             class="ml-auto"
             [post]="post"
             [postContent]="postContent"
+            [nftEntryResponses]="nftBidData?.NFTEntryResponses"
             (postHidden)="hidePost()"
             (userBlocked)="blockUser()"
             (toggleGlobalFeed)="_addPostToGlobalFeed()"
@@ -181,12 +183,12 @@
                 [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
               ></follow-button>
 
-              <div class="br-20px" style="border-radius: 20px; border: 1px solid var(--hover); color: var(--hover)">&nbsp;NFT&nbsp;</div>
               <feed-post-dropdown
                 *ngIf="showDropdown && !reclouterProfile"
                 class="ml-auto"
                 [post]="post"
                 [postContent]="postContent"
+                [nftEntryResponses]="nftBidData?.NFTEntryResponses"
                 (postHidden)="hidePost()"
                 (userBlocked)="blockUser()"
                 (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
@@ -227,7 +229,6 @@
             outline: none;
           "
               [innerHTML]="postContent.Body | sanitizeAndAutoLink"
-              [routerLink]="['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex]"
               queryParamsHandling="merge"
             ></div>
 
@@ -424,7 +425,7 @@
     </div>
   </div>
 
-  <div style="background-color: var(--border) !important; width: 100%" class="p-15px fs-15px pb-0" *ngIf="showNFTDetails">
+  <div style="background-color: var(--border) !important; width: 100%" class="p-15px fs-15px pb-0" *ngIf="showNFTDetails" [ngStyle]="{ 'border-radius': setBorder ? '0 0 12px 12px' : '' }">
     <div class="d-flex justify-content-between align-items-center" style="line-height: 24px" [ngClass]="{ 'pb-15px': !showExpandedNFTDetails || (!highBid && !lowBid) }">
       <div>
         <span><b>{{ availableSerialNumbers?.length }} of {{ post.NumNFTCopies }} available &nbsp;</b></span>

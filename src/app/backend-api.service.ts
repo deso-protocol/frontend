@@ -234,11 +234,12 @@ export class BalanceEntryResponse {
 
 export class NFTEntryResponse {
   OwnerPublicKeyBase58Check: string;
+  ProfileEntryResponse: ProfileEntryResponse | undefined;
   PostEntryResponse: PostEntryResponse | undefined;
   SerialNumber: number;
   IsForSale: boolean;
   MinBidAmountNanos: number;
-  LastPrice?: number;
+  LastAcceptedBidAmountNanos: number;
 }
 
 export class NFTBidEntryResponse {

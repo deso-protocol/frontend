@@ -30,6 +30,7 @@ export class NftPostComponent {
   nftPost: PostEntryResponse;
   nftPostHashHex: string;
   nftBidData: NFTBidData;
+  myBids: NFTBidEntryResponse[];
   availableSerialNumbers: NFTEntryResponse[];
   myAvailableSerialNumbers: NFTEntryResponse[];
   loading = true;
@@ -39,15 +40,20 @@ export class NftPostComponent {
   lowBid: number;
   selectedBids: boolean[];
   selectedBid: NFTBidEntryResponse;
+  showBidsView: boolean = true;
+  bids: NFTBidEntryResponse[];
+  owners: NFTEntryResponse[];
+
+  NftPostComponent = NftPostComponent;
 
   activeTab = NftPostComponent.MY_AUCTION;
 
-  static THREAD = "Thread";
-  static ACTIVE_BIDS = "Active Bids";
-  static MY_AUCTION = "My Auction";
+  static ALL_BIDS = "All Bids";
+  static MY_BIDS = "My Bids";
+  static MY_AUCTION = "My Auctions";
   static OWNERS = "Owners";
 
-  tabs = [NftPostComponent.THREAD, NftPostComponent.ACTIVE_BIDS, NftPostComponent.MY_AUCTION, NftPostComponent.OWNERS];
+  tabs = [NftPostComponent.ALL_BIDS, NftPostComponent.MY_BIDS, NftPostComponent.MY_AUCTION, NftPostComponent.OWNERS];
 
   constructor(
     private route: ActivatedRoute,
@@ -134,9 +140,14 @@ export class NftPostComponent {
                 (nftEntryResponse) =>
                   nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
               );
+              this.myBids = this.nftBidData.BidEntryResponses.filter(
+                (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+              );
               this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
               this.highBid = this.getMaxBidAmountFromList(this.nftBidData.BidEntryResponses);
               this.lowBid = this.getMinBidAmountFromList(this.nftBidData.BidEntryResponses);
+              this.owners = this.nftBidData.NFTEntryResponses;
+              this.sortNftEntries(NftPostComponent.SORT_BY_PRICE);
             },
             (err) => {
               console.error(err);
@@ -239,5 +250,111 @@ export class NftPostComponent {
       (nftEntryResponse) =>
         nftEntryResponse.SerialNumber === serialNumber && nftEntryResponse.OwnerPublicKeyBase58Check === loggedInPubKey
     ).length;
+  }
+
+  _handleTabClick(tabName: string): void {
+    this.activeTab = tabName;
+    this.showBidsView = tabName !== NftPostComponent.OWNERS;
+    if (this.activeTab === NftPostComponent.ALL_BIDS) {
+      this.bids = this.nftBidData.BidEntryResponses;
+    } else if (this.activeTab === NftPostComponent.MY_BIDS) {
+      this.bids = this.nftBidData.BidEntryResponses.filter(
+        (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      );
+    } else if (this.activeTab === NftPostComponent.MY_AUCTION) {
+      const serialNumbers = this.myAvailableSerialNumbers?.map((nftEntryResponse) => nftEntryResponse.SerialNumber);
+      this.bids = this.nftBidData.BidEntryResponses.filter(
+        (bidEntry) => bidEntry.SerialNumber in serialNumbers || bidEntry.SerialNumber === 0
+      );
+    }
+    this.sortBids();
+  }
+
+  static SORT_BY_PRICE = "PRICE";
+  static SORT_BY_USERNAME = "USERNAME";
+  static SORT_BY_EDITION = "EDITION";
+  sortByField = NftPostComponent.SORT_BY_PRICE;
+  sortDescending = true;
+
+  sortBids(attribute: string = NftPostComponent.SORT_BY_PRICE, descending: boolean = true): void {
+    if (!this.bids?.length) {
+      return;
+    }
+    const sortDescending = descending ? -1 : 1;
+    this.bids.sort((a, b) => {
+      const bidDiff = this.compareBidAmount(a, b);
+      const serialNumDiff = this.compareSerialNumber(a, b);
+      const usernameDiff = this.compareUsername(a, b);
+      if (attribute === NftPostComponent.SORT_BY_PRICE) {
+        return sortDescending * bidDiff || serialNumDiff || usernameDiff;
+      } else if (attribute === NftPostComponent.SORT_BY_USERNAME) {
+        return sortDescending * usernameDiff || bidDiff || serialNumDiff;
+      } else if (attribute === NftPostComponent.SORT_BY_EDITION) {
+        return sortDescending * serialNumDiff || bidDiff || usernameDiff;
+      }
+    });
+  }
+
+  handleColumnHeaderClick(header: string): void {
+    if (this.sortByField === header) {
+      this.sortDescending = !this.sortDescending;
+    } else {
+      this.sortDescending = false;
+    }
+    this.sortByField = header;
+    this.sortBids(header, this.sortDescending);
+    this.sortNftEntries(header, this.sortDescending);
+  }
+
+  compareBidAmount(a: NFTBidEntryResponse, b: NFTBidEntryResponse): number {
+    return a.BidAmountNanos - b.BidAmountNanos;
+  }
+  compareSerialNumber(a: NFTBidEntryResponse | NFTEntryResponse, b: NFTBidEntryResponse | NFTEntryResponse): number {
+    return a.SerialNumber - b.SerialNumber;
+  }
+  compareUsername(a: NFTBidEntryResponse, b: NFTBidEntryResponse): number {
+    const aUsername = a.ProfileEntryResponse?.Username || a.PublicKeyBase58Check;
+    const bUsername = b.ProfileEntryResponse?.Username || b.PublicKeyBase58Check;
+    if (aUsername < bUsername) {
+      return -1;
+    }
+    if (bUsername < aUsername) {
+      return 1;
+    }
+    return 0;
+  }
+
+  sortNftEntries(attribute: string, descending: boolean = true): void {
+    if (!this.owners?.length) {
+      return;
+    }
+    const sortDescending = descending ? -1 : 1;
+    this.owners.sort((a, b) => {
+      const lastAcceptedBidDiff = this.compareLastAcceptedBidAmount(a, b);
+      const serialNumDiff = this.compareSerialNumber(a, b);
+      const usernameDiff = this.compareNFTEntryUsername(a, b);
+      if (attribute === NftPostComponent.SORT_BY_PRICE) {
+        return sortDescending * lastAcceptedBidDiff || serialNumDiff || usernameDiff;
+      } else if (attribute === NftPostComponent.SORT_BY_USERNAME) {
+        return sortDescending * usernameDiff || lastAcceptedBidDiff || serialNumDiff;
+      } else if (attribute === NftPostComponent.SORT_BY_EDITION) {
+        return sortDescending * serialNumDiff || lastAcceptedBidDiff || usernameDiff;
+      }
+    });
+  }
+
+  compareLastAcceptedBidAmount(a: NFTEntryResponse, b: NFTEntryResponse): number {
+    return a.LastAcceptedBidAmountNanos - b.LastAcceptedBidAmountNanos;
+  }
+  compareNFTEntryUsername(a: NFTEntryResponse, b: NFTEntryResponse): number {
+    const aUsername = a.ProfileEntryResponse?.Username || a.OwnerPublicKeyBase58Check;
+    const bUsername = b.ProfileEntryResponse?.Username || b.OwnerPublicKeyBase58Check;
+    if (aUsername < bUsername) {
+      return -1;
+    }
+    if (bUsername < aUsername) {
+      return 1;
+    }
+    return 0;
   }
 }

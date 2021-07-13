@@ -143,12 +143,15 @@ export class FeedPostComponent implements OnInit {
     this._nftBidData = bidData;
     if (bidData) {
       this.availableSerialNumbers = bidData.NFTEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
-      console.log(this.availableSerialNumbers);
+      this.mySerialNumbersNotForSale = bidData.NFTEntryResponses.filter(
+        (nftEntryResponse) =>
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+      );
       this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
         (nftEntryResponse) =>
           nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
       );
-      console.log(this.myAvailableSerialNumbers);
       this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
       if (bidData.BidEntryResponses?.length) {
         this.highBid = this.getMaxBidAmountFromList(bidData.BidEntryResponses);
@@ -158,6 +161,8 @@ export class FeedPostComponent implements OnInit {
   }
   @Input() showNFTDetails = false;
   @Input() showExpandedNFTDetails = false;
+  @Input() setBorder = false;
+  @Input() linkToNFT = false;
 
   // If the post is shown in a modal, this is used to hide the modal on post click.
   @Input() containerModalRef: any = null;
@@ -188,6 +193,7 @@ export class FeedPostComponent implements OnInit {
   lowBid: number;
   availableSerialNumbers: NFTEntryResponse[];
   myAvailableSerialNumbers: NFTEntryResponse[];
+  mySerialNumbersNotForSale: NFTEntryResponse[];
   _nftBidData: NFTBidData;
 
   ngOnInit() {
@@ -221,6 +227,13 @@ export class FeedPostComponent implements OnInit {
     // don't navigate if the user clicked a link
     if (event.target.tagName.toLowerCase() === "a") {
       return true;
+    }
+
+    if (this.linkToNFT) {
+      this.router.navigate(["/" + this.globalVars.RouteNames.NFT, this.postContent.PostHashHex], {
+        queryParamsHandling: "merge",
+      });
+      return;
     }
 
     this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex], {
