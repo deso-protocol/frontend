@@ -57,12 +57,22 @@ export class ChangeAccountSelectorComponent {
     let touched = false;
     this.renderer.listen("window", "touchstart", (e: any) => {
       touched = true;
-      for (let ii = 0; ii < e.path.length; ii++) {
-        if (e.path[ii] === this.accountSelectorRoot.nativeElement) {
+      if (e.touches.length > 0 && e.touches[0].target.offsetParent) {
+        if (e.touches[0].target.offsetParent === this.accountSelectorRoot.nativeElement) {
           if (!this.selectorOpen) {
             this.selectorOpen = true;
           }
           return;
+        }
+      }
+      if (e.path?.length) {
+        for (let ii = 0; ii < e.path.length; ii++) {
+          if (e.path[ii] === this.accountSelectorRoot.nativeElement) {
+            if (!this.selectorOpen) {
+              this.selectorOpen = true;
+            }
+            return;
+          }
         }
       }
       // If we get here, the user did not click the selector.
