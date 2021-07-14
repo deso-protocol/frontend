@@ -43,7 +43,7 @@ export class ChangeAccountSelectorComponent {
     this.globalVars.SetupMessages();
 
     const currentUrl = this.router.url;
-    this.router.navigate(["/"]).then(() => {
+    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]).then(() => {
       this.router.navigateByUrl(currentUrl);
     });
 
