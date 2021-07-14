@@ -206,6 +206,15 @@ export class SearchBarComponent implements OnInit {
     }
   }
 
+  _handleMouseOut(creator: string, index: number) {
+    if (this.creatorSelected === creator) {
+      this.creatorSelected = "";
+    }
+    if (this.selectedCreatorIndex === index) {
+      this.selectedCreatorIndex = -1;
+    }
+  }
+
   _setUpClickOutListener() {
     this.renderer.listen("window", "click", (e: any) => {
       if (e.path == undefined) {
