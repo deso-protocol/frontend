@@ -1018,6 +1018,10 @@ $green-font-color: #19B028;
   background-image: url('/assets/img/default_profile_pic.png');
 }
 
+.feed-create-comment__textarea {
+  min-height: 55px;
+}
+
 .feed-create-post__textarea:focus {
   border: none;
   box-shadow: none;
@@ -2300,22 +2304,23 @@ input {
   background-color: var(--background) !important;
   color: var(--text);
 }
-.searchCloud {
-  position: sticky; 
+
+.cloutavista-button {
+  position: sticky;
   bottom: 0px;
-  a{
-    display: flex; 
-    flex-direction: column; 
+  a {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    div{
-      height: 1px; 
-      position: absolute; 
-      top: 0px; 
+    div {
+      height: 1px;
+      position: absolute;
+      top: 0px;
       width: 100%;
     }
-    p{
-      color: var(--text) !important; 
-      margin: 15px 0 15px 0; 
+    p {
+      color: var(--text) !important;
+      margin: 15px 0 15px 0;
       font-size: 15px;
     }
   }
