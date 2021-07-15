@@ -10,16 +10,13 @@ import {
 } from "../../backend-api.service";
 import { Title } from "@angular/platform-browser";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
 import { Location } from "@angular/common";
 import * as _ from "lodash";
 import { SellNftModalComponent } from "../../sell-nft-modal/sell-nft-modal.component";
-import { of } from "rxjs";
-import { concatMap, last } from "rxjs/operators";
-import { NftSoldModalComponent } from "../../nft-sold-modal/nft-sold-modal.component";
 import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: "nft-post",
@@ -39,21 +36,20 @@ export class NftPostComponent {
   highBid: number;
   lowBid: number;
   selectedBids: boolean[];
-  selectedBid: NFTBidEntryResponse;
   showBidsView: boolean = true;
   bids: NFTBidEntryResponse[];
   owners: NFTEntryResponse[];
 
   NftPostComponent = NftPostComponent;
 
-  activeTab = NftPostComponent.MY_AUCTION;
+  activeTab = NftPostComponent.ALL_BIDS;
 
   static ALL_BIDS = "All Bids";
   static MY_BIDS = "My Bids";
-  static MY_AUCTION = "My Auctions";
+  static MY_AUCTIONS = "My Auctions";
   static OWNERS = "Owners";
 
-  tabs = [NftPostComponent.ALL_BIDS, NftPostComponent.MY_BIDS, NftPostComponent.MY_AUCTION, NftPostComponent.OWNERS];
+  tabs = [NftPostComponent.ALL_BIDS, NftPostComponent.MY_BIDS, NftPostComponent.MY_AUCTIONS, NftPostComponent.OWNERS];
 
   constructor(
     private route: ActivatedRoute,
@@ -100,9 +96,10 @@ export class NftPostComponent {
           return;
         }
         if (!res.PostFound.IsNFT) {
+          const postHashHex = res.PostFound.PostHashHex;
           SwalHelper.fire({
             target: this.globalVars.getTargetComponentSelector(),
-            title: "This post is not an NFT",
+            html: "This post is not an NFT",
             showConfirmButton: true,
             showCancelButton: true,
             customClass: {
@@ -114,7 +111,7 @@ export class NftPostComponent {
             reverseButtons: true,
           }).then((res) => {
             if (res.isConfirmed) {
-              this.router.navigate(["/" + RouteNames.POSTS + "/" + this.nftPost.PostHashHex]);
+              this.router.navigate(["/" + RouteNames.POSTS + "/" + postHashHex]);
               return;
             }
             this.location.back();
@@ -124,37 +121,7 @@ export class NftPostComponent {
         // Set current post
         this.nftPost = res.PostFound;
         this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on BitClout");
-        this.backendApi
-          .GetNFTBidsForNFTPost(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.nftPost.PostHashHex
-          )
-          .subscribe(
-            (res) => {
-              this.nftBidData = res;
-              this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
-                (nftEntryResponse) => nftEntryResponse.IsForSale
-              );
-              this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
-                (nftEntryResponse) =>
-                  nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
-              );
-              this.myBids = this.nftBidData.BidEntryResponses.filter(
-                (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
-              );
-              this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-              this.highBid = this.getMaxBidAmountFromList(this.nftBidData.BidEntryResponses);
-              this.lowBid = this.getMinBidAmountFromList(this.nftBidData.BidEntryResponses);
-              this.owners = this.nftBidData.NFTEntryResponses;
-              this.sortNftEntries(NftPostComponent.SORT_BY_PRICE);
-            },
-            (err) => {
-              console.error(err);
-              this.globalVars._alertError(err);
-            }
-          )
-          .add(() => (this.loading = false));
+        this.refreshBidData();
       },
       (err) => {
         // TODO: post threads: rollbar
@@ -163,6 +130,51 @@ export class NftPostComponent {
         this.loading = false;
       }
     );
+  }
+
+  refreshBidData(): Subscription {
+    return this.backendApi
+      .GetNFTBidsForNFTPost(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.nftPost.PostHashHex
+      )
+      .subscribe(
+        (res) => {
+          this.nftBidData = res;
+          if (!this.nftBidData.BidEntryResponses) {
+            this.nftBidData.BidEntryResponses = [];
+          }
+          this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
+            (nftEntryResponse) => nftEntryResponse.IsForSale
+          );
+          this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
+            (nftEntryResponse) =>
+              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+          );
+          if (!this.myAvailableSerialNumbers.length) {
+            this.tabs = this.tabs.filter((t) => t !== NftPostComponent.MY_AUCTIONS);
+          }
+          this.myBids = this.nftBidData.BidEntryResponses.filter(
+            (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+          );
+          if (!this.myBids.length) {
+            this.tabs = this.tabs.filter((t) => t !== NftPostComponent.MY_BIDS);
+          }
+          this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
+          this.highBid = this.getMaxBidAmountFromList(this.nftBidData.BidEntryResponses);
+          this.lowBid = this.getMinBidAmountFromList(this.nftBidData.BidEntryResponses);
+          this.owners = this.nftBidData.NFTEntryResponses;
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(err);
+        }
+      )
+      .add(() => {
+        this._handleTabClick(this.activeTab);
+        this.loading = false;
+      });
   }
 
   getMaxBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
@@ -261,13 +273,14 @@ export class NftPostComponent {
       this.bids = this.nftBidData.BidEntryResponses.filter(
         (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
       );
-    } else if (this.activeTab === NftPostComponent.MY_AUCTION) {
+    } else if (this.activeTab === NftPostComponent.MY_AUCTIONS) {
       const serialNumbers = this.myAvailableSerialNumbers?.map((nftEntryResponse) => nftEntryResponse.SerialNumber);
       this.bids = this.nftBidData.BidEntryResponses.filter(
-        (bidEntry) => bidEntry.SerialNumber in serialNumbers || bidEntry.SerialNumber === 0
+        (bidEntry) => serialNumbers.includes(bidEntry.SerialNumber) || bidEntry.SerialNumber === 0
       );
     }
-    this.sortBids();
+    this.sortBids(this.sortByField, this.sortDescending);
+    this.sortNftEntries(this.sortByField, this.sortDescending);
   }
 
   static SORT_BY_PRICE = "PRICE";
@@ -356,5 +369,43 @@ export class NftPostComponent {
       return 1;
     }
     return 0;
+  }
+
+  selectHighestBids(): void {
+    let highestNFTMap: { [k: number]: NFTBidEntryResponse } = {};
+    this.bids.forEach((bid) => {
+      const highestBid = highestNFTMap[bid.SerialNumber];
+      if (!highestBid || highestBid.BidAmountNanos < bid.BidAmountNanos) {
+        highestNFTMap[bid.SerialNumber] = bid;
+      }
+    });
+    this.bids.forEach((bid) => {
+      const highestBid = highestNFTMap[bid.SerialNumber];
+      bid.selected =
+        highestBid.PublicKeyBase58Check === bid.PublicKeyBase58Check &&
+        highestBid.BidAmountNanos === bid.BidAmountNanos &&
+        highestBid.SerialNumber === bid.SerialNumber;
+    });
+  }
+
+  cancelBid(bidEntry: NFTBidEntryResponse): void {
+    this.loading = true;
+    this.backendApi
+      .CreateNFTBid(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.nftPost.PostHashHex,
+        bidEntry.SerialNumber,
+        0,
+        this.globalVars.defaultFeeRateNanosPerKB
+      )
+      .subscribe(
+        (res) => {
+          this.refreshBidData();
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
   }
 }

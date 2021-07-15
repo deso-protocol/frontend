@@ -11,7 +11,7 @@ import { Location } from "@angular/common";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { InfiniteScroller } from "../../infinite-scroller";
-import {Subscription} from "rxjs";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "creator-profile-nfts",
@@ -39,8 +39,6 @@ export class CreatorProfileNftsComponent implements OnInit {
   activeTab: string;
 
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
-  // loadingFirstPage = true;
-  // loadingNextPage = false;
 
   @Output() blockUser = new EventEmitter();
 
@@ -54,14 +52,23 @@ export class CreatorProfileNftsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    let checkNotForSale = false;
     if (!this.activeTab) {
       this.activeTab = CreatorProfileNftsComponent.FOR_SALE;
+      checkNotForSale = true;
     }
-    this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE);
+    this.isLoading = true;
+    this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE).add(() => {
+      if (checkNotForSale && !this.nftResponse.length) {
+        this.activeTab = CreatorProfileNftsComponent.NOT_FOR_SALE;
+        this.getNFTs(false).add(() => (this.isLoading = false));
+      } else {
+        this.isLoading = false;
+      }
+    });
   }
 
   getNFTs(isForSale: boolean | null = null): Subscription {
-    this.isLoading = true;
     return this.backendApi
       .GetNFTsForUser(
         this.globalVars.localNode,
@@ -79,10 +86,7 @@ export class CreatorProfileNftsComponent implements OnInit {
           }
           this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
         }
-      )
-      .add(() => {
-        this.isLoading = false;
-      });
+      );
   }
 
   getPage(page: number) {
@@ -97,30 +101,6 @@ export class CreatorProfileNftsComponent implements OnInit {
         )
       );
     });
-    // if (this.lastPage != null && page > this.lastPage) {
-    //   return [];
-    // }
-    // this.loadingNextPage = true;
-    // const lastPostHashHex = this.pagedKeys[page];
-    // return this.backendApi
-    //   .GetNFTsForUser(
-    //     this.globalVars.localNode,
-    //     this.profile.Username,
-    //     this.globalVars.loggedInUser?.PublicKeyBase58Check,
-    //     true,
-    //     page * CreatorProfileNftsComponent.PAGE_SIZE,
-    //     CreatorProfileNftsComponent.PAGE_SIZE
-    //   )
-    //   .toPromise()
-    //   .then((res) => {
-    //     const nftEntries: NFTEntryResponse[] = res.NFTEntries;
-    //     nftEntries.map((nftEntry) => (nftEntry.PostEntryResponse.ProfileEntryResponse = this.profile));
-    //     return nftEntries;
-    //   })
-    //   .finally(() => {
-    //     this.loadingFirstPage = false;
-    //     this.loadingNextPage = false;
-    //   });
   }
 
   async _prependComment(uiPostParent, index, newComment) {
@@ -168,9 +148,13 @@ export class CreatorProfileNftsComponent implements OnInit {
     if (this.activeTab !== event) {
       this.activeTab = event;
       this.loadingNewSelection = true;
+      this.isLoading = true;
       this.infiniteScroller.reset();
       this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE).add(() => {
-        this.datasource.adapter.reset().then(() => (this.loadingNewSelection = false));
+        this.datasource.adapter.reset().then(() => {
+          this.loadingNewSelection = false;
+          this.isLoading = false;
+        });
       });
     }
   }

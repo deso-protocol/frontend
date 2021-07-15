@@ -92,4 +92,8 @@ export class CreateNftAuctionModalComponent implements OnInit {
   createAuctionDisabled(): boolean {
     return !this.selectedSerialNumbers.filter((isSelected) => isSelected)?.length;
   }
+
+  checkSelectionStatus(event: any): void {
+    // this.
+  }
 }

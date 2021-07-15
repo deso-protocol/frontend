@@ -29,7 +29,7 @@
         </div>
         <div class="d-flex align-items-center">
           <div *ngFor="let selection of selectedSerialNumbers; let i = index" [ngClass]="{'pr-5px': selection }">
-            <span class="badge bg-secondary" *ngIf="selection">#{{ i }}<i class="fas fa-times pl-5px" (click)="selectedSerialNumbers[i] = false"></i></span>
+            <span class="badge bg-secondary fs-15px font-weight-normal" *ngIf="selection">#{{ i }}<sup><i class="fas fa-times pl-5px pt-5px cursor-pointer" (click)="deselectSerialNumber(i)"></i></sup></span>
           </div>
         </div>
 
@@ -83,7 +83,7 @@
         <div>{{ bidAmountCLOUT }} $CLOUT</div>
       </div>
     </div>
-
+    <div *ngIf="bidAmountErrors" class="text-danger pb-15px" style="white-space: pre-line;">{{ bidAmountErrors }}</div>
     <div class="d-flex align-items-center mb-15px">
       <button
         class="btn btn-primary font-weight-bold fs-15px br-12px"
@@ -104,7 +104,7 @@
      Select an edition to start bidding
     </div>
     <div class="container fs-15px pb-30px px-0px">
-      <div class="row no-gutters background-color-white p-15px create-nft-auction-row-border"
+      <div class="row no-gutters p-15px create-nft-auction-row-border"
            style="opacity: 50%">
         <div class="col-5 mb-0px">
           <input type="checkbox" style="width: 15px" [(ngModel)]="selectAll" (ngModelChange)="toggleSelectAll($event)"/>
@@ -113,7 +113,7 @@
         <div class="col-7 mb-0px">Last Price</div>
       </div>
       <div style="max-height: 250px; overflow-y: scroll" class="mb-30px">
-        <div *ngFor="let nft of availableSerialNumbers"
+        <div *ngFor="let nft of biddableSerialNumbers"
              class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border">
           <div class="col-5 mb-0px d-flex align-items-center">
             <input type="checkbox" style="width: 15px" [(ngModel)]="selectedSerialNumbers[nft.SerialNumber]" (ngModelChange)="checkSelectionStatus($event)"/>
@@ -124,7 +124,7 @@
               {{globalVars.nanosToBitClout(nft.LastAcceptedBidAmountNanos)}} CLOUT
               <span class="text-grey7">(~{{globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)}})</span>
             </div>
-            <div class="d-flex justify-content-center cursor-pointer" style="width: 50px">
+            <div class="d-flex justify-content-center cursor-pointer" style="width: 50px" (click)="selectSerialNumber(nft.SerialNumber)">
               <i class="fas fa-chevron-right"></i>
             </div>
           </div>

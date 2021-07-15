@@ -48,37 +48,6 @@ export class FeedPostComponent implements OnInit {
     } else {
       this.postContent = post;
     }
-
-    // if (this.showNFTDetails) {
-    //   this.backendApi
-    //     .GetNFTBidsForNFTPost(
-    //       this.globalVars.localNode,
-    //       this.globalVars.loggedInUser.PublicKeyBase58Check,
-    //       this._post.PostHashHex
-    //     )
-    //     .subscribe(
-    //       (res) => {
-    //         console.log(res);
-    //         this.nftBidData = res;
-    //         this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
-    //           (nftEntryResponse) => nftEntryResponse.IsForSale
-    //         );
-    //         console.log(this.availableSerialNumbers);
-    //         this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
-    //           (nftEntryResponse) =>
-    //             nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
-    //         );
-    //         console.log(this.myAvailableSerialNumbers);
-    //         this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-    //         this.highBid = this.getMaxBidAmountFromList(this.nftBidData.BidEntryResponses);
-    //         this.lowBid = this.getMinBidAmountFromList(this.nftBidData.BidEntryResponses);
-    //       },
-    //       (err) => {
-    //         console.error(err);
-    //         this.globalVars._alertError(err);
-    //       }
-    //     );
-    // }
   }
 
   getMaxBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
@@ -142,7 +111,12 @@ export class FeedPostComponent implements OnInit {
   set nftBidData(bidData: NFTBidData) {
     this._nftBidData = bidData;
     if (bidData) {
+      bidData.NFTEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
       this.availableSerialNumbers = bidData.NFTEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
+      this.serialNumbersDisplay =
+        bidData.NFTEntryResponses.map((serialNumber) => `#${serialNumber.SerialNumber}`)
+          .slice(0, 5)
+          .join(", ") + (this.availableSerialNumbers.length > 5 ? "..." : "");
       this.mySerialNumbersNotForSale = bidData.NFTEntryResponses.filter(
         (nftEntryResponse) =>
           !nftEntryResponse.IsForSale &&
@@ -163,6 +137,7 @@ export class FeedPostComponent implements OnInit {
   @Input() showExpandedNFTDetails = false;
   @Input() setBorder = false;
   @Input() linkToNFT = false;
+  @Input() showAvailableSerialNumbers = false;
 
   // If the post is shown in a modal, this is used to hide the modal on post click.
   @Input() containerModalRef: any = null;
@@ -194,6 +169,7 @@ export class FeedPostComponent implements OnInit {
   availableSerialNumbers: NFTEntryResponse[];
   myAvailableSerialNumbers: NFTEntryResponse[];
   mySerialNumbersNotForSale: NFTEntryResponse[];
+  serialNumbersDisplay: string;
   _nftBidData: NFTBidData;
 
   ngOnInit() {

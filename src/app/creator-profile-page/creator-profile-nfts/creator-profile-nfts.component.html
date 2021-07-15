@@ -2,6 +2,7 @@
 <simple-center-loader [height]="200" *ngIf="isLoading && datasource.adapter.isLoading"></simple-center-loader>
 <div
   class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column px-15px pt-15px"
+  *ngIf="!isLoading"
 >
   <div>
     <select
@@ -21,7 +22,7 @@
 </div>
 <div
   *ngIf="
-    !showProfileAsReserved && !isLoading && !datasource.adapter.isLoading && datasource.adapter.itemsCount === 0
+    !showProfileAsReserved && !isLoading && !nftResponse.length
   "
   class="p-15px"
 >
@@ -47,6 +48,7 @@
         [showExpandedNFTDetails]="true"
         [setBorder]="true"
         [linkToNFT]="true"
+        [showAvailableSerialNumbers]="true"
         (userBlocked)="userBlocked()"
       ></feed-post>
     </div>
