@@ -1,23 +1,36 @@
-<div class="w-100 global__top-bar__height"
-  [ngClass]="{ 'px-15px border-bottom border-color-grey': isSearchForUsersToMessage }" #searchBarRoot
-  id="searchBarRoot">
+<div
+  class="w-100 global__top-bar__height"
+  [ngClass]="{ 'px-15px border-bottom border-color-grey': isSearchForUsersToMessage }"
+  #searchBarRoot
+  id="searchBarRoot"
+>
   <!-- Input -->
   <div class="d-flex align-items-center w-100 text-grey8A fs-15px global__top-bar__height">
     <div class="input-group">
       <div class="input-group-prepend">
-        <span class="input-group-text search-bar__icon" [ngStyle]="{
+        <span
+          class="input-group-text search-bar__icon"
+          [ngStyle]="{
           'border-top-left-radius': isSearchForUsersToSendClout ? '0.25rem' : '',
           'border-bottom-left-radius': isSearchForUsersToSendClout ? '0.25rem' : ''
-          }">
+          }"
+        >
           <i class="icon-search"></i>
         </span>
       </div>
-      <input [(ngModel)]="searchText" (ngModelChange)="_handleSearchTextChange($event)"
-        (keyup.arrowup)="_handleArrowKey('UP')" (keyup.arrowdown)="_handleArrowKey('DOWN')"
-        (keyup.enter)="_handleCreatorSelect(creators[selectedCreatorIndex])" (keyup.escape)="_exitSearch()" type="text"
+      <input
+        [(ngModel)]="searchText"
+        (ngModelChange)="_handleSearchTextChange($event)"
+        (keyup.arrowup)="_handleArrowKey('UP')"
+        (keyup.arrowdown)="_handleArrowKey('DOWN')"
+        (keyup.enter)="_handleCreatorSelect(creators[selectedCreatorIndex])"
+        (keyup.escape)="_exitSearch()"
+        type="text"
         class="form-control shadow-none search-bar__fix-active"
         style="font-size: 15px; padding-left: 0; border-left-color: rgba(0, 0, 0, 0)"
-        [ngClass]="{ 'br-12px': !isSearchForUsersToSendClout }" placeholder="Search" />
+        [ngClass]="{ 'br-12px': !isSearchForUsersToSendClout }"
+        placeholder="Search"
+      />
     </div>
   </div>
 
@@ -25,38 +38,48 @@
   <div class="w-100 search-bar__results-dropdown" *ngIf="searchText != '' && (creators.length > 0 || loading)">
     <div *ngIf="loading" class="d-flex justify-content-center fs-15px fc-muted p-5px">Loading...</div>
     <div *ngIf="!loading && creators.length > 0" class="fs-15px">
-      <div *ngFor="let creator of creators; let ii = index" class="d-flex align-items-center"
+      <div
+        *ngFor="let creator of creators; let ii = index"
+        class="d-flex align-items-center"
         [ngClass]="{ 'search-bar__selected-color': creator.Username == creatorSelected }"
         (click)="_handleCreatorSelect(creators[selectedCreatorIndex])"
-        (mouseover)="_handleMouseOver(creator.Username, ii)" (mouseout)="_handleMouseOut(creator.Username, ii)">
+        (mouseover)="_handleMouseOver(creator.Username, ii)"
+      >
         <div class="search-bar__avatar m-10px" [avatar]="creator.PublicKeyBase58Check"></div>
         <div>
           <span>{{ creator.Username || creator.PublicKeyBase58Check }}</span>
-          <span *ngIf="creator.IsReserved && !creator.IsVerified"
+          <span
+            *ngIf="creator.IsReserved && !creator.IsVerified"
             class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="'This profile is reserved. Click to learn how to claim it.'">
+            [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
+          >
             <i class="far fa-clock fa-md align-middle"></i>
           </span>
-          <span *ngIf="creator.IsVerified" (click)="tooltip.toggle()" class="ml-1 cursor-pointer text-primary"
+          <span
+            *ngIf="creator.IsVerified"
+            (click)="tooltip.toggle()"
+            class="ml-1 cursor-pointer text-primary"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="'This account is verified'" #tooltip="matTooltip">
+            [matTooltip]="'This account is verified'"
+            #tooltip="matTooltip"
+          >
             <i class="fas fa-check-circle fa-md align-middle"></i>
           </span>
           <span *ngIf="creator.CoinPriceBitCloutNanos">&nbsp;&middot;&nbsp;</span>
         </div>
-        <div class="fc-muted" *ngIf="creator.CoinPriceBitCloutNanos">~{{
-          globalVars.nanosToUSD(creator.CoinPriceBitCloutNanos, 2) }}</div>
+        <div class="fc-muted" *ngIf="creator.CoinPriceBitCloutNanos">~{{ globalVars.nanosToUSD(creator.CoinPriceBitCloutNanos, 2) }}</div>
       </div>
     </div>
     <!-- Search Cloutavista -->
-    <div class="main cloutavista-button">
+    <div class="main searchCloud">
       <a index=-2 [ngClass]="{'search-bar__selected-color': 'Cloutavista' == creatorSelected }"
         (mouseover)="_handleMouseOver('Cloutavista', -2)" (mouseout)="_handleMouseOut('Cloutavista', -2)"
         href="https://www.cloutavista.com/bitclout/posts?text={{searchText}}" target="_blank">
-        <div class="search-bar__selected-color"></div>
-        <p target="_blank" href="https://www.cloutavista.com/bitclout/posts?text={{searchText}}"><i
-            class="fas fa-external-link-alt" aria-hidden="true"></i> Search on Cloutavista </p>
+        <div class="search-bar__selected-color" ></div>
+        <p target="_blank"
+          href="https://www.cloutavista.com/bitclout/posts?text={{searchText}}"><i class="fas fa-external-link-alt"
+            aria-hidden="true"></i> Search on Cloutavista </p>
       </a>
     </div>
   </div>
