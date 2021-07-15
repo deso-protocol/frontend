@@ -1018,6 +1018,10 @@ $green-font-color: #19B028;
   background-image: url('/assets/img/default_profile_pic.png');
 }
 
+.feed-create-comment__textarea {
+  min-height: 55px;
+}
+
 .feed-create-post__textarea:focus {
   border: none;
   box-shadow: none;
