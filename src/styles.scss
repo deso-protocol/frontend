@@ -2304,3 +2304,24 @@ input {
   background-color: var(--background) !important;
   color: var(--text);
 }
+
+.cloutavista-button {
+  position: sticky;
+  bottom: 0px;
+  a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    div {
+      height: 1px;
+      position: absolute;
+      top: 0px;
+      width: 100%;
+    }
+    p {
+      color: var(--text) !important;
+      margin: 15px 0 15px 0;
+      font-size: 15px;
+    }
+  }
+}
