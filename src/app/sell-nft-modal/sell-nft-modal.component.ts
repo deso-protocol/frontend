@@ -7,6 +7,7 @@ import { of } from "rxjs";
 import { concatMap, last } from "rxjs/operators";
 import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
 import { AddUnlockableModalComponent } from "../add-unlockable-modal/add-unlockable-modal.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "sell-nft-modal",
@@ -29,9 +30,11 @@ export class SellNftModalComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private modalService: BsModalService,
     private backendApi: BackendApiService,
-    public bsModalRef: BsModalRef
+    public bsModalRef: BsModalRef,
+    private router: Router
   ) {}
 
+  // TODO: compute service fee.
   ngOnInit(): void {
     this.sellingPrice = _.sumBy(this.selectedBidEntries, "BidAmountNanos") / 1e9;
     const coinRoyaltyBasisPoints = this.post.NFTRoyaltyToCoinBasisPoints;
@@ -85,5 +88,19 @@ export class SellNftModalComponent implements OnInit {
         }
       )
       .add(() => (this.sellNFTDisabled = false));
+  }
+
+  remove(bidEntry: NFTBidEntryResponse): void {
+    this.selectedBidEntries = this.selectedBidEntries.filter((selectedEntry) => selectedEntry !== bidEntry);
+  }
+
+  navigateToProfile(bidEntry: NFTBidEntryResponse): void {
+    if (!bidEntry.ProfileEntryResponse?.Username) {
+      return;
+    }
+    this.bsModalRef.hide();
+    this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, bidEntry.ProfileEntryResponse.Username], {
+      queryParamsHandling: "merge",
+    });
   }
 }

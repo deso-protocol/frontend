@@ -1,17 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { BsModalRef } from "ngx-bootstrap/modal";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
-  selector: 'app-bid-placed-modal',
-  templateUrl: './bid-placed-modal.component.html',
+  selector: "bid-placed-modal",
+  templateUrl: "./bid-placed-modal.component.html",
 })
-export class BidPlacedModalComponent implements OnInit {
-
-  constructor(
-    public bsModalRef: BsModalRef
-  ) { }
-
-  ngOnInit(): void {
-  }
-
+export class BidPlacedModalComponent {
+  constructor(public bsModalRef: BsModalRef, public globalVars: GlobalVarsService) {}
 }

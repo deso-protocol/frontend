@@ -51,7 +51,7 @@ export class PostThreadComponent {
     this.currentPost = _.cloneDeep(this.currentPost);
   }
 
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
+  // TODO: Cleanup - Update InfiniteScroller class to de-duplicate this logic
   getDataSource() {
     return new Datasource<IAdapter<any>>({
       get: (index, count, success) => {

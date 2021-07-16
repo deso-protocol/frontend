@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { PostEntryResponse } from "../../backend-api.service";
+import {NFTBidData, NFTEntryResponse, PostEntryResponse} from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -27,6 +27,7 @@ import { AddUnlockableModalComponent } from "../../add-unlockable-modal/add-unlo
 export class FeedPostDropdownComponent {
   @Input() post: PostEntryResponse;
   @Input() postContent: PostEntryResponse;
+  @Input() nftEntryResponses: NFTEntryResponse[];
 
   @Output() postHidden = new EventEmitter();
   @Output() userBlocked = new EventEmitter();
@@ -42,9 +43,8 @@ export class FeedPostDropdownComponent {
     private platformLocation: PlatformLocation
   ) {}
 
-  ngOnInit(): void {}
-
-  reportPost() {
+  reportPost(): void {
+    this.globalVars.logEvent("post : report-content");
     window.open(
       `https://report.bitclout.com?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}`
     );
@@ -159,6 +159,17 @@ export class FeedPostDropdownComponent {
     return this.globalFeedEligible() && this.post.IsPinned;
   }
 
+  showCreateNFTAuction(): boolean {
+    return (
+      this.post.IsNFT &&
+      !!this.nftEntryResponses.filter(
+        (nftEntryResponse) =>
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )?.length
+    );
+  }
+
   hidePost() {
     this.postHidden.emit();
   }
@@ -201,6 +212,13 @@ export class FeedPostDropdownComponent {
     this.modalService.show(MintNftModalComponent, {
       class: "modal-dialog-centered modal-lg",
       initialState: { post: this.post },
+    });
+  }
+
+  openCreateNFTAuctionModal(event): void {
+    this.modalService.show(CreateNftAuctionModalComponent, {
+      class: "modal-dialog-centered",
+      initialState: { post: this.post, nftEntryResponses: this.nftEntryResponses },
     });
   }
 }

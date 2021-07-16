@@ -1,0 +1,161 @@
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+  ProfileEntryResponse,
+} from "../../backend-api.service";
+import { GlobalVarsService } from "../../global-vars.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Location } from "@angular/common";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import * as _ from "lodash";
+import { InfiniteScroller } from "../../infinite-scroller";
+import { Subscription } from "rxjs";
+
+@Component({
+  selector: "creator-profile-nfts",
+  templateUrl: "./creator-profile-nfts.component.html",
+  styleUrls: ["./creator-profile-nfts.component.scss"],
+})
+export class CreatorProfileNftsComponent implements OnInit {
+  static PAGE_SIZE = 10;
+  static BUFFER_SIZE = 5;
+  static WINDOW_VIEWPORT = true;
+  static PADDING = 0.5;
+
+  @Input() profile: ProfileEntryResponse;
+  @Input() afterCommentCreatedCallback: any = null;
+  @Input() showProfileAsReserved: boolean;
+
+  nftResponse: { NFTEntryResponses: NFTEntryResponse[]; PostEntryResponse: PostEntryResponse }[];
+
+  lastPage = null;
+  isLoading = true;
+  loadingNewSelection = false;
+  static FOR_SALE = "For Sale";
+  static NOT_FOR_SALE = "Not For Sale";
+  static tabs = [CreatorProfileNftsComponent.FOR_SALE, CreatorProfileNftsComponent.NOT_FOR_SALE];
+  activeTab: string;
+
+  CreatorProfileNftsComponent = CreatorProfileNftsComponent;
+
+  @Output() blockUser = new EventEmitter();
+
+  constructor(
+    private globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private location: Location
+  ) {}
+
+  ngOnInit(): void {
+    let checkNotForSale = false;
+    if (!this.activeTab) {
+      this.activeTab = CreatorProfileNftsComponent.FOR_SALE;
+      checkNotForSale = true;
+    }
+    this.isLoading = true;
+    this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE).add(() => {
+      if (checkNotForSale && !this.nftResponse.length) {
+        this.activeTab = CreatorProfileNftsComponent.NOT_FOR_SALE;
+        this.getNFTs(false).add(() => (this.isLoading = false));
+      } else {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getNFTs(isForSale: boolean | null = null): Subscription {
+    return this.backendApi
+      .GetNFTsForUser(
+        this.globalVars.localNode,
+        this.profile.PublicKeyBase58Check,
+        this.globalVars?.loggedInUser.PublicKeyBase58Check,
+        isForSale
+      )
+      .subscribe(
+        (res: {
+          NFTsMap: { [k: string]: { PostEntryResponse: PostEntryResponse; NFTEntryResponses: NFTEntryResponse[] } };
+        }) => {
+          this.nftResponse = [];
+          for (const k in res.NFTsMap) {
+            this.nftResponse.push(res.NFTsMap[k]);
+          }
+          this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
+        }
+      );
+  }
+
+  getPage(page: number) {
+    if (this.lastPage != null && page > this.lastPage) {
+      return [];
+    }
+    return new Promise((resolve, reject) => {
+      resolve(
+        this.nftResponse.slice(
+          page * CreatorProfileNftsComponent.PAGE_SIZE,
+          Math.min((page + 1) * CreatorProfileNftsComponent.PAGE_SIZE, this.nftResponse.length)
+        )
+      );
+    });
+  }
+
+  async _prependComment(uiPostParent, index, newComment) {
+    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
+    await this.datasource.adapter.relax();
+    await this.datasource.adapter.update({
+      predicate: ({ $index, data, element }) => {
+        let currentPost = (data as any) as PostEntryResponse;
+        if ($index === index) {
+          newComment.parentPost = currentPost;
+          currentPost.Comments = currentPost.Comments || [];
+          currentPost.Comments.unshift(_.cloneDeep(newComment));
+          return [this.globalVars.incrementCommentCount(currentPost)];
+        } else if (this.globalVars.getPostContentHashHex(currentPost) === uiPostParentHashHex) {
+          // We also want to increment the comment count on any other notifications related to the same post hash hex.
+          return [this.globalVars.incrementCommentCount(currentPost)];
+        }
+        // Leave all other items in the datasource as is.
+        return true;
+      },
+    });
+  }
+
+  userBlocked() {
+    this.blockUser.emit();
+  }
+
+  profileBelongsToLoggedInUser(): boolean {
+    return (
+      this.globalVars.loggedInUser?.ProfileEntryResponse &&
+      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
+    );
+  }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    CreatorProfileNftsComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    CreatorProfileNftsComponent.WINDOW_VIEWPORT,
+    CreatorProfileNftsComponent.BUFFER_SIZE,
+    CreatorProfileNftsComponent.PADDING
+  );
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+
+  onChange(event): void {
+    if (this.activeTab !== event) {
+      this.activeTab = event;
+      this.loadingNewSelection = true;
+      this.isLoading = true;
+      this.infiniteScroller.reset();
+      this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE).add(() => {
+        this.datasource.adapter.reset().then(() => {
+          this.loadingNewSelection = false;
+          this.isLoading = false;
+        });
+      });
+    }
+  }
+}

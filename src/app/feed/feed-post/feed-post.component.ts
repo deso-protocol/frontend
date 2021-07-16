@@ -1,7 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import {
+  BackendApiService,
+  NFTBidData,
+  NFTBidEntryResponse,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from "../../backend-api.service";
+import { AppRoutingModule } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
@@ -11,7 +17,9 @@ import { RecloutsModalComponent } from "../../reclouts-modal/reclouts-modal.comp
 import { QuoteRecloutsModalComponent } from "../../quote-reclouts-modal/quote-reclouts-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
-import { VideoUrlParserService } from "../../../lib/services/video-url-parser-service/video-url-parser-service";
+import * as _ from "lodash";
+import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
+import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 
 @Component({
   selector: "feed-post",
@@ -41,6 +49,15 @@ export class FeedPostComponent implements OnInit {
       this.postContent = post;
     }
   }
+
+  getMaxBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
+    return _.maxBy(bidEntryResponses, (bidEntryResponse) => bidEntryResponse.BidAmountNanos)?.BidAmountNanos;
+  }
+
+  getMinBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
+    return _.minBy(bidEntryResponses, (bidEntryResponses) => bidEntryResponses.BidAmountNanos)?.BidAmountNanos;
+  }
+
   @Input() set blocked(value: boolean) {
     this._blocked = value;
     this.ref.detectChanges();
@@ -86,6 +103,41 @@ export class FeedPostComponent implements OnInit {
   @Input() hoverable = true;
 
   @Input() showReplyingTo = false;
+  @Input()
+  get nftBidData(): NFTBidData {
+    return this._nftBidData;
+  }
+
+  set nftBidData(bidData: NFTBidData) {
+    this._nftBidData = bidData;
+    if (bidData) {
+      bidData.NFTEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
+      this.availableSerialNumbers = bidData.NFTEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
+      this.serialNumbersDisplay =
+        bidData.NFTEntryResponses.map((serialNumber) => `#${serialNumber.SerialNumber}`)
+          .slice(0, 5)
+          .join(", ") + (this.availableSerialNumbers.length > 5 ? "..." : "");
+      this.mySerialNumbersNotForSale = bidData.NFTEntryResponses.filter(
+        (nftEntryResponse) =>
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+      );
+      this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
+        (nftEntryResponse) =>
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+      );
+      this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
+      if (bidData.BidEntryResponses?.length) {
+        this.highBid = this.getMaxBidAmountFromList(bidData.BidEntryResponses);
+        this.lowBid = this.getMinBidAmountFromList(bidData.BidEntryResponses);
+      }
+    }
+  }
+  @Input() showNFTDetails = false;
+  @Input() showExpandedNFTDetails = false;
+  @Input() setBorder = false;
+  @Input() linkToNFT = false;
+  @Input() showAvailableSerialNumbers = false;
 
   // If the post is shown in a modal, this is used to hide the modal on post click.
   @Input() containerModalRef: any = null;
@@ -109,7 +161,16 @@ export class FeedPostComponent implements OnInit {
   hidingPost = false;
   quotedContent: any;
   _blocked: boolean;
-  constructedEmbedVideoURL: any;
+  constructedEmbedURL: any;
+
+  showPlaceABid: boolean;
+  highBid: number;
+  lowBid: number;
+  availableSerialNumbers: NFTEntryResponse[];
+  myAvailableSerialNumbers: NFTEntryResponse[];
+  mySerialNumbersNotForSale: NFTEntryResponse[];
+  serialNumbersDisplay: string;
+  _nftBidData: NFTBidData;
 
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
@@ -119,7 +180,7 @@ export class FeedPostComponent implements OnInit {
     if (!this.post.RecloutCount) {
       this.post.RecloutCount = 0;
     }
-    this.setEmbedVideoURLForPostContent();
+    this.setEmbedURLForPostContent();
   }
 
   onPostClicked(event) {
@@ -142,6 +203,13 @@ export class FeedPostComponent implements OnInit {
     // don't navigate if the user clicked a link
     if (event.target.tagName.toLowerCase() === "a") {
       return true;
+    }
+
+    if (this.linkToNFT) {
+      this.router.navigate(["/" + this.globalVars.RouteNames.NFT, this.postContent.PostHashHex], {
+        queryParamsHandling: "merge",
+      });
+      return;
     }
 
     this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex], {
@@ -205,6 +273,7 @@ export class FeedPostComponent implements OnInit {
 
   hidePost() {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Hide post?",
       html: `This can’t be undone. The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`,
       showCancelButton: true,
@@ -257,6 +326,7 @@ export class FeedPostComponent implements OnInit {
 
   blockUser() {
     SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
       title: "Block user?",
       html: `This will hide all comments from this user on your posts as well as hide them from your view on your feed and other threads.`,
       showCancelButton: true,
@@ -438,25 +508,21 @@ export class FeedPostComponent implements OnInit {
       });
   }
 
-  getEmbedVideoURLForPostContent(): any {
-    return this.constructedEmbedVideoURL;
-  }
-
-  setEmbedVideoURLForPostContent(): void {
-    VideoUrlParserService.getEmbedVideoURL(
+  setEmbedURLForPostContent(): void {
+    EmbedUrlParserService.getEmbedURL(
       this.backendApi,
       this.globalVars,
       this.postContent.PostExtraData["EmbedVideoURL"]
-    ).subscribe((res) => (this.constructedEmbedVideoURL = res));
+    ).subscribe((res) => (this.constructedEmbedURL = res));
   }
 
-  getEmbedVideoHeight(): number {
-    return VideoUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
+  getEmbedHeight(): number {
+    return EmbedUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
 
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.
   setNegativeMargins(link: string, globalVars: GlobalVarsService) {
-    return globalVars.isMobile() && VideoUrlParserService.isVimeoLink(link);
+    return globalVars.isMobile() && EmbedUrlParserService.isVimeoLink(link);
   }
 
   mapImageURLs(imgURL: string): string {
@@ -464,5 +530,13 @@ export class FeedPostComponent implements OnInit {
       return imgURL.replace("https://i.imgur.com", "https://images.bitclout.com/i.imgur.com");
     }
     return imgURL;
+  }
+
+  openPlaceBidModal(event: any) {
+    event.stopPropagation();
+    this.modalService.show(PlaceBidModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { post: this._post },
+    });
   }
 }

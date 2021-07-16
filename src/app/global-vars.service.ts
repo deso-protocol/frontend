@@ -16,6 +16,8 @@ import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithun
 import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
+import {FeedComponent} from "./feed/feed.component";
+import {BsModalRef} from "ngx-bootstrap/modal";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -501,6 +503,20 @@ export class GlobalVarsService {
     return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
   }
 
+  convertTstampToDateTime(tstampNanos: number) {
+    const date = new Date(tstampNanos / 1e6);
+    const currentDate = new Date();
+    if (
+      date.getDate() != currentDate.getDate() ||
+      date.getMonth() != currentDate.getMonth() ||
+      date.getFullYear() != currentDate.getFullYear()
+    ) {
+      return date.toLocaleString("default", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "numeric", second: "numeric", hour12: true });
+    }
+
+    return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
+  }
+  
   doesLoggedInUserHaveProfile() {
     if (!this.loggedInUser) {
       return false;
@@ -650,7 +666,7 @@ export class GlobalVarsService {
   // Does some basic checks on a public key.
   isMaybePublicKey(pk: string) {
     // Test net public keys start with 'tBC', regular public keys start with 'BC'.
-    return pk.startsWith("tBC") || pk.startsWith("BC");
+    return (pk.startsWith("tBC") && pk.length == 54) || (pk.startsWith("BC") && pk.length == 55);
   }
 
   isVanillaReclout(post: PostEntryResponse): boolean {
@@ -836,5 +852,38 @@ export class GlobalVarsService {
       return "messages-page";
     }
     return "app-page";
+  }
+
+  _updateBitCloutExchangeRate() {
+    this.backendApi.GetExchangeRate(this.localNode).subscribe(
+      (res: any) => {
+        this.satoshisPerBitCloutExchangeRate = res.SatoshisPerBitCloutExchangeRate;
+
+        this.NanosSold = res.NanosSold;
+        this.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
+
+        this.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
+        this.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
+        this.BuyBitCloutFeeBasisPoints = res.BuyBitCloutFeeBasisPoints;
+
+        const nanosPerUnit = 1e9;
+        this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerBitClout / 100);
+        this.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
+        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, null);
+        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, 2);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  exploreMarketplace(bsModalRef: BsModalRef): void {
+    if (bsModalRef) {
+      bsModalRef.hide();
+    }
+    this.router.navigate(["/" + this.RouteNames.BROWSE], {
+      queryParams: { feedTab: FeedComponent.MARKET_TAB },
+    });
   }
 }

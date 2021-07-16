@@ -976,7 +976,8 @@
   // Copyright 2018 Twitter, Inc.
   // Licensed under the Apache License, Version 2.0
   // http://www.apache.org/licenses/LICENSE-2.0
-  var cashtag = /[a-z0-9_]{1,24}/i;
+  // make sure cash tags contain at least one non-numeric character
+  var cashtag = /(?=\w*[a-z_]\w*)[a-z0-9_]{1,24}/i;
 
   // Copyright 2018 Twitter, Inc.
   // Licensed under the Apache License, Version 2.0

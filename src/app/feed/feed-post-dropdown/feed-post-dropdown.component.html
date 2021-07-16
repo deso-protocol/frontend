@@ -1,6 +1,7 @@
 <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
   <div class="d-inline-block d-lg-none fs-12px fc-muted pr-5px">
-    {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+    <span class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle" matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size" mat-raised-button #tooltip="matTooltip" [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)">{{
+      globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}</span>
   </div>
   <a class="js-feed-post__dropdown-toggle link--unstyled text-grey9" role="button" dropdownToggle>
     <i class="fas fa-ellipsis-h"></i>
@@ -14,13 +15,19 @@
       Link to Post
     </a>
     <a
-      *ngIf="globalVars.loggedInUser 
-        && globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check"
+      *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT"
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
       (click)="openMintNftModal($event)"
     >
       <i class="fas fa-stamp"></i>
-      Mint NFT {{post.IsNFT}}
+      Mint NFT
+    </a>
+    <a
+      *ngIf="showCreateNFTAuction()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
+      (click)="openCreateNFTAuctionModal($event)"
+    >
+      Put On Sale
     </a>
     <a
       *ngIf="post.IsNFT && globalVars.showAdminTools()"

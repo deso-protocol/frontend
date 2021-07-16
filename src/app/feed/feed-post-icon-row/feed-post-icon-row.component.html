@@ -1,6 +1,4 @@
-<div
-  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px"
->
+<div class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px">
   <!-- TODO: post threads: needs hover treatment-->
   <!--     [routerLink]="router.url"-->
   <div
@@ -66,7 +64,7 @@
         </a>
       </ng-template>
     </div>
-    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount }}</span>
+    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount + postContent.QuoteRecloutCount}}</span>
   </div>
 
   <div
@@ -76,7 +74,7 @@
   >
     <i
       [ngClass]="{
-        'is_animating': animateLike,
+        is_animating: animateLike,
         'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
         'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
       }"
@@ -131,7 +129,9 @@
                 class="icon-diamond fs-25px d-block"
                 [ngStyle]="{ color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555' }"
               ></i>
-              <div class="d-block fc-muted fs-12px" style="text-align: center">{{ globalVars.getUSDForDiamond(index + 1) }}</div>
+              <div class="d-block fc-muted fs-12px" style="text-align: center">
+                {{ globalVars.getUSDForDiamond(index + 1) }}
+              </div>
             </div>
           </ng-template>
         </div>
@@ -144,7 +144,7 @@
   </ng-template>
   <div
     class="cursor-pointer d-flex align-items-center"
-    [ngClass]="{'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
+    [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
   >
     <i
       [popover]="popTemplate"
@@ -158,16 +158,14 @@
       style="font-size: 20px !important; padding-right: 5px"
       (click)="diamondClickHandler($event)"
       (click)="animateDiamond = !animateDiamond"
-      [ngClass]="{'is_animating_ice': animateDiamond}"
+      [ngClass]="{ is_animating_ice: animateDiamond }"
     ></i>
     <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
   </div>
 
   <div class="d-none d-lg-flex cursor-pointer align-items-center">
-    <i
-      class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon"
-      (click)="copyPostLinkToClipboard($event)"
-    ></i>
-    {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
-  </div>
+        <i class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon" (click)="copyPostLinkToClipboard($event)"></i>
+        <span class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle" matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size" mat-raised-button #tooltip="matTooltip" [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)">{{
+      globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}</span>
+    </div>
 </div>

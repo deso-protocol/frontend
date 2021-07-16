@@ -1,0 +1,56 @@
+<!-- Posts -->
+<simple-center-loader [height]="200" *ngIf="isLoading && datasource.adapter.isLoading"></simple-center-loader>
+<div
+  class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column px-15px pt-15px"
+  *ngIf="!isLoading"
+>
+  <div>
+    <select
+      class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer"
+      (ngModelChange)="onChange($event)"
+      [ngModel]="activeTab"
+    >
+      <option
+        *ngFor="let option of CreatorProfileNftsComponent.tabs"
+        [value]="option"
+        class="fs-15px text-grey5 font-weight-bold"
+      >
+        {{ option }}
+      </option>
+    </select>
+  </div>
+</div>
+<div
+  *ngIf="
+    !showProfileAsReserved && !isLoading && !nftResponse.length
+  "
+  class="p-15px"
+>
+  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">Create an NFT.</span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} is on the platform but doesn't have any NFTs for sale.</span>
+    </ng-template>
+  </div>
+</div>
+<div *ngIf="!showProfileAsReserved && (!isLoading || loadingNewSelection)">
+  <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
+    <div #uiScroll *uiScroll="let nftEntry of datasource; let index = index" style="margin: 20px;">
+      <feed-post
+        *ngIf="nftEntry.PostEntryResponse.ProfileEntryResponse"
+        [contentShouldLinkToThread]="true"
+        [includePaddingOnPost]="true"
+        [post]="nftEntry.PostEntryResponse"
+        [afterCommentCreatedCallback]="_prependComment.bind(this, nftEntry.PostEntryResponse, index)"
+        [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+        [nftBidData]="nftEntry"
+        [showNFTDetails]="true"
+        [showExpandedNFTDetails]="true"
+        [setBorder]="true"
+        [linkToNFT]="true"
+        [showAvailableSerialNumbers]="true"
+        (userBlocked)="userBlocked()"
+      ></feed-post>
+    </div>
+  </div>
+</div>

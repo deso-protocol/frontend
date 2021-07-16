@@ -28,7 +28,7 @@
       <div *ngFor="let comment of post.Comments">
         <div class="px-15px pb-15px post-thread__subcomment-container">
           <feed-post
-            [includePaddingOnPost]="false"
+            [includePaddingOnPost]="true"
             [post]="comment"
             [parentPost]="post"
             [contentShouldLinkToThread]="true"
