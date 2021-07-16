@@ -10,8 +10,26 @@
     </div>
   </div>
 
-  <!-- Feed Selector -->
-  <tab-selector [tabs]="adminTabs" [activeTab]="activeTab" (tabClick)="_tabClicked($event)"></tab-selector>
+  <!-- Selector -->
+  <div class="fs-15px border-bottom border-color-grey">
+    <div class="m-15px">
+      <select
+        #rightBarSelect
+        id="right-bar-chart-select"
+        class="form-control w-100 fs-15px text-grey5 font-weight-bold cursor-pointer"
+        (change)="_tabClicked($event)"
+        [(ngModel)]="activeTab"
+      >
+        <option
+          *ngFor="let option of adminTabs"
+          [value]="option"
+          class="fs-15px text-grey5 font-weight-bold"
+        >
+          {{ option }}
+        </option>
+      </select>
+    </div>
+  </div>
 
   <!-- Post Whitelist Selector -->
   <div style="overflow-y: scroll" class="disable-scrollbars" *ngIf="activeTab == 'Posts' && adminPosts.length != 0 && !loadingPosts">
@@ -58,7 +76,7 @@
     <simple-center-loader *ngIf="searchingForPostsByClout; else showPosts"></simple-center-loader>
     <ng-template #showPosts>
       <div *ngFor="let post of activePosts; let ii = index">
-        <div *ngIf="post.ProfileEntryResponse" class="p-15px border-bottom border-color-grey">
+        <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
           <!--
             The post.parentPost stuff is a hack to make it so that a new comment shows up
             in the feed with the "replying to @[parentPost.Username]" content diplayed.
@@ -516,6 +534,15 @@
     </div>
     <div *ngIf="!loadingNextBlockStats && !nextBlockStats">Next block stats not available. Try refreshing.</div>
     <div *ngIf="loadingNextBlockStats">Loading...</div>
+  </div>
+
+  <!-- NFTs -->
+  <div
+    *ngIf="activeTab == 'NFTs'"
+    class="w-100 d-flex flex-column disable-scrollbars"
+    style="overflow-y: scroll"
+  >
+      <nft-drop-mgr></nft-drop-mgr>
   </div>
 
   <!-- Super Info -->

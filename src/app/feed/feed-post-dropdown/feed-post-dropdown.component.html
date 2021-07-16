@@ -23,6 +23,14 @@
       Mint NFT {{post.IsNFT}}
     </a>
     <a
+      *ngIf="post.IsNFT && globalVars.showAdminTools()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
+      (click)="dropNFT()"
+    >
+      <i class="fas fa-tint"></i>
+      Add NFT to drop
+    </a>
+    <a
       *ngIf="post.InMempool"
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
       style="cursor: default"

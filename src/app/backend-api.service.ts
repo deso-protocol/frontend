@@ -87,6 +87,8 @@ export class BackendRoutes {
   static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
   static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
+  static RoutePathAdminGetNFTDrop = "/api/v0/admin/get-nft-drop";
+  static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
@@ -1595,6 +1597,34 @@ export class BackendApiService {
   GetGlobalParams(endpoint: string, UpdaterPublicKeyBase58Check: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathGetGlobalParams, UpdaterPublicKeyBase58Check, {
       AdminPublicKey: UpdaterPublicKeyBase58Check,
+    });
+  }
+
+  AdminGetNFTDrop(
+    endpoint: string, 
+    UpdaterPublicKeyBase58Check: string, 
+    DropNumber: number
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetNFTDrop, UpdaterPublicKeyBase58Check, {
+      DropNumber,
+    });
+  }
+
+  AdminUpdateNFTDrop(
+    endpoint: string, 
+    UpdaterPublicKeyBase58Check: string, 
+    DropNumber: number,
+    DropTstampNanos: number,
+    IsActive: boolean,
+    NFTHashHexToAdd: string,
+    NFTHashHexToRemove: string,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateNFTDrop, UpdaterPublicKeyBase58Check, {
+      DropNumber,
+      DropTstampNanos,
+      IsActive,
+      NFTHashHexToAdd,
+      NFTHashHexToRemove,
     });
   }
 

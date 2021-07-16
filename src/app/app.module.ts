@@ -90,6 +90,8 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { PopoverModule } from "ngx-bootstrap/popover";
 import { RatingModule } from "ngx-bootstrap/rating";
+import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
+import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
@@ -136,6 +138,7 @@ import { SellNftModalComponent } from './sell-nft-modal/sell-nft-modal.component
 import { AddUnlockableModalComponent } from './add-unlockable-modal/add-unlockable-modal.component';
 import {NftPostPageComponent} from "./nft-post-page/nft-post-page.component";
 import {NftPostComponent} from "./nft-post-page/nft-post/nft-post.component";
+import { NftDropMgrComponent } from './nft-drop-mgr/nft-drop-mgr.component';
 
 @NgModule({
   declarations: [
@@ -247,6 +250,7 @@ import {NftPostComponent} from "./nft-post-page/nft-post/nft-post.component";
     AddUnlockableModalComponent,
     NftPostPageComponent,
     NftPostComponent,
+    NftDropMgrComponent,
   ],
   imports: [
     BrowserModule,
@@ -266,6 +270,8 @@ import {NftPostComponent} from "./nft-post-page/nft-post/nft-post.component";
     BsDropdownModule.forRoot(),
     PopoverModule.forRoot(),
     RatingModule.forRoot(),
+    BsDatepickerModule.forRoot(),
+    TimepickerModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
       themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme],

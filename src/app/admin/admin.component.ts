@@ -102,7 +102,7 @@ export class AdminComponent implements OnInit {
   usernameVerificationAuditLogs: any = [];
   loadingVerifiedUsers = false;
   loadingVerifiedUsersAuditLog = false;
-  adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Wyre", "Super"];
+  adminTabs = ["Posts", "Profiles", "NFTs", "Network", "Mempool", "Wyre"];
   POSTS_TAB = "Posts";
   POSTS_BY_CLOUT_TAB = "Posts By Clout";
   adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_CLOUT_TAB];
@@ -146,6 +146,10 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit() {
+    if(this.globalVars.showSuperAdminTools()) {
+      this.adminTabs.push("Super") 
+    }
+
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.adminTab) {
         this.activeTab = queryParams.adminTab;
@@ -196,10 +200,9 @@ export class AdminComponent implements OnInit {
   }
 
   _tabClicked(tabName: any) {
-    this.activeTab = tabName;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { adminTab: tabName },
+      queryParams: { adminTab: this.activeTab },
       queryParamsHandling: "merge",
     });
   }

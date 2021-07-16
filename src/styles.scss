@@ -522,6 +522,16 @@ $green-font-color: #19B028;
   font-size: 15px !important;
 }
 
+input.bs-timepicker-field {
+  font-size: 15px;
+}
+
+.btn-default {
+  font-size: 15px;
+  border-color: var(--border) !important;
+}
+
+
 //
 // Top-level css for the feed.
 //
@@ -617,7 +627,7 @@ $green-font-color: #19B028;
 
 // Set a relative width on mobile
 .global__mobile .global__content__width {
-  width: 100%;
+  width: 100vw;
 }
 
 // Set a width, height, and border on desktop
