@@ -147,7 +147,7 @@ $red-font-color: #fe3537;
 $green-font-color: #19B028;
 
 // For when you want a finger instead of an arrow.
-.cursor-pointer { 
+.cursor-pointer {
   cursor: pointer;
 }
 
@@ -843,11 +843,10 @@ $green-font-color: #19B028;
 	height: 24px;
 	min-width: 24px;
 	margin-right: 10px;
-	border-radius: 100%;
+	border-radius: 3px;
 }
 
 .change-account-selector {
-	margin-left: -10px;
 	position: relative;
 	z-index: 30;
 	background-color: var(--secondary);
@@ -871,13 +870,11 @@ $green-font-color: #19B028;
 }
 
 .change-account-selector_list {
-	position: absolute;
 	background-color: var(--secondary);
 	padding: 0px 0px 10px;
-	margin-top: 15px;
+	margin-top: 10px;
 	width: 100%;
-	margin-left: -4px;
-	z-index: 11;
+	z-index: 99;
 	border: 1px solid var(--border);
 }
 
@@ -1021,6 +1018,10 @@ $green-font-color: #19B028;
   background-image: url('/assets/img/default_profile_pic.png');
 }
 
+.feed-create-comment__textarea {
+  min-height: 55px;
+}
+
 .feed-create-post__textarea:focus {
   border: none;
   box-shadow: none;
@@ -1105,7 +1106,7 @@ $green-font-color: #19B028;
 }
 
 /* reclout hover animation */
-.feed-post-icon-row__icon.icon-repost { 
+.feed-post-icon-row__icon.icon-repost {
   &:hover {
     background-color: $reclout-hover;
     color: $reclout-color;
@@ -1766,7 +1767,7 @@ $green-font-color: #19B028;
 }
 
 .simple-profile-card__avatar-container {
-  width: 50px; 
+  width: 50px;
   margin-right: 15px;
 }
 
@@ -2302,4 +2303,25 @@ input {
 .swal2-popup {
   background-color: var(--background) !important;
   color: var(--text);
+}
+
+.cloutavista-button {
+  position: sticky;
+  bottom: 0px;
+  a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    div {
+      height: 1px;
+      position: absolute;
+      top: 0px;
+      width: 100%;
+    }
+    p {
+      color: var(--text) !important;
+      margin: 15px 0 15px 0;
+      font-size: 15px;
+    }
+  }
 }

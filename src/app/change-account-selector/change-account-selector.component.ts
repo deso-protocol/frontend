@@ -25,7 +25,6 @@ export class ChangeAccountSelectorComponent {
     private router: Router
   ) {
     this.selectorOpen = false;
-    this._setUpClickListener();
   }
 
   launchLogoutFlow() {
@@ -43,56 +42,11 @@ export class ChangeAccountSelectorComponent {
     this.globalVars.messageResponse = null;
     this.globalVars.SetupMessages();
 
-    const currentUrl = this.router.url
-    this.router.navigate(['/']).then(() => { this.router.navigateByUrl(currentUrl); })
+    const currentUrl = this.router.url;
+    this.router.navigate(["/"]).then(() => {
+      this.router.navigateByUrl(currentUrl);
+    });
 
     this.globalVars.isLeftBarMobileOpen = false;
-  }
-
-  // TODO: Cleanup - we should consider using a dropdown library that does all this hard work for us
-  _setUpClickListener() {
-    let touched = false;
-    this.renderer.listen("window", "touchstart", (e: any) => {
-      touched = true;
-      if (e.touches.length > 0 && e.touches[0].target.offsetParent) {
-        if (e.touches[0].target.offsetParent === this.accountSelectorRoot.nativeElement) {
-          if (!this.selectorOpen) {
-            this.selectorOpen = true;
-          }
-          return;
-        }
-      } else {
-        for (let ii = 0; ii < e.path.length; ii++) {
-          if (e.path[ii] === this.accountSelectorRoot.nativeElement) {
-            if (!this.selectorOpen) {
-              this.selectorOpen = true;
-            }
-            return;
-          }
-        }
-      }
-      // If we get here, the user did not click the selector.
-      touched = false;
-      this.selectorOpen = false;
-    });
-
-    this.renderer.listen("window", "click", (e: any) => {
-      if (touched) return; // prevent click trigger if touch is being used
-      if (e.path === undefined) {
-        if (e.target.offsetParent === this.accountSelectorRoot.nativeElement) {
-          this.selectorOpen = !this.selectorOpen;
-          return;
-        }
-      } else {
-        for (let ii = 0; ii < e.path.length; ii++) {
-          if (e.path[ii] === this.accountSelectorRoot.nativeElement) {
-            this.selectorOpen = !this.selectorOpen;
-            return;
-          }
-        }
-      }
-      // If we get here, the user did not click the selector.
-      this.selectorOpen = false;
-    });
   }
 }
