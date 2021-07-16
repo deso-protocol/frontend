@@ -503,6 +503,20 @@ export class GlobalVarsService {
     return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
   }
 
+  convertTstampToDateTime(tstampNanos: number) {
+    const date = new Date(tstampNanos / 1e6);
+    const currentDate = new Date();
+    if (
+      date.getDate() != currentDate.getDate() ||
+      date.getMonth() != currentDate.getMonth() ||
+      date.getFullYear() != currentDate.getFullYear()
+    ) {
+      return date.toLocaleString("default", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "numeric", second: "numeric", hour12: true });
+    }
+
+    return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
+  }
+  
   doesLoggedInUserHaveProfile() {
     if (!this.loggedInUser) {
       return false;
