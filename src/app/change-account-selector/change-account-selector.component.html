@@ -14,6 +14,7 @@
             ?  globalVars.loggedInUser.ProfileEntryResponse.Username
             : globalVars.loggedInUser.PublicKeyBase58Check
         }}</div>
+        <span *ngIf="globalVars.loggedInUser.isVerified" class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>
       </div>
       <div
         *ngIf="!globalVars.loggedInUser"
@@ -42,6 +43,7 @@
         >
           <div class="feed-create-post__avatar d-inline-block change-account-selector__account-image" [avatar]="user.PublicKeyBase58Check"></div>
           <div class="d-inline-block change-account-selector__ellipsis-restriction change-account-selector__acount-name">{{ user.ProfileEntryResponse?.Username ? user.ProfileEntryResponse.Username : user.PublicKeyBase58Check }}</div>
+          <span *ngIf="user.ProfileEntryResponse.isVerified" class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>
         </div>
       </div>
     </div>
