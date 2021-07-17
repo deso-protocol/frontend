@@ -59,7 +59,6 @@ export class PostThreadComponent {
     return new Datasource<IAdapter<any>>({
       get: (index, count, success) => {
         const comments = this.currentPost.Comments || [];
-        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
         if (!comments || (this.scrollingDisabled && index > comments.length)) {
           success([]);
           return;
