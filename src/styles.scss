@@ -1113,7 +1113,7 @@ $green-font-color: #19B028;
   }
 }
 /* like button hover animation */
-.icon-heart, .icon-heart-fill{
+.feed-post-icon-row__icon.icon-heart, .feed-post-icon-row__icon.icon-heart-fill{
   &:hover{
     background-color: $like-hover;
     color: $like-color;
@@ -1121,7 +1121,7 @@ $green-font-color: #19B028;
 }
 
 /* diamond button hover animation */
-.icon-diamond{
+.feed-post-icon-row__icon.icon-diamond{
   &:hover{
     background-color: $diamond-hover;
     color: $diamond-color;
@@ -1129,13 +1129,14 @@ $green-font-color: #19B028;
 }
 
 /* copy link button hover animation */
-.icon-link{
+.feed-post-icon-row__icon.icon-link{
   &:hover{
     background-color: $link-btn-hover;
     color: $link-btn-color;
 
   }
 }
+
 .feed-post__icon-row-holder {
 }
 
