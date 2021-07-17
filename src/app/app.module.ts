@@ -120,17 +120,17 @@ import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { TrendsComponent } from "./trends-page/trends/trends.component";
 import { UploadDirective } from "./directives/upload.directive";
 import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
-import { MintNftModalComponent } from './mint-nft-modal/mint-nft-modal.component';
-import { CreateNftAuctionModalComponent } from './create-nft-auction-modal/create-nft-auction-modal.component';
-import { AuctionCreatedModalComponent } from './auction-created-modal/auction-created-modal.component';
-import { BidPlacedModalComponent } from './bid-placed-modal/bid-placed-modal.component';
-import { PlaceBidModalComponent } from './place-bid-modal/place-bid-modal.component';
-import { SelectSerialNumberModalComponent } from './select-serial-number-modal/select-serial-number-modal.component';
-import { NftSoldModalComponent } from './nft-sold-modal/nft-sold-modal.component';
-import { NftModalHeaderComponent } from './nft-modal-header/nft-modal-header.component';
-import { CloseNftAuctionModalComponent } from './close-nft-auction-modal/close-nft-auction-modal.component';
-import { SellNftModalComponent } from './sell-nft-modal/sell-nft-modal.component';
-import { AddUnlockableModalComponent } from './add-unlockable-modal/add-unlockable-modal.component';
+import { MintNftModalComponent } from "./mint-nft-modal/mint-nft-modal.component";
+import { CreateNftAuctionModalComponent } from "./create-nft-auction-modal/create-nft-auction-modal.component";
+import { AuctionCreatedModalComponent } from "./auction-created-modal/auction-created-modal.component";
+import { BidPlacedModalComponent } from "./bid-placed-modal/bid-placed-modal.component";
+import { PlaceBidModalComponent } from "./place-bid-modal/place-bid-modal.component";
+import { SelectSerialNumberModalComponent } from "./select-serial-number-modal/select-serial-number-modal.component";
+import { NftSoldModalComponent } from "./nft-sold-modal/nft-sold-modal.component";
+import { NftModalHeaderComponent } from "./nft-modal-header/nft-modal-header.component";
+import { CloseNftAuctionModalComponent } from "./close-nft-auction-modal/close-nft-auction-modal.component";
+import { SellNftModalComponent } from "./sell-nft-modal/sell-nft-modal.component";
+import { AddUnlockableModalComponent } from "./add-unlockable-modal/add-unlockable-modal.component";
 import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { NftPostComponent } from "./nft-post-page/nft-post/nft-post.component";
 import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-profile-nfts/creator-profile-nfts.component";
@@ -146,7 +146,6 @@ import { legendsTheme } from "./theme/legends-theme";
 import { cakeTheme } from "./theme/cake-theme";
 //Theme for BitClout by @mrpreet
 import { greenishTheme } from "./theme/greenish-theme";
->>>>>>> ln/nft-on-profiles
 
 @NgModule({
   declarations: [
