@@ -14,7 +14,7 @@
             ?  globalVars.loggedInUser.ProfileEntryResponse.Username
             : globalVars.loggedInUser.PublicKeyBase58Check
         }}</div>
-        <span *ngIf="globalVars.loggedInUser.isVerified" class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>
+        <span *ngIf="globalVars.loggedInUser.ProfileEntryResponse?.IsVerified" class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>
       </div>
       <div
         *ngIf="!globalVars.loggedInUser"
