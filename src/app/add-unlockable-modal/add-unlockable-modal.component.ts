@@ -3,7 +3,7 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { BackendApiService, NFTBidEntryResponse, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import { of } from "rxjs";
-import { concatMap, last } from "rxjs/operators";
+import { concatMap, last, map } from "rxjs/operators";
 import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
 
@@ -18,6 +18,7 @@ export class AddUnlockableModalComponent implements OnInit {
   @Input() selectedBidEntries: NFTBidEntryResponse[];
 
   addDisabled = false;
+  sellingNFT = false;
   unlockableText: string = "";
 
   constructor(
@@ -29,21 +30,32 @@ export class AddUnlockableModalComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  sellNFTTotal: number;
+  sellNFTCounter: number = 0;
   sellNFT(): void {
     this.addDisabled = true;
+    this.sellingNFT = true;
+    this.sellNFTTotal = this.selectedBidEntries.length;
     of(...this.selectedBidEntries)
       .pipe(
         concatMap((bidEntry) => {
-          return this.backendApi.AcceptNFTBid(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.post.PostHashHex,
-            bidEntry.SerialNumber,
-            bidEntry.PublicKeyBase58Check,
-            bidEntry.BidAmountNanos,
-            this.unlockableText,
-            this.globalVars.defaultFeeRateNanosPerKB
-          );
+          return this.backendApi
+            .AcceptNFTBid(
+              this.globalVars.localNode,
+              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.post.PostHashHex,
+              bidEntry.SerialNumber,
+              bidEntry.PublicKeyBase58Check,
+              bidEntry.BidAmountNanos,
+              this.unlockableText,
+              this.globalVars.defaultFeeRateNanosPerKB
+            )
+            .pipe(
+              map((res) => {
+                this.sellNFTCounter++;
+                return res;
+              })
+            );
         })
       )
       .pipe(last((res) => res))
@@ -60,6 +72,9 @@ export class AddUnlockableModalComponent implements OnInit {
           this.globalVars._alertError(this.backendApi.parseMessageError(err));
         }
       )
-      .add(() => (this.addDisabled = false));
+      .add(() => {
+        this.addDisabled = false;
+        this.sellingNFT = false;
+      });
   }
 }

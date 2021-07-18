@@ -3,7 +3,7 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../global-vars.service";
 import { AuctionCreatedModalComponent } from "../auction-created-modal/auction-created-modal.component";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { concatMap, last } from "rxjs/operators";
+import { concatMap, filter, last, map, take } from "rxjs/operators";
 import { of } from "rxjs";
 
 @Component({
@@ -38,21 +38,32 @@ export class CreateNftAuctionModalComponent implements OnInit {
     this.minBidAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
+  auctionTotal: number;
+  auctionCounter: number = 0;
   createAuction() {
+    this.auctionTotal = this.selectedSerialNumbers.filter((res) => res).length;
     this.creatingAuction = true;
     of(...this.selectedSerialNumbers.map((isSelected, index) => (isSelected ? index : -1)))
       .pipe(
         concatMap((val) => {
           if (val >= 0) {
-            return this.backendApi.UpdateNFT(
-              this.globalVars.localNode,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
-              this.post.PostHashHex,
-              val,
-              true,
-              Math.trunc(this.minBidAmountCLOUT * 1e9),
-              this.globalVars.defaultFeeRateNanosPerKB
-            );
+            return this.backendApi
+              .UpdateNFT(
+                this.globalVars.localNode,
+                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                this.post.PostHashHex,
+                val,
+                true,
+                Math.trunc(this.minBidAmountCLOUT * 1e9),
+                this.globalVars.defaultFeeRateNanosPerKB
+              )
+              .pipe(
+                map((res) => {
+                  console.log(res);
+                  this.auctionCounter++;
+                  return res;
+                })
+              );
           } else {
             return of("");
           }
@@ -63,9 +74,19 @@ export class CreateNftAuctionModalComponent implements OnInit {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
-          this.modalService.show(AuctionCreatedModalComponent, {
+          const modalRef = this.modalService.show(AuctionCreatedModalComponent, {
             class: "modal-dialog-centered modal-sm",
           });
+          modalRef.onHide
+            .pipe(
+              take(1),
+              filter((reason) => {
+                return reason !== "explore";
+              })
+            )
+            .subscribe(() => {
+              window.location.reload();
+            });
         },
         (err) => {
           console.error(err);
@@ -93,7 +114,10 @@ export class CreateNftAuctionModalComponent implements OnInit {
     return !this.selectedSerialNumbers.filter((isSelected) => isSelected)?.length;
   }
 
-  checkSelectionStatus(event: any): void {
-    // this.
+  selectSerialNumber(idx: number): void {
+    this.selectAll = false;
+    for (let ii = 0; ii < this.selectedSerialNumbers.length; ii++) {
+      this.selectedSerialNumbers[ii] = ii === idx;
+    }
   }
 }

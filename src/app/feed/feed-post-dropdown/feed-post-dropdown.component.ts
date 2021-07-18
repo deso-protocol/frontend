@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import {NFTBidData, NFTEntryResponse, PostEntryResponse} from "../../backend-api.service";
+import { NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -52,66 +52,67 @@ export class FeedPostDropdownComponent {
 
   dropNFT() {
     // Get the latest drop so that we can update it.
-    this.backendApi.AdminGetNFTDrop(
-      this.globalVars.localNode, 
-      this.globalVars.loggedInUser.PublicKeyBase58Check,
-      -1 /*DropNumber*/
-    ).subscribe(
-      (res: any) => {
-        if (res.DropEntry.DropTstampNanos == 0) {
-          this.globalVars._alertError("There are no drops. Make one in the admin NFT tab.")
-          return
-        }
+    this.backendApi
+      .AdminGetNFTDrop(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, -1 /*DropNumber*/)
+      .subscribe(
+        (res: any) => {
+          if (res.DropEntry.DropTstampNanos == 0) {
+            this.globalVars._alertError("There are no drops. Make one in the admin NFT tab.");
+            return;
+          }
 
-        let currentTime = new Date();
-        if ((res.DropEntry.DropTstampNanos / 1e6) < currentTime.getTime()) {
-          SwalHelper.fire({
-            target: this.globalVars.getTargetComponentSelector(),
-            html: `The latest drop has already dropped.  Add this NFT to the active drop? `+
-            `If you would like to make a new drop, make one in the NFT admin tab first.`,
-            showCancelButton: true,
-            showConfirmButton: true,
-            focusConfirm: true,
-            customClass: {
-              confirmButton: "btn btn-light",
-              cancelButton: "btn btn-light no",
-            },
-            confirmButtonText: "Yes",
-            cancelButtonText: "No",
-            reverseButtons: true,
-          }).then(async (alertRes: any) => {
-            if (alertRes.isConfirmed) {
-              this.addNFTToLatestDrop(res.DropEntry, this.post.PostHashHex);
-            }
-          });
-          return
-        }
-          
-        this.addNFTToLatestDrop(res.DropEntry, this.post.PostHashHex)
-      },
-      (error) => { this.globalVars._alertError(error.error.error) }
-    );
+          let currentTime = new Date();
+          if (res.DropEntry.DropTstampNanos / 1e6 < currentTime.getTime()) {
+            SwalHelper.fire({
+              target: this.globalVars.getTargetComponentSelector(),
+              html:
+                `The latest drop has already dropped.  Add this NFT to the active drop? ` +
+                `If you would like to make a new drop, make one in the NFT admin tab first.`,
+              showCancelButton: true,
+              showConfirmButton: true,
+              focusConfirm: true,
+              customClass: {
+                confirmButton: "btn btn-light",
+                cancelButton: "btn btn-light no",
+              },
+              confirmButtonText: "Yes",
+              cancelButtonText: "No",
+              reverseButtons: true,
+            }).then(async (alertRes: any) => {
+              if (alertRes.isConfirmed) {
+                this.addNFTToLatestDrop(res.DropEntry, this.post.PostHashHex);
+              }
+            });
+            return;
+          }
 
+          this.addNFTToLatestDrop(res.DropEntry, this.post.PostHashHex);
+        },
+        (error) => {
+          this.globalVars._alertError(error.error.error);
+        }
+      );
   }
 
   addNFTToLatestDrop(latestDrop: any, postHash: string) {
-    this.backendApi.AdminUpdateNFTDrop(
-      this.globalVars.localNode, 
-      this.globalVars.loggedInUser.PublicKeyBase58Check,
-      latestDrop.DropNumber,
-      latestDrop.DropTstampNanos,  
-      latestDrop.IsActive, /*IsActive*/
-      postHash, /*NFTHashHexToAdd*/
-      "", /*NFTHashHexToRemove*/
-    ).subscribe(
-      (res: any) => {
-        this.globalVars._alertSuccess(
-          "Successfully added NFT to drop #" + latestDrop.DropNumber.toString())
-      },
-      (error) => {
-        this.globalVars._alertError(error.error.error);
-      }
-    );
+    this.backendApi
+      .AdminUpdateNFTDrop(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        latestDrop.DropNumber,
+        latestDrop.DropTstampNanos,
+        latestDrop.IsActive /*IsActive*/,
+        postHash /*NFTHashHexToAdd*/,
+        "" /*NFTHashHexToRemove*/
+      )
+      .subscribe(
+        (res: any) => {
+          this.globalVars._alertSuccess("Successfully added NFT to drop #" + latestDrop.DropNumber.toString());
+        },
+        (error) => {
+          this.globalVars._alertError(error.error.error);
+        }
+      );
   }
 
   showBlockUserDropdownItem() {
@@ -162,7 +163,7 @@ export class FeedPostDropdownComponent {
   showCreateNFTAuction(): boolean {
     return (
       this.post.IsNFT &&
-      !!this.nftEntryResponses.filter(
+      !!this.nftEntryResponses?.filter(
         (nftEntryResponse) =>
           !nftEntryResponse.IsForSale &&
           nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check

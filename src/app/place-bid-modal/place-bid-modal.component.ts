@@ -12,10 +12,10 @@ import {
 import * as _ from "lodash";
 import { Router } from "@angular/router";
 import { of } from "rxjs";
-import { concatMap, last } from "rxjs/operators";
+import { concatMap, filter, last, map, take } from "rxjs/operators";
 
 @Component({
-  selector: "app-place-bid-modal",
+  selector: "place-bid-modal",
   templateUrl: "./place-bid-modal.component.html",
 })
 export class PlaceBidModalComponent implements OnInit {
@@ -95,7 +95,8 @@ export class PlaceBidModalComponent implements OnInit {
       ? `You do not have ${this.bidAmountCLOUT} $CLOUT to fulfill this bid.\n\n`
       : "";
     this.bidAmountErrors += serialNumbersBelowMinBid.length
-      ? `Your bid of ${this.bidAmountCLOUT} does not meet the minimum bid requirement for the following serial numbers: ` + serialNumbersBelowMinBid
+      ? `Your bid of ${this.bidAmountCLOUT} does not meet the minimum bid requirement for the following serial numbers: ` +
+        serialNumbersBelowMinBid
           .map((sn) => `#${sn.SerialNumber} (${this.globalVars.nanosToBitClout(sn.MinBidAmountNanos, 2)})`)
           .join(", ")
       : "";
@@ -109,20 +110,30 @@ export class PlaceBidModalComponent implements OnInit {
     return _.minBy(bidEntryResponses, (bidEntryResponses) => bidEntryResponses.BidAmountNanos)?.BidAmountNanos;
   }
 
+  bidTotal: number;
+  bidCounter: number = 0;
   placeBid() {
     this.placingBids = true;
+    this.bidTotal = this.selectedSerialNumberCount();
     of(...this.selectedSerialNumbers.map((isSelected, index) => (isSelected ? index : -1)))
       .pipe(
         concatMap((val) => {
           if (val >= 0) {
-            return this.backendApi.CreateNFTBid(
-              this.globalVars.localNode,
-              this.globalVars.loggedInUser.PublicKeyBase58Check,
-              this.post.PostHashHex,
-              val,
-              Math.trunc(this.bidAmountCLOUT * 1e9),
-              this.globalVars.defaultFeeRateNanosPerKB
-            );
+            return this.backendApi
+              .CreateNFTBid(
+                this.globalVars.localNode,
+                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                this.post.PostHashHex,
+                val,
+                Math.trunc(this.bidAmountCLOUT * 1e9),
+                this.globalVars.defaultFeeRateNanosPerKB
+              )
+              .pipe(
+                map((res) => {
+                  this.bidCounter++;
+                  return res;
+                })
+              );
           } else {
             return of("");
           }
@@ -133,9 +144,19 @@ export class PlaceBidModalComponent implements OnInit {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
-          this.modalService.show(BidPlacedModalComponent, {
+          const modalRef = this.modalService.show(BidPlacedModalComponent, {
             class: "modal-dialog-centered modal-sm",
           });
+          modalRef.onHide
+            .pipe(
+              take(1),
+              filter((reason) => {
+                return reason !== "explore";
+              })
+            )
+            .subscribe(() => {
+              window.location.reload();
+            });
         },
         (err) => {
           console.error(err);
@@ -188,18 +209,35 @@ export class PlaceBidModalComponent implements OnInit {
 
   selectSerialNumber(idx: number) {
     this.saveSelectionDisabled = false;
-    console.log(idx);
-    console.log(this.selectedSerialNumbers);
-    for (let i = 0; i < this.selectedSerialNumbers.length; i++) {
-      console.log(i);
-      this.selectedSerialNumbers[i] = i === idx;
+    for (let ii = 0; ii < this.selectedSerialNumbers.length; ii++) {
+      this.selectedSerialNumbers[ii] = ii === idx;
     }
-    console.log(this.selectedSerialNumbers);
     this.saveSelection();
   }
 
   deselectSerialNumber(idx: number) {
+    if (this.placingBids) {
+      return;
+    }
     this.selectedSerialNumbers[idx] = false;
     this.showSelectedSerialNumbers = !!this.selectedSerialNumbers.filter((val) => val).length;
+  }
+
+  selectedSerialNumbersDisplay(): number[] {
+    let displaySerialNumbers = [];
+    for (let ii = 0; ii < this.selectedSerialNumbers.length; ii++) {
+      if (this.selectedSerialNumbers[ii]) {
+        displaySerialNumbers.push(ii);
+      }
+      if (displaySerialNumbers.length >= 10) {
+        return displaySerialNumbers;
+      }
+    }
+    return displaySerialNumbers;
+  }
+
+  selectedSerialNumberCount(): number {
+    console.log(this.selectedSerialNumbers.filter((val) => val).length);
+    return this.selectedSerialNumbers.filter((val) => val).length;
   }
 }

@@ -39,7 +39,6 @@ export class InfiniteScroller {
 
         const pageRequests: any[] = [];
         for (let i = startPage; i <= endPage; i++) {
-          // console.log("starting page:")
           const existingRequest = this.pagedRequests[i];
           if (existingRequest) {
             pageRequests.push(existingRequest);

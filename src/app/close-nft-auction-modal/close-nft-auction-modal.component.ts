@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { of } from "rxjs";
-import { concatMap, last } from "rxjs/operators";
+import { concatMap, last, map } from "rxjs/operators";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 
@@ -21,20 +21,30 @@ export class CloseNftAuctionModalComponent {
     private globalVars: GlobalVarsService
   ) {}
 
+  auctionTotal: number;
+  auctionCounter: number = 0;
   closeAuction(): void {
     this.closingAuction = true;
+    this.auctionTotal = this.myAvailableSerialNumbers.length;
     of(...this.myAvailableSerialNumbers)
       .pipe(
         concatMap((nftEntry) => {
-          return this.backendApi.UpdateNFT(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.post.PostHashHex,
-            nftEntry.SerialNumber,
-            false,
-            nftEntry.MinBidAmountNanos,
-            this.globalVars.defaultFeeRateNanosPerKB
-          );
+          return this.backendApi
+            .UpdateNFT(
+              this.globalVars.localNode,
+              this.globalVars.loggedInUser.PublicKeyBase58Check,
+              this.post.PostHashHex,
+              nftEntry.SerialNumber,
+              false,
+              nftEntry.MinBidAmountNanos,
+              this.globalVars.defaultFeeRateNanosPerKB
+            )
+            .pipe(
+              map((res) => {
+                this.auctionCounter++;
+                return res;
+              })
+            );
         })
       )
       .pipe(last((res) => res))
@@ -42,6 +52,7 @@ export class CloseNftAuctionModalComponent {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
+          window.location.reload();
         },
         (err) => {
           console.error(err);

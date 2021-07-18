@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { BsModalRef } from "ngx-bootstrap/modal";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
@@ -7,5 +7,9 @@ import { GlobalVarsService } from "../global-vars.service";
   templateUrl: "./auction-created-modal.component.html",
 })
 export class AuctionCreatedModalComponent {
-  constructor(public bsModalRef: BsModalRef, public globalVars: GlobalVarsService) {}
+  constructor(
+    public bsModalRef: BsModalRef,
+    public modalService: BsModalService,
+    public globalVars: GlobalVarsService
+  ) {}
 }

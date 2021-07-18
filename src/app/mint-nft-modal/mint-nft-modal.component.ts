@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { BackendApiService, BackendRoutes } from "../backend-api.service";
+import { Component, Input } from "@angular/core";
+import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { BsModalService } from "ngx-bootstrap/modal";
@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
   selector: "app-mint-nft-modal",
   templateUrl: "./mint-nft-modal.component.html",
 })
-export class MintNftModalComponent implements OnInit {
+export class MintNftModalComponent {
   IS_SINGLE_COPY = "isSingleCopy";
   IS_MULTIPLE_COPIES = "isMultipleCopies";
   @Input() post: any;
@@ -28,6 +28,8 @@ export class MintNftModalComponent implements OnInit {
   creatorRoyaltyPercent: number;
   coinRoyaltyPercent: number;
   includeUnlockable: boolean = false;
+  createNFTFeeNanos: number;
+  maxCopiesPerNFT: number;
 
   // Errors.
   unreasonableRoyaltiesSet: boolean = false;
@@ -41,9 +43,13 @@ export class MintNftModalComponent implements OnInit {
     public bsModalRef: BsModalRef
   ) {
     this.globalVars = _globalVars;
+    this.backendApi
+      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .subscribe((res) => {
+        this.createNFTFeeNanos = res.CreateNFTFeeNanos;
+        this.maxCopiesPerNFT = res.MaxCopiesPerNFT;
+      });
   }
-
-  ngOnInit(): void {}
 
   hasUnreasonableRoyalties() {
     let isEitherUnreasonable =
@@ -56,7 +62,7 @@ export class MintNftModalComponent implements OnInit {
   }
 
   hasUnreasonableNumCopies() {
-    return this.numCopies > 1000 || this.numCopies < 1;
+    return this.numCopies > (this.maxCopiesPerNFT || 1000) || this.numCopies < 1;
   }
 
   hasUnreasonableMinBidAmount() {
@@ -114,6 +120,7 @@ export class MintNftModalComponent implements OnInit {
           this.bsModalRef.hide();
         },
         (err) => {
+          this.globalVars._alertError(err.error.error);
           this.failedMinting = true;
         }
       )

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import {
@@ -16,7 +16,7 @@ import { Location } from "@angular/common";
 import * as _ from "lodash";
 import { SellNftModalComponent } from "../../sell-nft-modal/sell-nft-modal.component";
 import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
-import {Subscription} from "rxjs";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "nft-post",
@@ -31,11 +31,13 @@ export class NftPostComponent {
   availableSerialNumbers: NFTEntryResponse[];
   myAvailableSerialNumbers: NFTEntryResponse[];
   loading = true;
+  refreshingBids = true;
   sellNFTDisabled = true;
   showPlaceABid: boolean;
   highBid: number;
   lowBid: number;
   selectedBids: boolean[];
+  selectedBid: NFTBidEntryResponse;
   showBidsView: boolean = true;
   bids: NFTBidEntryResponse[];
   owners: NFTEntryResponse[];
@@ -133,6 +135,7 @@ export class NftPostComponent {
   }
 
   refreshBidData(): Subscription {
+    this.refreshingBids = true;
     return this.backendApi
       .GetNFTBidsForNFTPost(
         this.globalVars.localNode,
@@ -174,6 +177,7 @@ export class NftPostComponent {
       .add(() => {
         this._handleTabClick(this.activeTab);
         this.loading = false;
+        this.refreshingBids = false;
       });
   }
 
@@ -385,11 +389,14 @@ export class NftPostComponent {
         highestBid.PublicKeyBase58Check === bid.PublicKeyBase58Check &&
         highestBid.BidAmountNanos === bid.BidAmountNanos &&
         highestBid.SerialNumber === bid.SerialNumber;
+      if (this.nftPost.NumNFTCopies === 1 && bid.selected) {
+        this.selectedBid = highestBid;
+      }
     });
+    this.sellNFTDisabled = false;
   }
 
   cancelBid(bidEntry: NFTBidEntryResponse): void {
-    this.loading = true;
     this.backendApi
       .CreateNFTBid(
         this.globalVars.localNode,

@@ -78,6 +78,7 @@ export class AdminComponent implements OnInit {
   updatingCreateProfileFee = false;
   updatingMinimumNetworkFee = false;
   updatingMaxCopiesPerNFT = false;
+  updatingCreateNFTFeeNanos = false;
   feeRateBitCloutPerKB = (1000 / 1e9).toFixed(9); // Default fee rate.
   bitcoinBlockHashOrHeight = "";
   evictBitcoinTxnHashes = "";
@@ -97,6 +98,7 @@ export class AdminComponent implements OnInit {
     CreateProfileFeeNanos: 0,
     MinimumNetworkFeeNanosPerKB: 0,
     MaxCopiesPerNFT: 0,
+    CreateNFTFeeNanos: 0,
   };
   verifiedUsers: any = [];
   usernameVerificationAuditLogs: any = [];
@@ -147,7 +149,7 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     if(this.globalVars.showSuperAdminTools()) {
-      this.adminTabs.push("Super") 
+      this.adminTabs.push("Super")
     }
 
     this.route.queryParams.subscribe((queryParams) => {
@@ -422,6 +424,7 @@ export class AdminComponent implements OnInit {
             CreateProfileFeeNanos: res.CreateProfileFeeNanos / 1e9,
             MinimumNetworkFeeNanosPerKB: res.MinimumNetworkFeeNanosPerKB,
             MaxCopiesPerNFT: res.MaxCopiesPerNFT,
+            CreateNFTFeeNanos: res.CreateNFTFeeNanos / 1e9,
           };
           this.updateGlobalParamsValues = this.globalParams;
         },
@@ -737,22 +740,27 @@ export class AdminComponent implements OnInit {
 
   updateGlobalParamUSDPerBitcoin() {
     this.updatingUSDToBitcoin = true;
-    this.updateGlobalParams(this.updateGlobalParamsValues.USDPerBitcoin, -1, -1, -1);
+    this.updateGlobalParams(this.updateGlobalParamsValues.USDPerBitcoin, -1, -1, -1, -1);
   }
 
   updateGlobalParamCreateProfileFee() {
     this.updatingCreateProfileFee = true;
-    this.updateGlobalParams(-1, this.updateGlobalParamsValues.CreateProfileFeeNanos, -1, -1);
+    this.updateGlobalParams(-1, this.updateGlobalParamsValues.CreateProfileFeeNanos, -1, -1, -1);
   }
 
   updateGlobalParamMinimumNetworkFee() {
     this.updatingMinimumNetworkFee = true;
-    this.updateGlobalParams(-1, -1, this.updateGlobalParamsValues.MinimumNetworkFeeNanosPerKB, -1);
+    this.updateGlobalParams(-1, -1, this.updateGlobalParamsValues.MinimumNetworkFeeNanosPerKB, -1, -1);
   }
 
   updateGlobalParamMaxCopiesPerNFT() {
     this.updatingMaxCopiesPerNFT = true;
-    this.updateGlobalParams(-1, -1, -1, this.updateGlobalParamsValues.MaxCopiesPerNFT);
+    this.updateGlobalParams(-1, -1, -1, this.updateGlobalParamsValues.MaxCopiesPerNFT, -1);
+  }
+
+  updateGlobalParamCreateNFTFeeNanos() {
+    this.updatingCreateNFTFeeNanos = true;
+    this.updateGlobalParams(-1, -1, -1, -1, this.updateGlobalParamsValues.CreateNFTFeeNanos);
   }
 
   updateUSDToBitCloutReserveExchangeRate(): void {
@@ -833,17 +841,20 @@ export class AdminComponent implements OnInit {
     usdPerBitcoin: number,
     createProfileFeeNanos: number,
     minimumNetworkFeeNanosPerKB: number,
-    maxCopiesPerNFT: number
+    maxCopiesPerNFT: number,
+    createNFTFeeNanos: number,
   ) {
     const updateBitcoinMessage = usdPerBitcoin >= 0 ? `Update Bitcoin to USD exchange rate: ${usdPerBitcoin}\n` : "";
     const createProfileFeeNanosMessage =
-      createProfileFeeNanos >= 0 ? `Create Profile Fee Nanos: ${createProfileFeeNanos}\n` : "";
+      createProfileFeeNanos >= 0 ? `Create Profile Fee (in $CLOUT): ${createProfileFeeNanos}\n` : "";
     const minimumNetworkFeeNanosPerKBMessage =
-      minimumNetworkFeeNanosPerKB >= 0 ? `Minimum Network Fee Nanos Per KB: ${minimumNetworkFeeNanosPerKB}` : "";
+      minimumNetworkFeeNanosPerKB >= 0 ? `Minimum Network Fee Nanos Per KB: ${minimumNetworkFeeNanosPerKB}\n` : "";
+    const maxCopiesMessage = maxCopiesPerNFT >= 0 ? `Max Copies Per NFT: ${maxCopiesPerNFT}\n` : "";
+    const createNFTFeeNanosMessage = createNFTFeeNanos >= 0 ? `Create NFT Fee (in $CLOUT): ${createNFTFeeNanos}\n` : "";
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `${updateBitcoinMessage}${createProfileFeeNanosMessage}${minimumNetworkFeeNanosPerKBMessage}`,
+      html: `${updateBitcoinMessage}${createProfileFeeNanosMessage}${minimumNetworkFeeNanosPerKBMessage}${maxCopiesMessage}${createNFTFeeNanosMessage}`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
@@ -864,6 +875,7 @@ export class AdminComponent implements OnInit {
               createProfileFeeNanos >= 0 ? createProfileFeeNanos * 1e9 : -1,
               minimumNetworkFeeNanosPerKB >= 0 ? minimumNetworkFeeNanosPerKB : -1,
               maxCopiesPerNFT >= 0 ? maxCopiesPerNFT : -1,
+              createNFTFeeNanos >= 0 ? createNFTFeeNanos * 1e9 : -1,
               minimumNetworkFeeNanosPerKB >= 0
                 ? minimumNetworkFeeNanosPerKB
                 : this.globalParams.MinimumNetworkFeeNanosPerKB >= 0
@@ -906,6 +918,7 @@ export class AdminComponent implements OnInit {
         this.updatingCreateProfileFee = false;
         this.updatingMinimumNetworkFee = false;
         this.updatingMaxCopiesPerNFT = false;
+        this.updatingCreateNFTFeeNanos = false;
       });
   }
 

@@ -60,7 +60,8 @@
           <i class="fas fs-14px" [ngClass]="{'fa-arrows-alt-v': sortByField !== NftPostComponent.SORT_BY_PRICE, 'fa-sort-amount-up-alt': sortByField === NftPostComponent.SORT_BY_PRICE && !sortDescending, 'fa-sort-amount-down': sortByField === NftPostComponent.SORT_BY_PRICE && sortDescending}"></i>
         </div>
       </div>
-      <div style="max-height: 400px; overflow-y: scroll;">
+      <simple-center-loader *ngIf="refreshingBids"></simple-center-loader>
+      <div style="max-height: 400px; overflow-y: scroll;" *ngIf="!refreshingBids">
         <div
           class="container d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled"
           *ngFor="let bidEntry of bids; let i = index">
@@ -128,17 +129,17 @@
           </div>
         </div>
       </div>
-      <div class="d-flex align-items-center p-15px" *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && myAvailableSerialNumbers?.length">
-        <button
-          class="btn btn-primary font-weight-bold fs-15px br-12px"
-          style="height: 36px; width: 115px; line-height: 15px"
-          [disabled]="sellNFTDisabled"
-          (click)="sellNFT()"
-        >
-          Sell NFT
-        </button>
-        <span (click)="closeAuction()" class="fc-red pl-20px cursor-pointer">Close my auctions</span>
-      </div>
+    </div>
+    <div class="d-flex align-items-center p-15px" *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && myAvailableSerialNumbers?.length">
+      <button
+        class="btn btn-primary font-weight-bold fs-15px br-12px"
+        style="height: 36px; width: 115px; line-height: 15px"
+        [disabled]="sellNFTDisabled"
+        (click)="sellNFT()" *ngIf="!loading && bids?.length"
+      >
+        Sell NFT
+      </button>
+      <span (click)="closeAuction()" class="fc-red cursor-pointer" [ngClass]="{'pl-20px': !loading && bids?.length }">Close my auctions</span>
     </div>
   </div>
   <div *ngIf="activeTab === NftPostComponent.OWNERS">

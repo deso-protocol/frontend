@@ -435,7 +435,13 @@
       <div>
         <span *ngIf="showAvailableSerialNumbers"> {{ serialNumbersDisplay }}&nbsp;</span>
         <span *ngIf="!showAvailableSerialNumbers"><b>{{ availableSerialNumbers?.length }} of {{ post.NumNFTCopies }} available&nbsp;</b></span>
-        <span *ngIf="post.HasUnlockable">|&nbsp;<i class="fas fa-lock"></i> Unlockable content</span>
+        <span *ngIf="post.HasUnlockable">|&nbsp;</span>
+        <span *ngIf="post.HasUnlockable"
+              class="cursor-pointer"
+              (click)="tooltip.toggle()"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="unlockableTooltip"
+              #tooltip="matTooltip"><i class="fas fa-lock"></i> Unlockable content</span>
       </div>
       <div>
         <button

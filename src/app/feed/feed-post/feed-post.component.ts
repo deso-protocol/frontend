@@ -172,6 +172,9 @@ export class FeedPostComponent implements OnInit {
   serialNumbersDisplay: string;
   _nftBidData: NFTBidData;
 
+  unlockableTooltip =
+    "This NFT will come with content that encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
+
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
       this.loggedInUserStakeAmount = this._getLoggedInUserStakeAmount();

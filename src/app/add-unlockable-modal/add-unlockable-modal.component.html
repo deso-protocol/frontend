@@ -19,10 +19,13 @@
     <button
       class="btn btn-primary font-weight-bold fs-15px br-8px"
       style="height: 36px; width: 100px; line-height: 15px"
+      [ngStyle]="{ 'width': sellingNFT ? '140px' : '100px' }"
       (click)="sellNFT()"
       [disabled]="addDisabled"
     >
-      Add
+      {{ sellingNFT ? "Selling NFTs" : "Add" }}
     </button>
+    <div *ngIf="sellingNFT" class="pl-15px">{{ sellNFTCounter }} of {{ sellNFTTotal }} sold</div>
+
   </div>
 </div>

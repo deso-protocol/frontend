@@ -785,6 +785,37 @@
       </div>
     </div>
 
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Create NFT Fee in BitClout
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="updateGlobalParamsValues.CreateNFTFeeNanos"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          style="width: 250px"
+          placeholder="Set fee per copy of an NFT"
+        />
+        <button
+          *ngIf="!updatingCreateNFTFeeNanos"
+          (click)="updateGlobalParamCreateNFTFeeNanos()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+          [ngStyle]="{ disabled: updatingGlobalParams }"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingCreateNFTFeeNanos"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content"
+          disabled
+        >
+          Updating...
+        </button>
+      </div>
+    </div>
+
     <!-- Verify User -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Grant Verification Badge:

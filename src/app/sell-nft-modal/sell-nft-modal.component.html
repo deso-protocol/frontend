@@ -98,9 +98,8 @@
       (click)="sellNFT()"
       [disabled]="sellNFTDisabled"
     >
-      Sell NFT
+      {{ sellingNFT ? "Selling NFTs" : "Sell NFTs" }}
     </button>
+    <div *ngIf="sellingNFT" class="pl-15px">{{ sellNFTCounter }} of {{ sellNFTTotal }} sold</div>
   </div>
-
-  <simple-center-loader *ngIf="loading"></simple-center-loader>
 </div>

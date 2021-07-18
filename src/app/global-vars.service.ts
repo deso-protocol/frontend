@@ -17,7 +17,7 @@ import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-s
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
 import {FeedComponent} from "./feed/feed.component";
-import {BsModalRef} from "ngx-bootstrap/modal";
+import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -516,7 +516,7 @@ export class GlobalVarsService {
 
     return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
   }
-  
+
   doesLoggedInUserHaveProfile() {
     if (!this.loggedInUser) {
       return false;
@@ -878,7 +878,10 @@ export class GlobalVarsService {
     );
   }
 
-  exploreMarketplace(bsModalRef: BsModalRef): void {
+  exploreMarketplace(bsModalRef: BsModalRef, modalService: BsModalService): void {
+    if (modalService) {
+      modalService.setDismissReason("explore");
+    }
     if (bsModalRef) {
       bsModalRef.hide();
     }
