@@ -74,6 +74,10 @@
     </div>
   </div>
 
+  <div *ngIf="activeTab === FeedComponent.MARKET_TAB">
+    <nft-marketplace></nft-marketplace>
+  </div>
+
   <div
     *ngIf="showNoPostsFound()"
     class="d-flex flex-column align-items-center justify-content-center fc-muted fs-15px p-15px text-center"

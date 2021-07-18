@@ -146,6 +146,7 @@ import { legendsTheme } from "./theme/legends-theme";
 import { cakeTheme } from "./theme/cake-theme";
 //Theme for BitClout by @mrpreet
 import { greenishTheme } from "./theme/greenish-theme";
+import { NftMarketplaceComponent } from './nft-marketplace/nft-marketplace.component';
 
 @NgModule({
   declarations: [
@@ -261,6 +262,7 @@ import { greenishTheme } from "./theme/greenish-theme";
     NftPostComponent,
     NftDropMgrComponent,
     CreatorProfileNftsComponent,
+    NftMarketplaceComponent,
   ],
   imports: [
     BrowserModule,
