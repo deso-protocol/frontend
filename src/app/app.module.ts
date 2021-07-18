@@ -121,15 +121,13 @@ import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
-import { lightTheme } from "./theme/light-theme";
-import { darkTheme } from "./theme/dark-theme";
-import { icydarkTheme } from "./theme/icy-dark-theme";
-import { legendsTheme } from "./theme/legends-theme";
-// Themes for BitClout by Brix Boston @brixboston100 for Modular Themes by Carsen Klock @carsenk
-import { cakeTheme } from "./theme/cake-theme";
-//Theme for BitClout by @mrpreet
-import { greenishTheme } from "./theme/greenish-theme";
-
+import { Theme } from "./theme/symbols";
+const lightTheme: Theme = { key: "light", name: "Light Theme" };
+const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
+const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
+const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
+const cakeTheme: Theme = { key: "cake", name: "Cake Theme" };
+const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
 
 @NgModule({
   declarations: [

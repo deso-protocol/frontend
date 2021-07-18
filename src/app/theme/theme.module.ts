@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders, InjectionToken } from "@angular/core";
+import { NgModule, ModuleWithProviders } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 import { ThemeService } from "./theme.service";
