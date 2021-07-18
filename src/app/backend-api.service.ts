@@ -60,6 +60,7 @@ export class BackendRoutes {
   static RoutePathAcceptNFTBid = "/api/v0/accept-nft-bid";
   static RoutePathGetNFTBidsForNFTPost = "/api/v0/get-nft-bids-for-nft-post";
   static RoutePathGetNFTsForUser = "/api/v0/get-nfts-for-user";
+  static RoutePathGetNFTMarketplace = "/api/v0/get-nft-marketplace";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -806,6 +807,17 @@ export class BackendApiService {
       UserPublicKeyBase58Check,
       ReaderPublicKeyBase58Check,
       IsForSale,
+    });
+  }
+
+  GetNFTMarketplace(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string,
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTMarketplace, {
+      UserPublicKeyBase58Check,
+      ReaderPublicKeyBase58Check,
     });
   }
 

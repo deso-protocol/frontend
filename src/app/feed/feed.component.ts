@@ -216,7 +216,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   showLoadingSpinner() {
-    return this.loadingFirstBatchOfActiveTabPosts() || this.switchingTabs;
+    return this.activeTab !== FeedComponent.MARKET_TAB && (this.loadingFirstBatchOfActiveTabPosts() || this.switchingTabs);
   }
 
   // controls whether we show the loading spinner

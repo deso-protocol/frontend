@@ -1,0 +1,11 @@
+<div *ngFor="let nftCollection of nftCollections">
+  <feed-post
+    [post]="nftCollection.PostEntryResponse"
+    [includePaddingOnPost]="true"
+    [showReplyingToContent]="nftCollection.PostEntryResponse.parentPost"
+    [parentPost]="nftCollection.PostEntryResponse.parentPost"
+    [contentShouldLinkToThread]="true"
+  ></feed-post>
+</div>
+
+<simple-center-loader *ngIf="loading"></simple-center-loader>
