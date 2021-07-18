@@ -32,7 +32,9 @@ export class SettingsComponent implements OnInit {
 
     this.themeService.setTheme(selectedTheme);
     localStorage.setItem("theme", selectedTheme);
-    document.querySelector("[app-theme]").className = "main global__container " + selectedTheme;
+    document.querySelectorAll("[app-theme]").forEach((tag) => {
+      tag.className += " " + selectedTheme;
+    }); // append newest theme class
   }
 
   ngOnInit() {

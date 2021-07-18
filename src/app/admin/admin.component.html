@@ -36,7 +36,8 @@
             Time Window:
           </mat-label>
           <mat-select id="time-window" style="height: auto; vertical-align: middle;" [(value)]="selectedTimeWindow">
-            <mat-option app-theme
+            <mat-option app-theme 
+                        [ngClass]="theme"
                         *ngFor="let timeWindow of timeWindowOptions | keyvalue"
                         [value]="timeWindow.value">
               {{ timeWindow.key }}

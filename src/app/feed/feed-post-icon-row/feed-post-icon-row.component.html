@@ -85,7 +85,7 @@
   </div>
 
   <ng-template #popTemplate>
-    <div id="diamond-popover" app-theme>
+    <div id="diamond-popover" app-theme [ngClass]="theme">
       <div *ngIf="!sendingDiamonds; else sendingDiamondSpinner">
         <div (click)="expandDiamondInfo($event)">
           Give a diamond.
