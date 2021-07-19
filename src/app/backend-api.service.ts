@@ -813,7 +813,7 @@ export class BackendApiService {
   GetNFTMarketplace(
     endpoint: string,
     UserPublicKeyBase58Check: string,
-    ReaderPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNFTMarketplace, {
       UserPublicKeyBase58Check,
@@ -1642,6 +1642,7 @@ export class BackendApiService {
   AdminGetNFTDrop(endpoint: string, UpdaterPublicKeyBase58Check: string, DropNumber: number): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetNFTDrop, UpdaterPublicKeyBase58Check, {
       DropNumber,
+      AdminPublicKey: UpdaterPublicKeyBase58Check,
     });
   }
 
@@ -1660,6 +1661,7 @@ export class BackendApiService {
       IsActive,
       NFTHashHexToAdd,
       NFTHashHexToRemove,
+      AdminPublicKey: UpdaterPublicKeyBase58Check,
     });
   }
 
