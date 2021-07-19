@@ -6,6 +6,7 @@ $info: #689eff;
 $feed-border-radius: 12px;
 
 @import 'variables.scss';
+@import 'app/theme/themes/index';
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
 
 // regular style toast
@@ -13,8 +14,8 @@ $feed-border-radius: 12px;
 
 // New themeing class
 .main {
-  background: var(--background) !important;
-  color: var(--text) !important;
+  background: var(--background) !important; // TODO: remove all !important, this is a platform to extend
+  color: var(--text) !important; // TODO: remove all !important, this is a platform to extend
 }
 
 html {
@@ -1141,7 +1142,7 @@ input.bs-timepicker-field {
   }
 }
 /* like button hover animation */
-.icon-heart, .icon-heart-fill{
+.feed-post-icon-row__icon.icon-heart, .feed-post-icon-row__icon.icon-heart-fill{
   &:hover{
     background-color: $like-hover;
     color: $like-color;
@@ -1149,7 +1150,7 @@ input.bs-timepicker-field {
 }
 
 /* diamond button hover animation */
-.icon-diamond{
+.feed-post-icon-row__icon.icon-diamond{
   &:hover{
     background-color: $diamond-hover;
     color: $diamond-color;
@@ -1157,13 +1158,14 @@ input.bs-timepicker-field {
 }
 
 /* copy link button hover animation */
-.icon-link{
+.feed-post-icon-row__icon.icon-link{
   &:hover{
     background-color: $link-btn-hover;
     color: $link-btn-color;
 
   }
 }
+
 .feed-post__icon-row-holder {
 }
 

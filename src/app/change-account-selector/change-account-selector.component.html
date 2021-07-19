@@ -1,4 +1,5 @@
-<div class="btn-group" dropdown #dropdown="bs-dropdown" style="width: 100%">
+<div *ngIf="!globalVars.loggedInUser" class="fs-15px fc-blue font-weight-bold cursor-pointer pl-20px" (click)="globalVars.launchLoginFlow()"> Log In </div>
+<div class="btn-group" dropdown #dropdown="bs-dropdown" style="width: 100%" *ngIf="globalVars.loggedInUser">
   <div
     class="fs-14px fc-default px-5px cursor-pointer change-account-selector br-4px change-account-selector__hover"
     [ngClass]="{ 'change-account-selector__shadow': selectorOpen }"
@@ -14,12 +15,7 @@
             ?  globalVars.loggedInUser.ProfileEntryResponse.Username
             : globalVars.loggedInUser.PublicKeyBase58Check
         }}</div>
-      </div>
-      <div
-        *ngIf="!globalVars.loggedInUser"
-        class="font-italic change-account-selector__ellipsis-restriction cursor-pointer"
-      >
-        Logged out
+        <span *ngIf="globalVars.loggedInUser.ProfileEntryResponse?.IsVerified" class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>
       </div>
       <i class="fas fa-angle-down text-grey5 change-account-selector__down-arrow"></i>
     </div>
@@ -42,6 +38,7 @@
         >
           <div class="feed-create-post__avatar d-inline-block change-account-selector__account-image" [avatar]="user.PublicKeyBase58Check"></div>
           <div class="d-inline-block change-account-selector__ellipsis-restriction change-account-selector__acount-name">{{ user.ProfileEntryResponse?.Username ? user.ProfileEntryResponse.Username : user.PublicKeyBase58Check }}</div>
+          <span *ngIf="user.ProfileEntryResponse?.IsVerified" class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>
         </div>
       </div>
     </div>

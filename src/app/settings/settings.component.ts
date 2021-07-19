@@ -32,6 +32,7 @@ export class SettingsComponent implements OnInit {
 
     this.themeService.setTheme(selectedTheme);
     localStorage.setItem("theme", selectedTheme);
+    document.querySelector("[app-theme]").classList.add(selectedTheme);
   }
 
   ngOnInit() {

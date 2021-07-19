@@ -293,6 +293,7 @@ export class GlobalVarsService {
       for (const entry of this.loggedInUser?.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
+      this.followFeedPosts = [];
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);

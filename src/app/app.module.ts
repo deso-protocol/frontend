@@ -135,18 +135,17 @@ import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { NftPostComponent } from "./nft-post-page/nft-post/nft-post.component";
 import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-profile-nfts/creator-profile-nfts.component";
 import { NftDropMgrComponent } from "./nft-drop-mgr/nft-drop-mgr.component";
+import { NftMarketplaceComponent } from "./nft-marketplace/nft-marketplace.component";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
-import { lightTheme } from "./theme/light-theme";
-import { darkTheme } from "./theme/dark-theme";
-import { icydarkTheme } from "./theme/icy-dark-theme";
-import { legendsTheme } from "./theme/legends-theme";
-// Themes for BitClout by Brix Boston @brixboston100 for Modular Themes by Carsen Klock @carsenk
-import { cakeTheme } from "./theme/cake-theme";
-//Theme for BitClout by @mrpreet
-import { greenishTheme } from "./theme/greenish-theme";
-import { NftMarketplaceComponent } from './nft-marketplace/nft-marketplace.component';
+import { Theme } from "./theme/symbols";
+const lightTheme: Theme = { key: "light", name: "Light Theme" };
+const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
+const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
+const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
+const cakeTheme: Theme = { key: "cake", name: "Cake Theme" };
+const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
 
 @NgModule({
   declarations: [
