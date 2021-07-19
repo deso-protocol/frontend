@@ -5,7 +5,16 @@ import { THEMES, ACTIVE_THEME, Theme } from "./symbols";
 export class ThemeService {
   themeChange = new EventEmitter<Theme>();
 
-  constructor(@Inject(THEMES) public themes: Theme[], @Inject(ACTIVE_THEME) public theme: string) {}
+  constructor(
+    @Inject(THEMES) public themes: Theme[],
+    @Inject(ACTIVE_THEME) public theme: string
+  ) {}
+
+  // Called in app-component ngOnInit
+  init(): void {
+    const active = this.getActiveTheme();
+    document.body.classList.add(active.key);
+  }
 
   getActiveTheme(): Theme {
     const theme = this.themes.find((t) => t.key === this.theme);
@@ -15,8 +24,15 @@ export class ThemeService {
     return theme;
   }
 
-  setTheme(key: string): void {
-    this.theme = key;
+  setTheme(newTheme: string): void {
+    const oldTheme = this.theme;
+
+    localStorage.setItem("theme", newTheme);
+    document.body.classList.remove(oldTheme);
+    document.body.classList.add(newTheme);
+
+    // Maje the changes and inform all observers
+    this.theme = newTheme;
     this.themeChange.emit(this.getActiveTheme());
   }
 }
