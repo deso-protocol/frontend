@@ -59,7 +59,6 @@ export class CreateNftAuctionModalComponent implements OnInit {
               )
               .pipe(
                 map((res) => {
-                  console.log(res);
                   this.auctionCounter++;
                   return res;
                 })

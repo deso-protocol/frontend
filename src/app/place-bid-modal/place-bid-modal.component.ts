@@ -237,7 +237,6 @@ export class PlaceBidModalComponent implements OnInit {
   }
 
   selectedSerialNumberCount(): number {
-    console.log(this.selectedSerialNumbers.filter((val) => val).length);
     return this.selectedSerialNumbers.filter((val) => val).length;
   }
 }
