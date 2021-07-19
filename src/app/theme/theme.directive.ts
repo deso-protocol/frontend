@@ -11,5 +11,8 @@ export class ThemeDirective implements OnInit {
 
   ngOnInit() {
     const active = this._themeService.getActiveTheme();
+    let body = document.querySelector("body");
+    body.classList.add(active.key);
+    body.setAttribute("app-theme", "");
   }
 }
