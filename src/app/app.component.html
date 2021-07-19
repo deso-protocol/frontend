@@ -16,9 +16,7 @@
 
 <!--p-0 is important here. Mobile UIs expect that there's no side padding.-->
 <div 
-  app-theme 
   class="main global__container" 
-  [ngClass]="theme"
   *ngIf="!globalVars.requestingStorageAccess"
  >
   <router-outlet *ngIf="!globalVars.loadingInitialAppState"></router-outlet>
