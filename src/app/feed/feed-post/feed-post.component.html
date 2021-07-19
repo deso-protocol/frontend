@@ -225,9 +225,8 @@
             outline: none;
           "
           [innerHTML]="postContent.Body | sanitizeAndAutoLink"
-          [routerLink]="['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex]"
           queryParamsHandling="merge"
-        ></div>
+          ></div>
 
         <!-- Media, don't show images on comment posts. -->
         <div

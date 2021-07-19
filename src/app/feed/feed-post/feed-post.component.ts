@@ -144,6 +144,18 @@ export class FeedPostComponent implements OnInit {
       return true;
     }
 
+    // identify ctrl+click (or) cmd+clik and opens feed in new tab
+    if (event.ctrlKey) {
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex], {
+          queryParamsHandling: "merge",
+        })
+      );
+      window.open(url, '_blank');
+      // don't navigate after new tab is opened
+      return true;
+    }
+
     this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex], {
       queryParamsHandling: "merge",
     });
