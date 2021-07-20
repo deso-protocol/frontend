@@ -13,8 +13,8 @@
 
     <!-- Availability metadata -->
     <div class="fs-15px" *ngIf="!loading">
-      <div *ngIf="nftBidData?.BidEntryResponses?.length">Highest bid {{ highBid / 1e9 }} CLOUT | From {{ lowBid / 1e9 }} CLOUT</div>
-      <div [ngClass]="{'pt-15px': nftBidData?.BidEntryResponses?.length }">{{ availableCount }} of {{ post.NumNFTCopies }} available
+      <div *ngIf="highBid != null && lowBid != null">Highest bid {{ highBid / 1e9 }} CLOUT | From {{ lowBid / 1e9 }} CLOUT</div>
+      <div [ngClass]="{'pt-15px': availableSerialNumbers.length }">{{ availableCount }} of {{ post.NumNFTCopies }} available
         <span
           class="font-weight-500 cursor-pointer pl-20px"
           style="text-decoration: underline"
@@ -25,15 +25,19 @@
       </div>
       <div class="pt-15px d-flex justify-content-between align-items-center" *ngIf="showSelectedSerialNumbers">
         <div>
-          <span>Edition Numbers</span>
+          <span>Serial Number</span>
         </div>
         <div class="d-flex align-items-center">
-          <div *ngFor="let selection of selectedSerialNumbersDisplay()" class="pr-5px">
-            <span class="badge bg-secondary fs-15px font-weight-normal">#{{ selection }}<sup><i class="fas fa-times pl-5px pt-5px cursor-pointer" (click)="deselectSerialNumber(selection)"></i></sup></span>
-          </div>
-          <div *ngIf="selectedSerialNumbersDisplay().length < selectedSerialNumberCount()">
-            and {{ selectedSerialNumberCount() - selectedSerialNumbersDisplay().length }} more.
-          </div>
+          <span
+            class="badge formbg fs-15px font-weight-normal"
+          >#{{ selectedSerialNumber.SerialNumber }}
+            <sup>
+              <i
+                class="fas fa-times pl-5px pt-5px cursor-pointer"
+                (click)="deselectSerialNumber()"
+              ></i>
+            </sup>
+          </span>
         </div>
 
       </div>
@@ -99,18 +103,17 @@
         <div>{{ bidAmountCLOUT }} $CLOUT</div>
       </div>
     </div>
-    <div *ngIf="bidAmountErrors" class="text-danger pb-15px" style="white-space: pre-line;">{{ bidAmountErrors }}</div>
+    <div *ngIf="bidAmountErrors" class="text-danger" style="white-space: pre-line;">{{ errors }}</div>
     <div class="d-flex align-items-center mb-15px">
       <button
         class="btn btn-primary font-weight-bold fs-15px br-12px"
         style="height: 36px; width: 140px; line-height: 15px"
-        [disabled]="placingBids || placeBidDisabled()"
         (click)="placeBid()"
+        [disabled]="placingBids"
       >
         {{ placingBids ? "Placing Bids" : "Place Bid" }}
       </button>
       <div class="fs-15px ml-30px cursor-pointer text-grey7" (click)="navigateToBuyCLOUT()">Buy $CLOUT</div>
-      <div *ngIf="placingBids" class="pl-15px"> {{ bidCounter }} of {{ bidTotal }} submitted</div>
     </div>
 
   </div>
@@ -124,16 +127,16 @@
       <div class="row no-gutters p-15px create-nft-auction-row-border"
            style="opacity: 50%">
         <div class="col-5 mb-0px">
-          <input type="checkbox" style="width: 15px" [(ngModel)]="selectAll" (ngModelChange)="toggleSelectAll($event)"/>
-          Select All
+          Serial Number
         </div>
         <div class="col-7 mb-0px">Last Price</div>
       </div>
       <div style="max-height: 250px; overflow-y: scroll" class="mb-30px">
         <div *ngFor="let nft of biddableSerialNumbers"
-             class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border">
+             class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border cursor-pointer"
+             (click)="selectSerialNumber(nft.SerialNumber)"
+        >
           <div class="col-5 mb-0px d-flex align-items-center">
-            <input type="checkbox" style="width: 15px" [(ngModel)]="selectedSerialNumbers[nft.SerialNumber]" (ngModelChange)="checkSelectionStatus($event)"/>
             <span class="lh-15px">&nbsp;#{{nft.SerialNumber}}</span>
           </div>
           <div class="col-7 mb-0px d-flex justify-content-between align-items-center">
@@ -141,21 +144,11 @@
               {{globalVars.nanosToBitClout(nft.LastAcceptedBidAmountNanos)}} CLOUT
               <span class="text-grey7">(~{{globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)}})</span>
             </div>
-            <div class="d-flex justify-content-center cursor-pointer" style="width: 50px" (click)="selectSerialNumber(nft.SerialNumber)">
+            <div class="d-flex justify-content-center cursor-pointer" style="width: 50px">
               <i class="fas fa-chevron-right"></i>
             </div>
           </div>
         </div>
-      </div>
-      <div class="d-flex align-items-center">
-        <button
-          class="btn btn-primary font-weight-bold fs-15px br-12px"
-          style="height: 36px; width: 160px; line-height: 15px"
-          [disabled]="saveSelectionDisabled"
-          (click)="saveSelection()"
-        >
-          Save Selection
-        </button>
       </div>
     </div>
   </div>

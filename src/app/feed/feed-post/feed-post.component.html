@@ -182,7 +182,14 @@
                 [followLinkClass]="'link--unstyled'"
                 [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
               ></follow-button>
-
+              <div
+                *ngIf="postContent.IsNFT && !(postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID)"
+                class="br-12px formbg p-5px"
+                style="width: 120px;"
+                (click)="openPlaceBidModal($event)"
+              >
+                <i class="fas fa-shopping-cart"></i>&nbsp;Buy NFT
+              </div>
               <feed-post-dropdown
                 *ngIf="showDropdown && !reclouterProfile"
                 class="ml-auto"
@@ -278,6 +285,7 @@
                 [hoverable]="false"
               ></feed-post>
             </div>
+
 
             <!-- Bottom Buttons -->
             <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">

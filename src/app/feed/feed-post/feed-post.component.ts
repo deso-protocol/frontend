@@ -110,7 +110,7 @@ export class FeedPostComponent implements OnInit {
 
   set nftBidData(bidData: NFTBidData) {
     this._nftBidData = bidData;
-    if (bidData) {
+    if (bidData && bidData.NFTEntryResponses) {
       bidData.NFTEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
       this.availableSerialNumbers = bidData.NFTEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
       this.serialNumbersDisplay =

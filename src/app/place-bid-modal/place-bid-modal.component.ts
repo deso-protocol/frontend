@@ -2,17 +2,10 @@ import { Component, OnInit, Input } from "@angular/core";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../global-vars.service";
 import { BidPlacedModalComponent } from "../bid-placed-modal/bid-placed-modal.component";
-import {
-  BackendApiService,
-  NFTBidData,
-  NFTBidEntryResponse,
-  NFTEntryResponse,
-  PostEntryResponse,
-} from "../backend-api.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import * as _ from "lodash";
 import { Router } from "@angular/router";
-import { of } from "rxjs";
-import { concatMap, filter, last, map, take } from "rxjs/operators";
+import { filter, take } from "rxjs/operators";
 
 @Component({
   selector: "place-bid-modal",
@@ -23,21 +16,18 @@ export class PlaceBidModalComponent implements OnInit {
   @Input() post: PostEntryResponse;
   bidAmountCLOUT: number;
   bidAmountUSD: string;
-  nftBidData: NFTBidData;
-  selectedSerialNumbers: boolean[] = [];
-  selectedSerialNumber: number = 0;
+  selectedSerialNumber: NFTEntryResponse = null;
   availableCount: number;
   availableSerialNumbers: NFTEntryResponse[];
   biddableSerialNumbers: NFTEntryResponse[];
-  highBid: number;
-  lowBid: number;
+  highBid: number = null;
+  lowBid: number = null;
   loading = true;
-  isSelectingSerialNumber = false;
-  saveSelectionDisabled = true;
+  isSelectingSerialNumber = true;
+  saveSelectionDisabled = false;
   showSelectedSerialNumbers = false;
-  selectAll: boolean = false;
   placingBids: boolean = false;
-  bidAmountErrors: string;
+  errors: string;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -49,97 +39,65 @@ export class PlaceBidModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.backendApi
-      .GetNFTBidsForNFTPost(
+      .GetNFTCollectionSummary(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.post.PostHashHex
       )
       .subscribe((res) => {
-        this.nftBidData = res;
-        this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
-          (nftEntryResponse) => nftEntryResponse.IsForSale
-        ).sort((a, b) => a.SerialNumber - b.SerialNumber);
-        // force selection of serial number 1 for 1-of-1 NFTs
-        if (this.nftBidData.NFTEntryResponses.length === 1) {
-          this.selectedSerialNumbers[this.nftBidData.NFTEntryResponses[0].SerialNumber] = true;
-        } else {
-          this.selectedSerialNumbers = new Array(this.nftBidData.PostEntryResponse.NumNFTCopies);
-        }
+        this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse).sort(
+          (a, b) => a.SerialNumber - b.SerialNumber
+        );
         this.availableCount = this.availableSerialNumbers.length;
         this.biddableSerialNumbers = this.availableSerialNumbers.filter(
           (nftEntryResponse) =>
             nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
         );
-        this.highBid = this.getMaxBidAmountFromList(this.nftBidData.BidEntryResponses);
-        this.lowBid = this.getMinBidAmountFromList(this.nftBidData.BidEntryResponses);
+        this.highBid = res.NFTCollectionResponse.HighestBidAmountNanos;
+        this.lowBid = res.NFTCollectionResponse.LowestBidAmountNanos;
       })
       .add(() => (this.loading = false));
   }
 
   updateBidAmountUSD(cloutAmount) {
     this.bidAmountUSD = this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2);
-    this.setBidAmountErrors();
+    this.setErrors();
   }
 
   updateBidAmountCLOUT(usdAmount) {
     this.bidAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
-    this.setBidAmountErrors();
+    this.setErrors();
   }
 
-  setBidAmountErrors(): void {
+  setErrors(): void {
     const bidAmountExceedsBalance = this.bidAmountCLOUT * 1e9 > this.globalVars.loggedInUser.BalanceNanos;
-    const serialNumbersBelowMinBid = this.availableSerialNumbers.filter(
-      (sn) => this.selectedSerialNumbers[sn.SerialNumber] && sn.MinBidAmountNanos > this.bidAmountCLOUT * 1e9
-    );
-    this.bidAmountErrors = bidAmountExceedsBalance
+    this.errors = !this.bidAmountCLOUT ? "You must bid more than 0 $CLOUT.\n\n" : "";
+    this.errors += !this.selectedSerialNumber ? "You must select a serial number to bid.\n\n" : "";
+    this.errors += bidAmountExceedsBalance
       ? `You do not have ${this.bidAmountCLOUT} $CLOUT to fulfill this bid.\n\n`
       : "";
-    this.bidAmountErrors += serialNumbersBelowMinBid.length
-      ? `Your bid of ${this.bidAmountCLOUT} does not meet the minimum bid requirement for the following serial numbers: ` +
-        serialNumbersBelowMinBid
-          .map((sn) => `#${sn.SerialNumber} (${this.globalVars.nanosToBitClout(sn.MinBidAmountNanos, 2)})`)
-          .join(", ")
-      : "";
+    this.errors +=
+      this.selectedSerialNumber.MinBidAmountNanos > this.bidAmountCLOUT * 1e9
+        ? `Your bid of ${this.bidAmountCLOUT} does not meet the minimum bid requirement of ${this.selectedSerialNumber.MinBidAmountNanos}`
+        : "";
   }
 
-  getMaxBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
-    return _.maxBy(bidEntryResponses, (bidEntryResponse) => bidEntryResponse.BidAmountNanos)?.BidAmountNanos;
-  }
-
-  getMinBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
-    return _.minBy(bidEntryResponses, (bidEntryResponses) => bidEntryResponses.BidAmountNanos)?.BidAmountNanos;
-  }
-
-  bidTotal: number;
-  bidCounter: number = 0;
   placeBid() {
+    this.setErrors();
+    if (this.errors) {
+      return;
+    }
+    this.saveSelectionDisabled = true;
     this.placingBids = true;
-    this.bidTotal = this.selectedSerialNumberCount();
-    of(...this.selectedSerialNumbers.map((isSelected, index) => (isSelected ? index : -1)))
-      .pipe(
-        concatMap((val) => {
-          if (val >= 0) {
-            return this.backendApi
-              .CreateNFTBid(
-                this.globalVars.localNode,
-                this.globalVars.loggedInUser.PublicKeyBase58Check,
-                this.post.PostHashHex,
-                val,
-                Math.trunc(this.bidAmountCLOUT * 1e9),
-                this.globalVars.defaultFeeRateNanosPerKB
-              )
-              .pipe(
-                map((res) => {
-                  this.bidCounter++;
-                  return res;
-                })
-              );
-          } else {
-            return of("");
-          }
-        })
+    this.backendApi
+      .CreateNFTBid(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.post.PostHashHex,
+        this.selectedSerialNumber.SerialNumber,
+        Math.trunc(this.bidAmountCLOUT * 1e9),
+        this.globalVars.defaultFeeRateNanosPerKB
       )
-      .pipe(last((res) => res))
       .subscribe(
         (res) => {
           // Hide this modal and open the next one.
@@ -163,7 +121,10 @@ export class PlaceBidModalComponent implements OnInit {
           this.globalVars._alertError(this.backendApi.parseMessageError(err));
         }
       )
-      .add(() => (this.placingBids = false));
+      .add(() => {
+        this.placingBids = false;
+        this.saveSelectionDisabled = false;
+      });
   }
 
   navigateToBuyCLOUT(): void {
@@ -178,65 +139,17 @@ export class PlaceBidModalComponent implements OnInit {
     }
   }
 
-  toggleSelectAll(val: boolean) {
-    this.saveSelectionDisabled = !val;
-    this.availableSerialNumbers.forEach(
-      (nftEntryResponse) => (this.selectedSerialNumbers[nftEntryResponse.SerialNumber] = val)
-    );
-  }
-
-  checkSelectionStatus(val: boolean): void {
-    let newSelectAll: boolean = true;
-    let newSaveSelectionDisabled: boolean = true;
-    for (let availableSerialNumber of this.availableSerialNumbers) {
-      if (!this.selectedSerialNumbers[availableSerialNumber.SerialNumber]) {
-        newSelectAll = false;
-      } else {
-        newSaveSelectionDisabled = false;
-      }
-    }
-    this.selectAll = newSelectAll;
-    this.saveSelectionDisabled = newSaveSelectionDisabled;
-  }
-
-  placeBidDisabled(): boolean {
-    return (
-      !this.selectedSerialNumbers.filter((selectedSerialNum) => selectedSerialNum).length ||
-      !this.bidAmountCLOUT ||
-      !!this.bidAmountErrors
-    );
-  }
-
   selectSerialNumber(idx: number) {
-    this.saveSelectionDisabled = false;
-    for (let ii = 0; ii < this.selectedSerialNumbers.length; ii++) {
-      this.selectedSerialNumbers[ii] = ii === idx;
-    }
+    this.selectedSerialNumber = this.availableSerialNumbers.find((sn) => sn.SerialNumber === idx);
     this.saveSelection();
   }
 
-  deselectSerialNumber(idx: number) {
+  deselectSerialNumber() {
     if (this.placingBids) {
       return;
     }
-    this.selectedSerialNumbers[idx] = false;
-    this.showSelectedSerialNumbers = !!this.selectedSerialNumbers.filter((val) => val).length;
-  }
-
-  selectedSerialNumbersDisplay(): number[] {
-    let displaySerialNumbers = [];
-    for (let ii = 0; ii < this.selectedSerialNumbers.length; ii++) {
-      if (this.selectedSerialNumbers[ii]) {
-        displaySerialNumbers.push(ii);
-      }
-      if (displaySerialNumbers.length >= 10) {
-        return displaySerialNumbers;
-      }
-    }
-    return displaySerialNumbers;
-  }
-
-  selectedSerialNumberCount(): number {
-    return this.selectedSerialNumbers.filter((val) => val).length;
+    this.selectedSerialNumber = null;
+    this.showSelectedSerialNumbers = false;
+    this.setErrors();
   }
 }

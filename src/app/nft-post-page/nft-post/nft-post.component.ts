@@ -397,22 +397,36 @@ export class NftPostComponent {
   }
 
   cancelBid(bidEntry: NFTBidEntryResponse): void {
-    this.backendApi
-      .CreateNFTBid(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.nftPost.PostHashHex,
-        bidEntry.SerialNumber,
-        0,
-        this.globalVars.defaultFeeRateNanosPerKB
-      )
-      .subscribe(
-        (res) => {
-          this.refreshBidData();
-        },
-        (err) => {
-          console.error(err);
-        }
-      );
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Cancel Bid",
+      html: `Are you sure you'd like to cancel this bid?`,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.backendApi
+          .CreateNFTBid(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.nftPost.PostHashHex,
+            bidEntry.SerialNumber,
+            0,
+            this.globalVars.defaultFeeRateNanosPerKB
+          )
+          .subscribe(
+            (res) => {
+              this.refreshBidData();
+            },
+            (err) => {
+              console.error(err);
+            }
+          );
+      }
+    });
   }
 }

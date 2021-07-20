@@ -34,12 +34,12 @@
     <tab-selector [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
   </div>
   <div *ngIf="showBidsView">
-    <div *ngIf="!loading && !bids?.length" class="p-15px">
+    <div *ngIf="!loading && !bids?.length" class="p-15px pb-0">
       There are no bids yet.
     </div>
     <div *ngIf="!loading && bids?.length">
       <div
-        class="fs-14px p-15px"
+        class="fs-14px p-15px cursor-pointer"
         (click)="selectHighestBids()"
         *ngIf="activeTab === NftPostComponent.MY_AUCTIONS"
       >
@@ -69,21 +69,25 @@
             <div class="col-5 d-flex align-items-center mb-0 p-0">
               <!-- checkbox or radio button -->
               <input
-                class="pr-10px"
+                class="pr-10px cursor-pointer"
                 type="checkbox"
                 style="width: 35px"
                 *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && nftPost.NumNFTCopies > 1 && userOwnsSerialNumber(bidEntry.SerialNumber)"
                 [(ngModel)]="bidEntry.selected"
                 (ngModelChange)="checkSelectedBidEntries(bidEntry)"/>
               <input
-                class="pr-10px"
+                class="pr-10px cursor-pointer"
                 type="radio"
                 style="width: 35px"
                 *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && nftPost.NumNFTCopies === 1 && userOwnsSerialNumber(bidEntry.SerialNumber)"
                 [value]="bidEntry"
                 [(ngModel)]="selectedBid"
                 (ngModelChange)="selectBidEntry(bidEntry)"/>
-              <i class="fas fa-trash pr-10px text-danger" *ngIf="activeTab === NftPostComponent.MY_BIDS" (click)="cancelBid(bidEntry)"></i>
+              <i
+                class="fas fa-trash pr-10px text-danger cursor-pointer fs-18px"
+                *ngIf="activeTab === NftPostComponent.MY_BIDS"
+                (click)="cancelBid(bidEntry)"
+              ></i>
               <!-- Avatar -->
               <div class="simple-profile-card__avatar-container">
                 <div
@@ -139,7 +143,13 @@
       >
         Sell NFT
       </button>
-      <span (click)="closeAuction()" class="fc-red cursor-pointer" [ngClass]="{'pl-20px': !loading && bids?.length }">Close my auctions</span>
+      <button
+        class="btn btn-danger font-weight-bold fs-15px br-12px"
+        (click)="closeAuction()"
+        [ngClass]="{'ml-20px': !loading && bids?.length }"
+      >
+        Close my auctions
+      </button>
     </div>
   </div>
   <div *ngIf="activeTab === NftPostComponent.OWNERS">
@@ -213,5 +223,6 @@
 
     </div>
   </div>
-
+  <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+  <div class="global__bottom-bar-mobile-height"></div>
 </div>

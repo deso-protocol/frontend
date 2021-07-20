@@ -60,7 +60,9 @@ export class BackendRoutes {
   static RoutePathAcceptNFTBid = "/api/v0/accept-nft-bid";
   static RoutePathGetNFTBidsForNFTPost = "/api/v0/get-nft-bids-for-nft-post";
   static RoutePathGetNFTsForUser = "/api/v0/get-nfts-for-user";
+  static RoutePathGetNFTBidsForUser = "/api/v0/get-nft-bids-for-user";
   static RoutePathGetNFTMarketplace = "/api/v0/get-nft-marketplace";
+  static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -249,6 +251,7 @@ export class NFTEntryResponse {
 export class NFTBidEntryResponse {
   PublicKeyBase58Check: string;
   ProfileEntryResponse: ProfileEntryResponse;
+  PostHashHex: string;
   PostEntryResponse: PostEntryResponse | undefined;
   SerialNumber: number;
   BidAmountNanos: number;
@@ -810,6 +813,17 @@ export class BackendApiService {
     });
   }
 
+  GetNFTBidsForUser(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string,
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTBidsForUser, {
+      UserPublicKeyBase58Check,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
   GetNFTMarketplace(
     endpoint: string,
     UserPublicKeyBase58Check: string,
@@ -818,6 +832,12 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.RoutePathGetNFTMarketplace, {
       UserPublicKeyBase58Check,
       ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetNFTCollectionSummary(endpoint: string, ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTCollectionSummary, {
+      PostHashHex,
     });
   }
 
