@@ -41,6 +41,7 @@
 <div *ngIf="messageThreads" class="messages-inbox__threads vh-100">
   <!-- Search -->
   <search-bar
+    [showCloutavista]="false"
     [isSearchForUsersToMessage]="true"
     (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
     class="pb-15px border-bottom border-color-grey"
