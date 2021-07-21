@@ -78,7 +78,11 @@ export class PlaceBidModalComponent implements OnInit {
       : "";
     this.errors +=
       this.selectedSerialNumber.MinBidAmountNanos > this.bidAmountCLOUT * 1e9
-        ? `Your bid of ${this.bidAmountCLOUT} does not meet the minimum bid requirement of ${this.selectedSerialNumber.MinBidAmountNanos}`
+        ? `Your bid of ${
+            this.bidAmountCLOUT
+          } does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
+            this.selectedSerialNumber.MinBidAmountNanos
+          )}`
         : "";
   }
 

@@ -91,7 +91,7 @@
       </div>
 
       <!-- Summary data -->
-      <div class="fs-15px mb-30px formbg">
+      <div class="fs-15px mb-15px formbg">
         <div class="p-10px d-flex justify-content-between">
           <div>Your balance</div>
           <div>{{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }} $CLOUT</div>
@@ -105,7 +105,7 @@
           <div>{{ bidAmountCLOUT }} $CLOUT</div>
         </div>
       </div>
-      <div *ngIf="bidAmountErrors" class="text-danger" style="white-space: pre-line;">{{ errors }}</div>
+      <div *ngIf="errors" class="text-danger pb-15px" style="white-space: pre-line;">{{ errors }}</div>
       <div class="d-flex align-items-center mb-15px">
         <button
           class="btn btn-primary font-weight-bold fs-15px br-12px"
