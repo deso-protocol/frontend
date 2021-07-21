@@ -151,7 +151,7 @@ export class FeedPostComponent implements OnInit {
           queryParamsHandling: "merge",
         })
       );
-      window.open(url, '_blank');
+      window.open(url, "_blank");
       // don't navigate after new tab is opened
       return true;
     }
