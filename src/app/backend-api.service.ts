@@ -246,6 +246,11 @@ export class NFTEntryResponse {
   IsForSale: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
+
+  // only populated when the reader is the owner of the nft and there is an unlockable.
+  LastOwnerPublicKeyBase58Check: string | undefined;
+  EncryptedUnlockableText: string | undefined;
+  DecryptedUnlockableText: string | undefined;
 }
 
 export class NFTBidEntryResponse {
@@ -777,16 +782,56 @@ export class BackendApiService {
     UnencryptedUnlockableText: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathAcceptNFTBid, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      BidderPublicKeyBase58Check,
-      BidAmountNanos,
-      UnencryptedUnlockableText,
-      MinFeeRateNanosPerKB,
-    });
+    let request = UnencryptedUnlockableText
+      ? this.identityService.encrypt({
+          ...this.identityService.identityServiceParamsForKey(UpdaterPublicKeyBase58Check),
+          recipientPublicKey: BidderPublicKeyBase58Check,
+          message: UnencryptedUnlockableText,
+        })
+      : of({ encryptedMessage: "" });
+    request = request.pipe(
+      switchMap((encrypted) => {
+        const EncryptedMessageText = encrypted.encryptedMessage;
+        return this.post(endpoint, BackendRoutes.RoutePathAcceptNFTBid, {
+          UpdaterPublicKeyBase58Check,
+          NFTPostHashHex,
+          SerialNumber,
+          BidderPublicKeyBase58Check,
+          BidAmountNanos,
+          EncryptedUnlockableText: EncryptedMessageText,
+          MinFeeRateNanosPerKB,
+        }).pipe(
+          map((request) => {
+            return { ...request };
+          })
+        );
+      })
+    );
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  DecryptUnlockableTexts(
+    ReaderPublicKeyBase58Check: string,
+    UnlockableNFTEntryResponses: NFTEntryResponse[]
+  ): Observable<any> {
+    return this.identityService
+      .decrypt({
+        ...this.identityService.identityServiceParamsForKey(ReaderPublicKeyBase58Check),
+        encryptedMessages: UnlockableNFTEntryResponses.map((unlockableNFTEntryResponses) => ({
+          EncryptedHex: unlockableNFTEntryResponses.EncryptedUnlockableText,
+          PublicKey: unlockableNFTEntryResponses.LastOwnerPublicKeyBase58Check,
+        })),
+      })
+      .pipe(
+        map((decrypted) => {
+          for (const unlockableNFTEntryResponse of UnlockableNFTEntryResponses) {
+            unlockableNFTEntryResponse.DecryptedUnlockableText =
+              decrypted.decryptedHexes[unlockableNFTEntryResponse.EncryptedUnlockableText];
+          }
+          return UnlockableNFTEntryResponses;
+        })
+      )
+      .pipe(catchError(this._handleError));
   }
 
   GetNFTBidsForNFTPost(
@@ -816,7 +861,7 @@ export class BackendApiService {
   GetNFTBidsForUser(
     endpoint: string,
     UserPublicKeyBase58Check: string,
-    ReaderPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNFTBidsForUser, {
       UserPublicKeyBase58Check,
@@ -1131,7 +1176,7 @@ export class BackendApiService {
               EncryptedHex: message.EncryptedText,
               PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
               IsSender: message.IsSender,
-              V2: message.V2,
+              Legacy: !message.V2,
             };
             encryptedMessages.push(payload);
           }

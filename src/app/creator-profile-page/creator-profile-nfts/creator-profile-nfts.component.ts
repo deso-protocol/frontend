@@ -210,11 +210,11 @@ export class CreatorProfileNftsComponent implements OnInit {
       this.infiniteScroller.reset();
       if (this.activeTab === CreatorProfileNftsComponent.MY_BIDS) {
         return this.getNFTBids().add(() => {
-          this.resetDatasource();
+          this.resetDatasource(event);
         });
       } else {
         return this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE).add(() => {
-          this.resetDatasource();
+          this.resetDatasource(event);
         });
       }
     } else {
@@ -222,7 +222,7 @@ export class CreatorProfileNftsComponent implements OnInit {
     }
   }
 
-  resetDatasource(): void {
+  resetDatasource(event): void {
     this.datasource.adapter.reset().then(() => {
       this.loadingNewSelection = false;
       this.isLoading = false;

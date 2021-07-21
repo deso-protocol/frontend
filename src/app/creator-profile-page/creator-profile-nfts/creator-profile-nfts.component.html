@@ -33,6 +33,19 @@
     </ng-template>
   </div>
 </div>
+<div
+  *ngIf="
+    !showProfileAsReserved && !isLoading && !myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS
+  "
+  class="p-15px"
+>
+  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">Bid on an NFT.</span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} is on the platform but hasn't bid on NFTs yet.</span>
+    </ng-template>
+  </div>
+</div>
 <div *ngIf="!showProfileAsReserved && (!isLoading || loadingNewSelection)">
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
     <div

@@ -3,7 +3,7 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { BackendApiService, NFTBidEntryResponse, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import { of } from "rxjs";
-import { concatMap, last, map } from "rxjs/operators";
+import { concatMap, filter, last, map, take } from "rxjs/operators";
 import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
 
@@ -63,9 +63,19 @@ export class AddUnlockableModalComponent implements OnInit {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
-          this.modalService.show(NftSoldModalComponent, {
+          const modalRef = this.modalService.show(NftSoldModalComponent, {
             class: "modal-dialog-centered modal-sm",
           });
+          modalRef.onHide
+            .pipe(
+              take(1),
+              filter((reason) => {
+                return reason !== "view_my_nfts";
+              })
+            )
+            .subscribe(() => {
+              window.location.reload();
+            });
         },
         (err) => {
           console.error(err);

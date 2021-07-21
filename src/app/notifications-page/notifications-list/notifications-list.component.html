@@ -33,6 +33,7 @@
       [showReplyingToContent]="!!item.parentPost"
       [parentPost]="item.parentPost"
       [contentShouldLinkToThread]="true"
+      [linkToNFT]="item.bidInfo"
       [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
     ></feed-post>
     <div *ngFor="let comment of item.post.Comments">

@@ -112,6 +112,17 @@ export class FeedPostComponent implements OnInit {
     this._nftBidData = bidData;
     if (bidData && bidData.NFTEntryResponses) {
       bidData.NFTEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
+      this.decryptableNFTEntryResponses = bidData.NFTEntryResponses.filter(
+        (sn) =>
+          sn.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+          sn.EncryptedUnlockableText &&
+          sn.LastOwnerPublicKeyBase58Check
+      );
+      if (this.decryptableNFTEntryResponses.length) {
+        this.backendApi
+          .DecryptUnlockableTexts(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.decryptableNFTEntryResponses)
+          .subscribe((res) => (this.decryptableNFTEntryResponses = res));
+      }
       this.availableSerialNumbers = bidData.NFTEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
       this.serialNumbersDisplay =
         bidData.NFTEntryResponses.map((serialNumber) => `#${serialNumber.SerialNumber}`)
@@ -171,6 +182,7 @@ export class FeedPostComponent implements OnInit {
   mySerialNumbersNotForSale: NFTEntryResponse[];
   serialNumbersDisplay: string;
   _nftBidData: NFTBidData;
+  decryptableNFTEntryResponses: NFTEntryResponse[];
 
   unlockableTooltip =
     "This NFT will come with content that encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
@@ -541,5 +553,13 @@ export class FeedPostComponent implements OnInit {
       class: "modal-dialog-centered modal-lg",
       initialState: { post: this._post },
     });
+  }
+
+  showUnlockableContent = false;
+  toggleShowUnlockableContent(): void {
+    if (!this.decryptableNFTEntryResponses.length) {
+      return;
+    }
+    this.showUnlockableContent = !this.showUnlockableContent;
   }
 }

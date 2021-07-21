@@ -61,7 +61,7 @@
         </div>
       </div>
       <simple-center-loader *ngIf="refreshingBids"></simple-center-loader>
-      <div style="max-height: 400px; overflow-y: scroll;" *ngIf="!refreshingBids">
+      <div style="max-height: 600px; overflow-y: scroll;" *ngIf="!refreshingBids">
         <div
           class="container d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled"
           *ngFor="let bidEntry of bids; let i = index">
@@ -169,7 +169,7 @@
           <i class="fas fs-14px" [ngClass]="{'fa-arrows-alt-v': sortByField !== NftPostComponent.SORT_BY_PRICE, 'fa-sort-amount-up-alt': sortByField === NftPostComponent.SORT_BY_PRICE && !sortDescending, 'fa-sort-amount-down': sortByField === NftPostComponent.SORT_BY_PRICE && sortDescending}"></i>
         </div>
       </div>
-      <div style="max-height: 400px; overflow-y: scroll;">
+      <div style="max-height: 600px; overflow-y: scroll;">
         <div
           class="container d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled"
           *ngFor="let owner of owners; let i = index">

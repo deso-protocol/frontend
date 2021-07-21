@@ -182,14 +182,14 @@
                 [followLinkClass]="'link--unstyled'"
                 [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
               ></follow-button>
-              <div
-                *ngIf="postContent.IsNFT && !(postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID)"
-                class="br-12px formbg p-5px"
-                style="width: 120px;"
-                (click)="openPlaceBidModal($event)"
-              >
-                <i class="fas fa-shopping-cart"></i>&nbsp;Buy NFT
-              </div>
+<!--              <div-->
+<!--                *ngIf="postContent.IsNFT && !(postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID)"-->
+<!--                class="br-12px formbg p-5px"-->
+<!--                style="width: 120px;"-->
+<!--                (click)="openPlaceBidModal($event)"-->
+<!--              >-->
+<!--                <i class="fas fa-shopping-cart"></i>&nbsp;Buy NFT-->
+<!--              </div>-->
               <feed-post-dropdown
                 *ngIf="showDropdown && !reclouterProfile"
                 class="ml-auto"
@@ -446,12 +446,21 @@
         <span *ngIf="post.HasUnlockable">|&nbsp;</span>
         <span *ngIf="post.HasUnlockable"
               class="cursor-pointer"
-              (click)="tooltip.toggle()"
+              (click)="tooltip.toggle(); toggleShowUnlockableContent()"
               matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
               [matTooltip]="unlockableTooltip"
-              #tooltip="matTooltip"><i class="fas fa-lock"></i> Unlockable content</span>
+              #tooltip="matTooltip"
+        >
+          <i
+            class="fas"
+            [ngClass]="{
+            'fa-lock': !decryptableNFTEntryResponses?.length || showUnlockableContent,
+            'fa-unlock-alt': decryptableNFTEntryResponses?.length && !showUnlockableContent
+            }"
+          ></i>
+          {{ decryptableNFTEntryResponses?.length ? (showUnlockableContent ? "Hide" : "Show") : ""  }} Unlockable content
+        </span>
       </div>
-      <div>
         <button
           class="btn btn-primary font-weight-bold br-8px fs-13px"
           (click)="openPlaceBidModal($event)"
@@ -460,6 +469,13 @@
           Place a bid
         </button>
       </div>
+      <div *ngIf="showUnlockableContent" class="pb-15px">
+        <div *ngFor="let nftEntry of decryptableNFTEntryResponses" class="d-flex flex-row">
+          <div>#{{ nftEntry.SerialNumber }}:&nbsp;</div>
+          <div [innerHTML]="nftEntry.DecryptedUnlockableText | sanitizeAndAutoLink"></div>
+        </div>
+      </div>
+      <div>
     </div>
     <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)">
       <div style="line-height: 24px;" *ngIf="highBid">
