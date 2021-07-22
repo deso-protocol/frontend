@@ -52,6 +52,7 @@ export class BackendRoutes {
   static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
   static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
   static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
+  static RoutePathVerifyEmail = "/api/v0/verify-email"
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -1244,6 +1245,17 @@ export class BackendApiService {
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathGetUserGlobalMetadata, UserPublicKeyBase58Check, {
       UserPublicKeyBase58Check,
+    });
+  }
+
+  VerifyEmail(
+    endpoint: string,
+    PublicKey: string,
+    EmailHash: string,
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathVerifyEmail, {
+      PublicKey,
+      EmailHash,
     });
   }
 
