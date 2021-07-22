@@ -23,6 +23,8 @@ export class RightBarCreatorsComponent implements OnInit {
   selectedOptionWidth: string;
   activeRightTabOption: RightBarTabOption;
 
+  resentVerifyEmail = false;
+
   RightBarCreatorsComponent = RightBarCreatorsComponent;
   static RightBarTabKey = "RightBarTab";
 
@@ -69,5 +71,10 @@ export class RightBarCreatorsComponent implements OnInit {
     if (!skipStorage) {
       this.backendApi.SetStorage(RightBarCreatorsComponent.RightBarTabKey, this.activeTab);
     }
+  }
+
+  resendVerifyEmail() {
+    this.backendApi.ResendVerifyEmail(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe();
+    this.resentVerifyEmail = true;
   }
 }
