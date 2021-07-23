@@ -41,8 +41,8 @@
     <div>Your email is not verified.&nbsp;&nbsp;&nbsp;</div>
     <div>
       <div *ngIf="globalVars.loggedInUser.HasEmail">
-        <a class="font-weight-bold" (click)="resendVerifyEmail()" *ngIf="!resentVerifyEmail">Resend Verification Email</a>
-        <span *ngIf="resentVerifyEmail">Sent!</span>
+        <a class="font-weight-bold" (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">Resend Verification Email</a>
+        <span *ngIf="globalVars.resentVerifyEmail">Sent!</span>
       </div>
       <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
     </div>
