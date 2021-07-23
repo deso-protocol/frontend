@@ -96,22 +96,18 @@
           <div>Your balance</div>
           <div>{{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }} $CLOUT</div>
         </div>
-  <!--      <div class="px-10px pb-10px d-flex justify-content-between">-->
-  <!--        <div>Service fee</div>-->
-  <!--        <div>0.01 $CLOUT</div>-->
-  <!--      </div>-->
         <div class="px-10px pb-10px d-flex justify-content-between">
           <div>Total bid amount</div>
           <div>{{ bidAmountCLOUT }} $CLOUT</div>
         </div>
       </div>
-      <div *ngIf="errors" class="text-danger pb-15px" style="white-space: pre-line;">{{ errors }}</div>
+      <div *ngIf="errors" class="text-danger" style="white-space: pre-line;">{{ errors }}</div>
       <div class="d-flex align-items-center mb-15px">
         <button
           class="btn btn-primary font-weight-bold fs-15px br-12px"
           style="height: 36px; width: 140px; line-height: 15px"
           (click)="placeBid()"
-          [disabled]="placingBids"
+          [disabled]="placingBids || errors"
         >
           {{ placingBids ? "Placing Bids" : "Place Bid" }}
         </button>
