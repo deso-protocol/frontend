@@ -20,14 +20,13 @@ export class NftMarketplaceComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.backendApi.GetNFTMarketplace(
+    this.backendApi.GetNFTShowcase(
       this.globalVars.localNode, 
       this.globalVars.loggedInUser.PublicKeyBase58Check,
       this.globalVars.loggedInUser.PublicKeyBase58Check,
     ).subscribe(
       (res: any) => {
         this.nftCollections = res.NFTCollections;
-        debugger;
       },
       (error) => { this.globalVars._alertError(error.error.error) }
     ).add(() => {this.loading = false});
