@@ -33,6 +33,21 @@
     </div>
   </div>
 
+  <!-- Mobile email confirmation alert -->
+  <div
+    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified"
+    class="d-flex border-bottom border-color-grey background-color-grey py-5px px-15px fs-12px"
+  >
+    <div>Your email is not verified.&nbsp;&nbsp;&nbsp;</div>
+    <div>
+      <div *ngIf="globalVars.loggedInUser.HasEmail">
+        <a class="font-weight-bold" (click)="resendVerifyEmail()" *ngIf="!resentVerifyEmail">Resend Verification Email</a>
+        <span *ngIf="resentVerifyEmail">Sent!</span>
+      </div>
+      <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
+    </div>
+  </div>
+
   <!-- Tab Selector -->
   <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
 
