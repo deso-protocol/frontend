@@ -28,6 +28,9 @@ export class VerifyEmailComponent implements OnInit {
         this.globalVars._alertError("Failed to verify email: " + err.error.error);
       });
 
+      // This re-renders the sidebar
+      this.globalVars.loggedInUser.EmailVerified = true;
+
       this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
     });
   }

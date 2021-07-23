@@ -35,6 +35,15 @@
     </div>
   </div>
 
+  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified" class="bg-light br-12px p-15px mb-30px fs-13px">
+    <p>Your email is not verified.</p>
+    <div *ngIf="globalVars.loggedInUser.HasEmail">
+      <a class="font-weight-bold" (click)="resendVerifyEmail()" *ngIf="!resentVerifyEmail">Resend Verification Email</a>
+      <p *ngIf="resentVerifyEmail">Sent!</p>
+    </div>
+    <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
+  </div>
+
   <!-- Sign Up Flow -->
   <div *ngIf="globalVars.loggedInUser == null" class="mb-30px">
     <right-bar-signup></right-bar-signup>
