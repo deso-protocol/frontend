@@ -68,6 +68,14 @@
     placeholder="Embed Youtube, Vimeo, TikTok, Giphy, Spotify or SoundCloud"
   />
 </div>
+<div class="flex-fill px-15px br-10px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showImageLink">
+  <input
+    class="br-3px"
+    type="url"
+    [(ngModel)]="postImageSrc"
+    placeholder="Arweave link"
+  />
+</div>
 <!-- Image Upload + Post Buttons -->
 <div class="d-flex justify-content-end align-items-center pr-15px pb-15px mt-10px">
   <span
@@ -82,18 +90,18 @@
     {{ postInput.length }} / {{ GlobalVarsService.MAX_POST_LENGTH }}
   </span>
   <i
-    class="fas fa-code fa-lg text-grey8A cursor-pointer"
-    style="font-size: 18px"
+    class="fas fa-code fa-lg text-grey8A cursor-pointer fs-18px"
     [ngClass]="{'pr-15px': !isComment}"
     (click)="showEmbedURL = !showEmbedURL"
   ></i>
-  <div *ngIf="!isComment">
+  <ng-container *ngIf="!isComment">
+    <i class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px" (click)="showImageLink = !showImageLink"></i>
     <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
     <i
       class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
       (click)="imageInput.click()"
     ></i>
-  </div>
+  </ng-container>
   <button
     class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
     style="height: 36px; width: 75px; line-height: 15px"

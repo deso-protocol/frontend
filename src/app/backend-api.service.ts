@@ -195,6 +195,7 @@ export class PostEntryResponse {
   IsPinned: boolean;
   DiamondsFromSender?: number;
   NumNFTCopies: number;
+  NumNFTCopiesForSale: number;
   HasUnlockable: boolean;
   IsNFT: boolean;
   NFTRoyaltyToCoinBasisPoints: number;
@@ -261,6 +262,15 @@ export class NFTBidEntryResponse {
   SerialNumber: number;
   BidAmountNanos: number;
   selected?: boolean;
+}
+
+export class NFTCollectionResponse {
+  AvailableSerialNumbers: number[];
+  PostEntryResponse: PostEntryResponse;
+  ProfileEntryResponse: ProfileEntryResponse;
+  NumCopiesForSale: number;
+  HighestBidAmountNanos: number;
+  LowestBidAmountNanos: number;
 }
 
 export class NFTBidData {

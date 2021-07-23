@@ -154,15 +154,9 @@
     <div class="fs-15px">
       <div class="font-weight-500">Service Fee</div>
     </div>
-    <div class="input-group py-5px" style="width: 250px;">
-      <div class="input-group-prepend" id="service-fee-label">
-        <span class="input-group-text fs-15px">CLOUT</span>
-      </div>
-      <input
-        [value]="createNFTFeeNanos * numCopies / 1e9"
-        aria-describedby="service-fee-label"
-        class="form-control fs-15px text-right d-inline-block"
-        type="number" disabled/>
+    <div>
+      {{ globalVars.nanosToBitClout(createNFTFeeNanos * numCopies) }} CLOUT
+      <span class="text-grey7">(~{{globalVars.nanosToUSD(createNFTFeeNanos * numCopies, 2)}})</span>
     </div>
   </div>
 

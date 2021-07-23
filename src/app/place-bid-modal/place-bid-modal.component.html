@@ -3,7 +3,7 @@
 
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
-    <div *ngIf="!isSelectingSerialNumber && biddableSerialNumbers?.length">
+    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
       <div class="fs-15px text-grey5">
         You are about to place a bid for an NFT auctioned by @{{ post.ProfileEntryResponse.Username}}.
       </div>
@@ -121,43 +121,43 @@
     </div>
 
 
-    <div *ngIf="isSelectingSerialNumber && biddableSerialNumbers?.length">
-      <div class="fs-15px text-grey5 pb-15px">
+    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
+      <div class="fs-15px text-grey5 pb-15px cursor-pointer">
        Select an edition to start bidding
       </div>
       <div class="container fs-15px pb-30px px-0px">
         <div class="row no-gutters p-15px create-nft-auction-row-border"
              style="opacity: 50%">
-          <div class="col-3 mb-0px">
+          <div class="col-2 mb-0px text-align-center">
             Serial Number
           </div>
-          <div class="col-5 mb-0px">
+          <div class="col-5 mb-0px text-align-center">
             Last Price
           </div>
-          <div class="col-4 mb-0px">
+          <div class="col-5 mb-0px text-align-center">
             Min Bid Amount
           </div>
         </div>
         <div style="max-height: 250px; overflow-y: scroll" class="mb-30px">
-          <div *ngFor="let nft of biddableSerialNumbers"
+          <div #uiScroll *uiScroll="let nft of datasource"
                class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border cursor-pointer"
                (click)="selectSerialNumber(nft.SerialNumber)"
           >
-            <div class="col-3 mb-0px d-flex align-items-center">
+            <div class="col-2 mb-0px d-flex align-items-center">
               <span class="lh-15px">&nbsp;#{{nft.SerialNumber}}</span>
             </div>
-            <div class="col-5 mb-0px d-flex justify-content-between align-items-center">
+            <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
               <div>
-                {{globalVars.nanosToBitClout(nft.LastAcceptedBidAmountNanos)}} CLOUT
-                <span class="text-grey7">(~{{globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)}})</span>
+                <div class="d-lg-inline-block d-block">{{globalVars.nanosToBitClout(nft.LastAcceptedBidAmountNanos)}} CLOUT </div>
+                <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)}})</div>
               </div>
             </div>
-            <div class="col-4 mb-0px d-flex align-items-center">
-              <span> {{ globalVars.nanosToBitClout(nft.MinBidAmountNanos) }} </span>
-              <div class="d-flex justify-content-center cursor-pointer" style="width: 50px">
-                <i class="fas fa-chevron-right"></i>
+            <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
+              <div>
+                <div class="d-lg-inline-block d-block">{{ globalVars.nanosToBitClout(nft.MinBidAmountNanos) }} CLOUT </div>
+                <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.MinBidAmountNanos, 2)}})</div>
               </div>
-            </div>
+             </div>
           </div>
         </div>
       </div>

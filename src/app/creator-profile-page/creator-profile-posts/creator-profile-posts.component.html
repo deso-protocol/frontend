@@ -15,7 +15,7 @@
 </div>
 <ng-container *ngIf="!showProfileAsReserved">
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
-    <div #uiScroll *uiScroll="let post of datasource; let index = index" class="border-bottom border-color-grey">
+    <div #uiScroll *uiScroll="let post of datasource; let index = index">
       <feed-post
         *ngIf="post.ProfileEntryResponse"
         [contentShouldLinkToThread]="true"
@@ -23,10 +23,12 @@
         [post]="post"
         [afterCommentCreatedCallback]="_prependComment.bind(this, post, index)"
         [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+        [cardStyle]="true"
+        [showNFTDetails]="true"
         (userBlocked)="userBlocked()"
       ></feed-post>
       <div *ngFor="let comment of post.Comments">
-        <div class="px-15px pb-15px post-thread__subcomment-container">
+        <div class="pl-15px pb-15px post-thread__subcomment-container">
           <feed-post
             [includePaddingOnPost]="true"
             [post]="comment"
@@ -36,6 +38,7 @@
             [showDropdown]="false"
             [showReplyToContent]="false"
             [isSubcomment]="true"
+            [cardStyle]="true"
           ></feed-post>
         </div>
       </div>

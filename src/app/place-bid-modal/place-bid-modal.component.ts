@@ -6,12 +6,19 @@ import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backe
 import * as _ from "lodash";
 import { Router } from "@angular/router";
 import { filter, take } from "rxjs/operators";
+import { InfiniteScroller } from "../infinite-scroller";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 
 @Component({
   selector: "place-bid-modal",
   templateUrl: "./place-bid-modal.component.html",
 })
 export class PlaceBidModalComponent implements OnInit {
+  static PAGE_SIZE = 50;
+  static BUFFER_SIZE = 10;
+  static WINDOW_VIEWPORT = false;
+  static PADDING = 0.5;
+
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
   bidAmountCLOUT: number;
@@ -48,7 +55,7 @@ export class PlaceBidModalComponent implements OnInit {
         this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse).sort(
           (a, b) => a.SerialNumber - b.SerialNumber
         );
-        this.availableCount = this.availableSerialNumbers.length;
+        this.availableCount = res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
         this.biddableSerialNumbers = this.availableSerialNumbers.filter(
           (nftEntryResponse) =>
             nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
@@ -77,7 +84,7 @@ export class PlaceBidModalComponent implements OnInit {
       ? `You do not have ${this.bidAmountCLOUT} $CLOUT to fulfill this bid.\n\n`
       : "";
     this.errors +=
-      this.selectedSerialNumber.MinBidAmountNanos > this.bidAmountCLOUT * 1e9
+      this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountCLOUT * 1e9
         ? `Your bid of ${
             this.bidAmountCLOUT
           } does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
@@ -155,5 +162,27 @@ export class PlaceBidModalComponent implements OnInit {
     this.selectedSerialNumber = null;
     this.showSelectedSerialNumbers = false;
     this.setErrors();
+  }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    PlaceBidModalComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    PlaceBidModalComponent.WINDOW_VIEWPORT,
+    PlaceBidModalComponent.BUFFER_SIZE,
+    PlaceBidModalComponent.PADDING
+  );
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  lastPage = null;
+
+  getPage(page: number) {
+    if (this.lastPage != null && page > this.lastPage) {
+      return [];
+    }
+    const startIdx = page * PlaceBidModalComponent.PAGE_SIZE;
+    const endIdx = (page + 1) * PlaceBidModalComponent.PAGE_SIZE;
+
+    return new Promise((resolve, reject) => {
+      resolve(this.biddableSerialNumbers.slice(startIdx, Math.min(endIdx, this.biddableSerialNumbers.length)));
+    });
   }
 }

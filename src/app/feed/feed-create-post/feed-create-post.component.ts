@@ -48,6 +48,7 @@ export class FeedCreatePostComponent implements OnInit {
   postImageSrc = null;
 
   showEmbedURL = false;
+  showImageLink = false;
   embedURL = "";
   constructedEmbedURL: any;
   // Emits a PostEntryResponse. It would be better if this were typed.

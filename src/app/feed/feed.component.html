@@ -41,7 +41,7 @@
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingPosts()">
     <div *ngFor="let post of postsToShow()">
-      <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
+      <div *ngIf="post.ProfileEntryResponse">
         <!--
             The post.parentPost stuff is a hack to make it so that a new comment shows up
             in the feed with the "replying to @[parentPost.Username]" content diplayed.
@@ -58,6 +58,8 @@
           [contentShouldLinkToThread]="true"
           [showLeftSelectedBorder]="post.IsPinned"
           [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+          [cardStyle]="true"
+          [showNFTDetails]="true"
           (postDeleted)="onPostHidden($event)"
           (userBlocked)="userBlocked()"
         ></feed-post>

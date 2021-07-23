@@ -101,6 +101,7 @@ export class FeedPostComponent implements OnInit {
 
   @Input() showQuotedContent = true;
   @Input() hoverable = true;
+  @Input() cardStyle: boolean = false;
 
   @Input() showReplyingTo = false;
   @Input()
@@ -137,7 +138,7 @@ export class FeedPostComponent implements OnInit {
         (nftEntryResponse) =>
           nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
       );
-      this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
+      // this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
       if (bidData.BidEntryResponses?.length) {
         this.highBid = this.getMaxBidAmountFromList(bidData.BidEntryResponses);
         this.lowBid = this.getMinBidAmountFromList(bidData.BidEntryResponses);
@@ -174,7 +175,7 @@ export class FeedPostComponent implements OnInit {
   _blocked: boolean;
   constructedEmbedURL: any;
 
-  showPlaceABid: boolean;
+  showPlaceABid: boolean = true;
   highBid: number;
   lowBid: number;
   availableSerialNumbers: NFTEntryResponse[];
@@ -557,7 +558,7 @@ export class FeedPostComponent implements OnInit {
 
   showUnlockableContent = false;
   toggleShowUnlockableContent(): void {
-    if (!this.decryptableNFTEntryResponses.length) {
+    if (!this.decryptableNFTEntryResponses?.length) {
       return;
     }
     this.showUnlockableContent = !this.showUnlockableContent;

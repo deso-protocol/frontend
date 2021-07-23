@@ -50,11 +50,11 @@
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
     <div
       #uiScroll *uiScroll="let nftEntry of datasource; let index = index"
-      style="margin: 20px;"
       [ngClass]="{
       'br-12px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
       'p-10px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-      'background-color-grey': activeTab === CreatorProfileNftsComponent.MY_BIDS
+      'background-color-grey': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+      'm-20px': activeTab === CreatorProfileNftsComponent.MY_BIDS
       }"
       [ngStyle]="{
       'border': activeTab === CreatorProfileNftsComponent.MY_BIDS ? '1px solid var(--border)' : ''
@@ -73,6 +73,7 @@
         [setBorder]="true"
         [linkToNFT]="true"
         [showAvailableSerialNumbers]="true"
+        [cardStyle]="true"
         (userBlocked)="userBlocked()"
       ></feed-post>
       <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS">
