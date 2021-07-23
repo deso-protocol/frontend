@@ -887,7 +887,7 @@ export class GlobalVarsService {
       bsModalRef.hide();
     }
     this.router.navigate(["/" + this.RouteNames.BROWSE], {
-      queryParams: { feedTab: FeedComponent.MARKET_TAB },
+      queryParams: { feedTab: FeedComponent.SHOWCASE_TAB },
     });
   }
 }

@@ -61,7 +61,8 @@ export class BackendRoutes {
   static RoutePathGetNFTBidsForNFTPost = "/api/v0/get-nft-bids-for-nft-post";
   static RoutePathGetNFTsForUser = "/api/v0/get-nfts-for-user";
   static RoutePathGetNFTBidsForUser = "/api/v0/get-nft-bids-for-user";
-  static RoutePathGetNFTMarketplace = "/api/v0/get-nft-marketplace";
+  static RoutePathGetNFTShowcase = "/api/v0/get-nft-showcase";
+  static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
 
   // Admin routes.
@@ -869,14 +870,23 @@ export class BackendApiService {
     });
   }
 
-  GetNFTMarketplace(
+  GetNFTShowcase(
     endpoint: string,
     UserPublicKeyBase58Check: string,
     ReaderPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNFTMarketplace, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTShowcase, {
       UserPublicKeyBase58Check,
       ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetNextNFTShowcase(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNextNFTShowcase, {
+      UserPublicKeyBase58Check,
     });
   }
 

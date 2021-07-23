@@ -1,6 +1,6 @@
 <div
-  style="background-color: #222; color: #39ff14"
-  class="cursor-pointer"
+  style="color: black"
+  class="cursor-pointer background-color-light-grey border-bottom"
   [ngStyle]="{
     'font-size': fontSize + 'px',
     'border-radius': borderRadiusSize + 'px',
@@ -9,11 +9,21 @@
   (click)="navigateToURL()"
 >
   <div
-    class="px-15px py-5px d-flex font-weight-bold justify-content-around"
-    [ngClass]="{ 'justify-content-between': !justifyLeft, 'justify-left': justifyLeft }">
-    <div>
-      {{ timerText }}&nbsp;
+    class="px-15px py-5px d-flex"
+    [ngClass]="{
+      'justify-content-between': !(justifyLeft || justifyAround),
+      'justify-left': justifyLeft,
+      'justify-around': justifyAround
+    }">
+    <div>🎉</div>
+    <div class="d-flex">
+      <div>
+        {{ timerText }}&nbsp;&nbsp;
+      </div>
+      <div class="font-weight-semibold">
+        {{ days + "d " + hours + "h " + minutes + "m " + seconds + "s" }}
+      </div>
     </div>
-    <div>{{ days + "d " + hours + "h " + minutes + "m " + seconds + "s" }}</div>
+    <div>🎉</div>
   </div>
 </div>
