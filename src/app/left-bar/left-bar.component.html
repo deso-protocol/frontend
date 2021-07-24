@@ -49,6 +49,18 @@
       ></left-bar-button>
 
       <div class="p-15px"></div>
+      <left-bar-button
+        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
+        [queryParams]="{ 'nftTab': 'my_bids', 'tab': 'nfts' }"
+        [buttonLabel]="'My NFT Bids'"
+      ></left-bar-button>
+      <left-bar-button
+        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
+        [queryParams]="{ 'nftTab': 'my_gallery', 'tab': 'nfts' }"
+        [buttonLabel]="'My NFT Gallery'"
+      ></left-bar-button>
+
+      <div class="p-15px"></div>
 
       <left-bar-button
         [link]="'/' + globalVars.RouteNames.PICK_A_COIN"
@@ -67,6 +79,7 @@
       <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse?.Username; else elseBlock">
         <left-bar-button
           [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
+          [queryParams]="{ 'tab':'posts' }"
           [buttonLabel]="'Profile'"
         ></left-bar-button>
       </div>

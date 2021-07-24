@@ -249,6 +249,9 @@ export class NFTEntryResponse {
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
 
+  HighestBidAmountNanos: number;
+  LowestBidAmountNanos: number;
+
   // only populated when the reader is the owner of the nft and there is an unlockable.
   LastOwnerPublicKeyBase58Check: string | undefined;
   EncryptedUnlockableText: string | undefined;
@@ -262,6 +265,10 @@ export class NFTBidEntryResponse {
   PostEntryResponse: PostEntryResponse | undefined;
   SerialNumber: number;
   BidAmountNanos: number;
+
+  HighestBidAmountNanos: number | undefined;
+  LowestBidAmountNanos: number | undefined;
+
   selected?: boolean;
 }
 
@@ -891,10 +898,7 @@ export class BackendApiService {
     });
   }
 
-  GetNextNFTShowcase(
-    endpoint: string,
-    UserPublicKeyBase58Check: string,
-  ): Observable<any> {
+  GetNextNFTShowcase(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNextNFTShowcase, {
       UserPublicKeyBase58Check,
     });

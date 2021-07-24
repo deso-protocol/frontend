@@ -16,11 +16,13 @@
       <!-- Availability metadata -->
       <div class="fs-15px" *ngIf="!loading">
         <div *ngIf="highBid != null && lowBid != null">Highest bid {{ highBid / 1e9 }} CLOUT | From {{ lowBid / 1e9 }} CLOUT</div>
-        <div [ngClass]="{'pt-15px': availableSerialNumbers.length }">{{ availableCount }} of {{ post.NumNFTCopies }} available
+        <div [ngClass]="{'pt-15px': availableSerialNumbers.length }">
+          <span class="pr-20px">
+            {{ availableCount }} of {{ post.NumNFTCopies }} available
+          </span>
           <span
-            class="font-weight-500 cursor-pointer pl-20px"
+            class="font-weight-500 cursor-pointer d-lg-inline-block d-block"
             style="text-decoration: underline"
-            *ngIf="post.NumNFTCopies > 1"
             (click)="isSelectingSerialNumber = placingBids ? false : true"
           >
           Select a serial number</span>

@@ -50,14 +50,6 @@ export class FeedPostComponent implements OnInit {
     }
   }
 
-  getMaxBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
-    return _.maxBy(bidEntryResponses, (bidEntryResponse) => bidEntryResponse.BidAmountNanos)?.BidAmountNanos;
-  }
-
-  getMinBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
-    return _.minBy(bidEntryResponses, (bidEntryResponses) => bidEntryResponses.BidAmountNanos)?.BidAmountNanos;
-  }
-
   @Input() set blocked(value: boolean) {
     this._blocked = value;
     this.ref.detectChanges();
@@ -139,9 +131,9 @@ export class FeedPostComponent implements OnInit {
           nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
       );
       // this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-      if (bidData.BidEntryResponses?.length) {
-        this.highBid = this.getMaxBidAmountFromList(bidData.BidEntryResponses);
-        this.lowBid = this.getMinBidAmountFromList(bidData.BidEntryResponses);
+      if (bidData.NFTEntryResponses?.length) {
+        this.highBid = _.maxBy(bidData.NFTEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;
+        this.lowBid = _.minBy(bidData.NFTEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
       }
     }
   }

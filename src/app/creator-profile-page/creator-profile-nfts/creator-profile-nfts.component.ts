@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import {
   BackendApiService,
-  NFTBidData,
   NFTBidEntryResponse,
   NFTEntryResponse,
   PostEntryResponse,
@@ -38,21 +37,21 @@ export class CreatorProfileNftsComponent implements OnInit {
   isLoading = true;
   loadingNewSelection = false;
   static FOR_SALE = "For Sale";
-  static NOT_FOR_SALE = "Not For Sale";
   static MY_BIDS = "My Bids";
-  tabs = [CreatorProfileNftsComponent.FOR_SALE, CreatorProfileNftsComponent.NOT_FOR_SALE];
+  static MY_GALLERY = "My Gallery";
+  tabs = [CreatorProfileNftsComponent.FOR_SALE, CreatorProfileNftsComponent.MY_GALLERY];
   activeTab: string;
 
   nftTabMap = {
     my_bids: CreatorProfileNftsComponent.MY_BIDS,
     for_sale: CreatorProfileNftsComponent.FOR_SALE,
-    not_for_sale: CreatorProfileNftsComponent.NOT_FOR_SALE,
+    my_gallery: CreatorProfileNftsComponent.MY_GALLERY,
   };
 
   nftTabInverseMap = {
     [CreatorProfileNftsComponent.FOR_SALE]: "for_sale",
     [CreatorProfileNftsComponent.MY_BIDS]: "my_bids",
-    [CreatorProfileNftsComponent.NOT_FOR_SALE]: "not_for_sale",
+    [CreatorProfileNftsComponent.MY_GALLERY]: "my_gallery",
   };
 
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
@@ -74,26 +73,23 @@ export class CreatorProfileNftsComponent implements OnInit {
     }
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.nftTab && queryParams.nftTab in this.nftTabMap) {
-        this.activeTab = this.nftTabMap[queryParams.nftTab];
+        if (
+          queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_BIDS] &&
+          this.globalVars.loggedInUser?.PublicKeyBase58Check !== this.profile.PublicKeyBase58Check
+        ) {
+          this.updateNFTTabParam(CreatorProfileNftsComponent.MY_GALLERY);
+        } else {
+          this.onActiveTabChange(this.nftTabMap[queryParams.nftTab]);
+        }
       }
     });
 
-    let checkNotForSale = false;
     if (!this.activeTab) {
-      this.activeTab = CreatorProfileNftsComponent.FOR_SALE;
-    }
-    this.isLoading = true;
-    if (this.activeTab === CreatorProfileNftsComponent.MY_BIDS) {
-      this.getNFTBids().add(() => (this.isLoading = false));
-    } else {
-      this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE).add(() => {
-        if (checkNotForSale && !this.nftResponse.length) {
-          this.activeTab = CreatorProfileNftsComponent.NOT_FOR_SALE;
-          this.getNFTs(false).add(() => (this.isLoading = false));
-        } else {
-          this.isLoading = false;
-        }
-      });
+      this.isLoading = true;
+      let defaultTab = this.profileBelongsToLoggedInUser()
+        ? CreatorProfileNftsComponent.MY_BIDS
+        : CreatorProfileNftsComponent.MY_GALLERY;
+      this.onActiveTabChange(defaultTab);
     }
   }
 
@@ -120,6 +116,7 @@ export class CreatorProfileNftsComponent implements OnInit {
             return bidEntry;
           });
           this.lastPage = Math.floor(this.myBids.length / CreatorProfileNftsComponent.PAGE_SIZE);
+          return this.myBids;
         }
       );
   }
@@ -138,9 +135,17 @@ export class CreatorProfileNftsComponent implements OnInit {
         }) => {
           this.nftResponse = [];
           for (const k in res.NFTsMap) {
-            this.nftResponse.push(res.NFTsMap[k]);
+            const responseElement = res.NFTsMap[k];
+            if (
+              (this.activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
+                responseElement.PostEntryResponse.PosterPublicKeyBase58Check !== this.profile.PublicKeyBase58Check) ||
+              this.activeTab === CreatorProfileNftsComponent.FOR_SALE
+            ) {
+              this.nftResponse.push(responseElement);
+            }
           }
           this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
+          return this.nftResponse;
         }
       );
   }
@@ -213,7 +218,7 @@ export class CreatorProfileNftsComponent implements OnInit {
           this.resetDatasource(event);
         });
       } else {
-        return this.getNFTs(this.activeTab === CreatorProfileNftsComponent.FOR_SALE).add(() => {
+        return this.getNFTs(this.getIsForSaleValue()).add(() => {
           this.resetDatasource(event);
         });
       }
@@ -223,6 +228,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   }
 
   resetDatasource(event): void {
+    this.infiniteScroller.reset();
     this.datasource.adapter.reset().then(() => {
       this.loadingNewSelection = false;
       this.isLoading = false;
@@ -281,5 +287,9 @@ export class CreatorProfileNftsComponent implements OnInit {
           );
       }
     });
+  }
+
+  getIsForSaleValue(): boolean | null {
+    return this.activeTab === CreatorProfileNftsComponent.MY_GALLERY ? null : true;
   }
 }

@@ -1,7 +1,7 @@
 <!-- Posts -->
 <simple-center-loader [height]="200" *ngIf="isLoading && datasource.adapter.isLoading"></simple-center-loader>
 <div
-  class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column px-15px pt-15px"
+  class="fs-15px text-grey5 font-weight-bold d-flex flex-column px-15px pt-15px"
   *ngIf="!isLoading"
 >
   <div>
@@ -22,7 +22,7 @@
 </div>
 <div
   *ngIf="
-    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab !== CreatorProfileNftsComponent.MY_BIDS
+    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.FOR_SALE
   "
   class="p-15px"
 >
@@ -30,6 +30,19 @@
     <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">Create an NFT.</span>
     <ng-template #elseMissingPostBlock>
       <span>@{{ profile.Username }} is on the platform but doesn't have any NFTs for sale.</span>
+    </ng-template>
+  </div>
+</div>
+<div
+  *ngIf="
+    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.MY_GALLERY
+  "
+  class="p-15px"
+>
+  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">You have not purchased any NFTs.</span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} is on the platform but has not acquired any NFTs.</span>
     </ng-template>
   </div>
 </div>
@@ -47,6 +60,17 @@
   </div>
 </div>
 <div *ngIf="!showProfileAsReserved && (!isLoading || loadingNewSelection)">
+  <div class="p-15px pb-0">
+    <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && myBids?.length">
+      Your current outstanding bids
+    </div>
+    <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_GALLERY && nftResponse?.length">
+      NFTs purchased by @{{ profile.Username }}
+    </div>
+    <div *ngIf="activeTab === CreatorProfileNftsComponent.FOR_SALE && nftResponse?.length">
+      NFTs that @{{ profile.Username }} is currently selling
+    </div>
+  </div>
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
     <div
       #uiScroll *uiScroll="let nftEntry of datasource; let index = index"
@@ -69,30 +93,42 @@
         [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
         [nftBidData]="nftEntry"
         [showNFTDetails]="true"
-        [showExpandedNFTDetails]="true"
+        [showExpandedNFTDetails]="false"
         [setBorder]="true"
         [linkToNFT]="true"
         [showAvailableSerialNumbers]="true"
         [cardStyle]="true"
         (userBlocked)="userBlocked()"
       ></feed-post>
-      <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS">
-        <div class="row no-gutters w-100 pb-10px justify-content-start">
-          <div class="d-flex align-items-center mb-0 p-5px">
+      <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse">
+        <div class="row no-gutters w-100 pb-5px justify-content-start">
+          <div class="d-flex align-items-center mb-0 p-5px pr-10px">
             <i
-              class="fas fa-trash pr-10px text-danger cursor-pointer fs-18px"
+              class="fas fa-trash text-danger cursor-pointer fs-18px"
               (click)="cancelBid(nftEntry)"
             ></i>
           </div>
           <div
             class="d-flex align-items-center justify-content-center mb-0 p-5px fs-12px"
-          >Serial Number: {{ nftEntry.SerialNumber > 0 && "#" + nftEntry.SerialNumber.toString() }}</div>
+          >Serial #{{ nftEntry.SerialNumber }}</div>
           <div
             class="d-flex align-items-center mb-0 justify-content-around p-5px fs-12px"
           >
-            Bid Amount:
+            Bid:
             <span class="px-5px">{{ nftEntry.BidAmountNanos / 1e9 }} $CLOUT</span>
-            <span>~{{ globalVars.nanosToUSD(nftEntry.BidAmountNanos, 2) }}</span>
+            <span>(~{{ globalVars.nanosToUSD(nftEntry.BidAmountNanos, 2) }})</span>
+          </div>
+        </div>
+        <div class="fs-12px p-5px pt-0px">
+          <div
+            class="fc-red"
+            *ngIf="nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos">
+            There is a higher bid of {{ globalVars.nanosToBitClout(nftEntry.HighestBidAmountNanos) }} CLOUT (~{{ globalVars.nanosToUSD(nftEntry.HighestBidAmountNanos, 2) }}) for this serial number.
+          </div>
+          <div
+            class="fc-green"
+            *ngIf="nftEntry.HighestBidAmountNanos === nftEntry.BidAmountNanos">
+            Your bid is the highest one for this serial number.
           </div>
         </div>
         <div class="br-12px background-color-white">
