@@ -78,10 +78,8 @@
       'br-12px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
       'p-10px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
       'background-color-grey': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-      'm-20px': activeTab === CreatorProfileNftsComponent.MY_BIDS
-      }"
-      [ngStyle]="{
-      'border': activeTab === CreatorProfileNftsComponent.MY_BIDS ? '1px solid var(--border)' : ''
+      'm-15px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+      'border': activeTab === CreatorProfileNftsComponent.MY_BIDS
       }"
     >
       <feed-post
@@ -127,10 +125,14 @@
           </div>
           <div
             class="fc-green"
-            *ngIf="nftEntry.HighestBidAmountNanos === nftEntry.BidAmountNanos">
+            *ngIf="nftEntry.HighestBidAmountNanos === nftEntry.BidAmountNanos && nftEntry.BidderBalanceNanos >= nftEntry.BidAmountNanos">
             Your bid is the highest one for this serial number.
           </div>
+          <div class="fs-12px fc-red" *ngIf="nftEntry.BidderBalanceNanos < nftEntry.BidAmountNanos" [ngClass]="{ 'pt-5px': nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos }">
+            You do not have enough CLOUT for this bid. Place a lower bid or <a class="link--unstyled" style="text-decoration: underline" [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT">buy CLOUT</a>.
+          </div>
         </div>
+
         <div class="br-12px background-color-white">
           <feed-post
             *ngIf="nftEntry.PostEntryResponse.ProfileEntryResponse"

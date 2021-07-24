@@ -14,9 +14,8 @@
      - market-feed component -->
 <div
   class="d-flex flex-column"
-  [ngStyle]="{'border': setBorder || cardStyle ? '1px solid var(--border)' : '' }"
-  [ngClass]="{'br-12px': setBorder || cardStyle , 'm-15px': cardStyle, 'js-feed-post-hover': hoverable }">
-  <div style="width: 100%">
+  [ngClass]="{'br-12px': setBorder || cardStyle , 'm-15px': cardStyle, 'js-feed-post-hover': hoverable, 'border': setBorder || cardStyle }">
+  <div class="w-100">
     <div
       *ngIf="post.IsHidden"
       class="p-10px background-color-grey d-flex align-items-center justify-content-center fs-15px"

@@ -272,15 +272,20 @@ export class NftPostComponent {
     this.activeTab = tabName;
     this.showBidsView = tabName !== NftPostComponent.OWNERS;
     if (this.activeTab === NftPostComponent.ALL_BIDS) {
-      this.bids = this.nftBidData.BidEntryResponses;
+      this.bids = this.nftBidData.BidEntryResponses.filter(
+        (bidEntry) => bidEntry.BidAmountNanos <= bidEntry.BidderBalanceNanos
+      );
     } else if (this.activeTab === NftPostComponent.MY_BIDS) {
+      console.log(this.bids);
       this.bids = this.nftBidData.BidEntryResponses.filter(
         (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
       );
     } else if (this.activeTab === NftPostComponent.MY_AUCTIONS) {
       const serialNumbers = this.myAvailableSerialNumbers?.map((nftEntryResponse) => nftEntryResponse.SerialNumber);
       this.bids = this.nftBidData.BidEntryResponses.filter(
-        (bidEntry) => serialNumbers.includes(bidEntry.SerialNumber) || bidEntry.SerialNumber === 0
+        (bidEntry) =>
+          (serialNumbers.includes(bidEntry.SerialNumber) || bidEntry.SerialNumber === 0) &&
+          bidEntry.BidAmountNanos <= bidEntry.BidderBalanceNanos
       );
     }
     this.sortBids(this.sortByField, this.sortDescending);
@@ -379,7 +384,10 @@ export class NftPostComponent {
     let highestNFTMap: { [k: number]: NFTBidEntryResponse } = {};
     this.bids.forEach((bid) => {
       const highestBid = highestNFTMap[bid.SerialNumber];
-      if (!highestBid || highestBid.BidAmountNanos < bid.BidAmountNanos) {
+      if (
+        (!highestBid || highestBid.BidAmountNanos < bid.BidAmountNanos) &&
+        bid.BidderBalanceNanos >= bid.BidAmountNanos
+      ) {
         highestNFTMap[bid.SerialNumber] = bid;
       }
     });

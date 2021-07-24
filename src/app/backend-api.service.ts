@@ -269,6 +269,8 @@ export class NFTBidEntryResponse {
   HighestBidAmountNanos: number | undefined;
   LowestBidAmountNanos: number | undefined;
 
+  BidderBalanceNanos: number;
+
   selected?: boolean;
 }
 
