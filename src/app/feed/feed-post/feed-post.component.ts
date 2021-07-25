@@ -96,6 +96,8 @@ export class FeedPostComponent implements OnInit {
   @Input() cardStyle: boolean = false;
 
   @Input() showReplyingTo = false;
+  @Input() nftCollectionHighBid = 0;
+  @Input() nftCollectionLowBid = 0;
   @Input()
   get nftBidData(): NFTBidData {
     return this._nftBidData;
@@ -131,7 +133,7 @@ export class FeedPostComponent implements OnInit {
           nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
       );
       // this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-      if (bidData.NFTEntryResponses?.length) {
+      if (bidData.NFTEntryResponses?.length && bidData.NFTEntryResponses[0]["HighestBidAmountNanos"]) {
         this.highBid = _.maxBy(bidData.NFTEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;
         this.lowBid = _.minBy(bidData.NFTEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
       }
@@ -189,6 +191,9 @@ export class FeedPostComponent implements OnInit {
       this.post.RecloutCount = 0;
     }
     this.setEmbedURLForPostContent();
+
+    this.highBid = this.nftCollectionHighBid;
+    this.lowBid = this.nftCollectionHighBid;
   }
 
   onPostClicked(event) {
