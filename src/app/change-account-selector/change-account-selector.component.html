@@ -1,53 +1,56 @@
-<div
-  class="fs-15px fc-default px-5px cursor-pointer change-account-selector br-12px"
-  [ngClass]="{ 'change-account-selector__shadow': selectorOpen }"
-  #changeAccountSelectorRoot
-  id="changeAccountSelectorRoot"
->
-  <!-- Selector (unopened state) -->
-  <div class="d-flex align-items-center justify-content-between pl-10px pr-10px change-account-selector__hover">
-    <div *ngIf="globalVars.loggedInUser" class="change-account-selector__ellipsis-restriction cursor-pointer">
-      {{
-        globalVars.loggedInUser.ProfileEntryResponse?.Username
-          ? globalVars.loggedInUser.ProfileEntryResponse.Username
-          : globalVars.loggedInUser.PublicKeyBase58Check
-      }}
+<div *ngIf="!globalVars.loggedInUser" class="fs-15px fc-blue font-weight-bold cursor-pointer pl-20px" (click)="globalVars.launchLoginFlow()"> Log In </div>
+<div class="btn-group" dropdown #dropdown="bs-dropdown" style="width: 100%" *ngIf="globalVars.loggedInUser">
+  <div
+    class="fs-14px fc-default px-5px cursor-pointer change-account-selector br-4px change-account-selector__hover"
+    [ngClass]="{ 'change-account-selector__shadow': selectorOpen }"
+    dropdownToggle id="changeAccountButton" aria-controls="dropdown-basic"
+  >
+    <!-- Selector (unopened state) -->
+    <div class="d-flex align-items-center justify-content-between pl-5px pr-5px">
+      <div *ngIf="globalVars.loggedInUser" class="change-account-selector__ellipsis-restriction d-flex flex-row align-items-center cursor-pointer">
+        <div class="feed-create-post__avatar align-items-center change-account-selector__account-image" [avatar]="globalVars.loggedInUser.PublicKeyBase58Check"></div>
+        <div class="change-account-selector__acount-name change-account-selector__ellipsis-restriction">
+        {{
+          globalVars.loggedInUser.ProfileEntryResponse?.Username
+            ?  globalVars.loggedInUser.ProfileEntryResponse.Username
+            : globalVars.loggedInUser.PublicKeyBase58Check
+        }}</div>
+        <span *ngIf="globalVars.loggedInUser.ProfileEntryResponse?.IsVerified" class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>
+      </div>
+      <i class="fas fa-angle-down text-grey5 change-account-selector__down-arrow"></i>
     </div>
-    <div
-      *ngIf="!globalVars.loggedInUser"
-      class="font-italic change-account-selector__ellipsis-restriction cursor-pointer"
-    >
-      Logged out
-    </div>
-    <i class="fas fa-angle-down text-grey5 change-account-selector__down-arrow"></i>
   </div>
-
   <!-- Drop-down (open state) -->
-  <div *ngIf="selectorOpen">
+  <div class="fs-14px fc-default px-5px cursor-pointer change-account-selector_list br-4px change-account-selector_list__hover dropdown-menu"
+       id="dropdown-basic"
+       *dropdownMenu
+       aria-labelledby="changeAccountButton">
     <div *ngFor="let user of globalVars.userList; let rowNum = index">
       <div
         *ngIf="!globalVars.loggedInUser || user.PublicKeyBase58Check != globalVars.loggedInUser.PublicKeyBase58Check"
         (mouseover)="hoverRow = rowNum"
-        class="pt-5px pb-5px d-flex align-items-center change-account-selector__hover"
+        class="change-account-selector_list__inner pt-10px pb-10px pl-10px pr-10px d-flex align-items-center"
       >
         <div
-          (click)="_switchToUser(user)"
-          class="pl-10px pr-10px change-account-selector__ellipsis-restriction"
+          class="align-items-center change-account-selector_list-item d-flex flex-row"
           style="flex-grow: 1"
+          (click)="_switchToUser(user)"
         >
-          {{ user.ProfileEntryResponse?.Username ? user.ProfileEntryResponse.Username : user.PublicKeyBase58Check }}
+          <div class="feed-create-post__avatar d-inline-block change-account-selector__account-image" [avatar]="user.PublicKeyBase58Check"></div>
+          <div class="d-inline-block change-account-selector__ellipsis-restriction change-account-selector__acount-name">{{ user.ProfileEntryResponse?.Username ? user.ProfileEntryResponse.Username : user.PublicKeyBase58Check }}</div>
+          <span *ngIf="user.ProfileEntryResponse?.IsVerified" class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>
         </div>
       </div>
     </div>
     <div
       (click)="globalVars.launchLoginFlow()"
-      class="pl-10px pr-10px pt-10px font-weight-bold change-account-selector__hover"
+      class="pl-15px text-link_hover pr-10px pt-10px"
     >
       Add account
     </div>
     <div
       *ngIf="globalVars.loggedInUser"
-      class="pl-10px pr-10px pt-10px font-weight-bold change-account-selector__hover"
+      class="pl-15px text-link_hover pr-10px pt-10px"
       (click)="launchLogoutFlow()"
     >
       Logout

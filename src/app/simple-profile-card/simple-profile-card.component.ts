@@ -14,6 +14,7 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() showRecloutIcon = false;
   @Input() containerModalRef: any = null;
   @Input() singleColumn = false;
+  @Input() hideFollowLink = false;
 
   constructor(public globalVars: GlobalVarsService, private router: Router) {}
 

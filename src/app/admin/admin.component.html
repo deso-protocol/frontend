@@ -31,13 +31,12 @@
       style="justify-content: flex-start; align-items: center;"
     >
       <div>
-        <mat-form-field appearance="fill" class="pb-0" app-theme>
+        <mat-form-field appearance="fill" class="pb-0">
           <mat-label for="time-window" class="pr-10px mb-0" style="height: auto; vertical-align: middle;">
             Time Window:
           </mat-label>
           <mat-select id="time-window" style="height: auto; vertical-align: middle;" [(value)]="selectedTimeWindow">
-            <mat-option app-theme
-                        *ngFor="let timeWindow of timeWindowOptions | keyvalue"
+            <mat-option *ngFor="let timeWindow of timeWindowOptions | keyvalue"
                         [value]="timeWindow.value">
               {{ timeWindow.key }}
             </mat-option>

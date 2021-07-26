@@ -291,6 +291,7 @@ export class GlobalVarsService {
       for (const entry of this.loggedInUser?.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
+      this.followFeedPosts = [];
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
@@ -492,6 +493,20 @@ export class GlobalVarsService {
       date.getFullYear() != currentDate.getFullYear()
     ) {
       return date.toLocaleString("default", { month: "short", day: "numeric" });
+    }
+
+    return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
+  }
+
+  convertTstampToDateTime(tstampNanos: number) {
+    const date = new Date(tstampNanos / 1e6);
+    const currentDate = new Date();
+    if (
+      date.getDate() != currentDate.getDate() ||
+      date.getMonth() != currentDate.getMonth() ||
+      date.getFullYear() != currentDate.getFullYear()
+    ) {
+      return date.toLocaleString("default", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "numeric", second: "numeric", hour12: true });
     }
 
     return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
@@ -856,5 +871,11 @@ export class GlobalVarsService {
         console.error(error);
       }
     );
+  }
+
+  resentVerifyEmail = false;
+  resendVerifyEmail() {
+    this.backendApi.ResendVerifyEmail(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe();
+    this.resentVerifyEmail = true;
   }
 }

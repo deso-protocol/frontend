@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angu
 import { Location } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import {BackendApiService, ProfileEntryResponse} from "../../backend-api.service";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { dynamicMaxValidator } from "../../../lib/validators/dynamic-max-validator";
@@ -153,7 +153,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
           this.appData.localNode,
           this.appData.loggedInUser.PublicKeyBase58Check /*SenderPublicKeyBase58Check*/,
           this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
-          this.creatorCoinTrade.transferRecipient.value /*ReceiverPublicKeyBase58Check*/,
+          this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
           this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
           this.appData.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/,
           false
@@ -464,5 +464,9 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     if (this.loggedInUserSubscription) {
       this.loggedInUserSubscription.unsubscribe();
     }
+  }
+
+  _handleCreatorSelectedInSearch(creator: ProfileEntryResponse) {
+    this.creatorCoinTrade.transferRecipient.setValue(creator);
   }
 }

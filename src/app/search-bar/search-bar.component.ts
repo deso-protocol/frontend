@@ -14,6 +14,7 @@ const DEBOUNCE_TIME_MS = 300;
 export class SearchBarComponent implements OnInit {
   @ViewChild("searchBarRoot", { static: true }) searchBarRoot: ElementRef;
   @Input() isSearchForUsersToMessage: boolean;
+  @Input() showCloutavista: boolean = true;
   @Input() isSearchForUsersToSendClout: boolean;
   @Input() startingSearchText: string;
   @Output() creatorToMessage = new EventEmitter<any>();
@@ -93,7 +94,7 @@ export class SearchBarComponent implements OnInit {
         this.globalVars.localNode,
         "" /*PublicKeyBase58Check*/,
         "" /*Username*/,
-        this.searchText /*UsernamePrefix*/,
+        this.searchText.trim().replace(/^@/, '') /*UsernamePrefix*/,
         "" /*Description*/,
         "" /*Order by*/,
         20 /*NumToFetch*/,
@@ -205,6 +206,15 @@ export class SearchBarComponent implements OnInit {
       this.debouncedSearchFunction();
     }
   }
+  
+  _handleMouseOut(creator: string, index: number) {
+      if (this.creatorSelected === creator) {
+        this.creatorSelected = "";
+      }
+      if (this.selectedCreatorIndex === index) {
+        this.selectedCreatorIndex = -1;
+      }
+    }
 
   _setUpClickOutListener() {
     this.renderer.listen("window", "click", (e: any) => {

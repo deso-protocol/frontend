@@ -121,10 +121,14 @@ import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
-import { lightTheme } from "./theme/light-theme";
-import { darkTheme } from "./theme/dark-theme";
-import { icydarkTheme } from "./theme/icy-dark-theme";
-import { legendsTheme } from "./theme/legends-theme";
+import { Theme } from "./theme/symbols";
+import { VerifyEmailComponent } from './verify-email/verify-email.component';
+const lightTheme: Theme = { key: "light", name: "Light Theme" };
+const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
+const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
+const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
+const cakeTheme: Theme = { key: "cake", name: "Cake Theme" };
+const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
 
 @NgModule({
   declarations: [
@@ -225,6 +229,7 @@ import { legendsTheme } from "./theme/legends-theme";
     TrendsPageComponent,
     TrendsComponent,
     SanitizeQRCodePipe,
+    VerifyEmailComponent,
   ],
   imports: [
     BrowserModule,
@@ -246,7 +251,7 @@ import { legendsTheme } from "./theme/legends-theme";
     RatingModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme],
+      themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme, cakeTheme, greenishTheme],
       active:
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),

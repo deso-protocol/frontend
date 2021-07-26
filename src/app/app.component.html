@@ -15,7 +15,10 @@
 ></iframe>
 
 <!--p-0 is important here. Mobile UIs expect that there's no side padding.-->
-<div app-theme class="main global__container" *ngIf="!globalVars.requestingStorageAccess">
+<div 
+  class="main global__container" 
+  *ngIf="!globalVars.requestingStorageAccess"
+ >
   <router-outlet *ngIf="!globalVars.loadingInitialAppState"></router-outlet>
   <simple-center-loader *ngIf="globalVars.loadingInitialAppState"></simple-center-loader>
 </div>

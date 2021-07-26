@@ -5,10 +5,10 @@
   Notifications
 </div>
 <div class="global__top-bar__height"></div>
-<div *ngIf="isLoading">
+<div *ngIf="loadingFirstPage">
   <simple-center-loader></simple-center-loader>
 </div>
-<div *ngIf="(!totalItems || totalItems === 0) && !isLoading" class="d-flex justify-content-center mt-30px">
+<div *ngIf="(!totalItems || totalItems === 0) && !loadingFirstPage" class="d-flex justify-content-center mt-30px">
   <span>You don't have any notifications</span>
 </div>
 
@@ -51,7 +51,7 @@
     </div>
   </div>
 </div>
-<simple-center-loader *ngIf="loadingMoreNotifications && !isLoading" [height]="200"></simple-center-loader>
+<simple-center-loader *ngIf="loadingNextPage && !loadingFirstPage" [height]="200"></simple-center-loader>
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
 <div class="d-lg-none global__bottom-bar-mobile-height"></div>
 <div class="global__bottom-bar-mobile-height"></div>

@@ -42,7 +42,6 @@ export class PostThreadComponent {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
   }
 
   _rerenderThread() {
@@ -55,7 +54,7 @@ export class PostThreadComponent {
     this.currentPost = _.cloneDeep(this.currentPost);
   }
 
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
+  // TODO: Cleanup - Update InfiniteScroller class to de-duplicate this logic
   getDataSource() {
     return new Datasource<IAdapter<any>>({
       get: (index, count, success) => {
@@ -307,6 +306,7 @@ export class PostThreadComponent {
         }
         // Set current post
         this.currentPost = res.PostFound;
+        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
       },
       (err) => {
         // TODO: post threads: rollbar
