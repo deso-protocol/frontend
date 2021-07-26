@@ -170,11 +170,15 @@ export class FeedPostComponent implements OnInit {
               .subscribe((res) => (this.decryptableNFTEntryResponses = res));
           }
           this.availableSerialNumbers = this.nftEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
+          const mySerialNumbers = this.nftEntryResponses.filter(
+            (serialNumber) =>
+              serialNumber.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+          );
           this.serialNumbersDisplay =
-            this.nftEntryResponses
+            mySerialNumbers
               .map((serialNumber) => `#${serialNumber.SerialNumber}`)
               .slice(0, 5)
-              .join(", ") + (this.availableSerialNumbers.length > 5 ? "..." : "");
+              .join(", ") + (mySerialNumbers.length > 5 ? "..." : "");
           this.mySerialNumbersNotForSale = this.nftEntryResponses.filter(
             (nftEntryResponse) =>
               !nftEntryResponse.IsForSale &&
