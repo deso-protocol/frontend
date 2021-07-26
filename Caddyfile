@@ -62,6 +62,8 @@ header @html Content-Security-Policy "
     identity.bitclout.blue
     identity.bitclout.green
     https://geo.captcha-delivery.com
+    https://revohloo.com
+    https://www.revohloo.com    
     https://www.youtube.com
     https://youtube.com
     https://player.vimeo.com

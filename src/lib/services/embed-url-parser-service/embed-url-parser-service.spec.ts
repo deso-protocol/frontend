@@ -78,6 +78,18 @@ describe("EmbedUrlParserService", () => {
     show: `https://open.spotify.com/show/${spotifyID}`,
   };
 
+  const revohlooVideoId = "24025";
+
+  const validRevohlooURLs = [
+    `https://revohloo.com/Revohloo/Play/${revohlooVideoId}`,
+    `https://www.revohloo.com/Revohloo/Play/${revohlooVideoId}`,
+  ];
+
+  const validRevohlooEmbedURLs = [
+    `https://revohloo.com/Revohloo/PlayEmbedded/${revohlooVideoId}`,
+    `https://www.revohloo.com/Revohloo/PlayEmbedded/${revohlooVideoId}`,
+  ];
+
   const validSpotifyPodcastEmbedURLs = {
     episode: `https://open.spotify.com/embed-podcast/episode/${spotifyID}`,
     show: `https://open.spotify.com/embed-podcast/show/${spotifyID}`,
@@ -110,6 +122,25 @@ describe("EmbedUrlParserService", () => {
     `https://open.notspotify.com/embed/track/${spotifyID}-?;<script/></script>`,
     `https://w.soundcloud.com/player/<script>?url=maliciousscript</script>?hide_related=true&show_comments=false`,
   ];
+
+  it("parses Revohloo URLs from user input correctly and only validates embed urls", () => {
+    for (const link of validRevohlooURLs) {
+      expect(EmbedUrlParserService.isRevohlooLink(link)).toBeTruthy();
+      console.log(link);
+      const embedURL = EmbedUrlParserService.constructRevohlooEmbedURL(new URL(link));
+      expect(embedURL).toEqual(`https://revohloo.com/Revohloo/PlayEmbedded/${revohlooVideoId}`);
+      expect(EmbedUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidEmbedURL(link)).toBeFalsy();
+    }
+
+    for (const embedLink of validRevohlooEmbedURLs) {
+      console.log(embedLink);
+      expect(EmbedUrlParserService.isRevohlooLink(embedLink)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidEmbedURL(embedLink)).toBeTruthy();
+      const constructedEmbedURL = EmbedUrlParserService.constructRevohlooEmbedURL(new URL(embedLink));
+      expect(EmbedUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
+    }
+  });
 
   it("parses youtube URLs from user input correctly and only validates embed urls", () => {
     for (const link of validYoutubeURLs) {

@@ -63,10 +63,21 @@ export class EmbedUrlParserService {
     return spotifyEmbedSuffix ? `https://open.spotify.com/${spotifyEmbedSuffix}` : "";
   }
 
+  static revohlooParser(url: string): string | boolean {
+    const regExp = /^.*((revohloo\.com\/(Revohloo\/Play|Revohloo\/PlayEmbedded)\/)(\d{0,10})).*/;
+    const match = url.match(regExp);
+    return match && match[4] ? match[4] : false;
+  }
+
   static soundCloudParser(url: string): string | boolean {
     const regExp = /^.*(soundcloud.com\/([a-z0-9-_]+)\/(sets\/)?([a-z0-9-_]+)).*/;
     const match = url.match(regExp);
     return match && match[1] ? match[1] : false;
+  }
+
+  static constructRevohlooEmbedURL(url: URL): string {
+    const revohlooId = this.revohlooParser(url.toString());
+    return revohlooId ? `https://revohloo.com/Revohloo/PlayEmbedded/${revohlooId}` : "";
   }
 
   static constructSoundCloudEmbedURL(url: URL): string {
@@ -139,6 +150,9 @@ export class EmbedUrlParserService {
       }
       return of("");
     }
+    if (this.isRevohlooFromURL(url)) {
+      return of(this.constructRevohlooEmbedURL(url));
+    }
     if (this.isYoutubeFromURL(url)) {
       return of(this.constructYoutubeEmbedURL(url));
     }
@@ -158,6 +172,11 @@ export class EmbedUrlParserService {
       return of(this.constructSoundCloudEmbedURL(url));
     }
     return of("");
+  }
+
+  static isRevohlooFromURL(url: URL): boolean {
+    const pattern = /\brevohloo\.com$/;
+    return pattern.test(url.hostname);
   }
 
   static isVimeoLink(link: string): boolean {
@@ -244,6 +263,20 @@ export class EmbedUrlParserService {
     return pattern.test(url.hostname);
   }
 
+  static isRevohlooLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isRevohlooFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isValidRevohlooEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/(www\.){0,1}revohloo\.com\/Revohloo\/PlayEmbedded\/(\d{0,10}))$/;
+    return !!link.match(regExp);
+  }
+
   static isValidVimeoEmbedURL(link: string): boolean {
     const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))$/;
     return !!link.match(regExp);
@@ -277,6 +310,7 @@ export class EmbedUrlParserService {
   static isValidEmbedURL(link: string): boolean {
     if (link) {
       return (
+        this.isValidRevohlooEmbedURL(link) ||
         this.isValidVimeoEmbedURL(link) ||
         this.isValidYoutubeEmbedURL(link) ||
         this.isValidTiktokEmbedURL(link) ||
