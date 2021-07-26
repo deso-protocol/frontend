@@ -35,7 +35,7 @@
   </div>
 
   <!-- Results Dropdown -->
-  <div class="w-100 search-bar__results-dropdown" *ngIf="searchText != '' && (creators.length > 0 || loading)">
+  <div class="w-100 search-bar__results-dropdown" *ngIf="searchText != '' && (creators.length > 0 || loading || showCloutavista)">
     <div *ngIf="loading" class="d-flex justify-content-center fs-15px fc-muted p-5px">Loading...</div>
     <div *ngIf="!loading && creators.length > 0" class="fs-15px">
       <div
@@ -70,6 +70,17 @@
         </div>
         <div class="fc-muted" *ngIf="creator.CoinPriceBitCloutNanos">~{{ globalVars.nanosToUSD(creator.CoinPriceBitCloutNanos, 2) }}</div>
       </div>
+    </div>
+    <!-- Search Cloutavista -->
+    <div class="main cloutavista-button" *ngIf="showCloutavista">
+      <a index=-2 [ngClass]="{'search-bar__selected-color': 'Cloutavista' == creatorSelected }"
+        (mouseover)="_handleMouseOver('Cloutavista', -2)" (mouseout)="_handleMouseOut('Cloutavista', -2)"
+        href="https://www.cloutavista.com/bitclout/posts?text={{searchText}}" target="_blank">
+        <div class="search-bar__selected-color" ></div>
+        <p target="_blank"
+          href="https://www.cloutavista.com/bitclout/posts?text={{searchText}}"><i class="fas fa-external-link-alt"
+            aria-hidden="true"></i> Search on Cloutavista </p>
+      </a>
     </div>
   </div>
 </div>

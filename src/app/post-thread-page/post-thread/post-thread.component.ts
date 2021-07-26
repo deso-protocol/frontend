@@ -42,7 +42,6 @@ export class PostThreadComponent {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
   }
 
   _rerenderThread() {
@@ -307,6 +306,7 @@ export class PostThreadComponent {
         }
         // Set current post
         this.currentPost = res.PostFound;
+        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
       },
       (err) => {
         // TODO: post threads: rollbar

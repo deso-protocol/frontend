@@ -60,6 +60,7 @@ export class TrendsComponent implements OnInit {
     this.activeRightTabOption = rightTabOption;
     this.selectedOptionWidth = rightTabOption.width + "px";
     this.loading = true;
+    this.infiniteScroller.reset();
     this.datasource.adapter.reset().then(() => (this.loading = false));
   }
 
