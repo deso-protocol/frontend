@@ -16,7 +16,7 @@ import { Title } from "@angular/platform-browser";
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   static GLOBAL_TAB = "Global";
   static FOLLOWING_TAB = "Following";
-  static SHOWCASE_TAB = "Showcase";
+  static SHOWCASE_TAB = "⚡Showcase⚡";
   static TABS = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
   static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
