@@ -50,12 +50,12 @@
 
       <div class="p-15px"></div>
       <left-bar-button
-        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
+        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
         [queryParams]="{ 'nftTab': 'my_bids', 'tab': 'nfts' }"
         [buttonLabel]="'My NFT Bids'"
       ></left-bar-button>
       <left-bar-button
-        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
+        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
         [queryParams]="{ 'nftTab': 'my_gallery', 'tab': 'nfts' }"
         [buttonLabel]="'My NFT Gallery'"
       ></left-bar-button>
