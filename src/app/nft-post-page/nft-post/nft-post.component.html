@@ -32,7 +32,7 @@
     <tab-selector [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
   </div>
   <div *ngIf="showBidsView">
-    <div *ngIf="!loading && !bids?.length" class="p-15px pb-0">
+    <div *ngIf="!loading && !bids?.length" class="fs-15px p-15px pb-0">
       There are no bids yet.
     </div>
     <div *ngIf="!loading && bids?.length">

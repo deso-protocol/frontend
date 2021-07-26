@@ -71,13 +71,13 @@
   <div class="d-flex align-items-center">
     <button
       class="btn btn-primary font-weight-bold fs-15px br-12px"
-      style="height: 36px; width: 175px; line-height: 15px"
+      style="height: 36px; width: 180px; line-height: 15px"
       (click)="createAuction()"
       [disabled]="creatingAuction || createAuctionDisabled()"
     >
       {{ creatingAuction ? "Creating Auction" : "Create auction" }}
     </button>
-    <div *ngIf="creatingAuction" class="pl-15px"> {{ auctionCounter }} of {{ auctionTotal }} auctions created</div>
+    <div *ngIf="creatingAuction" class="pl-15px fs-15px"> {{ auctionCounter }} of {{ auctionTotal }} auctions created</div>
   </div>
 
 

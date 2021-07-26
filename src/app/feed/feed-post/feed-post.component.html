@@ -427,12 +427,14 @@
   </div>
 
   <div
-    class="p-15px fs-15px pb-0 w-100 background-color-grey" *ngIf="showNFTDetails && post.IsNFT"
+    *ngIf="showNFTDetails && post.IsNFT"
+    class="p-15px fs-15px w-100 background-color-grey"
     [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : '' }"
     [ngClass]="{ 'feed-post__blue-border': showLeftSelectedBorder }"
   >
     <div
-      class="d-flex justify-content-between align-items-center" style="line-height: 24px" [ngClass]="{ 'pb-15px': !showExpandedNFTDetails || (!highBid && !lowBid) }">
+      class="d-flex justify-content-between align-items-center"
+    >
       <div>
         <span *ngIf="showAvailableSerialNumbers"> {{ serialNumbersDisplay }}&nbsp;</span>
         <span *ngIf="!showAvailableSerialNumbers"><b>{{ post.NumNFTCopiesForSale }} of {{ post.NumNFTCopies }} available&nbsp;</b></span>
@@ -470,12 +472,12 @@
       </div>
       <div>
     </div>
-    <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)">
-      <div style="line-height: 24px;" *ngIf="highBid">
-        Highest: {{ highBid / 1e9 }} $CLOUT ~{{ globalVars.nanosToUSD(highBid, 2) }}
+    <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)" [ngClass]="{'pt-15px': globalVars.isMobile()}">
+      <div *ngIf="highBid">
+        Highest: {{ highBid / 1e9 }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
       </div>
-      <div class="pt-5px" style="line-height: 24px;" *ngIf="lowBid">
-        From: {{ lowBid / 1e9 }} $CLOUT ~{{ globalVars.nanosToUSD(lowBid, 2) }}
+      <div *ngIf="lowBid">
+        From: {{ lowBid / 1e9 }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
       </div>
     </div>
   </div>

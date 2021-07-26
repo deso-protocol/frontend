@@ -154,7 +154,7 @@
     <div class="fs-15px">
       <div class="font-weight-500">Service Fee</div>
     </div>
-    <div>
+    <div class="fs-15px">
       {{ globalVars.nanosToBitClout(createNFTFeeNanos * numCopies) }} CLOUT
       <span class="text-grey7">(~{{globalVars.nanosToUSD(createNFTFeeNanos * numCopies, 2)}})</span>
     </div>
@@ -164,7 +164,7 @@
     [disabled]="hasUnreasonableRoyalties() || hasUnreasonableNumCopies() || hasUnreasonableMinBidAmount() || minting"
     (click)="mintNft()"
     class="btn btn-primary font-weight-bold fs-15px br-12px mb-15px"
-    style="height: 36px; width: 130px; line-height: 15px"
+    style="height: 36px; width: 135px; line-height: 15px"
   >
     {{ minting ? "Minting NFT" : "Mint NFT" }}
   </button>

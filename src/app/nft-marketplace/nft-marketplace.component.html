@@ -1,32 +1,17 @@
 <div *ngFor="let nftCollection of nftCollections">
-  <div class="br-12px m-15px border border-color-grey">
+  <div class="br-12px m-15px">
     <feed-post
       [post]="nftCollection.PostEntryResponse"
       [includePaddingOnPost]="true"
       [showReplyingToContent]="nftCollection.PostEntryResponse.parentPost"
       [parentPost]="nftCollection.PostEntryResponse.parentPost"
       [contentShouldLinkToThread]="true"
+      [showNFTDetails]="true"
+      [showExpandedNFTDetails]="true"
+      [setBorder]="true"
+      [nftCollectionHighBid]="nftCollection.HighestBidAmountNanos"
+      [nftCollectionLowBid]="nftCollection.LowestBidAmountNanos"
     ></feed-post>
-    <div class="fs-15px p-15px background-color-grey" style="border-radius: 0px 0px 12px 12px;">
-      <div class="d-flex align-items-center justify-content-between">
-        <div class="d-flex flex-wrap">
-          <div class="font-weight-bold">10 of 10 available</div>
-          <div class="d-flex align-items-center">
-            <span class="d-none d-lg-block">&nbsp;|&nbsp;</span>
-            <i class="fas fa-lock"></i>&nbsp;Unlockable content
-          </div>
-        </div>
-        <button
-          class="btn btn-primary font-weight-bold br-8px fs-13px"
-          style="min-width: 120px">
-          Place a bid
-        </button>
-      </div>
-      <div class="pt-10px">Highest:</div>
-      <div class="pt-5px pb-10px">From:</div>
-      <div class="cursor-pointer" style="text-decoration: underline">Active bids</div>
-    </div>
-  </div>
 </div>
 
 <simple-center-loader *ngIf="loading"></simple-center-loader>

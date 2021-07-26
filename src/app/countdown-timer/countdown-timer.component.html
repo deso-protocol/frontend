@@ -9,14 +9,14 @@
   (click)="navigateToURL()"
 >
   <div
-    class="px-15px py-5px d-flex"
+    class="px-15px py-5px d-flex align-items-center"
     [ngClass]="{
       'justify-content-between': !(justifyLeft || justifyAround),
       'justify-left': justifyLeft,
       'justify-around': justifyAround
     }">
     <div>🎉</div>
-    <div class="d-flex">
+    <div [ngClass]="{'d-flex': !globalVars.isMobile()}">
       <div>
         {{ timerText }}&nbsp;&nbsp;
       </div>

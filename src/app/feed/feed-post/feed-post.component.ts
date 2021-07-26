@@ -91,6 +91,8 @@ export class FeedPostComponent implements OnInit {
   @Input() cardStyle: boolean = false;
 
   @Input() showReplyingTo = false;
+  @Input() nftCollectionHighBid = 0;
+  @Input() nftCollectionLowBid = 0;
 
   @Input() showNFTDetails = false;
   @Input() showExpandedNFTDetails = false;
@@ -186,6 +188,9 @@ export class FeedPostComponent implements OnInit {
           this.lowBid = _.minBy(this.nftEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
         });
     }
+
+    this.highBid = this.nftCollectionHighBid;
+    this.lowBid = this.nftCollectionHighBid;
   }
 
   onPostClicked(event) {
