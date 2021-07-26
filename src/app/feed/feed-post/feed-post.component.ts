@@ -464,6 +464,10 @@ export class FeedPostComponent implements OnInit {
     return EmbedUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
 
+  getEmbedWidth(): string {
+    return EmbedUrlParserService.getEmbedWidth(this.postContent.PostExtraData["EmbedVideoURL"]);
+  }
+
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.
   setNegativeMargins(link: string, globalVars: GlobalVarsService) {
     return globalVars.isMobile() && EmbedUrlParserService.isVimeoLink(link);
