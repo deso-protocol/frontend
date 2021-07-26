@@ -80,6 +80,7 @@ export class FeedPostComponent implements OnInit {
   @Input() showThreadConnectionLine = false;
   @Input() showLeftSelectedBorder = false;
   @Input() showInteractionDetails = false;
+  @Input() isQuotedContent: boolean = false;
 
   @Input() showDropdown = true;
   @Input() hideFollowLink = false;

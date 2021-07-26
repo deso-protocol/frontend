@@ -14,7 +14,7 @@
      - market-feed component -->
 <div
   class="d-flex flex-column"
-  [ngClass]="{'br-12px': setBorder || cardStyle , 'm-15px': cardStyle, 'js-feed-post-hover': hoverable, 'border': setBorder || cardStyle }">
+  [ngClass]="{'br-12px': setBorder || cardStyle , 'm-15px': cardStyle, 'js-feed-post-hover': hoverable, 'border': setBorder || cardStyle, 'feed-post__quoted-content': hoverable && isQuotedContent }">
   <div class="w-100">
     <div
       *ngIf="post.IsHidden"
@@ -264,18 +264,21 @@
 
             <div
               *ngIf="quotedContent && showQuotedContent"
-              class="border border-color-grey p-15px br-12px"
-              [ngClass]="{ 'feed-post__quoted-content': hoverable }"
+              class="br-12px"
+              [ngClass]="{ 'border': !cardStyle }"
             >
               <feed-post
                 *ngIf="quotedContent && showQuotedContent"
                 [post]="quotedContent"
-                [includePaddingOnPost]="false"
+                [isQuotedContent]="true"
+                [includePaddingOnPost]="true"
                 [showIconRow]="false"
                 [showDropdown]="false"
                 [showQuotedContent]="false"
                 [contentShouldLinkToThread]="contentShouldLinkToThread"
-                [hoverable]="false"
+                [hoverable]="hoverable"
+                [showNFTDetails]="showNFTDetails && !postContent.IsNFT"
+                [cardStyle]="cardStyle"
               ></feed-post>
             </div>
 
@@ -433,14 +436,15 @@
     [ngClass]="{ 'feed-post__blue-border': showLeftSelectedBorder }"
   >
     <div
-      class="d-flex justify-content-between align-items-center"
+      class="d-flex justify-content-between"
+      [ngClass]="{'flex-column': isQuotedContent, 'align-items-start': isQuotedContent, 'align-items-center': !isQuotedContent }"
     >
       <div>
         <span *ngIf="showAvailableSerialNumbers"> {{ serialNumbersDisplay }}&nbsp;</span>
         <span *ngIf="!showAvailableSerialNumbers"><b>{{ post.NumNFTCopiesForSale }} of {{ post.NumNFTCopies }} available&nbsp;</b></span>
         <span *ngIf="post.HasUnlockable" class="d-lg-inline-block d-none">|&nbsp;</span>
         <span *ngIf="post.HasUnlockable"
-              class="cursor-pointer d-lg-inline-block d-block"
+              class="cursor-pointer d-lg-inline-block d-block mt-5px"
               (click)="tooltip.toggle(); toggleShowUnlockableContent()"
               matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
               [matTooltip]="unlockableTooltip"
@@ -458,6 +462,7 @@
       </div>
         <button
           class="btn btn-primary font-weight-bold br-8px fs-13px"
+          [ngClass]="{ 'mt-15px': isQuotedContent }"
           (click)="openPlaceBidModal($event)"
           *ngIf="showPlaceABid"
         >
