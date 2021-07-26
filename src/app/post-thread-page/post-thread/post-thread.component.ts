@@ -22,6 +22,9 @@ export class PostThreadComponent {
   commentLimit = 20;
   datasource: IDatasource<IAdapter<any>>;
 
+  @Input() hideHeader: boolean = false;
+  @Input() hideCurrentPost: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,

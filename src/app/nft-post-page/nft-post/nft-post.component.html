@@ -19,12 +19,10 @@
     <feed-post
       [post]="nftPost"
       [includePaddingOnPost]="true"
-      [contentShouldLinkToThread]="true"
       [isParentPostInThread]="true"
       [showLeftSelectedBorder]="true"
       [showInteractionDetails]="true"
       [blocked]="isPostBlocked(nftPost)"
-      [nftBidData]="nftBidData"
       [showNFTDetails]="true"
       [showExpandedNFTDetails]="true"
       (userBlocked)="afterUserBlocked($event)"
@@ -222,6 +220,9 @@
 
 
     </div>
+  </div>
+  <div *ngIf="activeTab === NftPostComponent.THREAD">
+    <post-thread [hideHeader]="true" [hideCurrentPost]="!nftPost.ParentStakeID"></post-thread>
   </div>
   <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
   <div class="global__bottom-bar-mobile-height"></div>

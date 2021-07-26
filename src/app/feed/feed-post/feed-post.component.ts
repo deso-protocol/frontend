@@ -1,12 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import {
-  BackendApiService,
-  NFTBidData,
-  NFTBidEntryResponse,
-  NFTEntryResponse,
-  PostEntryResponse,
-} from "../../backend-api.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { AppRoutingModule } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
@@ -20,6 +14,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import * as _ from "lodash";
 import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
+import { SharedDialogs } from "../../../lib/shared-dialogs";
 
 @Component({
   selector: "feed-post",
@@ -96,51 +91,10 @@ export class FeedPostComponent implements OnInit {
   @Input() cardStyle: boolean = false;
 
   @Input() showReplyingTo = false;
-  @Input()
-  get nftBidData(): NFTBidData {
-    return this._nftBidData;
-  }
 
-  set nftBidData(bidData: NFTBidData) {
-    this._nftBidData = bidData;
-    if (bidData && bidData.NFTEntryResponses) {
-      bidData.NFTEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
-      this.decryptableNFTEntryResponses = bidData.NFTEntryResponses.filter(
-        (sn) =>
-          sn.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
-          sn.EncryptedUnlockableText &&
-          sn.LastOwnerPublicKeyBase58Check
-      );
-      if (this.decryptableNFTEntryResponses.length) {
-        this.backendApi
-          .DecryptUnlockableTexts(this.globalVars.loggedInUser?.PublicKeyBase58Check, this.decryptableNFTEntryResponses)
-          .subscribe((res) => (this.decryptableNFTEntryResponses = res));
-      }
-      this.availableSerialNumbers = bidData.NFTEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
-      this.serialNumbersDisplay =
-        bidData.NFTEntryResponses.map((serialNumber) => `#${serialNumber.SerialNumber}`)
-          .slice(0, 5)
-          .join(", ") + (this.availableSerialNumbers.length > 5 ? "..." : "");
-      this.mySerialNumbersNotForSale = bidData.NFTEntryResponses.filter(
-        (nftEntryResponse) =>
-          !nftEntryResponse.IsForSale &&
-          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
-      );
-      this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
-        (nftEntryResponse) =>
-          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
-      );
-      // this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-      if (bidData.NFTEntryResponses?.length) {
-        this.highBid = _.maxBy(bidData.NFTEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;
-        this.lowBid = _.minBy(bidData.NFTEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
-      }
-    }
-  }
   @Input() showNFTDetails = false;
   @Input() showExpandedNFTDetails = false;
   @Input() setBorder = false;
-  @Input() linkToNFT = false;
   @Input() showAvailableSerialNumbers = false;
 
   // If the post is shown in a modal, this is used to hide the modal on post click.
@@ -167,14 +121,14 @@ export class FeedPostComponent implements OnInit {
   _blocked: boolean;
   constructedEmbedURL: any;
 
-  showPlaceABid: boolean = true;
+  showPlaceABid: boolean;
   highBid: number;
   lowBid: number;
   availableSerialNumbers: NFTEntryResponse[];
   myAvailableSerialNumbers: NFTEntryResponse[];
   mySerialNumbersNotForSale: NFTEntryResponse[];
   serialNumbersDisplay: string;
-  _nftBidData: NFTBidData;
+  nftEntryResponses: NFTEntryResponse[];
   decryptableNFTEntryResponses: NFTEntryResponse[];
 
   unlockableTooltip =
@@ -189,6 +143,49 @@ export class FeedPostComponent implements OnInit {
       this.post.RecloutCount = 0;
     }
     this.setEmbedURLForPostContent();
+    if (this.postContent.IsNFT && !this.nftEntryResponses?.length) {
+      this.backendApi
+        .GetNFTEntriesForNFTPost(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          this.postContent.PostHashHex
+        )
+        .subscribe((res) => {
+          this.nftEntryResponses = res.NFTEntryResponses;
+          this.decryptableNFTEntryResponses = this.nftEntryResponses.filter(
+            (sn) =>
+              sn.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+              sn.EncryptedUnlockableText &&
+              sn.LastOwnerPublicKeyBase58Check
+          );
+          if (this.decryptableNFTEntryResponses.length) {
+            this.backendApi
+              .DecryptUnlockableTexts(
+                this.globalVars.loggedInUser?.PublicKeyBase58Check,
+                this.decryptableNFTEntryResponses
+              )
+              .subscribe((res) => (this.decryptableNFTEntryResponses = res));
+          }
+          this.availableSerialNumbers = this.nftEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
+          this.serialNumbersDisplay =
+            this.nftEntryResponses
+              .map((serialNumber) => `#${serialNumber.SerialNumber}`)
+              .slice(0, 5)
+              .join(", ") + (this.availableSerialNumbers.length > 5 ? "..." : "");
+          this.mySerialNumbersNotForSale = this.nftEntryResponses.filter(
+            (nftEntryResponse) =>
+              !nftEntryResponse.IsForSale &&
+              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+          );
+          this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
+            (nftEntryResponse) =>
+              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+          );
+          this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
+          this.highBid = _.maxBy(this.nftEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;
+          this.lowBid = _.minBy(this.nftEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
+        });
+    }
   }
 
   onPostClicked(event) {
@@ -213,7 +210,8 @@ export class FeedPostComponent implements OnInit {
       return true;
     }
 
-    if (this.linkToNFT) {
+    // If the post is an NFT, we go to the NFT post page instead of the post thread page.
+    if (this.postContent.IsNFT) {
       this.router.navigate(["/" + this.globalVars.RouteNames.NFT, this.postContent.PostHashHex], {
         queryParamsHandling: "merge",
       });
@@ -541,6 +539,10 @@ export class FeedPostComponent implements OnInit {
   }
 
   openPlaceBidModal(event: any) {
+    if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
+      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "place a bid");
+      return;
+    }
     event.stopPropagation();
     this.modalService.show(PlaceBidModalComponent, {
       class: "modal-dialog-centered modal-lg",

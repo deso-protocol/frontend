@@ -44,14 +44,21 @@ export class NftPostComponent {
 
   NftPostComponent = NftPostComponent;
 
-  activeTab = NftPostComponent.ALL_BIDS;
+  activeTab = NftPostComponent.THREAD;
 
   static ALL_BIDS = "All Bids";
   static MY_BIDS = "My Bids";
   static MY_AUCTIONS = "My Auctions";
   static OWNERS = "Owners";
+  static THREAD = "Thread";
 
-  tabs = [NftPostComponent.ALL_BIDS, NftPostComponent.MY_BIDS, NftPostComponent.MY_AUCTIONS, NftPostComponent.OWNERS];
+  tabs = [
+    NftPostComponent.THREAD,
+    NftPostComponent.ALL_BIDS,
+    NftPostComponent.MY_BIDS,
+    NftPostComponent.MY_AUCTIONS,
+    NftPostComponent.OWNERS,
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -165,8 +172,8 @@ export class NftPostComponent {
             this.tabs = this.tabs.filter((t) => t !== NftPostComponent.MY_BIDS);
           }
           this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-          this.highBid = this.getMaxBidAmountFromList(this.nftBidData.BidEntryResponses);
-          this.lowBid = this.getMinBidAmountFromList(this.nftBidData.BidEntryResponses);
+          this.highBid = _.maxBy(this.nftBidData.NFTEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;
+          this.lowBid = _.minBy(this.nftBidData.NFTEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
           this.owners = this.nftBidData.NFTEntryResponses;
         },
         (err) => {
@@ -179,14 +186,6 @@ export class NftPostComponent {
         this.loading = false;
         this.refreshingBids = false;
       });
-  }
-
-  getMaxBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
-    return _.maxBy(bidEntryResponses, (bidEntryResponse) => bidEntryResponse.BidAmountNanos)?.BidAmountNanos;
-  }
-
-  getMinBidAmountFromList(bidEntryResponses: NFTBidEntryResponse[]): number {
-    return _.minBy(bidEntryResponses, (bidEntryResponses) => bidEntryResponses.BidAmountNanos)?.BidAmountNanos;
   }
 
   _setStateFromActivatedRoute(route) {
@@ -270,13 +269,15 @@ export class NftPostComponent {
 
   _handleTabClick(tabName: string): void {
     this.activeTab = tabName;
-    this.showBidsView = tabName !== NftPostComponent.OWNERS;
+    this.showBidsView =
+      tabName === NftPostComponent.ALL_BIDS ||
+      tabName === NftPostComponent.MY_BIDS ||
+      tabName === NftPostComponent.MY_AUCTIONS;
     if (this.activeTab === NftPostComponent.ALL_BIDS) {
       this.bids = this.nftBidData.BidEntryResponses.filter(
         (bidEntry) => bidEntry.BidAmountNanos <= bidEntry.BidderBalanceNanos
       );
     } else if (this.activeTab === NftPostComponent.MY_BIDS) {
-      console.log(this.bids);
       this.bids = this.nftBidData.BidEntryResponses.filter(
         (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
       );
@@ -288,8 +289,11 @@ export class NftPostComponent {
           bidEntry.BidAmountNanos <= bidEntry.BidderBalanceNanos
       );
     }
-    this.sortBids(this.sortByField, this.sortDescending);
-    this.sortNftEntries(this.sortByField, this.sortDescending);
+    if (this.showBidsView) {
+      this.sortBids(this.sortByField, this.sortDescending);
+    } else if (this.activeTab === NftPostComponent.OWNERS) {
+      this.sortNftEntries(this.sortByField, this.sortDescending);
+    }
   }
 
   static SORT_BY_PRICE = "PRICE";

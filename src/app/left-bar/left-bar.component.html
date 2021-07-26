@@ -48,16 +48,18 @@
         [buttonLabel]="'Buy $CLOUT'"
       ></left-bar-button>
 
-      <div class="p-15px"></div>
+      <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
       <left-bar-button
         [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
         [queryParams]="{ 'nftTab': 'my_bids', 'tab': 'nfts' }"
         [buttonLabel]="'My NFT Bids'"
+        *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
       ></left-bar-button>
       <left-bar-button
         [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
         [queryParams]="{ 'nftTab': 'my_gallery', 'tab': 'nfts' }"
         [buttonLabel]="'My NFT Gallery'"
+        *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
       ></left-bar-button>
 
       <div class="p-15px"></div>

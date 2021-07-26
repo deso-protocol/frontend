@@ -64,6 +64,7 @@ export class BackendRoutes {
   static RoutePathGetNFTShowcase = "/api/v0/get-nft-showcase";
   static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
+  static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -908,6 +909,14 @@ export class BackendApiService {
 
   GetNFTCollectionSummary(endpoint: string, ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNFTCollectionSummary, {
+      ReaderPublicKeyBase58Check,
+      PostHashHex,
+    });
+  }
+
+  GetNFTEntriesForNFTPost(endpoint: string, ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTEntriesForPostHash, {
+      ReaderPublicKeyBase58Check,
       PostHashHex,
     });
   }

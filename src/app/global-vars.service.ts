@@ -16,8 +16,8 @@ import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithun
 import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
-import {FeedComponent} from "./feed/feed.component";
-import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
+import { FeedComponent } from "./feed/feed.component";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",

@@ -89,11 +89,9 @@
         [post]="nftEntry.PostEntryResponse"
         [afterCommentCreatedCallback]="_prependComment.bind(this, nftEntry.PostEntryResponse, index)"
         [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
-        [nftBidData]="nftEntry"
         [showNFTDetails]="true"
         [showExpandedNFTDetails]="false"
         [setBorder]="true"
-        [linkToNFT]="true"
         [showAvailableSerialNumbers]="true"
         [cardStyle]="true"
         (userBlocked)="userBlocked()"
@@ -142,7 +140,6 @@
             [afterCommentCreatedCallback]="_prependComment.bind(this, nftEntry.PostEntryResponse, index)"
             [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
             [setBorder]="true"
-            [linkToNFT]="true"
             (userBlocked)="userBlocked()"
           ></feed-post>
         </div>
