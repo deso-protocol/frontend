@@ -222,12 +222,10 @@
               class="roboto-regular mt-1"
               [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
               style="
-            overflow-wrap: anywhere;
-            -ms-word-break: break-all;
-            word-break: break-all;
-            word-break: break-word;
-            outline: none;
-          "
+                overflow-wrap: anywhere;
+                -ms-word-break: break-all;
+                word-break: break-all;
+                outline: none;"
               [innerHTML]="postContent.Body | sanitizeAndAutoLink"
               queryParamsHandling="merge"
             ></div>
@@ -252,9 +250,9 @@
                 [height]="getEmbedHeight()"
                 class="feed-post__image"
                 [ngStyle]="{
-              'margin-top': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
-              'margin-bottom': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : ''
-            }"
+                  'margin-top': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
+                  'margin-bottom': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : ''
+                  }"
                 [src]="constructedEmbedURL | sanitizeEmbed"
                 frameborder="0"
                 allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer; encrypted-media;"
