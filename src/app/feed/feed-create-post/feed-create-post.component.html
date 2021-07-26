@@ -54,6 +54,7 @@
           [src]="constructedEmbedURL | sanitizeEmbed"
           frameborder="0"
           allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
+          [ngStyle]="{'max-width': EmbedUrlParserService.isValidTiktokEmbedURL(constructedEmbedURL) ? '325px' : '' }"
           allowfullscreen
         ></iframe>
       </div>
