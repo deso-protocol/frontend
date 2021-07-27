@@ -129,6 +129,10 @@ export class NftPostComponent {
         }
         // Set current post
         this.nftPost = res.PostFound;
+        if (!this.nftPost.CommentCount && !this.nftPost.ParentStakeID) {
+          this.tabs = this.tabs.filter((tab) => tab !== NftPostComponent.THREAD);
+          this.activeTab = this.activeTab === NftPostComponent.THREAD ? this.tabs[0] : this.activeTab;
+        }
         this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on BitClout");
         this.refreshBidData();
       },
@@ -164,12 +168,14 @@ export class NftPostComponent {
           );
           if (!this.myAvailableSerialNumbers.length) {
             this.tabs = this.tabs.filter((t) => t !== NftPostComponent.MY_AUCTIONS);
+            this.activeTab = this.activeTab === NftPostComponent.MY_AUCTIONS ? this.tabs[0] : this.activeTab;
           }
           this.myBids = this.nftBidData.BidEntryResponses.filter(
             (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
           );
           if (!this.myBids.length) {
             this.tabs = this.tabs.filter((t) => t !== NftPostComponent.MY_BIDS);
+            this.activeTab = this.activeTab === NftPostComponent.MY_BIDS ? this.tabs[0] : this.activeTab;
           }
           this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
           this.highBid = _.maxBy(this.nftBidData.NFTEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;

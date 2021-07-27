@@ -94,11 +94,14 @@ export class FeedPostComponent implements OnInit {
   @Input() showReplyingTo = false;
   @Input() nftCollectionHighBid = 0;
   @Input() nftCollectionLowBid = 0;
+  @Input() isForSaleOnly: boolean = false;
 
   @Input() showNFTDetails = false;
   @Input() showExpandedNFTDetails = false;
   @Input() setBorder = false;
   @Input() showAvailableSerialNumbers = false;
+
+  @Input() profilePublicKeyBase58Check: string = "";
 
   // If the post is shown in a modal, this is used to hide the modal on post click.
   @Input() containerModalRef: any = null;
@@ -155,6 +158,7 @@ export class FeedPostComponent implements OnInit {
         )
         .subscribe((res) => {
           this.nftEntryResponses = res.NFTEntryResponses;
+          this.nftEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
           this.decryptableNFTEntryResponses = this.nftEntryResponses.filter(
             (sn) =>
               sn.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
@@ -170,15 +174,16 @@ export class FeedPostComponent implements OnInit {
               .subscribe((res) => (this.decryptableNFTEntryResponses = res));
           }
           this.availableSerialNumbers = this.nftEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
-          const mySerialNumbers = this.nftEntryResponses.filter(
+          const profileSerialNumbers = this.nftEntryResponses.filter(
             (serialNumber) =>
-              serialNumber.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+              serialNumber.OwnerPublicKeyBase58Check === this.profilePublicKeyBase58Check &&
+              (!this.isForSaleOnly || serialNumber.IsForSale)
           );
           this.serialNumbersDisplay =
-            mySerialNumbers
+            profileSerialNumbers
               .map((serialNumber) => `#${serialNumber.SerialNumber}`)
               .slice(0, 5)
-              .join(", ") + (mySerialNumbers.length > 5 ? "..." : "");
+              .join(", ") + (profileSerialNumbers.length > 5 ? "..." : "");
           this.mySerialNumbersNotForSale = this.nftEntryResponses.filter(
             (nftEntryResponse) =>
               !nftEntryResponse.IsForSale &&

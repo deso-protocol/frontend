@@ -15,8 +15,12 @@
 
       <!-- Availability metadata -->
       <div class="fs-15px" *ngIf="!loading">
-        <div *ngIf="highBid != null && lowBid != null">Highest bid {{ highBid / 1e9 }} CLOUT | From {{ lowBid / 1e9 }} CLOUT</div>
-        <div [ngClass]="{'pt-15px': availableSerialNumbers.length }">
+        <div *ngIf="highBid != null && lowBid != null" class="pb-15px">
+          <span class="d-lg-inline-block d-block">Highest bid {{ globalVars.nanosToBitClout(highBid) }} CLOUT</span>
+          <span class="d-lg-inline-block d-none"> | </span>
+          <span class="d-lg-inline-block d-block">From {{ globalVars.nanosToBitClout(lowBid) }} CLOUT</span>
+        </div>
+        <div>
           <span class="pr-20px">
             {{ availableCount }} of {{ post.NumNFTCopies }} available
           </span>
@@ -120,17 +124,17 @@
 
 
     <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
-      <div class="fs-15px text-grey5 pb-15px cursor-pointer">
+      <div class="fs-15px text-grey5 cursor-pointer">
        Select an edition to start bidding
       </div>
       <div class="container fs-15px pb-30px px-0px">
-        <div class="row no-gutters p-15px create-nft-auction-row-border"
+        <div class="row no-gutters py-15px create-nft-auction-row-border"
              style="opacity: 50%">
           <div class="col-2 mb-0px text-align-center">
             Serial Number
           </div>
           <div class="col-5 mb-0px text-align-center">
-            Last Price
+            Highest Bid
           </div>
           <div class="col-5 mb-0px text-align-center">
             Min Bid Amount
@@ -142,12 +146,12 @@
                (click)="selectSerialNumber(nft.SerialNumber)"
           >
             <div class="col-2 mb-0px d-flex align-items-center">
-              <span class="lh-15px">&nbsp;#{{nft.SerialNumber}}</span>
+              <span class="lh-15px">#{{nft.SerialNumber}}</span>
             </div>
             <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
               <div>
-                <div class="d-lg-inline-block d-block">{{globalVars.nanosToBitClout(nft.LastAcceptedBidAmountNanos)}} CLOUT </div>
-                <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)}})</div>
+                <div class="d-lg-inline-block d-block">{{globalVars.nanosToBitClout(nft.HighestBidAmountNanos)}} CLOUT </div>
+                <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2)}})</div>
               </div>
             </div>
             <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
@@ -161,7 +165,7 @@
       </div>
     </div>
     <div *ngIf="!biddableSerialNumbers.length" class="fs-15px">
-      There are no serial numbers available for you to bid on. 
+      There are no serial numbers available for you to bid on.
     </div>
   </div>
 </div>

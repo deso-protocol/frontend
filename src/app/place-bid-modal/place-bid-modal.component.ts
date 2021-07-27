@@ -60,8 +60,6 @@ export class PlaceBidModalComponent implements OnInit {
           (nftEntryResponse) =>
             nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
         );
-        this.highBid = res.NFTCollectionResponse.HighestBidAmountNanos;
-        this.lowBid = res.NFTCollectionResponse.LowestBidAmountNanos;
       })
       .add(() => (this.loading = false));
   }
@@ -147,6 +145,9 @@ export class PlaceBidModalComponent implements OnInit {
     if (!this.saveSelectionDisabled) {
       this.isSelectingSerialNumber = false;
       this.showSelectedSerialNumbers = true;
+      this.highBid = this.selectedSerialNumber.HighestBidAmountNanos;
+      this.lowBid = this.selectedSerialNumber.LowestBidAmountNanos;
+      this.setErrors();
     }
   }
 
@@ -161,6 +162,8 @@ export class PlaceBidModalComponent implements OnInit {
     }
     this.selectedSerialNumber = null;
     this.showSelectedSerialNumbers = false;
+    this.highBid = null;
+    this.lowBid = null;
     this.setErrors();
   }
 

@@ -122,7 +122,6 @@ import { UploadDirective } from "./directives/upload.directive";
 import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 import { MintNftModalComponent } from "./mint-nft-modal/mint-nft-modal.component";
 import { CreateNftAuctionModalComponent } from "./create-nft-auction-modal/create-nft-auction-modal.component";
-import { AuctionCreatedModalComponent } from "./auction-created-modal/auction-created-modal.component";
 import { BidPlacedModalComponent } from "./bid-placed-modal/bid-placed-modal.component";
 import { PlaceBidModalComponent } from "./place-bid-modal/place-bid-modal.component";
 import { NftSoldModalComponent } from "./nft-sold-modal/nft-sold-modal.component";
@@ -134,7 +133,7 @@ import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { NftPostComponent } from "./nft-post-page/nft-post/nft-post.component";
 import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-profile-nfts/creator-profile-nfts.component";
 import { NftDropMgrComponent } from "./nft-drop-mgr/nft-drop-mgr.component";
-import { NftMarketplaceComponent } from "./nft-marketplace/nft-marketplace.component";
+import { NftShowcaseComponent } from "./nft-showcase/nft-showcase.component";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -247,7 +246,6 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     SanitizeQRCodePipe,
     MintNftModalComponent,
     CreateNftAuctionModalComponent,
-    AuctionCreatedModalComponent,
     BidPlacedModalComponent,
     PlaceBidModalComponent,
     NftSoldModalComponent,
@@ -259,7 +257,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     NftPostComponent,
     NftDropMgrComponent,
     CreatorProfileNftsComponent,
-    NftMarketplaceComponent,
+    NftShowcaseComponent,
   ],
   imports: [
     BrowserModule,

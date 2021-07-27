@@ -271,10 +271,12 @@ export class NotificationsListComponent {
       const actorName = actor.Username !== "anonymous" ? userProfile.Username : txnMeta.TransactorPublicKeyBase58Check;
       result.post = this.postMap[postHash];
       result.action = nftBidMeta.BidAmountNanos
-        ? `${actorName} submitted a bid of ${this.globalVars.nanosToBitClout(
+        ? `${actorName} bid ${this.globalVars.nanosToBitClout(
             nftBidMeta.BidAmountNanos,
             2
-          )} for serial number ${nftBidMeta.SerialNumber}`
+          )} CLOUT (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
+            nftBidMeta.SerialNumber
+          }`
         : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber}`;
       result.icon = nftBidMeta.BidAmountNanos ? "fas fa-dollar-sign fc-blue" : "fas fa-dollar-sign fc-red";
       result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };

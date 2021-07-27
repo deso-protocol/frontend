@@ -879,7 +879,7 @@ export class GlobalVarsService {
     );
   }
 
-  exploreMarketplace(bsModalRef: BsModalRef, modalService: BsModalService): void {
+  exploreShowcase(bsModalRef: BsModalRef, modalService: BsModalService): void {
     if (modalService) {
       modalService.setDismissReason("explore");
     }

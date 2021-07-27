@@ -46,10 +46,7 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   navigateToURL(): void {
-    this.router.navigate(
-      ["/" + this.globalVars.RouteNames.BROWSE],
-      {queryParams: {feedTab: 'Showcase'}}
-    );
+    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], { queryParams: { feedTab: "Showcase" } });
   }
 
   setDaysDiff(start: number): void {

@@ -14,6 +14,6 @@ export class BidPlacedModalComponent {
   ) {}
 
   onExploreClicked() {
-    this.globalVars.exploreMarketplace(this.bsModalRef, this.modalService);
+    this.globalVars.exploreShowcase(this.bsModalRef, this.modalService);
   }
 }

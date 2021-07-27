@@ -94,6 +94,8 @@
         [setBorder]="true"
         [showAvailableSerialNumbers]="true"
         [cardStyle]="true"
+        [profilePublicKeyBase58Check]="profile.PublicKeyBase58Check"
+        [isForSaleOnly]="activeTab === CreatorProfileNftsComponent.FOR_SALE"
         (userBlocked)="userBlocked()"
       ></feed-post>
       <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse">

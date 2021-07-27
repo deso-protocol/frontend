@@ -1,16 +1,16 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { Component, Input } from "@angular/core";
+import { BsModalRef } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../global-vars.service";
-import { AuctionCreatedModalComponent } from "../auction-created-modal/auction-created-modal.component";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { concatMap, filter, last, map, take } from "rxjs/operators";
+import { concatMap, last, map } from "rxjs/operators";
 import { of } from "rxjs";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "create-nft-auction",
   templateUrl: "./create-nft-auction-modal.component.html",
 })
-export class CreateNftAuctionModalComponent implements OnInit {
+export class CreateNftAuctionModalComponent {
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
@@ -24,11 +24,9 @@ export class CreateNftAuctionModalComponent implements OnInit {
   constructor(
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
-    private modalService: BsModalService,
-    public bsModalRef: BsModalRef
+    public bsModalRef: BsModalRef,
+    private router: Router
   ) {}
-
-  ngOnInit(): void {}
 
   updateMinBidAmountUSD(cloutAmount) {
     this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2);
@@ -71,21 +69,8 @@ export class CreateNftAuctionModalComponent implements OnInit {
       .pipe(last((res) => res))
       .subscribe(
         (res) => {
-          // Hide this modal and open the next one.
+          this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.post.PostHashHex]);
           this.bsModalRef.hide();
-          const modalRef = this.modalService.show(AuctionCreatedModalComponent, {
-            class: "modal-dialog-centered modal-sm",
-          });
-          modalRef.onHide
-            .pipe(
-              take(1),
-              filter((reason) => {
-                return reason !== "explore";
-              })
-            )
-            .subscribe(() => {
-              window.location.reload();
-            });
         },
         (err) => {
           console.error(err);

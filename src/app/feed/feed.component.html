@@ -37,7 +37,7 @@
   <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
 
   <countdown-timer *ngIf="nextNFTShowcaseTime"
-    [timerText]="'The next NFT showcase drops in...'" 
+    [timerText]="'The next NFT showcase drops in...'"
     [fontWeight]="500"
     [timerEnd]="nextNFTShowcaseTime"></countdown-timer>
 
@@ -82,7 +82,7 @@
   </div>
 
   <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
-    <nft-marketplace></nft-marketplace>
+    <nft-showcase></nft-showcase>
   </div>
 
   <div

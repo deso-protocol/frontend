@@ -239,7 +239,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   updateNFTTabParam(event): void {
     // Update query params to reflect current tab
     const urlTree = this.router.createUrlTree([], {
-      queryParams: { nftTab: this.nftTabInverseMap[event] || "for_sale" },
+      queryParams: { nftTab: this.nftTabInverseMap[event] || "for_sale", tab: "nfts" },
       queryParamsHandling: "merge",
       preserveFragment: true,
     });
@@ -269,10 +269,10 @@ export class CreatorProfileNftsComponent implements OnInit {
             this.globalVars.defaultFeeRateNanosPerKB
           )
           .subscribe(
-            (res) => {
-              this.datasource.adapter.remove({
+            () => {
+              return this.datasource.adapter.remove({
                 predicate: ({ data }) => {
-                  const currBidEntry = data as any;
+                  const currBidEntry = (data as any) as NFTBidEntryResponse;
                   return (
                     currBidEntry.SerialNumber === bidEntry.SerialNumber &&
                     currBidEntry.BidAmountNanos === currBidEntry.BidAmountNanos &&
