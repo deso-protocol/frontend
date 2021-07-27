@@ -6,6 +6,7 @@ import { map } from "rxjs/operators";
 import { FollowChangeObservableResult } from "../../../lib/observable-results/follow-change-observable-result";
 import { AppRoutingModule } from "../../app-routing.module";
 import { FollowButtonComponent } from "../../follow-button/follow-button.component";
+import { Router } from "@angular/router";
 @Component({
   selector: "creator-profile-top-card",
   templateUrl: "./creator-profile-top-card.component.html",
@@ -30,7 +31,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   refreshFollowingBeingCalled = false;
   publicKeyIsCopied = false;
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {
     this.globalVars = _globalVars;
 
     // If the user follows/unfollows this user, update the follower count
@@ -60,6 +61,13 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   block() {
     this.userBlocked.emit(this.profile.PublicKeyBase58Check);
+  }
+
+  messageUser(): void {
+    this.router.navigate(["/" + this.globalVars.RouteNames.INBOX_PREFIX], {
+      queryParams: { username: this.profile.Username },
+      queryParamsHandling: "merge",
+    });
   }
 
   coinsInCirculation() {

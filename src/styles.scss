@@ -2307,6 +2307,10 @@ input {
   color: var(--text);
 }
 
+.border {
+  border: 1px solid var(--border) !important;
+}
+
 .cloutavista-button {
   position: sticky;
   bottom: 0px;
