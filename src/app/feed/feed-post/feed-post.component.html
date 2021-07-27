@@ -467,7 +467,7 @@
           Place a bid
         </button>
       </div>
-      <div *ngIf="showUnlockableContent" class="pb-15px">
+      <div *ngIf="showUnlockableContent">
         <div *ngFor="let nftEntry of decryptableNFTEntryResponses" class="d-flex flex-row">
           <div>#{{ nftEntry.SerialNumber }}:&nbsp;</div>
           <div [innerHTML]="nftEntry.DecryptedUnlockableText | sanitizeAndAutoLink"></div>
