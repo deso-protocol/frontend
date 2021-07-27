@@ -890,4 +890,10 @@ export class GlobalVarsService {
       queryParams: { feedTab: FeedComponent.SHOWCASE_TAB },
     });
   }
+
+  resentVerifyEmail = false;
+  resendVerifyEmail() {
+    this.backendApi.ResendVerifyEmail(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe();
+    this.resentVerifyEmail = true;
+  }
 }

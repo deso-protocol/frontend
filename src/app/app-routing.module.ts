@@ -27,6 +27,7 @@ import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.comp
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
+import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -66,6 +67,7 @@ class RouteNames {
   public static DIAMONDS = "diamonds";
   public static TRENDS = "trends";
   public static NFT = "nft";
+  public static VERIFY_EMAIL = "verify-email"
 }
 
 const routes: Routes = [
@@ -109,6 +111,7 @@ const routes: Routes = [
   { path: RouteNames.USER_PREFIX + "/:username/:tradeType", component: TradeCreatorPageComponent, pathMatch: "full" },
   { path: RouteNames.GET_STARTER_BITCLOUT, component: GetStarterBitcloutPageComponent, pathMatch: "full" },
   { path: RouteNames.TRENDS, component: TrendsPageComponent, pathMatch: "full" },
+  { path: RouteNames.VERIFY_EMAIL + "/:publicKey/:emailHash", component: VerifyEmailComponent, pathMatch: "full" },
   // This NotFound route must be the last one as it catches all paths that were not matched above.
   { path: "**", component: NotFoundPageComponent, pathMatch: "full" },
 ];

@@ -300,4 +300,8 @@ export class EmbedUrlParserService {
     }
     return 315;
   }
+
+  static getEmbedWidth(link: string): string {
+    return this.isValidTiktokEmbedURL(link) ? "325px" : "";
+  }
 }

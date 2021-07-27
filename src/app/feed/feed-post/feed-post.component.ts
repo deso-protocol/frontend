@@ -225,15 +225,21 @@ export class FeedPostComponent implements OnInit {
       return true;
     }
 
-    // If the post is an NFT, we go to the NFT post page instead of the post thread page.
-    if (this.postContent.IsNFT) {
-      this.router.navigate(["/" + this.globalVars.RouteNames.NFT, this.postContent.PostHashHex], {
-        queryParamsHandling: "merge",
-      });
-      return;
+    const route = this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS;
+
+    // identify ctrl+click (or) cmd+clik and opens feed in new tab
+    if (event.ctrlKey) {
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree(["/" + route, this.postContent.PostHashHex], {
+          queryParamsHandling: "merge",
+        })
+      );
+      window.open(url, "_blank");
+      // don't navigate after new tab is opened
+      return true;
     }
 
-    this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex], {
+    this.router.navigate(["/" + route, this.postContent.PostHashHex], {
       queryParamsHandling: "merge",
     });
   }
@@ -539,6 +545,10 @@ export class FeedPostComponent implements OnInit {
 
   getEmbedHeight(): number {
     return EmbedUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
+  }
+
+  getEmbedWidth(): string {
+    return EmbedUrlParserService.getEmbedWidth(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
 
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.

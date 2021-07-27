@@ -122,6 +122,7 @@
           </a>
         </div>
 
+
         <div
           class="feed-post__container d-flex justify-content-left w-100"
           [ngClass]="{
@@ -155,6 +156,7 @@
               >
                 {{ postContent.ProfileEntryResponse.Username }}
               </a>
+
 
               <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
             <i class="fas fa-check-circle fa-md align-middle"></i>
@@ -251,7 +253,8 @@
                 class="feed-post__image"
                 [ngStyle]="{
                   'margin-top': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
-                  'margin-bottom': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : ''
+                  'margin-bottom': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
+                  'max-width': getEmbedWidth(constructedEmbedURL)
                   }"
                 [src]="constructedEmbedURL | sanitizeEmbed"
                 frameborder="0"
