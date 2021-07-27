@@ -224,6 +224,7 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   _handleFilesInput(files: FileList) {
+    this.showImageLink = false;
     const fileToUpload = files.item(0);
     this._handleFileInput(fileToUpload);
   }

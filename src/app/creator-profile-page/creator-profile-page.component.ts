@@ -1,7 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 
 @Component({
-  selector: "app-creator-profile-page",
+  selector: "creator-profile-page",
   templateUrl: "./creator-profile-page.component.html",
   styleUrls: ["./creator-profile-page.component.scss"],
 })
