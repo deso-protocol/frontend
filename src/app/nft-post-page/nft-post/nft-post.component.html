@@ -26,6 +26,7 @@
       [showNFTDetails]="true"
       [showExpandedNFTDetails]="true"
       [contentShouldLinkToThread]="true"
+      [afterCommentCreatedCallback]="incrementCommentCounter.bind(this)"
       (userBlocked)="afterUserBlocked($event)"
     ></feed-post>
   </div>
@@ -233,8 +234,15 @@
 
     </div>
   </div>
-  <div *ngIf="activeTab === NftPostComponent.THREAD">
-    <post-thread [hideHeader]="true" [hideCurrentPost]="!nftPost.ParentStakeID"></post-thread>
+  <div *ngIf="!loading && activeTab === NftPostComponent.THREAD && !reloadingThread">
+    <div *ngIf="!nftPost.CommentCount && !nftPost.ParentStakeID" class="p-15px">
+      There are no comments on this NFT yet.
+    </div>
+    <post-thread
+      [hideHeader]="true"
+      [hideCurrentPost]="!nftPost.ParentStakeID"
+      *ngIf="nftPost.CommentCount || nftPost.ParentStakeID"
+    ></post-thread>
   </div>
   <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
   <div class="global__bottom-bar-mobile-height"></div>
