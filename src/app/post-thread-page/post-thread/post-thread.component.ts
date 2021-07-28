@@ -22,6 +22,9 @@ export class PostThreadComponent {
   commentLimit = 20;
   datasource: IDatasource<IAdapter<any>>;
 
+  @Input() hideHeader: boolean = false;
+  @Input() hideCurrentPost: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -39,9 +42,6 @@ export class PostThreadComponent {
     this.route.params.subscribe((params) => {
       this._setStateFromActivatedRoute(route);
     });
-  }
-
-  ngOnInit() {
   }
 
   _rerenderThread() {

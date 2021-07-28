@@ -108,7 +108,9 @@ export class NotificationsListComponent {
       ProfilePic: "/assets/img/default_profile_pic.png",
     };
     const userProfile = this.profileMap[userPublicKeyBase58Check];
-    const actorName = actor.IsVerified ? `<b>${actor.Username}</b><span class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>` : `<b>${actor.Username}</b>`;
+    const actorName = actor.IsVerified
+      ? `<b>${actor.Username}</b><span class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>`
+      : `<b>${actor.Username}</b>`;
 
     // We map everything to an easy-to-use object so the template
     // doesn't have to do any hard work
@@ -119,6 +121,7 @@ export class NotificationsListComponent {
       post: null, // the post involved
       parentPost: null, // the parent post involved
       link: AppRoutingModule.profilePath(actor.Username),
+      bidInfo: null,
     };
 
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
@@ -256,6 +259,43 @@ export class NotificationsListComponent {
       result.action = `${actorName} ${action} <i class="text-grey7">${postText}</i>`;
       result.link = AppRoutingModule.postPath(postHash);
 
+      return result;
+    } else if (txnMeta.TxnType == "NFT_BID") {
+      const nftBidMeta = txnMeta.NFTBidTxindexMetadata;
+      if (!nftBidMeta) {
+        return null;
+      }
+
+      const postHash = nftBidMeta.NFTPostHashHex;
+
+      const actorName = actor.Username !== "anonymous" ? userProfile.Username : txnMeta.TransactorPublicKeyBase58Check;
+      result.post = this.postMap[postHash];
+      result.action = nftBidMeta.BidAmountNanos
+        ? `${actorName} bid ${this.globalVars.nanosToBitClout(
+            nftBidMeta.BidAmountNanos,
+            2
+          )} CLOUT (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
+            nftBidMeta.SerialNumber
+          }`
+        : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber}`;
+      result.icon = nftBidMeta.BidAmountNanos ? "fas fa-dollar-sign fc-blue" : "fas fa-dollar-sign fc-red";
+      result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
+      return result;
+    } else if (txnMeta.TxnType == "ACCEPT_NFT_BID") {
+      const acceptNFTBidMeta = txnMeta.AcceptNFTBidTxindexMetadata;
+      if (!acceptNFTBidMeta) {
+        return null;
+      }
+
+      const postHash = acceptNFTBidMeta.NFTPostHashHex;
+
+      result.post = this.postMap[postHash];
+      result.action = `${userProfile.Username} accepted your bid of ${this.globalVars.nanosToBitClout(
+        acceptNFTBidMeta.BidAmountNanos,
+        2
+      )} for serial number ${acceptNFTBidMeta.SerialNumber}`;
+      result.icon = "fas fa-trophy";
+      result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
       return result;
     }
 

@@ -1,0 +1,15 @@
+<div app-theme class="nft-modal-container p-15px">
+  <nft-modal-header [header]="'NFT Sold'" [bsModalRef]="bsModalRef"></nft-modal-header>
+
+  <div class="pb-15px fs-15px">
+    Your sell was successful.
+  </div>
+
+  <div
+    class="font-weight-500 fs-15px pb-15px cursor-pointer"
+    style="text-decoration-line: underline"
+    (click)="viewMyNFTs()"
+  >
+    View my NFTs
+  </div>
+</div>

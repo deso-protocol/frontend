@@ -1,0 +1,151 @@
+<!-- Posts -->
+<simple-center-loader [height]="200" *ngIf="isLoading && datasource.adapter.isLoading"></simple-center-loader>
+<div
+  class="fs-15px text-grey5 font-weight-bold d-flex flex-column px-15px pt-15px"
+  *ngIf="!isLoading"
+>
+  <div>
+    <select
+      class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer"
+      (ngModelChange)="onActiveTabChange($event)"
+      [ngModel]="activeTab"
+    >
+      <option
+        *ngFor="let option of tabs"
+        [value]="option"
+        class="fs-15px text-grey5 font-weight-bold"
+      >
+        {{ option }}
+      </option>
+    </select>
+  </div>
+</div>
+<div
+  *ngIf="
+    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.FOR_SALE
+  "
+  class="p-15px"
+>
+  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No NFTs for sale right now.</span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} is on the platform but doesn't have any NFTs for sale.</span>
+    </ng-template>
+  </div>
+</div>
+<div
+  *ngIf="
+    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.MY_GALLERY
+  "
+  class="p-15px"
+>
+  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No NFTs purchased yet.</span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} has not acquired any NFTs yet.</span>
+    </ng-template>
+  </div>
+</div>
+<div
+  *ngIf="
+    !showProfileAsReserved && !isLoading && !myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS
+  "
+  class="p-15px"
+>
+  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No bids yet.</span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} is on the platform but hasn't bid on NFTs yet.</span>
+    </ng-template>
+  </div>
+</div>
+<div *ngIf="!showProfileAsReserved && (!isLoading || loadingNewSelection)">
+  <div class="p-15px pb-0">
+    <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && myBids?.length">
+      Your current outstanding bids
+    </div>
+    <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_GALLERY && nftResponse?.length">
+      NFTs purchased by @{{ profile.Username }}
+    </div>
+    <div *ngIf="activeTab === CreatorProfileNftsComponent.FOR_SALE && nftResponse?.length">
+      NFTs that @{{ profile.Username }} is currently selling
+    </div>
+  </div>
+  <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
+    <div
+      #uiScroll *uiScroll="let nftEntry of datasource; let index = index"
+      [ngClass]="{
+      'br-12px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+      'p-10px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+      'background-color-grey': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+      'm-15px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+      'border': activeTab === CreatorProfileNftsComponent.MY_BIDS
+      }"
+    >
+      <feed-post
+        *ngIf="activeTab !== CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse.ProfileEntryResponse"
+        [contentShouldLinkToThread]="true"
+        [includePaddingOnPost]="true"
+        [post]="nftEntry.PostEntryResponse"
+        [afterCommentCreatedCallback]="_prependComment.bind(this, nftEntry.PostEntryResponse, index)"
+        [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+        [showNFTDetails]="true"
+        [showExpandedNFTDetails]="false"
+        [setBorder]="true"
+        [showAvailableSerialNumbers]="true"
+        [cardStyle]="true"
+        [profilePublicKeyBase58Check]="profile.PublicKeyBase58Check"
+        [isForSaleOnly]="activeTab === CreatorProfileNftsComponent.FOR_SALE"
+        (userBlocked)="userBlocked()"
+      ></feed-post>
+      <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse">
+        <div class="row no-gutters w-100 pb-5px justify-content-start">
+          <div class="d-flex align-items-center mb-0 p-5px pr-10px">
+            <i
+              class="fas fa-trash text-danger cursor-pointer fs-18px"
+              (click)="cancelBid(nftEntry)"
+            ></i>
+          </div>
+          <div
+            class="d-flex align-items-center justify-content-center mb-0 p-5px fs-12px"
+          >Serial #{{ nftEntry.SerialNumber }}</div>
+          <div
+            class="d-flex align-items-center mb-0 justify-content-around p-5px fs-12px"
+          >
+            Bid:
+            <span class="px-5px">{{ globalVars.nanosToBitClout(nftEntry.BidAmountNanos, 5) }} $CLOUT</span>
+            <span>(~{{ globalVars.nanosToUSD(nftEntry.BidAmountNanos, 2) }})</span>
+          </div>
+        </div>
+        <div class="fs-12px p-5px pt-0px">
+          <div
+            class="fc-red"
+            *ngIf="nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos">
+            There is a higher bid of {{ globalVars.nanosToBitClout(nftEntry.HighestBidAmountNanos) }} CLOUT (~{{ globalVars.nanosToUSD(nftEntry.HighestBidAmountNanos, 2) }}) for this serial number.
+          </div>
+          <div
+            class="fc-green"
+            *ngIf="nftEntry.HighestBidAmountNanos === nftEntry.BidAmountNanos && nftEntry.BidderBalanceNanos >= nftEntry.BidAmountNanos">
+            Your bid is the highest one for this serial number.
+          </div>
+          <div class="fs-12px fc-red" *ngIf="nftEntry.BidderBalanceNanos < nftEntry.BidAmountNanos" [ngClass]="{ 'pt-5px': nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos }">
+            You do not have enough CLOUT for this bid. Place a lower bid or <a class="link--unstyled" style="text-decoration: underline" [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT">buy CLOUT</a>.
+          </div>
+        </div>
+
+        <div class="br-12px background-color-white">
+          <feed-post
+            *ngIf="nftEntry.PostEntryResponse.ProfileEntryResponse"
+            [contentShouldLinkToThread]="true"
+            [includePaddingOnPost]="true"
+            [post]="nftEntry.PostEntryResponse"
+            [afterCommentCreatedCallback]="_prependComment.bind(this, nftEntry.PostEntryResponse, index)"
+            [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+            [setBorder]="true"
+            (userBlocked)="userBlocked()"
+          ></feed-post>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

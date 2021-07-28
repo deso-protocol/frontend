@@ -1,0 +1,31 @@
+<div app-theme class="nft-modal-container p-15px">
+  <nft-modal-header [header]="'Add unlockable content'" [bsModalRef]="bsModalRef"></nft-modal-header>
+
+  <div class="fs-15px pt-15px pb-30px text-grey5">
+    This NFT includes unlockable content. Enter it below.
+  </div>
+
+    <textarea
+      class="fs-15px lh-18px br-8px form-control mb-30px"
+      style="width: 100%; padding: 10px"
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="5"
+      [(ngModel)]="unlockableText"
+      #autosize="cdkTextareaAutosize"
+      placeholder="Enter URL, code to redeem, link, etc... "
+    ></textarea>
+
+  <div class="d-flex align-items-center mb-15px">
+    <button
+      class="btn btn-primary font-weight-bold fs-15px br-8px"
+      style="height: 36px; width: 100px; line-height: 15px"
+      [ngStyle]="{ 'width': sellingNFT ? '140px' : '100px' }"
+      (click)="sellNFT()"
+      [disabled]="addDisabled"
+    >
+      {{ sellingNFT ? "Selling NFTs" : "Add" }}
+    </button>
+    <div *ngIf="sellingNFT" class="pl-15px">{{ sellNFTCounter }} of {{ sellNFTTotal }} sold</div>
+
+  </div>
+</div>
