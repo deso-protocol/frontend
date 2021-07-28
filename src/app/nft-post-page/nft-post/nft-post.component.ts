@@ -129,10 +129,6 @@ export class NftPostComponent {
         }
         // Set current post
         this.nftPost = res.PostFound;
-        if (!this.nftPost.CommentCount && !this.nftPost.ParentStakeID) {
-          this.tabs = this.tabs.filter((tab) => tab !== NftPostComponent.THREAD);
-          this.activeTab = this.activeTab === NftPostComponent.THREAD ? this.tabs[0] : this.activeTab;
-        }
         this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on BitClout");
         this.refreshBidData();
       },
@@ -446,5 +442,12 @@ export class NftPostComponent {
           );
       }
     });
+  }
+
+  reloadingThread = false;
+  incrementCommentCounter(): void {
+    this.nftPost.CommentCount += 1;
+    setTimeout(() => (this.reloadingThread = true));
+    setTimeout(() => (this.reloadingThread = false));
   }
 }

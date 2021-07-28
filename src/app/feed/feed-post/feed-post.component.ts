@@ -196,8 +196,8 @@ export class FeedPostComponent implements OnInit {
               nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
           );
           this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-          this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos").HighestBidAmountNanos;
-          this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos").HighestBidAmountNanos;
+          this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
+          this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
         });
     }
   }
