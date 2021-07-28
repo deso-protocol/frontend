@@ -30,6 +30,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   selectedThread: any;
   fetchingMoreMessages: boolean = false;
   activeTab: string;
+  startingSearchText: string;
 
   // The contact to select by default, passed in via query param. Note: if the current user
   // doesn't have a conversation with the contact, these parameters do nothing.
@@ -58,6 +59,9 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       // Handle the tab click if the stored messages are from a different tab
       if (this.activeTab !== storedTab) {
         this._handleTabClick(this.activeTab);
+      }
+      if (params.username) {
+        this.startingSearchText = params.username;
       }
     });
   }

@@ -86,5 +86,6 @@ export class MessagesPageComponent {
     this.selectedThread = null;
     this.selectedThreadPublicKey = "";
     this.showThreadView = false;
+    this.router.navigate([], { queryParams: { username: null }, queryParamsHandling: "merge" });
   }
 }

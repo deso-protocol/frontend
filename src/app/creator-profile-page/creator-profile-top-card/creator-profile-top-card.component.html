@@ -17,13 +17,20 @@
       <a class="link--unstyled text-grey9 link--unstyled text-grey9" dropdownToggle>
         <i class="fas fa-ellipsis-h"></i>
       </a>
-      <div class="dropdown-menu dropdown-menu-right text-danger p-0" *dropdownMenu>
+      <div class="dropdown-menu dropdown-menu-right p-0 border background-color-light-grey fs-15px" *dropdownMenu>
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
         >
           <i class="fas fa-ban"></i>
           {{ globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? "Unblock" : "Block" }} User
+        </a>
+        <a
+          class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+          (click)="messageUser()"
+        >
+          <i class="fas fa-envelope"></i>
+          Message User
         </a>
       </div>
     </div>
