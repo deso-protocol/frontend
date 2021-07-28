@@ -27,7 +27,7 @@
   class="p-15px"
 >
   <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
-    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">Create an NFT.</span>
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No NFTs for sale right now.</span>
     <ng-template #elseMissingPostBlock>
       <span>@{{ profile.Username }} is on the platform but doesn't have any NFTs for sale.</span>
     </ng-template>
@@ -40,9 +40,9 @@
   class="p-15px"
 >
   <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
-    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">You have not purchased any NFTs.</span>
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No NFTs purchased yet.</span>
     <ng-template #elseMissingPostBlock>
-      <span>@{{ profile.Username }} is on the platform but has not acquired any NFTs.</span>
+      <span>@{{ profile.Username }} has not acquired any NFTs yet.</span>
     </ng-template>
   </div>
 </div>
@@ -53,7 +53,7 @@
   class="p-15px"
 >
   <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
-    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">Bid on an NFT.</span>
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No bids yet.</span>
     <ng-template #elseMissingPostBlock>
       <span>@{{ profile.Username }} is on the platform but hasn't bid on NFTs yet.</span>
     </ng-template>

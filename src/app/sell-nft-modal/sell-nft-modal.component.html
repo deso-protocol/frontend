@@ -67,22 +67,38 @@
     <div class="content fs-15px mb-30px py-5px formbg">
       <div class="row p-10px">
         <div class="col-6 m-0px">Selling Price</div>
-        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{globalVars.abbreviateNumber(sellingPrice, 3)}} $CLOUT
+        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
+          <div>
+            {{globalVars.abbreviateNumber(sellingPrice, 3)}} $CLOUT
+          </div>
+          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(sellingPrice*1e9, 2) }})</div>
         </div>
       </div>
       <div class="row px-10px pb-10px">
         <div class="col-6 m-0px">Earnings</div>
-        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{globalVars.abbreviateNumber(earnings, 3)}} $CLOUT
+        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
+          <div>
+            {{globalVars.abbreviateNumber(earnings, 3)}} $CLOUT
+          </div>
+          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(earnings*1e9, 2) }})</div>
         </div>
       </div>
       <div class="row px-10px pb-10px">
         <div class="col-6 m-0px">Creator royalty</div>
-        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{globalVars.abbreviateNumber(creatorRoyalty, 3)}} $CLOUT
+        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
+          <div>
+            {{globalVars.abbreviateNumber(creatorRoyalty, 3)}} $CLOUT
+          </div>
+          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(creatorRoyalty*1e9, 2) }})</div>
         </div>
       </div>
       <div class="row px-10px pb-10px">
         <div class="col-6 m-0px">Coin-holder royalty</div>
-        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">{{globalVars.abbreviateNumber(coinRoyalty, 3)}} $CLOUT
+        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
+          <div>
+            {{globalVars.abbreviateNumber(coinRoyalty, 3)}} $CLOUT
+          </div>
+          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(coinRoyalty*1e9, 2) }})</div>
         </div>
       </div>
     </div>

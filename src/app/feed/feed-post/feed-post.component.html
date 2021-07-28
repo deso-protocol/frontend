@@ -442,7 +442,12 @@
     >
       <div>
         <span *ngIf="showAvailableSerialNumbers"> {{ serialNumbersDisplay }}&nbsp;</span>
-        <span *ngIf="!showAvailableSerialNumbers"><b>{{ post.NumNFTCopiesForSale }} of {{ post.NumNFTCopies }} available&nbsp;</b></span>
+        <span *ngIf="!showAvailableSerialNumbers" class="cursor-pointer"
+            (click)="NFTMOfNTooltip.toggle(); toggleShowMOfNNFTTooltip()"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="mOfNNFTTooltip"
+            #NFTMOfNTooltip="matTooltip"
+        ><b>{{ post.NumNFTCopiesForSale }} of {{ post.NumNFTCopies }} available&nbsp;</b></span>
         <span *ngIf="post.HasUnlockable" class="d-lg-inline-block d-none">|&nbsp;</span>
         <span *ngIf="post.HasUnlockable"
               class="cursor-pointer d-lg-inline-block d-block mt-5px"
@@ -480,10 +485,10 @@
     </div>
     <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)" [ngClass]="{'pt-15px': globalVars.isMobile()}">
       <div *ngIf="highBid != null">
-        Highest: {{ globalVars.nanosToBitClout(highBid) }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
+        Highest: {{ globalVars.nanosToBitClout(highBid, 5) }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
       </div>
       <div *ngIf="lowBid != null">
-        From: {{ globalVars.nanosToBitClout(lowBid) }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
+        From: {{ globalVars.nanosToBitClout(lowBid, 5) }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
       </div>
     </div>
   </div>

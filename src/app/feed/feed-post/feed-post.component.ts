@@ -138,7 +138,9 @@ export class FeedPostComponent implements OnInit {
   decryptableNFTEntryResponses: NFTEntryResponse[];
 
   unlockableTooltip =
-    "This NFT will come with content that encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
+    "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
+  mOfNNFTTooltip =
+    "Each NFT can have multiple editions, each of which has its own unique serial number. This shows how many editions are currently on sale and how many there are in total. Generally, editions with lower serial numbers are more valuable.";
 
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
@@ -578,5 +580,9 @@ export class FeedPostComponent implements OnInit {
       return;
     }
     this.showUnlockableContent = !this.showUnlockableContent;
+  }
+  showmOfNNFTTooltip = false;
+  toggleShowMOfNNFTTooltip(): void {
+    this.showmOfNNFTTooltip = !this.showmOfNNFTTooltip;
   }
 }

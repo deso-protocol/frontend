@@ -25,7 +25,7 @@
   </div>
 
   <!-- Mobile BitClout Price -->
-  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-grey py-5px px-15px fs-12px">
+  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">
     <div>$CLOUT Price&nbsp;&nbsp;&nbsp;</div>
     <div>
       <span>~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
@@ -36,7 +36,7 @@
   <!-- Mobile email confirmation alert -->
   <div
     *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified"
-    class="d-flex border-bottom border-color-grey background-color-grey py-5px px-15px fs-12px"
+    class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
   >
     <div>Your email is not verified.&nbsp;&nbsp;&nbsp;</div>
     <div>

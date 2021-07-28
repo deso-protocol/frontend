@@ -38,7 +38,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   loadingNewSelection = false;
   static FOR_SALE = "For Sale";
   static MY_BIDS = "My Bids";
-  static MY_GALLERY = "My Gallery";
+  static MY_GALLERY = "Gallery";
   tabs = [CreatorProfileNftsComponent.FOR_SALE, CreatorProfileNftsComponent.MY_GALLERY];
   activeTab: string;
 

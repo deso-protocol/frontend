@@ -25,8 +25,8 @@ export class MintNftModalComponent {
   putOnSale: boolean = true;
   minBidAmountUSD: string = "0";
   minBidAmountCLOUT: number = 0;
-  creatorRoyaltyPercent: number;
-  coinRoyaltyPercent: number;
+  creatorRoyaltyPercent: number = 10;
+  coinRoyaltyPercent: number = 10;
   includeUnlockable: boolean = false;
   createNFTFeeNanos: number;
   maxCopiesPerNFT: number;

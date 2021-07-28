@@ -1,5 +1,5 @@
 <div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="isSelectingSerialNumber ? 'Select a serial number' : 'Place a bid'" [bsModalRef]="bsModalRef"></nft-modal-header>
+  <nft-modal-header [header]="isSelectingSerialNumber ? 'Select an edition' : 'Place a bid'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
@@ -16,27 +16,28 @@
       <!-- Availability metadata -->
       <div class="fs-15px" *ngIf="!loading">
         <div *ngIf="highBid != null && lowBid != null" class="pb-15px">
-          <span class="d-lg-inline-block d-block">Highest bid {{ globalVars.nanosToBitClout(highBid) }} CLOUT</span>
+          <span class="d-lg-inline-block d-block">Highest bid {{ globalVars.nanosToBitClout(highBid) }} CLOUT&nbsp;</span>
+          <span class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(highBid, 2)}})</span>
           <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
-          <span class="d-lg-inline-block d-block">From {{ globalVars.nanosToBitClout(lowBid) }} CLOUT</span>
+          <span class="d-lg-inline-block d-block">From {{ globalVars.nanosToBitClout(lowBid) }} CLOUT&nbsp;</span>
+          <span class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(lowBid, 2)}})</span>
         </div>
         <div class="pb-15px">
-          <span class="d-lg-inline-block d-block">Total Royalty {{ (post.NFTRoyaltyToCreatorBasisPoints + post.NFTRoyaltyToCoinBasisPoints) / 100 }}%</span>
-          <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
           <span class="d-lg-inline-block d-block">Creator Royalty {{ post.NFTRoyaltyToCreatorBasisPoints / 100 }}%</span>
           <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
-          <span class="d-lg-inline-block d-block">Creator Coin Royalty {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
+          <span class="d-lg-inline-block d-block">Coin-holder Royalty {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
         </div>
-        <div>
+        <div class="d-flex align-items-center">
+          <button
+            class="btn btn-primary font-weight-bold fs-15px mr-15px"
+            style="height: 36px; width: 190px; line-height: 15px"
+            (click)="isSelectingSerialNumber = placingBids ? false : true"
+          >
+            Select an Edition
+          </button>
           <span class="pr-20px">
             {{ availableCount }} of {{ post.NumNFTCopies }} available
           </span>
-          <span
-            class="font-weight-500 cursor-pointer d-lg-inline-block d-block"
-            style="text-decoration: underline"
-            (click)="isSelectingSerialNumber = placingBids ? false : true"
-          >
-          Select a serial number</span>
         </div>
         <div class="pt-15px d-flex justify-content-between align-items-center" *ngIf="showSelectedSerialNumbers">
           <div>
@@ -64,7 +65,7 @@
       </div>
 
       <!-- The bid -->
-      <div class="pb-30px font-weight-500">
+      <div class="pb-15px font-weight-500">
         <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
           <div>
             Your Bid
@@ -103,17 +104,6 @@
         </div>
       </div>
 
-      <!-- Summary data -->
-      <div class="fs-15px mb-15px formbg">
-        <div class="p-10px d-flex justify-content-between">
-          <div>Your balance</div>
-          <div>{{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }} $CLOUT</div>
-        </div>
-        <div class="px-10px pb-10px d-flex justify-content-between">
-          <div>Total bid amount</div>
-          <div>{{ bidAmountCLOUT }} $CLOUT</div>
-        </div>
-      </div>
       <div *ngIf="errors" class="text-danger" style="white-space: pre-line;">{{ errors }}</div>
       <div class="d-flex align-items-center mb-15px">
         <button
@@ -131,8 +121,8 @@
 
 
     <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
-      <div class="fs-15px text-grey5 cursor-pointer">
-       Select an edition to start bidding
+      <div class="fs-15px text-grey5">
+       An NFT can have multiple editions, each with its own unique serial number.
       </div>
       <div class="container fs-15px pb-30px px-0px">
         <div class="row no-gutters py-15px create-nft-auction-row-border"

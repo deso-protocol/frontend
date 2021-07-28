@@ -1,18 +1,18 @@
 <div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="'Collectible Settings'" [bsModalRef]="bsModalRef"></nft-modal-header>
+  <nft-modal-header [header]="'NFT Settings'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
-  <!-- Type of Collectible -->
+  <!-- Type of NFT -->
   <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
-    <div class="pr-5px">Type of Collectible</div>
+    <div class="pr-5px">Type of NFT</div>
     <div class="flex-grow-1 nft-modal-separator"></div>
   </div>
-  <div class="py-30px font-weight-500">
+  <div class="pt-30px font-weight-500">
     <div class="d-flex align-items-center fs-15px">
       <input [(ngModel)]="copiesRadioValue"
              [value]="IS_SINGLE_COPY"
              type="radio"
              name="test"
-             class="mr-15px nft-modal-radio-size">
+             class="mr-15px nft-modal-radio-size cursor-pointer">
       Single
     </div>
     <div class="d-flex justify-content-between align-items-center fs-15px">
@@ -21,14 +21,14 @@
                [value]="IS_MULTIPLE_COPIES"
                type="radio"
                name="test"
-               class="mr-15px nft-modal-radio-size">
-        Multiple copies
+               class="mr-15px nft-modal-radio-size cursor-pointer">
+        Multiple editions
       </div>
       <input
          [(ngModel)]="numCopies"
          *ngIf="copiesRadioValue === IS_MULTIPLE_COPIES"
          class="form-control fs-15px text-right d-inline-block"
-         style="max-width: 190px"
+         style="max-width: 150px"
          type="number"
          min=1 [max]="maxCopiesPerNFT"
          placeholder="1"/>
@@ -36,7 +36,7 @@
       <input
          *ngIf="copiesRadioValue === IS_SINGLE_COPY"
          class="form-control fs-15px text-right d-inline-block"
-         style="max-width: 190px; background-color: #e9ecef !important;"
+         style="max-width: 150px; background-color: #e9ecef !important;"
          placeholder="1"
          disabled/>
     </div>
@@ -44,6 +44,9 @@
          class="fs-15px fc-red pt-15px">
       The number of NFT copies must be between 1 and {{ maxCopiesPerNFT }}.
     </div>
+  </div>
+  <div class="fs-15px text-grey7 mt-15px mb-30px">
+      An NFT can have multiple editions, each with its own unique serial number.
   </div>
 
   <!-- Sale Status and Price -->
@@ -103,7 +106,7 @@
     <div class="pr-5px">Royalties</div>
     <div class="flex-grow-1 nft-modal-separator"></div>
   </div>
-  <div class="pt-20px pb-30px font-weight-500">
+  <div class="pt-15px pb-30px font-weight-500">
     <div class="d-flex justify-content-between align-items-center fs-15px pt-10px">
       <div>
         % Creator Royalty
@@ -111,7 +114,7 @@
       <input
          [(ngModel)]="creatorRoyaltyPercent"
          class="form-control fs-15px text-right d-inline-block"
-         style="max-width: 190px"
+         style="max-width: 150px"
          type="number"
          min="0" max="100"
          placeholder="0%"/>
@@ -123,13 +126,17 @@
       <input
          [(ngModel)]="coinRoyaltyPercent"
          class="form-control fs-15px text-right d-inline-block"
-         style="max-width: 190px; background-color: white"
+         style="max-width: 150px; background-color: white"
          type="number"
          min="0" max="100"
          placeholder="0%"/>
     </div>
     <div *ngIf="hasUnreasonableRoyalties()" class="fs-15px fc-red pt-15px">
       The sum of creator and coin-holder royalties must be less than 100.
+    </div>
+    <div class="fs-15px text-grey7 mt-15px" style="font-weight: 400">
+      On every sale, including resale, a customizable percentage goes to the you, the creator, and to your
+      coin-holders.
     </div>
   </div>
 
@@ -138,24 +145,24 @@
     <div class="pr-5px">Unlockable Content</div>
     <div class="flex-grow-1 nft-modal-separator"></div>
   </div>
-  <div class="d-flex justify-content-between align-items-center py-30px">
+  <div class="d-flex justify-content-between align-items-center mt-15px">
     <div class="fs-15px">
       <div class="font-weight-500">Enable Unlockable Content</div>
-      <div class="fs-15px text-grey7">
-        Include exclusive text content encrypted for NFT purchasers
-      </div>
     </div>
     <div class="custom-control custom-switch custom-switch-lg">
       <input [(ngModel)]="includeUnlockable" type="checkbox" class="custom-control-input" id="customSwitch2">
       <label class="custom-control-label" for="customSwitch2"></label>
     </div>
   </div>
-  <div class="d-flex justify-content-between align-items-center pb-15px">
+  <div class="fs-15px text-grey7 mb-30px" style="font-weight: 400">
+    Include exclusive text, like a URL, encrypted for NFT purchasers.
+  </div>
+  <div class="d-flex justify-content-between align-items-center pb-30px">
     <div class="fs-15px">
-      <div class="font-weight-500">Service Fee</div>
+      <div class="font-weight-500">Network Fee</div>
     </div>
     <div class="fs-15px">
-      {{ globalVars.nanosToBitClout(createNFTFeeNanos * numCopies) }} CLOUT
+      {{ globalVars.nanosToBitClout(createNFTFeeNanos * numCopies, 5) }} CLOUT
       <span class="text-grey7">(~{{globalVars.nanosToUSD(createNFTFeeNanos * numCopies, 2)}})</span>
     </div>
   </div>
