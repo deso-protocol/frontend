@@ -430,7 +430,7 @@
   </div>
 
   <div
-    *ngIf="showNFTDetails && post.IsNFT"
+    *ngIf="showNFTDetails && postContent.IsNFT"
     class="p-15px fs-15px w-100 background-color-grey"
     [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : '' }"
     [ngClass]="{ 'feed-post__blue-border': showLeftSelectedBorder }"
@@ -446,9 +446,9 @@
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
             [matTooltip]="mOfNNFTTooltip"
             #NFTMOfNTooltip="matTooltip"
-        ><b>{{ post.NumNFTCopiesForSale }} of {{ post.NumNFTCopies }} available&nbsp;</b></span>
-        <span *ngIf="post.HasUnlockable" class="d-lg-inline-block d-none">|&nbsp;</span>
-        <span *ngIf="post.HasUnlockable"
+        ><b>{{ postContent.NumNFTCopiesForSale }} of {{ postContent.NumNFTCopies }} available&nbsp;</b></span>
+        <span *ngIf="postContent.HasUnlockable" class="d-lg-inline-block d-none">|&nbsp;</span>
+        <span *ngIf="postContent.HasUnlockable"
               class="cursor-pointer d-lg-inline-block d-block mt-5px"
               (click)="tooltip.toggle(); toggleShowUnlockableContent()"
               matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
