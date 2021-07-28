@@ -101,7 +101,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     // Go see if there is an upcoming NFT showcase that should be advertised.
     this.backendApi
-      .GetNextNFTShowcase(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .GetNextNFTShowcase(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe((res: any) => {
         if (res.NextNFTShowcaseTstamp) {
           this.nextNFTShowcaseTime = new Date(res.NextNFTShowcaseTstamp / 1e6);
