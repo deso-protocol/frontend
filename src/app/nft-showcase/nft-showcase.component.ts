@@ -26,7 +26,9 @@ export class NftShowcaseComponent implements OnInit {
       .subscribe(
         (res: any) => {
           this.nftCollections = res.NFTCollections;
-          this.nftCollections.sort((a, b) => b.HighestBidAmountNanos - a.HighestBidAmountNanos);
+          if (this.nftCollections) {
+            this.nftCollections.sort((a, b) => b.HighestBidAmountNanos - a.HighestBidAmountNanos);
+          }
         },
         (error) => {
           this.globalVars._alertError(error.error.error);
