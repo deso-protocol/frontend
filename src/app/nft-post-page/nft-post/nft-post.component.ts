@@ -146,7 +146,7 @@ export class NftPostComponent {
     return this.backendApi
       .GetNFTBidsForNFTPost(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.nftPost.PostHashHex
       )
       .subscribe(
@@ -160,7 +160,7 @@ export class NftPostComponent {
           );
           this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
             (nftEntryResponse) =>
-              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
           );
           if (!this.myAvailableSerialNumbers.length) {
             this.tabs = this.tabs.filter((t) => t !== NftPostComponent.MY_AUCTIONS);
