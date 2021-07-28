@@ -68,7 +68,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.globalVars.loggedInUser.PublicKeyBase58Check === this.profile.PublicKeyBase58Check) {
+    if (this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check) {
       this.tabs.push(CreatorProfileNftsComponent.MY_BIDS);
     }
     this.route.queryParams.subscribe((queryParams) => {
@@ -126,7 +126,7 @@ export class CreatorProfileNftsComponent implements OnInit {
       .GetNFTsForUser(
         this.globalVars.localNode,
         this.profile.PublicKeyBase58Check,
-        this.globalVars?.loggedInUser.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
         isForSale
       )
       .subscribe(
