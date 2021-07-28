@@ -35,7 +35,7 @@
   </div>
 
   <!-- Results Dropdown -->
-  <div class="w-100 search-bar__results-dropdown" *ngIf="searchText != '' && (creators.length > 0 || loading || showCloutavista)">
+  <div class="w-100 search-bar__results-dropdown disable-scrollbars" *ngIf="searchText != '' && (creators.length > 0 || loading || showCloutavista)">
     <div *ngIf="loading" class="d-flex justify-content-center fs-15px fc-muted p-5px">Loading...</div>
     <div *ngIf="!loading && creators.length > 0" class="fs-15px">
       <div

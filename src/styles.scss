@@ -220,6 +220,8 @@ $green-font-color: #19B028;
 .fc-red { color: var(--cred); }
 .fc-green { color: var(--cgreen); }
 
+.font-weight-500 { font-weight: 500 }
+
 .fs-1 { font-size: 2.5rem }
 .fs-2 { font-size: 2rem }
 .fs-3 { font-size: 1.75rem }
@@ -240,6 +242,7 @@ $green-font-color: #19B028;
 .fs-10px { font-size: 10px !important; }
 // line heights
 .lh-24px { line-height: 24px; }
+.lh-20px { line-height: 20px; }
 .lh-18px { line-height: 18px; }
 .lh-16px { line-height: 16px; }
 .lh-15px { line-height: 15px; }
@@ -259,6 +262,7 @@ $green-font-color: #19B028;
 .background-color-light-grey { background-color: var(--secondary); }
 .background-color-light-grey-important { background-color: var(--secondary) !important }
 .background-color-light-pink { background-color: lightpink; }
+.background-color-white { background-color: var(--background); }
 
 // Custom padding classes.
 .p-35px { padding: 35px; }
@@ -343,6 +347,12 @@ $green-font-color: #19B028;
 .px-0px { padding-left: 0px; padding-right: 0px;}
 
 // Custom margin classes.
+.m-0px { margin: 0px !important; }
+.mt-0px { margin-top: 0px; }
+.mr-0px { margin-right: 0px; }
+.mb-0px { margin-bottom: 0px !important; }
+.ml-0px { margin-left: 0px; }
+
 .mt-2px { margin-top: 2px; }
 
 .m-5px { margin: 5px; }
@@ -362,6 +372,8 @@ $green-font-color: #19B028;
 .mr-15px { margin-right: 15px; }
 .mb-15px { margin-bottom: 15px; }
 .ml-15px { margin-left: 15px; }
+.mx-15px { margin-left: 15px; margin-right: 15px; }
+.my-15px { margin-top: 15px; margin-bottom: 15px; }
 
 .m-20px { margin: 20px; }
 .mt-20px { margin-top: 20px; }
@@ -389,12 +401,12 @@ $green-font-color: #19B028;
 
 .br-3px { border-radius: 3px; }
 .br-4px { border-radius: 4px; }
+.br-8px { border-radius: 8px; }
 .br-12px { border-radius: $feed-border-radius; }
 
 .vh-100 { height: 100vh !important; }
 
 .position-fixed { position: fixed; }
-.background-color-white { background-color: var(--background); }
 
 .global__container {
   min-height: 100vh;
@@ -513,13 +525,29 @@ $green-font-color: #19B028;
   font-size: 15px !important;
 }
 
+input.bs-timepicker-field {
+  font-size: 15px;
+}
+
+.btn-default {
+  font-size: 15px;
+  border-color: var(--border) !important;
+}
+
+
 //
 // Top-level css for the feed.
 //
 
 // This removes the scrollbar on the feed.
-::-webkit-scrollbar {
-  width: 0px;
+.disable-scrollbars::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* Chrome/Safari/Webkit */
+}
+
+.disable-scrollbars {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
 }
 
 .light-grey-divider {
@@ -602,7 +630,7 @@ $green-font-color: #19B028;
 
 // Set a relative width on mobile
 .global__mobile .global__content__width {
-  width: 100%;
+  width: 100vw;
 }
 
 // Set a width, height, and border on desktop
@@ -2233,6 +2261,10 @@ input {
   border-bottom: 1px solid var(--border);
 }
 
+.formbg {
+  background-color: var(--formbg) !important;
+}
+
 .modal-content {
   position: relative;
   background-color: var(--secalt);
@@ -2264,6 +2296,43 @@ input {
   background-color: var(--background);
   color: var(--text);
   border: var(--mborder);
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+}
+
+.nft-modal-container {
+  color: var(--text);
+  border: 1px solid var(--mborder);
+  background-color: var(--secondary);
+  background-clip: padding-box;
+  flex-direction: column;
+  width: 100%;
+  display: flex;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+  outline: 0;
+  position: relative;
+}
+
+.nft-modal-radio-size {
+  height: 15px;
+  width: 15px;
+}
+
+.nft-modal-separator {
+  border-bottom: #AAAAAA solid 1px;
+}
+
+.nft-modal-separator-2 {
+  border-bottom: #DDDDDD solid 1px;
+}
+
+.create-nft-auction-row-border {
+  border-bottom: #EEEEEE solid 1px;
 }
 
 .interaction-detail {
@@ -2306,6 +2375,73 @@ input {
   background-color: var(--background) !important;
   color: var(--text);
 }
+
+//
+// Bootstrap switch custom styling
+//
+
+// Add class `.custom-switch-lg` to a `custom-switch`
+.custom-switch.custom-switch-lg {
+  padding-bottom: 1rem;
+	padding-left: 2.25rem;
+
+  & .custom-control-label {
+    padding-left: .75rem;
+    padding-top: 0.15rem;
+
+    &::before {
+      border-radius: 1rem;
+      height: 1.5rem;
+      width: 2.5rem;
+    }
+
+    &::after {
+			border-radius: .65rem;
+      height: calc(1.5rem - 4px);
+      width: calc(1.5rem - 4px);
+    }
+  }
+
+	.custom-control-input:checked ~ .custom-control-label::after{
+  	transform: translateX(1rem);
+	}
+}
+
+// Add class `.custom-switch-xl` to a `custom-switch`
+.custom-switch.custom-switch-xl {
+  padding-bottom: 1rem;
+	padding-left: 2.25rem;
+
+  & .custom-control-label {
+    padding-left: 2rem;
+  	padding-top: 0.5rem;
+
+    &::before {
+      border-radius: 1rem;
+      height: 2rem;
+      width: 3.5rem;
+    }
+
+    &::after {
+      border-radius: 2rem;
+      height: calc(2rem - 4px);
+      width: calc(2rem - 4px);
+    }
+  }
+
+	.custom-control-input:checked ~ .custom-control-label::after {
+  	transform: translateX(1.5rem);
+	}
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.borderbg {
+  background-color: var(--border);
+}
+
 
 .border {
   border: 1px solid var(--border) !important;

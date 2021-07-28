@@ -90,6 +90,8 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 import { PopoverModule } from "ngx-bootstrap/popover";
 import { RatingModule } from "ngx-bootstrap/rating";
+import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
+import { TimepickerModule } from "ngx-bootstrap/timepicker";
 import { CollapseModule } from "ngx-bootstrap/collapse";
 import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { AnimateOnScrollModule } from "ng2-animate-on-scroll";
@@ -118,11 +120,25 @@ import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { TrendsComponent } from "./trends-page/trends/trends.component";
 import { UploadDirective } from "./directives/upload.directive";
 import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
+import { MintNftModalComponent } from "./mint-nft-modal/mint-nft-modal.component";
+import { CreateNftAuctionModalComponent } from "./create-nft-auction-modal/create-nft-auction-modal.component";
+import { BidPlacedModalComponent } from "./bid-placed-modal/bid-placed-modal.component";
+import { PlaceBidModalComponent } from "./place-bid-modal/place-bid-modal.component";
+import { NftSoldModalComponent } from "./nft-sold-modal/nft-sold-modal.component";
+import { NftModalHeaderComponent } from "./nft-modal-header/nft-modal-header.component";
+import { CloseNftAuctionModalComponent } from "./close-nft-auction-modal/close-nft-auction-modal.component";
+import { SellNftModalComponent } from "./sell-nft-modal/sell-nft-modal.component";
+import { AddUnlockableModalComponent } from "./add-unlockable-modal/add-unlockable-modal.component";
+import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
+import { NftPostComponent } from "./nft-post-page/nft-post/nft-post.component";
+import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-profile-nfts/creator-profile-nfts.component";
+import { NftDropMgrComponent } from "./nft-drop-mgr/nft-drop-mgr.component";
+import { NftShowcaseComponent } from "./nft-showcase/nft-showcase.component";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
-import { VerifyEmailComponent } from './verify-email/verify-email.component';
+import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -229,6 +245,20 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     TrendsPageComponent,
     TrendsComponent,
     SanitizeQRCodePipe,
+    MintNftModalComponent,
+    CreateNftAuctionModalComponent,
+    BidPlacedModalComponent,
+    PlaceBidModalComponent,
+    NftSoldModalComponent,
+    NftModalHeaderComponent,
+    CloseNftAuctionModalComponent,
+    SellNftModalComponent,
+    AddUnlockableModalComponent,
+    NftPostPageComponent,
+    NftPostComponent,
+    NftDropMgrComponent,
+    CreatorProfileNftsComponent,
+    NftShowcaseComponent,
     VerifyEmailComponent,
   ],
   imports: [
@@ -249,6 +279,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     BsDropdownModule.forRoot(),
     PopoverModule.forRoot(),
     RatingModule.forRoot(),
+    BsDatepickerModule.forRoot(),
+    TimepickerModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
       themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme, cakeTheme, greenishTheme],
