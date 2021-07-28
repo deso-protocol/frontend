@@ -17,8 +17,15 @@
       <div class="fs-15px" *ngIf="!loading">
         <div *ngIf="highBid != null && lowBid != null" class="pb-15px">
           <span class="d-lg-inline-block d-block">Highest bid {{ globalVars.nanosToBitClout(highBid) }} CLOUT</span>
-          <span class="d-lg-inline-block d-none"> | </span>
+          <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
           <span class="d-lg-inline-block d-block">From {{ globalVars.nanosToBitClout(lowBid) }} CLOUT</span>
+        </div>
+        <div class="pb-15px">
+          <span class="d-lg-inline-block d-block">Total Royalty {{ (post.NFTRoyaltyToCreatorBasisPoints + post.NFTRoyaltyToCoinBasisPoints) / 100 }}%</span>
+          <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
+          <span class="d-lg-inline-block d-block">Creator Royalty {{ post.NFTRoyaltyToCreatorBasisPoints / 100 }}%</span>
+          <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
+          <span class="d-lg-inline-block d-block">Creator Coin Royalty {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
         </div>
         <div>
           <span class="pr-20px">
