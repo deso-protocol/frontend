@@ -113,7 +113,7 @@
             class="d-flex align-items-center mb-0 justify-content-around p-5px fs-12px"
           >
             Bid:
-            <span class="px-5px">{{ nftEntry.BidAmountNanos / 1e9 }} $CLOUT</span>
+            <span class="px-5px">{{ globalVars.nanosToBitClout(nftEntry.BidAmountNanos, 5) }} $CLOUT</span>
             <span>(~{{ globalVars.nanosToUSD(nftEntry.BidAmountNanos, 2) }})</span>
           </div>
         </div>
