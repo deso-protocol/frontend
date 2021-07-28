@@ -479,11 +479,11 @@
       <div>
     </div>
     <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)" [ngClass]="{'pt-15px': globalVars.isMobile()}">
-      <div *ngIf="highBid">
-        Highest: {{ highBid / 1e9 }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
+      <div *ngIf="highBid != null">
+        Highest: {{ globalVars.nanosToBitClout(highBid) }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
       </div>
-      <div *ngIf="lowBid">
-        From: {{ lowBid / 1e9 }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
+      <div *ngIf="lowBid != null">
+        From: {{ globalVars.nanosToBitClout(lowBid) }} CLOUT <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
       </div>
     </div>
   </div>

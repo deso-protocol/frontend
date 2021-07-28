@@ -128,8 +128,8 @@ export class FeedPostComponent implements OnInit {
   constructedEmbedURL: any;
 
   showPlaceABid: boolean;
-  highBid: number;
-  lowBid: number;
+  highBid: number = null;
+  lowBid: number = null;
   availableSerialNumbers: NFTEntryResponse[];
   myAvailableSerialNumbers: NFTEntryResponse[];
   mySerialNumbersNotForSale: NFTEntryResponse[];
@@ -194,13 +194,10 @@ export class FeedPostComponent implements OnInit {
               nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
           );
           this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-          this.highBid = _.maxBy(this.nftEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;
-          this.lowBid = _.minBy(this.nftEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
+          this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos").HighestBidAmountNanos;
+          this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos").HighestBidAmountNanos;
         });
     }
-
-    this.highBid = this.nftCollectionHighBid;
-    this.lowBid = this.nftCollectionHighBid;
   }
 
   onPostClicked(event) {
