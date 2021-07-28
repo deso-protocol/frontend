@@ -512,7 +512,15 @@ export class GlobalVarsService {
       date.getMonth() != currentDate.getMonth() ||
       date.getFullYear() != currentDate.getFullYear()
     ) {
-      return date.toLocaleString("default", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "numeric", second: "numeric", hour12: true });
+      return date.toLocaleString("default", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: true,
+      });
     }
 
     return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
