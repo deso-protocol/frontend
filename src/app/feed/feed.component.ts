@@ -7,6 +7,7 @@ import { tap, finalize, first } from "rxjs/operators";
 import * as _ from "lodash";
 import PullToRefresh from "pulltorefreshjs";
 import { Title } from "@angular/platform-browser";
+import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
 
 @Component({
   selector: "feed",
@@ -72,7 +73,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.feedTab) {
-        this.activeTab = queryParams.feedTab;
+        if (queryParams.feedTab === "Showcase") {
+          this.activeTab = FeedComponent.SHOWCASE_TAB;
+        } else {
+          this.activeTab = queryParams.feedTab;
+        }
       } else {
         // A default activeTab will be set after we load the follow feed (based on whether
         // the user is following anybody)
@@ -95,16 +100,13 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
 
     // Go see if there is an upcoming NFT showcase that should be advertised.
-    this.backendApi.GetNextNFTShowcase(
-      this.globalVars.localNode,
-      this.globalVars.loggedInUser.PublicKeyBase58Check,
-    ).subscribe(
-      (res: any) => {
-        if(res.NextNFTShowcaseTstamp) {
+    this.backendApi
+      .GetNextNFTShowcase(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .subscribe((res: any) => {
+        if (res.NextNFTShowcaseTstamp) {
           this.nextNFTShowcaseTime = new Date(res.NextNFTShowcaseTstamp / 1e6);
         }
-      }
-    )
+      });
   }
 
   ngOnInit() {
@@ -230,7 +232,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   showLoadingSpinner() {
-    return this.activeTab !== FeedComponent.SHOWCASE_TAB && (this.loadingFirstBatchOfActiveTabPosts() || this.switchingTabs);
+    return (
+      this.activeTab !== FeedComponent.SHOWCASE_TAB && (this.loadingFirstBatchOfActiveTabPosts() || this.switchingTabs)
+    );
   }
 
   // controls whether we show the loading spinner

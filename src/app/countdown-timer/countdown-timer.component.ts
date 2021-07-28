@@ -26,15 +26,14 @@ export class CountdownTimerComponent implements OnInit {
   hours: string;
   days: string;
 
-  constructor(public globalVars: GlobalVarsService, private router: Router) {
+  constructor(public globalVars: GlobalVarsService, private router: Router) {}
+
+  ngOnInit() {
     const now = new Date().getTime();
     this.setDaysDiff(now);
     this.setHoursDiff(now);
     this.setMinutesDiff(now);
     this.setSecondsDiff(now);
-  }
-
-  ngOnInit() {
     setInterval(() => {
       const now = new Date().getTime();
       this.setDaysDiff(now);
