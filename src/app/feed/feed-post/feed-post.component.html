@@ -126,12 +126,13 @@
         <div
           class="feed-post__container d-flex justify-content-left w-100"
           [ngClass]="{
-        'px-15px': includePaddingOnPost,
-        'pb-15px': includePaddingOnPost,
-        'pt-15px': includePaddingOnPost && !reclouterProfile,
-        'feed-post__blue-border': showLeftSelectedBorder,
-        'feed-post__parent-post-font-size': isParentPostInThread
-      }"
+          'px-15px': includePaddingOnPost,
+          'pb-15px': includePaddingOnPost,
+          'pt-15px': includePaddingOnPost && !reclouterProfile,
+          'feed-post__blue-border': showLeftSelectedBorder,
+          'feed-post__parent-post-font-size': isParentPostInThread
+          }"
+          [ngStyle]="{ 'border-radius': showLeftSelectedBorder && cardStyle ? '12px 0' : '' }"
           *ngIf="!postContent.IsHidden"
         >
           <!-- Avatar -->
@@ -406,11 +407,11 @@
         *ngIf="showInteractionDetails"
         class="feed-post__container d-flex justify-content-left w-100"
         [ngClass]="{
-      'px-15px': includePaddingOnPost,
-      'pb-15px': includePaddingOnPost,
-      'feed-post__blue-border': showLeftSelectedBorder,
-      'feed-post__parent-post-font-size': isParentPostInThread
-    }"
+        'px-15px': includePaddingOnPost,
+        'pb-15px': includePaddingOnPost,
+        'feed-post__blue-border': showLeftSelectedBorder,
+        'feed-post__parent-post-font-size': isParentPostInThread
+        }"
       >
         <div class="feed-post__avatar-container"></div>
         <div class="w-100" style="margin-left: -5px">
