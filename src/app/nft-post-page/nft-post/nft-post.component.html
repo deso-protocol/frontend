@@ -38,6 +38,7 @@
       There are no bids yet.
       <button
         class="btn btn-danger font-weight-bold fs-15px br-12px"
+        *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && myAvailableSerialNumbers?.length"
         (click)="closeAuction()"
       >
         Close my auctions
