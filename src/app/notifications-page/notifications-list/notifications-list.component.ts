@@ -290,7 +290,7 @@ export class NotificationsListComponent {
       const postHash = acceptNFTBidMeta.NFTPostHashHex;
 
       result.post = this.postMap[postHash];
-      result.action = `${userProfile.Username} accepted your bid of ${this.globalVars.nanosToBitClout(
+      result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToBitClout(
         acceptNFTBidMeta.BidAmountNanos,
         2
       )} for serial number ${acceptNFTBidMeta.SerialNumber}`;
