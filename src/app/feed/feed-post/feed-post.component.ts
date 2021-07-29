@@ -570,7 +570,7 @@ export class FeedPostComponent implements OnInit {
     event.stopPropagation();
     this.modalService.show(PlaceBidModalComponent, {
       class: "modal-dialog-centered modal-lg",
-      initialState: { post: this._post },
+      initialState: { post: this.postContent },
     });
   }
 
