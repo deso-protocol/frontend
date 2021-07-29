@@ -268,7 +268,7 @@ export class NotificationsListComponent {
 
       const postHash = nftBidMeta.NFTPostHashHex;
 
-      const actorName = actor.Username !== "anonymous" ? userProfile.Username : txnMeta.TransactorPublicKeyBase58Check;
+      const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
       result.post = this.postMap[postHash];
       result.action = nftBidMeta.BidAmountNanos
         ? `${actorName} bid ${this.globalVars.nanosToBitClout(
