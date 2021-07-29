@@ -54,6 +54,7 @@ export class BackendRoutes {
   static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
   static RoutePathVerifyEmail = "/api/v0/verify-email"
   static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email"
+  static RoutePathJumioBegin = "/api/v0/jumio-begin"
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -1269,6 +1270,15 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.RoutePathVerifyEmail, {
       PublicKey,
       EmailHash,
+    });
+  }
+
+  JumioBegin(
+    endpoint: string,
+    PublicKey: string,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathJumioBegin, PublicKey, {
+      PublicKey
     });
   }
 

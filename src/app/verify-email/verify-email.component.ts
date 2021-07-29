@@ -18,6 +18,8 @@ export class VerifyEmailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.backendApi.JumioBegin(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe();
+
     this.route.params.subscribe((params) => {
       const publicKey = params.publicKey;
       const emailHash = params.emailHash;
