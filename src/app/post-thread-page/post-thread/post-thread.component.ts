@@ -22,6 +22,9 @@ export class PostThreadComponent {
   commentLimit = 20;
   datasource: IDatasource<IAdapter<any>>;
 
+  @Input() hideHeader: boolean = false;
+  @Input() hideCurrentPost: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -39,9 +42,6 @@ export class PostThreadComponent {
     this.route.params.subscribe((params) => {
       this._setStateFromActivatedRoute(route);
     });
-  }
-
-  ngOnInit() {
   }
 
   _rerenderThread() {
@@ -302,6 +302,15 @@ export class PostThreadComponent {
       (res) => {
         if (!res || !res.PostFound) {
           this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          return;
+        }
+        if (
+          res.PostFound.IsNFT &&
+          (!this.route.snapshot.url.length || this.route.snapshot.url[0].path != this.globalVars.RouteNames.NFT)
+        ) {
+          this.router.navigate(["/" + this.globalVars.RouteNames.NFT, this.currentPostHashHex], {
+            queryParamsHandling: "merge",
+          });
           return;
         }
         // Set current post

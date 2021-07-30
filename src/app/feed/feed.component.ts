@@ -7,6 +7,7 @@ import { tap, finalize, first } from "rxjs/operators";
 import * as _ from "lodash";
 import PullToRefresh from "pulltorefreshjs";
 import { Title } from "@angular/platform-browser";
+import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
 
 @Component({
   selector: "feed",
@@ -16,8 +17,8 @@ import { Title } from "@angular/platform-browser";
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   static GLOBAL_TAB = "Global";
   static FOLLOWING_TAB = "Following";
-  static MARKET_TAB = "Market";
-  static TABS = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB];
+  static SHOWCASE_TAB = "⚡ NFT Showcase ⚡";
+  static TABS = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
   static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
   static PULL_TO_REFRESH_MARKER_ID = "pull-to-refresh-marker";
@@ -29,6 +30,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   followChangeSubscription: Subscription;
   FeedComponent = FeedComponent;
   switchingTabs = false;
+
+  nextNFTShowcaseTime;
 
   followedPublicKeyToProfileEntry = {};
 
@@ -70,7 +73,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.feedTab) {
-        this.activeTab = queryParams.feedTab;
+        if (queryParams.feedTab === "Showcase") {
+          this.activeTab = FeedComponent.SHOWCASE_TAB;
+        } else {
+          this.activeTab = queryParams.feedTab;
+        }
       } else {
         // A default activeTab will be set after we load the follow feed (based on whether
         // the user is following anybody)
@@ -91,6 +98,15 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         this._initializeFeeds();
       }
     });
+
+    // Go see if there is an upcoming NFT showcase that should be advertised.
+    this.backendApi
+      .GetNextNFTShowcase(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .subscribe((res: any) => {
+        if (res.NextNFTShowcaseTstamp) {
+          this.nextNFTShowcaseTime = new Date(res.NextNFTShowcaseTstamp / 1e6);
+        }
+      });
   }
 
   ngOnInit() {
@@ -216,7 +232,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   showLoadingSpinner() {
-    return this.loadingFirstBatchOfActiveTabPosts() || this.switchingTabs;
+    return (
+      this.activeTab !== FeedComponent.SHOWCASE_TAB && (this.loadingFirstBatchOfActiveTabPosts() || this.switchingTabs)
+    );
   }
 
   // controls whether we show the loading spinner
@@ -432,7 +450,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       defaultActiveTab = FeedComponent.GLOBAL_TAB;
     }
 
-    this.feedTabs = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB];
+    this.feedTabs = [FeedComponent.GLOBAL_TAB, FeedComponent.FOLLOWING_TAB, FeedComponent.SHOWCASE_TAB];
 
     if (!this.activeTab) {
       this.activeTab = defaultActiveTab;

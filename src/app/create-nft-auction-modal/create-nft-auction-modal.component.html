@@ -1,0 +1,85 @@
+<div app-theme class="nft-modal-container p-15px">
+  <nft-modal-header [header]="'Create an Auction'" [bsModalRef]="bsModalRef"></nft-modal-header>
+
+  <!-- Pricing -->
+  <div class="pt-15px pb-30px font-weight-500">
+    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
+      <div>
+        Minimum price <span class="text-grey7">(Optional)</span>
+      </div>
+        <div class="d-flex flex-wrap">
+          <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
+               [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+            <div class="input-group-prepend" id="usd-label">
+              <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
+            </div>
+            <input
+              [(ngModel)]="minBidAmountUSD"
+              (ngModelChange)="updateMinBidAmountCLOUT($event)"
+              [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}"
+              aria-describedby="usd-label"
+              class="form-control fs-15px text-right d-inline-block"
+              type="number" min="0"
+              placeholder="0"
+              [disabled]="creatingAuction"/>
+          </div>
+          <div class="input-group py-5px"
+               [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+            <div class="input-group-prepend" id="clout-label">
+              <span class="input-group-text fs-15px">CLOUT</span>
+            </div>
+            <input
+              [(ngModel)]="minBidAmountCLOUT"
+              (ngModelChange)="updateMinBidAmountUSD($event)"
+              aria-describedby="clout-label"
+              class="form-control fs-15px text-right d-inline-block"
+              type="number" min="0"
+              placeholder="0"
+              [disabled]="creatingAuction"/>
+          </div>
+        </div>
+    </div>
+  </div>
+
+
+  <div class="container fs-15px pb-30px px-0px">
+    <div class="row no-gutters background-color-white p-15px create-nft-auction-row-border"
+         style="opacity: 50%">
+      <div class="col-5 mb-0px">
+        <input type="checkbox" class="w-10" [(ngModel)]="selectAll" (ngModelChange)="toggleSelectAll($event)"/>
+        Select All
+      </div>
+      <div class="col-7 mb-0px">Last Price</div>
+    </div>
+    <div style="max-height: 250px; overflow-y: scroll">
+      <div *ngFor="let nft of mySerialNumbersNotForSale()"
+           class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border">
+        <div class="col-5 mb-0px d-flex align-items-center">
+          <input type="checkbox" style="width: 15px" [(ngModel)]="selectedSerialNumbers[nft.SerialNumber]"/>
+          <span class="lh-15px">&nbsp;#{{nft.SerialNumber}}</span>
+        </div>
+        <div class="col-7 mb-0px d-flex justify-content-between align-items-center">
+          <div>
+            {{globalVars.nanosToBitClout(nft.LastAcceptedBidAmountNanos)}} CLOUT
+            <span class="text-grey7">(~{{globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)}})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center">
+    <button
+      class="btn btn-primary font-weight-bold fs-15px br-12px"
+      style="height: 36px; width: 180px; line-height: 15px"
+      (click)="createAuction()"
+      [disabled]="creatingAuction || createAuctionDisabled()"
+    >
+      {{ creatingAuction ? "Creating Auction" : "Create auction" }}
+    </button>
+    <div *ngIf="creatingAuction" class="pl-15px fs-15px"> {{ auctionCounter }} of {{ auctionTotal }} auctions created</div>
+  </div>
+
+
+  <simple-center-loader *ngIf="loading"></simple-center-loader>
+</div>
