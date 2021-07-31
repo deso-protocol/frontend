@@ -1,34 +1,34 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { BackendApiService } from '../backend-api.service';
-import { GlobalVarsService } from '../global-vars.service';
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { BackendApiService } from "../backend-api.service";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
-  selector: 'app-verify-email',
-  templateUrl: './verify-email.component.html',
-  styleUrls: ['./verify-email.component.scss']
+  selector: "verify-email",
+  templateUrl: "./verify-email.component.html",
+  styleUrls: ["./verify-email.component.scss"],
 })
 export class VerifyEmailComponent implements OnInit {
-
   constructor(
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService,
-    private router: Router,
-  ) { }
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.backendApi.JumioBegin(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check).subscribe();
-
     this.route.params.subscribe((params) => {
       const publicKey = params.publicKey;
       const emailHash = params.emailHash;
 
-      this.backendApi.VerifyEmail(this.globalVars.localNode, publicKey, emailHash).subscribe((res) => {
-        this.globalVars._alertSuccess("Email verified successfully");
-      }, (err) => {
-        this.globalVars._alertError("Failed to verify email: " + err.error.error);
-      });
+      this.backendApi.VerifyEmail(this.globalVars.localNode, publicKey, emailHash).subscribe(
+        (res) => {
+          this.globalVars._alertSuccess("Email verified successfully");
+        },
+        (err) => {
+          this.globalVars._alertError("Failed to verify email: " + err.error.error);
+        }
+      );
 
       // This re-renders the sidebar
       this.globalVars.loggedInUser.EmailVerified = true;
