@@ -168,6 +168,7 @@ export class AppComponent implements OnInit {
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
+        this.globalVars.showJumio = res.HasJumioIntegration;
         // Setup amplitude on first run
         if (!this.globalVars.amplitude && res.AmplitudeKey) {
           this.globalVars.amplitude = require("amplitude-js");

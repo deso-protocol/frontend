@@ -118,6 +118,7 @@ import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { TrendsComponent } from "./trends-page/trends/trends.component";
 import { UploadDirective } from "./directives/upload.directive";
 import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
+import { AdminJumioComponent } from "./admin/admin-jumio/admin-jumio.component";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -230,6 +231,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     TrendsComponent,
     SanitizeQRCodePipe,
     VerifyEmailComponent,
+    AdminJumioComponent,
   ],
   imports: [
     BrowserModule,

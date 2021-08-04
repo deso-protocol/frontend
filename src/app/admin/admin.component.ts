@@ -100,7 +100,7 @@ export class AdminComponent implements OnInit {
   usernameVerificationAuditLogs: any = [];
   loadingVerifiedUsers = false;
   loadingVerifiedUsersAuditLog = false;
-  adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Wyre", "Super"];
+  adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Wyre", "Jumio", "Super"];
   POSTS_TAB = "Posts";
   POSTS_BY_CLOUT_TAB = "Posts By Clout";
   adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_CLOUT_TAB];

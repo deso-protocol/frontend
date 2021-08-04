@@ -83,6 +83,9 @@ export class BackendRoutes {
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
   static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
 
+  static RoutePathAdminGetJumioAttemptsForPublicKey = "/api/v0/admin/get-jumio-attempts-for-public-key";
+  static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
+
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
   // Wyre routes.
@@ -144,6 +147,7 @@ export class User {
   CanCreateProfile: boolean;
   HasEmail: boolean;
   EmailVerified: boolean;
+  JumioVerified: boolean;
 
   BlockedPubKeys: { [key: string]: object };
 
@@ -1266,9 +1270,16 @@ export class BackendApiService {
     });
   }
 
-  JumioBegin(endpoint: string, PublicKey: string): Observable<any> {
+  JumioBegin(
+    endpoint: string,
+    PublicKey: string,
+    SuccessURL: string = undefined,
+    ErrorURL: string = undefined
+  ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathJumioBegin, PublicKey, {
       PublicKey,
+      SuccessURL,
+      ErrorURL,
     });
   }
 
@@ -1518,9 +1529,36 @@ export class BackendApiService {
     );
   }
 
+  AdminGetJumioAttemptsForPublicKey(
+    endpoint: string,
+    AdminPublicKeyBase58Check: string,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetJumioAttemptsForPublicKey, AdminPublicKeyBase58Check, {
+      AdminPublicKey: AdminPublicKeyBase58Check,
+      PublicKeyBase58Check,
+      Username,
+    });
+  }
+
+  AdminResetJumioAttemptsForPublicKey(
+    endpoint: string,
+    AdminPublicKeyBase58Check: string,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetJumioForPublicKey, AdminPublicKeyBase58Check, {
+      AdminPublicKey: AdminPublicKeyBase58Check,
+      PublicKeyBase58Check,
+      Username,
+    });
+  }
+
+
   GetWyreWalletOrderForPublicKey(
     endpoint: string,
-    AdminPublicKeyBase58Check,
+    AdminPublicKeyBase58Check: string,
     PublicKeyBase58Check: string,
     Username: string
   ): Observable<any> {

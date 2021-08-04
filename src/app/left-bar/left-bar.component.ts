@@ -48,4 +48,11 @@ export class LeftBarComponent {
   logHelp(): void {
     this.globalVars.logEvent("help : click");
   }
+
+  openJumio(): void {
+    this.globalVars.logEvent("jumio : click");
+    let errorURL = new URL(window.location.href);
+    errorURL.searchParams.append("jumioError", "true");
+    this.globalVars.openJumio(encodeURIComponent(window.location.href), encodeURIComponent(errorURL.href));
+  }
 }

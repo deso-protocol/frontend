@@ -24,7 +24,6 @@ import { GetStarterBitcloutPageComponent } from "./get-starter-bitclout-page/get
 import { WalletComponent } from "./wallet/wallet.component";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
-import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamond-posts.component";
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
@@ -66,7 +65,7 @@ class RouteNames {
   public static LANDING = "/";
   public static DIAMONDS = "diamonds";
   public static TRENDS = "trends";
-  public static VERIFY_EMAIL = "verify-email"
+  public static VERIFY_EMAIL = "verify-email";
 }
 
 const routes: Routes = [

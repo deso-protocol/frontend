@@ -147,6 +147,9 @@ export class GlobalVarsService {
   // Whether or not to show the Buy BitClout with USD flow.
   showBuyWithUSD = false;
 
+  // Whether or not to show the Jumio verification flow.
+  showJumio = false;
+
   // Whether or not this node comps profile creation.
   isCompProfileCreation = false;
 
@@ -506,7 +509,15 @@ export class GlobalVarsService {
       date.getMonth() != currentDate.getMonth() ||
       date.getFullYear() != currentDate.getFullYear()
     ) {
-      return date.toLocaleString("default", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "numeric", second: "numeric", hour12: true });
+      return date.toLocaleString("default", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: true,
+      });
     }
 
     return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
@@ -701,6 +712,25 @@ export class GlobalVarsService {
     }
 
     this.amplitude.logEvent(event, data);
+  }
+
+  openJumio(jumioSuccessRoute: string, jumioErrorRoute: string): void {
+    // Note: this endpoint will fail if success and error routes do not conform to the expectations of Jumio.
+    // See here for details: https://github.com/Jumio/implementation-guides/blob/master/netverify/netverify-web-v4.md#url-requirements
+    this.backendApi
+      .JumioBegin(this.localNode, this.loggedInUser?.PublicKeyBase58Check, jumioSuccessRoute, jumioErrorRoute)
+      .subscribe((res) => {
+        window.open(res.URL);
+      });
+  }
+
+  // Helper to launch the get free clout flow in identity.
+  launchGetFreeCLOUTFlow() {
+    this.logEvent("identity : jumio : launch");
+    this.identityService.launch("/get-free-clout").subscribe(() => {
+      this.logEvent("identity : jumio : success");
+      this.updateEverything();
+    });
   }
 
   launchLoginFlow() {

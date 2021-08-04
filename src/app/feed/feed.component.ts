@@ -94,11 +94,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.backendApi
-      .JumioBegin(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
-      .subscribe((res) => {
-        console.log(res);
-      });
     this._initializeFeeds();
     this.titleService.setTitle("Feed - BitClout");
   }
