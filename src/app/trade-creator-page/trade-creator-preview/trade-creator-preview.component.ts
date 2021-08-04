@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
+import {FollowService} from "../../follow-button/follow.service";
 
 @Component({
   selector: "trade-creator-preview",
@@ -17,6 +18,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
   CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorCreatorCoinLessThanMinimumSetByUser";
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
+  @Input() userFollowingCreator: boolean;
 
   @Output() slippageError = new EventEmitter();
   @Output() tradeExecuted = new EventEmitter();
@@ -26,6 +28,9 @@ export class TradeCreatorPreviewComponent implements OnInit {
   appData: GlobalVarsService;
   creatorCoinTradeBeingCalled: boolean = false;
   showHighLoadWarning: boolean = false;
+
+  changeRef: ChangeDetectorRef;
+  followService: FollowService;
 
   _onTradeExecuted() {
     this.tradeExecuted.emit();
@@ -123,6 +128,10 @@ export class TradeCreatorPreviewComponent implements OnInit {
 
           // This will update the user's balance.
           this.appData.updateEverything(response.TxnHashHex, this._creatorCoinSuccess, this._creatorCoinFailure, this);
+
+          if (this.creatorCoinTrade.followCreator && !this.followService._isLoggedInUserFollowing()) {
+            this.followService._toggleFollow(true);
+          }
         },
         (response) => {
           this._handleRequestErrors(response);
@@ -219,13 +228,22 @@ export class TradeCreatorPreviewComponent implements OnInit {
     private globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private _router: Router,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private _changeRef: ChangeDetectorRef
   ) {
     this.appData = globalVars;
     this.router = _router;
+    this.changeRef = _changeRef;
   }
 
   ngOnInit() {
+    this.followService = new FollowService(
+      this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
+      this.appData,
+      this.backendApi,
+      this.appData,
+      this.changeRef
+    );
     window.scroll(0, 0);
   }
 }

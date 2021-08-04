@@ -1,6 +1,9 @@
 <!-- Override .container's max-width property with max-width: inherit-->
 <div class="container fs-15px" style="max-width: inherit">
-  <trade-creator-table [creatorCoinTrade]="creatorCoinTrade"></trade-creator-table>
+  <trade-creator-table
+    [creatorCoinTrade]="creatorCoinTrade"
+    [userFollowingCreator]="userFollowingCreator"
+  ></trade-creator-table>
 
   <div *ngIf="showHighLoadWarning" class="bg-light mt-15px p-15px roboto-regular br-12px text-grey5">
     Due to high load, {{ creatorCoinTrade.tradeVerbString() | lowercase }}s may take several minutes to process. Please

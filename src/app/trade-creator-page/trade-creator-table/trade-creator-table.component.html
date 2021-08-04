@@ -96,7 +96,7 @@
   <!-- Founder's Reward Warning -->
   <div
     *ngIf="creatorCoinTrade.getFoundersRewardPercent() > 0 && !creatorCoinTrade.isBuyingOwnCoin()"
-    class="py-3 border-bottom text-muted d-flex"
+    class="py-3 text-muted d-flex"
   >
     <div class="mr-10px">
       <i class="fas fa-heart fa-md text-grey9"></i>
@@ -116,5 +116,16 @@
         ></i>
       </span>
     </div>
+  </div>
+  <div *ngIf="!userFollowingCreator" class="py-1 border-bottom text-muted d-flex">
+    <input type="checkbox" id="check" [(ngModel)]="creatorCoinTrade.followCreator" />
+    <label for="check" style="--d: 15px" class="follow-check">
+      <svg viewBox="0,0,50,50">
+        <path d="M5 30 L 20 45 L 45 5"></path>
+      </svg>
+    </label>
+    <label class="form-check-label follow-check-label" for="check">
+      Follow {{ creatorCoinTrade.creatorProfile.Username }}
+    </label>
   </div>
 </ng-template>

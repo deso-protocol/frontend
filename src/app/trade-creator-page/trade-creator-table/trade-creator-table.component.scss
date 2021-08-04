@@ -1,0 +1,51 @@
+*, *:after, *:before {box-sizing: border-box;}
+
+body {
+  background: whitesmoke;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+input#check {
+  position: absolute;
+  opacity: 0;
+
+  &:checked + label svg path {
+    stroke-dashoffset: 0;
+  }
+
+  &:focus + label {
+    transform: scale(1.03);
+  }
+}
+
+#check + label {
+  display: block;
+  border: 2px solid #8A8A8A;
+  width: var(--d); height: var(--d);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all .2s ease;
+
+  svg {
+    pointer-events: none;
+    vertical-align: top;
+    path {
+      fill: none;
+      stroke: #8A8A8A;
+      stroke-width: 11px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 101;
+      transition: all 350ms cubic-bezier(1,0,.37,.91);
+    }
+  }
+}
+
+.follow-check {
+  margin-top: 4px;
+  margin-right: 10px;
+}

@@ -2467,3 +2467,8 @@ input {
     }
   }
 }
+
+.checkbox-warning-filled [type="checkbox"][class*='filled-in']:checked+label:after {
+  border-color: #FF8800 !important;
+  background-color: #FF8800 !important;
+}

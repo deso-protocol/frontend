@@ -11,6 +11,7 @@ import { BackendApiService } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { AppRoutingModule } from "../../app-routing.module";
+import { FollowService } from "../../follow-button/follow.service";
 
 @Component({
   selector: "trade-creator",
@@ -40,6 +41,10 @@ export class TradeCreatorComponent implements OnInit {
   // sell creator coin data
   creatorCoinToSell: number;
   expectedBitCloutReturnedNanos: number;
+
+  followService: FollowService;
+  changeRef: ChangeDetectorRef;
+  userFollowingCreator: boolean;
 
   _onSlippageError() {
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
@@ -134,6 +139,7 @@ export class TradeCreatorComponent implements OnInit {
         let profile = response.Profile;
         this.creatorCoinTrade.creatorProfile = profile;
         this.creatorProfile = profile;
+        this._getUserFollowingCreator();
       },
       (err) => {
         console.error(err);
@@ -142,15 +148,28 @@ export class TradeCreatorComponent implements OnInit {
     );
   }
 
+  _getUserFollowingCreator() {
+    this.followService = new FollowService(
+      this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
+      this.appData,
+      this.backendApi,
+      this.appData,
+      this.changeRef
+    );
+    this.userFollowingCreator = this.followService._isLoggedInUserFollowing();
+  }
+
   constructor(
     private globalVars: GlobalVarsService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+  private _changeRef: ChangeDetectorRef
   ) {
     this.appData = globalVars;
     this.router = _router;
     this.route = _route;
+    this.changeRef = _changeRef;
   }
 
   ngOnInit() {

@@ -13,6 +13,7 @@ export class TradeCreatorTableComponent {
 
   @Input() displayForCreatorForm: boolean = false;
   @Input() creatorCoinTrade: CreatorCoinTrade;
+  @Input() userFollowingCreator: boolean;
 
   TradeCreatorTableComponent = TradeCreatorTableComponent;
 
