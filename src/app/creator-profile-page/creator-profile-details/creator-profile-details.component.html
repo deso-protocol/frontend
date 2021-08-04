@@ -14,7 +14,7 @@
 
   <!-- Feed Selector -->
   <tab-selector
-    [tabs]="['Posts', 'Creator Coin', 'Diamonds']"
+    [tabs]="['Posts', 'Creator Coin', 'Diamonds', 'NFTs']"
     [activeTab]="activeTab"
     (tabClick)="_handleTabClick($event)"
   ></tab-selector>
@@ -114,6 +114,16 @@
   <!-- Diamonds -->
   <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'Diamonds' && !loading">
     <creator-diamonds [profile]="profile"></creator-diamonds>
+    <div class="w-100 p-35px"></div>
+  </div>
+
+  <!-- NFTs -->
+  <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'NFTs' && !loading">
+    <creator-profile-nfts
+      [profile]="profile"
+      [showProfileAsReserved]="showProfileAsReserved()"
+      (blockUser)="userBlocked()"
+    ></creator-profile-nfts>
     <div class="w-100 p-35px"></div>
   </div>
 </div>

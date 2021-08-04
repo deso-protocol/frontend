@@ -16,6 +16,8 @@ import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithun
 import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
+import { FeedComponent } from "./feed/feed.component";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -398,6 +400,10 @@ export class GlobalVarsService {
 
   nanosToUSDNumber(nanos: number): number {
     return nanos / this.nanosPerUSDExchangeRate;
+  }
+
+  usdToNanosNumber(usdAmount: number): number {
+    return usdAmount * this.nanosPerUSDExchangeRate;
   }
 
   nanosToUSD(nanos: number, decimal?: number): string {
@@ -901,6 +907,18 @@ export class GlobalVarsService {
         console.error(error);
       }
     );
+  }
+
+  exploreShowcase(bsModalRef: BsModalRef, modalService: BsModalService): void {
+    if (modalService) {
+      modalService.setDismissReason("explore");
+    }
+    if (bsModalRef) {
+      bsModalRef.hide();
+    }
+    this.router.navigate(["/" + this.RouteNames.BROWSE], {
+      queryParams: { feedTab: FeedComponent.SHOWCASE_TAB },
+    });
   }
 
   resentVerifyEmail = false;

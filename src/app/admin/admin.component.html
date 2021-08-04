@@ -10,11 +10,29 @@
     </div>
   </div>
 
-  <!-- Feed Selector -->
-  <tab-selector [tabs]="adminTabs" [activeTab]="activeTab" (tabClick)="_tabClicked($event)"></tab-selector>
+  <!-- Selector -->
+  <div class="fs-15px border-bottom border-color-grey">
+    <div class="m-15px">
+      <select
+        #rightBarSelect
+        id="right-bar-chart-select"
+        class="form-control w-100 fs-15px text-grey5 font-weight-bold cursor-pointer"
+        (change)="_tabClicked($event)"
+        [(ngModel)]="activeTab"
+      >
+        <option
+          *ngFor="let option of adminTabs"
+          [value]="option"
+          class="fs-15px text-grey5 font-weight-bold"
+        >
+          {{ option }}
+        </option>
+      </select>
+    </div>
+  </div>
 
   <!-- Post Whitelist Selector -->
-  <div style="overflow-y: scroll" *ngIf="activeTab == 'Posts' && adminPosts.length != 0 && !loadingPosts">
+  <div style="overflow-y: scroll" class="disable-scrollbars" *ngIf="activeTab == 'Posts' && adminPosts.length != 0 && !loadingPosts">
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
@@ -57,7 +75,7 @@
     <simple-center-loader *ngIf="searchingForPostsByClout; else showPosts"></simple-center-loader>
     <ng-template #showPosts>
       <div *ngFor="let post of activePosts; let ii = index">
-        <div *ngIf="post.ProfileEntryResponse" class="p-15px border-bottom border-color-grey">
+        <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
           <!--
             The post.parentPost stuff is a hack to make it so that a new comment shows up
             in the feed with the "replying to @[parentPost.Username]" content diplayed.
@@ -452,7 +470,7 @@
   </div>
 
   <!-- Mempool Info -->
-  <div *ngIf="activeTab == 'Mempool'" class="w-100 d-flex flex-column" style="overflow-y: scroll">
+  <div *ngIf="activeTab == 'Mempool'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
@@ -517,10 +535,19 @@
     <div *ngIf="loadingNextBlockStats">Loading...</div>
   </div>
 
+  <!-- NFTs -->
+  <div
+    *ngIf="activeTab == 'NFTs'"
+    class="w-100 d-flex flex-column disable-scrollbars"
+    style="overflow-y: scroll"
+  >
+      <nft-drop-mgr></nft-drop-mgr>
+  </div>
+
   <!-- Super Info -->
   <div
     *ngIf="activeTab == 'Super' && globalVars.showSuperAdminTools()"
-    class="w-100 d-flex flex-column"
+    class="w-100 d-flex flex-column disable-scrollbars"
     style="overflow-y: scroll"
   >
     <div
@@ -726,6 +753,68 @@
       </div>
     </div>
 
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Max Copies per NFT
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="updateGlobalParamsValues.MaxCopiesPerNFT"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          style="width: 250px"
+          placeholder="Set max copies per NFT"
+        />
+        <button
+          *ngIf="!updatingMaxCopiesPerNFT"
+          (click)="updateGlobalParamMaxCopiesPerNFT()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+          [ngStyle]="{ disabled: updatingGlobalParams }"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingMaxCopiesPerNFT"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content"
+          disabled
+        >
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Create NFT Fee in BitClout
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="updateGlobalParamsValues.CreateNFTFeeNanos"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          style="width: 250px"
+          placeholder="Set fee per copy of an NFT"
+        />
+        <button
+          *ngIf="!updatingCreateNFTFeeNanos"
+          (click)="updateGlobalParamCreateNFTFeeNanos()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+          [ngStyle]="{ disabled: updatingGlobalParams }"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingCreateNFTFeeNanos"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content"
+          disabled
+        >
+          Updating...
+        </button>
+      </div>
+    </div>
+
     <!-- Verify User -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Grant Verification Badge:
@@ -860,7 +949,7 @@
   </div>
 
   <!-- Wyre Info -->
-  <div *ngIf="activeTab == 'Wyre'" class="w-100 d-flex flex-column" style="overflow-y: scroll">
+  <div *ngIf="activeTab == 'Wyre'" class="w-100 d-flex flex-column disable-scrollbars" style="overflow-y: scroll">
     <admin-wyre></admin-wyre>
   </div>
 

@@ -1,6 +1,4 @@
 <div class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px">
-  <!-- TODO: post threads: needs hover treatment-->
-  <!--     [routerLink]="router.url"-->
   <div
     class="cursor-pointer d-flex align-items-center"
     (click)="openModal($event)"
@@ -30,7 +28,7 @@
     >
       <i class="icon-repost feed-post-icon-row__icon"></i>
     </a>
-    <div class="dropdown-menu p-0 fs-12px" style="min-width: 6rem" *dropdownMenu aria-labelledby="recloutActionsButton">
+    <div class="dropdown-menu p-0 fs-12px border background-color-light-grey" style="min-width: 6rem" *dropdownMenu aria-labelledby="recloutActionsButton">
       <a
         *ngIf="sendingRecloutRequest; else recloutOptions"
         class="dropdown-menu-item d-block p-5px feed-post__dropdown-menu-item"

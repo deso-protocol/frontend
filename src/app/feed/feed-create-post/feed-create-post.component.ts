@@ -48,6 +48,7 @@ export class FeedCreatePostComponent implements OnInit {
   postImageSrc = null;
 
   showEmbedURL = false;
+  showImageLink = false;
   embedURL = "";
   constructedEmbedURL: any;
   // Emits a PostEntryResponse. It would be better if this were typed.
@@ -223,6 +224,7 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   _handleFilesInput(files: FileList) {
+    this.showImageLink = false;
     const fileToUpload = files.item(0);
     this._handleFileInput(fileToUpload);
   }

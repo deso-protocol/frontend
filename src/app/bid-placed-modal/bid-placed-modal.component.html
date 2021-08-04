@@ -1,0 +1,10 @@
+<div app-theme class="nft-modal-container p-15px">
+  <nft-modal-header [header]="'Bid placed'" [bsModalRef]="bsModalRef"></nft-modal-header>
+
+  <div class="pb-15px fs-15px">
+    Your bid was successful. We will notify you when the auction closes.
+  </div>
+
+  <div class="font-weight-500 fs-15px pb-15px cursor-pointer" style="text-decoration-line: underline"
+       (click)="globalVars.exploreShowcase(bsModalRef, modalService)">Explore the Showcase</div>
+</div>

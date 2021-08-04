@@ -56,6 +56,19 @@ export class BackendRoutes {
   static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
   static RoutePathJumioBegin = "/api/v0/jumio-begin";
 
+  // NFT routes.
+  static RoutePathCreateNft = "/api/v0/create-nft";
+  static RoutePathUpdateNFT = "/api/v0/update-nft";
+  static RoutePathCreateNFTBid = "/api/v0/create-nft-bid";
+  static RoutePathAcceptNFTBid = "/api/v0/accept-nft-bid";
+  static RoutePathGetNFTBidsForNFTPost = "/api/v0/get-nft-bids-for-nft-post";
+  static RoutePathGetNFTsForUser = "/api/v0/get-nfts-for-user";
+  static RoutePathGetNFTBidsForUser = "/api/v0/get-nft-bids-for-user";
+  static RoutePathGetNFTShowcase = "/api/v0/get-nft-showcase";
+  static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
+  static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
+  static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
+
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
   static ReprocessBitcoinBlockRoute = "/api/v0/admin/reprocess-bitcoin-block";
@@ -79,9 +92,12 @@ export class BackendRoutes {
     "/api/v0/admin/get-usd-cents-to-bitclout-reserve-exchange-rate";
   static RoutePathSetBuyBitCloutFeeBasisPoints = "/api/v0/admin/set-buy-bitclout-fee-basis-points";
   static RoutePathGetBuyBitCloutFeeBasisPoints = "/api/v0/admin/get-buy-bitclout-fee-basis-points";
-  static RoutePathGetGlobalParams = "/api/v0/admin/get-global-params";
+  static RoutePathAdminGetGlobalParams = "/api/v0/admin/get-global-params";
+  static RoutePathGetGlobalParams = "/api/v0/get-global-params";
   static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
   static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
+  static RoutePathAdminGetNFTDrop = "/api/v0/admin/get-nft-drop";
+  static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
 
   static RoutePathAdminGetJumioAttemptsForPublicKey = "/api/v0/admin/get-jumio-attempts-for-public-key";
   static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
@@ -190,6 +206,12 @@ export class PostEntryResponse {
   InMempool: boolean;
   IsPinned: boolean;
   DiamondsFromSender?: number;
+  NumNFTCopies: number;
+  NumNFTCopiesForSale: number;
+  HasUnlockable: boolean;
+  IsNFT: boolean;
+  NFTRoyaltyToCoinBasisPoints: number;
+  NFTRoyaltyToCreatorBasisPoints: number;
 }
 
 export class DiamondsPost {
@@ -227,6 +249,55 @@ export class BalanceEntryResponse {
   NetBalanceInMempool: number;
 
   ProfileEntryResponse: ProfileEntryResponse;
+}
+
+export class NFTEntryResponse {
+  OwnerPublicKeyBase58Check: string;
+  ProfileEntryResponse: ProfileEntryResponse | undefined;
+  PostEntryResponse: PostEntryResponse | undefined;
+  SerialNumber: number;
+  IsForSale: boolean;
+  MinBidAmountNanos: number;
+  LastAcceptedBidAmountNanos: number;
+
+  HighestBidAmountNanos: number;
+  LowestBidAmountNanos: number;
+
+  // only populated when the reader is the owner of the nft and there is an unlockable.
+  LastOwnerPublicKeyBase58Check: string | undefined;
+  EncryptedUnlockableText: string | undefined;
+  DecryptedUnlockableText: string | undefined;
+}
+
+export class NFTBidEntryResponse {
+  PublicKeyBase58Check: string;
+  ProfileEntryResponse: ProfileEntryResponse;
+  PostHashHex: string;
+  PostEntryResponse: PostEntryResponse | undefined;
+  SerialNumber: number;
+  BidAmountNanos: number;
+
+  HighestBidAmountNanos: number | undefined;
+  LowestBidAmountNanos: number | undefined;
+
+  BidderBalanceNanos: number;
+
+  selected?: boolean;
+}
+
+export class NFTCollectionResponse {
+  AvailableSerialNumbers: number[];
+  PostEntryResponse: PostEntryResponse;
+  ProfileEntryResponse: ProfileEntryResponse;
+  NumCopiesForSale: number;
+  HighestBidAmountNanos: number;
+  LowestBidAmountNanos: number;
+}
+
+export class NFTBidData {
+  PostEntryResponse: PostEntryResponse;
+  NFTEntryResponses: NFTEntryResponse[];
+  BidEntryResponses: NFTBidEntryResponse[];
 }
 
 @Injectable({
@@ -666,6 +737,200 @@ export class BackendApiService {
     );
   }
 
+  CreateNft(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    NumCopies: number,
+    NFTRoyaltyToCreatorBasisPoints: number,
+    NFTRoyaltyToCoinBasisPoints: number,
+    HasUnlockable: boolean,
+    IsForSale: boolean,
+    MinBidAmountNanos: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCreateNft, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      NumCopies,
+      NFTRoyaltyToCreatorBasisPoints,
+      NFTRoyaltyToCoinBasisPoints,
+      HasUnlockable,
+      IsForSale,
+      MinBidAmountNanos,
+      MinFeeRateNanosPerKB,
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  UpdateNFT(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    IsForSale: boolean,
+    MinBidAmountNanos: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateNFT, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
+      IsForSale,
+      MinBidAmountNanos,
+      MinFeeRateNanosPerKB,
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  CreateNFTBid(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    BidAmountNanos: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCreateNFTBid, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
+      BidAmountNanos,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  AcceptNFTBid(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    BidderPublicKeyBase58Check: string,
+    BidAmountNanos: number,
+    UnencryptedUnlockableText: string,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    let request = UnencryptedUnlockableText
+      ? this.identityService.encrypt({
+          ...this.identityService.identityServiceParamsForKey(UpdaterPublicKeyBase58Check),
+          recipientPublicKey: BidderPublicKeyBase58Check,
+          message: UnencryptedUnlockableText,
+        })
+      : of({ encryptedMessage: "" });
+    request = request.pipe(
+      switchMap((encrypted) => {
+        const EncryptedMessageText = encrypted.encryptedMessage;
+        return this.post(endpoint, BackendRoutes.RoutePathAcceptNFTBid, {
+          UpdaterPublicKeyBase58Check,
+          NFTPostHashHex,
+          SerialNumber,
+          BidderPublicKeyBase58Check,
+          BidAmountNanos,
+          EncryptedUnlockableText: EncryptedMessageText,
+          MinFeeRateNanosPerKB,
+        }).pipe(
+          map((request) => {
+            return { ...request };
+          })
+        );
+      })
+    );
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  DecryptUnlockableTexts(
+    ReaderPublicKeyBase58Check: string,
+    UnlockableNFTEntryResponses: NFTEntryResponse[]
+  ): Observable<any> {
+    return this.identityService
+      .decrypt({
+        ...this.identityService.identityServiceParamsForKey(ReaderPublicKeyBase58Check),
+        encryptedMessages: UnlockableNFTEntryResponses.map((unlockableNFTEntryResponses) => ({
+          EncryptedHex: unlockableNFTEntryResponses.EncryptedUnlockableText,
+          PublicKey: unlockableNFTEntryResponses.LastOwnerPublicKeyBase58Check,
+        })),
+      })
+      .pipe(
+        map((decrypted) => {
+          for (const unlockableNFTEntryResponse of UnlockableNFTEntryResponses) {
+            unlockableNFTEntryResponse.DecryptedUnlockableText =
+              decrypted.decryptedHexes[unlockableNFTEntryResponse.EncryptedUnlockableText];
+          }
+          return UnlockableNFTEntryResponses;
+        })
+      )
+      .pipe(catchError(this._handleError));
+  }
+
+  GetNFTBidsForNFTPost(
+    endpoint: string,
+    ReaderPublicKeyBase58Check: string,
+    PostHashHex: string
+  ): Observable<NFTBidData> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTBidsForNFTPost, {
+      ReaderPublicKeyBase58Check,
+      PostHashHex,
+    });
+  }
+
+  GetNFTsForUser(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string,
+    IsForSale: boolean | null = null
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTsForUser, {
+      UserPublicKeyBase58Check,
+      ReaderPublicKeyBase58Check,
+      IsForSale,
+    });
+  }
+
+  GetNFTBidsForUser(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTBidsForUser, {
+      UserPublicKeyBase58Check,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetNFTShowcase(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    ReaderPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTShowcase, {
+      UserPublicKeyBase58Check,
+      ReaderPublicKeyBase58Check,
+    });
+  }
+
+  GetNextNFTShowcase(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNextNFTShowcase, {
+      UserPublicKeyBase58Check,
+    });
+  }
+
+  GetNFTCollectionSummary(endpoint: string, ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTCollectionSummary, {
+      ReaderPublicKeyBase58Check,
+      PostHashHex,
+    });
+  }
+
+  GetNFTEntriesForNFTPost(endpoint: string, ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetNFTEntriesForPostHash, {
+      ReaderPublicKeyBase58Check,
+      PostHashHex,
+    });
+  }
+
   SubmitPost(
     endpoint: string,
     UpdaterPublicKeyBase58Check: string,
@@ -956,7 +1221,7 @@ export class BackendApiService {
               EncryptedHex: message.EncryptedText,
               PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
               IsSender: message.IsSender,
-              V2: message.V2,
+              Legacy: !message.V2,
             };
             encryptedMessages.push(payload);
           }
@@ -1487,12 +1752,16 @@ export class BackendApiService {
     USDCentsPerBitcoin: number,
     CreateProfileFeeNanos: number,
     MinimumNetworkFeeNanosPerKB: number,
+    MaxCopiesPerNFT: number,
+    CreateNFTFeeNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateGlobalParams, UpdaterPublicKeyBase58Check, {
       UpdaterPublicKeyBase58Check,
       USDCentsPerBitcoin,
       CreateProfileFeeNanos,
+      MaxCopiesPerNFT,
+      CreateNFTFeeNanos,
       MinimumNetworkFeeNanosPerKB,
       MinFeeRateNanosPerKB,
       AdminPublicKey: UpdaterPublicKeyBase58Check,
@@ -1501,7 +1770,33 @@ export class BackendApiService {
   }
 
   GetGlobalParams(endpoint: string, UpdaterPublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetGlobalParams, UpdaterPublicKeyBase58Check, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetGlobalParams, {
+      UpdaterPublicKeyBase58Check,
+    });
+  }
+
+  AdminGetNFTDrop(endpoint: string, UpdaterPublicKeyBase58Check: string, DropNumber: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetNFTDrop, UpdaterPublicKeyBase58Check, {
+      DropNumber,
+      AdminPublicKey: UpdaterPublicKeyBase58Check,
+    });
+  }
+
+  AdminUpdateNFTDrop(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    DropNumber: number,
+    DropTstampNanos: number,
+    IsActive: boolean,
+    NFTHashHexToAdd: string,
+    NFTHashHexToRemove: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateNFTDrop, UpdaterPublicKeyBase58Check, {
+      DropNumber,
+      DropTstampNanos,
+      IsActive,
+      NFTHashHexToAdd,
+      NFTHashHexToRemove,
       AdminPublicKey: UpdaterPublicKeyBase58Check,
     });
   }
