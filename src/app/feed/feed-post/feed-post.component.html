@@ -132,7 +132,7 @@
           'feed-post__blue-border': showLeftSelectedBorder,
           'feed-post__parent-post-font-size': isParentPostInThread
           }"
-          [ngStyle]="{ 'border-radius': showLeftSelectedBorder && cardStyle ? '12px 0' : '' }"
+          [ngStyle]="{ 'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT ? '12px 0' : '12px') : '' }"
           *ngIf="!postContent.IsHidden"
         >
           <!-- Avatar -->
