@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { InfiniteScroller } from "../infinite-scroller";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 
 @Component({
   selector: "nft-drop-mgr",
@@ -27,6 +29,22 @@ export class NftDropMgrComponent implements OnInit {
   posts = [];
 
   isUpdatable = false;
+
+  static PAGE_SIZE = 10;
+  static WINDOW_VIEWPORT = true;
+  static BUFFER_SIZE = 5;
+  static PADDING = 0.5;
+
+  lastPage: number;
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    NftDropMgrComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    NftDropMgrComponent.WINDOW_VIEWPORT,
+    NftDropMgrComponent.BUFFER_SIZE,
+    NftDropMgrComponent.PADDING
+  );
+
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 
   constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
     this.globalVars = _globalVars;
@@ -57,6 +75,18 @@ export class NftDropMgrComponent implements OnInit {
       });
   }
 
+  getPage(page: number) {
+    if (this.lastPage != null && page > this.lastPage) {
+      return [];
+    }
+    const startIdx = page * NftDropMgrComponent.PAGE_SIZE;
+    const endIdx = (page + 1) * NftDropMgrComponent.PAGE_SIZE;
+
+    return new Promise((resolve, reject) => {
+      resolve(this.posts.slice(startIdx, Math.min(endIdx, this.posts.length)));
+    });
+  }
+
   isWorking() {
     return this.loading || this.settingDate || this.togglingActivation || this.addingNFT;
   }
@@ -68,10 +98,8 @@ export class NftDropMgrComponent implements OnInit {
     this.dropNumber = dropEntry.DropNumber;
     this.dropTime = new Date(dropEntry.DropTstampNanos / 1e6);
     let currentTime = new Date();
-    this.hideDateTimeAdjuster = false;
-    if (this.dropTime < currentTime) {
-      this.hideDateTimeAdjuster = true;
-    }
+    this.hideDateTimeAdjuster = this.dropTime < currentTime;
+    this.lastPage = Math.floor(this.posts.length / NftDropMgrComponent.PAGE_SIZE);
     this.setIsUpdatable();
   }
 
@@ -80,6 +108,11 @@ export class NftDropMgrComponent implements OnInit {
     setTimeout(() => {
       this.dropSelectorError = "";
     }, 1500);
+  }
+
+  resetDatasource(): void {
+    this.infiniteScroller.reset();
+    this.datasource.adapter.reset();
   }
 
   nextDrop() {
@@ -102,6 +135,7 @@ export class NftDropMgrComponent implements OnInit {
       this.dropTime = new Date();
       this.dropEntry = null;
       this.hideDateTimeAdjuster = false;
+      this.resetDatasource();
       return;
     }
 
