@@ -33,8 +33,6 @@ export class TradeCreatorCompleteComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('Here is the user following creator')
-    console.log(this.userFollowingCreator);
     window.scroll(0, 0);
   }
 }
