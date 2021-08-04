@@ -40,7 +40,7 @@ export class CountdownTimerComponent implements OnInit {
       this.setHoursDiff(now);
       this.setMinutesDiff(now);
       this.setSecondsDiff(now);
-      // this.celebrateIfTimeEnd(now);
+      this.celebrateIfTimeEnd(now);
     }, 1000);
   }
 
@@ -100,7 +100,7 @@ export class CountdownTimerComponent implements OnInit {
   celebrateIfTimeEnd(now: number): void {
     const diff = (now - this.timerEnd) / 1000;
     if (diff > 0 && diff < 3) {
-      this.globalVars.celebrate([ConfettiSvg.ROCKET, ConfettiSvg.LAMBO]);
+      this.globalVars.celebrate();
     }
   }
 

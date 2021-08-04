@@ -110,6 +110,7 @@
       [includePaddingOnPost]="true"
       [showReplyingToContent]="!!post.parentPost"
       [parentPost]="post.parentPost"
+      [contentShouldLinkToThread]="true"
     ></feed-post>
     <span *ngIf="post.PostHashHex === nftBeingRemoved">&nbsp;Removing...</span>
   </div>
