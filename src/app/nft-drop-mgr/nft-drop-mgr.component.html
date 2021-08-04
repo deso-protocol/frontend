@@ -98,14 +98,14 @@
 
 <div class="w-100 light-grey-divider border-bottom border-top border-color-grey" style="height:10px"></div>
 
-<div *ngIf="posts.length > 0 && !loading" class="p-15px fs-15px">
-  <b>NFTs in this drop:</b>
-  <div #uiScroll *uiScroll="let post of datasource" class="d-flex align-items-center mt-15px border border-color-grey br-8px">
+<div *ngIf="posts.length > 0 && (!loading || loadingNewDrop)" class="p-15px fs-15px">
+  <b *ngIf="!loadingNewDrop">NFTs in this drop:</b>
+  <div #uiScroll *uiScroll="let post of datasource" [ngClass]="{'d-flex align-items-center mt-15px border border-color-grey br-8px': !loadingNewDrop}">
     <i (click)="removeNFT(post.PostHashHex)"
-       class="p-10px far fa-trash-alt fc-red cursor-pointer"></i>
+       class="p-10px far fa-trash-alt fc-red cursor-pointer" *ngIf="!loadingNewDrop"></i>
     <feed-post
       class="flex-grow-1 border-left border-color-grey cursor-pointer"
-      *ngIf="post.PostHashHex !== nftBeingRemoved"
+      *ngIf="post.PostHashHex !== nftBeingRemoved && !loadingNewDrop"
       [post]="post"
       [includePaddingOnPost]="true"
       [showReplyingToContent]="!!post.parentPost"

@@ -13,6 +13,7 @@ export class NftDropMgrComponent implements OnInit {
   globalVars: GlobalVarsService;
 
   loading: boolean = false;
+  loadingNewDrop: boolean = false;
   settingDate: boolean = false;
   togglingActivation: boolean = false;
   addingNFT: boolean = false;
@@ -112,7 +113,10 @@ export class NftDropMgrComponent implements OnInit {
 
   resetDatasource(): void {
     this.infiniteScroller.reset();
-    this.datasource.adapter.reset();
+    this.datasource.adapter.reset().then(() => {
+      this.loadingNewDrop = false;
+      this.loading = false;
+    });
   }
 
   nextDrop() {
@@ -140,6 +144,7 @@ export class NftDropMgrComponent implements OnInit {
     }
 
     this.loading = true;
+    this.loadingNewDrop = true;
     this.backendApi
       .AdminGetNFTDrop(
         this.globalVars.localNode,
@@ -155,7 +160,7 @@ export class NftDropMgrComponent implements OnInit {
         }
       )
       .add(() => {
-        this.loading = false;
+        this.resetDatasource();
       });
   }
 
@@ -168,6 +173,7 @@ export class NftDropMgrComponent implements OnInit {
     let prevDropNumber = this.dropNumber - 1;
 
     this.loading = true;
+    this.loadingNewDrop = true;
     this.backendApi
       .AdminGetNFTDrop(
         this.globalVars.localNode,
@@ -183,7 +189,7 @@ export class NftDropMgrComponent implements OnInit {
         }
       )
       .add(() => {
-        this.loading = false;
+        this.resetDatasource();
       });
   }
 
