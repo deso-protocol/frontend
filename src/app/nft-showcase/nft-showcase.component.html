@@ -1,29 +1,32 @@
-<div *ngFor="let nftCollection of nftCollections">
-  <div class="br-12px m-15px">
-    <feed-post
-      [post]="nftCollection.PostEntryResponse"
-      [includePaddingOnPost]="true"
-      [showReplyingToContent]="nftCollection.PostEntryResponse.parentPost"
-      [parentPost]="nftCollection.PostEntryResponse.parentPost"
-      [contentShouldLinkToThread]="true"
-      [showNFTDetails]="true"
-      [showExpandedNFTDetails]="true"
-      [setBorder]="true"
-      [nftCollectionHighBid]="nftCollection.HighestBidAmountNanos"
-      [nftCollectionLowBid]="nftCollection.LowestBidAmountNanos"
-    ></feed-post>
+<div *ngIf="!loading">
+  <div *ngFor="let nftCollection of nftCollections">
+    <div class="br-12px m-15px">
+      <feed-post
+        [post]="nftCollection.PostEntryResponse"
+        [includePaddingOnPost]="true"
+        [showReplyingToContent]="nftCollection.PostEntryResponse.parentPost"
+        [parentPost]="nftCollection.PostEntryResponse.parentPost"
+        [contentShouldLinkToThread]="true"
+        [showNFTDetails]="true"
+        [showExpandedNFTDetails]="true"
+        [setBorder]="true"
+        [nftCollectionHighBid]="nftCollection.HighestBidAmountNanos"
+        [nftCollectionLowBid]="nftCollection.LowestBidAmountNanos"
+      ></feed-post>
+    </div>
   </div>
 </div>
-<div *ngIf="!nftCollections || !nftCollections.length" class="d-flex align-items-center justify-content-center">
 
-  <div _ngcontent-vsd-c84="" class="d-flex flex-column align-items-center justify-content-center fc-muted fs-15px p-15px text-center" style="height: 400px;">
-    <div _ngcontent-vsd-c84="">The NFT Showcase is coming soon!</div>
+<div *ngIf="!loading && !nftCollections || !nftCollections.length" class="d-flex align-items-center justify-content-center">
 
-    <div _ngcontent-vsd-c84="" class="mt-15px">
+  <div class="d-flex flex-column align-items-center justify-content-center fc-muted fs-15px p-15px text-center" style="height: 400px;">
+    <div>The NFT Showcase is coming soon!</div>
+
+    <div class="mt-15px">
       Want a chance to be in the showcase?
     </div>
 
-    <div _ngcontent-vsd-c84="" class="mt-15px">
+    <div class="mt-15px">
       Just create an NFT and share it on Twitter or Instagram with <b>#CLOUTNFT</b>!
     </div>
   </div>
