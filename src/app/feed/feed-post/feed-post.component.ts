@@ -189,11 +189,11 @@ export class FeedPostComponent implements OnInit {
           this.mySerialNumbersNotForSale = this.nftEntryResponses.filter(
             (nftEntryResponse) =>
               !nftEntryResponse.IsForSale &&
-              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
           );
           this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
             (nftEntryResponse) =>
-              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check
+              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
           );
           this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
           this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;

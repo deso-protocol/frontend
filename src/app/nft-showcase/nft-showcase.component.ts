@@ -20,8 +20,8 @@ export class NftShowcaseComponent implements OnInit {
     this.backendApi
       .GetNFTShowcase(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.globalVars.loggedInUser.PublicKeyBase58Check
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check
       )
       .subscribe(
         (res: any) => {
