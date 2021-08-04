@@ -116,14 +116,11 @@ export class PlaceBidModalComponent implements OnInit {
           });
           modalRef.onHide
             .pipe(
-              take(1),
-              filter((reason) => {
-                return reason !== "explore";
-              })
-            )
-            .subscribe(() => {
-              window.location.reload();
-            });
+            take(1),
+            filter((reason) => {
+              return reason !== "explore";
+            })
+          );
         },
         (err) => {
           console.error(err);
