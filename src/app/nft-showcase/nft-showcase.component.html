@@ -1,5 +1,5 @@
 <div *ngIf="!loading">
-  <div *ngFor="let nftCollection of nftCollections">
+  <div *ngFor="let nftCollection of datasource">
     <div class="br-12px m-15px">
       <feed-post
         [post]="nftCollection.PostEntryResponse"
