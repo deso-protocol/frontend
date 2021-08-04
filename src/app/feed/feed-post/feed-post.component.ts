@@ -151,7 +151,7 @@ export class FeedPostComponent implements OnInit {
       this.post.RecloutCount = 0;
     }
     this.setEmbedURLForPostContent();
-    if (this.postContent.IsNFT && !this.nftEntryResponses?.length) {
+    if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.backendApi
         .GetNFTEntriesForNFTPost(
           this.globalVars.localNode,
