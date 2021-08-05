@@ -202,7 +202,6 @@ export class FeedPostComponent implements OnInit {
     }
     this.setEmbedURLForPostContent();
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
-      // TODO: Break this into seperate fn, call fn on new bid
       this.getNFTEntries();
     }
   }
