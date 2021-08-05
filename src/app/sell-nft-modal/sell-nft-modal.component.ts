@@ -51,19 +51,7 @@ export class SellNftModalComponent implements OnInit {
 
   sellNFT(): void {
     if (this.post.HasUnlockable) {
-      const unlockableModalDetails = this.modalService.show(AddUnlockableModalComponent, {
-        class: "modal-dialog-centered",
-        initialState: {
-          post: this.post,
-          selectedBidEntries: this.selectedBidEntries,
-        },
-      });
-      const onHideEvent = unlockableModalDetails.onHide;
-      onHideEvent.subscribe((response) => {
-        if (response === "nft sold") {
-          this.modalService.setDismissReason("nft sold");
-        }
-      });
+      this.modalService.setDismissReason("unlockable content opened");
       this.bsModalRef.hide();
       return;
     }
