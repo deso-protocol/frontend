@@ -3,7 +3,7 @@ import { BackendApiService, NFTCollectionResponse } from "../backend-api.service
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import * as _ from "lodash";
+import { uniqBy } from "lodash";
 
 @Component({
   selector: "nft-showcase",
@@ -46,7 +46,7 @@ export class NftShowcaseComponent implements OnInit {
           this.nftCollections = res.NFTCollections;
           if (this.nftCollections) {
             this.nftCollections.sort((a, b) => b.HighestBidAmountNanos - a.HighestBidAmountNanos);
-            this.nftCollections = _.uniqBy(
+            this.nftCollections = uniqBy(
               this.nftCollections,
               (nftCollection) => nftCollection.PostEntryResponse.PostHashHex
             );
