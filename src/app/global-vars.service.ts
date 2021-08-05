@@ -781,7 +781,7 @@ export class GlobalVarsService {
     this.satoshisPerBitCloutExchangeRate = 0;
     this.nanosPerUSDExchangeRate = GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE;
     this.usdPerBitcoinExchangeRate = 10000;
-    this.defaultFeeRateNanosPerKB = 0.0;
+    this.defaultFeeRateNanosPerKB = 1000.0;
 
     this.localNode = this.backendApi.GetStorage(this.backendApi.LastLocalNodeKey);
 
