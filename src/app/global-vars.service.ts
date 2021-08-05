@@ -926,4 +926,39 @@ export class GlobalVarsService {
     this.backendApi.ResendVerifyEmail(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe();
     this.resentVerifyEmail = true;
   }
+
+  // TODO: do we want to set some variable in global vars so we can open a SweetAlert is a user tries to take any action
+  // before receiving their money?
+  // If we return from the Jumio flow, poll for up to 2 minutes to see if we need to update the user's balance.
+  pollLoggedInUserForJumio(publicKey: string): void {
+    let attempts = 0;
+    let numTries = 48;
+    let timeoutMillis = 2500;
+    let interval = setInterval(() => {
+      if (attempts >= numTries) {
+        clearInterval(interval);
+        return;
+      }
+      this.backendApi
+        .GetUsersStateless(this.localNode, [publicKey], false)
+        .subscribe(
+          (res: any) => {
+            const user = res.UserList[0];
+            if (user.JumioVerified) {
+              this.userList.forEach((userInList, idx) => {
+                if (userInList.PublicKeyBase58Check === user.PublicKeyBase58Check) {
+                  this.userList[idx] = user;
+                }
+              });
+              this.setLoggedInUser(user);
+              clearInterval(interval);
+            }
+          },
+          (error) => {
+            clearInterval(interval);
+          }
+        )
+        .add(() => attempts++);
+    }, timeoutMillis);
+  }
 }
