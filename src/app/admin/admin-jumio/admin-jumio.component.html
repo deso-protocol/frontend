@@ -29,14 +29,13 @@
       <button *ngIf="loadingJumioAttempts" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
     </div>
   </div>
-  <div *ngFor="let attempt of jumioAttempts" class="px-15px">
+  <div *ngFor="let attempt of jumioAttempts; let i = index;" class="p-15px">
+    #{{ i }}:
     <ul>
-      <ng-container *ngFor="let item of attempt | keyvalue">
-        <li>{{ item.key }}</li>
-        <ul>
-          <li *ngFor="let value of item.value">{{ value }}</li>
-        </ul>
-      </ng-container>
+      <li
+        style="word-break: break-word"
+        *ngFor="let item of attempt | keyvalue"
+      >{{ item.key }}: {{ item.value }}</li>
     </ul>
   </div>
 </div>
