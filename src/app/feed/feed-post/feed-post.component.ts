@@ -142,6 +142,56 @@ export class FeedPostComponent implements OnInit {
   mOfNNFTTooltip =
     "Each NFT can have multiple editions, each of which has its own unique serial number. This shows how many editions are currently on sale and how many there are in total. Generally, editions with lower serial numbers are more valuable.";
 
+  getNFTEntries() {
+    this.backendApi
+      .GetNFTEntriesForNFTPost(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.postContent.PostHashHex
+      )
+      .subscribe((res) => {
+        this.nftEntryResponses = res.NFTEntryResponses;
+        this.nftEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
+        this.decryptableNFTEntryResponses = this.nftEntryResponses.filter(
+          (sn) =>
+            sn.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+            sn.EncryptedUnlockableText &&
+            sn.LastOwnerPublicKeyBase58Check
+        );
+        if (this.decryptableNFTEntryResponses.length) {
+          this.backendApi
+            .DecryptUnlockableTexts(
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
+              this.decryptableNFTEntryResponses
+            )
+            .subscribe((res) => (this.decryptableNFTEntryResponses = res));
+        }
+        this.availableSerialNumbers = this.nftEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
+        const profileSerialNumbers = this.nftEntryResponses.filter(
+          (serialNumber) =>
+            serialNumber.OwnerPublicKeyBase58Check === this.profilePublicKeyBase58Check &&
+            (!this.isForSaleOnly || serialNumber.IsForSale)
+        );
+        this.serialNumbersDisplay =
+          profileSerialNumbers
+            .map((serialNumber) => `#${serialNumber.SerialNumber}`)
+            .slice(0, 5)
+            .join(", ") + (profileSerialNumbers.length > 5 ? "..." : "");
+        this.mySerialNumbersNotForSale = this.nftEntryResponses.filter(
+          (nftEntryResponse) =>
+            !nftEntryResponse.IsForSale &&
+            nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+        );
+        this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
+          (nftEntryResponse) =>
+            nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+        );
+        this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
+        this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
+        this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
+      });
+  }
+
   ngOnInit() {
     if (this.globalVars.loggedInUser) {
       this.loggedInUserStakeAmount = this._getLoggedInUserStakeAmount();
@@ -152,53 +202,8 @@ export class FeedPostComponent implements OnInit {
     }
     this.setEmbedURLForPostContent();
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
-      this.backendApi
-        .GetNFTEntriesForNFTPost(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          this.postContent.PostHashHex
-        )
-        .subscribe((res) => {
-          this.nftEntryResponses = res.NFTEntryResponses;
-          this.nftEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
-          this.decryptableNFTEntryResponses = this.nftEntryResponses.filter(
-            (sn) =>
-              sn.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
-              sn.EncryptedUnlockableText &&
-              sn.LastOwnerPublicKeyBase58Check
-          );
-          if (this.decryptableNFTEntryResponses.length) {
-            this.backendApi
-              .DecryptUnlockableTexts(
-                this.globalVars.loggedInUser?.PublicKeyBase58Check,
-                this.decryptableNFTEntryResponses
-              )
-              .subscribe((res) => (this.decryptableNFTEntryResponses = res));
-          }
-          this.availableSerialNumbers = this.nftEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
-          const profileSerialNumbers = this.nftEntryResponses.filter(
-            (serialNumber) =>
-              serialNumber.OwnerPublicKeyBase58Check === this.profilePublicKeyBase58Check &&
-              (!this.isForSaleOnly || serialNumber.IsForSale)
-          );
-          this.serialNumbersDisplay =
-            profileSerialNumbers
-              .map((serialNumber) => `#${serialNumber.SerialNumber}`)
-              .slice(0, 5)
-              .join(", ") + (profileSerialNumbers.length > 5 ? "..." : "");
-          this.mySerialNumbersNotForSale = this.nftEntryResponses.filter(
-            (nftEntryResponse) =>
-              !nftEntryResponse.IsForSale &&
-              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
-          );
-          this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
-            (nftEntryResponse) =>
-              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
-          );
-          this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-          this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
-          this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
-        });
+      // TODO: Break this into seperate fn, call fn on new bid
+      this.getNFTEntries();
     }
   }
 

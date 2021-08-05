@@ -52,6 +52,7 @@ export class CloseNftAuctionModalComponent {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
+          // TODO: Trigger bid refresh and nft entries
           window.location.reload();
         },
         (err) => {

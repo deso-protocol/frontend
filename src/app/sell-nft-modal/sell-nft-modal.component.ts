@@ -102,6 +102,8 @@ export class SellNftModalComponent implements OnInit {
               })
             )
             .subscribe(() => {
+
+              // TODO: Trigger bid refresh and nft entries
               window.location.reload();
             });
         },

@@ -74,6 +74,7 @@ export class AddUnlockableModalComponent implements OnInit {
               })
             )
             .subscribe(() => {
+              // TODO: Trigger bid refresh and nft entries
               window.location.reload();
             });
         },
