@@ -67,9 +67,7 @@ export class AdminJumioComponent {
         username
       )
       .subscribe(
-        (res) => {
-          this.jumioAttempts = res.VerificationAttempts;
-        },
+        (res) => {},
         (err) => {
           this.globalVars._alertError(err.error.error);
         }

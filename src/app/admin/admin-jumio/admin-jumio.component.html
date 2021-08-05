@@ -29,6 +29,9 @@
       <button *ngIf="loadingJumioAttempts" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
     </div>
   </div>
+  <div *ngIf="jumioAttempts != null && jumioAttempts.length === 0">
+    There are no Jumio logs for {{ usernameToFetchJumioAttempts }}
+  </div>
   <div *ngFor="let attempt of jumioAttempts; let i = index;" class="p-15px">
     #{{ i }}:
     <ul>
