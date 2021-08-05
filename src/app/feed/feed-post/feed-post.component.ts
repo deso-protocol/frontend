@@ -573,9 +573,15 @@ export class FeedPostComponent implements OnInit {
       return;
     }
     event.stopPropagation();
-    this.modalService.show(PlaceBidModalComponent, {
+    const placeBidModalDetails = this.modalService.show(PlaceBidModalComponent, {
       class: "modal-dialog-centered modal-lg",
       initialState: { post: this.postContent },
+    });
+    const onHideEvent = placeBidModalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "bid placed") {
+        this.getNFTEntries();
+      }
     });
   }
 

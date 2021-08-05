@@ -114,6 +114,7 @@ export class PlaceBidModalComponent implements OnInit {
           const modalRef = this.modalService.show(BidPlacedModalComponent, {
             class: "modal-dialog-centered modal-sm",
           });
+          this.modalService.setDismissReason("bid placed");
           modalRef.onHide.pipe(
             take(1),
             filter((reason) => {

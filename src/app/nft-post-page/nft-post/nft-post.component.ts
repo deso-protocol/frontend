@@ -218,13 +218,19 @@ export class NftPostComponent {
     if (this.sellNFTDisabled) {
       return;
     }
-    this.modalService.show(SellNftModalComponent, {
+    const sellNFTModalDetails = this.modalService.show(SellNftModalComponent, {
       class: "modal-dialog-center",
       initialState: {
         post: this.nftPost,
         nftEntries: this.nftBidData.NFTEntryResponses,
         selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
       },
+    });
+    const onHideEvent = sellNFTModalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "nft sold") {
+        this.refreshBidData();
+      }
     });
   }
 
@@ -252,12 +258,18 @@ export class NftPostComponent {
   }
 
   closeAuction(): void {
-    this.modalService.show(CloseNftAuctionModalComponent, {
+    const closeNftAuctionModalDetails = this.modalService.show(CloseNftAuctionModalComponent, {
       class: "modal-dialog-centered",
       initialState: {
         post: this.nftPost,
         myAvailableSerialNumbers: this.myAvailableSerialNumbers,
       },
+    });
+    const onHiddenEvent = closeNftAuctionModalDetails.onHidden;
+    onHiddenEvent.subscribe((response) => {
+      if (response === "auction cancelled") {
+        this.refreshBidData();
+      }
     });
   }
 

@@ -51,12 +51,18 @@ export class SellNftModalComponent implements OnInit {
 
   sellNFT(): void {
     if (this.post.HasUnlockable) {
-      this.modalService.show(AddUnlockableModalComponent, {
+      const unlockableModalDetails = this.modalService.show(AddUnlockableModalComponent, {
         class: "modal-dialog-centered",
         initialState: {
           post: this.post,
           selectedBidEntries: this.selectedBidEntries,
         },
+      });
+      const onHideEvent = unlockableModalDetails.onHide;
+      onHideEvent.subscribe((response) => {
+        if (response === "nft sold") {
+          this.modalService.setDismissReason("nft sold");
+        }
       });
       this.bsModalRef.hide();
       return;
@@ -94,18 +100,13 @@ export class SellNftModalComponent implements OnInit {
           const modalRef = this.modalService.show(NftSoldModalComponent, {
             class: "modal-dialog-centered modal-sm",
           });
-          modalRef.onHide
-            .pipe(
-              take(1),
-              filter((reason) => {
-                return reason !== "view_my_nfts";
-              })
-            )
-            .subscribe(() => {
-
-              // TODO: Trigger bid refresh and nft entries
-              window.location.reload();
-            });
+          this.modalService.setDismissReason("nft sold");
+          modalRef.onHide.pipe(
+            take(1),
+            filter((reason) => {
+              return reason !== "view_my_nfts";
+            })
+          );
         },
         (err) => {
           console.error(err);
