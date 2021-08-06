@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
-import { FollowService } from "../../follow-button/follow.service";
+import { FollowService } from "../../../lib/services/follow/follow.service";
 
 @Component({
   selector: "trade-creator-preview",

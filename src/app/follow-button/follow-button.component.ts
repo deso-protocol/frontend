@@ -12,7 +12,7 @@ import { Input } from "@angular/core";
 import { FollowChangeObservableResult } from "../../lib/observable-results/follow-change-observable-result";
 import { Subscription } from "rxjs";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { FollowService } from "./follow.service";
+import { FollowService } from "../../lib/services/follow/follow.service";
 
 @Component({
   selector: "follow-button",
