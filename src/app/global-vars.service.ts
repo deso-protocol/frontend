@@ -739,26 +739,29 @@ export class GlobalVarsService {
     });
   }
 
-  launchLoginFlow() {
-    this.logEvent("account : login : launch");
+  launchIdentityFlow(event: string): void {
+    this.logEvent(`account : ${event} : launch`);
     this.identityService.launch("/log-in").subscribe((res) => {
-      this.logEvent("account : login : success");
+      this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything().subscribe(() => {
-        this.flowRedirect(res.signedUp);
-      });
+      this.updateEverything()
+        .subscribe(() => {
+          this.flowRedirect(res.signedUp);
+        })
+        .add(() => {
+          if (res.jumioSuccess) {
+            this.pollLoggedInUserForJumio(res.PublicKeyAdded);
+          }
+        });
     });
   }
 
+  launchLoginFlow() {
+    this.launchIdentityFlow("login");
+  }
+
   launchSignupFlow() {
-    this.logEvent("account : create : launch");
-    this.identityService.launch("/log-in").subscribe((res) => {
-      this.logEvent("account : create : success");
-      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything().subscribe(() => {
-        this.flowRedirect(res.signedUp);
-      });
-    });
+    this.launchIdentityFlow("create");
   }
 
   flowRedirect(signedUp: boolean): void {
