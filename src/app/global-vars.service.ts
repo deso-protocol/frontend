@@ -928,7 +928,7 @@ export class GlobalVarsService {
   }
 
   // TODO: do we want to set some variable in global vars so we can open a SweetAlert is a user tries to take any action
-  // before receiving their money?
+  // before receiving their money? Should we only poll if they have a 0 balance?
   // If we return from the Jumio flow, poll for up to 2 minutes to see if we need to update the user's balance.
   pollLoggedInUserForJumio(publicKey: string): void {
     let attempts = 0;
