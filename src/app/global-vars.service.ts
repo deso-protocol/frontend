@@ -750,7 +750,7 @@ export class GlobalVarsService {
         })
         .add(() => {
           if (res.jumioSuccess) {
-            this.pollLoggedInUserForJumio(res.PublicKeyAdded);
+            this.pollLoggedInUserForJumio(res.publicKeyAdded);
           }
         });
     });
