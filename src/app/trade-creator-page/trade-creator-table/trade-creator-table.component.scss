@@ -23,7 +23,7 @@ input#check {
 
 #check + label {
   display: block;
-  border: 2px solid #8A8A8A;
+  border: 2px solid var(--grey);
   width: var(--d); height: var(--d);
   border-radius: 5px;
   cursor: pointer;
@@ -34,7 +34,7 @@ input#check {
     vertical-align: top;
     path {
       fill: none;
-      stroke: #8A8A8A;
+      stroke: var(--grey);
       stroke-width: 11px;
       stroke-linecap: round;
       stroke-linejoin: round;

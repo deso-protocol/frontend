@@ -99,17 +99,17 @@
     class="py-3 text-muted d-flex"
   >
     <div class="mr-10px">
-      <i class="fas fa-heart fa-md text-grey9"></i>
+      <i class="fas fa-heart fa-md text-grey5"></i>
     </div>
-    <div [ngClass]="{ 'text-danger': creatorCoinTrade.showFounderRewardWarning() }">
+    <div [ngClass]="{ 'text-danger': creatorCoinTrade.showFounderRewardWarning() }" class="text-grey5">
       @{{ creatorCoinTrade.creatorProfile.Username }} will receive
-      <span class="font-weight-semibold">{{ creatorCoinTrade.getFoundersRewardPercent() | number: "0.0-9" }}%</span>
+      <span class="font-weight-semibold text-grey5">{{ creatorCoinTrade.getFoundersRewardPercent() | number: "0.0-9" }}%</span>
       of your purchase as a
       <span style="white-space: nowrap">
         founder reward
         <i
           (click)="tooltip.toggle()"
-          class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+          class="fas fa-info-circle text-grey5 fs-15px global__tooltip-icon"
           matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
           [matTooltip]="TradeCreatorTableComponent.FOUNDER_REWARD_EXPLANATION"
           #tooltip="matTooltip"
@@ -117,14 +117,14 @@
       </span>
     </div>
   </div>
-  <div *ngIf="!userFollowingCreator" class="py-1 border-bottom text-muted d-flex">
+  <div *ngIf="!userFollowingCreator" class="py-1 border-bottom text-muted d-flex text-grey9">
     <input type="checkbox" id="check" [(ngModel)]="creatorCoinTrade.followCreator" />
-    <label for="check" style="--d: 15px" class="follow-check">
+    <label for="check" style="--d: 15px" class="follow-check text-grey9">
       <svg viewBox="0,0,50,50">
         <path d="M5 30 L 20 45 L 45 5"></path>
       </svg>
     </label>
-    <label class="form-check-label follow-check-label" for="check">
+    <label class="form-check-label follow-check-label text-grey5" for="check">
       Follow {{ creatorCoinTrade.creatorProfile.Username }}
     </label>
   </div>

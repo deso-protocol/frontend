@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Injectable} from "@angular/core";
+import { Injectable } from "@angular/core";
 import { BackendApiService } from "../backend-api.service";
 import { FollowChangeObservableResult } from "../../lib/observable-results/follow-change-observable-result";
 import { GlobalVarsService } from "../global-vars.service";
@@ -8,27 +8,26 @@ import { GlobalVarsService } from "../global-vars.service";
 })
 export class FollowService {
   constructor(
-    private followedPubKeyBase58Check: string,
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private appData: GlobalVarsService,
-    private changeRef: ChangeDetectorRef
-  ) {}
+  ) {
+  }
 
   RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS = "RuleErrorFollowEntryAlreadyExists";
   RULE_ERROR_CANNOT_UNFOLLOW_NONEXISTENT_FOLLOW_ENTRY = "RuleErrorCannotUnfollowNonexistentFollowEntry";
   createFollowTxnBeingCalled = false;
   isFollowing: boolean;
 
-  _isLoggedInUserFollowing() {
+  _isLoggedInUserFollowing(followedPubKeyBase58Check: string) {
     if (!this.appData.loggedInUser?.PublicKeysBase58CheckFollowedByUser) {
       return false;
     }
 
-    return this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser.includes(this.followedPubKeyBase58Check);
+    return this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser.includes(followedPubKeyBase58Check);
   }
 
-  _toggleFollow(isFollow) {
+  _toggleFollow(isFollow: boolean, followedPubKeyBase58Check: string) {
     if (this.createFollowTxnBeingCalled) {
       return;
     }
@@ -36,34 +35,30 @@ export class FollowService {
     let followerPublicKeyBase58Check = this.appData.loggedInUser.PublicKeyBase58Check;
 
     this.createFollowTxnBeingCalled = true;
-    // Need to manually detect changes, since the follow button can rendered from the feed
-    // (which has change detection disabled)
-    this.changeRef.detectChanges();
 
-    this.backendApi
+    return this.backendApi
       .CreateFollowTxn(
         this.appData.localNode,
         followerPublicKeyBase58Check,
-        this.followedPubKeyBase58Check,
+        followedPubKeyBase58Check,
         !isFollow /*isUnfollow*/,
         this.appData.feeRateBitCloutPerKB * 1e9
       )
       .subscribe(
         (response) => {
-          this._handleSuccessfulFollowTxn(isFollow);
-          this._notifyFollowChangeObservers();
+          this._handleSuccessfulFollowTxn(isFollow, followedPubKeyBase58Check);
+          this._notifyFollowChangeObservers(followedPubKeyBase58Check);
         },
         (response) => {
-          console.error(response);
           let errorString = response.error.error || "";
           if (errorString.includes(this.RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS)) {
             // If the user is already following, then set our button to reflect that.
             // Note: a common way this can currently happen is if there are multiple
             // follow buttons on the same page for the same user. TODO: fix this
-            this._handleSuccessfulFollow();
+            this._handleSuccessfulFollow(followedPubKeyBase58Check);
           } else if (errorString.includes(this.RULE_ERROR_CANNOT_UNFOLLOW_NONEXISTENT_FOLLOW_ENTRY)) {
             // If the user is already not following, then set our button to reflect that.
-            this._handleSuccessfulUnfollow();
+            this._handleSuccessfulUnfollow(followedPubKeyBase58Check);
           } else {
             // TODO: RuleErrorInputSpendsNonexistentUtxo is a problem ... we need a lock in the server endpoint
             // TODO: there's prob some "out of funds" error which is a problem
@@ -75,29 +70,25 @@ export class FollowService {
       )
       .add(() => {
         this.createFollowTxnBeingCalled = false;
-
-        // Need to manually detect changes, since the follow button can rendered from the feed
-        // (which has change detection disabled)
-        this.changeRef.detectChanges();
       });
   }
 
-  _handleSuccessfulFollowTxn(isFollow) {
+  _handleSuccessfulFollowTxn(isFollow: boolean, followedPubKeyBase58Check: string) {
     if (isFollow) {
-      this._handleSuccessfulFollow();
+      this._handleSuccessfulFollow(followedPubKeyBase58Check);
     } else {
-      this._handleSuccessfulUnfollow();
+      this._handleSuccessfulUnfollow(followedPubKeyBase58Check);
     }
   }
 
-  _handleSuccessfulFollow() {
+  _handleSuccessfulFollow(followedPubKeyBase58Check: string) {
     this.globalVars.logEvent("user : follow");
 
     // add to the list of follows (keep the global list correct)
     let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;
-    let index = publicKeys.indexOf(this.followedPubKeyBase58Check);
+    let index = publicKeys.indexOf(followedPubKeyBase58Check);
     if (index == -1) {
-      publicKeys.push(this.followedPubKeyBase58Check);
+      publicKeys.push(followedPubKeyBase58Check);
       // we keep the array sorted since app.component.ts does the following
       // to determine whether any user fields are changed:
       //   (JSON.stringify(this.appData.loggedInUser) !== JSON.stringify(loggedInUserFound))
@@ -110,12 +101,12 @@ export class FollowService {
     this.isFollowing = true;
   }
 
-  _handleSuccessfulUnfollow() {
+  _handleSuccessfulUnfollow(followedPubKeyBase58Check: string) {
     this.globalVars.logEvent("user : unfollow");
 
     // remove from the list of follows (keep the global list correct)
     let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;
-    let index = publicKeys.indexOf(this.followedPubKeyBase58Check);
+    let index = publicKeys.indexOf(followedPubKeyBase58Check);
     if (index > -1) {
       publicKeys.splice(index, 1);
       publicKeys.sort();
@@ -125,16 +116,15 @@ export class FollowService {
       console.error(`_handleSuccessfulUnfollow: unexpected index: ${index}`);
     }
     this.isFollowing = false;
-    this.changeRef.detectChanges();
   }
 
   // Note: only the follow button that calls CreateFollowTxn should notify. Any
   // other buttons that update their state should not notify.
-  _notifyFollowChangeObservers() {
+  _notifyFollowChangeObservers(followedPubKeyBase58Check: string) {
     this.appData.followChangeObservers.forEach((observer) => {
       let result = new FollowChangeObservableResult();
       result.isFollowing = this.isFollowing;
-      result.followedPubKeyBase58Check = this.followedPubKeyBase58Check;
+      result.followedPubKeyBase58Check = followedPubKeyBase58Check;
       observer.next(result);
     });
   }

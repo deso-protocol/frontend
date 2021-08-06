@@ -7,7 +7,7 @@
 
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, User } from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { Input } from "@angular/core";
 import { FollowChangeObservableResult } from "../../lib/observable-results/follow-change-observable-result";
 import { Subscription } from "rxjs";
@@ -20,9 +20,6 @@ import { FollowService } from "./follow.service";
   styleUrls: ["./follow-button.component.scss"],
 })
 export class FollowButtonComponent implements OnInit, OnDestroy {
-  RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS = "RuleErrorFollowEntryAlreadyExists";
-  RULE_ERROR_CANNOT_UNFOLLOW_NONEXISTENT_FOLLOW_ENTRY = "RuleErrorCannotUnfollowNonexistentFollowEntry";
-
   @Input() followedPubKeyBase58Check: string;
   @Input() displayAsLink: boolean;
   @Input() unfollowButtonClasses = [];
@@ -32,19 +29,33 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   // Is the logged in user currently following the target person?
   isFollowing: boolean;
   appData: GlobalVarsService;
-  followService: FollowService;
   createFollowTxnBeingCalled = false;
   followChangeSubscription: Subscription;
   changeRef: ChangeDetectorRef;
 
   unfollow(event) {
+    this.createFollowTxnBeingCalled = true;
     event.stopPropagation();
-    this.followService._toggleFollow(false);
+    const followTransaction = this.followService._toggleFollow(false, this.followedPubKeyBase58Check);
+    followTransaction.add(() => {
+      this.createFollowTxnBeingCalled = false;
+      // Need to manually detect changes, since the follow button can rendered from the feed
+      // (which has change detection disabled)
+      this.changeRef.detectChanges();
+    });
   }
 
   follow(event) {
+    this.createFollowTxnBeingCalled = true;
     event.stopPropagation();
-    this.followService._toggleFollow(true);
+    const followTransaction = this.followService._toggleFollow(true, this.followedPubKeyBase58Check);
+    followTransaction.add(() => {
+      this.createFollowTxnBeingCalled = false;
+
+      // Need to manually detect changes, since the follow button can rendered from the feed
+      // (which has change detection disabled)
+      this.changeRef.detectChanges();
+    });
   }
 
   canLoggedInUserFollowTargetPublicKey() {
@@ -87,7 +98,8 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   constructor(
     private globalVars: GlobalVarsService,
     private _changeRef: ChangeDetectorRef,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private followService: FollowService
   ) {
     this.appData = globalVars;
     this.changeRef = _changeRef;
@@ -105,13 +117,6 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.followService = new FollowService(
-      this.followedPubKeyBase58Check,
-      this.appData,
-      this.backendApi,
-      this.appData,
-      this.changeRef
-    );
-    this.isFollowing = this.followService._isLoggedInUserFollowing();
+    this.isFollowing = this.followService._isLoggedInUserFollowing(this.followedPubKeyBase58Check);
   }
 }

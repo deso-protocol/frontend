@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { Location } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";

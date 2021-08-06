@@ -5,7 +5,7 @@
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -42,8 +42,6 @@ export class TradeCreatorComponent implements OnInit {
   creatorCoinToSell: number;
   expectedBitCloutReturnedNanos: number;
 
-  followService: FollowService;
-  changeRef: ChangeDetectorRef;
   userFollowingCreator: boolean;
 
   _onSlippageError() {
@@ -149,14 +147,7 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   _getUserFollowingCreator() {
-    this.followService = new FollowService(
-      this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check,
-      this.appData,
-      this.backendApi,
-      this.appData,
-      this.changeRef
-    );
-    this.userFollowingCreator = this.followService._isLoggedInUserFollowing();
+    this.userFollowingCreator = this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check);
   }
 
   constructor(
@@ -164,12 +155,11 @@ export class TradeCreatorComponent implements OnInit {
     private _route: ActivatedRoute,
     private _router: Router,
     private backendApi: BackendApiService,
-  private _changeRef: ChangeDetectorRef
+    private followService: FollowService
   ) {
     this.appData = globalVars;
     this.router = _router;
     this.route = _route;
-    this.changeRef = _changeRef;
   }
 
   ngOnInit() {
