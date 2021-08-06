@@ -1,15 +1,21 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, Input, OnInit} from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: "nft-drop-mgr",
   templateUrl: "./nft-drop-mgr.component.html",
 })
 export class NftDropMgrComponent implements OnInit {
+  static SHOWCASE_MANAGEMENT = "Manage Showcase";
+  static SHOWCASE_PREVIEW_TAB = "Showcase Preview";
+
+  @Input() activeTab = NftDropMgrComponent.SHOWCASE_MANAGEMENT;
+
   globalVars: GlobalVarsService;
 
   loading: boolean = false;
@@ -47,8 +53,50 @@ export class NftDropMgrComponent implements OnInit {
 
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  feedTabs = [NftDropMgrComponent.SHOWCASE_MANAGEMENT, NftDropMgrComponent.SHOWCASE_PREVIEW_TAB];
+  switchingTabs = false;
+
+  constructor(
+    private _globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.globalVars = _globalVars;
+  }
+
+  showShowcaseManagementTab() {
+    return (
+      this.activeTab === NftDropMgrComponent.SHOWCASE_MANAGEMENT &&
+      this.posts.length > 0 &&
+      (!this.loading || this.loadingNewDrop)
+    );
+  }
+
+  showShowcasePreviewTab() {
+    return (
+      this.activeTab === NftDropMgrComponent.SHOWCASE_PREVIEW_TAB &&
+      this.posts.length > 0 &&
+      (!this.loading || this.loadingNewDrop)
+    );
+  }
+
+  _handleTabClick(tab: string) {
+    this.activeTab = tab;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { feedTab: this.activeTab },
+      queryParamsHandling: "merge",
+    });
+    this._onTabSwitch();
+  }
+
+  _onTabSwitch() {
+    // Delay rendering the posts for a hot second so nav is fast.
+    this.switchingTabs = true;
+    setTimeout(() => {
+      this.switchingTabs = false;
+    }, 0);
   }
 
   ngOnInit(): void {
