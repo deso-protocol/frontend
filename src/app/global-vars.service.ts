@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
-import { Observable, Observer } from "rxjs";
+import { Observable, Observer, of } from "rxjs";
 import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
 import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
 import { SwalHelper } from "../lib/helpers/swal-helper";
@@ -188,6 +188,8 @@ export class GlobalVarsService {
   // Timestamp of last profile update
   profileUpdateTimestamp: number;
 
+  jumioBitCloutNanos = 0;
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -281,6 +283,11 @@ export class GlobalVarsService {
 
     this.loggedInUser = user;
 
+    // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
+    if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
+      this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
+    }
+
     if (!isSameUserAsBefore) {
       // Store the user in localStorage
       this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
@@ -299,6 +306,7 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
+    this.jumioInternalReference = "";
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
   }
 
@@ -613,24 +621,27 @@ export class GlobalVarsService {
     });
   }
 
-  _alertError(err: any, showBuyBitClout: boolean = false) {
+  _alertError(err: any, showBuyBitClout: boolean = false, showBuyCreatorCoin: boolean = false) {
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
-      showCancelButton: showBuyBitClout,
+      showCancelButton: showBuyBitClout || showBuyCreatorCoin,
       focusConfirm: true,
       customClass: {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: showBuyBitClout ? "Buy BitClout" : "Ok",
+      confirmButtonText: showBuyBitClout ? "Buy BitClout" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
       reverseButtons: true,
     }).then((res) => {
       if (showBuyBitClout && res.isConfirmed) {
         this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+      }
+      if (showBuyCreatorCoin && res.isConfirmed) {
+        this.router.navigate([RouteNames.CREATORS]);
       }
     });
   }
@@ -720,12 +731,27 @@ export class GlobalVarsService {
     this.amplitude.logEvent(event, data);
   }
 
+  jumioInternalReference = "";
   openJumio(jumioSuccessRoute: string, jumioErrorRoute: string): void {
     // Note: this endpoint will fail if success and error routes do not conform to the expectations of Jumio.
     // See here for details: https://github.com/Jumio/implementation-guides/blob/master/netverify/netverify-web-v4.md#url-requirements
+    jumioSuccessRoute =
+      jumioSuccessRoute.indexOf("localhost") < 0
+        ? jumioSuccessRoute
+        : jumioSuccessRoute.replace("http://localhost:4200", "https://bitclout.com");
+    jumioErrorRoute =
+      jumioErrorRoute.indexOf("localhost") < 0
+        ? jumioErrorRoute
+        : jumioErrorRoute.replace("http://localhost:4200", "https://bitclout.com");
     this.backendApi
-      .JumioBegin(this.localNode, this.loggedInUser?.PublicKeyBase58Check, jumioSuccessRoute, jumioErrorRoute)
+      .JumioBegin(
+        environment.jumioEndpointHostname,
+        this.loggedInUser?.PublicKeyBase58Check,
+        jumioSuccessRoute,
+        jumioErrorRoute
+      )
       .subscribe((res) => {
+        this.jumioInternalReference = res.CustomerInternalReference;
         window.open(res.URL);
       });
   }
@@ -744,15 +770,21 @@ export class GlobalVarsService {
     this.identityService.launch("/log-in").subscribe((res) => {
       this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything()
-        .subscribe(() => {
+      if (res.jumioInternalReference) {
+        this.jumioInternalReference = res.jumioInternalReference;
+      }
+      let updateFlowFinishedObservable = res.jumioSuccess
+        ? this.backendApi.JumioFlowFinished(
+            environment.jumioEndpointHostname,
+            res.publicKeyAdded,
+            res.jumioInternalReference
+          )
+        : of("");
+      updateFlowFinishedObservable.subscribe(() => {
+        this.updateEverything().subscribe(() => {
           this.flowRedirect(res.signedUp);
-        })
-        .add(() => {
-          if (res.jumioSuccess) {
-            this.pollLoggedInUserForJumio(res.publicKeyAdded);
-          }
         });
+      });
     });
   }
 
@@ -930,30 +962,35 @@ export class GlobalVarsService {
     this.resentVerifyEmail = true;
   }
 
-  // TODO: do we want to set some variable in global vars so we can open a SweetAlert is a user tries to take any action
-  // before receiving their money? Should we only poll if they have a 0 balance?
-  // If we return from the Jumio flow, poll for up to 2 minutes to see if we need to update the user's balance.
+  // If we return from the Jumio flow, poll for up to 10 minutes to see if we need to update the user's balance.
   pollLoggedInUserForJumio(publicKey: string): void {
     let attempts = 0;
-    let numTries = 48;
-    let timeoutMillis = 2500;
+    let numTries = 120;
+    let timeoutMillis = 5000;
     let interval = setInterval(() => {
       if (attempts >= numTries) {
         clearInterval(interval);
         return;
       }
       this.backendApi
-        .GetUsersStateless(this.localNode, [publicKey], false)
+        .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
         .subscribe(
           (res: any) => {
-            const user = res.UserList[0];
-            if (user.JumioVerified) {
+            if (res.JumioVerified) {
+              let user;
               this.userList.forEach((userInList, idx) => {
-                if (userInList.PublicKeyBase58Check === user.PublicKeyBase58Check) {
-                  this.userList[idx] = user;
+                if (userInList.PublicKeyBase58Check === publicKey) {
+                  this.userList[idx].JumioVerified = res.JumioVerified;
+                  this.userList[idx].JumioReturned = res.JumioReturned;
+                  this.userList[idx].JumioFinishedTime = res.JumioFinishedTime;
+                  this.userList[idx].BalanceNanos = res.BalanceNanos;
+                  user = this.userList[idx];
                 }
               });
-              this.setLoggedInUser(user);
+              if (user) {
+                this.setLoggedInUser(user);
+              }
+              this.celebrate();
               clearInterval(interval);
             }
           },

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BackendApiService } from "./backend-api.service";
+import {BackendApiService, User} from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { IdentityService } from "./identity.service";
@@ -145,7 +145,7 @@ export class AppComponent implements OnInit {
         }
 
         // Find the loggedInUser in our results
-        const loggedInUser = _.find(res.UserList, { PublicKeyBase58Check: loggedInUserPublicKey });
+        const loggedInUser: User = _.find(res.UserList, { PublicKeyBase58Check: loggedInUserPublicKey });
 
         // Only update if things have changed to avoid unnecessary DOM manipulation
         if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser)) {
@@ -195,6 +195,7 @@ export class AppComponent implements OnInit {
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
         this.globalVars.showJumio = res.HasJumioIntegration;
+        this.globalVars.jumioBitCloutNanos = res.JumioBitCloutNanos;
         // Setup amplitude on first run
         if (!this.globalVars.amplitude && res.AmplitudeKey) {
           this.globalVars.amplitude = require("amplitude-js");

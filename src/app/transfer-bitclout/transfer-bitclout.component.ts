@@ -18,6 +18,7 @@ class Messages {
     "Send %s $CLOUT with a fee of %s BitClout for a total of %s BitClout to public key %s";
   static CONFIRM_TRANSFER_TO_USERNAME =
     "Send %s $CLOUT with a fee of %s BitClout for a total of %s BitClout to username %s";
+  static MUST_PURCHASE_CREATOR_COIN = `You must purchase a creator coin before you can send $CLOUT`;
 }
 
 @Component({
@@ -135,7 +136,7 @@ export class TransferBitcloutComponent implements OnInit {
         // If res is null then an error should be set.
         if (res == null || res.FeeNanos == null || res.SpendAmountNanos == null) {
           this.sendingBitClout = false;
-          this.globalVars._alertError(this.transferBitCloutError);
+          this.globalVars._alertError(this.transferBitCloutError, false, this.transferBitCloutError === Messages.MUST_PURCHASE_CREATOR_COIN);
           return;
         }
 
@@ -206,7 +207,11 @@ export class TransferBitcloutComponent implements OnInit {
                   console.error(error);
                   this.transferBitCloutError = this._extractError(error);
                   this.globalVars.logEvent("bitpop : send : error", { parsedError: this.transferBitCloutError });
-                  this.globalVars._alertError(this.transferBitCloutError);
+                  this.globalVars._alertError(
+                    this.transferBitCloutError,
+                    false,
+                    this.transferBitCloutError === Messages.MUST_PURCHASE_CREATOR_COIN
+                  );
                 }
               );
 
@@ -302,6 +307,8 @@ export class TransferBitcloutComponent implements OnInit {
         rawError.includes("Checksum does not match")
       ) {
         return Messages.INVALID_PUBLIC_KEY;
+      } else if (rawError.includes("You must purchase a creator coin")) {
+        return Messages.MUST_PURCHASE_CREATOR_COIN;
       } else {
         return rawError;
       }

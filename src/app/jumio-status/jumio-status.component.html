@@ -1,0 +1,14 @@
+<div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified" class="w-100">
+  <!-- User completed Jumio flow, but we haven't received the Jumio callback yet-->
+  <div *ngIf="globalVars.loggedInUser.JumioFinishedTime && !globalVars.loggedInUser.JumioReturned">
+    Your free {{ globalVars.nanosToBitClout(globalVars.jumioBitCloutNanos) }} $CLOUT (~{{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 2) }} USD) is pending.
+  </div>
+  <!-- User hasn't tried jumio flow -->
+  <div *ngIf="!globalVars.loggedInUser.JumioFinishedTime" (click)="openJumio()">
+    Click here to get {{ globalVars.nanosToBitClout(globalVars.jumioBitCloutNanos) }} $CLOUT (~{{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 2) }} USD) for free.
+  </div>
+  <!-- User tried Jumio but verification failed-->
+  <div *ngIf="globalVars.loggedInUser.JumioFinishedTime && globalVars.loggedInUser.JumioReturned" (click)="openJumio()">
+    Your last Jumio attempt failed. Click here to try again
+  </div>
+</div>

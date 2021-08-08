@@ -5,6 +5,8 @@
 export const environment = {
   production: false,
   uploadImageHostname: "bitclout.com",
+  jumioEndpointHostname: "http://localhost:18001",
+  // jumioEndpointHostname: "bitclout.com",
   dd: {
     apiKey: "DCEB26AC8BF47F1D7B4D87440EDCA6",
     jsPath: "https://bitclout.com/tags.js",

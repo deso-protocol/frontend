@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
+import { v4 } from "uuid";
+import { environment } from "../../environments/environment";
 
 export class RightBarTabOption {
   name: string;
@@ -71,4 +73,28 @@ export class RightBarCreatorsComponent implements OnInit {
     }
   }
 
+  jumioTestCallback(error: boolean = false) {
+    let body = new URLSearchParams();
+    body.set("idType", "PASSPORT");
+    body.set("idSubtype", "");
+    body.set("idCountry", "USA");
+    body.set("idNumber", Math.floor(Math.random() * 1000000000).toString());
+    body.set("customerId", this.globalVars.loggedInUser?.PublicKeyBase58Check);
+    body.set("merchantIdScanReference", this.globalVars.jumioInternalReference);
+    body.set("jumioIdScanReference", v4());
+    body.set("idScanStatus", error ? "ERROR" : "SUCCESS");
+    this.backendApi.JumioCallback(this.globalVars.localNode, body).subscribe((res) => console.log(res));
+  }
+
+  jumioTestFlowFinished(): void {
+    this.backendApi
+      .JumioFlowFinished(
+        environment.jumioEndpointHostname,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.globalVars.jumioInternalReference
+      )
+      .subscribe(() => {
+        this.globalVars.updateEverything();
+      });
+  }
 }

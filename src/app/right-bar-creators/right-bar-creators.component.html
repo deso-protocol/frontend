@@ -4,6 +4,12 @@
 
   <div class="pt-10px"></div>
 
+  <div class="d-flex justify-content-between">
+    <div (click)="jumioTestCallback()" class="px-10px">Jumio success</div>
+    <div (click)="jumioTestCallback(true)" class="px-10px">Jumio failure</div>
+    <div (click)="jumioTestFlowFinished()" class="px-10px">Jumio Flow Finish</div>
+  </div>
+
   <!-- BitClout Price / Balance -->
   <div class="right-bar-creators__balance-box br-12px p-15px mb-30px fs-13px text-grey5 font-weight-bold">
     <div class="d-flex justify-content-between">
@@ -33,6 +39,7 @@
         </div>
       </div>
     </div>
+    <jumio-status></jumio-status>
   </div>
 
   <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified" class="bg-light br-12px p-15px mb-30px fs-13px">

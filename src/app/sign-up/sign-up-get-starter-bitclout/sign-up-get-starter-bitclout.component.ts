@@ -54,6 +54,7 @@ export class SignUpGetStarterBitcloutComponent implements OnInit {
 
   ngOnInit(): void {
     this._setScreenToShow();
+    // this.jumioTestCallback();
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.jumioError) {
         this.jumioError = true;
