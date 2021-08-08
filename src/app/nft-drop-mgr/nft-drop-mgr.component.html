@@ -1,11 +1,11 @@
 <div class="w-100 light-grey-divider border-bottom border-color-grey" style="height:10px"></div>
-  
+
 <div class="px-15px pt-15px pb-5px fs-15px">
   <div class="py-5px w-100 d-flex justify-content-between align-items-center">
     <i (click)="previousDrop()" class="fas fa-chevron-left pl-5px pr-15px cursor-pointer"></i>
     <div class="d-flex align-items-center">
       <div class="font-weight-500">Drop #&nbsp;</div>
-      <input [(ngModel)]="dropNumber" 
+      <input [(ngModel)]="dropNumber"
              class="form-control fs-15px lh-18px p-10px"
              style="width: 75px; text-align: center" disabled/>
     </div>
@@ -28,8 +28,8 @@
              class="form-control fs-15px"
              bsDatepicker>
       <div class="d-flex align-items-center justify-content-between">
-        <timepicker [(ngModel)]="dropTime" 
-                    class="fs-15px pr-15px" 
+        <timepicker [(ngModel)]="dropTime"
+                    class="fs-15px pr-15px"
                     [ngClass]="{'pl-15px': !globalVars.isMobile()}"></timepicker>
         <div>
           <a (click)="setDate()" class="btn btn-warning fs-15px ml-5px font-weight-500"
@@ -67,7 +67,7 @@
     <pre *ngIf="hideDateTimeAdjuster" class="alert alert-info">This NFT drop occurred on: <br>{{dropTime}}</pre>
     <div *ngIf="dropEntry && dropEntry.DropTstampNanos != 0">
       <div *ngIf="isUpdatable" class="d-flex">
-        <input [(ngModel)]="nftToAdd" 
+        <input [(ngModel)]="nftToAdd"
                class="form-control fs-15px lh-18px p-10px"
                placeholder="Enter post hash to add." />
         <div>
@@ -95,21 +95,22 @@
 </div>
 
 <simple-center-loader *ngIf="loading"></simple-center-loader>
-  
+
 <div class="w-100 light-grey-divider border-bottom border-top border-color-grey" style="height:10px"></div>
 
-<div *ngIf="posts.length > 0 && !loading" class="p-15px fs-15px">
-  <b>NFTs in this drop:</b>
-  <div *ngFor="let post of posts" class="d-flex align-items-center mt-15px border border-color-grey br-8px">
+<div *ngIf="posts.length > 0 && (!loading || loadingNewDrop)" class="p-15px fs-15px">
+  <b *ngIf="!loadingNewDrop">NFTs in this drop:</b>
+  <div #uiScroll *uiScroll="let post of datasource" [ngClass]="{'d-flex align-items-center mt-15px border border-color-grey br-8px': !loadingNewDrop}">
     <i (click)="removeNFT(post.PostHashHex)"
-       class="p-10px far fa-trash-alt fc-red cursor-pointer"></i>
+       class="p-10px far fa-trash-alt fc-red cursor-pointer" *ngIf="!loadingNewDrop"></i>
     <feed-post
       class="flex-grow-1 border-left border-color-grey cursor-pointer"
-      *ngIf="post.PostHashHex !== nftBeingRemoved"
+      *ngIf="post.PostHashHex !== nftBeingRemoved && !loadingNewDrop"
       [post]="post"
       [includePaddingOnPost]="true"
       [showReplyingToContent]="!!post.parentPost"
       [parentPost]="post.parentPost"
+      [contentShouldLinkToThread]="true"
     ></feed-post>
     <span *ngIf="post.PostHashHex === nftBeingRemoved">&nbsp;Removing...</span>
   </div>

@@ -140,6 +140,9 @@ export class AppComponent implements OnInit {
           this.globalVars.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
         }
 
+        if (res.DefaultFeeRateNanosPerKB > 0) {
+          this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
+        }
         this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         this.globalVars.globoMods = res.GloboMods;
         this.ref.detectChanges();
