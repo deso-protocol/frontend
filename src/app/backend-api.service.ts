@@ -1555,7 +1555,7 @@ export class BackendApiService {
   }
 
   JumioFlowFinished(endpoint: string, PublicKey: string, JumioInternalReference: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathJumioFlowFinished, PublicKey, {
+    return this.post(endpoint, BackendRoutes.RoutePathJumioFlowFinished, {
       PublicKey,
       JumioInternalReference,
     });
