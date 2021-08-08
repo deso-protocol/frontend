@@ -53,6 +53,8 @@ export class LeftBarComponent {
     this.globalVars.logEvent("jumio : click");
     let errorURL = new URL(window.location.href);
     errorURL.searchParams.append("jumioError", "true");
-    this.globalVars.openJumio(encodeURI(window.location.href), encodeURI(errorURL.href));
+    let successURL = new URL(window.location.href);
+    successURL.searchParams.append("jumioSuccess", "true");
+    this.globalVars.openJumio(encodeURI(successURL.href), encodeURI(errorURL.href));
   }
 }

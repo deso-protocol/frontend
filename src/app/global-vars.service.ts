@@ -306,7 +306,6 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
-    this.jumioInternalReference = "";
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
   }
 
@@ -731,18 +730,9 @@ export class GlobalVarsService {
     this.amplitude.logEvent(event, data);
   }
 
-  jumioInternalReference = "";
   openJumio(jumioSuccessRoute: string, jumioErrorRoute: string): void {
     // Note: this endpoint will fail if success and error routes do not conform to the expectations of Jumio.
     // See here for details: https://github.com/Jumio/implementation-guides/blob/master/netverify/netverify-web-v4.md#url-requirements
-    jumioSuccessRoute =
-      jumioSuccessRoute.indexOf("localhost") < 0
-        ? jumioSuccessRoute
-        : jumioSuccessRoute.replace("http://localhost:4200", "https://bitclout.com");
-    jumioErrorRoute =
-      jumioErrorRoute.indexOf("localhost") < 0
-        ? jumioErrorRoute
-        : jumioErrorRoute.replace("http://localhost:4200", "https://bitclout.com");
     this.backendApi
       .JumioBegin(
         environment.jumioEndpointHostname,
@@ -750,10 +740,14 @@ export class GlobalVarsService {
         jumioSuccessRoute,
         jumioErrorRoute
       )
-      .subscribe((res) => {
-        this.jumioInternalReference = res.CustomerInternalReference;
-        window.open(res.URL);
-      });
+      .subscribe(
+        (res) => {
+          window.open(res.URL);
+        },
+        (err) => {
+          this._alertError(err);
+        }
+      );
   }
 
   // Helper to launch the get free clout flow in identity.
@@ -770,9 +764,6 @@ export class GlobalVarsService {
     this.identityService.launch("/log-in").subscribe((res) => {
       this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      if (res.jumioInternalReference) {
-        this.jumioInternalReference = res.jumioInternalReference;
-      }
       let updateFlowFinishedObservable = res.jumioSuccess
         ? this.backendApi.JumioFlowFinished(
             environment.jumioEndpointHostname,

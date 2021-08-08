@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import {BackendApiService, User} from "./backend-api.service";
+import { BackendApiService, User } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { IdentityService } from "./identity.service";
@@ -39,7 +39,16 @@ export class AppComponent implements OnInit {
           ? customerInternalReference.slice(0, 55)
           : customerInternalReference.slice(0, 54);
         if (this.globalVars.isMaybePublicKey(publicKey)) {
-          this.globalVars.pollLoggedInUserForJumio(publicKey);
+          this.backendApi
+            .JumioFlowFinished(environment.jumioEndpointHostname, publicKey, customerInternalReference)
+            .subscribe(
+              () => {
+                this.globalVars.updateEverything();
+              },
+              (err) => {
+                console.error(err);
+              }
+            );
         }
       }
       // If we have jumio query params, already clear them so they don't follow the user around the site.

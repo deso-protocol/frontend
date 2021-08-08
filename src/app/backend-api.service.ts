@@ -5,7 +5,7 @@
 import { Injectable } from "@angular/core";
 import { Observable, of, throwError } from "rxjs";
 import { map, mergeMap, switchMap, catchError, mapTo } from "rxjs/operators";
-import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 
 export class BackendRoutes {
@@ -68,7 +68,6 @@ export class BackendRoutes {
   static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
-  static RoutePathJumioCallback = "/api/v0/jumio-callback";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
 
   // Admin routes.
@@ -1559,12 +1558,6 @@ export class BackendApiService {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathJumioFlowFinished, PublicKey, {
       PublicKey,
       JumioInternalReference,
-    });
-  }
-
-  JumioCallback(endpoint: string, body: any): Observable<any> {
-    return this.httpClient.post(this._makeRequestURL(endpoint, BackendRoutes.RoutePathJumioCallback), body.toString(), {
-      headers: new HttpHeaders().set("Content-Type", "application/x-www-form-urlencoded"),
     });
   }
 
