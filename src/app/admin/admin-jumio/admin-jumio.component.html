@@ -1,0 +1,64 @@
+<div>
+  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+    Set Jumio Starter $CLOUT amount (in nanos):
+    <div class="d-flex mt-5px">
+      <input
+        [(ngModel)]="jumioBitCloutNanos"
+        (keydown.enter)="updateJumioBitCloutNanos()"
+        class="form-control w-100 fs-15px lh-15px"
+        placeholder="Enter an amount"
+        type="number"
+      />
+      <button *ngIf="!updatingJumioBitCloutNanos" (click)="updateJumioBitCloutNanos()" class="btn btn-outline-primary fs-15px ml-5px">
+        Update
+      </button>
+      <button *ngIf="updatingJumioBitCloutNanos" class="btn btn-primary fs-15px ml-5px" disabled>
+        Working...
+      </button>
+    </div>
+  </div>
+  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+    Reset Jumio for Public Key or Username:
+    <div class="d-flex mt-5px">
+      <input
+        [(ngModel)]="usernameToResetJumio"
+        (keydown.enter)="_resetJumio()"
+        class="form-control w-100 fs-15px lh-15px"
+        placeholder="Enter a username or public key."
+      />
+      <button *ngIf="!resettingJumio" (click)="_resetJumio()" class="btn btn-outline-primary fs-15px ml-5px">
+        Reset
+      </button>
+      <button *ngIf="resettingJumio" class="btn btn-primary fs-15px ml-5px" disabled>
+        Working...
+      </button>
+    </div>
+  </div>
+  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+    Get Jumio attempts for Public Key or Username:
+    <div class="d-flex mt-5px">
+      <input
+        [(ngModel)]="usernameToFetchJumioAttempts"
+        (keydown.enter)="_loadJumioAttempts()"
+        class="form-control w-100 fs-15px lh-15px"
+        placeholder="Enter a username or public key."
+      />
+      <button *ngIf="!loadingJumioAttempts" (click)="_loadJumioAttempts()" class="btn btn-outline-primary fs-15px ml-5px">
+        Fetch
+      </button>
+      <button *ngIf="loadingJumioAttempts" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+    </div>
+  </div>
+  <div *ngIf="jumioAttempts != null && jumioAttempts.length === 0" class="p-15px">
+    There are no Jumio logs for {{ usernameToFetchJumioAttempts }}
+  </div>
+  <div *ngFor="let attempt of jumioAttempts; let i = index;" class="p-15px">
+    #{{ i }}:
+    <ul>
+      <li
+        style="word-break: break-word"
+        *ngFor="let item of attempt | keyvalue"
+      >{{ item.key }}: {{ item.value }}</li>
+    </ul>
+  </div>
+</div>

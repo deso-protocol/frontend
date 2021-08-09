@@ -15,12 +15,12 @@
   href=""
   [routerLink]="'/' + RouteNames.GET_STARTER_BITCLOUT"
   [queryParamsHandling]="'merge'"
-  *ngIf="globalVars.showPhoneNumberVerification"
+  *ngIf="globalVars.showPhoneNumberVerification || globalVars.showJumio"
 >
   Get Starter BitClout
 </a>
 
-<div class="fs-15px mt-15px" *ngIf="globalVars.showPhoneNumberVerification">Or</div>
+<div class="fs-15px mt-15px" *ngIf="globalVars.showPhoneNumberVerification || globalVars.showJumio">Or</div>
 
 <div class="fs-15px mt-15px">
   <a href="" [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT" queryParamsHandling="merge">

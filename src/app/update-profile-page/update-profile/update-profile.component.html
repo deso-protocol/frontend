@@ -16,8 +16,8 @@
       <!-- Create Profile Fee Warning -->
       <div
         *ngIf="
-          !globalVars.loggedInUser.ProfileEntryResponse &&
-          (!globalVars.loggedInUser.HasPhoneNumber || !globalVars.isCompProfileCreation) &&
+          !globalVars.loggedInUser?.ProfileEntryResponse &&
+          ((!globalVars.loggedInUser?.HasPhoneNumber && !globalVars.loggedInUser?.JumioVerified) || !globalVars.isCompProfileCreation) &&
           globalVars.createProfileFeeNanos > 0
         "
         class="p-15px bg-warning"
