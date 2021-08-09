@@ -18,6 +18,7 @@ import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import Timer = NodeJS.Timer;
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -730,26 +731,6 @@ export class GlobalVarsService {
     this.amplitude.logEvent(event, data);
   }
 
-  openJumio(jumioSuccessRoute: string, jumioErrorRoute: string): void {
-    // Note: this endpoint will fail if success and error routes do not conform to the expectations of Jumio.
-    // See here for details: https://github.com/Jumio/implementation-guides/blob/master/netverify/netverify-web-v4.md#url-requirements
-    this.backendApi
-      .JumioBegin(
-        environment.jumioEndpointHostname,
-        this.loggedInUser?.PublicKeyBase58Check,
-        jumioSuccessRoute,
-        jumioErrorRoute
-      )
-      .subscribe(
-        (res) => {
-          window.open(res.URL);
-        },
-        (err) => {
-          this._alertError(err);
-        }
-      );
-  }
-
   // Helper to launch the get free clout flow in identity.
   launchGetFreeCLOUTFlow() {
     this.logEvent("identity : jumio : launch");
@@ -764,17 +745,8 @@ export class GlobalVarsService {
     this.identityService.launch("/log-in").subscribe((res) => {
       this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      let updateFlowFinishedObservable = res.jumioSuccess
-        ? this.backendApi.JumioFlowFinished(
-            environment.jumioEndpointHostname,
-            res.publicKeyAdded,
-            res.jumioInternalReference
-          )
-        : of("");
-      updateFlowFinishedObservable.subscribe(() => {
-        this.updateEverything().subscribe(() => {
-          this.flowRedirect(res.signedUp);
-        });
+      this.updateEverything().subscribe(() => {
+        this.flowRedirect(res.signedUp);
       });
     });
   }
@@ -953,14 +925,18 @@ export class GlobalVarsService {
     this.resentVerifyEmail = true;
   }
 
+  jumioInterval: Timer = null;
   // If we return from the Jumio flow, poll for up to 10 minutes to see if we need to update the user's balance.
   pollLoggedInUserForJumio(publicKey: string): void {
+    if (this.jumioInterval) {
+      clearInterval(this.jumioInterval);
+    }
     let attempts = 0;
     let numTries = 120;
     let timeoutMillis = 5000;
-    let interval = setInterval(() => {
+    this.jumioInterval = setInterval(() => {
       if (attempts >= numTries) {
-        clearInterval(interval);
+        clearInterval(this.jumioInterval);
         return;
       }
       this.backendApi
@@ -982,11 +958,11 @@ export class GlobalVarsService {
                 this.setLoggedInUser(user);
               }
               this.celebrate();
-              clearInterval(interval);
+              clearInterval(this.jumioInterval);
             }
           },
           (error) => {
-            clearInterval(interval);
+            clearInterval(this.jumioInterval);
           }
         )
         .add(() => attempts++);

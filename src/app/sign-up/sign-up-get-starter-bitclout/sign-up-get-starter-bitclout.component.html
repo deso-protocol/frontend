@@ -15,27 +15,6 @@ can refactor.
     <div class="fs-18px mt-15px mb-15px">BitClout is a cryptocurrency that's required to use the site.</div>
   </div>
 
-  <div *ngIf="!jumioError && showJumio">
-    <div class="fs-18px">
-      Verify you're a human for free BitClout. Your verification details will never be shared with anyone.
-    </div>
-    <div class="d-flex py-15px justify-content-start">
-      <a
-        (click)="onJumioButtonClicked()"
-        class="btn btn-primary font-weight-bold fs-15px"
-      >Verify with Jumio</a>
-    </div>
-
-    <div class="fs-18px py-15px">
-      OR
-    </div>
-  </div>
-
-  <div *ngIf="jumioError && showJumio" class="fs-18px py-15px">
-    There was an issue verifying your identity with Jumio.  You can still get starter BitClout by verifying your phone
-    number.
-  </div>
-
   <div class="fs-18px">
     Verify your phone number for free BitClout. Your phone number will never be shared with anyone.
   </div>

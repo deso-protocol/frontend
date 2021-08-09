@@ -29,38 +29,6 @@ export class AppComponent implements OnInit {
       this.route // route
     );
 
-    // Subscribe to queryParams returned from Jumio flow
-    this.route.queryParams.subscribe((queryParams) => {
-      // If the jumio flow succeeded, starting polling GetUsersStateless to update loggedInUser when user's balance
-      // gets updated.
-      if (queryParams.transactionStatus == "SUCCESS") {
-        const customerInternalReference = queryParams.customerInternalReference;
-        const publicKey = customerInternalReference.startsWith("BC")
-          ? customerInternalReference.slice(0, 55)
-          : customerInternalReference.slice(0, 54);
-        if (this.globalVars.isMaybePublicKey(publicKey)) {
-          this.backendApi
-            .JumioFlowFinished(environment.jumioEndpointHostname, publicKey, customerInternalReference)
-            .subscribe(
-              () => {
-                this.globalVars.updateEverything();
-              },
-              (err) => {
-                console.error(err);
-              }
-            );
-        }
-      }
-      // If we have jumio query params, already clear them so they don't follow the user around the site.
-      if (queryParams.transactionStatus) {
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: { transactionStatus: null, customerInternalReference: null, transactionReference: null },
-          queryParamsHandling: "merge",
-        });
-      }
-    });
-
     // Nuke the referrer so we don't leak anything
     // We also have a meta tag in index.html that does this in a different way to make
     // sure it's nuked.

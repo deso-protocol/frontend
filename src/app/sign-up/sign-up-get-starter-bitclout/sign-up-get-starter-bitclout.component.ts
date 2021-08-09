@@ -17,9 +17,6 @@ export class SignUpGetStarterBitcloutComponent implements OnInit {
   static COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN = "completed_phone_number_verification_screen";
 
   @Input() displayForSignupFlow = false;
-  @Input() showJumio = false;
-  @Input() jumioSuccessRoute: string;
-  @Input() jumioErrorRoute: string;
   @Output() backToPreviousSignupStepClicked = new EventEmitter();
   @Output() phoneNumberVerified = new EventEmitter();
   @Output() skipButtonClicked = new EventEmitter();
@@ -44,22 +41,11 @@ export class SignUpGetStarterBitcloutComponent implements OnInit {
   resentVerificationCode = false;
   sendPhoneNumberVerificationTextServerErrors = new SendPhoneNumberVerificationTextServerErrors();
   submitPhoneNumberVerificationCodeServerErrors = new SubmitPhoneNumberVerificationCodeServerErrors();
-  jumioError: boolean = false;
 
-  constructor(
-    public globalVars: GlobalVarsService,
-    private backendApi: BackendApiService,
-    private route: ActivatedRoute
-  ) {}
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   ngOnInit(): void {
     this._setScreenToShow();
-    // this.jumioTestCallback();
-    this.route.queryParams.subscribe((queryParams) => {
-      if (queryParams.jumioError) {
-        this.jumioError = true;
-      }
-    });
   }
 
   _setScreenToShow() {
@@ -130,11 +116,6 @@ export class SignUpGetStarterBitcloutComponent implements OnInit {
 
   onSkipButtonClicked() {
     this.skipButtonClicked.emit();
-  }
-
-  onJumioButtonClicked() {
-    this.globalVars.logEvent("account : create : jumio : start");
-    this.globalVars.openJumio(this.jumioSuccessRoute, this.jumioErrorRoute);
   }
 
   onPhoneNumberInputChanged() {

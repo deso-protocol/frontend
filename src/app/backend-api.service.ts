@@ -54,7 +54,6 @@ export class BackendRoutes {
   static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
   static RoutePathVerifyEmail = "/api/v0/verify-email";
   static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
-  static RoutePathJumioBegin = "/api/v0/jumio-begin";
 
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
@@ -108,9 +107,6 @@ export class BackendRoutes {
   // Wyre routes.
   static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
   static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
-
-  // Jumio routes.
-  static RoutePathJumioFlowFinished = "/api/v0/jumio-flow-finished";
 }
 
 export class Transaction {
@@ -1538,26 +1534,6 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.RoutePathVerifyEmail, {
       PublicKey,
       EmailHash,
-    });
-  }
-
-  JumioBegin(
-    endpoint: string,
-    PublicKey: string,
-    SuccessURL: string = undefined,
-    ErrorURL: string = undefined
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathJumioBegin, PublicKey, {
-      PublicKey,
-      SuccessURL,
-      ErrorURL,
-    });
-  }
-
-  JumioFlowFinished(endpoint: string, PublicKey: string, JumioInternalReference: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathJumioFlowFinished, {
-      PublicKey,
-      JumioInternalReference,
     });
   }
 
