@@ -734,10 +734,12 @@ export class GlobalVarsService {
   // Helper to launch the get free clout flow in identity.
   launchGetFreeCLOUTFlow() {
     this.logEvent("identity : jumio : launch");
-    this.identityService.launch("/get-free-clout").subscribe(() => {
-      this.logEvent("identity : jumio : success");
-      this.updateEverything();
-    });
+    this.identityService
+      .launch(`/get-free-clout?public_key=${this.loggedInUser?.PublicKeyBase58Check}`)
+      .subscribe(() => {
+        this.logEvent("identity : jumio : success");
+        this.updateEverything();
+      });
   }
 
   launchIdentityFlow(event: string): void {
