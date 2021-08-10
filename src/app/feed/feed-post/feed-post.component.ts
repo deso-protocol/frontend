@@ -197,7 +197,7 @@ export class FeedPostComponent implements OnInit {
           );
           this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
           this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
-          this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
+          this.lowBid = _.minBy(this.availableSerialNumbers, "LowestBidAmountNanos")?.LowestBidAmountNanos || 0;
         });
     }
   }
