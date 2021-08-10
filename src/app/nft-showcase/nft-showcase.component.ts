@@ -3,7 +3,7 @@ import { BackendApiService, NFTCollectionResponse } from "../backend-api.service
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { has } from "lodash";
+import { has, uniqBy } from "lodash";
 
 @Component({
   selector: "nft-showcase",
@@ -26,7 +26,7 @@ export class NftShowcaseComponent implements OnInit {
     this.getPage.bind(this),
     NftShowcaseComponent.WINDOW_VIEWPORT,
     NftShowcaseComponent.BUFFER_SIZE,
-    NftShowcaseComponent.PADDING,
+    NftShowcaseComponent.PADDING
   );
 
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
@@ -51,6 +51,10 @@ export class NftShowcaseComponent implements OnInit {
           this.nftCollections = res.NFTCollections;
           if (this.nftCollections) {
             this.nftCollections.sort((a, b) => b.HighestBidAmountNanos - a.HighestBidAmountNanos);
+            this.nftCollections = uniqBy(
+              this.nftCollections,
+              (nftCollection) => nftCollection.PostEntryResponse.PostHashHex
+            );
           }
           this.lastPage = Math.floor(this.nftCollections.length / NftShowcaseComponent.PAGE_SIZE);
         },

@@ -48,7 +48,7 @@ export class SignUpComponent {
     this.validateEmail();
 
     if (this.invalidEmailEntered || this.emailAddress.length <= 0) {
-      return
+      return;
     }
 
     this.globalVars.logEvent("account : create : notifications-step");

@@ -67,7 +67,7 @@ class RouteNames {
   public static DIAMONDS = "diamonds";
   public static TRENDS = "trends";
   public static NFT = "nft";
-  public static VERIFY_EMAIL = "verify-email"
+  public static VERIFY_EMAIL = "verify-email";
 }
 
 const routes: Routes = [
