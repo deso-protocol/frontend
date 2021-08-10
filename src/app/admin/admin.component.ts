@@ -104,7 +104,8 @@ export class AdminComponent implements OnInit {
   usernameVerificationAuditLogs: any = [];
   loadingVerifiedUsers = false;
   loadingVerifiedUsersAuditLog = false;
-  adminTabs = ["Posts", "Profiles", "NFTs", "Network", "Mempool", "Wyre"];
+  adminTabs = ["Posts", "Profiles", "NFTs", "Network", "Mempool", "Wyre", "Jumio"];
+
   POSTS_TAB = "Posts";
   POSTS_BY_CLOUT_TAB = "Posts By Clout";
   adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_CLOUT_TAB];
@@ -148,8 +149,8 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.globalVars.showSuperAdminTools()) {
-      this.adminTabs.push("Super")
+    if (this.globalVars.showSuperAdminTools()) {
+      this.adminTabs.push("Super");
     }
 
     this.route.queryParams.subscribe((queryParams) => {
@@ -842,7 +843,7 @@ export class AdminComponent implements OnInit {
     createProfileFeeNanos: number,
     minimumNetworkFeeNanosPerKB: number,
     maxCopiesPerNFT: number,
-    createNFTFeeNanos: number,
+    createNFTFeeNanos: number
   ) {
     const updateBitcoinMessage = usdPerBitcoin >= 0 ? `Update Bitcoin to USD exchange rate: ${usdPerBitcoin}\n` : "";
     const createProfileFeeNanosMessage =

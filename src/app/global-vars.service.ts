@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
-import { Observable, Observer } from "rxjs";
+import { Observable, Observer, of } from "rxjs";
 import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
 import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
 import { SwalHelper } from "../lib/helpers/swal-helper";
@@ -18,6 +18,7 @@ import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import Timer = NodeJS.Timer;
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -52,7 +53,7 @@ export class GlobalVarsService {
     private httpClient: HttpClient
   ) {}
 
-  static MAX_POST_LENGTH = 280;
+  static MAX_POST_LENGTH = 560;
 
   static FOUNDER_REWARD_BASIS_POINTS_WARNING_THRESHOLD = 50 * 100;
 
@@ -149,6 +150,9 @@ export class GlobalVarsService {
   // Whether or not to show the Buy BitClout with USD flow.
   showBuyWithUSD = false;
 
+  // Whether or not to show the Jumio verification flow.
+  showJumio = false;
+
   // Whether or not this node comps profile creation.
   isCompProfileCreation = false;
 
@@ -184,6 +188,8 @@ export class GlobalVarsService {
 
   // Timestamp of last profile update
   profileUpdateTimestamp: number;
+
+  jumioBitCloutNanos = 0;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -278,6 +284,11 @@ export class GlobalVarsService {
 
     this.loggedInUser = user;
 
+    // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
+    if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
+      this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
+    }
+
     if (!isSameUserAsBefore) {
       // Store the user in localStorage
       this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
@@ -369,7 +380,7 @@ export class GlobalVarsService {
     this.formatUSDMemo[num][decimal] = Number(num).toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
-      minimumFractionDigits: decimal,
+      maximumFractionDigits: decimal,
     });
     return this.formatUSDMemo[num][decimal];
   }
@@ -610,24 +621,27 @@ export class GlobalVarsService {
     });
   }
 
-  _alertError(err: any, showBuyBitClout: boolean = false) {
+  _alertError(err: any, showBuyBitClout: boolean = false, showBuyCreatorCoin: boolean = false) {
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
-      showCancelButton: showBuyBitClout,
+      showCancelButton: showBuyBitClout || showBuyCreatorCoin,
       focusConfirm: true,
       customClass: {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: showBuyBitClout ? "Buy BitClout" : "Ok",
+      confirmButtonText: showBuyBitClout ? "Buy BitClout" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
       reverseButtons: true,
     }).then((res) => {
       if (showBuyBitClout && res.isConfirmed) {
         this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+      }
+      if (showBuyCreatorCoin && res.isConfirmed) {
+        this.router.navigate([RouteNames.CREATORS]);
       }
     });
   }
@@ -717,10 +731,21 @@ export class GlobalVarsService {
     this.amplitude.logEvent(event, data);
   }
 
-  launchLoginFlow() {
-    this.logEvent("account : login : launch");
+  // Helper to launch the get free clout flow in identity.
+  launchGetFreeCLOUTFlow() {
+    this.logEvent("identity : jumio : launch");
+    this.identityService
+      .launch(`/get-free-clout?public_key=${this.loggedInUser?.PublicKeyBase58Check}`)
+      .subscribe(() => {
+        this.logEvent("identity : jumio : success");
+        this.updateEverything();
+      });
+  }
+
+  launchIdentityFlow(event: string): void {
+    this.logEvent(`account : ${event} : launch`);
     this.identityService.launch("/log-in").subscribe((res) => {
-      this.logEvent("account : login : success");
+      this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().subscribe(() => {
         this.flowRedirect(res.signedUp);
@@ -728,15 +753,12 @@ export class GlobalVarsService {
     });
   }
 
+  launchLoginFlow() {
+    this.launchIdentityFlow("login");
+  }
+
   launchSignupFlow() {
-    this.logEvent("account : create : launch");
-    this.identityService.launch("/log-in").subscribe((res) => {
-      this.logEvent("account : create : success");
-      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything().subscribe(() => {
-        this.flowRedirect(res.signedUp);
-      });
-    });
+    this.launchIdentityFlow("create");
   }
 
   flowRedirect(signedUp: boolean): void {
@@ -903,5 +925,49 @@ export class GlobalVarsService {
   resendVerifyEmail() {
     this.backendApi.ResendVerifyEmail(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe();
     this.resentVerifyEmail = true;
+  }
+
+  jumioInterval: Timer = null;
+  // If we return from the Jumio flow, poll for up to 10 minutes to see if we need to update the user's balance.
+  pollLoggedInUserForJumio(publicKey: string): void {
+    if (this.jumioInterval) {
+      clearInterval(this.jumioInterval);
+    }
+    let attempts = 0;
+    let numTries = 120;
+    let timeoutMillis = 5000;
+    this.jumioInterval = setInterval(() => {
+      if (attempts >= numTries) {
+        clearInterval(this.jumioInterval);
+        return;
+      }
+      this.backendApi
+        .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
+        .subscribe(
+          (res: any) => {
+            if (res.JumioVerified) {
+              let user;
+              this.userList.forEach((userInList, idx) => {
+                if (userInList.PublicKeyBase58Check === publicKey) {
+                  this.userList[idx].JumioVerified = res.JumioVerified;
+                  this.userList[idx].JumioReturned = res.JumioReturned;
+                  this.userList[idx].JumioFinishedTime = res.JumioFinishedTime;
+                  this.userList[idx].BalanceNanos = res.BalanceNanos;
+                  user = this.userList[idx];
+                }
+              });
+              if (user) {
+                this.setLoggedInUser(user);
+              }
+              this.celebrate();
+              clearInterval(this.jumioInterval);
+            }
+          },
+          (error) => {
+            clearInterval(this.jumioInterval);
+          }
+        )
+        .add(() => attempts++);
+    }, timeoutMillis);
   }
 }
