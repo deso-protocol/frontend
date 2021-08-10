@@ -12,7 +12,6 @@ export class AvatarDirective implements OnChanges {
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService, private el: ElementRef) {}
 
   setAvatar() {
-    console.log(this.avatar);
     if (!this.avatar) {
       this.setURLOnElement(this.backendApi.GetDefaultProfilePictureURL(window.location.host));
       return;
