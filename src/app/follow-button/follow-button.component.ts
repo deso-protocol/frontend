@@ -36,8 +36,7 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   unfollow(event) {
     this.createFollowTxnBeingCalled = true;
     event.stopPropagation();
-    const followTransaction = this.followService._toggleFollow(false, this.followedPubKeyBase58Check);
-    followTransaction.add(() => {
+    this.followService._toggleFollow(false, this.followedPubKeyBase58Check).add(() => {
       this.createFollowTxnBeingCalled = false;
       // Need to manually detect changes, since the follow button can rendered from the feed
       // (which has change detection disabled)
