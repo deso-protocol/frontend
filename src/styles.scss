@@ -2467,3 +2467,79 @@ input {
     }
   }
 }
+
+.feed-reaction {
+  //width: 500px; height: 473px;
+  //background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAHZBAMAAACCytRRAAAAElBMVEXQ0NDf39/h4eHo6Ojt7e34+PjQ20C4AAAABnRSTlOZmZmZmZmTAzKZAAACY0lEQVR42u3dzQ2CMBgG4GIYQB3BCRyBQ8dmFnQDEgdQD3AE/IW08LyXHlpKnnxNaEoIRQxbzS6go6Ojo6Ojo6OjZ5iya+qhrkrV1131sdQvLo+qjo6Ojo6Ojo6Ojp7UHj6qOjo6Ojo6+mqe6/XPN4iqjo6Ojo6Ojo6Ojr7gHt7ZHDo6Onq2KXz7go6Ojo6Ojo6Ojp5VJr59+X7OStXR0dHR0dHR0dHR54pzeHR0dHR0dHR0dHR09NQzx9uX5BMteHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR09D+miCGEEA6bQrcWPDo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6+qpSdk2r6ujo6Ojo6Ojo6OhZ7eGbwc5T19yv78zUD35cRkcc9/nRmw/oE4NvZwseHR0dHR0dHR0dHR0dHR0dHR0dHR19W+n/06rq6Ojo6Ojo6Ojo6OjoyeYJhZoXiQEKSacAAAAASUVORK5CYII=);
+  position: relative;
+
+  .like-btn {
+    width: 44px; height: 25px;
+    background: #D0D0D0;
+    position: absolute;
+    bottom: 13px; left: 13px;
+    cursor: pointer;
+
+    &::before {
+      content: "."; opacity: 0;
+      display: block;
+      width: 44px; height: 10px;
+      position: absolute;
+      top: -10px; left: 0;
+    }
+
+    .reaction-box {
+      position: absolute;
+      width: 300px; height: 55px;
+      background: #F0C674;
+      border-radius: 28px;
+      left: -245px; bottom: 35px;
+      display: none;
+
+      .reaction-icon {
+        width: 40px; height: 40px;
+        display: inline-block;
+        background: #8959A8;
+        content: '\f219';
+        border-radius: 15px;
+        margin: 8px -1px 0 8px;
+        text-align: center;
+
+        .diamond-reaction {
+          font-size: 25px;
+          top: -30px;
+          left: -2px;
+          position: relative;
+        }
+
+        label {
+          padding: 3px 5px 3px 5px;
+          position: relative;
+          top: -24px;
+          border-radius: 10px;
+          font-size: 11px;
+          color: #FFF;
+          background: #333;
+          visibility: hidden;
+        }
+      }
+    }
+
+    &:hover {
+      background: #718C00;
+
+      .reaction-box {
+        display: block;
+
+        .reaction-icon:hover {
+          transform: scale(1.4);
+          transform-origin: bottom;
+
+          label {
+            visibility: visible;
+          }
+        }
+      }
+    }
+  }
+}

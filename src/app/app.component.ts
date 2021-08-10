@@ -143,7 +143,7 @@ export class AppComponent implements OnInit {
         if (res.DefaultFeeRateNanosPerKB > 0) {
           this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         }
-        this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
+        // this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         this.globalVars.globoMods = res.GloboMods;
         this.ref.detectChanges();
         this.globalVars.loadingInitialAppState = false;
