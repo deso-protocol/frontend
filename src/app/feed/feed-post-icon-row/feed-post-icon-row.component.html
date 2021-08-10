@@ -141,31 +141,50 @@
     </div>
   </ng-template>
   <div class="feed-reaction">
+    <i class="icon-diamond" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"></i>
     <a class="like-btn icon-diamond">
       <div class="reaction-box">
-        <div class="reaction-icon">
-          <label>Like</label>
-          <i class="icon-diamond diamond-reaction"></i>
+        <div class="reaction-icon" (click)="onDiamondSelected($event, 0)" (mouseover)="this.diamondHovered = 0" (mouseleave)="this.diamondHovered = -1">
+          <label>{{ globalVars.getUSDForDiamond(0 + 1) }}</label>
+          <i
+            class="icon-diamond diamond-reaction"
+            [ngStyle]="{ color: 0 < getCurrentDiamondLevel() || 0 <= this.diamondHovered ? '#0058F7' : '#555555' }"
+          ></i>
         </div>
-        <div class="reaction-icon">
-          <label>Love</label>
-          <i class="icon-diamond diamond-reaction"></i>
+        <div class="reaction-icon" (click)="onDiamondSelected($event, 1)" (mouseover)="this.diamondHovered = 1" (mouseleave)="this.diamondHovered = -1">
+          <label>{{ globalVars.getUSDForDiamond(1 + 1) }}</label>
+          <i
+            class="icon-diamond diamond-reaction"
+            [ngStyle]="{ color: 1 < getCurrentDiamondLevel() || 1 <= this.diamondHovered ? '#0058F7' : '#555555' }"
+          ></i>
         </div>
-        <div class="reaction-icon">
-          <label>Haha</label>
-          <i class="icon-diamond diamond-reaction"></i>
+        <div class="reaction-icon" (click)="onDiamondSelected($event, 2)" (mouseover)="this.diamondHovered = 2" (mouseleave)="this.diamondHovered = -1">
+          <label>{{ globalVars.getUSDForDiamond(2 + 1) }}</label>
+          <i
+            class="icon-diamond diamond-reaction"
+            [ngStyle]="{ color: 2 < getCurrentDiamondLevel() || 2 <= this.diamondHovered ? '#0058F7' : '#555555' }"
+          ></i>
         </div>
-        <div class="reaction-icon">
-          <label>Wow</label>
-          <i class="icon-diamond diamond-reaction"></i>
+        <div class="reaction-icon" (click)="onDiamondSelected($event, 3)" (mouseover)="this.diamondHovered = 3" (mouseleave)="this.diamondHovered = -1">
+          <label>{{ globalVars.getUSDForDiamond(3 + 1) }}</label>
+          <i
+            class="icon-diamond diamond-reaction"
+            [ngStyle]="{ color: 3 < getCurrentDiamondLevel() || 3 <= this.diamondHovered ? '#0058F7' : '#555555' }"
+          ></i>
         </div>
-        <div class="reaction-icon">
-          <label>Sad</label>
-          <i class="icon-diamond diamond-reaction"></i>
+        <div class="reaction-icon" (click)="onDiamondSelected($event, 4)" (mouseenter)="this.diamondHovered = 4" (mouseleave)="this.diamondHovered = -1">
+          <label>{{ globalVars.getUSDForDiamond(4 + 1) }}</label>
+          <i
+            class="icon-diamond diamond-reaction"
+            [ngStyle]="{ color: 4 < getCurrentDiamondLevel() || 4 <= this.diamondHovered ? '#0058F7' : '#555555' }"
+          ></i>
         </div>
-        <div class="reaction-icon">
-          <label>Angry</label>
-          <i class="icon-diamond diamond-reaction"></i>
+        <div class="reaction-icon" (click)="onDiamondSelected($event, 5)" (mouseover)="this.diamondHovered = 5" (mouseleave)="this.diamondHovered = -1">
+          <label>{{ globalVars.getUSDForDiamond(5 + 1) }}</label>
+          <i
+            class="icon-diamond diamond-reaction"
+            [ngStyle]="{ color: 5 < getCurrentDiamondLevel() || 5 <= this.diamondHovered ? '#0058F7' : '#555555' }"
+          ></i>
         </div>
       </div>
     </a>

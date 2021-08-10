@@ -10,6 +10,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { ThemeService } from "../../theme/theme.service";
+import * as _ from "lodash";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -36,6 +37,8 @@ export class FeedPostIconRowComponent {
   clickCounter = 0;
   // Track the diamond selected in the diamond popover.
   diamondSelected: number;
+  // Track the diamond that is currently being hovered
+  diamondHovered = -1;
   // Timeout for determining whether this is a single or double click event.
   static SingleClickDebounce = 300;
 
@@ -439,6 +442,16 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
+    // Disable diamond selection if diamonds are being sent
+    if (this.sendingDiamonds) {
+      return;
+    }
+
+    // Block user from selecting diamond level below already gifted amount
+    if (index < this.getCurrentDiamondLevel()) {
+      return;
+    }
+
     if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
       this.globalVars._alertError("You cannot downgrade a diamond");
       this.closeDiamondPopover();
