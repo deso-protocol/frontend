@@ -381,6 +381,7 @@ export class GlobalVarsService {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: decimal,
+      maximumFractionDigits: decimal,
     });
     return this.formatUSDMemo[num][decimal];
   }
