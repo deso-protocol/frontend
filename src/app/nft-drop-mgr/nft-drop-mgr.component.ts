@@ -67,11 +67,9 @@ export class NftDropMgrComponent implements OnInit {
 
   _handleTabClick(tab: string) {
     this.activeTab = tab;
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { adminNFTTab: this.activeTab },
-      queryParamsHandling: "merge",
-    });
+    if (this.activeTab === this.showcaseManagement) {
+      this.datasource = this.infiniteScroller.getDatasource();
+    }
   }
 
   ngOnInit(): void {
