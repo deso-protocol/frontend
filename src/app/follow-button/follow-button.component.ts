@@ -33,10 +33,10 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   followChangeSubscription: Subscription;
   changeRef: ChangeDetectorRef;
 
-  unfollow(event) {
+  _makeFollowTransaction(event, isFollow: boolean) {
     this.createFollowTxnBeingCalled = true;
     event.stopPropagation();
-    this.followService._toggleFollow(false, this.followedPubKeyBase58Check).add(() => {
+    this.followService._toggleFollow(isFollow, this.followedPubKeyBase58Check).add(() => {
       this.createFollowTxnBeingCalled = false;
       // Need to manually detect changes, since the follow button can rendered from the feed
       // (which has change detection disabled)
@@ -44,17 +44,12 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
     });
   }
 
-  follow(event) {
-    this.createFollowTxnBeingCalled = true;
-    event.stopPropagation();
-    const followTransaction = this.followService._toggleFollow(true, this.followedPubKeyBase58Check);
-    followTransaction.add(() => {
-      this.createFollowTxnBeingCalled = false;
+  unfollow(event) {
+    this._makeFollowTransaction(event, false);
+  }
 
-      // Need to manually detect changes, since the follow button can rendered from the feed
-      // (which has change detection disabled)
-      this.changeRef.detectChanges();
-    });
+  follow(event) {
+    this._makeFollowTransaction(event, true);
   }
 
   canLoggedInUserFollowTargetPublicKey() {

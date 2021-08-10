@@ -39,11 +39,16 @@ export class SignUpComponent {
 
   ////// NOTIFICATIONS STEP BUTTONS ///////
 
+  notificationsStepSkipped(): void {
+    this.globalVars.logEvent("account : create : notifications-step : skip");
+    this.nextPage();
+  }
+
   notificationsStepNext() {
     this.validateEmail();
 
     if (this.invalidEmailEntered || this.emailAddress.length <= 0) {
-      return
+      return;
     }
 
     this.globalVars.logEvent("account : create : notifications-step");

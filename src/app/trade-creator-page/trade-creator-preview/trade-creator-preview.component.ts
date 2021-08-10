@@ -123,14 +123,29 @@ export class TradeCreatorPreviewComponent implements OnInit {
           this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = ExpectedCreatorCoinReturnedNanos || 0;
           this.creatorCoinTrade.expectedBitCloutReturnedNanos = ExpectedBitCloutReturnedNanos || 0;
 
-          // This will update the user's balance.
-          this.appData.updateEverything(response.TxnHashHex, this._creatorCoinSuccess, this._creatorCoinFailure, this);
-
           if (
             this.creatorCoinTrade.followCreator &&
             !this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check)
           ) {
-            this.followService._toggleFollow(true, this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check);
+            this.followService
+              ._toggleFollow(true, this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check)
+              .add(() => {
+                // This will update the user's balance.
+                this.appData.updateEverything(
+                  response.TxnHashHex,
+                  this._creatorCoinSuccess,
+                  this._creatorCoinFailure,
+                  this
+                );
+              });
+          } else {
+            // This will update the user's balance.
+            this.appData.updateEverything(
+              response.TxnHashHex,
+              this._creatorCoinSuccess,
+              this._creatorCoinFailure,
+              this
+            );
           }
         },
         (response) => {

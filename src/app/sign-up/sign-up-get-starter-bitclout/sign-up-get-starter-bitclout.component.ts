@@ -4,7 +4,7 @@ import { CountryISO } from "ngx-intl-tel-input";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { MessagesInboxComponent } from "../../messages-page/messages-inbox/messages-inbox.component";
-import * as _ from "lodash";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "sign-up-get-starter-bitclout",

@@ -53,6 +53,7 @@
                 ></i>
               </div>
               <div class="fc-muted">≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }} USD</div>
+              <div *ngIf="!globalVars.loggedInUser?.JumioVerified"><jumio-status></jumio-status></div>
             </div>
           </div>
           <div class="row pt-15px pb-15px">
