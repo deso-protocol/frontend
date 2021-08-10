@@ -11,10 +11,10 @@ import { ActivatedRoute, Router } from "@angular/router";
   templateUrl: "./nft-drop-mgr.component.html",
 })
 export class NftDropMgrComponent implements OnInit {
-  static SHOWCASE_MANAGEMENT = "Manage Showcase";
-  static SHOWCASE_PREVIEW_TAB = "Showcase Preview";
+  showcaseManagement = "Manage Showcase";
+  showcasePreview = "Showcase Preview";
 
-  @Input() activeTab = NftDropMgrComponent.SHOWCASE_MANAGEMENT;
+  @Input() activeTab = this.showcaseManagement;
 
   globalVars: GlobalVarsService;
 
@@ -53,7 +53,7 @@ export class NftDropMgrComponent implements OnInit {
 
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 
-  adminNFTTabs = [NftDropMgrComponent.SHOWCASE_MANAGEMENT, NftDropMgrComponent.SHOWCASE_PREVIEW_TAB];
+  adminNFTTabs = [this.showcaseManagement, this.showcasePreview];
   switchingTabs = false;
 
   constructor(
@@ -63,22 +63,6 @@ export class NftDropMgrComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.globalVars = _globalVars;
-  }
-
-  showShowcaseManagementTab() {
-    return (
-      this.activeTab === NftDropMgrComponent.SHOWCASE_MANAGEMENT &&
-      this.posts.length > 0 &&
-      (!this.loading || this.loadingNewDrop)
-    );
-  }
-
-  showShowcasePreviewTab() {
-    return (
-      this.activeTab === NftDropMgrComponent.SHOWCASE_PREVIEW_TAB &&
-      this.posts.length > 0 &&
-      (!this.loading || this.loadingNewDrop)
-    );
   }
 
   _handleTabClick(tab: string) {

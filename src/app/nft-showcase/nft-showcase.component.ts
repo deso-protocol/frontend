@@ -1,9 +1,8 @@
-import {Component, Input, OnInit} from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { BackendApiService, NFTCollectionResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { has } from "lodash";
 
 @Component({
   selector: "nft-showcase",
@@ -33,10 +32,6 @@ export class NftShowcaseComponent implements OnInit {
 
   constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
     this.globalVars = _globalVars;
-  }
-
-  showcaseComingSoon() {
-    return !this.loading && (!this.nftCollections || !has(this.nftCollections, length));
   }
 
   getCurrentShowcase() {
@@ -89,9 +84,6 @@ export class NftShowcaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Here is the showcase idx');
-    console.log(this.showcaseIdx);
-    console.log(this.showcaseIdx === undefined);
     this.loading = true;
     if (this.showcaseIdx === undefined) {
       this.getCurrentShowcase();

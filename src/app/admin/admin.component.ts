@@ -878,7 +878,7 @@ export class AdminComponent implements OnInit {
               createNFTFeeNanos >= 0 ? createNFTFeeNanos * 1e9 : -1,
               minimumNetworkFeeNanosPerKB >= 0
                 ? minimumNetworkFeeNanosPerKB
-                : this.globalParams.MinimumNetworkFeeNanosPerKB >= 0
+                : this.globalParams.MinimumNetworkFeeNanosPerKB > 0
                 ? this.globalParams.MinimumNetworkFeeNanosPerKB
                 : Math.floor(parseFloat(this.feeRateBitCloutPerKB) * 1e9)
             )
