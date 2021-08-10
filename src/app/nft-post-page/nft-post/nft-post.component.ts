@@ -218,6 +218,11 @@ export class NftPostComponent {
     this.globalVars.loggedInUser.BlockedPubKeys[blockedPubKey] = {};
   }
 
+  afterNftBidPlaced() {
+    this.loading = true;
+    this.refreshPosts();
+  }
+
   sellNFT(): void {
     if (this.sellNFTDisabled) {
       return;

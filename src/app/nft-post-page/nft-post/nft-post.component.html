@@ -28,6 +28,7 @@
       [contentShouldLinkToThread]="true"
       [afterCommentCreatedCallback]="incrementCommentCounter.bind(this)"
       (userBlocked)="afterUserBlocked($event)"
+      (nftBidPlaced)="afterNftBidPlaced($event)"
     ></feed-post>
   </div>
   <div class="borderbg feed-post__blue-border" *ngIf="!loading">

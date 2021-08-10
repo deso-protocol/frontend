@@ -112,6 +112,9 @@ export class FeedPostComponent implements OnInit {
   // emits the UserBlocked event
   @Output() userBlocked = new EventEmitter();
 
+  // emits the nftBidPLaced event
+  @Output() nftBidPlaced = new EventEmitter();
+
   AppRoutingModule = AppRoutingModule;
   stakeAmount = 1;
   loggedInUserStakeAmount = 0;
