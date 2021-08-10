@@ -94,15 +94,17 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       const profileEntryResponse = this.globalVars.loggedInUser.ProfileEntryResponse;
       this.usernameInput = profileEntryResponse?.Username || "";
       this.descriptionInput = profileEntryResponse?.Description || "";
-      this.backendApi
-        .GetSingleProfilePicture(
-          this.globalVars.localNode,
-          profileEntryResponse?.PublicKeyBase58Check,
-          this.globalVars.profileUpdateTimestamp ? `?${this.globalVars.profileUpdateTimestamp}` : ""
-        )
-        .subscribe((res) => {
-          this._readImageFileToProfilePicInput(res);
-        });
+      if (profileEntryResponse) {
+        this.backendApi
+          .GetSingleProfilePicture(
+            this.globalVars.localNode,
+            profileEntryResponse?.PublicKeyBase58Check,
+            this.globalVars.profileUpdateTimestamp ? `?${this.globalVars.profileUpdateTimestamp}` : ""
+          )
+          .subscribe((res) => {
+            this._readImageFileToProfilePicInput(res);
+          });
+      }
 
       // If they don't have CreatorBasisPoints set, use the default.
       if (this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints != null) {

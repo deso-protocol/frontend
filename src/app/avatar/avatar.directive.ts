@@ -12,6 +12,7 @@ export class AvatarDirective implements OnChanges {
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService, private el: ElementRef) {}
 
   setAvatar() {
+    console.log(this.avatar);
     if (!this.avatar) {
       this.setURLOnElement(this.backendApi.GetDefaultProfilePictureURL(window.location.host));
       return;
@@ -23,8 +24,8 @@ export class AvatarDirective implements OnChanges {
     // the cache so we get the updated avatar.
     let cacheBuster = "";
     if (
-      this.globalVars.loggedInUser &&
-      this.avatar === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+      this.globalVars?.loggedInUser &&
+      this.avatar === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
       this.globalVars.profileUpdateTimestamp
     ) {
       cacheBuster = `&${this.globalVars.profileUpdateTimestamp}`;
