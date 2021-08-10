@@ -1,10 +1,10 @@
-import {Component, Input, OnInit} from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import {ActivatedRoute, Router} from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "nft-drop-mgr",
@@ -53,7 +53,7 @@ export class NftDropMgrComponent implements OnInit {
 
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 
-  feedTabs = [NftDropMgrComponent.SHOWCASE_MANAGEMENT, NftDropMgrComponent.SHOWCASE_PREVIEW_TAB];
+  adminNFTTabs = [NftDropMgrComponent.SHOWCASE_MANAGEMENT, NftDropMgrComponent.SHOWCASE_PREVIEW_TAB];
   switchingTabs = false;
 
   constructor(
@@ -85,7 +85,7 @@ export class NftDropMgrComponent implements OnInit {
     this.activeTab = tab;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { feedTab: this.activeTab },
+      queryParams: { adminNFTTab: this.activeTab },
       queryParamsHandling: "merge",
     });
     this._onTabSwitch();

@@ -64,7 +64,6 @@ export class BackendRoutes {
   static RoutePathGetNFTsForUser = "/api/v0/get-nfts-for-user";
   static RoutePathGetNFTBidsForUser = "/api/v0/get-nft-bids-for-user";
   static RoutePathGetNFTShowcase = "/api/v0/get-nft-showcase";
-  static RoutePathGetNFTShowcasePreview = "/api/v0/admin/get-nft-showcase-preview";
   static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
@@ -85,6 +84,7 @@ export class BackendRoutes {
   static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
   static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
+  static RoutePathGetNFTShowcasePreview = "/api/v0/admin/get-nft-showcase-preview";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathSetUSDCentsToBitCloutReserveExchangeRate =
     "/api/v0/admin/set-usd-cents-to-bitclout-reserve-exchange-rate";
