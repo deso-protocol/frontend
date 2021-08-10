@@ -3,10 +3,7 @@ import { BackendApiService, NFTCollectionResponse } from "../backend-api.service
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-<<<<<<< HEAD
-=======
-import { has, uniqBy } from "lodash";
->>>>>>> 8ee0784773eb8f9f4652ff77dd45deae99d53a62
+import { uniqBy } from "lodash";
 
 @Component({
   selector: "nft-showcase",

@@ -72,15 +72,6 @@ export class NftDropMgrComponent implements OnInit {
       queryParams: { adminNFTTab: this.activeTab },
       queryParamsHandling: "merge",
     });
-    this._onTabSwitch();
-  }
-
-  _onTabSwitch() {
-    // Delay rendering the posts for a hot second so nav is fast.
-    this.switchingTabs = true;
-    setTimeout(() => {
-      this.switchingTabs = false;
-    }, 0);
   }
 
   ngOnInit(): void {
