@@ -140,46 +140,46 @@
       </ng-template>
     </div>
   </ng-template>
-  <div class="feed-reaction">
+  <div class="feed-reaction cursor-pointer d-flex align-items-center" (click)="sendOneDiamond($event)" (mouseover)="addDiamondSelection($event)" (mouseleave)="removeDiamondSelection()">
     <i class="icon-diamond" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"></i>
     <a class="like-btn icon-diamond">
       <div class="reaction-box">
-        <div class="reaction-icon" (click)="onDiamondSelected($event, 0)" (mouseover)="this.diamondHovered = 0" (mouseleave)="this.diamondHovered = -1">
+        <div [ngClass]="{ show: diamondsVisible[0] }" class="reaction-icon" (click)="onDiamondSelected($event, 0)" (mouseover)="this.diamondHovered = 0" (mouseleave)="this.diamondHovered = -1">
           <label>{{ globalVars.getUSDForDiamond(0 + 1) }}</label>
           <i
             class="icon-diamond diamond-reaction"
             [ngStyle]="{ color: 0 < getCurrentDiamondLevel() || 0 <= this.diamondHovered ? '#0058F7' : '#555555' }"
           ></i>
         </div>
-        <div class="reaction-icon" (click)="onDiamondSelected($event, 1)" (mouseover)="this.diamondHovered = 1" (mouseleave)="this.diamondHovered = -1">
+        <div [ngClass]="{ show: diamondsVisible[1] }" class="reaction-icon" (click)="onDiamondSelected($event, 1)" (mouseover)="this.diamondHovered = 1" (mouseleave)="this.diamondHovered = -1">
           <label>{{ globalVars.getUSDForDiamond(1 + 1) }}</label>
           <i
             class="icon-diamond diamond-reaction"
             [ngStyle]="{ color: 1 < getCurrentDiamondLevel() || 1 <= this.diamondHovered ? '#0058F7' : '#555555' }"
           ></i>
         </div>
-        <div class="reaction-icon" (click)="onDiamondSelected($event, 2)" (mouseover)="this.diamondHovered = 2" (mouseleave)="this.diamondHovered = -1">
+        <div [ngClass]="{ show: diamondsVisible[2] }" class="reaction-icon" (click)="onDiamondSelected($event, 2)" (mouseover)="this.diamondHovered = 2" (mouseleave)="this.diamondHovered = -1">
           <label>{{ globalVars.getUSDForDiamond(2 + 1) }}</label>
           <i
             class="icon-diamond diamond-reaction"
             [ngStyle]="{ color: 2 < getCurrentDiamondLevel() || 2 <= this.diamondHovered ? '#0058F7' : '#555555' }"
           ></i>
         </div>
-        <div class="reaction-icon" (click)="onDiamondSelected($event, 3)" (mouseover)="this.diamondHovered = 3" (mouseleave)="this.diamondHovered = -1">
+        <div [ngClass]="{ show: diamondsVisible[3] }" class="reaction-icon" (click)="onDiamondSelected($event, 3)" (mouseover)="this.diamondHovered = 3" (mouseleave)="this.diamondHovered = -1">
           <label>{{ globalVars.getUSDForDiamond(3 + 1) }}</label>
           <i
             class="icon-diamond diamond-reaction"
             [ngStyle]="{ color: 3 < getCurrentDiamondLevel() || 3 <= this.diamondHovered ? '#0058F7' : '#555555' }"
           ></i>
         </div>
-        <div class="reaction-icon" (click)="onDiamondSelected($event, 4)" (mouseenter)="this.diamondHovered = 4" (mouseleave)="this.diamondHovered = -1">
+        <div [ngClass]="{ show: diamondsVisible[4] }" class="reaction-icon" (click)="onDiamondSelected($event, 4)" (mouseenter)="this.diamondHovered = 4" (mouseleave)="this.diamondHovered = -1">
           <label>{{ globalVars.getUSDForDiamond(4 + 1) }}</label>
           <i
             class="icon-diamond diamond-reaction"
             [ngStyle]="{ color: 4 < getCurrentDiamondLevel() || 4 <= this.diamondHovered ? '#0058F7' : '#555555' }"
           ></i>
         </div>
-        <div class="reaction-icon" (click)="onDiamondSelected($event, 5)" (mouseover)="this.diamondHovered = 5" (mouseleave)="this.diamondHovered = -1">
+        <div [ngClass]="{ show: diamondsVisible[5] }" class="reaction-icon" (click)="onDiamondSelected($event, 5)" (mouseover)="this.diamondHovered = 5" (mouseleave)="this.diamondHovered = -1">
           <label>{{ globalVars.getUSDForDiamond(5 + 1) }}</label>
           <i
             class="icon-diamond diamond-reaction"
@@ -189,26 +189,26 @@
       </div>
     </a>
   </div>
-  <div
-    class="cursor-pointer d-flex align-items-center"
-    [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
-  >
-    <i
-      [popover]="popTemplate"
-      triggers=""
-      placement="top"
-      [containerClass]="getPopoverContainerClass()"
-      [container]="globalVars.getTargetComponentSelector()"
-      [outsideClick]="true"
-      #diamondPopover="bs-popover"
-      class="icon-diamond feed-post-icon-row__icon p-2px"
-      style="font-size: 20px !important; padding-right: 5px"
-      (click)="diamondClickHandler($event)"
-      (click)="animateDiamond = !animateDiamond"
-      [ngClass]="{ is_animating_ice: animateDiamond }"
-    ></i>
-    <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
-  </div>
+<!--  <div-->
+<!--    class="cursor-pointer d-flex align-items-center"-->
+<!--    [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"-->
+<!--  >-->
+<!--    <i-->
+<!--      [popover]="popTemplate"-->
+<!--      triggers=""-->
+<!--      placement="top"-->
+<!--      [containerClass]="getPopoverContainerClass()"-->
+<!--      [container]="globalVars.getTargetComponentSelector()"-->
+<!--      [outsideClick]="true"-->
+<!--      #diamondPopover="bs-popover"-->
+<!--      class="icon-diamond feed-post-icon-row__icon p-2px"-->
+<!--      style="font-size: 20px !important; padding-right: 5px"-->
+<!--      (click)="diamondClickHandler($event)"-->
+<!--      (click)="animateDiamond = !animateDiamond"-->
+<!--      [ngClass]="{ is_animating_ice: animateDiamond }"-->
+<!--    ></i>-->
+<!--    <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>-->
+<!--  </div>-->
 
     <div class="d-none d-lg-flex cursor-pointer align-items-center">
         <i class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon" (click)="copyPostLinkToClipboard($event)"></i>

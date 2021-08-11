@@ -11,6 +11,7 @@ import { CommentModalComponent } from "../../comment-modal/comment-modal.compone
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { ThemeService } from "../../theme/theme.service";
 import * as _ from "lodash";
+import { includes } from "lodash";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -50,6 +51,14 @@ export class FeedPostIconRowComponent {
 
   // Boolean for animation on whether a diamond is clicked or not
   animateDiamond = false;
+
+  diamondCount = 6;
+  // Controls visibility of selectable diamond levels. Initialize to false.
+  diamondsVisible = Array<boolean>(this.diamondCount).fill(false);
+  // Store timeout functions so that they can be cancelled prematurely
+  diamondTimeouts: NodeJS.Timer[] = [];
+  // How quickly the diamonds appear on hover
+  diamondAnimationDelay = 75;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -318,6 +327,7 @@ export class FeedPostIconRowComponent {
   }
 
   sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
+    console.log('Send diamonds fn');
     this.sendingDiamonds = true;
     return this.backendApi
       .SendDiamonds(
@@ -402,19 +412,14 @@ export class FeedPostIconRowComponent {
     comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
   }
 
-  diamondPopoverOpen = false;
   openDiamondPopover() {
     this.backendApi.SetStorage("hasSeenDiamondInfo", true);
     this.collapseDiamondInfo = this.backendApi.GetStorage("collapseDiamondInfo");
     this.diamondSelected = this.getCurrentDiamondLevel();
-    this.diamondPopover.show();
-    this.diamondPopoverOpen = true;
     document.addEventListener("click", this.popoverOpenClickHandler, true);
   }
 
   closeDiamondPopover() {
-    this.diamondPopoverOpen = false;
-    this.diamondPopover.hide();
     document.removeEventListener("click", this.popoverOpenClickHandler);
   }
 
@@ -441,7 +446,47 @@ export class FeedPostIconRowComponent {
     this.collapseDiamondInfo = isCollapse;
   }
 
+  async sendOneDiamond(event) {
+    // Disable diamond selection if diamonds are being sent
+    if (this.sendingDiamonds) {
+      return;
+    }
+
+    // Block user from selecting diamond level below already gifted amount
+    if (this.getCurrentDiamondLevel() > 0) {
+      return;
+    }
+
+    // Don't trigger diamond purchases on tap on mobile
+    if (event.pointerType === "touch") {
+      return;
+    }
+
+    this.onDiamondSelected(event, 0);
+  }
+
+  addDiamondSelection(event) {
+    // Need to make sure hover event doesn't trigger on child elements
+    if (includes(event.path[0].classList, "like-btn")) {
+      for (let idx = 0; idx < this.diamondCount; idx++) {
+        this.diamondTimeouts[idx] = setTimeout(() => {
+          // console.log('visibility on idx ' + idx.toString());
+          // console.log(this.diamondVisible);
+          this.diamondsVisible[idx] = true;
+        }, idx * this.diamondAnimationDelay);
+      }
+    }
+  }
+
+  removeDiamondSelection() {
+    for (let idx = 0; idx < this.diamondCount; idx++) {
+      clearTimeout(this.diamondTimeouts[idx]);
+      this.diamondsVisible[idx] = false;
+    }
+  }
+
   async onDiamondSelected(event: any, index: number): Promise<void> {
+    console.log('Sending a diamond')
     // Disable diamond selection if diamonds are being sent
     if (this.sendingDiamonds) {
       return;
@@ -480,6 +525,7 @@ export class FeedPostIconRowComponent {
         reverseButtons: true,
       }).then(async (res: any) => {
         if (res.isConfirmed) {
+          console.log('Initiating diamond send');
           await this.sendDiamonds(this.diamondSelected);
         }
       });
@@ -489,6 +535,14 @@ export class FeedPostIconRowComponent {
   }
 
   getCurrentDiamondLevel(): number {
+    return this.postContent.PostEntryReaderState?.DiamondLevelBestowed || 0;
+  }
+
+  getCurrentDiamondLevel2(obj, idx): number {
+    console.log('here is the obj');
+    console.log(obj);
+    console.log('here is the idx');
+    console.log(idx);
     return this.postContent.PostEntryReaderState?.DiamondLevelBestowed || 0;
   }
 
