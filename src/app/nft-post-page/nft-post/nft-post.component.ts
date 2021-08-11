@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ViewChild} from "@angular/core";
+import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import {
@@ -220,7 +220,7 @@ export class NftPostComponent {
 
   afterNftBidPlaced() {
     this.loading = true;
-    this.refreshPosts();
+    this.refreshBidData();
   }
 
   sellNFT(): void {
