@@ -327,7 +327,6 @@ export class FeedPostIconRowComponent {
   }
 
   sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
-    console.log('Send diamonds fn');
     this.sendingDiamonds = true;
     return this.backendApi
       .SendDiamonds(
@@ -341,6 +340,7 @@ export class FeedPostIconRowComponent {
       .toPromise()
       .then(
         (res) => {
+          this.sendingDiamonds = false;
           this.openDiamondPopover();
           this.globalVars.logEvent("diamond: send", {
             SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
@@ -459,6 +459,7 @@ export class FeedPostIconRowComponent {
 
     // Don't trigger diamond purchases on tap on mobile
     if (event.pointerType === "touch") {
+      event.stopPropagation();
       return;
     }
 
@@ -486,9 +487,13 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
-    console.log('Sending a diamond')
     // Disable diamond selection if diamonds are being sent
     if (this.sendingDiamonds) {
+      return;
+    }
+
+    if (event.pointerType === "touch" && includes(event.path[0].classList, "reaction-icon")) {
+      event.stopPropagation();
       return;
     }
 

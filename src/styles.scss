@@ -2568,13 +2568,15 @@ input {
             opacity: 1;
             transform: translate(0, 0) scale(1);
           }
+          // Prevent hover effects on mobile
+          @media (pointer: fine) {
+            &:hover {
+              transform: scale(1.4);
+              transform-origin: bottom;
 
-          &:hover {
-            transform: scale(1.4);
-            transform-origin: bottom;
-
-            label {
-              visibility: visible;
+              label {
+                visibility: visible;
+              }
             }
           }
         }

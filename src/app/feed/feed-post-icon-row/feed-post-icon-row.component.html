@@ -83,8 +83,8 @@
   </div>
 
   <ng-template #popTemplate>
-    <div id="diamond-popover">
-      <div *ngIf="!sendingDiamonds; else sendingDiamondSpinner">
+    <div id="diamond-popover" style="margin: 10px">
+      <div *ngIf="!sendingDiamonds">
         <div (click)="expandDiamondInfo($event)">
           Give a diamond.
           <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
@@ -92,7 +92,6 @@
           <b>a tip</b>
           from you, paid in
           <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>.
-          <i class="fas fa-info-circle"></i>
         </div>
         <div
           class="fs-14px w-100 mt-3 mb-1"
@@ -110,40 +109,16 @@
             <a (click)="hideDiamondInfo($event)" class="fc-muted">hide explainer</a>
           </div>
         </div>
-        <div class="d-flex justify-content-center pt-10px">
-          <rating
-            [max]="6"
-            [(ngModel)]="diamondSelected"
-            [customTemplate]="diamondRating"
-            [readonly]="sendingDiamonds"
-          ></rating>
-          <ng-template #diamondRating let-index="index" let-value="value">
-            <div
-              class="d-inline-block px-10px"
-              (click)="onDiamondSelected($event, index)"
-              [ngStyle]="{ disabled: index < getCurrentDiamondLevel() }"
-            >
-              <i
-                class="icon-diamond fs-25px d-block"
-                [ngStyle]="{ color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555' }"
-              ></i>
-              <div class="d-block fc-muted fs-12px" style="text-align: center">
-                {{ globalVars.getUSDForDiamond(index + 1) }}
-              </div>
-            </div>
-          </ng-template>
-        </div>
       </div>
-      <ng-template #sendingDiamondSpinner>
-        Sending @{{ postContent.ProfileEntryResponse.Username }} {{ diamondSelected }} diamonds!
-        <simple-center-loader [height]="200"></simple-center-loader>
-      </ng-template>
     </div>
   </ng-template>
   <div class="feed-reaction cursor-pointer d-flex align-items-center" (click)="sendOneDiamond($event)" (mouseover)="addDiamondSelection($event)" (mouseleave)="removeDiamondSelection()">
-    <i class="icon-diamond" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"></i>
+    <i [ngClass]="{ 'icon-diamond': !sendingDiamonds, 'fas fa-spinner fa-spin': sendingDiamonds, 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"></i>
     <a class="like-btn icon-diamond">
-      <div class="reaction-box">
+      <div class="reaction-box" [ngStyle]="{ height: !collapseDiamondInfo ? '385px' : '55px' }">
+        <div *ngIf="!collapseDiamondInfo">
+          <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
+        </div>
         <div [ngClass]="{ show: diamondsVisible[0] }" class="reaction-icon" (click)="onDiamondSelected($event, 0)" (mouseover)="this.diamondHovered = 0" (mouseleave)="this.diamondHovered = -1">
           <label>{{ globalVars.getUSDForDiamond(0 + 1) }}</label>
           <i
