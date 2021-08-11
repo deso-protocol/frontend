@@ -583,6 +583,7 @@ export class FeedPostComponent implements OnInit {
     onHideEvent.subscribe((response) => {
       if (response === "bid placed") {
         this.getNFTEntries();
+        this.nftBidPlaced.emit();
       }
     });
   }
