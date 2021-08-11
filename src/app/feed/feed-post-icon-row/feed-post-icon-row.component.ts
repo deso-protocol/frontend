@@ -413,10 +413,11 @@ export class FeedPostIconRowComponent {
   }
 
   openDiamondPopover() {
+    console.log('Here is the info');
+    console.log(this.backendApi.GetStorage("collapseDiamondInfo"));
+    console.log(this.collapseDiamondInfo);
     this.backendApi.SetStorage("hasSeenDiamondInfo", true);
     this.collapseDiamondInfo = this.backendApi.GetStorage("collapseDiamondInfo");
-    this.diamondSelected = this.getCurrentDiamondLevel();
-    document.addEventListener("click", this.popoverOpenClickHandler, true);
   }
 
   closeDiamondPopover() {
@@ -435,7 +436,9 @@ export class FeedPostIconRowComponent {
   }
 
   hideDiamondInfo(event: any): void {
+    event.stopPropagation();
     this.toggleDiamondInfo(event, true);
+    event.stopPropagation();
   }
 
   toggleDiamondInfo(event: any, isCollapse: boolean) {
@@ -444,6 +447,7 @@ export class FeedPostIconRowComponent {
     // Save the user's preference for seeing the diamond info or not and then toggle the collapse state of the div.
     this.backendApi.SetStorage("collapseDiamondInfo", isCollapse);
     this.collapseDiamondInfo = isCollapse;
+    event.stopPropagation();
   }
 
   async sendOneDiamond(event) {
@@ -469,6 +473,7 @@ export class FeedPostIconRowComponent {
   addDiamondSelection(event) {
     // Need to make sure hover event doesn't trigger on child elements
     if (includes(event.path[0].classList, "like-btn")) {
+      this.openDiamondPopover();
       for (let idx = 0; idx < this.diamondCount; idx++) {
         this.diamondTimeouts[idx] = setTimeout(() => {
           // console.log('visibility on idx ' + idx.toString());
