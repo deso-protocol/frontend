@@ -111,16 +111,10 @@ export class PlaceBidModalComponent implements OnInit {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
-          const modalRef = this.modalService.show(BidPlacedModalComponent, {
+          this.modalService.show(BidPlacedModalComponent, {
             class: "modal-dialog-centered modal-sm",
           });
           this.modalService.setDismissReason("bid placed");
-          modalRef.onHide.pipe(
-            take(1),
-            filter((reason) => {
-              return reason !== "explore";
-            })
-          );
         },
         (err) => {
           console.error(err);

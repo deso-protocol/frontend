@@ -63,16 +63,10 @@ export class AddUnlockableModalComponent implements OnInit {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
-          const modalRef = this.modalService.show(NftSoldModalComponent, {
+          this.modalService.show(NftSoldModalComponent, {
             class: "modal-dialog-centered modal-sm",
           });
           this.modalService.setDismissReason("nft sold");
-          modalRef.onHide.pipe(
-            take(1),
-            filter((reason) => {
-              return reason !== "view_my_nfts";
-            })
-          );
         },
         (err) => {
           console.error(err);
