@@ -90,25 +90,7 @@
           <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
           will receive the amount shown as
           <b>a tip</b>
-          from you, paid in
-          <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>.
-          <i class="fas fa-info-circle"></i>
-        </div>
-        <div
-          class="fs-14px w-100 mt-3 mb-1"
-          id="diamondInfoCollapse"
-          [collapse]="collapseDiamondInfo"
-          [isAnimated]="true"
-        >
-          <div class="mb-2">When you give a diamond:</div>
-          <ul class="mb-2">
-            <li>The receiver gets a tip paid in your creator coin</li>
-            <li>A collectible badge shows up on the receiver's profile</li>
-            <li>The receiver's comment on your post moves to the top</li>
-          </ul>
-          <div>
-            <a (click)="hideDiamondInfo($event)" class="fc-muted">hide explainer</a>
-          </div>
+          from you.
         </div>
         <div class="d-flex justify-content-center pt-10px">
           <rating
