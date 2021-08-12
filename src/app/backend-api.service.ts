@@ -98,7 +98,6 @@ export class BackendRoutes {
   static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
   static RoutePathAdminGetNFTDrop = "/api/v0/admin/get-nft-drop";
   static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
-  static RoutePathAdminGetJumioAttemptsForPublicKey = "/api/v0/admin/get-jumio-attempts-for-public-key";
   static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
   static RoutePathAdminUpdateJumioBitClout = "/api/v0/admin/update-jumio-bitclout";
 
@@ -1817,19 +1816,6 @@ export class BackendApiService {
         return res.FullTikTokURL;
       })
     );
-  }
-
-  AdminGetJumioAttemptsForPublicKey(
-    endpoint: string,
-    AdminPublicKeyBase58Check: string,
-    PublicKeyBase58Check: string,
-    Username: string
-  ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetJumioAttemptsForPublicKey, AdminPublicKeyBase58Check, {
-      AdminPublicKey: AdminPublicKeyBase58Check,
-      PublicKeyBase58Check,
-      Username,
-    });
   }
 
   AdminResetJumioAttemptsForPublicKey(

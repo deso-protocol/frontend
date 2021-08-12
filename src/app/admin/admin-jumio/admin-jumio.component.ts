@@ -10,10 +10,6 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
   styleUrls: ["./admin-jumio.component.scss"],
 })
 export class AdminJumioComponent {
-  usernameToFetchJumioAttempts = "";
-  loadingJumioAttempts = false;
-  jumioAttempts = null;
-
   usernameToResetJumio = "";
   resettingJumio = false;
 
@@ -27,33 +23,6 @@ export class AdminJumioComponent {
     private backendApi: BackendApiService
   ) {
     this.jumioBitCloutNanos = globalVars.jumioBitCloutNanos;
-  }
-
-  _loadJumioAttempts(): void {
-    this.loadingJumioAttempts = true;
-    let pubKey = "";
-    let username = "";
-    if (this.globalVars.isMaybePublicKey(this.usernameToFetchJumioAttempts)) {
-      pubKey = this.usernameToFetchJumioAttempts;
-    } else {
-      username = this.usernameToFetchJumioAttempts;
-    }
-    this.backendApi
-      .AdminGetJumioAttemptsForPublicKey(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        pubKey,
-        username
-      )
-      .subscribe(
-        (res) => {
-          this.jumioAttempts = res.VerificationAttempts;
-        },
-        (err) => {
-          this.globalVars._alertError(err.error.error);
-        }
-      )
-      .add(() => (this.loadingJumioAttempts = false));
   }
 
   _resetJumio(): void {
