@@ -123,9 +123,9 @@
       <div
         [ngStyle]="{ left: diamondDragLeftOffset }"
         (cdkDragStarted)="startDrag()"
-        (cdkDragMoved)="logDrag($event)"
+        (cdkDragMoved)="duringDrag($event)"
         (cdkDragEnded)="endDrag($event)"
-        (click)="diamondDragClick($event)"
+        (click)="sendOneDiamond($event, true)"
         class="diamond-mobile-drag-grab"
         id="diamond-mobile-drag-grab"
         cdkDragBoundary=".diamond-mobile-drag-container"
@@ -134,7 +134,7 @@
     </div>
     <div
       class="feed-reaction cursor-pointer d-flex align-items-center"
-      (click)="sendOneDiamond($event)"
+      (click)="sendOneDiamond($event, false)"
       (mouseover)="addDiamondSelection($event)"
       (mouseleave)="removeDiamondSelection()"
     >
@@ -144,9 +144,12 @@
           'fas fa-spinner fa-spin': sendingDiamonds,
           'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
         }"
+        [ngStyle]="{
+          visibility: diamondDragging ? 'hidden' : 'visible'
+        }"
       ></i>
       <a
-        [ngClass]="{ 'dragged-like': diamondDragging || diamondDragClicked }"
+        [ngClass]="{ 'dragged-like': diamondDragging }"
         class="like-btn icon-diamond"
         id="diamond-select"
       >

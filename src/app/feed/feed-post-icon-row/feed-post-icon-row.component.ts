@@ -51,8 +51,6 @@ export class FeedPostIconRowComponent {
   diamondDragLeftOffset = "0px";
   // Whether the diamond drag selector is being dragged
   diamondDragging = false;
-  // If the diamond drag selector has been clicked
-  diamondDragClicked = false;
   // Which diamond is selected by the drag selector
   diamondIdxDraggedTo = -1;
   // Whether the drag selector is at the top of it's bound and in position to make a transaction
@@ -114,7 +112,7 @@ export class FeedPostIconRowComponent {
     this.addDiamondSelection({ type: "initiateDrag" });
   }
 
-  logDrag(event) {
+  duringDrag(event) {
     const pageMargin = window.innerWidth * 0.15;
     const selectableWidth = window.innerWidth * 0.7;
     if (event.pointerPosition.x < pageMargin) {
@@ -403,18 +401,7 @@ export class FeedPostIconRowComponent {
     this.collapseDiamondInfo = !this.collapseDiamondInfo;
   }
 
-  diamondDragClick(event) {
-    if (!this.diamondDragClicked) {
-      this.diamondDragClicked = true;
-      this.addDiamondSelection({ type: "initiateDrag" });
-    } else {
-      this.diamondDragClicked = false;
-    }
-    event.stopPropagation();
-  }
-
   sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
-    this.diamondDragClicked = false;
     this.sendingDiamonds = true;
     return this.backendApi
       .SendDiamonds(
@@ -472,7 +459,7 @@ export class FeedPostIconRowComponent {
     }
   };
 
-  async sendOneDiamond(event) {
+  async sendOneDiamond(event: any, fromDragEvent: boolean) {
     // Disable diamond selection if diamonds are being sent
     if (this.sendingDiamonds) {
       return;
@@ -483,10 +470,15 @@ export class FeedPostIconRowComponent {
       return;
     }
 
-    // Don't trigger diamond purchases on tap on mobile
-    if (event.pointerType === "touch") {
+    // Don't trigger diamond purchases on tap on tablet
+    if (event && event.pointerType === "touch" && !fromDragEvent) {
       event.stopPropagation();
       return;
+    }
+
+    // If triggered from mobile, stop propegation
+    if (fromDragEvent) {
+      event.stopPropagation();
     }
 
     this.onDiamondSelected(event, 0);
