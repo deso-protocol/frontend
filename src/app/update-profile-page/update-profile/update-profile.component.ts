@@ -27,6 +27,8 @@ export type ProfileUpdateErrors = {
 })
 export class UpdateProfileComponent implements OnInit, OnChanges {
   @Input() loggedInUser: any;
+  @Input() inTutorial: boolean = false;
+
   updateProfileBeingCalled: boolean = false;
   usernameInput: string;
   descriptionInput: string;
@@ -198,8 +200,18 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       (res) => {
         this.globalVars.profileUpdateTimestamp = Date.now();
         this.globalVars.logEvent("profile : update");
-        // This updates things like the username that shows up in the dropdown.
-        this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);
+        if (!this.inTutorial) {
+          // This updates things like the username that shows up in the dropdown.
+          this.globalVars.updateEverything(
+            res.TxnHashHex,
+            this._updateProfileSuccess,
+            this._updateProfileFailure,
+            this
+          );
+        } else {
+          // Navigate to next page in tutorial - Invest in Others
+          this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR], { queryParamsHandling: "merge" });
+        }
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);

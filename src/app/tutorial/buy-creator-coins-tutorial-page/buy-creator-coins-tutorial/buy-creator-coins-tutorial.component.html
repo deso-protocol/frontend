@@ -1,0 +1,137 @@
+<div class="flex-grow-1">
+  <!--Header Mobile-->
+  <div
+    class="d-lg-none fixed-top-bar global__top-bar__height d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey"
+  >
+    <div class="d-flex align-items-center">
+      Choose a Creator to Invest In:
+    </div>
+  </div>
+
+  <!--Header Desktop-->
+  <div class="d-none d-lg-block w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">Choose a Creator to Invest In:</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="d-lg-none global__top-bar__height"></div>
+    <div
+      class="row no-gutters px-15px border-bottom background-color-light-grey py-15px pl-15px"
+      style="margin-left: 0; margin-right: 0"
+    >
+      <div class="text-grey5 fs-18px font">All creators have a coin. Buy your favorites and get on their team!</div>
+    </div>
+
+    <div>
+      Top Creators:
+      <div *ngFor="let profile of topCreatorsToHighlight">
+        <simple-profile-card
+          [profile]="profile"
+          [showTutorialBuy]="true"
+          [inTutorial]="true"
+        ></simple-profile-card>
+      </div>
+    </div>
+
+    <div>
+      Up-And-Coming Creators:
+      <div *ngFor="let profile of upAndComingCreatorsToHighlight">
+        <simple-profile-card
+          [profile]="profile"
+          [showTutorialBuy]="true"
+          [inTutorial]="true"
+        ></simple-profile-card>
+      </div>
+    </div>
+    <!-- Headers -->
+<!--    <div class="fs-15px">-->
+<!--      <div class="row px-15px no-gutters border-bottom py-15px fc-muted" style="margin-left: 0; margin-right: 0">-->
+<!--        <div class="col mb-0">Name</div>-->
+
+<!--        <div class="col-2 mb-0 text-right" style="min-width: 100px">-->
+<!--          <div class="pl-15px">Price</div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash;Hide on mobile&ndash;&gt;-->
+<!--        <div class="col mb-0 d-lg-block d-none creators-leaderboard__controls-column">-->
+<!--          &lt;!&ndash; Controls&ndash;&gt;-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <simple-center-loader *ngIf="isLoadingProfilesForFirstTime"></simple-center-loader>-->
+
+    <!-- Creator rows -->
+<!--    <div #uiScroll *uiScroll="let item of datasource" class="row no-gutters px-15px border-bottom fs-15px">-->
+<!--      <a-->
+<!--        class="col mb-0 py-15px link&#45;&#45;unstyled"-->
+<!--        queryParamsHandling="merge"-->
+<!--      >-->
+<!--        <div-->
+<!--          class="creators-leaderboard__avatar d-inline-block align-top rounded"-->
+<!--          [avatar]="item.PublicKeyBase58Check"-->
+<!--        ></div>-->
+<!--        <a class="d-inline-block mt-2 ml-3 fc-default">{{ item.Username }}</a>-->
+
+<!--        <span-->
+<!--          *ngIf="item.IsReserved && !item.IsVerified"-->
+<!--          class="d-inline-block ml-10px cursor-pointer fs-18px lh-12px fc-muted"-->
+<!--          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"-->
+<!--          [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"-->
+<!--        >-->
+<!--          <i class="far fa-clock fa-md align-middle"></i>-->
+<!--        </span>-->
+
+<!--        <span-->
+<!--          *ngIf="item.IsVerified"-->
+<!--          (click)="tooltip.toggle()"-->
+<!--          class="ml-10px cursor-pointer fs-20px lh-12px text-primary"-->
+<!--          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"-->
+<!--          [matTooltip]="'This account is verified'"-->
+<!--          #tooltip="matTooltip"-->
+<!--        >-->
+<!--          <i class="fas fa-check-circle fa-md align-middle"></i>-->
+<!--        </span>-->
+<!--      </a>-->
+
+<!--      <a-->
+<!--        class="col-2 mb-0 mt-2 py-15px link&#45;&#45;unstyled text-right"-->
+<!--        style="min-width: 100px"-->
+<!--        queryParamsHandling="merge"-->
+<!--      >-->
+<!--        <div class="pl-15px">~{{ globalVars.nanosToUSD(item.CoinPriceBitCloutNanos, 2) }}</div>-->
+<!--      </a>-->
+
+<!--      &lt;!&ndash;Hide on mobile&ndash;&gt;-->
+<!--      <div class="col py-15px d-lg-block d-none mb-0 creators-leaderboard__controls-column">-->
+<!--        <div class="pl-15px">-->
+<!--          &lt;!&ndash; TODO: link to tutorial page instead of normal buy creator path &ndash;&gt;-->
+<!--          <a-->
+<!--            class="btn btn-primary fs-18px text-left"-->
+<!--            [routerLink]="AppRoutingModule.buyCreatorPath(item.Username)"-->
+<!--            queryParamsHandling="merge"-->
+<!--          >-->
+<!--            Buy-->
+<!--          </a>-->
+
+<!--          <div *ngIf="appData.loggedInUser" class="d-inline-block text-right">-->
+<!--            <div class="ml-3 mt-1 align-top">-->
+<!--              <div *ngIf="canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)">-->
+<!--                <follow-button-->
+<!--                  [displayAsLink]="true"-->
+<!--                  [followedPubKeyBase58Check]="item.PublicKeyBase58Check"-->
+<!--                ></follow-button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+    <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+    <div class="global__bottom-bar-mobile-height"></div>
+    <div class="global__bottom-bar-mobile-height"></div>
+  </div>
+</div>

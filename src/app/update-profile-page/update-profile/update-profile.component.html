@@ -102,9 +102,9 @@
             </div>
           </div>
 
-          <div class="mt-30px font-weight-bold">Founder Reward Percentage</div>
+          <div class="mt-30px font-weight-bold" *ngIf="!inTutorial">Founder Reward Percentage</div>
 
-          <div class="mt-10px">
+          <div class="mt-10px" *ngIf="!inTutorial">
             <div class="d-flex align-items-center justify-content-start h-100">
               <input
                 [(ngModel)]="founderRewardInput"
@@ -150,7 +150,7 @@
               [ngClass]="{ 'btn-loading': updateProfileBeingCalled }"
               class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
             >
-              Update Profile
+              {{ inTutorial ? "Next" : "Update Profile" }}
             </a>
             <i *ngIf="profileUpdated" class="far fa-check-circle fa-lg fc-blue ml-10px"></i>
           </div>

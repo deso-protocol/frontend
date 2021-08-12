@@ -17,6 +17,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
   CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorCreatorCoinLessThanMinimumSetByUser";
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
+  @Input() inTutorial: boolean = false;
 
   @Output() slippageError = new EventEmitter();
   @Output() tradeExecuted = new EventEmitter();

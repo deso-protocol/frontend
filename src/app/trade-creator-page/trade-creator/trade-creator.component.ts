@@ -5,12 +5,13 @@
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
-import { AppRoutingModule } from "../../app-routing.module";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { Observable, Subscription } from "rxjs";
 
 @Component({
   selector: "trade-creator",
@@ -18,6 +19,8 @@ import { AppRoutingModule } from "../../app-routing.module";
   styleUrls: ["./trade-creator.component.scss"],
 })
 export class TradeCreatorComponent implements OnInit {
+  @Input() inTutorial: boolean = false;
+  @Input() tutorialBuy: boolean;
   TRADE_CREATOR_FORM_SCREEN = "trade_creator_form_screen";
   TRADE_CREATOR_PREVIEW_SCREEN = "trade_creator_preview_screen";
   TRADE_CREATOR_COMPLETE_SCREEN = "trade_creator_complete_screen";
@@ -56,7 +59,12 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   _onTradeExecuted() {
-    this.screenToShow = this.TRADE_CREATOR_COMPLETE_SCREEN;
+    if (!this.inTutorial) {
+      this.screenToShow = this.TRADE_CREATOR_COMPLETE_SCREEN;
+    } else {
+      // TODO: make sure user's holdings are refreshed before page load
+      this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET]);
+    }
   }
 
   readyForDisplay() {
@@ -120,12 +128,12 @@ export class TradeCreatorComponent implements OnInit {
     }
   }
 
-  _getCreatorProfile(creatorUsername) {
+  _getCreatorProfile(creatorUsername): Subscription {
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
-    this.backendApi.GetSingleProfile(this.globalVars.localNode, "", creatorUsername).subscribe(
+    return this.backendApi.GetSingleProfile(this.globalVars.localNode, "", creatorUsername).subscribe(
       (response) => {
         if (!response || !response.Profile) {
           this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
@@ -155,9 +163,68 @@ export class TradeCreatorComponent implements OnInit {
 
   ngOnInit() {
     this.creatorCoinTrade = new CreatorCoinTrade(this.appData);
-    this._setStateFromActivatedRoute(this.route);
-    this.route.params.subscribe((params) => {
+    if (!this.inTutorial) {
       this._setStateFromActivatedRoute(this.route);
-    });
+      this.route.params.subscribe((params) => {
+        this._setStateFromActivatedRoute(this.route);
+      });
+    } else {
+      this.screenToShow = this.TRADE_CREATOR_PREVIEW_SCREEN;
+      this.creatorCoinTrade.isBuyingCreatorCoin = !!this.tutorialBuy;
+      this.creatorCoinTrade.tradeType = !!this.tutorialBuy ? CreatorCoinTrade.BUY_VERB : CreatorCoinTrade.SELL_VERB;
+
+      this._getCreatorProfile(this.route.snapshot.params.username).add(() => {
+        if (this.creatorCoinTrade.isBuyingCreatorCoin) {
+          this.setUpBuyTutorial();
+        } else {
+          this.setUpSellTutorial();
+        }
+      });
+      // if (this.tutorialBuy) {
+      //   this.setUpBuyTutorial();
+      // } else {
+      //   this.setUpSellTutorial();
+      // }
+    }
+  }
+
+  setUpBuyTutorial(): void {
+    // this.creatorCoinTrade.isBuyingCreatorCoin = true;
+    // this.creatorCoinTrade.tradeType = CreatorCoinTrade.BUY_VERB;
+    let balance = this.appData.loggedInUser?.BalanceNanos;
+    balance = balance > this.appData.jumioBitCloutNanos ? this.appData.jumioBitCloutNanos : balance;
+    this.creatorCoinTrade.bitCloutToSell = (balance * 0.5) / 1e9;
+    this.getBuyOrSellObservable().subscribe(
+      (response) => {
+        this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = response.ExpectedCreatorCoinReturnedNanos || 0;
+        this.creatorCoinTrade.expectedFounderRewardNanos = response.FounderRewardGeneratedNanos || 0;
+        console.log(this.creatorCoinTrade);
+      },
+      (err) => {
+        // TODO: how to handle errors in tutorial
+        console.error(err);
+        this.appData._alertError(this.backendApi.parseProfileError(err));
+      }
+    );
+    // TODO: construct the rest of the creator coin trade
+    // AMOUNT OF CC TO BUY: max of jumio bitclout nanos
+  }
+
+  setUpSellTutorial(): void {}
+
+  getBuyOrSellObservable(): Observable<any> {
+    return this.backendApi.BuyOrSellCreatorCoin(
+      this.appData.localNode,
+      this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+      this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
+      this.creatorCoinTrade.operationType() /*OperationType*/,
+      this.creatorCoinTrade.bitCloutToSell * 1e9 /*BitCloutToSellNanos*/,
+      this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
+      0 /*BitCloutToAddNanos*/,
+      0 /*MinBitCloutExpectedNanos*/,
+      0 /*MinCreatorCoinExpectedNanos*/,
+      this.appData.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/,
+      false
+    );
   }
 }

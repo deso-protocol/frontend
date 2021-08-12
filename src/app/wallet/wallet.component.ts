@@ -1,14 +1,17 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule } from "../app-routing.module";
+import { AppRoutingModule, RouteNames } from "../app-routing.module";
 import { BalanceEntryResponse } from "../backend-api.service";
 import { Title } from "@angular/platform-browser";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "wallet",
   templateUrl: "./wallet.component.html",
 })
 export class WalletComponent implements OnInit {
+  @Input() inTutorial: boolean;
+
   globalVars: GlobalVarsService;
   AppRoutingModule = AppRoutingModule;
   hasUnminedCreatorCoins: boolean;
@@ -26,7 +29,7 @@ export class WalletComponent implements OnInit {
   tabs = [WalletComponent.coinsPurchasedTab, WalletComponent.coinsReceivedTab];
   activeTab: string = WalletComponent.coinsPurchasedTab;
 
-  constructor(private appData: GlobalVarsService, private titleService: Title) {
+  constructor(private appData: GlobalVarsService, private titleService: Title, private router: Router) {
     this.globalVars = appData;
   }
 
@@ -45,7 +48,7 @@ export class WalletComponent implements OnInit {
         this.usersYouReceived.push(balanceEntryResponse);
       }
     });
-    this.sortWallet("value")
+    this.sortWallet("value");
     this.titleService.setTitle("Wallet - BitClout");
   }
 
@@ -56,10 +59,9 @@ export class WalletComponent implements OnInit {
     this.sortedUSDValueFromHighToLow = descending ? -1 : 1;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
-        this.sortedUSDValueFromHighToLow * (
-          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry) -
-          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) 
-        )
+        this.sortedUSDValueFromHighToLow *
+        (this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry) -
+          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry))
       );
     });
   }
@@ -71,42 +73,48 @@ export class WalletComponent implements OnInit {
     this.sortedUSDValueFromHighToLow = 0;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
-        this.sortedPriceFromHighToLow * (
-          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.ProfileEntryResponse.CoinPriceBitCloutNanos, a.ProfileEntryResponse.CoinEntry) -
-          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.ProfileEntryResponse.CoinPriceBitCloutNanos, b.ProfileEntryResponse.CoinEntry)
-        )
+        this.sortedPriceFromHighToLow *
+        (this.globalVars.bitcloutNanosYouWouldGetIfYouSold(
+          a.ProfileEntryResponse.CoinPriceBitCloutNanos,
+          a.ProfileEntryResponse.CoinEntry
+        ) -
+          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(
+            b.ProfileEntryResponse.CoinPriceBitCloutNanos,
+            b.ProfileEntryResponse.CoinEntry
+          ))
       );
     });
   }
 
   // sort by username
-  sortHodlingsUsername(hodlings: BalanceEntryResponse[], descending: boolean): void{
+  sortHodlingsUsername(hodlings: BalanceEntryResponse[], descending: boolean): void {
     this.sortedUsernameFromHighToLow = descending ? -1 : 1;
     this.sortedPriceFromHighToLow = 0;
     this.sortedUSDValueFromHighToLow = 0;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
-        this.sortedUsernameFromHighToLow * b.ProfileEntryResponse.Username.localeCompare(a.ProfileEntryResponse.Username)
-      )
+        this.sortedUsernameFromHighToLow *
+        b.ProfileEntryResponse.Username.localeCompare(a.ProfileEntryResponse.Username)
+      );
     });
   }
 
-  sortWallet(column: string){
+  sortWallet(column: string) {
     let descending: boolean;
     switch (column) {
       case "username":
         // code block
-        descending = this.sortedUsernameFromHighToLow === - 1 ? false : true;
+        descending = this.sortedUsernameFromHighToLow === -1 ? false : true;
         this.sortHodlingsUsername(this.usersYouPurchased, descending);
         this.sortHodlingsUsername(this.usersYouReceived, descending);
         break;
       case "price":
-        descending = this.sortedPriceFromHighToLow === - 1 ? false : true;
+        descending = this.sortedPriceFromHighToLow === -1 ? false : true;
         this.sortHodlingsPrice(this.usersYouPurchased, descending);
         this.sortHodlingsPrice(this.usersYouReceived, descending);
         break;
       case "value":
-        descending = this.sortedUSDValueFromHighToLow === - 1 ? false : true;
+        descending = this.sortedUSDValueFromHighToLow === -1 ? false : true;
         this.sortHodlingsCoins(this.usersYouPurchased, descending);
         this.sortHodlingsCoins(this.usersYouReceived, descending);
         break;
@@ -166,5 +174,9 @@ export class WalletComponent implements OnInit {
   _handleTabClick(tab: string) {
     this.showTransferredCoins = tab === WalletComponent.coinsReceivedTab;
     this.activeTab = tab;
+  }
+
+  tutorialNext(): void {
+    this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR]);
   }
 }

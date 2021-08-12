@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified" class="bg-light br-12px p-15px mb-30px fs-13px">
+  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light br-12px p-15px mb-30px fs-13px">
     <p>Your email is not verified.</p>
     <div *ngIf="globalVars.loggedInUser.HasEmail">
       <a class="font-weight-bold" (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">Resend Verification Email</a>
@@ -56,6 +56,7 @@
   <div
     class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column"
     [ngClass]="{ 'pb-10px': !activeRightTabOption.poweredBy }"
+    *ngIf="!inTutorial"
   >
     <div>
       <select
@@ -84,5 +85,5 @@
   </div>
 
   <!-- Creators -->
-  <right-bar-creators-leaderboard [activeTab]="activeTab"></right-bar-creators-leaderboard>
+  <right-bar-creators-leaderboard [activeTab]="activeTab" *ngIf="!inTutorial"></right-bar-creators-leaderboard>
 </div>

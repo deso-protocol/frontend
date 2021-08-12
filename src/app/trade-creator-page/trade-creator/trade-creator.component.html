@@ -6,7 +6,7 @@
       style="min-height: 80px"
     >
       <div class="d-flex align-items-center">
-        <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
+        <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block" *ngIf="!inTutorial"></top-bar-mobile-hamburger-menu>
 
         <a
           class="d-none d-lg-block trade-creator__avatar mr-15px"
@@ -57,6 +57,7 @@
       [tabs]="tabList"
       [activeTab]="creatorCoinTrade.tradeType"
       (tabClick)="_handleTabClick($event)"
+      *ngIf="!inTutorial"
     ></tab-selector>
 
     <!-- Content -->
@@ -69,6 +70,7 @@
 
     <div *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
       <trade-creator-preview
+        [inTutorial]="inTutorial"
         [creatorCoinTrade]="creatorCoinTrade"
         (slippageError)="_onSlippageError()"
         (backButtonClicked)="_onBackButtonClicked()"
