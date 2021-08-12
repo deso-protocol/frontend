@@ -90,22 +90,12 @@
   <ng-template #popTemplate>
     <div id="diamond-popover" class="m-10px">
       <div *ngIf="!sendingDiamonds">
-        <div>
+        <div class="mb-3">
           Give a diamond.
           <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
           will receive the amount shown as
           <b>a tip</b>
-          from you, paid in
-          <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>
-          .
-        </div>
-        <div class="fs-14px w-100 mt-3 mb-5" id="diamondInfoCollapse">
-          <div class="mb-2">When you give a diamond:</div>
-          <ul class="mb-2">
-            <li>The receiver gets a tip paid in your creator coin</li>
-            <li>A collectible badge shows up on the receiver's profile</li>
-            <li>The receiver's comment on your post moves to the top</li>
-          </ul>
+          from you.
         </div>
       </div>
     </div>
@@ -159,7 +149,7 @@
           [ngStyle]="{
             height:
               !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
-                ? '347px'
+                ? '123px'
                 : '55px'
           }"
         >
