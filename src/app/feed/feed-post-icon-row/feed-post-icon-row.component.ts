@@ -30,29 +30,17 @@ export class FeedPostIconRowComponent {
 
   sendingRecloutRequest = false;
 
-  // Boolean for whether or not the div explaining diamonds should be collapsed or not.
-  collapseDiamondInfo = true;
-  // Boolean for tracking if we are processing a send diamonds event.
-  sendingDiamonds = false;
-  // Track if this is a single or multi-click event on the diamond icon.
-  clickCounter = 0;
-  // Track the diamond selected in the diamond popover.
-  diamondSelected: number;
-  // Track the diamond that is currently being hovered
-  diamondHovered = -1;
-  // Timeout for determining whether this is a single or double click event.
-  static SingleClickDebounce = 300;
-
   // Threshold above which user must confirm before sending diamonds
   static DiamondWarningThreshold = 3;
 
   // Boolean for animation on whether a heart is clicked or not
   animateLike = false;
 
-  // Boolean for animation on whether a diamond is clicked or not
-  animateDiamond = false;
-
   diamondCount = 6;
+  // Indexes from 0 to diamondCount (used by *ngFor)
+  diamondIndexes = Array<number>(this.diamondCount)
+    .fill(0)
+    .map((x, i) => i);
   // Controls visibility of selectable diamond levels. Initialize to false.
   diamondsVisible = Array<boolean>(this.diamondCount).fill(false);
   // Store timeout functions so that they can be cancelled prematurely
@@ -61,9 +49,24 @@ export class FeedPostIconRowComponent {
   diamondAnimationDelay = 50;
   // Where the drag div should be placed for mobile dragging
   diamondDragLeftOffset = "0px";
+  // Whether the diamond drag selector is being dragged
   diamondDragging = false;
+  // If the diamond drag selector has been clicked
+  diamondDragClicked = false;
+  // Which diamond is selected by the drag selector
   diamondIdxDraggedTo = -1;
+  // Whether the drag selector is at the top of it's bound and in position to make a transaction
   diamondDragConfirm = false;
+  // Boolean for whether or not the div explaining diamonds should be collapsed or not.
+  collapseDiamondInfo = true;
+  // Boolean for tracking if we are processing a send diamonds event.
+  sendingDiamonds = false;
+  // Track the diamond selected in the diamond popover.
+  diamondSelected: number;
+  // Track the diamond that is currently being hovered
+  diamondHovered = -1;
+  // Track if we've gone past the explainer already. (Don't want to show explainer on start)
+  diamondDragLeftExplainer = false;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -121,6 +124,10 @@ export class FeedPostIconRowComponent {
     } else {
       this.diamondIdxDraggedTo = round(((event.pointerPosition.x - pageMargin) / selectableWidth) * this.diamondCount);
     }
+    if (this.diamondIdxDraggedTo != this.diamondCount) {
+      this.diamondDragLeftExplainer = true;
+    }
+
     if (event.distance.y === -40) {
       this.diamondDragConfirm = true;
     } else {
@@ -129,12 +136,13 @@ export class FeedPostIconRowComponent {
   }
 
   endDrag(event) {
-    if (this.diamondDragConfirm && this.diamondIdxDraggedTo > -1) {
+    if (this.diamondDragConfirm && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
       this.onDiamondSelected(null, this.diamondIdxDraggedTo);
     }
     this.diamondDragConfirm = false;
     this.diamondDragging = false;
     this.diamondIdxDraggedTo = -1;
+    this.diamondDragLeftExplainer = false;
     event.source._dragRef.reset();
   }
 
@@ -395,7 +403,18 @@ export class FeedPostIconRowComponent {
     this.collapseDiamondInfo = !this.collapseDiamondInfo;
   }
 
+  diamondDragClick(event) {
+    if (!this.diamondDragClicked) {
+      this.diamondDragClicked = true;
+      this.addDiamondSelection({ type: "initiateDrag" });
+    } else {
+      this.diamondDragClicked = false;
+    }
+    event.stopPropagation();
+  }
+
   sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
+    this.diamondDragClicked = false;
     this.sendingDiamonds = true;
     return this.backendApi
       .SendDiamonds(
