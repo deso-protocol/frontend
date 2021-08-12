@@ -139,7 +139,7 @@ import { NftShowcaseComponent } from "./nft-showcase/nft-showcase.component";
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
-import {DragDropModule} from "@angular/cdk/drag-drop";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };

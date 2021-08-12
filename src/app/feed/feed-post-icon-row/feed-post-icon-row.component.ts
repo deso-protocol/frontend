@@ -1,4 +1,4 @@
-import {Component, Input, ChangeDetectorRef, ViewChild, HostListener} from "@angular/core";
+import { Component, Input, ChangeDetectorRef, ViewChild, HostListener } from "@angular/core";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
@@ -10,7 +10,6 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { ThemeService } from "../../theme/theme.service";
-import * as _ from "lodash";
 import { includes, round } from "lodash";
 
 @Component({
@@ -87,14 +86,20 @@ export class FeedPostIconRowComponent {
     this.resetDragPosition();
   }
 
+  // Because the drag component lives in an absolute-positioned div that spans the entire window width,
+  // we need to manually set it's position.
   resetDragPosition() {
     setTimeout(() => {
-      const likeBtn = document.getElementById("diamond-select");
+      // Get the diamond button
+      const likeBtn = document.getElementById("diamond-button");
+      // Calculate where the diamond button lives on the page
       const leftOffset = this.getPosition(likeBtn).offsetLeft;
+      // Set the drag component's left offset such that it lives right above the like button
       this.diamondDragLeftOffset = `${leftOffset}px`;
     }, 200);
   }
 
+  // Get the overall left and top offsets of a component
   getPosition(element) {
     let offsetLeft = 0;
     let offsetTop = 0;
@@ -107,40 +112,50 @@ export class FeedPostIconRowComponent {
     return { offsetTop: offsetTop, offsetLeft: offsetLeft };
   }
 
+  // Initiate mobile drag, have diamonds appear
   startDrag() {
     this.diamondDragging = true;
     this.addDiamondSelection({ type: "initiateDrag" });
   }
 
+  // Calculate where the drag box has been dragged to, make updates accordingly
   duringDrag(event) {
+    // Establish a margin to the left and right in order to improve reachability
     const pageMargin = window.innerWidth * 0.15;
-    const selectableWidth = window.innerWidth * 0.7;
+    // The width of the page minus the margins
+    const selectableWidth = window.innerWidth - 2 * pageMargin;
+    // If the selector is in the left margin, choose the first option
     if (event.pointerPosition.x < pageMargin) {
       this.diamondIdxDraggedTo = 0;
+      // If the selector is in the right margin, choose the last option
     } else if (event.pointerPosition.x > selectableWidth + pageMargin) {
       this.diamondIdxDraggedTo = this.diamondCount;
     } else {
+      // If the selector is in the middle, calculate what % of the middle it has been dragged to, assign a diamond value
       this.diamondIdxDraggedTo = round(((event.pointerPosition.x - pageMargin) / selectableWidth) * this.diamondCount);
     }
+    // If the selector has been dragged out of the right margin, enable the helper text
+    // (we don't want every drag event to start with the helper text enabled)
     if (this.diamondIdxDraggedTo != this.diamondCount) {
       this.diamondDragLeftExplainer = true;
     }
 
-    if (event.distance.y === -40) {
-      this.diamondDragConfirm = true;
-    } else {
-      this.diamondDragConfirm = false;
-    }
+    // If the drag box is at the very top of it's boundary, enable sending diamonds and change the color of the helper div
+    this.diamondDragConfirm = event.distance.y === -40;
   }
 
+  // End dragging procedure. Triggered when the dragged element is released
   endDrag(event) {
+    // If the drag box is in the "confirm" position, and the selected diamond makes sense, send diamonds
     if (this.diamondDragConfirm && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
       this.onDiamondSelected(null, this.diamondIdxDraggedTo);
     }
+    // Reset drag-related variables
     this.diamondDragConfirm = false;
     this.diamondDragging = false;
     this.diamondIdxDraggedTo = -1;
     this.diamondDragLeftExplainer = false;
+    // Move the drag box back to it's original position
     event.source._dragRef.reset();
   }
 
@@ -175,10 +190,6 @@ export class FeedPostIconRowComponent {
 
   userHasReclouted(): boolean {
     return this.postContent.PostEntryReaderState && this.postContent.PostEntryReaderState.RecloutedByReader;
-  }
-
-  mobileDiamondDrag(event) {
-    console.log(event);
   }
 
   _reclout(event: any) {
@@ -486,7 +497,7 @@ export class FeedPostIconRowComponent {
 
   addDiamondSelection(event) {
     // Need to make sure hover event doesn't trigger on child elements
-    if (event?.type === "initiateDrag" || includes(event.path[0].classList, "like-btn")) {
+    if (event?.type === "initiateDrag" || includes(event.path[0].classList, "diamond-btn")) {
       for (let idx = 0; idx < this.diamondCount; idx++) {
         this.diamondTimeouts[idx] = setTimeout(() => {
           this.diamondsVisible[idx] = true;

@@ -1473,7 +1473,7 @@ input.bs-timepicker-field {
 // Bottom bar (mobile)
 //
 .bottom-bar-mobile__create-post-circle {
-  z-index: 2;
+  z-index: 3;
   position: absolute;
   top: -70px;
   right: 22px;
@@ -2471,8 +2471,6 @@ input {
 }
 
 .feed-reaction {
-  //width: 500px; height: 473px;
-  //background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAHZBAMAAACCytRRAAAAElBMVEXQ0NDf39/h4eHo6Ojt7e34+PjQ20C4AAAABnRSTlOZmZmZmZmTAzKZAAACY0lEQVR42u3dzQ2CMBgG4GIYQB3BCRyBQ8dmFnQDEgdQD3AE/IW08LyXHlpKnnxNaEoIRQxbzS6go6Ojo6Ojo6OjZ5iya+qhrkrV1131sdQvLo+qjo6Ojo6Ojo6Ojp7UHj6qOjo6Ojo6+mqe6/XPN4iqjo6Ojo6Ojo6Ojr7gHt7ZHDo6Onq2KXz7go6Ojo6Ojo6Ojp5VJr59+X7OStXR0dHR0dHR0dHR54pzeHR0dHR0dHR0dHR09NQzx9uX5BMteHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR0dHR09D+miCGEEA6bQrcWPDo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6+qpSdk2r6ujo6Ojo6Ojo6OhZ7eGbwc5T19yv78zUD35cRkcc9/nRmw/oE4NvZwseHR0dHR0dHR0dHR0dHR0dHR0dHR19W+n/06rq6Ojo6Ojo6Ojo6OjoyeYJhZoXiQEKSacAAAAASUVORK5CYII=);
   position: relative;
 
   i {
@@ -2480,7 +2478,8 @@ input {
     font-size: 22px;
   }
 
-  .like-btn {
+  // Contains the button which triggers diamond pop ups
+  .diamond-btn {
     width: 44px; height: 30px;
     position: absolute;
     left: -4px;
@@ -2494,6 +2493,7 @@ input {
       top: -10px; left: 0;
     }
 
+    // Contains box which contains all of the selectable diamond levels
     .reaction-box {
       // Need to position box above top bar when explainer is triggered
       z-index: 30;
@@ -2502,13 +2502,16 @@ input {
       background: var(--background);
       border: 1px solid var(--border);
       border-radius: 20px;
+      // On mobile, need to position this box further left so it doesn't leave the screen
       @media (max-width: 991.98px) {
         left: -300px; bottom: 35px;
       }
       left: -125px; bottom: 35px;
       display: none;
 
+      // Each selectable diamond level in the diamond pop-up
       .reaction-icon {
+        // Enables "pop-up" animation
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         opacity: 0;
         transform: translate(0, 100px) scale(0);
@@ -2550,8 +2553,8 @@ input {
       }
     }
 
+    // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
     &.dragged-like,&:hover {
-
       .reaction-box {
         display: block;
 
@@ -2599,8 +2602,8 @@ input {
   display: none;
 }
 
-// Only enable drag controls for smaller screens
-@media (max-width: 500px) {
+// Only enable drag controls for smaller screens i.e. phones not tablets
+@media (max-width: 600px) {
   .diamond-mobile-drag-container {
     height: 120px;
     position: absolute;
@@ -2616,16 +2619,16 @@ input {
     top: 45px;
     left: 0;
     right: 0;
-    background: var(--grey);
-    transition: background-color 0.25s ease;
+    background: var(--background);
+    //transition: background-color 0s linear 300ms;
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s linear 300ms, opacity 300ms;
+    transition: visibility 0s linear 300ms, opacity 300ms, background-color 300ms ease;
 
     &.show {
       visibility: visible;
       opacity: 1;
-      transition: visibility 0s linear 0s, opacity 300ms;
+      transition: visibility 0s linear 0s, opacity 300ms, background-color 300ms ease;
     }
 
     p {
@@ -2645,7 +2648,7 @@ input {
     position: absolute;
     top: 40px;
     z-index: 1;
-    background: green;
+    background: transparent;
   }
 }
 

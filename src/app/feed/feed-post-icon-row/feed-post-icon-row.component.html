@@ -88,7 +88,7 @@
   </div>
 
   <ng-template #popTemplate>
-    <div id="diamond-popover" style="margin: 10px">
+    <div id="diamond-popover" class="m-10px">
       <div *ngIf="!sendingDiamonds">
         <div>
           Give a diamond.
@@ -99,7 +99,7 @@
           <b>${{ globalVars.loggedInUser.ProfileEntryResponse.Username }} coin</b>
           .
         </div>
-        <div class="fs-14px w-100 mt-3 mb-1" id="diamondInfoCollapse">
+        <div class="fs-14px w-100 mt-3 mb-5" id="diamondInfoCollapse">
           <div class="mb-2">When you give a diamond:</div>
           <ul class="mb-2">
             <li>The receiver gets a tip paid in your creator coin</li>
@@ -139,6 +139,7 @@
       (mouseleave)="removeDiamondSelection()"
     >
       <i
+        class="feed-post-icon-row__icon"
         [ngClass]="{
           'icon-diamond': !sendingDiamonds,
           'fas fa-spinner fa-spin': sendingDiamonds,
@@ -150,23 +151,19 @@
       ></i>
       <a
         [ngClass]="{ 'dragged-like': diamondDragging }"
-        class="like-btn icon-diamond"
-        id="diamond-select"
+        class="diamond-btn icon-diamond"
+        id="diamond-button"
       >
         <div
           class="reaction-box"
           [ngStyle]="{
             height:
-              !collapseDiamondInfo || (this.diamondIdxDraggedTo == this.diamondCount && this.diamondDragLeftExplainer)
-                ? '309px'
+              !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
+                ? '347px'
                 : '55px'
           }"
         >
-          <div
-            *ngIf="
-              !collapseDiamondInfo || (this.diamondIdxDraggedTo == this.diamondCount && this.diamondDragLeftExplainer)
-            "
-          >
+          <div *ngIf="!collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)">
             <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
           </div>
           <div
@@ -174,25 +171,25 @@
             [ngClass]="{ show: diamondsVisible[diamondIndex], 'dragged-icon': diamondIdxDraggedTo === diamondIndex }"
             class="reaction-icon transformable"
             (click)="onDiamondSelected($event, diamondIndex)"
-            (mouseover)="this.diamondHovered = diamondIndex"
-            (mouseleave)="this.diamondHovered = -1"
+            (mouseover)="diamondHovered = diamondIndex"
+            (mouseleave)="diamondHovered = -1"
           >
             <label>{{ globalVars.getUSDForDiamond(diamondIndex + 1) }}</label>
             <i
               class="icon-diamond diamond-reaction"
               [ngStyle]="{
                 color:
-                  diamondIndex < getCurrentDiamondLevel() || diamondIndex <= this.diamondHovered ? '#0058F7' : '#555555'
+                  diamondIndex < getCurrentDiamondLevel() || diamondIndex <= this.diamondHovered ? 'var(--cblue)' : 'var(--grey)'
               }"
             ></i>
           </div>
           <div
             class="reaction-icon show"
             (click)="toggleExplainer($event)"
-            (mouseover)="this.collapseDiamondInfo = false"
-            (mouseleave)="this.collapseDiamondInfo = true"
+            (mouseover)="collapseDiamondInfo = false"
+            (mouseleave)="collapseDiamondInfo = true"
           >
-            <i class="fas fa-question diamond-reaction diamond-help"></i>
+            <i class="fas fa-info-circle diamond-reaction diamond-help"></i>
           </div>
         </div>
       </a>
