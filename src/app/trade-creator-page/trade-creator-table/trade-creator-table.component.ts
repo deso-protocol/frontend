@@ -25,9 +25,11 @@ export class TradeCreatorTableComponent {
 
   // Hide follow prompt if user is already following or if user is buying own coin
   _shouldHideFollowPrompt() {
+    console.log(this.creatorCoinTrade);
     this.hideFollowPrompt =
       this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check) ||
-      this.appData.loggedInUser.PublicKeyBase58Check === this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check;
+      this.appData.loggedInUser.PublicKeyBase58Check === this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check ||
+      this.creatorCoinTrade.tradeType !== CreatorCoinTrade.BUY_VERB;
   }
 
   ngOnInit() {
