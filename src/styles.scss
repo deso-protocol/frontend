@@ -2531,12 +2531,6 @@ input {
           color: var(--grey);
         }
 
-        @media (max-width: 991.98px) {
-          label {
-            visibility: visible !important;
-          }
-        }
-
           label {
           padding: 3px 5px 3px 5px;
           position: relative;
@@ -2545,7 +2539,7 @@ input {
           font-size: 11px;
           color: #FFF;
           background: #333;
-          visibility: hidden;
+          visibility: visible;
         }
 
         // Make selectable area smaller, to prevent accidental selections
@@ -2573,20 +2567,12 @@ input {
               &.dragged-icon,&:hover {
                 transform: scale(1.4);
                 transform-origin: bottom;
-
-                label {
-                  visibility: visible;
-                }
               }
             }
             @media (pointer: coarse) {
               &.dragged-icon {
                 transform: scale(1.4);
                 transform-origin: bottom;
-
-                label {
-                  visibility: visible;
-                }
               }
             }
           }
