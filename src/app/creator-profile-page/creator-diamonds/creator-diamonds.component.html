@@ -42,7 +42,7 @@
       <simple-center-loader *ngIf="isLoading"></simple-center-loader>
       <div *ngIf="!isLoading || loadingNewSelection">
         <div #uiScroll *uiScroll="let row of datasource">
-          <div *ngIf="!row.totalRow">
+          <div *ngIf="!row.totalRow && row.ProfileEntryResponse">
             <div
               class="link--unstyled cursor-pointer"
               [routerLink]="[
@@ -55,7 +55,6 @@
               <div class="row no-gutters py-10px border-bottom mb-0">
                 <div class="col-5 d-flex align-items-left mb-0">
                   <div
-                    *ngIf="row.ProfileEntryResponse"
                     [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, row.ProfileEntryResponse.Username]"
                     class="d-flex align-items-center link--unstyled"
                   >
@@ -94,6 +93,41 @@
                 </div>
                 <div class="col-3 mb-0 d-flex align-items-center justify-content-center">
                   {{ row.TotalDiamonds }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="row.anonDiamondsRow">
+            <div
+              class="link--unstyled"
+            >
+              <div class="row no-gutters py-10px border-bottom mb-0">
+                <div class="col-5 d-flex align-items-left mb-0">
+                  <div
+                    class="d-flex align-items-center link--unstyled"
+                  >
+                    <div
+                      class="creator-profile-details__hodler-avatar mr-10px"
+                      style="background-image: url('/assets/img/default_profile_pic.png')"
+                    ></div>
+                    <div
+                      class="text-truncate"
+                      style="font-size: 14px"
+                      [ngStyle]="{ 'max-width': globalVars.isMobile() ? '100px' : '200px' }"
+                    >
+                      <span>Anonymous</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4 mb-0 d-flex align-items-center justify-flex-start">
+                  <i
+                    *ngFor="let diamond of counter(highestAnonDiamondLevel)"
+                    class="icon-diamond fs-20px d-block"
+                    style="margin-right: -7px"
+                  ></i>
+                </div>
+                <div class="col-3 mb-0 d-flex align-items-center justify-content-center">
+                  {{ totalAnonDiamonds }}
                 </div>
               </div>
             </div>
