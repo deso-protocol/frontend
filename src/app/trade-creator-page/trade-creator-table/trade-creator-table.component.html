@@ -117,7 +117,16 @@
       </span>
     </div>
   </div>
-  <div *ngIf="!hideFollowPrompt" class="py-1 border-bottom text-muted d-flex text-grey9 follow-on-buy">
+  <div
+    *ngIf="
+      !(
+        this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check) ||
+        this.appData.loggedInUser.PublicKeyBase58Check === this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check ||
+        this.creatorCoinTrade.tradeType !== buyVerb
+      )
+    "
+    class="py-1 border-bottom text-muted d-flex text-grey9 follow-on-buy"
+  >
     <input type="checkbox" id="check" [(ngModel)]="creatorCoinTrade.followCreator" />
     <label for="check" style="--d: 15px" class="follow-check text-grey9">
       <svg viewBox="0,0,50,50">
