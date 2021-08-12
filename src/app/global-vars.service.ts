@@ -380,6 +380,7 @@ export class GlobalVarsService {
     this.formatUSDMemo[num][decimal] = Number(num).toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
+      minimumFractionDigits: decimal,
       maximumFractionDigits: decimal,
     });
     return this.formatUSDMemo[num][decimal];
