@@ -95,7 +95,7 @@ export class FeedPostIconRowComponent {
     }, 200);
   }
 
-  getPosition(element){
+  getPosition(element) {
     let offsetLeft = 0;
     let offsetTop = 0;
 
