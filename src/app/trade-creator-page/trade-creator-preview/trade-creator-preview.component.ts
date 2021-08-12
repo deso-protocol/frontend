@@ -126,7 +126,8 @@ export class TradeCreatorPreviewComponent implements OnInit {
           const observable =
             this.creatorCoinTrade.followCreator &&
             !this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check) &&
-            this.appData.loggedInUser.PublicKeyBase58Check !== this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check
+            this.appData.loggedInUser.PublicKeyBase58Check !== this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
+            this.creatorCoinTrade.tradeType !== CreatorCoinTrade.BUY_VERB
               ? this.followService._toggleFollow(true, this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check)
               : of(null).subscribe();
           observable.add(() => {
