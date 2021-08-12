@@ -88,12 +88,22 @@ export class NftShowcaseComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {
+  refreshPage(): void {
     this.loading = true;
     if (this.showcaseIdx === undefined) {
       this.getCurrentShowcase();
     } else {
       this.getShowcaseByIdx(this.showcaseIdx);
+    }
+  }
+
+  ngOnInit(): void {
+    this.refreshPage();
+  }
+
+  ngOnChanges(changes: any): void {
+    if (changes.showcaseIdx && changes.showcaseIdx !== this.showcaseIdx) {
+      this.refreshPage();
     }
   }
 
