@@ -25,6 +25,7 @@ export class TradeCreatorTableComponent {
 
   // Hide follow prompt if user is already following or if user is buying own coin
   _shouldHideFollowPrompt() {
+    console.log("Here is the tradeType in the child component");
     console.log(this.creatorCoinTrade);
     this.hideFollowPrompt =
       this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check) ||

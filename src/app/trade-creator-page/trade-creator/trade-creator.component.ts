@@ -77,6 +77,8 @@ export class TradeCreatorComponent implements OnInit {
     this.creatorCoinTrade.setTradeType(tab);
     this.creatorCoinTrade.selectedCurrency = this.creatorCoinTrade.defaultCurrency();
 
+    console.log("Here is the trade type of the parent");
+    console.log(this.creatorCoinTrade.tradeType);
     // Reset us back to the form page.
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
 
