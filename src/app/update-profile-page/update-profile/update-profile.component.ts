@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, OnChanges } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
-import Swal from "sweetalert2";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -210,7 +209,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           );
         } else {
           // Navigate to next page in tutorial - Invest in Others
-          this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR], { queryParamsHandling: "merge" });
+          this.globalVars.TutorialStatus = TutorialStatus.CREATE_PROFILE;
+          this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR], {
+            queryParamsHandling: "merge",
+          });
         }
       },
       (err) => {

@@ -149,6 +149,8 @@ import {WalletPageComponent} from "./wallet/wallet-page/wallet-page.component";
 import {WalletTutorialPageComponent} from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
 import {SellCreatorCoinsTutorialPageComponent} from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial-page.component";
 import {SellCreatorCoinsTutorialComponent} from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
+import {DiamondTutorialPageComponent} from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
+import {DiamondTutorialComponent} from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -280,6 +282,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     WalletTutorialPageComponent,
     SellCreatorCoinsTutorialPageComponent,
     SellCreatorCoinsTutorialComponent,
+    DiamondTutorialPageComponent,
+    DiamondTutorialComponent,
   ],
   imports: [
     BrowserModule,

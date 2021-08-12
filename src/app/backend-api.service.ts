@@ -143,6 +143,18 @@ export class ProfileEntryResponse {
   IsVerified?: boolean;
 }
 
+export enum TutorialStatus {
+  EMPTY = "",
+  STARTED = "TutorialStarted",
+  SKIPPED = "TutorialSkipped",
+  CREATE_PROFILE = "TutorialCreateProfileComplete",
+  INVEST_OTHERS_BUY = "InvestInOthersBuyComplete",
+  INVEST_OTHERS_SELL = "InvestInOthersSellComplete",
+  DIAMOND = "GiveADiamondComplete",
+  INVEST_SELF = "InvestInYourselfComplete",
+  COMPLETE = "TutorialComplete",
+}
+
 export class User {
   ProfileEntryResponse: ProfileEntryResponse;
 

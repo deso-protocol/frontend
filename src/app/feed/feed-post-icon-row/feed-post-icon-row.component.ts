@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectorRef, ViewChild } from "@angular/core";
+import {Component, Input, ChangeDetectorRef, ViewChild, Output} from "@angular/core";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
@@ -10,6 +10,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { ThemeService } from "../../theme/theme.service";
+import EventEmitter = NodeJS.EventEmitter;
 
 @Component({
   selector: "feed-post-icon-row",
@@ -25,6 +26,10 @@ export class FeedPostIconRowComponent {
   @Input() afterCommentCreatedCallback: any = null;
   @Input() afterRecloutCreatedCallback: any = null;
   @Input() hideNumbers: boolean = false;
+  // Will need additional inputs if we walk through actions other than diamonds.
+  @Input() inTutorial: boolean = false;
+
+  @Output() diamondSent = new EventEmitter();
 
   sendingRecloutRequest = false;
 
@@ -93,6 +98,9 @@ export class FeedPostIconRowComponent {
   }
 
   _reclout(event: any) {
+    if (this.inTutorial) {
+      return;
+    }
     // Prevent the post from navigating.
     event.stopPropagation();
 
@@ -149,6 +157,9 @@ export class FeedPostIconRowComponent {
   }
 
   _undoReclout(event: any) {
+    if (this.inTutorial) {
+      return;
+    }
     // Prevent the post from navigating.
     event.stopPropagation();
 
@@ -194,6 +205,9 @@ export class FeedPostIconRowComponent {
   }
 
   toggleLike(event: any) {
+    if (this.inTutorial) {
+      return;
+    }
     // Prevent the post from navigating.
     event.stopPropagation();
 
@@ -240,6 +254,9 @@ export class FeedPostIconRowComponent {
   }
 
   openModal(event, isQuote: boolean = false) {
+    if (this.inTutorial) {
+      return;
+    }
     // Prevent the post navigation click from occurring.
     event.stopPropagation();
 
@@ -277,6 +294,9 @@ export class FeedPostIconRowComponent {
   }
 
   onTimestampClickHandler(event) {
+    if (this.inTutorial) {
+      return;
+    }
     this.globalVars.logEvent("post : share");
 
     // Prevent the post from navigating.
@@ -392,6 +412,7 @@ export class FeedPostIconRowComponent {
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
+    comp.diamondSent.emit(null);
   }
 
   sendDiamondsFailure(comp: FeedPostIconRowComponent) {

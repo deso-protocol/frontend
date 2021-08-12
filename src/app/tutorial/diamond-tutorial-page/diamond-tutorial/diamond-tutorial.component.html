@@ -1,0 +1,31 @@
+<div class="flex-grow-1">
+  <!-- Top Bar -->
+  <div
+    class="global__top-bar global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+  >
+    Give a Diamond
+  </div>
+
+  <div>
+    <div class="global__top-bar__height"></div>
+    <div
+      class="row no-gutters px-15px border-bottom background-color-light-grey py-15px pl-15px"
+      style="margin-left: 0; margin-right: 0"
+    >
+      <div class="text-grey5 fs-18px font">Tap the diamond to send $CLOUT to the poster</div>
+    </div>
+
+    <feed-post
+      [post]="post"
+      [includePaddingOnPost]="true"
+      [contentShouldLinkToThread]="false"
+      [showLeftSelectedBorder]="true"
+      [cardStyle]="true"
+      [inTutorial]="true"
+      (diamondSent)="onDiamondSent()"
+    ></feed-post>
+    <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+    <div class="global__bottom-bar-mobile-height"></div>
+    <div class="global__bottom-bar-mobile-height"></div>
+  </div>
+</div>

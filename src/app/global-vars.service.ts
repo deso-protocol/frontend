@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
+import { BalanceEntryResponse, PostEntryResponse, TutorialStatus, User } from "./backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { BackendApiService } from "./backend-api.service";
 import { RouteNames } from "./app-routing.module";
@@ -99,9 +99,12 @@ export class GlobalVarsService {
   loggedInUser: User;
   userList: User[] = [];
 
+  // Temporarily track tutorial status here until backend it flowing
+  TutorialStatus: TutorialStatus;
+
   // map[pubkey]->bool of globomods
   globoMods: any;
-  feeRateBitCloutPerKB = 0.0;
+  feeRateBitCloutPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
   messageResponse = null;

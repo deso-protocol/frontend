@@ -34,6 +34,7 @@ import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component"
 import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
 import {SellCreatorCoinsTutorialPageComponent} from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial-page.component";
 import {SellCreatorCoinsTutorialComponent} from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
+import {DiamondTutorialPageComponent} from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -134,7 +135,7 @@ const routes: Routes = [
     pathMatch: "full",
   },
   {
-    path: RouteNames.TUTORIAL + "/" + RouteNames.INVEST + "/" + RouteNames.SELL_CREATOR,
+    path: RouteNames.TUTORIAL + "/" + RouteNames.INVEST + "/" + RouteNames.SELL_CREATOR + "/:username",
     component: SellCreatorCoinsTutorialComponent,
     pathMatch: "full",
   },
@@ -144,8 +145,13 @@ const routes: Routes = [
     pathMatch: "full",
   },
   {
-    path: RouteNames.TUTORIAL + "/" + RouteNames.WALLET,
+    path: RouteNames.TUTORIAL + "/" + RouteNames.WALLET + "/:username",
     component: WalletTutorialPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.DIAMONDS,
+    component: DiamondTutorialPageComponent,
     pathMatch: "full",
   },
 

@@ -5,9 +5,9 @@
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
@@ -63,7 +63,17 @@ export class TradeCreatorComponent implements OnInit {
       this.screenToShow = this.TRADE_CREATOR_COMPLETE_SCREEN;
     } else {
       // TODO: make sure user's holdings are refreshed before page load
-      this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET]);
+      // How do we want to differentiate buy vs. sell ?
+      if (this.globalVars.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
+        this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_BUY;
+        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
+      } else if (this.globalVars.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
+        this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_SELL;
+        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
+      } else if (this.globalVars.TutorialStatus === TutorialStatus.DIAMOND) {
+        this.globalVars.TutorialStatus = TutorialStatus.INVEST_SELF;
+        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
+      }
     }
   }
 
@@ -180,17 +190,10 @@ export class TradeCreatorComponent implements OnInit {
           this.setUpSellTutorial();
         }
       });
-      // if (this.tutorialBuy) {
-      //   this.setUpBuyTutorial();
-      // } else {
-      //   this.setUpSellTutorial();
-      // }
     }
   }
 
   setUpBuyTutorial(): void {
-    // this.creatorCoinTrade.isBuyingCreatorCoin = true;
-    // this.creatorCoinTrade.tradeType = CreatorCoinTrade.BUY_VERB;
     let balance = this.appData.loggedInUser?.BalanceNanos;
     balance = balance > this.appData.jumioBitCloutNanos ? this.appData.jumioBitCloutNanos : balance;
     this.creatorCoinTrade.bitCloutToSell = (balance * 0.5) / 1e9;
@@ -198,7 +201,6 @@ export class TradeCreatorComponent implements OnInit {
       (response) => {
         this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = response.ExpectedCreatorCoinReturnedNanos || 0;
         this.creatorCoinTrade.expectedFounderRewardNanos = response.FounderRewardGeneratedNanos || 0;
-        console.log(this.creatorCoinTrade);
       },
       (err) => {
         // TODO: how to handle errors in tutorial
@@ -210,9 +212,31 @@ export class TradeCreatorComponent implements OnInit {
     // AMOUNT OF CC TO BUY: max of jumio bitclout nanos
   }
 
-  setUpSellTutorial(): void {}
+  setUpSellTutorial(): void {
+    const hodlings = this.globalVars.loggedInUser?.UsersYouHODL;
+    if (!hodlings) {
+      // some error and return?
+      return;
+    }
+    const creatorCoinBalance = hodlings.find(
+      (hodling) => hodling.CreatorPublicKeyBase58Check === this.creatorProfile.PublicKeyBase58Check
+    );
+    // For now, just take 5%. Eventually we'll do something more sophisticated in the event a user goes through the tutorial and buys a creator they already own.
+    this.creatorCoinTrade.creatorCoinToSell = (creatorCoinBalance.BalanceNanos * 0.05) / 1e9;
+    this.getBuyOrSellObservable().subscribe(
+      (response) => {
+        this.creatorCoinTrade.expectedBitCloutReturnedNanos = response.ExpectedBitCloutReturnedNanos || 0;
+      },
+      (err) => {
+        // TODO: how to handle errors in tutorial
+        console.error(err);
+        this.appData._alertError(this.backendApi.parseProfileError(err));
+      }
+    );
+  }
 
   getBuyOrSellObservable(): Observable<any> {
+    console.log(this.appData.feeRateBitCloutPerKB);
     return this.backendApi.BuyOrSellCreatorCoin(
       this.appData.localNode,
       this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,

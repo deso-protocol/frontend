@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule, RouteNames } from "../app-routing.module";
-import { BalanceEntryResponse } from "../backend-api.service";
-import { Title } from "@angular/platform-browser";
-import { Router } from "@angular/router";
+import {Component, Input, OnInit} from "@angular/core";
+import {GlobalVarsService} from "../global-vars.service";
+import {AppRoutingModule, RouteNames} from "../app-routing.module";
+import {BalanceEntryResponse, TutorialStatus} from "../backend-api.service";
+import {Title} from "@angular/platform-browser";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: "wallet",
@@ -28,9 +28,20 @@ export class WalletComponent implements OnInit {
   static coinsReceivedTab: string = "Coins Received";
   tabs = [WalletComponent.coinsPurchasedTab, WalletComponent.coinsReceivedTab];
   activeTab: string = WalletComponent.coinsPurchasedTab;
+  tutorialUsername: string;
 
-  constructor(private appData: GlobalVarsService, private titleService: Title, private router: Router) {
+  constructor(
+    private appData: GlobalVarsService,
+    private titleService: Title,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.globalVars = appData;
+    this.route.params.subscribe((params) => {
+      if (params.username) {
+        this.tutorialUsername = params.username;
+      }
+    });
   }
 
   ngOnInit() {
@@ -177,6 +188,20 @@ export class WalletComponent implements OnInit {
   }
 
   tutorialNext(): void {
-    this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR]);
+    // How do we want to differentiate between stages in tutorial? look at user metadata
+    const tutorialStatus = this.globalVars.TutorialStatus;
+    console.log(tutorialStatus);
+    if (tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
+      this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, this.tutorialUsername]);
+    } else if (tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
+      // TODO: go to diamonds first
+      this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]);
+      // this.router.navigate([
+      //   RouteNames.TUTORIAL,
+      //   RouteNames.INVEST,
+      //   RouteNames.BUY_CREATOR,
+      //   this.globalVars.loggedInUser?.ProfileEntryResponse?.Username,
+      // ]);
+    }
   }
 }
