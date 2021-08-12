@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { GlobalVarsService } from "../../global-vars.service";
+import { FollowService } from "../../../lib/services/follow/follow.service";
 
 @Component({
   selector: "trade-creator-table",
@@ -13,9 +14,23 @@ export class TradeCreatorTableComponent {
 
   @Input() displayForCreatorForm: boolean = false;
   @Input() creatorCoinTrade: CreatorCoinTrade;
-  @Input() userFollowingCreator: boolean;
 
+  hideFollowPrompt = true;
   TradeCreatorTableComponent = TradeCreatorTableComponent;
+  appData: GlobalVarsService;
 
-  constructor(public globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService, private followService: FollowService) {
+    this.appData = globalVars;
+  }
+
+  // Hide follow prompt if user is already following or if user is buying own coin
+  _shouldHideFollowPrompt() {
+    this.hideFollowPrompt =
+      this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check) ||
+      this.appData.loggedInUser.PublicKeyBase58Check === this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check;
+  }
+
+  ngOnInit() {
+    this._shouldHideFollowPrompt();
+  }
 }

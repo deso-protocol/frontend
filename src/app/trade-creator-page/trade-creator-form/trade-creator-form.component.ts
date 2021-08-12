@@ -31,7 +31,6 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
   MIN_BITCLOUT_NANOS_TO_LEAVE_WHEN_BUYING_CREATOR_COINS = 100_000;
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
-  @Input() userFollowingCreator: boolean;
   @Output() previewClicked = new EventEmitter();
 
   router: Router;

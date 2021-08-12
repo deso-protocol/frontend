@@ -63,7 +63,6 @@
     <div *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN">
       <trade-creator-form
         [creatorCoinTrade]="creatorCoinTrade"
-        [userFollowingCreator]="userFollowingCreator"
         (previewClicked)="_onPreviewClicked()"
       ></trade-creator-form>
     </div>
@@ -71,7 +70,6 @@
     <div *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
       <trade-creator-preview
         [creatorCoinTrade]="creatorCoinTrade"
-        [userFollowingCreator]="userFollowingCreator"
         (slippageError)="_onSlippageError()"
         (backButtonClicked)="_onBackButtonClicked()"
         (tradeExecuted)="_onTradeExecuted()"
@@ -81,7 +79,6 @@
     <div *ngIf="screenToShow == this.TRADE_CREATOR_COMPLETE_SCREEN">
       <trade-creator-complete
         [creatorCoinTrade]="creatorCoinTrade"
-        [userFollowingCreator]="userFollowingCreator"
         (tradeAgainButtonClicked)="_onBackButtonClicked()"
       ></trade-creator-complete>
     </div>

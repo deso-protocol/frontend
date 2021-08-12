@@ -42,8 +42,6 @@ export class TradeCreatorComponent implements OnInit {
   creatorCoinToSell: number;
   expectedBitCloutReturnedNanos: number;
 
-  userFollowingCreator: boolean;
-
   _onSlippageError() {
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
     this.creatorCoinTrade.showSlippageError = true;
@@ -137,7 +135,6 @@ export class TradeCreatorComponent implements OnInit {
         let profile = response.Profile;
         this.creatorCoinTrade.creatorProfile = profile;
         this.creatorProfile = profile;
-        this._getUserFollowingCreator();
       },
       (err) => {
         console.error(err);
@@ -146,16 +143,11 @@ export class TradeCreatorComponent implements OnInit {
     );
   }
 
-  _getUserFollowingCreator() {
-    this.userFollowingCreator = this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check);
-  }
-
   constructor(
     private globalVars: GlobalVarsService,
     private _route: ActivatedRoute,
     private _router: Router,
     private backendApi: BackendApiService,
-    private followService: FollowService
   ) {
     this.appData = globalVars;
     this.router = _router;
