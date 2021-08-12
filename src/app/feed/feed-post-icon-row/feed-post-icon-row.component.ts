@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectorRef, ViewChild } from "@angular/core";
+import {Component, Input, ChangeDetectorRef, ViewChild, HostListener} from "@angular/core";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
@@ -11,7 +11,7 @@ import { CommentModalComponent } from "../../comment-modal/comment-modal.compone
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { ThemeService } from "../../theme/theme.service";
 import * as _ from "lodash";
-import { includes } from "lodash";
+import { includes, round } from "lodash";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -31,7 +31,7 @@ export class FeedPostIconRowComponent {
   sendingRecloutRequest = false;
 
   // Boolean for whether or not the div explaining diamonds should be collapsed or not.
-  collapseDiamondInfo = false;
+  collapseDiamondInfo = true;
   // Boolean for tracking if we are processing a send diamonds event.
   sendingDiamonds = false;
   // Track if this is a single or multi-click event on the diamond icon.
@@ -57,8 +57,13 @@ export class FeedPostIconRowComponent {
   diamondsVisible = Array<boolean>(this.diamondCount).fill(false);
   // Store timeout functions so that they can be cancelled prematurely
   diamondTimeouts: NodeJS.Timer[] = [];
-  // How quickly the diamonds appear on hover
-  diamondAnimationDelay = 75;
+  // How quickly the diamonds sequentially appear on hover
+  diamondAnimationDelay = 50;
+  // Where the drag div should be placed for mobile dragging
+  diamondDragLeftOffset = "0px";
+  diamondDragging = false;
+  diamondIdxDraggedTo = -1;
+  diamondDragConfirm = false;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -70,6 +75,68 @@ export class FeedPostIconRowComponent {
     private modalService: BsModalService,
     private themeService: ThemeService
   ) {}
+
+  ngAfterViewInit() {
+    this.resetDragPosition();
+  }
+
+  // Make sure that if a mobile device rotates, that the drag markers remain in the same place
+  @HostListener("window:orientationchange", ["$event"])
+  onOrientationChange() {
+    this.resetDragPosition();
+  }
+
+  resetDragPosition() {
+    setTimeout(() => {
+      const likeBtn = document.getElementById("diamond-select");
+      const leftOffset = this.getPosition(likeBtn).offsetLeft;
+      this.diamondDragLeftOffset = `${leftOffset}px`;
+    }, 200);
+  }
+
+  getPosition(element){
+    let offsetLeft = 0;
+    let offsetTop = 0;
+
+    while (element) {
+      offsetLeft += element.offsetLeft;
+      offsetTop += element.offsetTop;
+      element = element.offsetParent;
+    }
+    return { offsetTop: offsetTop, offsetLeft: offsetLeft };
+  }
+
+  startDrag() {
+    this.diamondDragging = true;
+    this.addDiamondSelection({ type: "initiateDrag" });
+  }
+
+  logDrag(event) {
+    const pageMargin = window.innerWidth * 0.15;
+    const selectableWidth = window.innerWidth * 0.7;
+    if (event.pointerPosition.x < pageMargin) {
+      this.diamondIdxDraggedTo = 0;
+    } else if (event.pointerPosition.x > selectableWidth + pageMargin) {
+      this.diamondIdxDraggedTo = this.diamondCount;
+    } else {
+      this.diamondIdxDraggedTo = round(((event.pointerPosition.x - pageMargin) / selectableWidth) * this.diamondCount);
+    }
+    if (event.distance.y === -40) {
+      this.diamondDragConfirm = true;
+    } else {
+      this.diamondDragConfirm = false;
+    }
+  }
+
+  endDrag(event) {
+    if (this.diamondDragConfirm && this.diamondIdxDraggedTo > -1) {
+      this.onDiamondSelected(null, this.diamondIdxDraggedTo);
+    }
+    this.diamondDragConfirm = false;
+    this.diamondDragging = false;
+    this.diamondIdxDraggedTo = -1;
+    event.source._dragRef.reset();
+  }
 
   _detectChanges() {
     this.ref.detectChanges();
@@ -102,6 +169,10 @@ export class FeedPostIconRowComponent {
 
   userHasReclouted(): boolean {
     return this.postContent.PostEntryReaderState && this.postContent.PostEntryReaderState.RecloutedByReader;
+  }
+
+  mobileDiamondDrag(event) {
+    console.log(event);
   }
 
   _reclout(event: any) {
@@ -319,11 +390,9 @@ export class FeedPostIconRowComponent {
     return origin + path;
   }
 
-  showDiamondModal(): boolean {
-    return (
-      !this.backendApi.GetStorage("hasSeenDiamondInfo") ||
-      this.postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
-    );
+  toggleExplainer(event) {
+    event.stopPropagation();
+    this.collapseDiamondInfo = !this.collapseDiamondInfo;
   }
 
   sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
@@ -341,7 +410,6 @@ export class FeedPostIconRowComponent {
       .then(
         (res) => {
           this.sendingDiamonds = false;
-          this.openDiamondPopover();
           this.globalVars.logEvent("diamond: send", {
             SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
             ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
@@ -366,41 +434,7 @@ export class FeedPostIconRowComponent {
           this.globalVars.logEvent("diamonds: send: error", { parsedError });
           this.globalVars._alertError(parsedError);
         }
-      )
-      .finally(() => this.closeDiamondPopover());
-  }
-
-  async diamondClickHandler(event: any): Promise<void> {
-    event.stopPropagation();
-    if (!this.globalVars.loggedInUser) {
-      return this._preventNonLoggedInUserActions("diamond");
-    } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
-      this.globalVars.logEvent("alert : diamond : profile");
-      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "diamond");
-      return;
-    } else if (this.globalVars.loggedInUser.PublicKeyBase58Check === this.postContent.PosterPublicKeyBase58Check) {
-      this.globalVars._alertError("You cannot diamond your own post");
-      return;
-    }
-    if (this.showDiamondModal()) {
-      this.openDiamondPopover();
-    } else {
-      this.clickCounter += 1;
-      setTimeout(() => {
-        if (this.clickCounter === 1 && !this.showDiamondModal()) {
-          // Handle single click case when the user has interacted with the diamond feature before and this post has not
-          // received a diamond from the user yet.
-          this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
-          this.sendDiamonds(1, true);
-        } else {
-          // Either this is a double tap event, a single tap on an already diamonded post, or the first time a user is
-          // interacting with the diamond feature.
-          // Show the diamond popover
-          this.openDiamondPopover();
-        }
-        this.clickCounter = 0;
-      }, FeedPostIconRowComponent.SingleClickDebounce);
-    }
+      );
   }
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
@@ -412,43 +446,12 @@ export class FeedPostIconRowComponent {
     comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
   }
 
-  openDiamondPopover() {
-    console.log('Here is the info');
-    console.log(this.backendApi.GetStorage("collapseDiamondInfo"));
-    console.log(this.collapseDiamondInfo);
-    this.backendApi.SetStorage("hasSeenDiamondInfo", true);
-    this.collapseDiamondInfo = this.backendApi.GetStorage("collapseDiamondInfo");
-  }
-
-  closeDiamondPopover() {
-    document.removeEventListener("click", this.popoverOpenClickHandler);
-  }
-
   popoverOpenClickHandler = (e: Event) => {
     const popoverElement = document.getElementById("diamond-popover");
     if (popoverElement && e.target !== popoverElement && !popoverElement.contains(e.target as any)) {
       e.stopPropagation();
-      this.closeDiamondPopover();
     }
   };
-  expandDiamondInfo(event: any): void {
-    this.toggleDiamondInfo(event, false);
-  }
-
-  hideDiamondInfo(event: any): void {
-    event.stopPropagation();
-    this.toggleDiamondInfo(event, true);
-    event.stopPropagation();
-  }
-
-  toggleDiamondInfo(event: any, isCollapse: boolean) {
-    // Prevent popover from closing
-    event.stopPropagation();
-    // Save the user's preference for seeing the diamond info or not and then toggle the collapse state of the div.
-    this.backendApi.SetStorage("collapseDiamondInfo", isCollapse);
-    this.collapseDiamondInfo = isCollapse;
-    event.stopPropagation();
-  }
 
   async sendOneDiamond(event) {
     // Disable diamond selection if diamonds are being sent
@@ -472,12 +475,9 @@ export class FeedPostIconRowComponent {
 
   addDiamondSelection(event) {
     // Need to make sure hover event doesn't trigger on child elements
-    if (includes(event.path[0].classList, "like-btn")) {
-      this.openDiamondPopover();
+    if (event?.type === "initiateDrag" || includes(event.path[0].classList, "like-btn")) {
       for (let idx = 0; idx < this.diamondCount; idx++) {
         this.diamondTimeouts[idx] = setTimeout(() => {
-          // console.log('visibility on idx ' + idx.toString());
-          // console.log(this.diamondVisible);
           this.diamondsVisible[idx] = true;
         }, idx * this.diamondAnimationDelay);
       }
@@ -497,7 +497,7 @@ export class FeedPostIconRowComponent {
       return;
     }
 
-    if (event.pointerType === "touch" && includes(event.path[0].classList, "reaction-icon")) {
+    if (event && event.pointerType === "touch" && includes(event.path[0].classList, "reaction-icon")) {
       event.stopPropagation();
       return;
     }
@@ -509,13 +509,13 @@ export class FeedPostIconRowComponent {
 
     if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
       this.globalVars._alertError("You cannot downgrade a diamond");
-      this.closeDiamondPopover();
       return;
     }
     this.diamondSelected = index + 1;
-    event.stopPropagation();
+    if (event) {
+      event.stopPropagation();
+    }
     if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
-      this.closeDiamondPopover();
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
@@ -535,7 +535,6 @@ export class FeedPostIconRowComponent {
         reverseButtons: true,
       }).then(async (res: any) => {
         if (res.isConfirmed) {
-          console.log('Initiating diamond send');
           await this.sendDiamonds(this.diamondSelected);
         }
       });
@@ -545,14 +544,6 @@ export class FeedPostIconRowComponent {
   }
 
   getCurrentDiamondLevel(): number {
-    return this.postContent.PostEntryReaderState?.DiamondLevelBestowed || 0;
-  }
-
-  getCurrentDiamondLevel2(obj, idx): number {
-    console.log('here is the obj');
-    console.log(obj);
-    console.log('here is the idx');
-    console.log(idx);
     return this.postContent.PostEntryReaderState?.DiamondLevelBestowed || 0;
   }
 
