@@ -107,7 +107,9 @@
         [ngClass]="{ 'bg-success': diamondDragConfirm, show: diamondDragging }"
         class="diamond-mobile-drag-instructions"
       >
-        <p class="d-block">{{ diamondDragConfirm ? "Release" : "Drag Up" }} To Confirm</p>
+        <p class="d-block">
+          {{ !diamondDragMoved ? "<- Slide ->" : diamondDragConfirm ? "Release To Confirm" : "Drag Up To Confirm" }}
+        </p>
       </div>
       <!--Draggable element for mobile drag-selection-->
       <div
