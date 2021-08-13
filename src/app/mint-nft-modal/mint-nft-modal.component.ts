@@ -16,8 +16,6 @@ export class MintNftModalComponent {
 
   globalVars: GlobalVarsService;
   minting = false;
-  successfulMinting = false;
-  failedMinting = false;
 
   // Settings.
   copiesRadioValue = this.IS_SINGLE_COPY;
@@ -115,17 +113,23 @@ export class MintNftModalComponent {
       )
       .subscribe(
         (res) => {
-          this.successfulMinting = true;
-          this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.post.PostHashHex]);
-          this.bsModalRef.hide();
+          this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
-          this.failedMinting = true;
+          this.minting = false;
         }
-      )
-      .add(() => {
-        this.minting = false;
-      });
+      );
+  }
+
+  _mintNFTSuccess(comp: MintNftModalComponent) {
+    comp.minting = false;
+    comp.router.navigate(["/" + comp.globalVars.RouteNames.NFT + "/" + comp.post.PostHashHex]);
+    comp.bsModalRef.hide();
+  }
+
+  _mintNFTFailure(comp: MintNftModalComponent) {
+    comp.minting = false;
+    comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
   }
 }
