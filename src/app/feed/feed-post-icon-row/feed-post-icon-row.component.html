@@ -169,7 +169,11 @@
               class="icon-diamond diamond-reaction"
               [ngStyle]="{
                 color:
-                  diamondIndex < getCurrentDiamondLevel() || diamondIndex <= this.diamondHovered ? 'var(--cblue)' : 'var(--grey)'
+                  diamondIndex < getCurrentDiamondLevel() ||
+                  diamondIndex <= this.diamondHovered ||
+                  diamondIndex <= this.diamondIdxDraggedTo
+                    ? 'var(--cblue)'
+                    : 'var(--grey)'
               }"
             ></i>
           </div>
