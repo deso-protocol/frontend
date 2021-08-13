@@ -90,7 +90,7 @@
   <ng-template #popTemplate>
     <div id="diamond-popover" class="m-10px">
       <div *ngIf="!sendingDiamonds">
-        <div class="mb-3">
+        <div class="mb-4">
           Give a diamond.
           <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
           will receive the amount shown as
@@ -149,7 +149,7 @@
           [ngStyle]="{
             height:
               !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
-                ? '123px'
+                ? '152px'
                 : '55px'
           }"
         >
