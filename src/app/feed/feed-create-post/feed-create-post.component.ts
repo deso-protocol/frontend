@@ -24,7 +24,6 @@ export class FeedCreatePostComponent implements OnInit {
 
   isComment: boolean;
 
-  @ViewChild("postImage") postImage;
   @ViewChild("autosize") autosize: CdkTextareaAutosize;
 
   randomMovieQuote = "";

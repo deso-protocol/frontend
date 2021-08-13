@@ -1,0 +1,41 @@
+<div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified" class="w-100">
+  <!-- User completed Jumio flow, but we haven't received the Jumio callback yet-->
+  <div *ngIf="globalVars.loggedInUser.JumioFinishedTime && !globalVars.loggedInUser.JumioReturned"
+       class="d-flex align-items-center font-weight-normal justify-content-between">
+    <div class="fs-20px">
+      ⌛
+    </div>
+    <div style="width: calc(100% - 4rem); text-align: center;">
+      Your free <b>{{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 0) }}</b> will arrive in <b>about a minute</b>.
+    </div>
+    <div class="fs-20px">
+      ⌛
+    </div>
+  </div>
+  <!-- User hasn't tried jumio flow -->
+  <div *ngIf="!globalVars.loggedInUser.JumioFinishedTime" (click)="globalVars.launchGetFreeCLOUTFlow()"
+       class="d-flex align-items-center font-weight-normal justify-content-between">
+    <div class="fs-20px">
+      💰
+    </div>
+    <div style="width: calc(100% - 4rem); text-align: center;">
+      <span class="cursor-pointer font-weight-bold" style="color: var(--link);">Click here</span> to get your <b>free {{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 0) }}</b>.
+    </div>
+    <div class="fs-20px">
+      💰
+    </div>
+  </div>
+  <!-- User tried Jumio but verification failed-->
+  <div *ngIf="globalVars.loggedInUser.JumioFinishedTime && globalVars.loggedInUser.JumioReturned" (click)="globalVars.launchGetFreeCLOUTFlow()"
+       class="d-flex align-items-center font-weight-normal justify-content-between">
+    <div class="fs-20px">
+      😢
+    </div>
+    <div style="width: calc(100% - 4rem); text-align: center;">
+      Your robot check failed.<br><span class="cursor-pointer font-weight-bold" style="color: var(--link);">Click here</span> to try again.
+    </div>
+    <div class="fs-20px">
+      😢
+    </div>
+  </div>
+</div>

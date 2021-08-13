@@ -78,9 +78,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   founderRewardTooltip() {
     return (
-      "When someone purchases your coin, a percentage of each coin purchase " +
+      "When someone purchases your coin, a percentage of that " +
       "gets allocated to you as a founder reward.\n\n" +
-      "A value of 0% means that no new coins get allocated to you when someone buys, " +
+      "A value of 0% means you get no money when someone buys, " +
       "whereas a value of 100% means that nobody other than you can ever get coins because 100% of " +
       "every purchase will just go to you.\n\n" +
       "Setting this value too high will deter buyers from ever " +
@@ -94,15 +94,17 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       const profileEntryResponse = this.globalVars.loggedInUser.ProfileEntryResponse;
       this.usernameInput = profileEntryResponse?.Username || "";
       this.descriptionInput = profileEntryResponse?.Description || "";
-      this.backendApi
-        .GetSingleProfilePicture(
-          this.globalVars.localNode,
-          profileEntryResponse?.PublicKeyBase58Check,
-          this.globalVars.profileUpdateTimestamp ? `?${this.globalVars.profileUpdateTimestamp}` : ""
-        )
-        .subscribe((res) => {
-          this._readImageFileToProfilePicInput(res);
-        });
+      if (profileEntryResponse) {
+        this.backendApi
+          .GetSingleProfilePicture(
+            this.globalVars.localNode,
+            profileEntryResponse?.PublicKeyBase58Check,
+            this.globalVars.profileUpdateTimestamp ? `?${this.globalVars.profileUpdateTimestamp}` : ""
+          )
+          .subscribe((res) => {
+            this._readImageFileToProfilePicInput(res);
+          });
+      }
 
       // If they don't have CreatorBasisPoints set, use the default.
       if (this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints != null) {

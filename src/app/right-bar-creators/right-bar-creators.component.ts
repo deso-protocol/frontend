@@ -70,5 +70,4 @@ export class RightBarCreatorsComponent implements OnInit {
       this.backendApi.SetStorage(RightBarCreatorsComponent.RightBarTabKey, this.activeTab);
     }
   }
-
 }
