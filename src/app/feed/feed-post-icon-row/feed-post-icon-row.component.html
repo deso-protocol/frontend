@@ -1,4 +1,6 @@
-<div class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px">
+<div
+  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px unselectable"
+>
   <div
     class="cursor-pointer d-flex align-items-center"
     (click)="openModal($event)"
@@ -102,7 +104,7 @@
   </ng-template>
   <div class="cursor-pointer d-flex align-items-center">
     <!--Container to hold the bounds for the mobile drag interface-->
-    <div class="diamond-mobile-drag-container">
+    <div class="diamond-mobile-drag-container unselectable">
       <div
         [ngClass]="{ 'bg-success': diamondDragConfirm, show: diamondDragging }"
         class="diamond-mobile-drag-instructions"

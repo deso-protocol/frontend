@@ -2616,12 +2616,6 @@ input {
     left: 0;
     right: 0;
     display: block;
-    // Prevent text highlighting
-    user-select: none; /* supported by Chrome and Opera */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
   }
 
   .diamond-mobile-drag-instructions {
@@ -2715,4 +2709,13 @@ input {
     margin-top: 4px;
     margin-right: 10px;
   }
+}
+
+// Prevent text highlighting on mobile long press
+.unselectable {
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
 }
