@@ -18,7 +18,7 @@ export class TradeCreatorTableComponent {
   hideFollowPrompt = true;
   TradeCreatorTableComponent = TradeCreatorTableComponent;
   appData: GlobalVarsService;
-  buyVerb = CreatorCoinTrade.BUY_VERB
+  buyVerb = CreatorCoinTrade.BUY_VERB;
 
   constructor(public globalVars: GlobalVarsService, private followService: FollowService) {
     this.appData = globalVars;
