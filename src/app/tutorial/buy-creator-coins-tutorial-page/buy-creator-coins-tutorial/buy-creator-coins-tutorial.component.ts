@@ -4,7 +4,7 @@ import { BackendApiService, ProfileEntryResponse } from "../../../backend-api.se
 import { AppRoutingModule } from "../../../app-routing.module";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { Title } from "@angular/platform-browser";
-import {RightBarCreatorsLeaderboardComponent} from "../../../right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import { RightBarCreatorsLeaderboardComponent } from "../../../right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 
 @Component({
   selector: "buy-creator-coins-tutorial",

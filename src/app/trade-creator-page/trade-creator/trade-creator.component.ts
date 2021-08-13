@@ -196,7 +196,9 @@ export class TradeCreatorComponent implements OnInit {
   setUpBuyTutorial(): void {
     let balance = this.appData.loggedInUser?.BalanceNanos;
     balance = balance > this.appData.jumioBitCloutNanos ? this.appData.jumioBitCloutNanos : balance;
-    this.creatorCoinTrade.bitCloutToSell = (balance * 0.5) / 1e9;
+    const percentToBuy =
+      this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check ? 0.1 : 0.5;
+    this.creatorCoinTrade.bitCloutToSell = (balance * percentToBuy) / 1e9;
     this.getBuyOrSellObservable().subscribe(
       (response) => {
         this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = response.ExpectedCreatorCoinReturnedNanos || 0;

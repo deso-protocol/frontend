@@ -15,15 +15,18 @@
       <div class="text-grey5 fs-18px font">Tap the diamond to send $CLOUT to the poster</div>
     </div>
 
-    <feed-post
-      [post]="post"
-      [includePaddingOnPost]="true"
-      [contentShouldLinkToThread]="false"
-      [showLeftSelectedBorder]="true"
-      [cardStyle]="true"
-      [inTutorial]="true"
-      (diamondSent)="onDiamondSent()"
-    ></feed-post>
+    <simple-center-loader *ngIf="loading"></simple-center-loader>
+    <div *ngIf="!loading">
+      <feed-post
+        [post]="post"
+        [includePaddingOnPost]="true"
+        [contentShouldLinkToThread]="false"
+        [showLeftSelectedBorder]="true"
+        [cardStyle]="true"
+        [inTutorial]="true"
+        (diamondSent)="onDiamondSent()"
+      ></feed-post>
+    </div>
     <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
     <div class="global__bottom-bar-mobile-height"></div>
     <div class="global__bottom-bar-mobile-height"></div>

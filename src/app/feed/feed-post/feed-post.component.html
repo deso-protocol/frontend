@@ -132,7 +132,7 @@
           'feed-post__blue-border': showLeftSelectedBorder,
           'feed-post__parent-post-font-size': isParentPostInThread
           }"
-          [ngStyle]="{ 'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT ? '12px 0' : '12px') : '' }"
+          [ngStyle]="{ 'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT && showNFTDetails ? '12px 0' : '12px') : '' }"
           *ngIf="!postContent.IsHidden"
         >
           <!-- Avatar -->
@@ -289,6 +289,7 @@
                 [afterCommentCreatedCallback]="afterCommentCreatedCallback"
                 [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
                 [inTutorial]="inTutorial"
+                (diamondSent)="diamondSent.emit()"
               ></feed-post-icon-row>
 
               <!-- Admin Buttons -->
@@ -419,6 +420,7 @@
             [hideNumbers]="true"
             [afterCommentCreatedCallback]="afterCommentCreatedCallback"
             [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+            (diamondSent)="diamondSent.emit()"
           ></feed-post-icon-row>
         </div>
       </div>

@@ -196,12 +196,9 @@ export class WalletComponent implements OnInit {
     } else if (tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
       // TODO: go to diamonds first
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]);
-      // this.router.navigate([
-      //   RouteNames.TUTORIAL,
-      //   RouteNames.INVEST,
-      //   RouteNames.BUY_CREATOR,
-      //   this.globalVars.loggedInUser?.ProfileEntryResponse?.Username,
-      // ]);
+    } else if (tutorialStatus === TutorialStatus.INVEST_SELF) {
+      this.globalVars.TutorialStatus = TutorialStatus.COMPLETE;
+      this.router.navigate([RouteNames.BROWSE]);
     }
   }
 }

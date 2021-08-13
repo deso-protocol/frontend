@@ -117,6 +117,9 @@ export class FeedPostComponent implements OnInit {
   // emits the nftBidPLaced event
   @Output() nftBidPlaced = new EventEmitter();
 
+  // emits diamondSent event
+  @Output() diamondSent = new EventEmitter();
+
   AppRoutingModule = AppRoutingModule;
   stakeAmount = 1;
   loggedInUserStakeAmount = 0;

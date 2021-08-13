@@ -1,4 +1,4 @@
-import {Component, Input, ChangeDetectorRef, ViewChild, Output} from "@angular/core";
+import { Component, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter } from "@angular/core";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
@@ -10,7 +10,6 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { ThemeService } from "../../theme/theme.service";
-import EventEmitter = NodeJS.EventEmitter;
 
 @Component({
   selector: "feed-post-icon-row",
