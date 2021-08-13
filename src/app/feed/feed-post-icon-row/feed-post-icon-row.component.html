@@ -112,10 +112,10 @@
       <!--Draggable element for mobile drag-selection-->
       <div
         [ngStyle]="{ left: diamondDragLeftOffset }"
-        (cdkDragStarted)="startDrag()"
-        (cdkDragMoved)="duringDrag($event)"
+        (touchstart)="startDrag()"
+        (touchend)="dragClick($event)"
         (cdkDragEnded)="endDrag($event)"
-        (click)="sendOneDiamond($event, true)"
+        (cdkDragMoved)="duringDrag($event)"
         class="diamond-mobile-drag-grab"
         id="diamond-mobile-drag-grab"
         cdkDragBoundary=".diamond-mobile-drag-container"

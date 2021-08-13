@@ -64,6 +64,10 @@ export class FeedPostIconRowComponent {
   diamondHovered = -1;
   // Track if we've gone past the explainer already. (Don't want to show explainer on start)
   diamondDragLeftExplainer = false;
+  // Track if the dragged diamond actually moved, so that we can distinguish between drags and clicks
+  diamondDragMoved = false;
+  // Track when the drag began, if less than .1 seconds ago, and the drag didn't move, assume it was a click
+  diamondDragStarted: Date;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -114,12 +118,16 @@ export class FeedPostIconRowComponent {
 
   // Initiate mobile drag, have diamonds appear
   startDrag() {
+    this.diamondDragMoved = false;
+    this.diamondDragStarted = new Date();
     this.diamondDragging = true;
     this.addDiamondSelection({ type: "initiateDrag" });
   }
 
   // Calculate where the drag box has been dragged to, make updates accordingly
   duringDrag(event) {
+    // If this event was triggered, the user moved the drag box, and we assume it's not a click.
+    this.diamondDragMoved = true;
     // Establish a margin to the left and right in order to improve reachability
     const pageMargin = window.innerWidth * 0.15;
     // The width of the page minus the margins
@@ -144,6 +152,27 @@ export class FeedPostIconRowComponent {
     this.diamondDragConfirm = event.distance.y === -40;
   }
 
+  // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
+  dragClick(event) {
+    const now = new Date();
+    // If the drag box wasn't moved and less than 200ms have transpired since the start of the tap,
+    // assume this was a click and send 1 diamond
+    if (!this.diamondDragMoved) {
+      if (now.getTime() - this.diamondDragStarted.getTime() < 200) {
+        // Prevent touch event from propagating
+        event.preventDefault();
+        this.sendOneDiamond(event, true);
+      }
+      // If the diamond drag box wasn't moved, we need to reset these variables.
+      // If it was moved, the endDrag fn will do it.
+      this.diamondDragConfirm = false;
+      this.diamondDragging = false;
+      this.diamondIdxDraggedTo = -1;
+      this.diamondDragMoved = false;
+      this.diamondDragLeftExplainer = false;
+    }
+  }
+
   // End dragging procedure. Triggered when the dragged element is released
   endDrag(event) {
     // If the drag box is in the "confirm" position, and the selected diamond makes sense, send diamonds
@@ -154,6 +183,7 @@ export class FeedPostIconRowComponent {
     this.diamondDragConfirm = false;
     this.diamondDragging = false;
     this.diamondIdxDraggedTo = -1;
+    this.diamondDragMoved = false;
     this.diamondDragLeftExplainer = false;
     // Move the drag box back to it's original position
     event.source._dragRef.reset();
