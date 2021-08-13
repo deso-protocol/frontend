@@ -30,7 +30,7 @@ export class FeedPostIconRowComponent {
   sendingRecloutRequest = false;
 
   // Threshold above which user must confirm before sending diamonds
-  static DiamondWarningThreshold = 3;
+  static DiamondWarningThreshold = 4;
 
   // Boolean for animation on whether a heart is clicked or not
   animateLike = false;
@@ -541,10 +541,10 @@ export class FeedPostIconRowComponent {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
-        title: `Sending ${this.diamondSelected} diamonds to ${this.postContent.ProfileEntryResponse?.Username}`,
+        title: `Sending ${this.diamondSelected} diamonds to @${this.postContent.ProfileEntryResponse?.Username}`,
         html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
           this.diamondSelected
-        )} worth of your creator coin to @${this.postContent.ProfileEntryResponse?.Username}`,
+        )} to @${this.postContent.ProfileEntryResponse?.Username}`,
         showCancelButton: true,
         showConfirmButton: true,
         focusConfirm: true,

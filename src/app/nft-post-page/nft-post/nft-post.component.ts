@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from "@angular/core";
+import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import {
@@ -17,6 +17,8 @@ import * as _ from "lodash";
 import { SellNftModalComponent } from "../../sell-nft-modal/sell-nft-modal.component";
 import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
 import { Subscription } from "rxjs";
+import { AddUnlockableModalComponent } from "../../add-unlockable-modal/add-unlockable-modal.component";
+import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 
 @Component({
   selector: "nft-post",
@@ -24,6 +26,8 @@ import { Subscription } from "rxjs";
   styleUrls: ["./nft-post.component.scss"],
 })
 export class NftPostComponent {
+  @ViewChild(FeedPostComponent) feedPost: FeedPostComponent;
+
   nftPost: PostEntryResponse;
   nftPostHashHex: string;
   nftBidData: NFTBidData;
@@ -214,17 +218,46 @@ export class NftPostComponent {
     this.globalVars.loggedInUser.BlockedPubKeys[blockedPubKey] = {};
   }
 
+  afterNftBidPlaced() {
+    this.loading = true;
+    this.refreshBidData();
+  }
+
   sellNFT(): void {
     if (this.sellNFTDisabled) {
       return;
     }
-    this.modalService.show(SellNftModalComponent, {
+    const sellNFTModalDetails = this.modalService.show(SellNftModalComponent, {
       class: "modal-dialog-center",
       initialState: {
         post: this.nftPost,
         nftEntries: this.nftBidData.NFTEntryResponses,
         selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
       },
+    });
+    const onHiddenEvent = sellNFTModalDetails.onHidden;
+    onHiddenEvent.subscribe((response) => {
+      if (response === "nft sold") {
+        this.loading = true;
+        this.refreshPosts();
+        this.feedPost.getNFTEntries();
+      } else if (response === "unlockable content opened") {
+        const unlockableModalDetails = this.modalService.show(AddUnlockableModalComponent, {
+          class: "modal-dialog-centered",
+          initialState: {
+            post: this.nftPost,
+            selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
+          },
+        });
+        const onHiddenEvent = unlockableModalDetails.onHidden;
+        onHiddenEvent.subscribe((response) => {
+          if (response === "nft sold") {
+            this.loading = true;
+            this.refreshPosts();
+            this.feedPost.getNFTEntries();
+          }
+        });
+      }
     });
   }
 
@@ -252,12 +285,19 @@ export class NftPostComponent {
   }
 
   closeAuction(): void {
-    this.modalService.show(CloseNftAuctionModalComponent, {
+    const closeNftAuctionModalDetails = this.modalService.show(CloseNftAuctionModalComponent, {
       class: "modal-dialog-centered",
       initialState: {
         post: this.nftPost,
         myAvailableSerialNumbers: this.myAvailableSerialNumbers,
       },
+    });
+    const onHiddenEvent = closeNftAuctionModalDetails.onHidden;
+    onHiddenEvent.subscribe((response) => {
+      if (response === "auction cancelled") {
+        this.refreshBidData();
+        this.feedPost.getNFTEntries();
+      }
     });
   }
 
