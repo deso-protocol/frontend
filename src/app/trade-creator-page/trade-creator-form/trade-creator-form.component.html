@@ -148,7 +148,11 @@
   </div>
   <ng-template #isUpdatingAmountsElseBlock>
     <div class="fs-14px mt-10px text-grey5">
-      <trade-creator-table [displayForCreatorForm]="true" [creatorCoinTrade]="creatorCoinTrade"></trade-creator-table>
+      <trade-creator-table
+        [displayForCreatorForm]="true"
+        [creatorCoinTrade]="creatorCoinTrade"
+        [tradeType]="tradeType"
+      ></trade-creator-table>
     </div>
   </ng-template>
 

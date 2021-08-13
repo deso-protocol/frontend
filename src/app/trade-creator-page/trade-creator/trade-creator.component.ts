@@ -164,7 +164,7 @@ export class TradeCreatorComponent implements OnInit {
     private globalVars: GlobalVarsService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
   ) {
     this.appData = globalVars;
     this.router = _router;
