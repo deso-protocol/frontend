@@ -110,10 +110,9 @@
         <p class="d-block">Drag Up To Confirm</p>
       </div>
       <!--Draggable element for mobile drag-selection-->
-<!--        (cdkDragStarted)="startDrag()"-->
       <div
         [ngStyle]="{ left: diamondDragLeftOffset }"
-        (mousedown)="startDrag()"
+        (cdkDragStarted)="startDrag()"
         (cdkDragMoved)="duringDrag($event)"
         (cdkDragEnded)="endDrag($event)"
         (click)="sendOneDiamond($event, true)"
