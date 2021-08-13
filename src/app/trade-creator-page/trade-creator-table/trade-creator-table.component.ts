@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { GlobalVarsService } from "../../global-vars.service";
+import { FollowService } from "../../../lib/services/follow/follow.service";
 
 @Component({
   selector: "trade-creator-table",
@@ -14,7 +15,12 @@ export class TradeCreatorTableComponent {
   @Input() displayForCreatorForm: boolean = false;
   @Input() creatorCoinTrade: CreatorCoinTrade;
 
+  hideFollowPrompt = true;
   TradeCreatorTableComponent = TradeCreatorTableComponent;
+  appData: GlobalVarsService;
+  buyVerb = CreatorCoinTrade.BUY_VERB;
 
-  constructor(public globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService, private followService: FollowService) {
+    this.appData = globalVars;
+  }
 }
