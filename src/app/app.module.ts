@@ -141,7 +141,6 @@ import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
-import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
