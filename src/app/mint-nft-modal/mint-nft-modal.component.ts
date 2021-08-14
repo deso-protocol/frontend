@@ -113,7 +113,7 @@ export class MintNftModalComponent {
       )
       .subscribe(
         (res) => {
-          this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
+          this.globalVars.updateEverything(false, res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
         },
         (err) => {
           this.globalVars._alertError(err.error.error);

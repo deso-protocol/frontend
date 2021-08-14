@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from "@angular/core";
 import {GlobalVarsService} from "../global-vars.service";
 import {AppRoutingModule, RouteNames} from "../app-routing.module";
-import {BalanceEntryResponse, TutorialStatus} from "../backend-api.service";
+import {BackendApiService, BalanceEntryResponse, TutorialStatus} from "../backend-api.service";
 import {Title} from "@angular/platform-browser";
 import {ActivatedRoute, Router} from "@angular/router";
 
@@ -34,7 +34,8 @@ export class WalletComponent implements OnInit {
     private appData: GlobalVarsService,
     private titleService: Title,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private backendApi: BackendApiService
   ) {
     this.globalVars = appData;
     this.route.params.subscribe((params) => {
@@ -189,7 +190,7 @@ export class WalletComponent implements OnInit {
 
   tutorialNext(): void {
     // How do we want to differentiate between stages in tutorial? look at user metadata
-    const tutorialStatus = this.globalVars.TutorialStatus;
+    const tutorialStatus = this.globalVars.loggedInUser?.TutorialStatus;
     console.log(tutorialStatus);
     if (tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, this.tutorialUsername]);
@@ -197,8 +198,14 @@ export class WalletComponent implements OnInit {
       // TODO: go to diamonds first
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]);
     } else if (tutorialStatus === TutorialStatus.INVEST_SELF) {
-      this.globalVars.TutorialStatus = TutorialStatus.COMPLETE;
-      this.router.navigate([RouteNames.BROWSE]);
+      // this.globalVars.TutorialStatus = TutorialStatus.COMPLETE;
+      this.backendApi
+        .CompleteTutorial(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+        .subscribe(() => {
+          // We don't really need an update everything call here. Next time they refresh the page, the status should be correct.
+          this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.COMPLETE;
+          this.router.navigate([RouteNames.BROWSE]);
+        });
     }
   }
 }

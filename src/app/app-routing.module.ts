@@ -32,9 +32,8 @@ import { BuyCreatorCoinsTutorialPageComponent } from "./tutorial/buy-creator-coi
 import { BuyCreatorCoinsConfirmTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
 import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
 import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
-import {SellCreatorCoinsTutorialPageComponent} from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial-page.component";
-import {SellCreatorCoinsTutorialComponent} from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
-import {DiamondTutorialPageComponent} from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
+import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
+import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have

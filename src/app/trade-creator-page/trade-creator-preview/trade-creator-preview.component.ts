@@ -98,7 +98,8 @@ export class TradeCreatorPreviewComponent implements OnInit {
         minCreatorCoinExpectedNanos /*MinCreatorCoinExpectedNanos*/,
 
         this.appData.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/,
-        true
+        true,
+        this.inTutorial
       )
       .subscribe(
         (response) => {
@@ -133,6 +134,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
               : of(null).subscribe();
           observable.add(() => {
             this.appData.updateEverything(
+              false,
               response.TxnHashHex,
               this._creatorCoinSuccess,
               this._creatorCoinFailure,
@@ -186,7 +188,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
           });
 
           // This will update the user's balance.
-          this.appData.updateEverything(response.TxnHashHex, this._creatorCoinSuccess, this._creatorCoinFailure, this);
+          this.appData.updateEverything(false, response.TxnHashHex, this._creatorCoinSuccess, this._creatorCoinFailure, this);
         },
         (err) => {
           this._handleRequestErrors(err);
@@ -222,6 +224,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
     comp.appData.celebrate();
     comp.creatorCoinTradeBeingCalled = false;
     comp.showHighLoadWarning = false;
+    console.log(comp.appData.loggedInUser);
     this._onTradeExecuted();
   };
 

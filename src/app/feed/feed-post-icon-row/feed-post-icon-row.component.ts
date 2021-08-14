@@ -342,7 +342,8 @@ export class FeedPostIconRowComponent {
         this.postContent.PosterPublicKeyBase58Check,
         this.postContent.PostHashHex,
         diamonds,
-        this.globalVars.feeRateBitCloutPerKB * 1e9
+        this.globalVars.feeRateBitCloutPerKB * 1e9,
+        this.inTutorial
       )
       .toPromise()
       .then(
@@ -361,7 +362,7 @@ export class FeedPostIconRowComponent {
             // Celebrate when the SendDiamonds call completes
             this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           }
-          this.globalVars.updateEverything(res.TxnHashHex, this.sendDiamondsSuccess, this.sendDiamondsFailure, this);
+          this.globalVars.updateEverything(false, res.TxnHashHex, this.sendDiamondsSuccess, this.sendDiamondsFailure, this);
         },
         (err) => {
           if (err.status === 0) {

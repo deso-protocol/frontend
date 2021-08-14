@@ -62,16 +62,19 @@ export class TradeCreatorComponent implements OnInit {
     if (!this.inTutorial) {
       this.screenToShow = this.TRADE_CREATOR_COMPLETE_SCREEN;
     } else {
+      // TODO: instead of immediately navigating, let's open a SweetAlert and have user click OK.
       // TODO: make sure user's holdings are refreshed before page load
       // How do we want to differentiate buy vs. sell ?
-      if (this.globalVars.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
-        this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_BUY;
+      console.log("IN TUTORIAL!");
+      console.log(this.globalVars.loggedInUser.TutorialStatus);
+      if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
+        // this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_BUY;
         this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
-      } else if (this.globalVars.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
-        this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_SELL;
+      } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
+        // this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_SELL;
         this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
-      } else if (this.globalVars.TutorialStatus === TutorialStatus.DIAMOND) {
-        this.globalVars.TutorialStatus = TutorialStatus.INVEST_SELF;
+      } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.DIAMOND) {
+        // this.globalVars.TutorialStatus = TutorialStatus.INVEST_SELF;
         this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
       }
     }
@@ -238,7 +241,6 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   getBuyOrSellObservable(): Observable<any> {
-    console.log(this.appData.feeRateBitCloutPerKB);
     return this.backendApi.BuyOrSellCreatorCoin(
       this.appData.localNode,
       this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,

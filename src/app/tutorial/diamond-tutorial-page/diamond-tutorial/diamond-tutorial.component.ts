@@ -44,7 +44,7 @@ export class DiamondTutorialComponent implements OnInit {
   }
 
   onDiamondSent(): void {
-    this.globalVars.TutorialStatus = TutorialStatus.DIAMOND;
+    // this.globalVars.TutorialStatus = TutorialStatus.DIAMOND;
     this.router.navigate([
       RouteNames.TUTORIAL,
       RouteNames.INVEST,

@@ -204,6 +204,7 @@ export class SignUpGetStarterBitcloutComponent implements OnInit {
         (res) => {
           // Pull the CanCreateProfile boolean from the server
           this.globalVars.updateEverything(
+            false,
             res.TxnHashHex,
             this._getStarterBitCloutSuccess,
             this._getStarterBitCloutFailure,

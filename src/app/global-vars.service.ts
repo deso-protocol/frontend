@@ -1,23 +1,22 @@
-import { Injectable } from "@angular/core";
-import { BalanceEntryResponse, PostEntryResponse, TutorialStatus, User } from "./backend-api.service";
-import { Router, ActivatedRoute } from "@angular/router";
-import { BackendApiService } from "./backend-api.service";
-import { RouteNames } from "./app-routing.module";
+import {Injectable} from "@angular/core";
+import {BackendApiService, BalanceEntryResponse, PostEntryResponse, TutorialStatus, User} from "./backend-api.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {RouteNames} from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
-import { Observable, Observer, of } from "rxjs";
-import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
-import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
-import { SwalHelper } from "../lib/helpers/swal-helper";
-import { environment } from "../environments/environment";
-import { AmplitudeClient } from "amplitude-js";
-import { DomSanitizer } from "@angular/platform-browser";
-import { IdentityService } from "./identity.service";
-import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
-import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
-import { HttpClient } from "@angular/common/http";
-import { FeedComponent } from "./feed/feed.component";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import {Observable, Observer} from "rxjs";
+import {LoggedInUserObservableResult} from "../lib/observable-results/logged-in-user-observable-result";
+import {FollowChangeObservableResult} from "../lib/observable-results/follow-change-observable-result";
+import {SwalHelper} from "../lib/helpers/swal-helper";
+import {environment} from "../environments/environment";
+import {AmplitudeClient} from "amplitude-js";
+import {DomSanitizer} from "@angular/platform-browser";
+import {IdentityService} from "./identity.service";
+import {BithuntService, CommunityProject} from "../lib/services/bithunt/bithunt-service";
+import {LeaderboardResponse, PulseService} from "../lib/services/pulse/pulse-service";
+import {RightBarCreatorsLeaderboardComponent} from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import {HttpClient} from "@angular/common/http";
+import {FeedComponent} from "./feed/feed.component";
+import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 import Timer = NodeJS.Timer;
 
 export enum ConfettiSvg {
@@ -311,6 +310,39 @@ export class GlobalVarsService {
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
+    if ([TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user.TutorialStatus) < 0) {
+      // drop user at correct point in tutorial.
+      let route;
+      switch (user.TutorialStatus) {
+        case TutorialStatus.STARTED: {
+          route = [RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE];
+          break;
+        }
+        case TutorialStatus.CREATE_PROFILE: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          break;
+        }
+        case TutorialStatus.INVEST_OTHERS_BUY: {
+          // TODO: replace with username purchased
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          break;
+        }
+        case TutorialStatus.INVEST_OTHERS_SELL: {
+          // TODO: replace with username to sell
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          break;
+        }
+        case TutorialStatus.DIAMOND: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR, user.ProfileEntryResponse?.Username];
+          break;
+        }
+        case TutorialStatus.INVEST_SELF: {
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          break;
+        }
+      }
+      this.router.navigate(route);
+    }
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {
@@ -742,7 +774,7 @@ export class GlobalVarsService {
       .launch(`/get-free-clout?public_key=${this.loggedInUser?.PublicKeyBase58Check}`)
       .subscribe(() => {
         this.logEvent("identity : jumio : success");
-        this.updateEverything();
+        this.updateEverything(false);
       });
   }
 
@@ -751,7 +783,7 @@ export class GlobalVarsService {
     this.identityService.launch("/log-in").subscribe((res) => {
       this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything().subscribe(() => {
+      this.updateEverything(true).subscribe(() => {
         this.flowRedirect(res.signedUp);
       });
     });

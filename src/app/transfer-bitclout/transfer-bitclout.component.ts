@@ -196,6 +196,7 @@ export class TransferBitcloutComponent implements OnInit {
 
                   // This will update the user's balance.
                   this.globalVars.updateEverything(
+                    false,
                     res.TxnHashHex,
                     this._sendBitCloutSuccess,
                     this._sendBitCloutFailure,

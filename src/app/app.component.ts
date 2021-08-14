@@ -1,12 +1,12 @@
-import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { BackendApiService, User } from "./backend-api.service";
-import { GlobalVarsService } from "./global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { IdentityService } from "./identity.service";
+import {ChangeDetectorRef, Component, HostListener, OnInit} from "@angular/core";
+import {BackendApiService, TutorialStatus, User} from "./backend-api.service";
+import {GlobalVarsService} from "./global-vars.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {IdentityService} from "./identity.service";
 import * as _ from "lodash";
-import { environment } from "../environments/environment";
-import { ThemeService } from "./theme/theme.service";
+import {environment} from "../environments/environment";
+import {ThemeService} from "./theme/theme.service";
+import {RouteNames} from "./app-routing.module";
 
 @Component({
   selector: "app-root",
@@ -28,6 +28,21 @@ export class AppComponent implements OnInit {
       [], // userList
       this.route // route
     );
+
+    // Listen to the route, if it changes, check loggedInUser's tutorial status.
+    // this.router.
+    // this.route.url.subscribe((url) => {
+    //   console.log(url);
+    //   if (
+    //     this.globalVars.loggedInUser &&
+    //     [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(
+    //       this.globalVars.loggedInUser.TutorialStatus
+    //     ) < 0
+    //   ) {
+    //     // drop user at correct point in tutorial.
+    //     this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
+    //   }
+    // });
 
     // Nuke the referrer so we don't leak anything
     // We also have a meta tag in index.html that does this in a different way to make
@@ -91,12 +106,13 @@ export class AppComponent implements OnInit {
     const userCopy = JSON.parse(JSON.stringify(user));
   }
 
-  _updateTopLevelData() {
+  _updateTopLevelData(refreshAllUsers: boolean) {
     if (this.callingUpdateTopLevelData) {
       return;
     }
 
-    const publicKeys = Object.keys(this.identityService.identityServiceUsers);
+    let publicKeys = Object.keys(this.identityService.identityServiceUsers);
+
     let loggedInUserPublicKey =
       this.globalVars.loggedInUser?.PublicKeyBase58Check ||
       this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey) ||
@@ -109,6 +125,11 @@ export class AppComponent implements OnInit {
     }
 
     this.callingUpdateTopLevelData = true;
+
+    if (!refreshAllUsers) {
+      publicKeys = [loggedInUserPublicKey];
+    }
+
     const observable = this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, false);
 
     observable.subscribe(
@@ -116,9 +137,18 @@ export class AppComponent implements OnInit {
         this.problemWithNodeConnection = false;
         this.callingUpdateTopLevelData = false;
 
-        // Only update if things have changed to avoid unnecessary DOM manipulation
-        if (!_.isEqual(this.globalVars.userList, res.UserList)) {
+        // Only update if things have changed to avoid unnecessary DOM manipulation. Only reset entire user list if refreshAllUsers is true
+        if (refreshAllUsers && !_.isEqual(this.globalVars.userList, res.UserList)) {
           this.globalVars.userList = res.UserList || [];
+        }
+
+        // If we are only updating the logged in user, find that user in the user list and replace it.
+        if (!refreshAllUsers) {
+          this.globalVars.userList.forEach((user, index) => {
+            if (user.PublicKeyBase58Check === loggedInUserPublicKey && !_.isEqual(this.globalVars.loggedInUser, user)) {
+              this.globalVars.userList[index] = user;
+            }
+          });
         }
 
         // Find the loggedInUser in our results
@@ -195,11 +225,13 @@ export class AppComponent implements OnInit {
   }
 
   _updateEverything = (
+    refreshAllUsers: boolean = false,
     waitTxn: string = "",
     successCallback: (comp: any) => void = () => {},
     errorCallback: (comp: any) => void = () => {},
     comp: any = ""
   ) => {
+    console.log("refresh all users: ", refreshAllUsers);
     // Refresh the messageMeta periodically.
     this.globalVars.messageMeta = this.backendApi.GetStorage(this.backendApi.MessageMetaKey);
     if (!this.globalVars.messageMeta) {
@@ -229,7 +261,7 @@ export class AppComponent implements OnInit {
                 return;
               }
 
-              this._updateTopLevelData();
+              this._updateTopLevelData(refreshAllUsers);
               this._updateBitCloutExchangeRate();
               this._updateAppState();
 
@@ -249,7 +281,7 @@ export class AppComponent implements OnInit {
       }
       this._updateBitCloutExchangeRate();
       this._updateAppState();
-      return this._updateTopLevelData();
+      return this._updateTopLevelData(refreshAllUsers);
     }
   };
 
@@ -302,7 +334,7 @@ export class AppComponent implements OnInit {
     }
     this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
 
-    this.globalVars.updateEverything();
+    this.globalVars.updateEverything(true);
 
     // Clean up legacy seedinfo storage. only called when a user visits the site again after a successful import
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
