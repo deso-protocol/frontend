@@ -100,7 +100,8 @@ export class BackendRoutes {
   static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
   static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
   static RoutePathAdminUpdateJumioBitClout = "/api/v0/admin/update-jumio-bitclout";
-
+  static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
+  static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
   // Wyre routes.
@@ -1834,6 +1835,21 @@ export class BackendApiService {
   AdminUpdateJumioBitClout(endpoint: string, AdminPublicKey: string, BitCloutNanos: number): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioBitClout, AdminPublicKey, {
       BitCloutNanos,
+      AdminPublicKey,
+    });
+  }
+
+  AdminUpdateTutorialCreators(
+    endpoint: string,
+    AdminPublicKey: string,
+    PublicKeyBase58Check: string,
+    IsRemoval: boolean,
+    IsWellKnown: boolean
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioBitClout, AdminPublicKey, {
+      PublicKeyBase58Check,
+      IsRemoval,
+      IsWellKnown,
       AdminPublicKey,
     });
   }
