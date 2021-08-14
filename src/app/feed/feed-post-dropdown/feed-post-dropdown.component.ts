@@ -188,6 +188,20 @@ export class FeedPostDropdownComponent {
     this.globalVars._copyText(this._getPostUrl());
   }
 
+  sharePostUrl(event){
+    this.globalVars.logEvent("post : webapishare");
+    
+    // Prevent the post from navigating.
+    event.stopPropagation();
+
+    try {
+      navigator.share({url: this._getPostUrl() });
+      console.log("Data was shared successfully");
+    } catch (err) {
+      console.error("Share failed:", err.message);
+    }
+  }
+
   _getPostUrl() {
     const pathArray = ["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex];
 
