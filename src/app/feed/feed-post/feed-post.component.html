@@ -197,6 +197,7 @@
                 [displayAsLink]="true"
                 [followLinkClass]="'link--unstyled'"
                 [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+                [creatorCoinTemplate]="creatorCoinInfo"
               ></follow-button>
               <feed-post-dropdown
                 *ngIf="showDropdown && !reclouterProfile"
