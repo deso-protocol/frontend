@@ -2729,7 +2729,18 @@ input {
 
 .mobile-creator-coin-info {
   @media (max-width: 992px) {
-    display: inline
+    display: inline;
+    margin-left: 0px;
+    padding-left: 0px;
   }
-  display: none
+  display: none;
+}
+
+.creator-coin-info {
+  @media (max-width: 992px) {
+    padding-left: 0rem !important;
+    margin-left: 0rem !important;
+  }
+  padding-left: .5rem !important;
+  margin-left: .5rem !important;
 }
