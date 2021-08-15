@@ -52,8 +52,8 @@ export class FeedPostIconRowComponent {
   diamondDragging = false;
   // Which diamond is selected by the drag selector
   diamondIdxDraggedTo = -1;
-  // Whether the drag selector is at the top of it's bound and in position to make a transaction
-  diamondDragConfirm = false;
+  // Whether the drag selector is at the bottom of it's bound and in position to cancel a transaction
+  diamondDragCancel = false;
   // Boolean for whether or not the div explaining diamonds should be collapsed or not.
   collapseDiamondInfo = true;
   // Boolean for tracking if we are processing a send diamonds event.
@@ -100,7 +100,7 @@ export class FeedPostIconRowComponent {
       const leftOffset = this.getPosition(likeBtn).offsetLeft;
       // Set the drag component's left offset such that it lives right above the like button
       this.diamondDragLeftOffset = `${leftOffset}px`;
-    }, 200);
+    }, 5000);
   }
 
   // Get the overall left and top offsets of a component
@@ -148,9 +148,8 @@ export class FeedPostIconRowComponent {
     if (this.diamondIdxDraggedTo != this.diamondCount) {
       this.diamondDragLeftExplainer = true;
     }
-
-    // If the drag box is at the very top of it's boundary, enable sending diamonds and change the color of the helper div
-    this.diamondDragConfirm = event.distance.y === -40;
+    // If the drag box is at the alloted lower boundry or below, set cancel status to true
+    this.diamondDragCancel = event.distance.y >= 35;
   }
 
   // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
@@ -172,8 +171,8 @@ export class FeedPostIconRowComponent {
 
   // End dragging procedure. Triggered when the dragged element is released
   endDrag(event) {
-    // If the drag box is in the "confirm" position, and the selected diamond makes sense, send diamonds
-    if (this.diamondDragConfirm && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
+    // If the drag box is not in the "cancel" position, and the selected diamond makes sense, send diamonds
+    if (!this.diamondDragCancel && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
       this.onDiamondSelected(null, this.diamondIdxDraggedTo);
     }
     // Reset drag-related variables
@@ -184,7 +183,7 @@ export class FeedPostIconRowComponent {
 
   resetDragVariables() {
     this.globalVars.userIsDragging = false;
-    this.diamondDragConfirm = false;
+    this.diamondDragCancel = false;
     this.diamondDragging = false;
     this.diamondIdxDraggedTo = -1;
     this.diamondDragMoved = false;

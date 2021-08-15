@@ -106,11 +106,11 @@
     <!--Container to hold the bounds for the mobile drag interface-->
     <div class="diamond-mobile-drag-container unselectable">
       <div
-        [ngClass]="{ 'bg-success': diamondDragConfirm, show: diamondDragging }"
+        [ngClass]="{ 'bg-danger': diamondDragCancel, show: diamondDragging }"
         class="diamond-mobile-drag-instructions"
       >
         <p class="d-block">
-          {{ !diamondDragMoved ? "<- Slide ->" : diamondDragConfirm ? "Release To Confirm" : "Drag Up To Confirm" }}
+          {{ !diamondDragMoved ? "<- Slide ->" : diamondDragCancel ? "Release To Cancel" : "Release To Confirm - Drag Down To Cancel" }}
         </p>
       </div>
       <!--Draggable element for mobile drag-selection-->
