@@ -549,7 +549,7 @@ export class FeedPostIconRowComponent {
       return;
     }
 
-    if (event && event.pointerType === "touch" && includes(event.path[0].classList, "reaction-icon")) {
+    if (event && event.pointerType === "touch" && includes(event.target.classList, "reaction-icon")) {
       event.stopPropagation();
       return;
     }
