@@ -2513,7 +2513,7 @@ input {
       .reaction-icon {
         // Enables "pop-up" animation
         transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
-        //opacity: 0;
+        opacity: 0;
         transform: translate(0, 50px) scale(0);
         width: 40px; height: 40px;
         display: inline-block;
