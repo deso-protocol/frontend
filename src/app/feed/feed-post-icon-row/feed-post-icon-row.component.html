@@ -1,4 +1,6 @@
-<div class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px">
+<div
+  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px unselectable"
+>
   <div
     class="cursor-pointer d-flex align-items-center"
     (click)="openModal($event)"
@@ -28,7 +30,12 @@
     >
       <i class="icon-repost feed-post-icon-row__icon"></i>
     </a>
-    <div class="dropdown-menu p-0 fs-12px border background-color-light-grey" style="min-width: 6rem" *dropdownMenu aria-labelledby="recloutActionsButton">
+    <div
+      class="dropdown-menu p-0 fs-12px border background-color-light-grey"
+      style="min-width: 6rem"
+      *dropdownMenu
+      aria-labelledby="recloutActionsButton"
+    >
       <a
         *ngIf="sendingRecloutRequest; else recloutOptions"
         class="dropdown-menu-item d-block p-5px feed-post__dropdown-menu-item"
@@ -62,7 +69,7 @@
         </a>
       </ng-template>
     </div>
-    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount + postContent.QuoteRecloutCount}}</span>
+    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount + postContent.QuoteRecloutCount }}</span>
   </div>
 
   <div
@@ -83,69 +90,125 @@
   </div>
 
   <ng-template #popTemplate>
-    <div id="diamond-popover">
-      <div *ngIf="!sendingDiamonds; else sendingDiamondSpinner">
-        <div (click)="expandDiamondInfo($event)">
+    <div id="diamond-popover" class="m-10px">
+      <div *ngIf="!sendingDiamonds">
+        <div class="mb-4" style="font-size: 11.25px">
           Give a diamond.
           <b>@{{ postContent.ProfileEntryResponse.Username }}</b>
           will receive the amount shown as
           <b>a tip</b>
           from you.
         </div>
-        <div class="d-flex justify-content-center pt-10px">
-          <rating
-            [max]="6"
-            [(ngModel)]="diamondSelected"
-            [customTemplate]="diamondRating"
-            [readonly]="sendingDiamonds"
-          ></rating>
-          <ng-template #diamondRating let-index="index" let-value="value">
-            <div
-              class="d-inline-block px-10px"
-              (click)="onDiamondSelected($event, index)"
-              [ngStyle]="{ disabled: index < getCurrentDiamondLevel() }"
-            >
-              <i
-                class="icon-diamond fs-25px d-block"
-                [ngStyle]="{ color: index < getCurrentDiamondLevel() ? '#0058F7' : '#555555' }"
-              ></i>
-              <div class="d-block fc-muted fs-12px" style="text-align: center">
-                {{ globalVars.getUSDForDiamond(index + 1) }}
-              </div>
-            </div>
-          </ng-template>
-        </div>
       </div>
-      <ng-template #sendingDiamondSpinner>
-        Sending @{{ postContent.ProfileEntryResponse.Username }} {{ diamondSelected }} diamonds!
-        <simple-center-loader [height]="200"></simple-center-loader>
-      </ng-template>
     </div>
   </ng-template>
-  <div
-    class="cursor-pointer d-flex align-items-center"
-    [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }"
-  >
-    <i
-      [popover]="popTemplate"
-      triggers=""
-      placement="top"
-      [containerClass]="getPopoverContainerClass()"
-      [container]="globalVars.getTargetComponentSelector()"
-      [outsideClick]="true"
-      #diamondPopover="bs-popover"
-      class="icon-diamond feed-post-icon-row__icon p-2px"
-      style="font-size: 20px !important; padding-right: 5px"
-      (click)="diamondClickHandler($event)"
-      (click)="animateDiamond = !animateDiamond"
-      [ngClass]="{ is_animating_ice: animateDiamond }"
-    ></i>
+  <div class="cursor-pointer d-flex align-items-center">
+    <!--Container to hold the bounds for the mobile drag interface-->
+    <div class="diamond-mobile-drag-container unselectable">
+      <div
+        [ngClass]="{ 'bg-success': diamondDragConfirm, show: diamondDragging }"
+        class="diamond-mobile-drag-instructions"
+      >
+        <p class="d-block">
+          {{ !diamondDragMoved ? "<- Slide ->" : diamondDragConfirm ? "Release To Confirm" : "Drag Up To Confirm" }}
+        </p>
+      </div>
+      <!--Draggable element for mobile drag-selection-->
+      <div
+        [ngStyle]="{ left: diamondDragLeftOffset }"
+        (touchstart)="startDrag()"
+        (touchend)="dragClick($event)"
+        (cdkDragEnded)="endDrag($event)"
+        (cdkDragMoved)="duringDrag($event)"
+        class="diamond-mobile-drag-grab"
+        id="diamond-mobile-drag-grab"
+        cdkDragBoundary=".diamond-mobile-drag-container"
+        cdkDrag
+      ></div>
+    </div>
+    <div
+      class="feed-reaction cursor-pointer d-flex align-items-center"
+      (click)="sendOneDiamond($event, false)"
+      (mouseover)="addDiamondSelection($event)"
+      (mouseleave)="removeDiamondSelection()"
+    >
+      <i
+        class="feed-post-icon-row__icon"
+        [ngClass]="{
+          'icon-diamond': !sendingDiamonds,
+          'fas fa-spinner fa-spin': sendingDiamonds,
+          'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
+        }"
+        [ngStyle]="{
+          visibility: diamondDragging ? 'hidden' : 'visible'
+        }"
+      ></i>
+      <a
+        [ngClass]="{ 'dragged-like': diamondDragging }"
+        class="diamond-btn icon-diamond"
+        id="diamond-button"
+      >
+        <div
+          class="reaction-box"
+          [ngStyle]="{
+            height:
+              !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
+                ? '121px'
+                : '55px'
+          }"
+        >
+          <div *ngIf="!collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)">
+            <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
+          </div>
+          <div
+            *ngFor="let diamondIndex of diamondIndexes"
+            [ngClass]="{ show: diamondsVisible[diamondIndex], 'dragged-icon': diamondIdxDraggedTo === diamondIndex }"
+            class="reaction-icon transformable"
+            (click)="onDiamondSelected($event, diamondIndex)"
+            (mouseover)="diamondHovered = diamondIndex"
+            (mouseleave)="diamondHovered = -1"
+          >
+            <label>{{ globalVars.getUSDForDiamond(diamondIndex + 1) }}</label>
+            <i
+              class="icon-diamond diamond-reaction"
+              [ngStyle]="{
+                color:
+                  diamondIndex < getCurrentDiamondLevel() ||
+                  diamondIndex <= this.diamondHovered ||
+                  diamondIndex <= this.diamondIdxDraggedTo
+                    ? 'var(--cblue)'
+                    : 'var(--grey)'
+              }"
+            ></i>
+          </div>
+          <div
+            class="reaction-icon show"
+            (click)="toggleExplainer($event)"
+            (mouseover)="collapseDiamondInfo = false"
+            (mouseleave)="collapseDiamondInfo = true"
+          >
+            <i class="fas fa-info-circle diamond-reaction diamond-help"></i>
+          </div>
+        </div>
+      </a>
+    </div>
     <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
   </div>
 
-    <div class="d-none d-lg-flex cursor-pointer align-items-center">
-        <i class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon" (click)="copyPostLinkToClipboard($event)"></i>
-        <span class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle" matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size" mat-raised-button #tooltip="matTooltip" [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
-            (auxclick)="onTimestampClickHandler($event)">{{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}</span>
-    </div>
+  <div class="d-none d-lg-flex cursor-pointer align-items-center">
+    <i
+      class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon"
+      (click)="copyPostLinkToClipboard($event)"
+    ></i>
+    <span
+      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
+      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+      mat-raised-button
+      #tooltip="matTooltip"
+      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
+      (auxclick)="onTimestampClickHandler($event)"
+    >
+      {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+    </span>
+  </div>
 </div>
