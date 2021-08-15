@@ -103,6 +103,13 @@
     </div>
   </ng-template>
   <div class="cursor-pointer d-flex align-items-center">
+    <!--Div to stop mobile devices from highlighting on long-press-->
+    <div
+      *ngIf="diamondDragging"
+      class="unselectable text-selection-blocker"
+      style="background: blue"
+    >
+    </div>
     <!--Container to hold the bounds for the mobile drag interface-->
     <div class="diamond-mobile-drag-container unselectable">
       <div

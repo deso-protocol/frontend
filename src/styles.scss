@@ -2640,6 +2640,14 @@ input {
     pointer-events: none;
   }
 
+  .text-selection-blocker {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+
   .diamond-mobile-drag-instructions {
     display: block;
     height: 48px;
