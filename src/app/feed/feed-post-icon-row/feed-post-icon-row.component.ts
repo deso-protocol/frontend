@@ -118,6 +118,7 @@ export class FeedPostIconRowComponent {
 
   // Initiate mobile drag, have diamonds appear
   startDrag() {
+    this.globalVars.userIsDragging = true;
     this.diamondDragMoved = false;
     this.diamondDragStarted = new Date();
     this.diamondDragging = true;
@@ -165,11 +166,7 @@ export class FeedPostIconRowComponent {
       }
       // If the diamond drag box wasn't moved, we need to reset these variables.
       // If it was moved, the endDrag fn will do it.
-      this.diamondDragConfirm = false;
-      this.diamondDragging = false;
-      this.diamondIdxDraggedTo = -1;
-      this.diamondDragMoved = false;
-      this.diamondDragLeftExplainer = false;
+      this.resetDragVariables();
     }
   }
 
@@ -180,13 +177,18 @@ export class FeedPostIconRowComponent {
       this.onDiamondSelected(null, this.diamondIdxDraggedTo);
     }
     // Reset drag-related variables
+    this.resetDragVariables();
+    // Move the drag box back to it's original position
+    event.source._dragRef.reset();
+  }
+
+  resetDragVariables() {
+    this.globalVars.userIsDragging = false;
     this.diamondDragConfirm = false;
     this.diamondDragging = false;
     this.diamondIdxDraggedTo = -1;
     this.diamondDragMoved = false;
     this.diamondDragLeftExplainer = false;
-    // Move the drag box back to it's original position
-    event.source._dragRef.reset();
   }
 
   _detectChanges() {
