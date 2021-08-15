@@ -2719,3 +2719,17 @@ input {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
 }
+
+.desktop-creator-coin-info {
+  @media (max-width: 992px) {
+    display: none;
+  }
+  display: inline;
+}
+
+.mobile-creator-coin-info {
+  @media (max-width: 992px) {
+    display: inline
+  }
+  display: none
+}

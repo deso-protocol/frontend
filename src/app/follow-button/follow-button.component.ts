@@ -25,6 +25,7 @@ export class FollowButtonComponent implements OnInit, OnDestroy {
   @Input() unfollowButtonClasses = [];
   @Input() followButtonClasses = [];
   @Input() followLinkClass;
+  @Input() creatorCoinTemplate;
 
   // Is the logged in user currently following the target person?
   isFollowing: boolean;

@@ -17,6 +17,9 @@
         <a class="" [ngClass]="followLinkClass" (click)="follow($event)">Follow</a>
       </ng-template>
     </ng-template>
+    <div class="mobile-creator-coin-info">
+      <ng-container *ngTemplateOutlet="creatorCoinTemplate"></ng-container>
+    </div>
   </div>
   <ng-template #displayAsLinkElseBlock>
     <!-- Display as button -->
