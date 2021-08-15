@@ -101,20 +101,6 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
       );
   }
 
-  testCreatorList(): void {
-    this.backendApi
-      .AdminGetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 5)
-      .subscribe(
-        (res) => {
-          console.log("Here is the result");
-          console.log(res);
-        },
-        (err) => {
-          console.error(err);
-        }
-      );
-  }
-
   messageUser(): void {
     this.router.navigate(["/" + this.globalVars.RouteNames.INBOX_PREFIX], {
       queryParams: { username: this.profile.Username },

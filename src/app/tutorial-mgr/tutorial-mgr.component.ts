@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
-import { concat, map } from "lodash";
+import { concat, filter, map } from "lodash";
 
 @Component({
   selector: "tutorial-mgr",
@@ -10,12 +10,33 @@ import { concat, map } from "lodash";
 export class TutorialMgrComponent implements OnInit {
   globalVars: GlobalVarsService;
 
-  profileEntryResponses = [];
+  profileEntryResponses = null;
+  loading = false;
+  WELL_KNOWN_TAB = "Well Known";
+  UNDISCOVERED_TAB = "Undiscovered";
+  adminTutorialTabs = [this.WELL_KNOWN_TAB, this.UNDISCOVERED_TAB];
+  activeTutorialTab = this.WELL_KNOWN_TAB;
+  filteredProfileEntryResponses = null;
+
   constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
     this.globalVars = _globalVars;
   }
 
+  _tutorialTabClicked(tutorialTabName: string) {
+    this.activeTutorialTab = tutorialTabName;
+    if (tutorialTabName === this.WELL_KNOWN_TAB) {
+      this.filteredProfileEntryResponses = filter(this.profileEntryResponses, {
+        IsFeaturedTutorialWellKnownCreator: true,
+      });
+    } else {
+      this.filteredProfileEntryResponses = filter(this.profileEntryResponses, {
+        IsFeaturedTutorialUndiscoveredCreator: true,
+      });
+    }
+  }
+
   ngOnInit(): void {
+    this.loading = true;
     this.backendApi
       .AdminGetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 500)
       .subscribe(
@@ -29,11 +50,36 @@ export class TutorialMgrComponent implements OnInit {
             .subscribe(
               (res) => {
                 this.profileEntryResponses = map(res?.UserList, "ProfileEntryResponse");
+                this.filteredProfileEntryResponses = filter(this.profileEntryResponses, {
+                  IsFeaturedTutorialWellKnownCreator: true,
+                });
+                this.loading = false;
               },
               (err) => {
                 console.error(err);
               }
             );
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+  }
+
+  removeCreatorFeaturedTutorialList(isWellKnown: boolean, profilePublicKeyBase58Check: string) {
+    this.backendApi
+      .AdminUpdateTutorialCreators(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        profilePublicKeyBase58Check,
+        true,
+        isWellKnown
+      )
+      .subscribe(
+        (res) => {
+          this.profileEntryResponses = filter(this.profileEntryResponses, (profileEntryResponse) => {
+            return profileEntryResponse.PublicKeyBase58Check != profilePublicKeyBase58Check;
+          });
         },
         (err) => {
           console.error(err);

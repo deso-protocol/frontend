@@ -1,33 +1,61 @@
 <div class="w-100 light-grey-divider border-bottom border-color-grey" style="height:10px"></div>
-<div *ngFor>
-
-
-</div>
+<tab-selector
+  [tabs]="adminTutorialTabs"
+  [activeTab]="activeTutorialTab"
+  (tabClick)="_tutorialTabClicked($event)"
+></tab-selector>
+<simple-center-loader *ngIf="loading"></simple-center-loader>
 <div
-  class="right-bar-creators-leaderboard__creator-avatar"
-  [avatar]="profileEntryResponse.Profile.PublicKeyBase58Check"
-></div>
+  *ngFor="let profileEntryResponse of filteredProfileEntryResponses"
+  class="br-12px m-15px js-feed-post-hover border"
+>
+  <a
+    [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Username]"
+    queryParamsHandling="merge"
+    class="link--unstyled d-flex align-items-center text-grey5 fs-15px"
+  >
+    <div
+      class="link--unstyled d-flex align-items-center text-grey5 fs-15px m-2"
+    >
+      <div>
+        <i
+          (click)="
+            removeCreatorFeaturedTutorialList(
+              profileEntryResponse.IsFeaturedTutorialWellKnownCreator,
+              profileEntryResponse.PublicKeyBase58Check
+            )
+          "
+          class="p-10px far fa-trash-alt fc-red cursor-pointer"
+        ></i>
+      </div>
+      <div
+        class="right-bar-creators-leaderboard__creator-avatar ml-2"
+        [avatar]="profileEntryResponse.PublicKeyBase58Check"
+      ></div>
 
-<div style="flex-grow: 1">
-  <span>{{ profileEntryResponse.Profile.Username }}</span>
-  <span
-    *ngIf="profileEntryResponse.Profile.IsReserved && !profileEntryResponse.Profile.IsVerified"
-    class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
-    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-    [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
-  >
-      <i class="far fa-clock fa-md"></i>
-    </span>
-  <span
-    *ngIf="profileEntryResponse.Profile.IsVerified"
-    (click)="tooltip.toggle()"
-    class="ml-1 cursor-pointer text-primary"
-    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-    [matTooltip]="'This account is verified'"
-    #tooltip="matTooltip"
-  >
-      <i class="fas fa-check-circle fa-md"></i>
-    </span>
+      <div style="flex-grow: 1" class="ml-2">
+        <span>{{ profileEntryResponse.Username }}</span>
+        <span
+          *ngIf="profileEntryResponse.IsReserved && !profileEntryResponse.IsVerified"
+          class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
+        >
+          <i class="far fa-clock fa-md"></i>
+        </span>
+        <span
+          *ngIf="profileEntryResponse.IsVerified"
+          (click)="tooltip.toggle()"
+          class="ml-1 cursor-pointer text-primary"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="'This account is verified'"
+          #tooltip="matTooltip"
+        >
+          <i class="fas fa-check-circle fa-md"></i>
+        </span>
+      </div>
+    </div>
+  </a>
 </div>
 <!--<div class="px-15px pt-15px pb-5px fs-15px">-->
 <!--  <div class="py-5px w-100 d-flex justify-content-between align-items-center">-->
