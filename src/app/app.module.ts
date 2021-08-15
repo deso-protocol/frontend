@@ -137,6 +137,7 @@ import { NftShowcaseComponent } from "./nft-showcase/nft-showcase.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { AdminJumioComponent } from "./admin/admin-jumio/admin-jumio.component";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
+import { TutorialMgrComponent } from "./tutorial-mgr/tutorial-mgr.component";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -264,6 +265,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     VerifyEmailComponent,
     AdminJumioComponent,
     JumioStatusComponent,
+    TutorialMgrComponent,
   ],
   imports: [
     BrowserModule,

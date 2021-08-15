@@ -168,8 +168,6 @@ export class CreatorProfileDetailsComponent implements OnInit {
     this.loading = true;
     this.backendApi.GetSingleProfile(this.globalVars.localNode, "", this.userName).subscribe(
       (res) => {
-        console.log('HERE IS THE USER PROFILE');
-        console.log(res);
         if (!res || res.IsBlacklisted) {
           this.loading = false;
           this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });

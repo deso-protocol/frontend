@@ -1857,8 +1857,9 @@ export class BackendApiService {
     });
   }
 
-  AdminGetTutorialCreators(endpoint: string, AdminPublicKey: string): Observable<any> {
+  AdminGetTutorialCreators(endpoint: string, AdminPublicKey: string, ResponseLimit: number): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetTutorialCreators, AdminPublicKey, {
+      ResponseLimit,
       AdminPublicKey,
     });
   }

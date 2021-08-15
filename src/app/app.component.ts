@@ -124,9 +124,6 @@ export class AppComponent implements OnInit {
         // Find the loggedInUser in our results
         const loggedInUser: User = _.find(res.UserList, { PublicKeyBase58Check: loggedInUserPublicKey });
 
-        console.log('Found the logged in user');
-        console.log(res);
-
         // Only update if things have changed to avoid unnecessary DOM manipulation
         if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser)) {
           this.globalVars.setLoggedInUser(loggedInUser);

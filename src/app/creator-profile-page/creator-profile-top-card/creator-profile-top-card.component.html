@@ -42,17 +42,20 @@
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="updateWellKnownCreatorsList()"
-          *ngIf="!profile.IsFeaturedTutorialUndiscoveredCreator"
+          *ngIf="!profile.IsFeaturedTutorialUndiscoveredCreator && globalVars.showSuperAdminTools()"
         >
-          <i class="fas fa-flag"></i>
+          <i class="fas" [ngClass]="profile.IsFeaturedTutorialWellKnownCreator ? 'fa-user-minus' : 'fa-user-plus'"></i>
           {{ profile.IsFeaturedTutorialWellKnownCreator ? "Remove" : "Add" }} User As Well Known Creator
         </a>
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="updateUndiscoveredCreatorsList()"
-          *ngIf="!profile.IsFeaturedTutorialWellKnownCreator"
+          *ngIf="!profile.IsFeaturedTutorialWellKnownCreator && globalVars.showSuperAdminTools()"
         >
-          <i class="fas fa-flag"></i>
+          <i
+            class="fas"
+            [ngClass]="profile.IsFeaturedTutorialUndiscoveredCreator ? 'fa-user-minus' : 'fa-user-plus'"
+          ></i>
           {{ profile.IsFeaturedTutorialUndiscoveredCreator ? "Remove" : "Add" }} User As Undiscovered Creator
         </a>
         <a

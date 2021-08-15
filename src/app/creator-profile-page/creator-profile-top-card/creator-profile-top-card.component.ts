@@ -76,7 +76,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   updateUndiscoveredCreatorsList(): void {
     this.updateCreatorFeaturedTutorialList(false, this.profile.IsFeaturedTutorialUndiscoveredCreator);
-  }   
+  }
 
   updateCreatorFeaturedTutorialList(isWellKnown: boolean, isRemoval: boolean) {
     this.backendApi
@@ -94,8 +94,6 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
           } else {
             this.profile.IsFeaturedTutorialUndiscoveredCreator = !isRemoval;
           }
-          console.log("Here is the result");
-          console.log(res);
         },
         (err) => {
           console.error(err);
@@ -104,10 +102,8 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   }
 
   testCreatorList(): void {
-    console.log('Here is the users status');
-    console.log(this.profile);
     this.backendApi
-      .AdminGetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .AdminGetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 5)
       .subscribe(
         (res) => {
           console.log("Here is the result");
