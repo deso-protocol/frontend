@@ -1,7 +1,7 @@
 <div *ngIf="canLoggedInUserFollowTargetPublicKey()">
   <div *ngIf="displayAsLink; else displayAsLinkElseBlock">
     <!-- Display as link-->
-    <div class="mobile-creator-coin-info" *ngIf="creatorCoinTemplate">
+    <div class="mobile-creator-coin-info mr-2" *ngIf="creatorCoinTemplate">
       <ng-container *ngTemplateOutlet="creatorCoinTemplate"></ng-container>
     </div>
     <div *ngIf="createFollowTxnBeingCalled; else beingCalledElseBlock">
