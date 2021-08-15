@@ -2616,6 +2616,7 @@ input {
     left: 0;
     right: 0;
     display: block;
+    pointer-events: none;
   }
 
   .diamond-mobile-drag-instructions {
@@ -2654,6 +2655,7 @@ input {
     top: 40px;
     z-index: 1;
     background: transparent;
+    pointer-events: all;
   }
 }
 
