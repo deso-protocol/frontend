@@ -17,7 +17,7 @@
         <a class="" [ngClass]="followLinkClass" (click)="follow($event)">Follow</a>
       </ng-template>
     </ng-template>
-    <div class="mobile-creator-coin-info">
+    <div class="mobile-creator-coin-info" *ngIf="creatorCoinTemplate">
       <ng-container *ngTemplateOutlet="creatorCoinTemplate"></ng-container>
     </div>
   </div>
