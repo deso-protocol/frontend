@@ -15,8 +15,8 @@
 ></iframe>
 
 <!--p-0 is important here. Mobile UIs expect that there's no side padding.-->
-<div 
-  class="main global__container" 
+<div
+  class="main global__container unselectable"
   *ngIf="!globalVars.requestingStorageAccess"
  >
   <router-outlet *ngIf="!globalVars.loadingInitialAppState"></router-outlet>
