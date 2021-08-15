@@ -527,7 +527,7 @@ export class FeedPostIconRowComponent {
 
   addDiamondSelection(event) {
     // Need to make sure hover event doesn't trigger on child elements
-    if (event?.type === "initiateDrag" || includes(event.path[0].classList, "diamond-btn")) {
+    if (event?.type === "initiateDrag" || event.target.id === "diamond-button") {
       for (let idx = 0; idx < this.diamondCount; idx++) {
         this.diamondTimeouts[idx] = setTimeout(() => {
           this.diamondsVisible[idx] = true;
@@ -549,7 +549,7 @@ export class FeedPostIconRowComponent {
       return;
     }
 
-    if (event && event.pointerType === "touch" && includes(event.path[0].classList, "reaction-icon")) {
+    if (event && event.pointerType === "touch" && includes(event.target.classList, "reaction-icon")) {
       event.stopPropagation();
       return;
     }
