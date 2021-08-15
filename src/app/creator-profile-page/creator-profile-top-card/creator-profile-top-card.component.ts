@@ -70,8 +70,53 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     );
   }
 
-  addUserToWellKnownCreatorsList(): void {
+  updateWellKnownCreatorsList(): void {
+    this.updateCreatorFeaturedTutorialList(true, this.profile.IsFeaturedTutorialWellKnownCreator);
+  }
 
+  updateUndiscoveredCreatorsList(): void {
+    this.updateCreatorFeaturedTutorialList(false, this.profile.IsFeaturedTutorialUndiscoveredCreator);
+  }   
+
+  updateCreatorFeaturedTutorialList(isWellKnown: boolean, isRemoval: boolean) {
+    this.backendApi
+      .AdminUpdateTutorialCreators(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.profile.PublicKeyBase58Check,
+        isRemoval,
+        isWellKnown
+      )
+      .subscribe(
+        (res) => {
+          if (isWellKnown) {
+            this.profile.IsFeaturedTutorialWellKnownCreator = !isRemoval;
+          } else {
+            this.profile.IsFeaturedTutorialUndiscoveredCreator = !isRemoval;
+          }
+          console.log("Here is the result");
+          console.log(res);
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+  }
+
+  testCreatorList(): void {
+    console.log('Here is the users status');
+    console.log(this.profile);
+    this.backendApi
+      .AdminGetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .subscribe(
+        (res) => {
+          console.log("Here is the result");
+          console.log(res);
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
   }
 
   messageUser(): void {

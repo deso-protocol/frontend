@@ -41,10 +41,19 @@
         </a>
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-          (click)="addUserToWellKnownCreatorsList()"
+          (click)="updateWellKnownCreatorsList()"
+          *ngIf="!profile.IsFeaturedTutorialUndiscoveredCreator"
         >
           <i class="fas fa-flag"></i>
-          Add User As Well Known Creator
+          {{ profile.IsFeaturedTutorialWellKnownCreator ? "Remove" : "Add" }} User As Well Known Creator
+        </a>
+        <a
+          class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+          (click)="updateUndiscoveredCreatorsList()"
+          *ngIf="!profile.IsFeaturedTutorialWellKnownCreator"
+        >
+          <i class="fas fa-flag"></i>
+          {{ profile.IsFeaturedTutorialUndiscoveredCreator ? "Remove" : "Add" }} User As Undiscovered Creator
         </a>
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"

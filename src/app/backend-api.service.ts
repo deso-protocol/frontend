@@ -167,6 +167,9 @@ export class User {
   JumioReturned: boolean;
   JumioFinishedTime: number;
 
+  IsFeaturedTutorialWellKnownCreator: boolean;
+  IsFeaturedTutorialUndiscoveredCreator: boolean;
+
   BlockedPubKeys: { [key: string]: object };
 
   IsAdmin?: boolean;
@@ -1846,10 +1849,16 @@ export class BackendApiService {
     IsRemoval: boolean,
     IsWellKnown: boolean
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioBitClout, AdminPublicKey, {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateTutorialCreators, AdminPublicKey, {
       PublicKeyBase58Check,
       IsRemoval,
       IsWellKnown,
+      AdminPublicKey,
+    });
+  }
+
+  AdminGetTutorialCreators(endpoint: string, AdminPublicKey: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetTutorialCreators, AdminPublicKey, {
       AdminPublicKey,
     });
   }
