@@ -526,8 +526,6 @@ export class FeedPostIconRowComponent {
   }
 
   addDiamondSelection(event) {
-    console.log('Initiating diamond selection');
-    console.log(event);
     // Need to make sure hover event doesn't trigger on child elements
     if (event?.type === "initiateDrag" || event.target.id === "diamond-button") {
       for (let idx = 0; idx < this.diamondCount; idx++) {
