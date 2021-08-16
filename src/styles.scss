@@ -2673,9 +2673,8 @@ input {
     height: 45px;
     width: 45px;
     position: absolute;
-    top: 40px;
     z-index: 1;
-    background: green;
+    background: transparent;
     pointer-events: all;
   }
 }

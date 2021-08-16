@@ -80,51 +80,6 @@ export class FeedPostIconRowComponent {
     private themeService: ThemeService
   ) {}
 
-  ngAfterViewInit() {
-    this.resetDragPosition();
-  }
-
-  // Make sure that if a mobile device rotates, that the drag markers remain in the same place
-  @HostListener("window:orientationchange", ["$event"])
-  onOrientationChange() {
-    this.resetDragPosition();
-  }
-
-  // Because the drag component lives in an absolute-positioned div that spans the entire window width,
-  // we need to manually set it's position.
-  resetDragPosition() {
-    setTimeout(() => {
-      // Get the diamond button
-      const likeBtn = document.getElementById("diamond-button");
-      // Calculate where the diamond button lives on the page
-      const leftOffset = this.getPosition(likeBtn).offsetLeft;
-      // Set the drag component's left offset such that it lives right above the like button
-      this.diamondDragLeftOffset = `${leftOffset}px`;
-    }, 5000);
-  }
-
-  // Get the overall left and top offsets of a component
-  getPosition(element) {
-    let offsetLeft = 0;
-    let offsetTop = 0;
-
-    while (element) {
-      offsetLeft += element.offsetLeft;
-      offsetTop += element.offsetTop;
-      element = element.offsetParent;
-    }
-    return { offsetTop: offsetTop, offsetLeft: offsetLeft };
-  }
-
-  // Initiate mobile drag, have diamonds appear
-  startDrag() {
-    this.globalVars.userIsDragging = true;
-    this.diamondDragMoved = false;
-    this.diamondDragStarted = new Date();
-    this.diamondDragging = true;
-    this.addDiamondSelection({ type: "initiateDrag" });
-  }
-
   // Calculate where the drag box has been dragged to, make updates accordingly
   duringDrag(event) {
     // If this event was triggered, the user moved the drag box, and we assume it's not a click.

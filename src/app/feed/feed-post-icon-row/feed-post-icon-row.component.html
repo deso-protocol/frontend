@@ -113,18 +113,6 @@
           {{ !diamondDragMoved ? "<- Slide ->" : diamondDragCancel ? "Release To Cancel" : "Release To Confirm - Drag Down To Cancel" }}
         </p>
       </div>
-      <!--Draggable element for mobile drag-selection-->
-      <div
-        [ngStyle]="{ left: diamondDragLeftOffset }"
-        (touchstart)="startDrag()"
-        (touchend)="dragClick($event)"
-        (cdkDragEnded)="endDrag($event)"
-        (cdkDragMoved)="duringDrag($event)"
-        class="diamond-mobile-drag-grab"
-        id="diamond-mobile-drag-grab"
-        cdkDragBoundary=".diamond-mobile-drag-container"
-        cdkDrag
-      ></div>
     </div>
     <div
       class="feed-reaction cursor-pointer d-flex align-items-center"
@@ -191,9 +179,19 @@
           </div>
         </div>
       </a>
+      <div
+        (touchstart)="startDrag()"
+        (touchend)="dragClick($event)"
+        (cdkDragEnded)="endDrag($event)"
+        (cdkDragMoved)="duringDrag($event)"
+        class="diamond-mobile-drag-grab"
+        id="diamond-mobile-drag-grab"
+        cdkDrag
+      ></div>
     </div>
     <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
   </div>
+  <!--Draggable element for mobile drag-selection-->
 
   <div class="d-none d-lg-flex cursor-pointer align-items-center">
     <i
