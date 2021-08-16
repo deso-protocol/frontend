@@ -132,7 +132,11 @@
         }"
       ></i>
       <a
-        [ngClass]="{ 'dragged-like': diamondDragging }"
+        [ngClass]="{
+          'dragged-like': diamondDragging,
+          'own-post':
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser.PublicKeyBase58Check
+        }"
         class="diamond-btn icon-diamond"
         id="diamond-button"
       >
