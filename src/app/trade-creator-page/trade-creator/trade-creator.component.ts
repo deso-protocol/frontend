@@ -82,7 +82,23 @@ export class TradeCreatorComponent implements OnInit {
         ]);
       } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
         // this.globalVars.TutorialStatus = TutorialStatus.INVEST_SELF;
-        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
+        // TODO: add swal or another way to tell user we are lowering FR to 10%
+        this.backendApi
+          .UpdateProfile(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            "",
+            "",
+            "",
+            "",
+            10 * 100,
+            1.25 * 100 * 100,
+            false,
+            this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+          )
+          .subscribe((res) => {
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
+          });
       }
     }
   }
@@ -174,7 +190,7 @@ export class TradeCreatorComponent implements OnInit {
     private globalVars: GlobalVarsService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private backendApi: BackendApiService,
+    private backendApi: BackendApiService
   ) {
     this.appData = globalVars;
     this.router = _router;
