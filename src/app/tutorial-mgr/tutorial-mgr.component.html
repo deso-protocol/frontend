@@ -9,24 +9,20 @@
   *ngFor="let profileEntryResponse of filteredProfileEntryResponses"
   class="br-12px m-15px js-feed-post-hover border"
 >
-  <a
-    [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Username]"
-    queryParamsHandling="merge"
-    class="link--unstyled d-flex align-items-center text-grey5 fs-15px"
+  <div
+    class="link--unstyled d-flex align-items-center text-grey5 fs-15px m-2"
   >
-    <div
-      class="link--unstyled d-flex align-items-center text-grey5 fs-15px m-2"
+    <div>
+      <i
+        (click)="removeCreatorFeaturedTutorialList(profileEntryResponse.PublicKeyBase58Check, $event)"
+        class="p-10px far fa-trash-alt fc-red cursor-pointer"
+      ></i>
+    </div>
+    <a
+      [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Username]"
+      queryParamsHandling="merge"
+      class="link--unstyled d-flex align-items-center text-grey5 fs-15px"
     >
-      <div>
-        <i
-          (click)="
-            removeCreatorFeaturedTutorialList(
-              profileEntryResponse.PublicKeyBase58Check
-            )
-          "
-          class="p-10px far fa-trash-alt fc-red cursor-pointer"
-        ></i>
-      </div>
       <div
         class="right-bar-creators-leaderboard__creator-avatar ml-2"
         [avatar]="profileEntryResponse.PublicKeyBase58Check"
@@ -53,6 +49,6 @@
           <i class="fas fa-check-circle fa-md"></i>
         </span>
       </div>
-    </div>
-  </a>
+    </a>
+  </div>
 </div>

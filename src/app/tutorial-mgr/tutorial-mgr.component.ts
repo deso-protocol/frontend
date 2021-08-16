@@ -48,7 +48,8 @@ export class TutorialMgrComponent implements OnInit {
       );
   }
 
-  removeCreatorFeaturedTutorialList(profilePublicKeyBase58Check: string) {
+  removeCreatorFeaturedTutorialList(profilePublicKeyBase58Check: string, event) {
+    event.stopPropagation();
     this.backendApi
       .AdminUpdateTutorialCreators(
         this.globalVars.localNode,
@@ -59,9 +60,18 @@ export class TutorialMgrComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.profileEntryResponses = filter(this.profileEntryResponses, (profileEntryResponse) => {
+          this.filteredProfileEntryResponses = filter(this.filteredProfileEntryResponses, (profileEntryResponse) => {
             return profileEntryResponse.PublicKeyBase58Check != profilePublicKeyBase58Check;
           });
+          if (this.activeTutorialTab === this.WELL_KNOWN_TAB) {
+            this.wellKnownProfiles = filter(this.wellKnownProfiles, (profileEntryResponse) => {
+              return profileEntryResponse.PublicKeyBase58Check != profilePublicKeyBase58Check;
+            });
+          } else {
+            this.upAndComingProfiles = filter(this.upAndComingProfiles, (profileEntryResponse) => {
+              return profileEntryResponse.PublicKeyBase58Check != profilePublicKeyBase58Check;
+            });
+          }
         },
         (err) => {
           console.error(err);
