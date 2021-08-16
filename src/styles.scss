@@ -2558,7 +2558,7 @@ input {
     }
 
     // Don't show the diamond selector when it's the user's own post
-    &.own-post {
+    &.hide-diamonds {
       .reaction-box{
         display: none !important;
       }
