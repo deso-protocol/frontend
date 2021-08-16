@@ -53,7 +53,7 @@ export class FeedPostIconRowComponent {
   // Which diamond is selected by the drag selector
   diamondIdxDraggedTo = -1;
   // Whether the drag selector is at the bottom of it's bound and in position to cancel a transaction
-  diamondDragCancel = false;
+  diamondDragConfirm = false;
   // Boolean for whether or not the div explaining diamonds should be collapsed or not.
   collapseDiamondInfo = true;
   // Boolean for tracking if we are processing a send diamonds event.
@@ -113,7 +113,7 @@ export class FeedPostIconRowComponent {
       this.diamondDragLeftExplainer = true;
     }
     // If the drag box is at the alloted lower boundry or below, set cancel status to true
-    this.diamondDragCancel = event.distance.y >= 35;
+    this.diamondDragConfirm = event.distance.y < -10;
   }
 
   // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
@@ -137,8 +137,8 @@ export class FeedPostIconRowComponent {
   endDrag(event) {
     // Stop the drag event so that the slider isn't visible during transaction load
     this.diamondDragging = false;
-    // If the drag box is not in the "cancel" position, and the selected diamond makes sense, send diamonds
-    if (!this.diamondDragCancel && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
+    // If the drag box is in the "succeed" position, and the selected diamond makes sense, send diamonds
+    if (this.diamondDragConfirm && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
       this.onDiamondSelected(null, this.diamondIdxDraggedTo);
     }
     // Reset drag-related variables
@@ -149,7 +149,7 @@ export class FeedPostIconRowComponent {
 
   resetDragVariables() {
     this.globalVars.userIsDragging = false;
-    this.diamondDragCancel = false;
+    this.diamondDragConfirm = false;
     this.diamondDragging = false;
     this.diamondIdxDraggedTo = -1;
     this.diamondDragMoved = false;
@@ -494,7 +494,7 @@ export class FeedPostIconRowComponent {
 
   addDiamondSelection(event) {
     // Account for the delayed hover appearance with mouse
-    const additionalDelay = event?.type === "initiateDrag" ? 0 : 1000;
+    const additionalDelay = event?.type === "initiateDrag" ? 0 : 500;
     // Need to make sure hover event doesn't trigger on child elements
     if (event?.type === "initiateDrag" || event.target.id === "diamond-button") {
       for (let idx = 0; idx < this.diamondCount; idx++) {
@@ -513,6 +513,9 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
+    if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+      this.globalVars._alertError("Must be logged in to send diamonds");
+    }
     // Disable diamond selection if diamonds are being sent
     if (this.sendingDiamonds) {
       return;
