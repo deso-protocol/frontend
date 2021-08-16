@@ -80,6 +80,15 @@ export class FeedPostIconRowComponent {
     private themeService: ThemeService
   ) {}
 
+  // Initiate mobile drag, have diamonds appear
+  startDrag() {
+    this.globalVars.userIsDragging = true;
+    this.diamondDragMoved = false;
+    this.diamondDragStarted = new Date();
+    this.diamondDragging = true;
+    this.addDiamondSelection({ type: "initiateDrag" });
+  }
+
   // Calculate where the drag box has been dragged to, make updates accordingly
   duringDrag(event) {
     // If this event was triggered, the user moved the drag box, and we assume it's not a click.
