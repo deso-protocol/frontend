@@ -168,7 +168,7 @@ export class User {
   JumioFinishedTime: number;
 
   IsFeaturedTutorialWellKnownCreator: boolean;
-  IsFeaturedTutorialUndiscoveredCreator: boolean;
+  IsFeaturedTutorialUpAndComingCreator: boolean;
 
   BlockedPubKeys: { [key: string]: object };
 

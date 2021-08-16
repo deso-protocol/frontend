@@ -13,8 +13,8 @@ export class TutorialMgrComponent implements OnInit {
   profileEntryResponses = null;
   loading = false;
   WELL_KNOWN_TAB = "Well Known";
-  UNDISCOVERED_TAB = "Undiscovered";
-  adminTutorialTabs = [this.WELL_KNOWN_TAB, this.UNDISCOVERED_TAB];
+  UP_AND_COMING_TAB = "Up And Coming";
+  adminTutorialTabs = [this.WELL_KNOWN_TAB, this.UP_AND_COMING_TAB];
   activeTutorialTab = this.WELL_KNOWN_TAB;
   filteredProfileEntryResponses = null;
 
@@ -30,7 +30,7 @@ export class TutorialMgrComponent implements OnInit {
       });
     } else {
       this.filteredProfileEntryResponses = filter(this.profileEntryResponses, {
-        IsFeaturedTutorialUndiscoveredCreator: true,
+        IsFeaturedTutorialUpAndComingCreator: true,
       });
     }
   }
@@ -44,7 +44,7 @@ export class TutorialMgrComponent implements OnInit {
           this.backendApi
             .GetUsersStateless(
               this.globalVars.localNode,
-              concat(res.WellKnownPublicKeysBase58Check, res.UndiscoveredPublicKeysBase58Check),
+              concat(res.WellKnownPublicKeysBase58Check, res.UpAndComingPublicKeysBase58Check),
               false
             )
             .subscribe(

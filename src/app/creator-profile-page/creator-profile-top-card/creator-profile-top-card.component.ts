@@ -74,8 +74,8 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     this.updateCreatorFeaturedTutorialList(true, this.profile.IsFeaturedTutorialWellKnownCreator);
   }
 
-  updateUndiscoveredCreatorsList(): void {
-    this.updateCreatorFeaturedTutorialList(false, this.profile.IsFeaturedTutorialUndiscoveredCreator);
+  updateUpAndComingCreatorsList(): void {
+    this.updateCreatorFeaturedTutorialList(false, this.profile.IsFeaturedTutorialUpAndComingCreator);
   }
 
   updateCreatorFeaturedTutorialList(isWellKnown: boolean, isRemoval: boolean) {
@@ -92,7 +92,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
           if (isWellKnown) {
             this.profile.IsFeaturedTutorialWellKnownCreator = !isRemoval;
           } else {
-            this.profile.IsFeaturedTutorialUndiscoveredCreator = !isRemoval;
+            this.profile.IsFeaturedTutorialUpAndComingCreator = !isRemoval;
           }
         },
         (err) => {
