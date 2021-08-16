@@ -2488,7 +2488,12 @@ input {
     &::before {
       content: "."; opacity: 0;
       display: block;
-      width: 44px; height: 10px;
+      width: 44px;
+      // On desktop, move the diamond bar higher to prevent accidental clicking
+      @media (max-width: 991.98px) {
+        height: 10px;
+      }
+      height: 20px;
       position: absolute;
       top: -10px; left: 0;
     }
@@ -2506,7 +2511,7 @@ input {
       @media (max-width: 991.98px) {
         left: -300px; bottom: 35px;
       }
-      left: -125px; bottom: 35px;
+      left: -125px; bottom: 45px;
       //display: none;
       display: block;
       visibility: hidden;
@@ -2519,7 +2524,7 @@ input {
         transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
         opacity: 0;
         transform: translate(0, 50px) scale(0);
-        width: 40px; height: 25px;
+        width: 40px; height: 35px;
         display: inline-block;
         background: var(--secondary);
         background-color: transparent;
