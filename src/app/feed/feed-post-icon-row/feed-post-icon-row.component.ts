@@ -493,12 +493,14 @@ export class FeedPostIconRowComponent {
   }
 
   addDiamondSelection(event) {
+    // Account for the delayed hover appearance with mouse
+    const additionalDelay = event?.type === "initiateDrag" ? 0 : 1000;
     // Need to make sure hover event doesn't trigger on child elements
     if (event?.type === "initiateDrag" || event.target.id === "diamond-button") {
       for (let idx = 0; idx < this.diamondCount; idx++) {
         this.diamondTimeouts[idx] = setTimeout(() => {
           this.diamondsVisible[idx] = true;
-        }, idx * this.diamondAnimationDelay);
+        }, idx * this.diamondAnimationDelay + additionalDelay);
       }
     }
   }

@@ -2507,7 +2507,11 @@ input {
         left: -300px; bottom: 35px;
       }
       left: -125px; bottom: 35px;
-      display: none;
+      //display: none;
+      display: block;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0s opacity, 0s visibility;
 
       // Each selectable diamond level in the diamond pop-up
       .reaction-icon {
@@ -2515,7 +2519,7 @@ input {
         transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
         opacity: 0;
         transform: translate(0, 50px) scale(0);
-        width: 40px; height: 40px;
+        width: 40px; height: 25px;
         display: inline-block;
         background: var(--secondary);
         background-color: transparent;
@@ -2553,6 +2557,7 @@ input {
       }
     }
 
+    // Don't show the diamond selector when it's the user's own post
     &.own-post {
       .reaction-box{
         display: none !important;
@@ -2560,18 +2565,29 @@ input {
     }
 
     // We want to disable phone-sized devices from showing the selector on hover.
-    // Rather than duplicating the block above, just add this check instead.
     @media(max-width: 600px) {
       &.dragged-like {
         .reaction-box {
           display: block;
+          visibility: visible;
+          opacity: 1;
         }
       }
     }
+    // Show the selector on hover for tablets and desktop machines
     @media(min-width: 601px) {
       &:hover {
         .reaction-box {
-          display: block;
+          visibility: visible;
+          opacity: 1;
+          // Don't delay appearance of pop up on tablet click
+          @media(pointer: coarse) {
+            transition: 0s opacity, 0s visibility;
+            transition-delay: 0s;
+          }
+          transition: 1s opacity, 1s visibility;
+          // Delay appearance of pop up on mouse hover
+          transition-delay: 1s;
         }
       }
     }
@@ -2579,9 +2595,7 @@ input {
     // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
     &.dragged-like,&:hover {
 
-      // Show the reaction box
       .reaction-box {
-        //display: block;
 
         .reaction-icon {
 

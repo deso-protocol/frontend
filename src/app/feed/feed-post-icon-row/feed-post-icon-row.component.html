@@ -108,7 +108,7 @@
       class="diamond-mobile-drag-container unselectable"
       [ngClass]="{
         'own-post':
-          postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser.PublicKeyBase58Check
+          postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
       }"
     >
       <div
@@ -141,7 +141,7 @@
         [ngClass]="{
           'dragged-like': diamondDragging,
           'own-post':
-            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser.PublicKeyBase58Check
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
         }"
         class="diamond-btn icon-diamond"
         id="diamond-button"
@@ -198,7 +198,7 @@
         class="diamond-mobile-drag-grab"
         [ngClass]="{
           'own-post':
-            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser.PublicKeyBase58Check
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
         }"
         id="diamond-mobile-drag-grab"
         cdkDrag
