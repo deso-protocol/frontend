@@ -135,6 +135,8 @@ export class FeedPostIconRowComponent {
 
   // End dragging procedure. Triggered when the dragged element is released
   endDrag(event) {
+    // Stop the drag event so that the slider isn't visible during transaction load
+    this.diamondDragging = false;
     // If the drag box is not in the "cancel" position, and the selected diamond makes sense, send diamonds
     if (!this.diamondDragCancel && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
       this.onDiamondSelected(null, this.diamondIdxDraggedTo);

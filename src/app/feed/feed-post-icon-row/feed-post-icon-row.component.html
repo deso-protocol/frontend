@@ -179,6 +179,7 @@
           </div>
         </div>
       </a>
+      <!--Draggable element for mobile drag-selection-->
       <div
         (touchstart)="startDrag()"
         (touchend)="dragClick($event)"
@@ -191,7 +192,6 @@
     </div>
     <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
   </div>
-  <!--Draggable element for mobile drag-selection-->
 
   <div class="d-none d-lg-flex cursor-pointer align-items-center">
     <i
