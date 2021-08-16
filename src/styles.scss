@@ -2488,7 +2488,12 @@ input {
     &::before {
       content: "."; opacity: 0;
       display: block;
-      width: 44px; height: 10px;
+      width: 44px;
+      // On desktop, move the diamond bar higher to prevent accidental clicking
+      @media (max-width: 991.98px) {
+        height: 10px;
+      }
+      height: 15px;
       position: absolute;
       top: -10px; left: 0;
     }
@@ -2506,8 +2511,11 @@ input {
       @media (max-width: 991.98px) {
         left: -300px; bottom: 35px;
       }
-      left: -125px; bottom: 35px;
-      display: none;
+      left: -125px; bottom: 40px;
+      display: block;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0s opacity, 0s visibility;
 
       // Each selectable diamond level in the diamond pop-up
       .reaction-icon {
@@ -2515,13 +2523,13 @@ input {
         transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
         opacity: 0;
         transform: translate(0, 50px) scale(0);
-        width: 40px; height: 40px;
+        width: 47px; height: 25px;
         display: inline-block;
         background: var(--secondary);
         background-color: transparent;
         content: '\f219';
         border-radius: 15px;
-        margin: 8px -1px 0 8px;
+        margin: 8px 0 0 0;
         text-align: center;
 
         .diamond-reaction {
@@ -2529,6 +2537,7 @@ input {
           top: -30px;
           left: -2px;
           position: relative;
+          transition: color .3s;
         }
 
         .diamond-help {
@@ -2553,25 +2562,37 @@ input {
       }
     }
 
-    &.own-post {
+    // Don't show the diamond selector when it's the user's own post
+    &.hide-diamonds {
       .reaction-box{
         display: none !important;
       }
     }
 
     // We want to disable phone-sized devices from showing the selector on hover.
-    // Rather than duplicating the block above, just add this check instead.
     @media(max-width: 600px) {
       &.dragged-like {
         .reaction-box {
           display: block;
+          visibility: visible;
+          opacity: 1;
         }
       }
     }
+    // Show the selector on hover for tablets and desktop machines
     @media(min-width: 601px) {
       &:hover {
         .reaction-box {
-          display: block;
+          visibility: visible;
+          opacity: 1;
+          // Don't delay appearance of pop up on tablet click
+          @media(pointer: coarse) {
+            transition: 0s opacity, 0s visibility;
+            transition-delay: 0s;
+          }
+          transition: 1s opacity, 1s visibility;
+          // Delay appearance of pop up on mouse hover
+          transition-delay: 1s;
         }
       }
     }
@@ -2579,9 +2600,7 @@ input {
     // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
     &.dragged-like,&:hover {
 
-      // Show the reaction box
       .reaction-box {
-        //display: block;
 
         .reaction-icon {
 
@@ -2601,6 +2620,7 @@ input {
             // Prevent hover effects on mobile, we use the drag interface for that
             @media (pointer: fine) {
               &.dragged-icon,&:hover {
+                height: 35px;
                 transform: scale(1.3);
                 transform-origin: bottom;
               }
@@ -2685,7 +2705,7 @@ input {
   }
 }
 
-.own-post {
+.hide-diamonds {
   &.diamond-mobile-drag-grab {
     display: none;
   }
