@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { concat, filter, map } from "lodash";
+import {publish} from "rxjs-compat/operator/publish";
 
 @Component({
   selector: "tutorial-mgr",
@@ -11,6 +12,8 @@ export class TutorialMgrComponent implements OnInit {
   globalVars: GlobalVarsService;
 
   profileEntryResponses = null;
+  upAndComingProfiles = [];
+  wellKnownProfiles = [];
   loading = false;
   WELL_KNOWN_TAB = "Well Known";
   UP_AND_COMING_TAB = "Up And Coming";
@@ -24,15 +27,8 @@ export class TutorialMgrComponent implements OnInit {
 
   _tutorialTabClicked(tutorialTabName: string) {
     this.activeTutorialTab = tutorialTabName;
-    if (tutorialTabName === this.WELL_KNOWN_TAB) {
-      this.filteredProfileEntryResponses = filter(this.profileEntryResponses, {
-        IsFeaturedTutorialWellKnownCreator: true,
-      });
-    } else {
-      this.filteredProfileEntryResponses = filter(this.profileEntryResponses, {
-        IsFeaturedTutorialUpAndComingCreator: true,
-      });
-    }
+    this.filteredProfileEntryResponses =
+      tutorialTabName === this.WELL_KNOWN_TAB ? this.wellKnownProfiles : this.upAndComingProfiles;
   }
 
   ngOnInit(): void {
@@ -41,24 +37,10 @@ export class TutorialMgrComponent implements OnInit {
       .GetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 500)
       .subscribe(
         (res) => {
-          this.backendApi
-            .GetUsersStateless(
-              this.globalVars.localNode,
-              concat(res.WellKnownPublicKeysBase58Check, res.UpAndComingPublicKeysBase58Check),
-              false
-            )
-            .subscribe(
-              (res) => {
-                this.profileEntryResponses = map(res?.UserList, "ProfileEntryResponse");
-                this.filteredProfileEntryResponses = filter(this.profileEntryResponses, {
-                  IsFeaturedTutorialWellKnownCreator: true,
-                });
-                this.loading = false;
-              },
-              (err) => {
-                console.error(err);
-              }
-            );
+          this.wellKnownProfiles = res.WellKnownProfileEntryResponses;
+          this.upAndComingProfiles = res.UpAndComingProfileEntryResponses;
+          this.filteredProfileEntryResponses = this.wellKnownProfiles;
+          this.loading = false;
         },
         (err) => {
           console.error(err);
@@ -66,14 +48,14 @@ export class TutorialMgrComponent implements OnInit {
       );
   }
 
-  removeCreatorFeaturedTutorialList(isWellKnown: boolean, profilePublicKeyBase58Check: string) {
+  removeCreatorFeaturedTutorialList(profilePublicKeyBase58Check: string) {
     this.backendApi
       .AdminUpdateTutorialCreators(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         profilePublicKeyBase58Check,
         true,
-        isWellKnown
+        this.activeTutorialTab === this.WELL_KNOWN_TAB
       )
       .subscribe(
         (res) => {
