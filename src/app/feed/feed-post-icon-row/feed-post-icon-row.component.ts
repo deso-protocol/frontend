@@ -52,8 +52,8 @@ export class FeedPostIconRowComponent {
   diamondDragging = false;
   // Which diamond is selected by the drag selector
   diamondIdxDraggedTo = -1;
-  // Whether the drag selector is at the top of it's bound and in position to make a transaction
-  diamondDragConfirm = false;
+  // Whether the drag selector is at the bottom of it's bound and in position to cancel a transaction
+  diamondDragCancel = false;
   // Boolean for whether or not the div explaining diamonds should be collapsed or not.
   collapseDiamondInfo = true;
   // Boolean for tracking if we are processing a send diamonds event.
@@ -80,44 +80,9 @@ export class FeedPostIconRowComponent {
     private themeService: ThemeService
   ) {}
 
-  ngAfterViewInit() {
-    this.resetDragPosition();
-  }
-
-  // Make sure that if a mobile device rotates, that the drag markers remain in the same place
-  @HostListener("window:orientationchange", ["$event"])
-  onOrientationChange() {
-    this.resetDragPosition();
-  }
-
-  // Because the drag component lives in an absolute-positioned div that spans the entire window width,
-  // we need to manually set it's position.
-  resetDragPosition() {
-    setTimeout(() => {
-      // Get the diamond button
-      const likeBtn = document.getElementById("diamond-button");
-      // Calculate where the diamond button lives on the page
-      const leftOffset = this.getPosition(likeBtn).offsetLeft;
-      // Set the drag component's left offset such that it lives right above the like button
-      this.diamondDragLeftOffset = `${leftOffset}px`;
-    }, 200);
-  }
-
-  // Get the overall left and top offsets of a component
-  getPosition(element) {
-    let offsetLeft = 0;
-    let offsetTop = 0;
-
-    while (element) {
-      offsetLeft += element.offsetLeft;
-      offsetTop += element.offsetTop;
-      element = element.offsetParent;
-    }
-    return { offsetTop: offsetTop, offsetLeft: offsetLeft };
-  }
-
   // Initiate mobile drag, have diamonds appear
   startDrag() {
+    this.globalVars.userIsDragging = true;
     this.diamondDragMoved = false;
     this.diamondDragStarted = new Date();
     this.diamondDragging = true;
@@ -147,9 +112,8 @@ export class FeedPostIconRowComponent {
     if (this.diamondIdxDraggedTo != this.diamondCount) {
       this.diamondDragLeftExplainer = true;
     }
-
-    // If the drag box is at the very top of it's boundary, enable sending diamonds and change the color of the helper div
-    this.diamondDragConfirm = event.distance.y === -40;
+    // If the drag box is at the alloted lower boundry or below, set cancel status to true
+    this.diamondDragCancel = event.distance.y >= 35;
   }
 
   // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
@@ -165,28 +129,31 @@ export class FeedPostIconRowComponent {
       }
       // If the diamond drag box wasn't moved, we need to reset these variables.
       // If it was moved, the endDrag fn will do it.
-      this.diamondDragConfirm = false;
-      this.diamondDragging = false;
-      this.diamondIdxDraggedTo = -1;
-      this.diamondDragMoved = false;
-      this.diamondDragLeftExplainer = false;
+      this.resetDragVariables();
     }
   }
 
   // End dragging procedure. Triggered when the dragged element is released
   endDrag(event) {
-    // If the drag box is in the "confirm" position, and the selected diamond makes sense, send diamonds
-    if (this.diamondDragConfirm && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
+    // Stop the drag event so that the slider isn't visible during transaction load
+    this.diamondDragging = false;
+    // If the drag box is not in the "cancel" position, and the selected diamond makes sense, send diamonds
+    if (!this.diamondDragCancel && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
       this.onDiamondSelected(null, this.diamondIdxDraggedTo);
     }
     // Reset drag-related variables
-    this.diamondDragConfirm = false;
+    this.resetDragVariables();
+    // Move the drag box back to it's original position
+    event.source._dragRef.reset();
+  }
+
+  resetDragVariables() {
+    this.globalVars.userIsDragging = false;
+    this.diamondDragCancel = false;
     this.diamondDragging = false;
     this.diamondIdxDraggedTo = -1;
     this.diamondDragMoved = false;
     this.diamondDragLeftExplainer = false;
-    // Move the drag box back to it's original position
-    event.source._dragRef.reset();
   }
 
   _detectChanges() {

@@ -66,6 +66,9 @@ export class GlobalVarsService {
   // We're waiting for the user to grant storage access (full-screen takeover)
   requestingStorageAccess = false;
 
+  // Track if the user is dragging the diamond selector. If so, need to disable text selection in the app.
+  userIsDragging = false;
+
   RouteNames = RouteNames;
 
   pausePolling = false; // TODO: Monkey patch for when polling conflicts with other calls.

@@ -104,27 +104,21 @@
   </ng-template>
   <div class="cursor-pointer d-flex align-items-center">
     <!--Container to hold the bounds for the mobile drag interface-->
-    <div class="diamond-mobile-drag-container unselectable">
+    <div
+      class="diamond-mobile-drag-container unselectable"
+      [ngClass]="{
+        'own-post':
+          postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser.PublicKeyBase58Check
+      }"
+    >
       <div
-        [ngClass]="{ 'bg-success': diamondDragConfirm, show: diamondDragging }"
+        [ngClass]="{ 'bg-danger': diamondDragCancel, show: diamondDragging }"
         class="diamond-mobile-drag-instructions"
       >
         <p class="d-block">
-          {{ !diamondDragMoved ? "<- Slide ->" : diamondDragConfirm ? "Release To Confirm" : "Drag Up To Confirm" }}
+          {{ !diamondDragMoved ? "<- Slide ->" : diamondDragCancel ? "Release To Cancel" : "Release To Confirm - Drag Down To Cancel" }}
         </p>
       </div>
-      <!--Draggable element for mobile drag-selection-->
-      <div
-        [ngStyle]="{ left: diamondDragLeftOffset }"
-        (touchstart)="startDrag()"
-        (touchend)="dragClick($event)"
-        (cdkDragEnded)="endDrag($event)"
-        (cdkDragMoved)="duringDrag($event)"
-        class="diamond-mobile-drag-grab"
-        id="diamond-mobile-drag-grab"
-        cdkDragBoundary=".diamond-mobile-drag-container"
-        cdkDrag
-      ></div>
     </div>
     <div
       class="feed-reaction cursor-pointer d-flex align-items-center"
@@ -144,7 +138,11 @@
         }"
       ></i>
       <a
-        [ngClass]="{ 'dragged-like': diamondDragging }"
+        [ngClass]="{
+          'dragged-like': diamondDragging,
+          'own-post':
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser.PublicKeyBase58Check
+        }"
         class="diamond-btn icon-diamond"
         id="diamond-button"
       >
@@ -191,6 +189,20 @@
           </div>
         </div>
       </a>
+      <!--Draggable element for mobile drag-selection-->
+      <div
+        (touchstart)="startDrag()"
+        (touchend)="dragClick($event)"
+        (cdkDragEnded)="endDrag($event)"
+        (cdkDragMoved)="duringDrag($event)"
+        class="diamond-mobile-drag-grab"
+        [ngClass]="{
+          'own-post':
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser.PublicKeyBase58Check
+        }"
+        id="diamond-mobile-drag-grab"
+        cdkDrag
+      ></div>
     </div>
     <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
   </div>

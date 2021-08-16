@@ -2553,10 +2553,35 @@ input {
       }
     }
 
+    &.own-post {
+      .reaction-box{
+        display: none !important;
+      }
+    }
+
+    // We want to disable phone-sized devices from showing the selector on hover.
+    // Rather than duplicating the block above, just add this check instead.
+    @media(max-width: 600px) {
+      &.dragged-like {
+        .reaction-box {
+          display: block;
+        }
+      }
+    }
+    @media(min-width: 601px) {
+      &:hover {
+        .reaction-box {
+          display: block;
+        }
+      }
+    }
+
     // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
     &.dragged-like,&:hover {
+
+      // Show the reaction box
       .reaction-box {
-        display: block;
+        //display: block;
 
         .reaction-icon {
 
@@ -2565,20 +2590,22 @@ input {
             opacity: 1;
             transform: translate(0, 0) scale(1);
           }
-
+          // Show the reaction icon once it gets the "show" class (this is triggered by a timer in JS to achieve the animation)
           &.show {
             opacity: 1;
             transform: translate(0, 0) scale(1);
           }
 
+          // For those elements we want to grow, scale them up when they're hovered
           &.transformable{
-            // Prevent hover effects on mobile
+            // Prevent hover effects on mobile, we use the drag interface for that
             @media (pointer: fine) {
               &.dragged-icon,&:hover {
                 transform: scale(1.3);
                 transform-origin: bottom;
               }
             }
+            // Scale up icons on mobile when they're dragged across
             @media (pointer: coarse) {
               &.dragged-icon {
                 transform: scale(1.3);
@@ -2626,7 +2653,7 @@ input {
     top: 45px;
     left: 0;
     right: 0;
-    background: var(--background);
+    background: var(--norm);
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s linear 300ms, opacity 300ms, background-color 300ms ease;
@@ -2643,7 +2670,7 @@ input {
       text-align: center;
       position: relative;;
       display: table-cell;
-      color: var(--text)
+      color: var(--secalt)
     }
   }
 
@@ -2652,10 +2679,24 @@ input {
     height: 45px;
     width: 45px;
     position: absolute;
-    top: 40px;
     z-index: 1;
     background: transparent;
     pointer-events: all;
+  }
+}
+
+.own-post {
+  &.diamond-mobile-drag-grab {
+    display: none;
+  }
+  &.diamond-mobile-drag-container {
+    display: none;
+    .diamond-mobile-drag-instructions {
+      display: none;
+      .p {
+        display: none;
+      }
+    }
   }
 }
 
