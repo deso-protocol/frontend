@@ -2590,9 +2590,9 @@ input {
             transition: 0s opacity, 0s visibility;
             transition-delay: 0s;
           }
-          transition: .5s opacity, .5s visibility;
+          transition: .25s opacity, .25s visibility;
           // Delay appearance of pop up on mouse hover
-          transition-delay: .5s;
+          transition-delay: .25s;
         }
       }
     }
