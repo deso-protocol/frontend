@@ -2490,15 +2490,15 @@ input {
     &::before {
       content: "."; opacity: 0;
       display: block;
-      width: 340px;
+      width: 80px;
       // On desktop, move the diamond bar higher to prevent accidental clicking
       @media (max-width: 991.98px) {
         height: 10px;
-        left: -300px;
+        top: -5px; left: -20px;
       }
-      height: 35px;
+      height: 30px;
       position: absolute;
-      top: -30px; left: -125px;
+      top: -25px; left: -20px;
     }
 
     // Contains box which contains all of the selectable diamond levels
