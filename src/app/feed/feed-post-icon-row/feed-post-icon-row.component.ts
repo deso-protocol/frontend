@@ -515,6 +515,7 @@ export class FeedPostIconRowComponent {
   async onDiamondSelected(event: any, index: number): Promise<void> {
     if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
       this.globalVars._alertError("Must be logged in to send diamonds");
+      return;
     }
     // Disable diamond selection if diamonds are being sent
     if (this.sendingDiamonds) {
