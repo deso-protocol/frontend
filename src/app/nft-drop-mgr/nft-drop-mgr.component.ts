@@ -1,15 +1,21 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "nft-drop-mgr",
   templateUrl: "./nft-drop-mgr.component.html",
 })
 export class NftDropMgrComponent implements OnInit {
+  showcaseManagement = "Manage Showcase";
+  showcasePreview = "Showcase Preview";
+
+  @Input() activeTab = this.showcaseManagement;
+
   globalVars: GlobalVarsService;
 
   loading: boolean = false;
@@ -47,8 +53,23 @@ export class NftDropMgrComponent implements OnInit {
 
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  adminNFTTabs = [this.showcaseManagement, this.showcasePreview];
+  switchingTabs = false;
+
+  constructor(
+    private _globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.globalVars = _globalVars;
+  }
+
+  _handleTabClick(tab: string) {
+    this.activeTab = tab;
+    if (this.activeTab === this.showcaseManagement) {
+      this.datasource = this.infiniteScroller.getDatasource();
+    }
   }
 
   ngOnInit(): void {

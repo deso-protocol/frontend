@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { BackendApiService, NFTCollectionResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
@@ -10,6 +10,8 @@ import { uniqBy } from "lodash";
   templateUrl: "./nft-showcase.component.html",
 })
 export class NftShowcaseComponent implements OnInit {
+  @Input() showcaseIdx: number;
+
   globalVars: GlobalVarsService;
   loading: boolean = false;
   nftCollections: NFTCollectionResponse[];
@@ -33,8 +35,7 @@ export class NftShowcaseComponent implements OnInit {
     this.globalVars = _globalVars;
   }
 
-  ngOnInit(): void {
-    this.loading = true;
+  getCurrentShowcase() {
     this.backendApi
       .GetNFTShowcase(
         this.globalVars.localNode,
@@ -60,6 +61,50 @@ export class NftShowcaseComponent implements OnInit {
       .add(() => {
         this.loading = false;
       });
+  }
+
+  getShowcaseByIdx(dropIdx) {
+    this.backendApi
+      .GetNFTShowcaseAdminPreview(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        dropIdx
+      )
+      .subscribe(
+        (res: any) => {
+          this.nftCollections = res.NFTCollections;
+          if (this.nftCollections) {
+            this.nftCollections.sort((a, b) => b.HighestBidAmountNanos - a.HighestBidAmountNanos);
+          }
+          this.lastPage = Math.floor(this.nftCollections.length / NftShowcaseComponent.PAGE_SIZE);
+        },
+        (error) => {
+          this.globalVars._alertError(error.error.error);
+        }
+      )
+      .add(() => {
+        this.loading = false;
+      });
+  }
+
+  refreshPage(): void {
+    this.loading = true;
+    if (this.showcaseIdx === undefined) {
+      this.getCurrentShowcase();
+    } else {
+      this.getShowcaseByIdx(this.showcaseIdx);
+    }
+  }
+
+  ngOnInit(): void {
+    this.refreshPage();
+  }
+
+  ngOnChanges(changes: any): void {
+    if (changes.showcaseIdx && changes.showcaseIdx !== this.showcaseIdx) {
+      this.refreshPage();
+    }
   }
 
   getPage(page: number) {

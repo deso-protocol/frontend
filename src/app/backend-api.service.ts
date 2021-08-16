@@ -85,6 +85,7 @@ export class BackendRoutes {
   static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
   static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
   static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
+  static RoutePathGetNFTShowcasePreview = "/api/v0/admin/get-nft-showcase-preview";
   static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
   static RoutePathSetUSDCentsToBitCloutReserveExchangeRate =
     "/api/v0/admin/set-usd-cents-to-bitclout-reserve-exchange-rate";
@@ -911,6 +912,20 @@ export class BackendApiService {
       ReaderPublicKeyBase58Check,
     });
   }
+
+  GetNFTShowcaseAdminPreview(
+    endpoint: string,
+    AdminPublicKey: string,
+    ReaderPublicKeyBase58Check: string,
+    DropIdx: number
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetNFTShowcasePreview, AdminPublicKey, {
+      AdminPublicKey,
+      ReaderPublicKeyBase58Check,
+      DropIdx,
+    });
+  }
+
 
   GetNextNFTShowcase(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNextNFTShowcase, {
