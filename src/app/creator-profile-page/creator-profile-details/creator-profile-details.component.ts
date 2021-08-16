@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
@@ -12,7 +12,7 @@ import { Title } from "@angular/platform-browser";
   templateUrl: "./creator-profile-details.component.html",
   styleUrls: ["./creator-profile-details.component.scss"],
 })
-export class CreatorProfileDetailsComponent {
+export class CreatorProfileDetailsComponent implements OnInit {
   @ViewChild(CreatorProfileTopCardComponent, { static: false }) childTopCardComponent;
 
   static TABS = {
@@ -21,11 +21,13 @@ export class CreatorProfileDetailsComponent {
     "creator-coin": "Creator Coin",
     "coin-purchasers": "Creator Coin",
     diamonds: "Diamonds",
+    nfts: "NFTs",
   };
   static TABS_LOOKUP = {
     Posts: "posts",
     "Creator Coin": "creator-coin",
     Diamonds: "diamonds",
+    NFTs: "nfts",
   };
   appData: GlobalVarsService;
   userName: string;

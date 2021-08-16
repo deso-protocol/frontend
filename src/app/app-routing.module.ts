@@ -24,9 +24,9 @@ import { GetStarterBitcloutPageComponent } from "./get-starter-bitclout-page/get
 import { WalletComponent } from "./wallet/wallet.component";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
-import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamond-posts.component";
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
+import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 
 class RouteNames {
@@ -66,7 +66,8 @@ class RouteNames {
   public static LANDING = "/";
   public static DIAMONDS = "diamonds";
   public static TRENDS = "trends";
-  public static VERIFY_EMAIL = "verify-email"
+  public static NFT = "nft";
+  public static VERIFY_EMAIL = "verify-email";
 }
 
 const routes: Routes = [
@@ -87,6 +88,7 @@ const routes: Routes = [
   // if CREATOR_POST is second, then it's route (/posts/new/) will get matched to POSTS instead
   { path: RouteNames.CREATE_POST, component: CreatePostPageComponent, pathMatch: "full" },
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
+  { path: RouteNames.NFT + "/:postHashHex", component: NftPostPageComponent, pathMatch: "full" },
   { path: RouteNames.SEND_BITCLOUT, component: TransferBitcloutPageComponent, pathMatch: "full" },
   { path: RouteNames.TOS, component: TosPageComponent, pathMatch: "full" },
   { path: "tos", component: TosPageComponent, pathMatch: "full" },

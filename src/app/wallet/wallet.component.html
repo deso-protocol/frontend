@@ -14,7 +14,7 @@
 
   <div class="d-flex flex-column" *ngIf="globalVars.loggedInUser">
     <div style="flex-grow: 1">
-      <div class="global__mobile-scrollable-section">
+      <div class="global__mobile-scrollable-section disable-scrollbars">
         <!-- $CLOUT Divider Bar -->
         <div
           class="d-flex align-items-center justify-content-between fs-18px font-weight-bold p-15px holdings__divider border-bottom border-color-grey"
@@ -53,6 +53,7 @@
                 ></i>
               </div>
               <div class="fc-muted">≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }} USD</div>
+              <div *ngIf="!globalVars.loggedInUser?.JumioVerified"><jumio-status></jumio-status></div>
             </div>
           </div>
           <div class="row pt-15px pb-15px">

@@ -1,0 +1,21 @@
+<div app-theme class="nft-modal-container p-15px">
+  <nft-modal-header [header]="'Close auction'" [bsModalRef]="bsModalRef"></nft-modal-header>
+
+  <div class="py-15px fs-15px">
+    You are going to close your auction. It will cancel all bids on your NFT and prevent new bids from being submitted.
+  </div>
+  <div class="d-flex align-items-center py-15px">
+    <button
+      class="btn btn-danger fs-15px br-12px"
+      style="height: 36px; width: 190px; line-height: 15px"
+      (click)="closeAuction()"
+      [disabled]="closingAuction"
+    >
+      {{ closingAuction ? "Closing auctions" : "Close my auctions" }}
+    </button>
+    <div *ngIf="closingAuction" class="pl-15px fs-15px">
+      {{ auctionCounter }} of {{ auctionTotal }} closed
+    </div>
+  </div>
+
+</div>

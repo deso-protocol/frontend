@@ -48,6 +48,25 @@
         [buttonLabel]="'Buy $CLOUT'"
       ></left-bar-button>
 
+      <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeCLOUTFlow()">
+        <a class="left-bar__dot-inactive">·</a>
+        <a class="cursor-pointer fs-15px text-grey5">Get Free $CLOUT</a>
+      </div>
+
+      <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
+      <left-bar-button
+        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
+        [queryParams]="{ 'nftTab': 'my_bids', 'tab': 'nfts' }"
+        [buttonLabel]="'My NFT Bids'"
+        *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
+      ></left-bar-button>
+      <left-bar-button
+        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
+        [queryParams]="{ 'nftTab': 'my_gallery', 'tab': 'nfts' }"
+        [buttonLabel]="'My NFT Gallery'"
+        *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
+      ></left-bar-button>
+
       <div class="p-15px"></div>
 
       <left-bar-button
@@ -67,6 +86,7 @@
       <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse?.Username; else elseBlock">
         <left-bar-button
           [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
+          [queryParams]="{ 'tab':'posts' }"
           [buttonLabel]="'Profile'"
         ></left-bar-button>
       </div>
