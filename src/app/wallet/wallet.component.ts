@@ -1,9 +1,9 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {GlobalVarsService} from "../global-vars.service";
-import {AppRoutingModule, RouteNames} from "../app-routing.module";
-import {BackendApiService, BalanceEntryResponse, TutorialStatus} from "../backend-api.service";
-import {Title} from "@angular/platform-browser";
-import {ActivatedRoute, Router} from "@angular/router";
+import { Component, Input, OnInit } from "@angular/core";
+import { GlobalVarsService } from "../global-vars.service";
+import { AppRoutingModule, RouteNames } from "../app-routing.module";
+import { BackendApiService, BalanceEntryResponse, TutorialStatus } from "../backend-api.service";
+import { Title } from "@angular/platform-browser";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "wallet",
@@ -46,6 +46,9 @@ export class WalletComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.inTutorial) {
+      this.tabs = [WalletComponent.coinsPurchasedTab];
+    }
     this.globalVars.loggedInUser.UsersYouHODL.map((balanceEntryResponse: BalanceEntryResponse) => {
       if (balanceEntryResponse.NetBalanceInMempool != 0) {
         this.hasUnminedCreatorCoins = true;
@@ -196,16 +199,22 @@ export class WalletComponent implements OnInit {
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, this.tutorialUsername]);
     } else if (tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
       // TODO: go to diamonds first
-      this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]);
+      this.router.navigate([
+        RouteNames.TUTORIAL,
+        RouteNames.INVEST,
+        RouteNames.BUY_CREATOR,
+        this.globalVars.loggedInUser?.ProfileEntryResponse?.Username,
+      ]);
     } else if (tutorialStatus === TutorialStatus.INVEST_SELF) {
       // this.globalVars.TutorialStatus = TutorialStatus.COMPLETE;
-      this.backendApi
-        .CompleteTutorial(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-        .subscribe(() => {
-          // We don't really need an update everything call here. Next time they refresh the page, the status should be correct.
-          this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.COMPLETE;
-          this.router.navigate([RouteNames.BROWSE]);
-        });
+      this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]);
+      // this.backendApi
+      //   .CompleteTutorial(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      //   .subscribe(() => {
+      //     // We don't really need an update everything call here. Next time they refresh the page, the status should be correct.
+      //     this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.COMPLETE;
+      //     this.router.navigate([RouteNames.BROWSE]);
+      //   });
     }
   }
 }

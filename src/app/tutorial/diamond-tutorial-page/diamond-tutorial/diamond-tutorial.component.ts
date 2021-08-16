@@ -45,11 +45,7 @@ export class DiamondTutorialComponent implements OnInit {
 
   onDiamondSent(): void {
     // this.globalVars.TutorialStatus = TutorialStatus.DIAMOND;
-    this.router.navigate([
-      RouteNames.TUTORIAL,
-      RouteNames.INVEST,
-      RouteNames.BUY_CREATOR,
-      this.globalVars.loggedInUser.ProfileEntryResponse?.Username,
-    ]);
+    // TODO: navigate to create post tutorial page
+    this.router.navigate([RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST]);
   }
 }

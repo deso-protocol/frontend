@@ -65,7 +65,6 @@ export class TradeCreatorComponent implements OnInit {
       // TODO: instead of immediately navigating, let's open a SweetAlert and have user click OK.
       // TODO: make sure user's holdings are refreshed before page load
       // How do we want to differentiate buy vs. sell ?
-      console.log("IN TUTORIAL!");
       console.log(this.globalVars.loggedInUser.TutorialStatus);
       if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
         // this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_BUY;
@@ -81,7 +80,7 @@ export class TradeCreatorComponent implements OnInit {
           RouteNames.WALLET,
           this.globalVars.loggedInUser?.CreatorPurchasedInTutorialUsername,
         ]);
-      } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.DIAMOND) {
+      } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
         // this.globalVars.TutorialStatus = TutorialStatus.INVEST_SELF;
         this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
       }
@@ -206,7 +205,7 @@ export class TradeCreatorComponent implements OnInit {
 
   setUpBuyTutorial(): void {
     let balance = this.appData.loggedInUser?.BalanceNanos;
-    balance = balance > this.appData.jumioBitCloutNanos ? this.appData.jumioBitCloutNanos : balance;
+    balance = balance > this.appData.jumioBitCloutNanos ? 1e8 : balance;
     const percentToBuy =
       this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check ? 0.1 : 0.5;
     this.creatorCoinTrade.bitCloutToSell = (balance * percentToBuy) / 1e9;

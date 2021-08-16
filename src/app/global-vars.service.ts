@@ -329,22 +329,21 @@ export class GlobalVarsService {
           break;
         }
         case TutorialStatus.INVEST_OTHERS_BUY: {
-          console.log(user);
           // TODO: replace with username purchased
           route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
-          // TODO: replace with username to sell
           route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
-          break;
-        }
-        case TutorialStatus.DIAMOND: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR, user.ProfileEntryResponse?.Username];
           break;
         }
         case TutorialStatus.INVEST_SELF: {
           route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          break;
+        }
+        case TutorialStatus.DIAMOND: {
+          // TODO: this should put them on the create post tutorial page
+          route = [RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST];
           break;
         }
       }

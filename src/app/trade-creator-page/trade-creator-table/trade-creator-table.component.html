@@ -50,10 +50,12 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">You're exchanging</span>
 
     <div class="d-inline-block">
-      {{ creatorCoinTrade.assetToSellAmount() | number: "0.0-9" }}
-      {{ creatorCoinTrade.assetToSellString() }}
+      <span *ngIf="!inTutorial || !creatorCoinTrade.isBuyingCreatorCoin">
+        {{ creatorCoinTrade.assetToSellAmount() | number: "0.0-9" }}
+        {{ creatorCoinTrade.assetToSellString() }}
+      </span>
 
-      <span *ngIf="creatorCoinTrade.isBuyingCreatorCoin" class="text-muted">
+      <span *ngIf="creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
         ≈ {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
         USD
       </span>
@@ -65,10 +67,12 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">You receive</span>
 
     <div class="d-inline-block">
-      {{ creatorCoinTrade.assetReturnedAmount() | number: "0.0-9" }}
-      {{ creatorCoinTrade.assetReturnedString() }}
+      <span *ngIf="!inTutorial || creatorCoinTrade.isBuyingCreatorCoin">
+        {{ creatorCoinTrade.assetReturnedAmount() | number: "0.0-9" }}
+        {{ creatorCoinTrade.assetReturnedString() }}
+      </span>
 
-      <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin">
+      <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
         ≈ {{ creatorCoinTrade.assetReturnedAmountInUsd() | currency }}
         USD
       </span>
@@ -83,10 +87,13 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Price per coin</span>
 
     <div class="d-inline-block">
-      ~{{ creatorCoinTrade.bitCloutPriceOfCreatorCoin().toFixed(4) }}
-      BitClout
+      <span *ngIf="!inTutorial">
+        ~{{ creatorCoinTrade.bitCloutPriceOfCreatorCoin().toFixed(4) }}
+        BitClout
+      </span>
 
-      <span class="text-muted">
+
+      <span [ngClass]="{ 'text-muted': !inTutorial }">
         ≈ {{ creatorCoinTrade.usdPriceOfCreatorCoin() | currency }}
         USD
       </span>

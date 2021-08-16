@@ -152,8 +152,8 @@ export enum TutorialStatus {
   CREATE_PROFILE = "TutorialCreateProfileComplete",
   INVEST_OTHERS_BUY = "InvestInOthersBuyComplete",
   INVEST_OTHERS_SELL = "InvestInOthersSellComplete",
-  DIAMOND = "GiveADiamondComplete",
   INVEST_SELF = "InvestInYourselfComplete",
+  DIAMOND = "GiveADiamondComplete",
   COMPLETE = "TutorialComplete",
 }
 
@@ -961,7 +961,8 @@ export class BackendApiService {
     PostExtraData: any,
     Sub: string,
     IsHidden: boolean,
-    MinFeeRateNanosPerKB: number
+    MinFeeRateNanosPerKB: number,
+    InTutorial: boolean = false
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathSubmitPost, {
       UpdaterPublicKeyBase58Check,
@@ -974,6 +975,7 @@ export class BackendApiService {
       Sub,
       IsHidden,
       MinFeeRateNanosPerKB,
+      InTutorial
     });
 
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
