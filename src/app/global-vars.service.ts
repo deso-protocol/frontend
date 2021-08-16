@@ -1,22 +1,28 @@
-import {Injectable} from "@angular/core";
-import {BackendApiService, BalanceEntryResponse, PostEntryResponse, TutorialStatus, User} from "./backend-api.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {RouteNames} from "./app-routing.module";
+import { Injectable } from "@angular/core";
+import {
+  BackendApiService,
+  BalanceEntryResponse,
+  PostEntryResponse,
+  TutorialStatus,
+  User,
+} from "./backend-api.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { RouteNames } from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
-import {Observable, Observer} from "rxjs";
-import {LoggedInUserObservableResult} from "../lib/observable-results/logged-in-user-observable-result";
-import {FollowChangeObservableResult} from "../lib/observable-results/follow-change-observable-result";
-import {SwalHelper} from "../lib/helpers/swal-helper";
-import {environment} from "../environments/environment";
-import {AmplitudeClient} from "amplitude-js";
-import {DomSanitizer} from "@angular/platform-browser";
-import {IdentityService} from "./identity.service";
-import {BithuntService, CommunityProject} from "../lib/services/bithunt/bithunt-service";
-import {LeaderboardResponse, PulseService} from "../lib/services/pulse/pulse-service";
-import {RightBarCreatorsLeaderboardComponent} from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
-import {HttpClient} from "@angular/common/http";
-import {FeedComponent} from "./feed/feed.component";
-import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
+import { Observable, Observer } from "rxjs";
+import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
+import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
+import { SwalHelper } from "../lib/helpers/swal-helper";
+import { environment } from "../environments/environment";
+import { AmplitudeClient } from "amplitude-js";
+import { DomSanitizer } from "@angular/platform-browser";
+import { IdentityService } from "./identity.service";
+import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
+import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
+import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import { HttpClient } from "@angular/common/http";
+import { FeedComponent } from "./feed/feed.component";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Timer = NodeJS.Timer;
 
 export enum ConfettiSvg {
@@ -287,9 +293,9 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
-    if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
-      this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
-    }
+    // if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
+    this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
+    // }
 
     if (!isSameUserAsBefore) {
       // Store the user in localStorage
@@ -323,13 +329,14 @@ export class GlobalVarsService {
           break;
         }
         case TutorialStatus.INVEST_OTHERS_BUY: {
+          console.log(user);
           // TODO: replace with username purchased
-          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
           // TODO: replace with username to sell
-          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
           break;
         }
         case TutorialStatus.DIAMOND: {
@@ -981,21 +988,61 @@ export class GlobalVarsService {
         .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
         .subscribe(
           (res: any) => {
-            if (res.JumioVerified) {
-              let user;
+            // TODO: revert to res.JumioVerified - just using this for testing.
+            if (!res.JumioVerified) {
+              let user: User;
               this.userList.forEach((userInList, idx) => {
                 if (userInList.PublicKeyBase58Check === publicKey) {
                   this.userList[idx].JumioVerified = res.JumioVerified;
                   this.userList[idx].JumioReturned = res.JumioReturned;
                   this.userList[idx].JumioFinishedTime = res.JumioFinishedTime;
-                  this.userList[idx].BalanceNanos = res.BalanceNanos;
+                  // TODO: uncomment this as it's only removed for testing purposes.
+                  // this.userList[idx].BalanceNanos = res.BalanceNanos;
                   user = this.userList[idx];
                 }
               });
+              // TODO: remove - this is just for testing;
+              if (user.TutorialStatus !== TutorialStatus.EMPTY) {
+                clearInterval(this.jumioInterval);
+                return;
+              }
               if (user) {
                 this.setLoggedInUser(user);
               }
               this.celebrate();
+              SwalHelper.fire({
+                target: this.getTargetComponentSelector(),
+                title: "Tutorial",
+                html: `Want to learn how BitClout works?`,
+                showConfirmButton: true,
+                showCancelButton: true,
+                customClass: {
+                  confirmButton: "btn btn-light",
+                  cancelButton: "btn btn-light no",
+                },
+                reverseButtons: true,
+                confirmButtonText: "Start",
+                cancelButtonText: "Skip",
+                // User must skip or start tutorial
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+              }).then((res) => {
+                this.backendApi
+                  .StartOrSkipTutorial(
+                    this.localNode,
+                    this.loggedInUser?.PublicKeyBase58Check,
+                    !res.isConfirmed /* if it's not confirmed, skip tutorial*/
+                  )
+                  .subscribe((response) => {
+                    if (res.isConfirmed) {
+                      this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
+                    }
+                    // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+                    this.loggedInUser.TutorialStatus = res.isConfirmed
+                      ? TutorialStatus.STARTED
+                      : TutorialStatus.SKIPPED;
+                  });
+              });
               clearInterval(this.jumioInterval);
             }
           },

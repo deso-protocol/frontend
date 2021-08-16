@@ -69,10 +69,18 @@ export class TradeCreatorComponent implements OnInit {
       console.log(this.globalVars.loggedInUser.TutorialStatus);
       if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
         // this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_BUY;
-        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
+        this.router.navigate([
+          RouteNames.TUTORIAL,
+          RouteNames.WALLET,
+          this.globalVars.loggedInUser?.CreatorPurchasedInTutorialUsername,
+        ]);
       } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
         // this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_SELL;
-        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
+        this.router.navigate([
+          RouteNames.TUTORIAL,
+          RouteNames.WALLET,
+          this.globalVars.loggedInUser?.CreatorPurchasedInTutorialUsername,
+        ]);
       } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.DIAMOND) {
         // this.globalVars.TutorialStatus = TutorialStatus.INVEST_SELF;
         this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);

@@ -187,6 +187,7 @@ export class User {
   IsSuperAdmin?: boolean;
 
   TutorialStatus: TutorialStatus;
+  CreatorPurchasedInTutorialUsername?: string;
 }
 
 export class PostEntryResponse {

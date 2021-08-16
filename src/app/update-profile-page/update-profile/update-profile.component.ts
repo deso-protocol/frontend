@@ -234,7 +234,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           },
           confirmButtonText: lowBalance ? "Buy $CLOUT" : null,
           cancelButtonText: lowBalance ? "Later" : null,
-          showCancelButton: lowBalance,
+          showCancelButton: !!lowBalance,
         }).then((res) => {
           if (lowBalance && res.isConfirmed) {
             this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });

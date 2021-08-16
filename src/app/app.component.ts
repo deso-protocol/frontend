@@ -1,12 +1,12 @@
-import {ChangeDetectorRef, Component, HostListener, OnInit} from "@angular/core";
-import {BackendApiService, TutorialStatus, User} from "./backend-api.service";
-import {GlobalVarsService} from "./global-vars.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {IdentityService} from "./identity.service";
+import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
+import { BackendApiService, TutorialStatus, User } from "./backend-api.service";
+import { GlobalVarsService } from "./global-vars.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
-import {environment} from "../environments/environment";
-import {ThemeService} from "./theme/theme.service";
-import {RouteNames} from "./app-routing.module";
+import { environment } from "../environments/environment";
+import { ThemeService } from "./theme/theme.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -106,7 +106,7 @@ export class AppComponent implements OnInit {
     const userCopy = JSON.parse(JSON.stringify(user));
   }
 
-  _updateTopLevelData(refreshAllUsers: boolean) {
+  _updateTopLevelData(refreshAllUsers: boolean): Subscription {
     if (this.callingUpdateTopLevelData) {
       return;
     }
@@ -130,9 +130,7 @@ export class AppComponent implements OnInit {
       publicKeys = [loggedInUserPublicKey];
     }
 
-    const observable = this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, false);
-
-    observable.subscribe(
+    return this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, false).subscribe(
       (res: any) => {
         this.problemWithNodeConnection = false;
         this.callingUpdateTopLevelData = false;
@@ -184,8 +182,6 @@ export class AppComponent implements OnInit {
         console.error(error);
       }
     );
-
-    return observable;
   }
 
   _updateBitCloutExchangeRate() {
@@ -231,7 +227,6 @@ export class AppComponent implements OnInit {
     errorCallback: (comp: any) => void = () => {},
     comp: any = ""
   ) => {
-    console.log("refresh all users: ", refreshAllUsers);
     // Refresh the messageMeta periodically.
     this.globalVars.messageMeta = this.backendApi.GetStorage(this.backendApi.MessageMetaKey);
     if (!this.globalVars.messageMeta) {
@@ -261,12 +256,14 @@ export class AppComponent implements OnInit {
                 return;
               }
 
-              this._updateTopLevelData(refreshAllUsers);
               this._updateBitCloutExchangeRate();
               this._updateAppState();
 
-              clearInterval(interval);
-              successCallback(comp);
+              this._updateTopLevelData(refreshAllUsers).add(() => {
+                // We make sure the logged in user is updated before the success callback triggers
+                successCallback(comp);
+                clearInterval(interval);
+              });
             },
             (error) => {
               clearInterval(interval);
