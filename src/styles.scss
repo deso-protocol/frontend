@@ -2685,6 +2685,21 @@ input {
   }
 }
 
+.own-post {
+  &.diamond-mobile-drag-grab {
+    display: none;
+  }
+  &.diamond-mobile-drag-container {
+    display: none;
+    .diamond-mobile-drag-instructions {
+      display: none;
+      .p {
+        display: none;
+      }
+    }
+  }
+}
+
 .follow-on-buy {
   *, *:after, *:before {box-sizing: border-box;}
 

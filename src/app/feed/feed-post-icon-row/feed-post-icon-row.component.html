@@ -104,7 +104,13 @@
   </ng-template>
   <div class="cursor-pointer d-flex align-items-center">
     <!--Container to hold the bounds for the mobile drag interface-->
-    <div class="diamond-mobile-drag-container unselectable">
+    <div
+      class="diamond-mobile-drag-container unselectable"
+      [ngClass]="{
+        'own-post':
+          postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser.PublicKeyBase58Check
+      }"
+    >
       <div
         [ngClass]="{ 'bg-danger': diamondDragCancel, show: diamondDragging }"
         class="diamond-mobile-drag-instructions"
@@ -190,6 +196,10 @@
         (cdkDragEnded)="endDrag($event)"
         (cdkDragMoved)="duringDrag($event)"
         class="diamond-mobile-drag-grab"
+        [ngClass]="{
+          'own-post':
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser.PublicKeyBase58Check
+        }"
         id="diamond-mobile-drag-grab"
         cdkDrag
       ></div>
