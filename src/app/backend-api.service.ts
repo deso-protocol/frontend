@@ -68,6 +68,7 @@ export class BackendRoutes {
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
+  static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -101,7 +102,6 @@ export class BackendRoutes {
   static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
   static RoutePathAdminUpdateJumioBitClout = "/api/v0/admin/update-jumio-bitclout";
   static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
-  static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
   // Wyre routes.
@@ -1857,10 +1857,10 @@ export class BackendApiService {
     });
   }
 
-  AdminGetTutorialCreators(endpoint: string, AdminPublicKey: string, ResponseLimit: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetTutorialCreators, AdminPublicKey, {
+  GetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetTutorialCreators, PublicKeyBase58Check, {
       ResponseLimit,
-      AdminPublicKey,
+      PublicKeyBase58Check,
     });
   }
 
