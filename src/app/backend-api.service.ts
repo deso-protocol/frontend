@@ -268,9 +268,6 @@ export class BalanceEntryResponse {
   NetBalanceInMempool: number;
 
   ProfileEntryResponse: ProfileEntryResponse;
-
-  // This is only set in the frontend by the wallet component to highlight the coins recently purchased in the tutorial.
-  // IsHighlightedInTutorial?: boolean;
 }
 
 export class NFTEntryResponse {

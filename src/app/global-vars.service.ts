@@ -342,7 +342,6 @@ export class GlobalVarsService {
           break;
         }
         case TutorialStatus.DIAMOND: {
-          // TODO: this should put them on the create post tutorial page
           route = [RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST];
           break;
         }

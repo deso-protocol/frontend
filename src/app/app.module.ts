@@ -140,18 +140,17 @@ import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
 import { CreateProfileTutorialPageComponent } from "./tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component";
 import { BuyCreatorCoinsTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial/buy-creator-coins-tutorial.component";
 import { BuyCreatorCoinsTutorialPageComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component";
+import { BuyCreatorCoinsConfirmTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
+import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
+import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
+import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
+import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
+import { DiamondTutorialComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
+import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
-import {BuyCreatorCoinsConfirmTutorialComponent} from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
-import {WalletPageComponent} from "./wallet/wallet-page/wallet-page.component";
-import {WalletTutorialPageComponent} from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
-import {SellCreatorCoinsTutorialPageComponent} from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial-page.component";
-import {SellCreatorCoinsTutorialComponent} from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
-import {DiamondTutorialPageComponent} from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
-import {DiamondTutorialComponent} from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
-import {CreatePostTutorialPageComponent} from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -281,7 +280,6 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     BuyCreatorCoinsTutorialPageComponent,
     WalletPageComponent,
     WalletTutorialPageComponent,
-    SellCreatorCoinsTutorialPageComponent,
     SellCreatorCoinsTutorialComponent,
     DiamondTutorialPageComponent,
     DiamondTutorialComponent,

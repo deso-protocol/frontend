@@ -199,7 +199,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       (res) => {
         this.globalVars.profileUpdateTimestamp = Date.now();
         this.globalVars.logEvent("profile : update");
-        // if (!this.inTutorial) {
         // This updates things like the username that shows up in the dropdown.
         this.globalVars.updateEverything(
           false,
@@ -208,13 +207,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           this._updateProfileFailure,
           this
         );
-        // } else {
-        //   // Navigate to next page in tutorial - Invest in Others
-        //   this.globalVars.TutorialStatus = TutorialStatus.CREATE_PROFILE;
-        //   this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR], {
-        //     queryParamsHandling: "merge",
-        //   });
-        // }
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);
