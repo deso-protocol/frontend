@@ -70,6 +70,7 @@ export class BackendRoutes {
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
+  static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -102,6 +103,7 @@ export class BackendRoutes {
   static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
   static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
   static RoutePathAdminUpdateJumioBitClout = "/api/v0/admin/update-jumio-bitclout";
+  static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
   static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
@@ -180,6 +182,9 @@ export class User {
   JumioVerified: boolean;
   JumioReturned: boolean;
   JumioFinishedTime: number;
+
+  IsFeaturedTutorialWellKnownCreator: boolean;
+  IsFeaturedTutorialUpAndComingCreator: boolean;
 
   BlockedPubKeys: { [key: string]: object };
 
@@ -1863,10 +1868,31 @@ export class BackendApiService {
     });
   }
 
+  AdminUpdateTutorialCreators(
+    endpoint: string,
+    AdminPublicKey: string,
+    PublicKeyBase58Check: string,
+    IsRemoval: boolean,
+    IsWellKnown: boolean
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateTutorialCreators, AdminPublicKey, {
+      PublicKeyBase58Check,
+      IsRemoval,
+      IsWellKnown,
+      AdminPublicKey,
+    });
+  }    
   AdminResetTutorialStatus(endpoint: string, AdminPublicKey: string, PublicKeyBase58Check: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetTutorialStatus, AdminPublicKey, {
       PublicKeyBase58Check,
       AdminPublicKey,
+    });
+  }
+
+  GetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetTutorialCreators, PublicKeyBase58Check, {
+      ResponseLimit,
+      PublicKeyBase58Check,
     });
   }
 
