@@ -151,6 +151,7 @@ import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -287,6 +288,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
   ],
   imports: [
     BrowserModule,
+    DragDropModule,
     AppRoutingModule,
     FormsModule,
     MatSelectModule,

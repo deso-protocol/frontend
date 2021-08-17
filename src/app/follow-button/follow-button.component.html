@@ -1,22 +1,26 @@
 <div *ngIf="canLoggedInUserFollowTargetPublicKey()">
   <div *ngIf="displayAsLink; else displayAsLinkElseBlock">
-    <!-- Display as link-->
-
-    <div *ngIf="createFollowTxnBeingCalled; else beingCalledElseBlock">
-      <!-- Loading-->
-      <div class="spinner-border text-secondary" role="status">
-        <span class="sr-only">Loading...</span>
+    <div [ngClass]="creatorCoinTemplate ? 'my-2' : ''">
+      <div class="mobile-creator-coin-info mr-2" *ngIf="creatorCoinTemplate">
+        <ng-container *ngTemplateOutlet="creatorCoinTemplate"></ng-container>
       </div>
-    </div>
-    <ng-template #beingCalledElseBlock>
-      <!-- Actual link-->
-      <div *ngIf="isFollowing; else isFollowingElseBlock">
-        <a class="" [ngClass]="followLinkClass" (click)="unfollow($event)">Unfollow</a>
+      <div [ngClass]="creatorCoinTemplate ? 'd-inline-block' : ''" *ngIf="createFollowTxnBeingCalled; else beingCalledElseBlock">
+        <!-- Loading-->
+        <div class="spinner-border text-secondary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
       </div>
-      <ng-template #isFollowingElseBlock>
-        <a class="" [ngClass]="followLinkClass" (click)="follow($event)">Follow</a>
+      <ng-template #beingCalledElseBlock>
+        <!-- Actual link-->
+        <div [ngClass]="creatorCoinTemplate ? 'd-inline-block' : ''" *ngIf="isFollowing; else isFollowingElseBlock">
+          <a class="" [ngClass]="followLinkClass" (click)="unfollow($event)">Unfollow</a>
+        </div>
+        <ng-template #isFollowingElseBlock>
+          <a class="" [ngClass]="followLinkClass" (click)="follow($event)">Follow</a>
+        </ng-template>
       </ng-template>
-    </ng-template>
+    </div>
+    <!-- Display as link-->
   </div>
   <ng-template #displayAsLinkElseBlock>
     <!-- Display as button -->
