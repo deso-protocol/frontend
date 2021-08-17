@@ -1,50 +1,65 @@
 <div class="flex-grow-1">
-  <!--Header Mobile-->
   <div
-    class="d-lg-none fixed-top-bar global__top-bar__height d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey"
+    class="d-flex align-items-center justify-content-between w-100 pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+    style="min-height: 80px; background-color: var(--secalt)"
   >
-    <div class="d-flex align-items-center">
-      Choose a Creator to Invest In:
-    </div>
-  </div>
-
-  <!--Header Desktop-->
-  <div class="d-none d-lg-block w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey">
-    <div class="d-flex align-items-center justify-content-between">
-      <div class="d-flex align-items-center">Choose a Creator to Invest In:</div>
+    <div class="d-flex flex-column justify-flex-start">
+      <div class="pt-15px d-flex align-items-center font-weight-bold fs-18px">
+        <p *ngIf="!investInYourself">Invest in a Creator</p>
+        <p *ngIf="investInYourself">Invest In Yourself</p>
+      </div>
+      <div class="fs-14px py-15px pr-15px">
+        <p *ngIf="!investInYourself">
+          You can invest directly in your favorite creator's by buying their coin.
+          Click "Buy" next to one of the creators below to invest in them.
+        </p>
+        <p *ngIf="investInYourself">
+          Even you have a creator coin! Click "Buy" next to your name to invest in yourself.
+        </p>
+      </div>
     </div>
   </div>
 
   <div>
-    <div class="d-lg-none global__top-bar__height"></div>
-    <div
-      class="row no-gutters px-15px border-bottom background-color-light-grey py-15px pl-15px"
-      style="margin-left: 0; margin-right: 0"
-    >
-      <div class="text-grey5 fs-18px font">All creators have a coin. Buy your favorites and get on their team!</div>
-    </div>
+<!--    <div-->
+<!--      class="row no-gutters px-15px border-bottom background-color-light-grey py-15px pl-15px"-->
+<!--      style="margin-left: 0; margin-right: 0"-->
+<!--    >-->
+<!--      <div class="text-grey5 fs-18px font">All creators have a coin. Buy your favorites and get on their team!</div>-->
+<!--    </div>-->
 
-    <div>
-      <div class="fs-18px p-15px">Top Creators:</div>
-      <div *ngFor="let profile of topCreatorsToHighlight">
-        <simple-profile-card
-          [profile]="profile"
-          [showTutorialBuy]="true"
-          [inTutorial]="true"
-        ></simple-profile-card>
+    <div *ngIf="!investInYourself">
+      <div>
+        <div class="fs-18px p-10px font-weight-semibold">Top Creators:</div>
+        <div *ngFor="let profile of topCreatorsToHighlight">
+          <simple-profile-card
+            [profile]="profile"
+            [showTutorialBuy]="true"
+            [inTutorial]="true"
+          ></simple-profile-card>
+        </div>
+      </div>
+
+      <div>
+        <div class="fs-18px p-10px font-weight-semibold">Up-And-Coming Creators:</div>
+        <div *ngFor="let profile of upAndComingCreatorsToHighlight">
+          <simple-profile-card
+            [profile]="profile"
+            [showTutorialBuy]="true"
+            [inTutorial]="true"
+          ></simple-profile-card>
+        </div>
       </div>
     </div>
 
-    <div>
-      <div class="fs-18px p-15px">Up-And-Coming Creators:</div>
-      <div *ngFor="let profile of upAndComingCreatorsToHighlight">
-        <simple-profile-card
-          [profile]="profile"
-          [showTutorialBuy]="true"
-          [inTutorial]="true"
-        ></simple-profile-card>
-      </div>
+    <div *ngIf="investInYourself" class="p-15px">
+      <simple-profile-card
+        [profile]="loggedInUserProfile"
+        [showTutorialBuy]="true"
+        [inTutorial]="true"
+      ></simple-profile-card>
     </div>
+
 
     <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
     <div class="global__bottom-bar-mobile-height"></div>

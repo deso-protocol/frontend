@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Observable, Subscription } from "rxjs";
+import {SwalHelper} from "../../../lib/helpers/swal-helper";
 
 @Component({
   selector: "trade-creator",
@@ -44,6 +45,9 @@ export class TradeCreatorComponent implements OnInit {
   creatorCoinToSell: number;
   expectedBitCloutReturnedNanos: number;
 
+  // show different header text if we're at the "Invest In Yourself" stage of the tutorial
+  investInYourself: boolean = false;
+
   _onSlippageError() {
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
     this.creatorCoinTrade.showSlippageError = true;
@@ -62,43 +66,20 @@ export class TradeCreatorComponent implements OnInit {
     if (!this.inTutorial) {
       this.screenToShow = this.TRADE_CREATOR_COMPLETE_SCREEN;
     } else {
-      // TODO: instead of immediately navigating, let's open a SweetAlert and have user click OK.
-      // TODO: make sure user's holdings are refreshed before page load
-      // How do we want to differentiate buy vs. sell ?
-      console.log(this.globalVars.loggedInUser.TutorialStatus);
-      if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
-        // this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_BUY;
-        this.router.navigate([
-          RouteNames.TUTORIAL,
-          RouteNames.WALLET,
-          this.globalVars.loggedInUser?.CreatorPurchasedInTutorialUsername,
-        ]);
-      } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
-        // this.globalVars.TutorialStatus = TutorialStatus.INVEST_OTHERS_SELL;
+      if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
         this.router.navigate([
           RouteNames.TUTORIAL,
           RouteNames.WALLET,
           this.globalVars.loggedInUser?.CreatorPurchasedInTutorialUsername,
         ]);
       } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
-        // this.globalVars.TutorialStatus = TutorialStatus.INVEST_SELF;
-        // TODO: add swal or another way to tell user we are lowering FR to 10%
-        this.backendApi
-          .UpdateProfile(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            "",
-            "",
-            "",
-            "",
-            10 * 100,
-            1.25 * 100 * 100,
-            false,
-            this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
-          )
-          .subscribe((res) => {
-            this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
-          });
+        this.router.navigate([
+          RouteNames.TUTORIAL,
+          RouteNames.WALLET,
+          this.globalVars.loggedInUser?.CreatorPurchasedInTutorialUsername,
+        ]);
+      } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_SELF) {
+        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
       }
     }
   }
@@ -208,8 +189,10 @@ export class TradeCreatorComponent implements OnInit {
       this.screenToShow = this.TRADE_CREATOR_PREVIEW_SCREEN;
       this.creatorCoinTrade.isBuyingCreatorCoin = !!this.tutorialBuy;
       this.creatorCoinTrade.tradeType = !!this.tutorialBuy ? CreatorCoinTrade.BUY_VERB : CreatorCoinTrade.SELL_VERB;
-
       this._getCreatorProfile(this.route.snapshot.params.username).add(() => {
+        this.investInYourself =
+          this.globalVars.loggedInUser?.ProfileEntryResponse?.Username ===
+          this.creatorCoinTrade.creatorProfile.Username;
         if (this.creatorCoinTrade.isBuyingCreatorCoin) {
           this.setUpBuyTutorial();
         } else {

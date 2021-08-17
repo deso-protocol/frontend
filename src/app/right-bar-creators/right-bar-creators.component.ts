@@ -82,7 +82,7 @@ export class RightBarCreatorsComponent implements OnInit {
     this.backendApi
       .StartOrSkipTutorial(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, false)
       .subscribe(() => {
-        this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
+        this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
       });
   }
 

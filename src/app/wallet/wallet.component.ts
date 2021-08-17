@@ -1,15 +1,24 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule, RouteNames } from "../app-routing.module";
 import { BackendApiService, BalanceEntryResponse, TutorialStatus } from "../backend-api.service";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
+import { InfiniteScroller } from "../infinite-scroller";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Subscription } from "rxjs";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
 
 @Component({
   selector: "wallet",
   templateUrl: "./wallet.component.html",
 })
-export class WalletComponent implements OnInit {
+export class WalletComponent implements OnInit, OnDestroy {
+  static PAGE_SIZE = 1;
+  static BUFFER_SIZE = 1;
+  static WINDOW_VIEWPORT = true;
+  static PADDING = 0.01;
+
   @Input() inTutorial: boolean;
 
   globalVars: GlobalVarsService;
@@ -29,6 +38,11 @@ export class WalletComponent implements OnInit {
   tabs = [WalletComponent.coinsPurchasedTab, WalletComponent.coinsReceivedTab];
   activeTab: string = WalletComponent.coinsPurchasedTab;
   tutorialUsername: string;
+  tutorialStatus: TutorialStatus;
+  TutorialStatus = TutorialStatus;
+  balanceEntryToHighlight: BalanceEntryResponse;
+
+  nextButtonText: string;
 
   constructor(
     private appData: GlobalVarsService,
@@ -40,14 +54,74 @@ export class WalletComponent implements OnInit {
     this.globalVars = appData;
     this.route.params.subscribe((params) => {
       if (params.username) {
-        this.tutorialUsername = params.username;
+        this.tutorialUsername = params.username.toLowerCase();
       }
     });
   }
 
+  subscriptions = new Subscription();
+
   ngOnInit() {
     if (this.inTutorial) {
       this.tabs = [WalletComponent.coinsPurchasedTab];
+      this.tutorialStatus = this.globalVars.loggedInUser?.TutorialStatus;
+      this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
+        return balanceEntry.ProfileEntryResponse.Username.toLowerCase() === this.tutorialUsername;
+      });
+      switch (this.tutorialStatus) {
+        case TutorialStatus.INVEST_OTHERS_BUY: {
+          this.nextButtonText = `Sell ${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins`;
+          break;
+        }
+        case TutorialStatus.INVEST_OTHERS_SELL: {
+          this.nextButtonText = "Setup your profile";
+          break;
+        }
+        case TutorialStatus.INVEST_SELF: {
+          SwalHelper.fire({
+            target: this.globalVars.getTargetComponentSelector(),
+            icon: "info",
+            title: `Allow others to invest in your coin`,
+            html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase.`,
+            showCancelButton: true,
+            showConfirmButton: true,
+            focusConfirm: true,
+            customClass: {
+              confirmButton: "btn btn-light",
+              cancelButton: "btn btn-light no",
+            },
+            confirmButtonText: "Ok",
+            cancelButtonText: "Cancel",
+            reverseButtons: true,
+          }).then((res: any) => {
+            if (res.isConfirmed) {
+              return this.backendApi
+                .UpdateProfile(
+                  this.globalVars.localNode,
+                  this.globalVars.loggedInUser.PublicKeyBase58Check,
+                  "",
+                  "",
+                  "",
+                  "",
+                  10 * 100,
+                  1.25 * 100 * 100,
+                  false,
+                  this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+                )
+                .subscribe(
+                  (res) => {
+                    // Don't really need to do anything do we?
+                  },
+                  (err) => {
+                    console.error(err);
+                  }
+                );
+            }
+          });
+          this.nextButtonText = "Give a diamond";
+          break;
+        }
+      }
     }
     this.globalVars.loggedInUser.UsersYouHODL.map((balanceEntryResponse: BalanceEntryResponse) => {
       if (balanceEntryResponse.NetBalanceInMempool != 0) {
@@ -64,7 +138,30 @@ export class WalletComponent implements OnInit {
       }
     });
     this.sortWallet("value");
+    this._handleTabClick(WalletComponent.coinsPurchasedTab);
+    this.subscriptions.add(
+      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
+        // Last Item of myItems is Visible => data-padding-forward should be zero.
+        if (
+          lastVisible.$index ===
+          (this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased).length - 1
+        ) {
+          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+        }
+      })
+    );
     this.titleService.setTitle("Wallet - BitClout");
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  correctDataPaddingForwardElementHeight(viewportElement: HTMLElement): void {
+    const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-forward]`);
+    if (dataPaddingForwardElement) {
+      dataPaddingForwardElement.setAttribute("style", "height: 0px;");
+    }
   }
 
   // sort by USD value
@@ -89,14 +186,7 @@ export class WalletComponent implements OnInit {
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
         this.sortedPriceFromHighToLow *
-        (this.globalVars.bitcloutNanosYouWouldGetIfYouSold(
-          a.ProfileEntryResponse.CoinPriceBitCloutNanos,
-          a.ProfileEntryResponse.CoinEntry
-        ) -
-          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(
-            b.ProfileEntryResponse.CoinPriceBitCloutNanos,
-            b.ProfileEntryResponse.CoinEntry
-          ))
+        (a.ProfileEntryResponse.CoinEntry.BitCloutLockedNanos - b.ProfileEntryResponse.CoinEntry.BitCloutLockedNanos)
       );
     });
   }
@@ -119,23 +209,24 @@ export class WalletComponent implements OnInit {
     switch (column) {
       case "username":
         // code block
-        descending = this.sortedUsernameFromHighToLow === -1 ? false : true;
+        descending = this.sortedUsernameFromHighToLow !== -1;
         this.sortHodlingsUsername(this.usersYouPurchased, descending);
         this.sortHodlingsUsername(this.usersYouReceived, descending);
         break;
       case "price":
-        descending = this.sortedPriceFromHighToLow === -1 ? false : true;
+        descending = this.sortedPriceFromHighToLow !== -1;
         this.sortHodlingsPrice(this.usersYouPurchased, descending);
         this.sortHodlingsPrice(this.usersYouReceived, descending);
         break;
       case "value":
-        descending = this.sortedUSDValueFromHighToLow === -1 ? false : true;
+        descending = this.sortedUSDValueFromHighToLow !== -1;
         this.sortHodlingsCoins(this.usersYouPurchased, descending);
         this.sortHodlingsCoins(this.usersYouReceived, descending);
         break;
       default:
       // do nothing
     }
+    this.scrollerReset();
   }
 
   totalValue() {
@@ -188,33 +279,60 @@ export class WalletComponent implements OnInit {
 
   _handleTabClick(tab: string) {
     this.showTransferredCoins = tab === WalletComponent.coinsReceivedTab;
+    this.lastPage = Math.floor(
+      (this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased).length / WalletComponent.PAGE_SIZE
+    );
     this.activeTab = tab;
+    this.scrollerReset();
+  }
+
+  scrollerReset() {
+    this.infiniteScroller.reset();
+    this.datasource.adapter.reset().then(() => this.datasource.adapter.check());
+  }
+
+  isHighlightedCreator(balanceEntryResponse: BalanceEntryResponse): boolean {
+    if (!this.inTutorial) {
+      return false;
+    }
+    return (
+      balanceEntryResponse.ProfileEntryResponse.Username === this.balanceEntryToHighlight.ProfileEntryResponse.Username
+    );
   }
 
   tutorialNext(): void {
-    // How do we want to differentiate between stages in tutorial? look at user metadata
-    const tutorialStatus = this.globalVars.loggedInUser?.TutorialStatus;
-    console.log(tutorialStatus);
-    if (tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
+    if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, this.tutorialUsername]);
-    } else if (tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
-      // TODO: go to diamonds first
-      this.router.navigate([
-        RouteNames.TUTORIAL,
-        RouteNames.INVEST,
-        RouteNames.BUY_CREATOR,
-        this.globalVars.loggedInUser?.ProfileEntryResponse?.Username,
-      ]);
-    } else if (tutorialStatus === TutorialStatus.INVEST_SELF) {
-      // this.globalVars.TutorialStatus = TutorialStatus.COMPLETE;
+    } else if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
+      this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
+    } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]);
-      // this.backendApi
-      //   .CompleteTutorial(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      //   .subscribe(() => {
-      //     // We don't really need an update everything call here. Next time they refresh the page, the status should be correct.
-      //     this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.COMPLETE;
-      //     this.router.navigate([RouteNames.BROWSE]);
-      //   });
     }
+  }
+
+  lastPage = null;
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    WalletComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    WalletComponent.WINDOW_VIEWPORT,
+    WalletComponent.BUFFER_SIZE,
+    WalletComponent.PADDING
+  );
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+
+  getPage(page: number) {
+    if (this.lastPage != null && page > this.lastPage) {
+      return [];
+    }
+    const startIdx = page * WalletComponent.PAGE_SIZE;
+    const endIdx = (page + 1) * WalletComponent.PAGE_SIZE;
+
+    return new Promise((resolve, reject) => {
+      resolve(
+        this.showTransferredCoins
+          ? this.usersYouReceived.slice(startIdx, Math.min(endIdx, this.usersYouReceived.length))
+          : this.usersYouPurchased.slice(startIdx, Math.min(endIdx, this.usersYouPurchased.length))
+      );
+    });
   }
 }

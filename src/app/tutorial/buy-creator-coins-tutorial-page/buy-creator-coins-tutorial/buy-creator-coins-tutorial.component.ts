@@ -1,10 +1,10 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../../../backend-api.service";
-import { AppRoutingModule } from "../../../app-routing.module";
-import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { Title } from "@angular/platform-browser";
-import { RightBarCreatorsLeaderboardComponent } from "../../../right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import {Component, OnInit} from "@angular/core";
+import {GlobalVarsService} from "../../../global-vars.service";
+import {BackendApiService, ProfileEntryResponse, TutorialStatus} from "../../../backend-api.service";
+import {AppRoutingModule} from "../../../app-routing.module";
+import {CanPublicKeyFollowTargetPublicKeyHelper} from "../../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
+import {Title} from "@angular/platform-browser";
+import {RightBarCreatorsLeaderboardComponent} from "../../../right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 
 @Component({
   selector: "buy-creator-coins-tutorial",
@@ -27,9 +27,18 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   topCreatorsToHighlight: ProfileEntryResponse[];
   upAndComingCreatorsToHighlight: ProfileEntryResponse[];
 
+  loggedInUserProfile: ProfileEntryResponse;
+  investInYourself: boolean = false;
+
   ngOnInit() {
     // this.isLoadingProfilesForFirstTime = true;
     this.titleService.setTitle("Buy Creator Coins Tutorial - BitClout");
+    // If the user just completed their profile, we instruct them to buy their own coin.
+    if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
+      this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
+      this.investInYourself = true;
+      return;
+    }
     // TODO: replace with real data
     this.backendApi
       .GetProfiles(

@@ -20,7 +20,7 @@ export class DiamondTutorialComponent implements OnInit {
 
   post: PostEntryResponse;
   // TODO: replace with prod post hash hex
-  postHashHex = "7eba2b76e2b1851070f2740e25c1c70c64a228e226f0dff5734f19d3baca8224";
+  postHashHex = "3e42215a120a6e9d4848117f5829a2c4d9f692360fd14b78daea483a72d142dc";
   loading: boolean = true;
 
   ngOnInit() {
@@ -44,8 +44,8 @@ export class DiamondTutorialComponent implements OnInit {
   }
 
   onDiamondSent(): void {
-    // this.globalVars.TutorialStatus = TutorialStatus.DIAMOND;
-    // TODO: navigate to create post tutorial page
+    //
+    this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.DIAMOND;
     this.router.navigate([RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST]);
   }
 }

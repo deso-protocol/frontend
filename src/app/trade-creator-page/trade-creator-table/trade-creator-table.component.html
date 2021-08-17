@@ -56,7 +56,7 @@
       </span>
 
       <span *ngIf="creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
-        ≈ {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
+        {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
         USD
       </span>
     </div>
@@ -73,7 +73,7 @@
       </span>
 
       <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
-        ≈ {{ creatorCoinTrade.assetReturnedAmountInUsd() | currency }}
+        {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.assetReturnedAmountInUsd() | currency }}
         USD
       </span>
     </div>
@@ -94,7 +94,7 @@
 
 
       <span [ngClass]="{ 'text-muted': !inTutorial }">
-        ≈ {{ creatorCoinTrade.usdPriceOfCreatorCoin() | currency }}
+        {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.usdPriceOfCreatorCoin() | currency }}
         USD
       </span>
     </div>

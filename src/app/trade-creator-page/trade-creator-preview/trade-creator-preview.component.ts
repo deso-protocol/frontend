@@ -224,7 +224,6 @@ export class TradeCreatorPreviewComponent implements OnInit {
     comp.appData.celebrate();
     comp.creatorCoinTradeBeingCalled = false;
     comp.showHighLoadWarning = false;
-    console.log(comp.appData.loggedInUser);
     this._onTradeExecuted();
   };
 

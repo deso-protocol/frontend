@@ -1,15 +1,43 @@
 <!-- Top Bar -->
 <div
   class="global__top-bar  global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+  *ngIf="!inTutorial"
 >
   <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-  <div class="d-flex align-items-center w-100" style="justify-content: space-between;">
+  <div class="d-flex align-items-center w-100 justify-content-between">
     <div>Wallet</div>
     <div class="p-15px fs-14px"><span>≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}&nbsp;</span><small>USD Total</small></div>
   </div>
 </div>
 
-<div class="global__top-bar__height"></div>
+<div class="global__top-bar__height" *ngIf="!inTutorial"></div>
+<div
+  class="d-flex align-items-center justify-content-between w-100 pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+  style="min-height: 80px; background-color: var(--secalt)"
+  *ngIf="inTutorial"
+>
+  <div class="d-flex flex-column justify-flex-start">
+    <div class="pt-15px d-flex align-items-center font-weight-bold fs-18px">
+      Wallet
+    </div>
+    <div class="fs-14px py-15px pr-15px">
+      <p *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY">
+        You now have {{ globalVars.nanosToBitClout(balanceEntryToHighlight.BalanceNanos, 4) }} {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
+        Click the arrows in the highlighted row and select "Sell" to sell some {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins.
+      </p>
+      <p *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL">
+        You just sold {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins. Click "Next: Setup Your Profile" to set up your own coin!
+      </p>
+      <p *ngIf="tutorialStatus === TutorialStatus.INVEST_SELF">
+        You now have {{ globalVars.nanosToBitClout(balanceEntryToHighlight.BalanceNanos, 4) }} {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
+        Each of your coins is currently worth {{ globalVars.nanosToUSD(balanceEntryToHighlight.ProfileEntryResponse.CoinPriceBitCloutNanos, 2)}}!
+        Click "Next: Give a Diamond" to learn about Diamonds.
+      </p>
+    </div>
+  </div>
+
+</div>
+
 
 <div class="d-flex flex-column" *ngIf="globalVars.loggedInUser">
   <div style="flex-grow: 1">
@@ -115,18 +143,26 @@
           </div>
           <div class="col-lg-1 col-2 d-block mb-0"></div>
         </div>
-        <div *ngFor="let creator of showTransferredCoins ? usersYouReceived : usersYouPurchased">
+        <div
+          #uiScroll
+          *uiScroll="let creator of datasource"
+        >
           <!-- Screen out zero balances -->
+          <!-- How do we want to "highlight" the balance entry in the tutorial -->
           <div
             *ngIf="
               creator &&
               (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
             "
-            class="row no-gutters fc-default pt-15px pl-15px"
+            class="row no-gutters fc-default mt-5px mb-5px ml-10px mr-10px p-5px"
+            [ngStyle]="{
+            'border': isHighlightedCreator(creator) ? '1px solid var(--cblue)' : '',
+            'border-radius': isHighlightedCreator(creator) ? '12px' : ''
+            }"
           >
             <!-- Name-->
             <a
-              class="col-lg-5 col-6 d-flex align-items-center link--unstyled holdings__creator-coin-name"
+              class="col-lg-5 col-6 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
               [routerLink]="inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
               queryParamsHandling="merge"
               [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
@@ -194,10 +230,12 @@
 
             <!-- Buy / Sell / Transfer Dropdown -->
             <div
-              class="wallet__dropdown-parent col-lg-1 col-2 d-flex align-items-center justify-content-center text-grey8A pl-30px"
+              class="wallet__dropdown-parent col-lg-1 col-2 d-flex align-items-center justify-content-center text-grey8A m-0"
             >
               <wallet-actions-dropdown
                 [hodlingUsername]="creator.ProfileEntryResponse.Username"
+                [inTutorial]="inTutorial"
+                [isHighlightedCreator]="isHighlightedCreator(creator)"
               ></wallet-actions-dropdown>
             </div>
           </div>
@@ -211,11 +249,12 @@
         </div>
       </div>
 
-      <div *ngIf="inTutorial" (click)="tutorialNext()" class="p-15px">
+      <div *ngIf="inTutorial && tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY" (click)="tutorialNext()" class="p-15px">
         <a class="btn btn-primary fs-18px text-left">
-          Next
+          Next: {{ nextButtonText }}
         </a>
       </div>
+
       <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
       <div class="global__bottom-bar-mobile-height"></div>
       <div class="global__bottom-bar-mobile-height"></div>

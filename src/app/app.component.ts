@@ -29,21 +29,6 @@ export class AppComponent implements OnInit {
       this.route // route
     );
 
-    // Listen to the route, if it changes, check loggedInUser's tutorial status.
-    // this.router.
-    // this.route.url.subscribe((url) => {
-    //   console.log(url);
-    //   if (
-    //     this.globalVars.loggedInUser &&
-    //     [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(
-    //       this.globalVars.loggedInUser.TutorialStatus
-    //     ) < 0
-    //   ) {
-    //     // drop user at correct point in tutorial.
-    //     this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
-    //   }
-    // });
-
     // Nuke the referrer so we don't leak anything
     // We also have a meta tag in index.html that does this in a different way to make
     // sure it's nuked.
@@ -108,7 +93,7 @@ export class AppComponent implements OnInit {
 
   _updateTopLevelData(refreshAllUsers: boolean): Subscription {
     if (this.callingUpdateTopLevelData) {
-      return;
+      return new Subscription();
     }
 
     let publicKeys = Object.keys(this.identityService.identityServiceUsers);

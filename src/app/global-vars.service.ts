@@ -321,10 +321,6 @@ export class GlobalVarsService {
       let route;
       switch (user.TutorialStatus) {
         case TutorialStatus.STARTED: {
-          route = [RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE];
-          break;
-        }
-        case TutorialStatus.CREATE_PROFILE: {
           route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
           break;
         }
@@ -335,6 +331,10 @@ export class GlobalVarsService {
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
           route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
+          break;
+        }
+        case TutorialStatus.CREATE_PROFILE: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
           break;
         }
         case TutorialStatus.INVEST_SELF: {
@@ -1034,7 +1034,7 @@ export class GlobalVarsService {
                   )
                   .subscribe((response) => {
                     if (res.isConfirmed) {
-                      this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
+                      this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
                     }
                     // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
                     this.loggedInUser.TutorialStatus = res.isConfirmed
