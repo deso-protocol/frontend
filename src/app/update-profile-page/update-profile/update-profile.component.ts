@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, OnChanges } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
-import Swal from "sweetalert2";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -27,6 +26,8 @@ export type ProfileUpdateErrors = {
 })
 export class UpdateProfileComponent implements OnInit, OnChanges {
   @Input() loggedInUser: any;
+  @Input() inTutorial: boolean = false;
+
   updateProfileBeingCalled: boolean = false;
   usernameInput: string;
   descriptionInput: string;
@@ -199,7 +200,13 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.globalVars.profileUpdateTimestamp = Date.now();
         this.globalVars.logEvent("profile : update");
         // This updates things like the username that shows up in the dropdown.
-        this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);
+        this.globalVars.updateEverything(
+          false,
+          res.TxnHashHex,
+          this._updateProfileSuccess,
+          this._updateProfileFailure,
+          this
+        );
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);
@@ -219,7 +226,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           },
           confirmButtonText: lowBalance ? "Buy $CLOUT" : null,
           cancelButtonText: lowBalance ? "Later" : null,
-          showCancelButton: lowBalance,
+          showCancelButton: !!lowBalance,
         }).then((res) => {
           if (lowBalance && res.isConfirmed) {
             this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
@@ -233,6 +240,12 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     comp.globalVars.celebrate();
     comp.updateProfileBeingCalled = false;
     comp.profileUpdated = true;
+    if (comp.inTutorial) {
+      comp.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR], {
+        queryParamsHandling: "merge",
+      });
+      return;
+    }
     if (comp.globalVars.loggedInUser.UsersWhoHODLYouCount === 0) {
       SwalHelper.fire({
         target: comp.globalVars.getTargetComponentSelector(),

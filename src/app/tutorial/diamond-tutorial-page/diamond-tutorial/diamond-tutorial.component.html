@@ -1,0 +1,34 @@
+<div class="flex-grow-1">
+  <!-- Top Bar -->
+  <div
+    class="d-flex align-items-center justify-content-between w-100 pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+    style="min-height: 80px; background-color: var(--secalt)"
+  >
+    <div class="d-flex flex-column justify-flex-start">
+      <div class="pt-15px d-flex align-items-center font-weight-bold fs-18px">
+        Give a Diamond!
+      </div>
+      <div class="fs-14px py-15px pr-15px">
+        <p>Diamonds are a form of tipping to reward creators for their content.  Diamonds send money to post creator! Tap the diamond to reward this creator.</p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <simple-center-loader *ngIf="loading"></simple-center-loader>
+    <div *ngIf="!loading">
+      <feed-post
+        [post]="post"
+        [includePaddingOnPost]="true"
+        [contentShouldLinkToThread]="false"
+        [showLeftSelectedBorder]="true"
+        [cardStyle]="true"
+        [inTutorial]="true"
+        (diamondSent)="onDiamondSent()"
+      ></feed-post>
+    </div>
+    <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+    <div class="global__bottom-bar-mobile-height"></div>
+    <div class="global__bottom-bar-mobile-height"></div>
+  </div>
+</div>

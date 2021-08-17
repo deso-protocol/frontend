@@ -17,6 +17,7 @@ export class LeftBarComponent {
   }
 
   @Input() isMobile = false;
+  @Input() inTutorial: boolean = false;
   @Output() closeMobile = new EventEmitter<boolean>();
   currentRoute: string;
 

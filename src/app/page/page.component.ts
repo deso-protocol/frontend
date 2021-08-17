@@ -9,6 +9,7 @@ import { GlobalVarsService } from "../global-vars.service";
 export class PageComponent implements OnInit {
   @Input() hideSidebar: string;
   @Input() showPostButton = false;
+  @Input() inTutorial: boolean = false;
   mobile = false;
 
   @HostListener("window:resize") onResize() {

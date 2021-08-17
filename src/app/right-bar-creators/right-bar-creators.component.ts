@@ -1,6 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
+import { Router } from "@angular/router";
+import { RouteNames } from "../app-routing.module";
 
 export class RightBarTabOption {
   name: string;
@@ -17,7 +19,9 @@ export class RightBarTabOption {
   styleUrls: ["./right-bar-creators.component.sass"],
 })
 export class RightBarCreatorsComponent implements OnInit {
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  @Input() inTutorial: boolean = false;
+
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {}
 
   activeTab: string;
   selectedOptionWidth: string;
@@ -69,5 +73,29 @@ export class RightBarCreatorsComponent implements OnInit {
     if (!skipStorage) {
       this.backendApi.SetStorage(RightBarCreatorsComponent.RightBarTabKey, this.activeTab);
     }
+  }
+
+  startTutorial(): void {
+    if (this.inTutorial) {
+      return;
+    }
+    this.backendApi
+      .StartOrSkipTutorial(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, false)
+      .subscribe(() => {
+        this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+      });
+  }
+
+  // TODO: move to admin panel - it's only here for testing.
+  resetTutorial(): void {
+    this.backendApi
+      .AdminResetTutorialStatus(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )
+      .subscribe(() => {
+        console.log("reset!");
+      });
   }
 }

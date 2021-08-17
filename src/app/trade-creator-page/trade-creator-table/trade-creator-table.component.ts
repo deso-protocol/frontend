@@ -14,6 +14,7 @@ export class TradeCreatorTableComponent {
 
   @Input() displayForCreatorForm: boolean = false;
   @Input() creatorCoinTrade: CreatorCoinTrade;
+  @Input() inTutorial: boolean = false;
 
   hideFollowPrompt = true;
   TradeCreatorTableComponent = TradeCreatorTableComponent;

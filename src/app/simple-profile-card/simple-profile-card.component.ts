@@ -15,6 +15,8 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() containerModalRef: any = null;
   @Input() singleColumn = false;
   @Input() hideFollowLink = false;
+  @Input() inTutorial: boolean = false;
+  @Input() showTutorialBuy: boolean = false;
 
   constructor(public globalVars: GlobalVarsService, private router: Router) {}
 
@@ -25,6 +27,9 @@ export class SimpleProfileCardComponent implements OnInit {
   }
 
   onClick() {
+    if (this.inTutorial) {
+      return;
+    }
     if (this.containerModalRef !== null) {
       this.containerModalRef.hide();
     }
@@ -34,5 +39,17 @@ export class SimpleProfileCardComponent implements OnInit {
     this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, this.profile.Username], {
       queryParamsHandling: "merge",
     });
+  }
+
+  onBuyClicked() {
+    this.router.navigate(
+      [
+        this.globalVars.RouteNames.TUTORIAL,
+        this.globalVars.RouteNames.INVEST,
+        this.globalVars.RouteNames.BUY_CREATOR,
+        this.profile.Username,
+      ],
+      { queryParamsHandling: "merge" }
+    );
   }
 }

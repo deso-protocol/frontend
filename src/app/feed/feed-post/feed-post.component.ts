@@ -106,6 +106,8 @@ export class FeedPostComponent implements OnInit {
   // If the post is shown in a modal, this is used to hide the modal on post click.
   @Input() containerModalRef: any = null;
 
+  @Input() inTutorial: boolean = false;
+
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
 
@@ -114,6 +116,9 @@ export class FeedPostComponent implements OnInit {
 
   // emits the nftBidPLaced event
   @Output() nftBidPlaced = new EventEmitter();
+
+  // emits diamondSent event
+  @Output() diamondSent = new EventEmitter();
 
   AppRoutingModule = AppRoutingModule;
   stakeAmount = 1;
@@ -210,6 +215,9 @@ export class FeedPostComponent implements OnInit {
   }
 
   onPostClicked(event) {
+    if (this.inTutorial) {
+      return;
+    }
     if (this.containerModalRef !== null) {
       this.containerModalRef.hide();
     }
@@ -598,5 +606,9 @@ export class FeedPostComponent implements OnInit {
   showmOfNNFTTooltip = false;
   toggleShowMOfNNFTTooltip(): void {
     this.showmOfNNFTTooltip = !this.showmOfNNFTTooltip;
+  }
+
+  getRouterLink(val: any): any {
+    return this.inTutorial ? [] : val;
   }
 }

@@ -4,8 +4,10 @@
     <div
       class="d-flex align-items-center justify-content-between w-100 pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
       style="min-height: 80px"
+      [ngStyle]="{ 'background-color': inTutorial ? 'var(--secalt)' : '' }"
     >
-      <div class="d-flex align-items-center">
+      <!-- not in tutorial header -->
+      <div class="d-flex align-items-center" *ngIf="!inTutorial">
         <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
 
         <a
@@ -50,6 +52,30 @@
           </span>
         </span>
       </div>
+      <div class="d-flex flex-column justify-flex-start" *ngIf="inTutorial">
+        <div class="pt-15px d-flex align-items-center font-weight-bold fs-18px">
+          <a
+            class="d-block trade-creator__avatar mr-15px"
+            [avatar]="creatorCoinTrade.creatorProfile.PublicKeyBase58Check"
+          ></a>
+          <p *ngIf="!investInYourself && creatorCoinTrade.isBuyingCreatorCoin">Buy {{ creatorCoinTrade.creatorProfile.Username }} Coin</p>
+          <p *ngIf="!investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">Sell {{ creatorCoinTrade.creatorProfile.Username }} Coin</p>
+          <p *ngIf="investInYourself && creatorCoinTrade.isBuyingCreatorCoin">Invest In Yourself</p>
+        </div>
+        <div class="fs-14px py-15px pr-15px">
+          <p *ngIf="!investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
+            You can invest directly in your favorite creator's by buying their coin.
+            Click "Confirm Buy" to purchase {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin
+          </p>
+          <p *ngIf="!investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">
+            When a creator's coin goes up in value you can sell to make a return on your investment.
+            Click "Confirm Sell" to sell {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin!
+          </p>
+          <p *ngIf="investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
+            Even you have a creator coin! Invest in yourself by purchasing {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of your coin.
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- Tabs -->
@@ -57,6 +83,7 @@
       [tabs]="tabList"
       [activeTab]="creatorCoinTrade.tradeType"
       (tabClick)="_handleTabClick($event)"
+      *ngIf="!inTutorial"
     ></tab-selector>
 
     <!-- Content -->
@@ -69,6 +96,7 @@
 
     <div *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
       <trade-creator-preview
+        [inTutorial]="inTutorial"
         [creatorCoinTrade]="creatorCoinTrade"
         (slippageError)="_onSlippageError()"
         (backButtonClicked)="_onBackButtonClicked()"

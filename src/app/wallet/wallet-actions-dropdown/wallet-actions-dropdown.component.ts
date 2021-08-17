@@ -1,13 +1,25 @@
-import { Component, Input } from "@angular/core";
-import { AppRoutingModule } from "../../app-routing.module";
+import { Component, Input, OnInit } from "@angular/core";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { GlobalVarsService } from "../../global-vars.service";
+import { TutorialStatus } from "../../backend-api.service";
 
 @Component({
   selector: "wallet-actions-dropdown",
   templateUrl: "./wallet-actions-dropdown.component.html",
 })
-export class WalletActionsDropdownComponent {
+export class WalletActionsDropdownComponent implements OnInit {
   @Input() hodlingUsername: string;
+  @Input() inTutorial: boolean = false;
+  @Input() isHighlightedCreator: boolean = false;
   AppRoutingModule = AppRoutingModule;
 
-  constructor() {}
+  showSellOnly: boolean = false;
+  RouteNames = RouteNames;
+  constructor(public globalVars: GlobalVarsService) {}
+
+  ngOnInit(): void {
+    if (this.inTutorial && this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
+      this.showSellOnly = true;
+    }
+  }
 }
