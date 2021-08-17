@@ -48,6 +48,11 @@
         [buttonLabel]="'Buy $CLOUT'"
       ></left-bar-button>
 
+      <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeCLOUTFlow()">
+        <a class="left-bar__dot-inactive">·</a>
+        <a class="cursor-pointer fs-15px text-grey5">Get Free $CLOUT</a>
+      </div>
+
       <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
       <left-bar-button
         [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"

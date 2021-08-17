@@ -12,7 +12,7 @@ file_server
 
 # Fallback to index.html for everything but assets
 @html {
-  not path *.js *.css *.png *.svg *.pdf *.eot *.ttf *.woff *.woff2 *.webmanifest
+  not path *.js *.css *.png *.jpg *.svg *.pdf *.eot *.ttf *.woff *.woff2 *.webmanifest
 
   file index.html
 }

@@ -48,6 +48,13 @@
     </div>
   </div>
 
+  <div
+    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"
+    class="border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
+  >
+    <jumio-status></jumio-status>
+  </div>
+
   <!-- Tab Selector -->
   <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
 

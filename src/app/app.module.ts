@@ -134,11 +134,14 @@ import { NftPostComponent } from "./nft-post-page/nft-post/nft-post.component";
 import { CreatorProfileNftsComponent } from "./creator-profile-page/creator-profile-nfts/creator-profile-nfts.component";
 import { NftDropMgrComponent } from "./nft-drop-mgr/nft-drop-mgr.component";
 import { NftShowcaseComponent } from "./nft-showcase/nft-showcase.component";
+import { VerifyEmailComponent } from "./verify-email/verify-email.component";
+import { AdminJumioComponent } from "./admin/admin-jumio/admin-jumio.component";
+import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
-import { VerifyEmailComponent } from "./verify-email/verify-email.component";
+import { DragDropModule } from "@angular/cdk/drag-drop";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -260,9 +263,12 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     CreatorProfileNftsComponent,
     NftShowcaseComponent,
     VerifyEmailComponent,
+    AdminJumioComponent,
+    JumioStatusComponent,
   ],
   imports: [
     BrowserModule,
+    DragDropModule,
     AppRoutingModule,
     FormsModule,
     MatSelectModule,

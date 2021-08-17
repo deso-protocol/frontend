@@ -52,8 +52,8 @@ export class BackendRoutes {
   static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
   static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
   static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
-  static RoutePathVerifyEmail = "/api/v0/verify-email"
-  static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email"
+  static RoutePathVerifyEmail = "/api/v0/verify-email";
+  static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
 
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
@@ -67,6 +67,7 @@ export class BackendRoutes {
   static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
+  static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -97,6 +98,8 @@ export class BackendRoutes {
   static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
   static RoutePathAdminGetNFTDrop = "/api/v0/admin/get-nft-drop";
   static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
+  static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
+  static RoutePathAdminUpdateJumioBitClout = "/api/v0/admin/update-jumio-bitclout";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
@@ -159,6 +162,9 @@ export class User {
   CanCreateProfile: boolean;
   HasEmail: boolean;
   EmailVerified: boolean;
+  JumioVerified: boolean;
+  JumioReturned: boolean;
+  JumioFinishedTime: number;
 
   BlockedPubKeys: { [key: string]: object };
 
@@ -457,7 +463,7 @@ export class BackendApiService {
     PhoneNumber: string,
     PhoneNumberCountryCode: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathSendPhoneNumberVerificationText, {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSendPhoneNumberVerificationText, PublicKeyBase58Check, {
       PublicKeyBase58Check,
       PhoneNumber,
       PhoneNumberCountryCode,
@@ -471,7 +477,7 @@ export class BackendApiService {
     PhoneNumberCountryCode: string,
     VerificationCode: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathSubmitPhoneNumberVerificationCode, {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathSubmitPhoneNumberVerificationCode, PublicKeyBase58Check, {
       PublicKeyBase58Check,
       PhoneNumber,
       PhoneNumberCountryCode,
@@ -1517,23 +1523,22 @@ export class BackendApiService {
     });
   }
 
-  ResendVerifyEmail(
-    endpoint: string,
-    PublicKey: string,
-  ) {
+  ResendVerifyEmail(endpoint: string, PublicKey: string) {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathResendVerifyEmail, PublicKey, {
-      PublicKey
+      PublicKey,
     });
   }
 
-  VerifyEmail(
-    endpoint: string,
-    PublicKey: string,
-    EmailHash: string,
-  ): Observable<any> {
+  VerifyEmail(endpoint: string, PublicKey: string, EmailHash: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathVerifyEmail, {
       PublicKey,
       EmailHash,
+    });
+  }
+
+  GetJumioStatusForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetJumioStatusForPublicKey, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
     });
   }
 
@@ -1813,9 +1818,29 @@ export class BackendApiService {
     );
   }
 
+  AdminResetJumioAttemptsForPublicKey(
+    endpoint: string,
+    AdminPublicKeyBase58Check: string,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetJumioForPublicKey, AdminPublicKeyBase58Check, {
+      AdminPublicKey: AdminPublicKeyBase58Check,
+      PublicKeyBase58Check,
+      Username,
+    });
+  }
+
+  AdminUpdateJumioBitClout(endpoint: string, AdminPublicKey: string, BitCloutNanos: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioBitClout, AdminPublicKey, {
+      BitCloutNanos,
+      AdminPublicKey,
+    });
+  }
+
   GetWyreWalletOrderForPublicKey(
     endpoint: string,
-    AdminPublicKeyBase58Check,
+    AdminPublicKeyBase58Check: string,
     PublicKeyBase58Check: string,
     Username: string
   ): Observable<any> {

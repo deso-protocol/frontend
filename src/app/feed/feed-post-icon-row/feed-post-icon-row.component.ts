@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectorRef, ViewChild } from "@angular/core";
+import { Component, Input, ChangeDetectorRef, ViewChild, HostListener } from "@angular/core";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
@@ -10,6 +10,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { ThemeService } from "../../theme/theme.service";
+import { includes, round } from "lodash";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -28,25 +29,45 @@ export class FeedPostIconRowComponent {
 
   sendingRecloutRequest = false;
 
-  // Boolean for whether or not the div explaining diamonds should be collapsed or not.
-  collapseDiamondInfo = false;
-  // Boolean for tracking if we are processing a send diamonds event.
-  sendingDiamonds = false;
-  // Track if this is a single or multi-click event on the diamond icon.
-  clickCounter = 0;
-  // Track the diamond selected in the diamond popover.
-  diamondSelected: number;
-  // Timeout for determining whether this is a single or double click event.
-  static SingleClickDebounce = 300;
-
   // Threshold above which user must confirm before sending diamonds
-  static DiamondWarningThreshold = 3;
+  static DiamondWarningThreshold = 4;
 
   // Boolean for animation on whether a heart is clicked or not
   animateLike = false;
 
-  // Boolean for animation on whether a diamond is clicked or not
-  animateDiamond = false;
+  diamondCount = 6;
+  // Indexes from 0 to diamondCount (used by *ngFor)
+  diamondIndexes = Array<number>(this.diamondCount)
+    .fill(0)
+    .map((x, i) => i);
+  // Controls visibility of selectable diamond levels. Initialize to false.
+  diamondsVisible = Array<boolean>(this.diamondCount).fill(false);
+  // Store timeout functions so that they can be cancelled prematurely
+  diamondTimeouts: NodeJS.Timer[] = [];
+  // How quickly the diamonds sequentially appear on hover
+  diamondAnimationDelay = 50;
+  // Where the drag div should be placed for mobile dragging
+  diamondDragLeftOffset = "0px";
+  // Whether the diamond drag selector is being dragged
+  diamondDragging = false;
+  // Which diamond is selected by the drag selector
+  diamondIdxDraggedTo = -1;
+  // Whether the drag selector is at the bottom of it's bound and in position to cancel a transaction
+  diamondDragCancel = false;
+  // Boolean for whether or not the div explaining diamonds should be collapsed or not.
+  collapseDiamondInfo = true;
+  // Boolean for tracking if we are processing a send diamonds event.
+  sendingDiamonds = false;
+  // Track the diamond selected in the diamond popover.
+  diamondSelected: number;
+  // Track the diamond that is currently being hovered
+  diamondHovered = -1;
+  // Track if we've gone past the explainer already. (Don't want to show explainer on start)
+  diamondDragLeftExplainer = false;
+  // Track if the dragged diamond actually moved, so that we can distinguish between drags and clicks
+  diamondDragMoved = false;
+  // Track when the drag began, if less than .1 seconds ago, and the drag didn't move, assume it was a click
+  diamondDragStarted: Date;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -58,6 +79,82 @@ export class FeedPostIconRowComponent {
     private modalService: BsModalService,
     private themeService: ThemeService
   ) {}
+
+  // Initiate mobile drag, have diamonds appear
+  startDrag() {
+    this.globalVars.userIsDragging = true;
+    this.diamondDragMoved = false;
+    this.diamondDragStarted = new Date();
+    this.diamondDragging = true;
+    this.addDiamondSelection({ type: "initiateDrag" });
+  }
+
+  // Calculate where the drag box has been dragged to, make updates accordingly
+  duringDrag(event) {
+    // If this event was triggered, the user moved the drag box, and we assume it's not a click.
+    this.diamondDragMoved = true;
+    // Establish a margin to the left and right in order to improve reachability
+    const pageMargin = window.innerWidth * 0.15;
+    // The width of the page minus the margins
+    const selectableWidth = window.innerWidth - 2 * pageMargin;
+    // If the selector is in the left margin, choose the first option
+    if (event.pointerPosition.x < pageMargin) {
+      this.diamondIdxDraggedTo = 0;
+      // If the selector is in the right margin, choose the last option
+    } else if (event.pointerPosition.x > selectableWidth + pageMargin) {
+      this.diamondIdxDraggedTo = this.diamondCount;
+    } else {
+      // If the selector is in the middle, calculate what % of the middle it has been dragged to, assign a diamond value
+      this.diamondIdxDraggedTo = round(((event.pointerPosition.x - pageMargin) / selectableWidth) * this.diamondCount);
+    }
+    // If the selector has been dragged out of the right margin, enable the helper text
+    // (we don't want every drag event to start with the helper text enabled)
+    if (this.diamondIdxDraggedTo != this.diamondCount) {
+      this.diamondDragLeftExplainer = true;
+    }
+    // If the drag box is at the alloted lower boundry or below, set cancel status to true
+    this.diamondDragCancel = event.distance.y >= 35;
+  }
+
+  // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
+  dragClick(event) {
+    const now = new Date();
+    // If the drag box wasn't moved and less than 200ms have transpired since the start of the tap,
+    // assume this was a click and send 1 diamond
+    if (!this.diamondDragMoved) {
+      if (now.getTime() - this.diamondDragStarted.getTime() < 200) {
+        // Prevent touch event from propagating
+        event.preventDefault();
+        this.sendOneDiamond(event, true);
+      }
+      // If the diamond drag box wasn't moved, we need to reset these variables.
+      // If it was moved, the endDrag fn will do it.
+      this.resetDragVariables();
+    }
+  }
+
+  // End dragging procedure. Triggered when the dragged element is released
+  endDrag(event) {
+    // Stop the drag event so that the slider isn't visible during transaction load
+    this.diamondDragging = false;
+    // If the drag box is not in the "cancel" position, and the selected diamond makes sense, send diamonds
+    if (!this.diamondDragCancel && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
+      this.onDiamondSelected(null, this.diamondIdxDraggedTo);
+    }
+    // Reset drag-related variables
+    this.resetDragVariables();
+    // Move the drag box back to it's original position
+    event.source._dragRef.reset();
+  }
+
+  resetDragVariables() {
+    this.globalVars.userIsDragging = false;
+    this.diamondDragCancel = false;
+    this.diamondDragging = false;
+    this.diamondIdxDraggedTo = -1;
+    this.diamondDragMoved = false;
+    this.diamondDragLeftExplainer = false;
+  }
 
   _detectChanges() {
     this.ref.detectChanges();
@@ -307,11 +404,9 @@ export class FeedPostIconRowComponent {
     return origin + path;
   }
 
-  showDiamondModal(): boolean {
-    return (
-      !this.backendApi.GetStorage("hasSeenDiamondInfo") ||
-      this.postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
-    );
+  toggleExplainer(event) {
+    event.stopPropagation();
+    this.collapseDiamondInfo = !this.collapseDiamondInfo;
   }
 
   sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
@@ -328,7 +423,7 @@ export class FeedPostIconRowComponent {
       .toPromise()
       .then(
         (res) => {
-          this.openDiamondPopover();
+          this.sendingDiamonds = false;
           this.globalVars.logEvent("diamond: send", {
             SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
             ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
@@ -353,41 +448,7 @@ export class FeedPostIconRowComponent {
           this.globalVars.logEvent("diamonds: send: error", { parsedError });
           this.globalVars._alertError(parsedError);
         }
-      )
-      .finally(() => this.closeDiamondPopover());
-  }
-
-  async diamondClickHandler(event: any): Promise<void> {
-    event.stopPropagation();
-    if (!this.globalVars.loggedInUser) {
-      return this._preventNonLoggedInUserActions("diamond");
-    } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
-      this.globalVars.logEvent("alert : diamond : profile");
-      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "diamond");
-      return;
-    } else if (this.globalVars.loggedInUser.PublicKeyBase58Check === this.postContent.PosterPublicKeyBase58Check) {
-      this.globalVars._alertError("You cannot diamond your own post");
-      return;
-    }
-    if (this.showDiamondModal()) {
-      this.openDiamondPopover();
-    } else {
-      this.clickCounter += 1;
-      setTimeout(() => {
-        if (this.clickCounter === 1 && !this.showDiamondModal()) {
-          // Handle single click case when the user has interacted with the diamond feature before and this post has not
-          // received a diamond from the user yet.
-          this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
-          this.sendDiamonds(1, true);
-        } else {
-          // Either this is a double tap event, a single tap on an already diamonded post, or the first time a user is
-          // interacting with the diamond feature.
-          // Show the diamond popover
-          this.openDiamondPopover();
-        }
-        this.clickCounter = 0;
-      }, FeedPostIconRowComponent.SingleClickDebounce);
-    }
+      );
   }
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
@@ -399,62 +460,90 @@ export class FeedPostIconRowComponent {
     comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
   }
 
-  diamondPopoverOpen = false;
-  openDiamondPopover() {
-    this.backendApi.SetStorage("hasSeenDiamondInfo", true);
-    this.collapseDiamondInfo = this.backendApi.GetStorage("collapseDiamondInfo");
-    this.diamondSelected = this.getCurrentDiamondLevel();
-    this.diamondPopover.show();
-    this.diamondPopoverOpen = true;
-    document.addEventListener("click", this.popoverOpenClickHandler, true);
-  }
-
-  closeDiamondPopover() {
-    this.diamondPopoverOpen = false;
-    this.diamondPopover.hide();
-    document.removeEventListener("click", this.popoverOpenClickHandler);
-  }
-
   popoverOpenClickHandler = (e: Event) => {
     const popoverElement = document.getElementById("diamond-popover");
     if (popoverElement && e.target !== popoverElement && !popoverElement.contains(e.target as any)) {
       e.stopPropagation();
-      this.closeDiamondPopover();
     }
   };
-  expandDiamondInfo(event: any): void {
-    this.toggleDiamondInfo(event, false);
+
+  async sendOneDiamond(event: any, fromDragEvent: boolean) {
+    // Disable diamond selection if diamonds are being sent
+    if (this.sendingDiamonds) {
+      return;
+    }
+
+    // Block user from selecting diamond level below already gifted amount
+    if (this.getCurrentDiamondLevel() > 0) {
+      return;
+    }
+
+    // Don't trigger diamond purchases on tap on tablet
+    if (event && event.pointerType === "touch" && !fromDragEvent) {
+      event.stopPropagation();
+      return;
+    }
+
+    // If triggered from mobile, stop propegation
+    if (fromDragEvent) {
+      event.stopPropagation();
+    }
+
+    this.onDiamondSelected(event, 0);
   }
 
-  hideDiamondInfo(event: any): void {
-    this.toggleDiamondInfo(event, true);
+  addDiamondSelection(event) {
+    // Account for the delayed hover appearance with mouse
+    const additionalDelay = event?.type === "initiateDrag" ? 0 : 1000;
+    // Need to make sure hover event doesn't trigger on child elements
+    if (event?.type === "initiateDrag" || event.target.id === "diamond-button") {
+      for (let idx = 0; idx < this.diamondCount; idx++) {
+        this.diamondTimeouts[idx] = setTimeout(() => {
+          this.diamondsVisible[idx] = true;
+        }, idx * this.diamondAnimationDelay + additionalDelay);
+      }
+    }
   }
 
-  toggleDiamondInfo(event: any, isCollapse: boolean) {
-    // Prevent popover from closing
-    event.stopPropagation();
-    // Save the user's preference for seeing the diamond info or not and then toggle the collapse state of the div.
-    this.backendApi.SetStorage("collapseDiamondInfo", isCollapse);
-    this.collapseDiamondInfo = isCollapse;
+  removeDiamondSelection() {
+    for (let idx = 0; idx < this.diamondCount; idx++) {
+      clearTimeout(this.diamondTimeouts[idx]);
+      this.diamondsVisible[idx] = false;
+    }
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
+    // Disable diamond selection if diamonds are being sent
+    if (this.sendingDiamonds) {
+      return;
+    }
+
+    if (event && event.pointerType === "touch" && includes(event.target.classList, "reaction-icon")) {
+      event.stopPropagation();
+      return;
+    }
+
+    // Block user from selecting diamond level below already gifted amount
+    if (index < this.getCurrentDiamondLevel()) {
+      return;
+    }
+
     if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
       this.globalVars._alertError("You cannot downgrade a diamond");
-      this.closeDiamondPopover();
       return;
     }
     this.diamondSelected = index + 1;
-    event.stopPropagation();
+    if (event) {
+      event.stopPropagation();
+    }
     if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
-      this.closeDiamondPopover();
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
-        title: `Sending ${this.diamondSelected} diamonds to ${this.postContent.ProfileEntryResponse?.Username}`,
+        title: `Sending ${this.diamondSelected} diamonds to @${this.postContent.ProfileEntryResponse?.Username}`,
         html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
           this.diamondSelected
-        )} worth of your creator coin to @${this.postContent.ProfileEntryResponse?.Username}`,
+        )} to @${this.postContent.ProfileEntryResponse?.Username}`,
         showCancelButton: true,
         showConfirmButton: true,
         focusConfirm: true,

@@ -17,6 +17,7 @@ export class CloseNftAuctionModalComponent {
 
   constructor(
     public bsModalRef: BsModalRef,
+    private modalService: BsModalService,
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService
   ) {}
@@ -52,7 +53,7 @@ export class CloseNftAuctionModalComponent {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
-          window.location.reload();
+          this.modalService.setDismissReason("auction cancelled");
         },
         (err) => {
           console.error(err);

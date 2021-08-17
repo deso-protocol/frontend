@@ -5,12 +5,13 @@
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { AppRoutingModule } from "../../app-routing.module";
+import { FollowService } from "../../../lib/services/follow/follow.service";
 
 @Component({
   selector: "trade-creator",
@@ -146,7 +147,7 @@ export class TradeCreatorComponent implements OnInit {
     private globalVars: GlobalVarsService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
   ) {
     this.appData = globalVars;
     this.router = _router;
