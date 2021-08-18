@@ -166,6 +166,12 @@ export class AppComponent implements OnInit {
     this.backendApi
       .GetAppState(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .subscribe((res: any) => {
+        this.globalVars.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
+
+        const nanosPerUnit = 1e9;
+        this.globalVars.nanosPerUSDExchangeRate = nanosPerUnit / (this.globalVars.ExchangeUSDCentsPerBitClout / 100);
+        this.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(nanosPerUnit, 2);
+
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
