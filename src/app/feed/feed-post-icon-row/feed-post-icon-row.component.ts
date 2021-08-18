@@ -53,7 +53,7 @@ export class FeedPostIconRowComponent {
   // Which diamond is selected by the drag selector
   diamondIdxDraggedTo = -1;
   // Whether the drag selector is at the bottom of it's bound and in position to cancel a transaction
-  diamondDragConfirm = false;
+  diamondDragCancel = false;
   // Boolean for whether or not the div explaining diamonds should be collapsed or not.
   collapseDiamondInfo = true;
   // Boolean for tracking if we are processing a send diamonds event.
@@ -113,7 +113,7 @@ export class FeedPostIconRowComponent {
       this.diamondDragLeftExplainer = true;
     }
     // If the drag box is at the alloted lower boundry or below, set confirm status to true
-    this.diamondDragConfirm = event.distance.y > 20;
+    this.diamondDragCancel = event.distance.y > 25;
   }
 
   // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
@@ -137,8 +137,8 @@ export class FeedPostIconRowComponent {
   endDrag(event) {
     // Stop the drag event so that the slider isn't visible during transaction load
     this.diamondDragging = false;
-    // If the drag box is in the "succeed" position, and the selected diamond makes sense, send diamonds
-    if (this.diamondDragConfirm && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
+    // If the drag box is not in the "cancel" position, and the selected diamond makes sense, send diamonds
+    if (!this.diamondDragCancel && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
       this.onDiamondSelected(null, this.diamondIdxDraggedTo);
     }
     // Reset drag-related variables
@@ -149,7 +149,7 @@ export class FeedPostIconRowComponent {
 
   resetDragVariables() {
     this.globalVars.userIsDragging = false;
-    this.diamondDragConfirm = false;
+    this.diamondDragCancel = false;
     this.diamondDragging = false;
     this.diamondIdxDraggedTo = -1;
     this.diamondDragMoved = false;
