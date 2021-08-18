@@ -116,6 +116,15 @@
         <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
       </div>
 
+      <a
+        [routerLink]="'/' + globalVars.RouteNames.CREATE_POST"
+        queryParamsHandling="merge"
+      >
+      <div class="w-60 justify-content-center d-flex btn-create" style="border-radius:10px; padding:10px; margin: 0 auto; margin-top: 20px;">
+        Create Post
+      </div>
+      </a>
+
       <div class="p-15px"></div>
 
       <left-bar-button
