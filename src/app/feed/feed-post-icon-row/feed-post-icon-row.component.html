@@ -108,6 +108,7 @@
       class="diamond-mobile-drag-container unselectable"
       [ngClass]="{
         'hide-diamonds':
+          !globalVars.loggedInUser?.PublicKeyBase58Check ||
           postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
       }"
     >
@@ -116,7 +117,7 @@
         class="diamond-mobile-drag-instructions"
       >
         <p class="d-block">
-          {{ !diamondDragMoved ? "<- Slide ->" : diamondDragCancel ? "Release To Cancel" : "Release To Confirm - Drag Down To Cancel" }}
+          {{ !diamondDragMoved ? "<- Slide ->" : diamondDragCancel ? "Release To Cancel" : "Slide Down To Cancel - Release To Confirm" }}
         </p>
       </div>
     </div>
@@ -127,7 +128,7 @@
       (mouseleave)="removeDiamondSelection()"
     >
       <i
-        class="feed-post-icon-row__icon"
+        class="feed-post-icon-row__icon mr-2"
         [ngClass]="{
           'icon-diamond': !sendingDiamonds,
           'fas fa-spinner fa-spin': sendingDiamonds,
@@ -141,7 +142,9 @@
         [ngClass]="{
           'dragged-like': diamondDragging,
           'hide-diamonds':
-            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check || sendingDiamonds
+            !globalVars.loggedInUser?.PublicKeyBase58Check ||
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check ||
+            sendingDiamonds
         }"
         class="diamond-btn icon-diamond"
         id="diamond-button"
