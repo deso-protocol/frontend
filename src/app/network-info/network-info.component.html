@@ -283,26 +283,5 @@
   </div>
 </div>
 
-<div class="fs-15px mt-15px px-15px">
-  <span (click)="isOpen.bitcoinNode = !isOpen.bitcoinNode" class="font-weight-bold cursor-pointer">
-    <i *ngIf="!isOpen.bitcoinNode" class="fas fa-caret-right"></i>
-    <i *ngIf="isOpen.bitcoinNode" class="fas fa-caret-down"></i>
-    Bitcoin Node Info
-  </span>
-  <div *ngIf="isOpen.bitcoinNode && updatingBitcoinPeer" class="ml-15px fc-muted">Updating Bitcoin peer...</div>
-  <div *ngIf="isOpen.bitcoinNode && !updatingBitcoinPeer" class="ml-15px">
-    Manual Connection:
-    <div class="fc-blue d-flex align-items-center">
-      <input [(ngModel)]="manualBitcoinPeer" placeholder="Enter an address." style="width: 200px; border-radius: 3px" />
-      <div
-        (click)="connectBitcoinPeer(manualBitcoinPeer)"
-        class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
-      >
-        Connect
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Spacer for scrolling past the bottom. -->
 <div style="height: 100px; width: 100%"></div>
