@@ -113,7 +113,7 @@ export class FeedPostIconRowComponent {
       this.diamondDragLeftExplainer = true;
     }
     // If the drag box is at the alloted lower boundry or below, set confirm status to true
-    this.diamondDragCancel = event.distance.y > 25;
+    this.diamondDragCancel = event.distance.y > 30;
   }
 
   // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
