@@ -1,5 +1,5 @@
 <div
-  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between max-width-420px unselectable"
+  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between unselectable"
 >
   <div
     class="cursor-pointer d-flex align-items-center"
@@ -7,7 +7,8 @@
     data-toggle="modal"
     data-target=".js-feed-post-icon-row__comment-modal"
   >
-    <i class="icon-reply feed-post-icon-row__icon"></i>
+<!--    <i class="icon-reply feed-post-icon-row__icon"></i>-->
+    <i data-feather="plus-circle"></i>
     <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
   </div>
 

@@ -132,12 +132,11 @@
         <ng-template #creatorCoinInfo>
           <!-- Coin price-->
           <a
-            style="padding: 3px"
-            class="creator-coin-info fs-12px font-weight-bold feed-post__coin-price-holder br-12px"
+            class="feed-post__coin-price-holder"
             [routerLink]="AppRoutingModule.buyCreatorPath(postContent.ProfileEntryResponse.Username)"
             queryParamsHandling="merge"
           >
-            <span class="text-grey5">
+            <span class="feed-post__coin-price">
               ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
             </span>
 
@@ -147,7 +146,7 @@
         </ng-template>
 
         <div
-          class="feed-post__container d-flex justify-content-left w-100"
+          class="feed-post__container justify-content-left w-100"
           [ngClass]="{
             'px-15px': includePaddingOnPost,
             'pb-15px': includePaddingOnPost,
@@ -160,70 +159,66 @@
           }"
           *ngIf="!postContent.IsHidden"
         >
-          <!-- Avatar -->
-          <div class="feed-post__avatar-container">
-            <a
-              class="feed-post__avatar br-12px"
-              [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
-              [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
-              queryParamsHandling="merge"
-            ></a>
-            <div *ngIf="showThreadConnectionLine" class="feed-post__parent-thread-connector"></div>
+          <!-- Avatar and top 2 header rows -->
+          <div class="d-flex">
+            <div class="feed-post__avatar-container">
+              <a
+                class="feed-post__avatar"
+                [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+                [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
+                queryParamsHandling="merge"
+              ></a>
+              <div *ngIf="showThreadConnectionLine" class="feed-post__parent-thread-connector"></div>
+            </div>
+
+            <div>
+              <div class="d-flex align-items-center">
+                <!-- Username-->
+                <a
+                  class="feed-post__username fc-default font-weight-bold"
+                  [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
+                  queryParamsHandling="merge"
+                >
+                  {{ postContent.ProfileEntryResponse.Username }}
+                </a>
+
+                <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
+                  <i class="fas fa-check-circle fa-md align-middle"></i>
+                </span>
+                <div class="desktop-creator-coin-info">
+                  <ng-container *ngTemplateOutlet="creatorCoinInfo"></ng-container>
+                </div>
+
+                <feed-post-dropdown
+                  *ngIf="showDropdown && !reclouterProfile"
+                  class="ml-auto"
+                  [post]="post"
+                  [postContent]="postContent"
+                  [nftEntryResponses]="nftEntryResponses"
+                  (postHidden)="hidePost()"
+                  (userBlocked)="blockUser()"
+                  (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
+                  (togglePostPin)="_pinPostToGlobalFeed($event)"
+                ></feed-post-dropdown>
+              </div>
+
+              <!-- Follow button-->
+              <div class="feed-post__second-header-ln">
+                <follow-button
+                  *ngIf="!hideFollowLink"
+                  class="fs-12px"
+                  [displayAsLink]="true"
+                  [followLinkClass]="'link--unstyled'"
+                  [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+                  [creatorCoinTemplate]="creatorCoinInfo"
+                ></follow-button>
+              </div>
+            </div>
           </div>
+          <!-- Avatar -->
 
           <!-- Main Content -->
           <div class="w-100">
-            <div class="d-flex align-items-center">
-              <!-- Username-->
-              <a
-                class="fc-default font-weight-bold"
-                [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
-                queryParamsHandling="merge"
-              >
-                {{ postContent.ProfileEntryResponse.Username }}
-              </a>
-
-              <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
-                <i class="fas fa-check-circle fa-md align-middle"></i>
-              </span>
-              <div class="desktop-creator-coin-info">
-                <ng-container *ngTemplateOutlet="creatorCoinInfo"></ng-container>
-              </div>
-
-              <!-- Desktop follow button-->
-              <follow-button
-                *ngIf="!hideFollowLink"
-                class="ml-10px fs-12px d-lg-block d-none text-grey5"
-                [displayAsLink]="true"
-                [followLinkClass]="'link--unstyled'"
-                [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
-                [creatorCoinTemplate]="creatorCoinInfo"
-              ></follow-button>
-              <feed-post-dropdown
-                *ngIf="showDropdown && !reclouterProfile"
-                class="ml-auto"
-                [post]="post"
-                [postContent]="postContent"
-                [nftEntryResponses]="nftEntryResponses"
-                (postHidden)="hidePost()"
-                (userBlocked)="blockUser()"
-                (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
-                (togglePostPin)="_pinPostToGlobalFeed($event)"
-              ></feed-post-dropdown>
-            </div>
-
-            <!-- Mobile follow button-->
-            <div class="mt-5px d-lg-none text-grey5">
-              <follow-button
-                *ngIf="!hideFollowLink"
-                class="fs-12px"
-                [displayAsLink]="true"
-                [followLinkClass]="'link--unstyled'"
-                [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
-                [creatorCoinTemplate]="creatorCoinInfo"
-              ></follow-button>
-            </div>
-
             <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
               replying to
               <a
@@ -236,9 +231,8 @@
 
             <!-- Content -->
             <div
-              class="roboto-regular mt-1"
+              class="feed-post__content"
               [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
-              style="overflow-wrap: anywhere; word-break: break-word; outline: none"
               [innerHTML]="postContent.Body | sanitizeAndAutoLink"
               queryParamsHandling="merge"
             ></div>

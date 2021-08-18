@@ -1,6 +1,6 @@
 <div *ngIf="canLoggedInUserFollowTargetPublicKey()">
   <div *ngIf="displayAsLink; else displayAsLinkElseBlock">
-    <div [ngClass]="creatorCoinTemplate ? 'my-2' : ''">
+    <div class="feed-post__follow-btn" [ngClass]="creatorCoinTemplate && globalVars.isMobile() ? 'my-2' : ''">
       <div class="mobile-creator-coin-info mr-2" *ngIf="creatorCoinTemplate">
         <ng-container *ngTemplateOutlet="creatorCoinTemplate"></ng-container>
       </div>
