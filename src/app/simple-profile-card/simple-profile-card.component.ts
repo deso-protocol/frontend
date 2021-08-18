@@ -42,6 +42,9 @@ export class SimpleProfileCardComponent implements OnInit {
   }
 
   onBuyClicked() {
+    console.log(this.globalVars.loggedInUser);
+    console.log(this.globalVars.loggedInUser?.TutorialStatus);
+    this.globalVars.logEvent("buy : creator : select");
     this.router.navigate(
       [
         this.globalVars.RouteNames.TUTORIAL,

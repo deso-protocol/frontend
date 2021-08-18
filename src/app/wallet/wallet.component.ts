@@ -60,6 +60,8 @@ export class WalletComponent implements OnInit, OnDestroy {
   }
 
   subscriptions = new Subscription();
+  tutorialHeaderText: string = "";
+  tutorialStepNumber: number;
 
   ngOnInit() {
     if (this.inTutorial) {
@@ -70,14 +72,20 @@ export class WalletComponent implements OnInit, OnDestroy {
       });
       switch (this.tutorialStatus) {
         case TutorialStatus.INVEST_OTHERS_BUY: {
+          this.tutorialHeaderText = "Invest in a Creator";
+          this.tutorialStepNumber = 1;
           this.nextButtonText = `Sell ${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins`;
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
+          this.tutorialHeaderText = "Sell a Creator";
+          this.tutorialStepNumber = 2;
           this.nextButtonText = "Setup your profile";
           break;
         }
         case TutorialStatus.INVEST_SELF: {
+          this.tutorialHeaderText = "Invest in Yourself";
+          this.tutorialStepNumber = 4;
           this.nextButtonText = "Give a diamond";
           break;
         }
@@ -264,10 +272,13 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   tutorialNext(): void {
     if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
+      this.globalVars.logEvent("invest : others : buy : next");
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, this.tutorialUsername]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
+      this.globalVars.logEvent("invest : others : sell : next");
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
+      this.globalVars.logEvent("invest : self : buy : next");
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
@@ -302,9 +313,13 @@ export class WalletComponent implements OnInit, OnDestroy {
                 this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
               )
               .subscribe(
-                () => {},
+                () => {
+                  this.globalVars.logEvent("set : founder-reward");
+                },
                 (err) => {
                   console.error(err);
+                  const parsedError = this.backendApi.stringifyError(err);
+                  this.globalVars.logEvent("set : founder-reward : error", { parsedError });
                 }
               );
           }

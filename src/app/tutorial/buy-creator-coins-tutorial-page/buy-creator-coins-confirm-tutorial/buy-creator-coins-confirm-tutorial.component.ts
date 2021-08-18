@@ -21,9 +21,6 @@ export class BuyCreatorCoinsConfirmTutorialComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.route.params.subscribe((params) => {
-      if (!params.username) {
-        // TODO: hmm this is fishy - some exception handling
-      }
       this.username = params.username;
       this.backendApi.GetSingleProfile(this.globalVars.localNode, "", params.username).subscribe((res) => {
         // How do we want to handle the profile not found or blacklisted case in the tutorial?

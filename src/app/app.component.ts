@@ -184,6 +184,8 @@ export class AppComponent implements OnInit {
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioBitCloutNanos = res.JumioBitCloutNanos;
         // Setup amplitude on first run
+        console.log("amplitude key: ", res.AmplitudeKey);
+        console.log("amplitude domain: ", res.AmplitudeDomain);
         if (!this.globalVars.amplitude && res.AmplitudeKey) {
           this.globalVars.amplitude = require("amplitude-js");
           this.globalVars.amplitude.init(res.AmplitudeKey, null, {

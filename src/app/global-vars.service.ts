@@ -772,7 +772,16 @@ export class GlobalVarsService {
     if (!this.amplitude) {
       return;
     }
-
+    // If the user is in the tutorial, add the "tutorial : " prefix.
+    if (
+      this.loggedInUser &&
+      [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(
+        this.loggedInUser?.TutorialStatus
+      ) < 0
+    ) {
+      event = "tutorial : " + event;
+    }
+    console.log("amplitude event: ", event);
     this.amplitude.logEvent(event, data);
   }
 
@@ -1015,7 +1024,7 @@ export class GlobalVarsService {
               Swal.fire({
                 target: this.getTargetComponentSelector(),
                 title: "Congrats!",
-                html: 'You just got some free money!<br><br><b>Now it\'s time to learn how to earn even more!</b>',
+                html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
                 showConfirmButton: true,
                 customClass: {
                   confirmButton: "btn btn-light",
@@ -1035,13 +1044,17 @@ export class GlobalVarsService {
                     !res.isConfirmed /* if it's not confirmed, skip tutorial*/
                   )
                   .subscribe((response) => {
-                    if (res.isConfirmed) {
-                      this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
-                    }
+                    console.log("loggingevent");
+                    this.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
                     // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
                     this.loggedInUser.TutorialStatus = res.isConfirmed
                       ? TutorialStatus.STARTED
                       : TutorialStatus.SKIPPED;
+                    console.log(this.loggedInUser);
+                    console.log(this.loggedInUser?.TutorialStatus);
+                    if (res.isConfirmed) {
+                      this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+                    }
                   });
               });
               clearInterval(this.jumioInterval);
