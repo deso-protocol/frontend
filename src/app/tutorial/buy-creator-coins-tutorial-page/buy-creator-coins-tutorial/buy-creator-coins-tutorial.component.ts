@@ -17,6 +17,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   static BUFFER_SIZE = 5;
 
   AppRoutingModule = AppRoutingModule;
+  loading: boolean = true;
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -37,46 +38,20 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
       this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
       this.investInYourself = true;
+      this.loading = false;
       return;
     }
-    // TODO: replace with real data
     this.backendApi
-      .GetProfiles(
-        this.globalVars.localNode,
-        null /*PublicKeyBase58Check*/,
-        null /*Username*/,
-        null /*UsernamePrefix*/,
-        null /*Description*/,
-        BackendApiService.GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE /*Order by*/,
-        10 /*NumEntriesToReturn*/,
-        "" /*ReaderPublicKeyBase58Check*/,
-        "leaderboard" /*ModerationType*/,
-        false /*FetchUsersThatHODL*/,
-        false /*AddGlobalFeedBool*/
-      )
+      .GetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 2)
       .subscribe(
-        (response) => {
-          this.globalVars.topCreatorsAllTimeLeaderboard = response.ProfilesFound.slice(
-            0,
-            RightBarCreatorsLeaderboardComponent.MAX_PROFILE_ENTRIES
-          ).map((profile) => {
-            return {
-              Profile: profile,
-            };
-          });
-          this.topCreatorsToHighlight = this.globalVars.topCreatorsAllTimeLeaderboard.map((x) => x.Profile);
-          this.upAndComingCreatorsToHighlight = this.globalVars.topCreatorsAllTimeLeaderboard.map((x) => x.Profile);
+        (res) => {
+          this.topCreatorsToHighlight = res.WellKnownProfileEntryResponses;
+          this.upAndComingCreatorsToHighlight = res.UpAndComingProfileEntryResponses;
+          this.loading = false;
         },
         (err) => {
           console.error(err);
         }
       );
-  }
-
-  canLoggedInUserFollowTargetPublicKey(targetPubKeyBase58Check) {
-    return CanPublicKeyFollowTargetPublicKeyHelper.execute(
-      this.globalVars.loggedInUser.PublicKeyBase58Check,
-      targetPubKeyBase58Check
-    );
   }
 }

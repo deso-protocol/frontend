@@ -68,7 +68,7 @@
             Click "Confirm Buy" to purchase {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin
           </p>
           <p *ngIf="!investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">
-            When a creator's coin goes up in value you can sell to make a return on your investment.
+            When a creator's coin goes up in value you can sell.
             Click "Confirm Sell" to sell {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin!
           </p>
           <p *ngIf="investInYourself && creatorCoinTrade.isBuyingCreatorCoin">

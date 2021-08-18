@@ -85,17 +85,4 @@ export class RightBarCreatorsComponent implements OnInit {
         this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
       });
   }
-
-  // TODO: move to admin panel - it's only here for testing.
-  resetTutorial(): void {
-    this.backendApi
-      .AdminResetTutorialStatus(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.globalVars.loggedInUser?.PublicKeyBase58Check
-      )
-      .subscribe(() => {
-        console.log("reset!");
-      });
-  }
 }

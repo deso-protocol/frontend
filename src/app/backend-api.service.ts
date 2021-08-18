@@ -1881,7 +1881,8 @@ export class BackendApiService {
       IsWellKnown,
       AdminPublicKey,
     });
-  }    
+  }
+
   AdminResetTutorialStatus(endpoint: string, AdminPublicKey: string, PublicKeyBase58Check: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetTutorialStatus, AdminPublicKey, {
       PublicKeyBase58Check,

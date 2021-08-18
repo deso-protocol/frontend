@@ -3,7 +3,8 @@
     class="d-flex align-items-center justify-content-between w-100 pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
     style="min-height: 80px; background-color: var(--secalt)"
   >
-    <div class="d-flex flex-column justify-flex-start">
+    <simple-center-loader *ngIf="loading"></simple-center-loader>
+    <div class="d-flex flex-column justify-flex-start" *ngIf="!loading">
       <div class="pt-15px d-flex align-items-center font-weight-bold fs-18px">
         <p *ngIf="!investInYourself">Invest in a Creator</p>
         <p *ngIf="investInYourself">Invest In Yourself</p>

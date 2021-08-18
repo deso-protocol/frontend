@@ -1,14 +1,13 @@
 import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
-import { concat, filter, map } from "lodash";
-import {publish} from "rxjs-compat/operator/publish";
+import { GlobalVarsService } from "../../global-vars.service";
+import { BackendApiService } from "../../backend-api.service";
+import { filter } from "lodash";
 
 @Component({
-  selector: "tutorial-mgr",
-  templateUrl: "./tutorial-mgr.component.html",
+  selector: "admin-tutorial",
+  templateUrl: "./admin-tutorial.component.html",
 })
-export class TutorialMgrComponent implements OnInit {
+export class AdminTutorialComponent implements OnInit {
   globalVars: GlobalVarsService;
 
   profileEntryResponses = null;
@@ -17,9 +16,12 @@ export class TutorialMgrComponent implements OnInit {
   loading = false;
   WELL_KNOWN_TAB = "Well Known";
   UP_AND_COMING_TAB = "Up And Coming";
-  adminTutorialTabs = [this.WELL_KNOWN_TAB, this.UP_AND_COMING_TAB];
+  RESET_TAB = "Reset";
+  adminTutorialTabs = [this.WELL_KNOWN_TAB, this.UP_AND_COMING_TAB, this.RESET_TAB];
   activeTutorialTab = this.WELL_KNOWN_TAB;
   filteredProfileEntryResponses = null;
+  publicKeyToReset: string = "";
+  resettingTutorial: boolean = false;
 
   constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
     this.globalVars = _globalVars;
@@ -27,6 +29,9 @@ export class TutorialMgrComponent implements OnInit {
 
   _tutorialTabClicked(tutorialTabName: string) {
     this.activeTutorialTab = tutorialTabName;
+    if (this.activeTutorialTab === this.RESET_TAB) {
+      return;
+    }
     this.filteredProfileEntryResponses =
       tutorialTabName === this.WELL_KNOWN_TAB ? this.wellKnownProfiles : this.upAndComingProfiles;
   }
@@ -78,4 +83,22 @@ export class TutorialMgrComponent implements OnInit {
         }
       );
   }
+
+  _resetTutorial(): void {
+    this.resettingTutorial = true;
+    this.backendApi
+      .AdminResetTutorialStatus(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.publicKeyToReset
+      )
+      .subscribe(
+        (res) => {},
+        (err) => {
+          this.globalVars._alertError(err.error.error);
+        }
+      )
+      .add(() => (this.resettingTutorial = false));
+  }
+
 }

@@ -204,7 +204,12 @@ export class TradeCreatorComponent implements OnInit {
 
   setUpBuyTutorial(): void {
     let balance = this.appData.loggedInUser?.BalanceNanos;
-    balance = balance > this.appData.jumioBitCloutNanos ? 1e8 : balance;
+    balance =
+      balance > this.appData.jumioBitCloutNanos
+        ? this.appData.jumioBitCloutNanos > 0
+          ? this.appData.jumioBitCloutNanos
+          : 1e8
+        : balance;
     const percentToBuy =
       this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check ? 0.1 : 0.5;
     this.creatorCoinTrade.bitCloutToSell = (balance * percentToBuy) / 1e9;
@@ -214,13 +219,10 @@ export class TradeCreatorComponent implements OnInit {
         this.creatorCoinTrade.expectedFounderRewardNanos = response.FounderRewardGeneratedNanos || 0;
       },
       (err) => {
-        // TODO: how to handle errors in tutorial
         console.error(err);
         this.appData._alertError(this.backendApi.parseProfileError(err));
       }
     );
-    // TODO: construct the rest of the creator coin trade
-    // AMOUNT OF CC TO BUY: max of jumio bitclout nanos
   }
 
   setUpSellTutorial(): void {
@@ -239,7 +241,6 @@ export class TradeCreatorComponent implements OnInit {
         this.creatorCoinTrade.expectedBitCloutReturnedNanos = response.ExpectedBitCloutReturnedNanos || 0;
       },
       (err) => {
-        // TODO: how to handle errors in tutorial
         console.error(err);
         this.appData._alertError(this.backendApi.parseProfileError(err));
       }

@@ -1,10 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../../global-vars.service";
 import { BackendApiService, ProfileEntryResponse } from "../../../backend-api.service";
-import { AppRoutingModule } from "../../../app-routing.module";
-import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { Title } from "@angular/platform-browser";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "buy-creator-coins-confirm-tutorial",
@@ -20,8 +18,7 @@ export class BuyCreatorCoinsConfirmTutorialComponent implements OnInit {
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
-    private route: ActivatedRoute,
-    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.route.params.subscribe((params) => {
       if (!params.username) {
@@ -41,8 +38,6 @@ export class BuyCreatorCoinsConfirmTutorialComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.isLoadingProfilesForFirstTime = true;
     this.titleService.setTitle("Buy Creator Coins Tutorial - BitClout");
-    // TODO: replace with real data
   }
 }

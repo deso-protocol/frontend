@@ -137,7 +137,7 @@ import { NftShowcaseComponent } from "./nft-showcase/nft-showcase.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { AdminJumioComponent } from "./admin/admin-jumio/admin-jumio.component";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
-import { TutorialMgrComponent } from "./tutorial-mgr/tutorial-mgr.component";
+import { AdminTutorialComponent } from "./admin/admin-tutorial/admin-tutorial.component";
 import { CreateProfileTutorialPageComponent } from "./tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component";
 import { BuyCreatorCoinsTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial/buy-creator-coins-tutorial.component";
 import { BuyCreatorCoinsTutorialPageComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component";
@@ -276,7 +276,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     VerifyEmailComponent,
     AdminJumioComponent,
     JumioStatusComponent,
-    TutorialMgrComponent,
+    AdminTutorialComponent,
     CreateProfileTutorialPageComponent,
     BuyCreatorCoinsTutorialComponent,
     BuyCreatorCoinsConfirmTutorialComponent,

@@ -128,7 +128,8 @@ export class TradeCreatorPreviewComponent implements OnInit {
           const observable =
             this.creatorCoinTrade.followCreator &&
             !this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check) &&
-            this.appData.loggedInUser.PublicKeyBase58Check !== this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
+            this.appData.loggedInUser.PublicKeyBase58Check !==
+              this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
             this.creatorCoinTrade.tradeType === CreatorCoinTrade.BUY_VERB
               ? this.followService._toggleFollow(true, this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check)
               : of(null).subscribe();
@@ -188,7 +189,13 @@ export class TradeCreatorPreviewComponent implements OnInit {
           });
 
           // This will update the user's balance.
-          this.appData.updateEverything(false, response.TxnHashHex, this._creatorCoinSuccess, this._creatorCoinFailure, this);
+          this.appData.updateEverything(
+            false,
+            response.TxnHashHex,
+            this._creatorCoinSuccess,
+            this._creatorCoinFailure,
+            this
+          );
         },
         (err) => {
           this._handleRequestErrors(err);

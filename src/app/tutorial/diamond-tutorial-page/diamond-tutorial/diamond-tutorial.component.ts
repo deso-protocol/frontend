@@ -20,7 +20,7 @@ export class DiamondTutorialComponent implements OnInit {
 
   post: PostEntryResponse;
   // TODO: replace with prod post hash hex
-  postHashHex = "3e42215a120a6e9d4848117f5829a2c4d9f692360fd14b78daea483a72d142dc";
+  postHashHex = "7eba2b76e2b1851070f2740e25c1c70c64a228e226f0dff5734f19d3baca8224";
   loading: boolean = true;
 
   ngOnInit() {
@@ -36,11 +36,9 @@ export class DiamondTutorialComponent implements OnInit {
         false
       )
       .subscribe((res) => {
-        // TODO: handle any errors or post not found?
         this.post = res.PostFound;
       })
       .add(() => (this.loading = false));
-    // TODO: replace with real data
   }
 
   onDiamondSent(): void {

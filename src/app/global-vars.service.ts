@@ -296,6 +296,7 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
+    // TODO: uncomment lines here when done testing.
     // if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
     this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
     // }
@@ -328,7 +329,6 @@ export class GlobalVarsService {
           break;
         }
         case TutorialStatus.INVEST_OTHERS_BUY: {
-          // TODO: replace with username purchased
           route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
           break;
         }
@@ -989,7 +989,7 @@ export class GlobalVarsService {
         .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
         .subscribe(
           (res: any) => {
-            // TODO: revert to res.JumioVerified - just using this for testing.
+            // TODO: revert back to res.JumioVerified after testing
             if (!res.JumioVerified) {
               let user: User;
               this.userList.forEach((userInList, idx) => {

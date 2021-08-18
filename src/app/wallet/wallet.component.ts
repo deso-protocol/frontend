@@ -78,46 +78,6 @@ export class WalletComponent implements OnInit, OnDestroy {
           break;
         }
         case TutorialStatus.INVEST_SELF: {
-          SwalHelper.fire({
-            target: this.globalVars.getTargetComponentSelector(),
-            icon: "info",
-            title: `Allow others to invest in your coin`,
-            html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase.`,
-            showCancelButton: true,
-            showConfirmButton: true,
-            focusConfirm: true,
-            customClass: {
-              confirmButton: "btn btn-light",
-              cancelButton: "btn btn-light no",
-            },
-            confirmButtonText: "Ok",
-            cancelButtonText: "Cancel",
-            reverseButtons: true,
-          }).then((res: any) => {
-            if (res.isConfirmed) {
-              return this.backendApi
-                .UpdateProfile(
-                  this.globalVars.localNode,
-                  this.globalVars.loggedInUser.PublicKeyBase58Check,
-                  "",
-                  "",
-                  "",
-                  "",
-                  10 * 100,
-                  1.25 * 100 * 100,
-                  false,
-                  this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
-                )
-                .subscribe(
-                  (res) => {
-                    // Don't really need to do anything do we?
-                  },
-                  (err) => {
-                    console.error(err);
-                  }
-                );
-            }
-          });
           this.nextButtonText = "Give a diamond";
           break;
         }
@@ -157,6 +117,8 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.
+  // https://github.com/dhilt/ngx-ui-scroll/issues/111#issuecomment-697269318
   correctDataPaddingForwardElementHeight(viewportElement: HTMLElement): void {
     const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-forward]`);
     if (dataPaddingForwardElement) {
@@ -306,7 +268,48 @@ export class WalletComponent implements OnInit, OnDestroy {
     } else if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
-      this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]);
+      SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
+        icon: "info",
+        title: `Allow others to invest in your coin`,
+        html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase.`,
+        showCancelButton: true,
+        showConfirmButton: true,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+          cancelButton: "btn btn-light no",
+        },
+        confirmButtonText: "Ok",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+      })
+        .then((res: any) => {
+          if (res.isConfirmed) {
+            return this.backendApi
+              .UpdateProfile(
+                this.globalVars.localNode,
+                this.globalVars.loggedInUser.PublicKeyBase58Check,
+                "",
+                "",
+                "",
+                "",
+                10 * 100,
+                1.25 * 100 * 100,
+                false,
+                this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+              )
+              .subscribe(
+                () => {},
+                (err) => {
+                  console.error(err);
+                }
+              );
+          }
+        })
+        .finally(() => this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]));
     }
   }
 
