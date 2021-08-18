@@ -281,7 +281,7 @@ export class WalletComponent implements OnInit, OnDestroy {
           cancelButton: "btn btn-light no",
         },
         confirmButtonText: "Ok",
-        cancelButtonText: "Cancel",
+        cancelButtonText: "No thank you",
         reverseButtons: true,
         allowEscapeKey: false,
         allowOutsideClick: false,

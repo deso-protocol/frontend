@@ -71,7 +71,7 @@ export class FeedCreatePostComponent implements OnInit {
     this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
     if (this.inTutorial) {
-      this.postInput = "Hello beings of planet CLOUT";
+      this.postInput = "It's time to CLOUT!";
     }
   }
 

@@ -13,6 +13,7 @@ import { Observable, Observer } from "rxjs";
 import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
 import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
 import { SwalHelper } from "../lib/helpers/swal-helper";
+import Swal, { SweetAlertOptions } from "sweetalert2";
 import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer } from "@angular/platform-browser";
@@ -1011,18 +1012,17 @@ export class GlobalVarsService {
                 this.setLoggedInUser(user);
               }
               this.celebrate();
-              SwalHelper.fire({
+              Swal.fire({
                 target: this.getTargetComponentSelector(),
-                title: "Tutorial",
-                html: `Want to learn how BitClout works?`,
+                title: "Congrats!",
+                html: 'You just got some free money!<br><br><b>Now it\'s time to learn how to earn even more!</b>',
                 showConfirmButton: true,
-                showCancelButton: true,
                 customClass: {
                   confirmButton: "btn btn-light",
                   cancelButton: "btn btn-light no",
                 },
                 reverseButtons: true,
-                confirmButtonText: "Start",
+                confirmButtonText: "Start Tutorial",
                 cancelButtonText: "Skip",
                 // User must skip or start tutorial
                 allowOutsideClick: false,

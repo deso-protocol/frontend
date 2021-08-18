@@ -1,10 +1,33 @@
 <div *ngIf="readyForDisplay(); else loadingElseBlock">
   <div *ngIf="this.appData.loggedInUser; else elseBlock">
+    <div *ngIf="inTutorial && !investInYourself && creatorCoinTrade.isBuyingCreatorCoin" class="p-3" style="background-color: var(--secalt)">
+      <h3 class="mb-1">
+        Invest in a Creator
+      </h3>
+      <h5>
+        Step 1 of 5
+      </h5>
+    </div>
+    <div *ngIf="inTutorial && !investInYourself && !creatorCoinTrade.isBuyingCreatorCoin" class="p-3" style="background-color: var(--secalt)">
+      <h3 class="mb-1">
+        Sell a Creator
+      </h3>
+      <h5>
+        Step 2 of 5
+      </h5>
+    </div>
+    <div *ngIf="inTutorial && investInYourself && creatorCoinTrade.isBuyingCreatorCoin" class="p-3" style="background-color: var(--secalt)">
+      <h3 class="mb-1">
+        Invest in Yourself
+      </h3>
+      <h5>
+        Step 4 of 5
+      </h5>
+    </div>
     <!-- Top Bar -->
     <div
       class="d-flex align-items-center justify-content-between w-100 pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
       style="min-height: 80px"
-      [ngStyle]="{ 'background-color': inTutorial ? 'var(--secalt)' : '' }"
     >
       <!-- not in tutorial header -->
       <div class="d-flex align-items-center" *ngIf="!inTutorial">
@@ -64,13 +87,17 @@
         </div>
         <div class="fs-14px py-15px pr-15px">
           <p *ngIf="!investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
-            You can invest directly in your favorite creator's by buying their coin.
-            Click "Confirm Buy" to purchase {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin
+            You can invest directly in your favorite creators by buying their coin.
+            Click "Confirm Buy" to purchase {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin!
           </p>
-          <p *ngIf="!investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">
-            When a creator's coin goes up in value you can sell.
-            Click "Confirm Sell" to sell {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin!
-          </p>
+          <div *ngIf="!investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">
+            <p>
+              When a creator's coin goes up in value you can sell.
+            </p>
+            <p class="mt-3 mb-1">
+              <b>Click "Confirm Sell" to sell {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin!</b>
+            </p>
+          </div>
           <p *ngIf="investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
             Even you have a creator coin! Invest in yourself by purchasing {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of your coin.
           </p>

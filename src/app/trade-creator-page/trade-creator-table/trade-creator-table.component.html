@@ -126,6 +126,7 @@
   </div>
   <div
     *ngIf="
+      !inTutorial &&
       !(
         followService._isLoggedInUserFollowing(creatorCoinTrade.creatorProfile.PublicKeyBase58Check) ||
         appData.loggedInUser.PublicKeyBase58Check === creatorCoinTrade.creatorProfile.PublicKeyBase58Check ||
