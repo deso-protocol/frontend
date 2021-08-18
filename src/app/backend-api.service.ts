@@ -105,6 +105,7 @@ export class BackendRoutes {
   static RoutePathAdminUpdateJumioBitClout = "/api/v0/admin/update-jumio-bitclout";
   static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
   static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
+  static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
@@ -1891,9 +1892,17 @@ export class BackendApiService {
   }
 
   GetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetTutorialCreators, PublicKeyBase58Check, {
+    return this.post(endpoint, BackendRoutes.RoutePathGetTutorialCreators, {
       ResponseLimit,
       PublicKeyBase58Check,
+    });
+  }
+
+  AdminGetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetTutorialCreators, PublicKeyBase58Check, {
+      ResponseLimit,
+      PublicKeyBase58Check,
+      AdminPublicKey: PublicKeyBase58Check,
     });
   }
 

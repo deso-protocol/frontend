@@ -1026,6 +1026,8 @@ export class GlobalVarsService {
                 title: "Congrats!",
                 html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
                 showConfirmButton: true,
+                // Only show skip option to admins
+                showCancelButton: !!this.loggedInUser?.IsAdmin,
                 customClass: {
                   confirmButton: "btn btn-light",
                   cancelButton: "btn btn-light no",

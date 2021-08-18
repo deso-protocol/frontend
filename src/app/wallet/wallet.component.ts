@@ -322,6 +322,8 @@ export class WalletComponent implements OnInit, OnDestroy {
                   this.globalVars.logEvent("set : founder-reward : error", { parsedError });
                 }
               );
+          } else {
+            this.globalVars.logEvent("set : founder-reward : skip");
           }
         })
         .finally(() => this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]));

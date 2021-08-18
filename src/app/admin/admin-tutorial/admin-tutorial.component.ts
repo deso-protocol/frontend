@@ -39,7 +39,7 @@ export class AdminTutorialComponent implements OnInit {
   ngOnInit(): void {
     this.loading = true;
     this.backendApi
-      .GetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 500)
+      .AdminGetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 500)
       .subscribe(
         (res) => {
           this.wellKnownProfiles = res.WellKnownProfileEntryResponses;
