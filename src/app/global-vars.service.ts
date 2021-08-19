@@ -775,7 +775,6 @@ export class GlobalVarsService {
     ) {
       event = "tutorial : " + event;
     }
-    console.log("amplitude event: ", event);
     this.amplitude.logEvent(event, data);
   }
 
