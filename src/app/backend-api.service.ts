@@ -101,6 +101,11 @@ export class BackendRoutes {
   static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
   static RoutePathAdminUpdateJumioBitClout = "/api/v0/admin/update-jumio-bitclout";
 
+  // Referral program admin routes.
+  static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
+	static RoutePathAdminGetAllReferralInfoForUser = "/api/v0/admin/get-all-referral-info-for-user"
+	static RoutePathAdminUpdateReferralHash = "/api/v0/admin/update-referral-hash"
+
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
   // Wyre routes.
@@ -1834,6 +1839,38 @@ export class BackendApiService {
   AdminUpdateJumioBitClout(endpoint: string, AdminPublicKey: string, BitCloutNanos: number): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioBitClout, AdminPublicKey, {
       BitCloutNanos,
+      AdminPublicKey,
+    });
+  }
+
+  AdminCreateReferralHash(
+    endpoint: string, 
+    AdminPublicKey: string, 
+    UserPublicKeyBase58Check: string,
+    Username: string,
+    ReferrerAmountUSDCents: number,
+    RefereeAmountUSDCents: number,
+    RequiresJumio: boolean,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminCreateReferralHash, AdminPublicKey, {
+      UserPublicKeyBase58Check,
+      Username,
+      ReferrerAmountUSDCents,
+      RefereeAmountUSDCents,
+      RequiresJumio,
+      AdminPublicKey,
+    });
+  }
+
+  RoutePathAdminGetAllReferralInfoForUser(
+    endpoint: string, 
+    AdminPublicKey: string, 
+    UserPublicKeyBase58Check: string,
+    Username: string,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetAllReferralInfoForUser, AdminPublicKey, {
+      UserPublicKeyBase58Check,
+      Username,
       AdminPublicKey,
     });
   }

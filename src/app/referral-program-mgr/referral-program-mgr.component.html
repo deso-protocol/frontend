@@ -1,0 +1,197 @@
+<tab-selector [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_tabClicked($event)"></tab-selector>
+<div *ngIf="activeTab === 'Single User'" class="fs-15px">
+  <div class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom 
+              border-color-grey light-grey-divider">
+    Enter a user in order to modify its referral links.
+  </div>
+  
+  <div class="fs-15px mt-15px px-15px">
+    <div style="margin-bottom: -8px" class="font-weight-semibold">
+    Public key or username:
+    </div>
+    <!-- Search Bar -->
+    <search-bar
+      [showCloutavista]="false"
+      [isSearchForUsersToSendClout]="true"
+      (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+    ></search-bar>
+  </div>
+  
+  <div class="px-5px">
+    <simple-profile-card
+      [profile]="selectedCreator"
+      [singleColumn]="true"
+      [hideFollowLink]="true"
+      [isBold]="false"
+      *ngIf="selectedCreator"
+    ></simple-profile-card>
+  </div>
+
+  <div *ngIf="selectedCreator" class="pt-5px px-15px font-weight-semibold">
+    <div>
+      Create a new referral link:
+    </div>
+    <div class="mt-5px px-10px pb-10px br-3px border border-color-grey">
+      <!-- Referrer Amount -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
+        <div class="font-weight-normal">
+          Referrer Amount
+        </div>
+        <div class="d-flex flex-grow flex-wrap">
+          <div class="input-group py-5px">
+            <div class="input-group-prepend" id="usd-label">
+              <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
+            </div>
+            <input
+               [(ngModel)]="referrerAmountUSD"
+               aria-describedby="usd-label"
+               class="form-control fs-15px text-right d-inline-block"
+               type="number" min="0"
+               placeholder="0"/>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Referee Amount -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
+        <div class="font-weight-normal">
+          Referee Amount
+        </div>
+        <div class="d-flex flex-grow flex-wrap">
+          <div class="input-group py-5px">
+            <div class="input-group-prepend" id="usd-label">
+              <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
+            </div>
+            <input
+               [(ngModel)]="refereeAmountUSD"
+               aria-describedby="usd-label"
+               class="form-control fs-15px text-right d-inline-block"
+               type="number" min="0"
+               placeholder="0"/>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Requires Jumio -->
+      <div class="d-flex justify-content-between align-items-center fs-15px">
+        <div class="font-weight-normal">Requires Jumio</div>
+        <div class="custom-control custom-switch custom-switch-lg">
+          <input [(ngModel)]="requiresJumio" type="checkbox" class="custom-control-input" id="customSwitch1">
+          <label class="custom-control-label" for="customSwitch1"></label>
+        </div>
+      </div>
+      
+      <button (click)="_createNewLink()"
+              *ngIf="!creatingNewLink" 
+              class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px">
+        Create New Link
+      </button>
+      <button *ngIf="creatingNewLink" class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px" disabled>
+        Creating...
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="selectedCreator" class="px-15px py-15px font-weight-semibold">
+    Existing referral links:
+    <simple-center-loader
+      *ngIf="fetchingExistingLinks"
+      [titleLoadingText]="''"
+      [height]="200">
+    </simple-center-loader>
+    <div *ngIf="existingLinks.length == 0 && !fetchingExistingLinks"
+         class="font-weight-normal font-italic">
+      No existing links found.
+    </div>
+    <div *ngIf="existingLinks.length > 0 && !fetchingExistingLinks"
+         class="font-weight-normal">
+      <div *ngFor="let linkInfo of existingLinks; let ii = index">
+        <div class="mt-5px px-10px pb-10px br-3px border border-color-grey">
+          <div class="pt-10px">
+            <a href="{{ 'https://bitclout.com/r/' + linkInfo.Info.ReferralHashBase58 }}">
+            https://bitclout.com/r/{{ linkInfo.Info.ReferralHashBase58 }}
+            </a>
+          </div>
+
+          <!-- Referrer Amount -->
+          <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
+            <div class="font-weight-normal">
+              Referrer Amount
+            </div>
+            <div class="d-flex flex-grow flex-wrap">
+              <div class="input-group py-5px">
+                <div class="input-group-prepend" id="usd-label">
+                  <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
+                </div>
+                <input
+                   [(ngModel)]="linkInfo.Info.referrerAmountUSD"
+                   aria-describedby="usd-label"
+                   class="form-control fs-15px text-right d-inline-block"
+                   type="number" min="0"
+                   placeholder="0"/>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Referee Amount -->
+          <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
+            <div class="font-weight-normal">
+              Referee Amount
+            </div>
+            <div class="d-flex flex-grow flex-wrap">
+              <div class="input-group py-5px">
+                <div class="input-group-prepend" id="usd-label">
+                  <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
+                </div>
+                <input
+                   [(ngModel)]="linkInfo.Info.refereeAmountUSD"
+                   aria-describedby="usd-label"
+                   class="form-control fs-15px text-right d-inline-block"
+                   type="number" min="0"
+                   placeholder="0"/>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Requires Jumio -->
+          <div class="d-flex justify-content-between align-items-center fs-15px">
+            <div class="font-weight-normal">Requires Jumio</div>
+            <div class="custom-control custom-switch custom-switch-lg">
+              <input [(ngModel)]="linkInfo.Info.RequiresJumio" type="checkbox" class="custom-control-input" id="customSwitch1">
+              <label class="custom-control-label" for="customSwitch1"></label>
+            </div>
+          </div>
+      
+          <!-- Is Active -->
+          <div class="d-flex justify-content-between align-items-center fs-15px">
+            <div class="font-weight-normal">Is Active</div>
+            <div class="custom-control custom-switch custom-switch-lg">
+              <input [(ngModel)]="linkInfo.IsActive" type="checkbox" class="custom-control-input" id="customSwitch1">
+              <label class="custom-control-label" for="customSwitch1"></label>
+            </div>
+          </div>
+          
+          <button (click)="_createNewLink()"
+                  *ngIf="!creatingNewLink" 
+                  class="btn btn-warning btn-sm fs-15px mt-5px">
+            Update Link
+          </button>
+          <button *ngIf="creatingNewLink" 
+                  class="btn btn-warning btn-sm fs-15px mt-5px" disabled>
+            Updating...
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div *ngIf="activeTab === 'Bulk CSV Upload'" class="fs-15px">
+  <div class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom 
+              border-color-grey light-grey-divider">
+    Here you can download detailed CSV reports for the referral program and modify referral links en masse.
+  </div>
+  <div class="p-15px">
+  Let's upload a CSV. Why not?
+  </div>
+</div>

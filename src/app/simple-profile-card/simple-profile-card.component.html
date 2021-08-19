@@ -16,7 +16,9 @@
       <div class="d-flex">
         <div class="text-truncate holdings__name fs-15px">
           <div class="d-flex">
-            <div class="fc-default font-weight-bold text-truncate holdings__name link--unstyled">{{ profile.Username || profile.PublicKeyBase58Check }}</div>
+            <div class="fc-default text-truncate holdings__name link--unstyled"i
+                 [ngClass]="{'font-weight-bold': isBold }">
+              {{ profile.Username || profile.PublicKeyBase58Check }}</div>
             <span
               *ngIf="profile.IsVerified"
               (click)="tooltip.toggle()"

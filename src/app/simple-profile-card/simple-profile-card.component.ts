@@ -15,6 +15,7 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() containerModalRef: any = null;
   @Input() singleColumn = false;
   @Input() hideFollowLink = false;
+  @Input() isBold = true;
 
   constructor(public globalVars: GlobalVarsService, private router: Router) {}
 
