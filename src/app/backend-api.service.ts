@@ -194,6 +194,7 @@ export class User {
 
   TutorialStatus: TutorialStatus;
   CreatorPurchasedInTutorialUsername?: string;
+  MustCompleteTutorial: boolean;
 }
 
 export class PostEntryResponse {

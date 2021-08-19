@@ -3,7 +3,7 @@
   -->
 <div [class]="mobile ? 'global__mobile' : 'global__desktop'">
   <left-bar *ngIf="!mobile" [inTutorial]="inTutorial"></left-bar>
-  <left-bar-mobile *ngIf="mobile && !inTutorial"></left-bar-mobile>
+  <left-bar-mobile *ngIf="mobile" [inTutorial]="inTutorial"></left-bar-mobile>
 
   <div class="global__content__flex">
     <div [class]="mobile || hideSidebar ? 'global__content__width' : 'global__center__width'">

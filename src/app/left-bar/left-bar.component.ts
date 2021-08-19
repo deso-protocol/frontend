@@ -27,12 +27,14 @@ export class LeftBarComponent {
 
   // send logged out users to the landing page
   // send logged in users to browse
-  homeLink(): string {
+  homeLink(): string | string[] {
+    if (this.inTutorial) {
+      return [];
+    }
     if (this.globalVars.showLandingPage()) {
       return "/" + this.globalVars.RouteNames.LANDING;
-    } else {
-      return "/" + this.globalVars.RouteNames.BROWSE;
     }
+    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
   getHelpMailToAttr(): string {
