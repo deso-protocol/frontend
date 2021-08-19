@@ -993,23 +993,17 @@ export class GlobalVarsService {
         .subscribe(
           (res: any) => {
             // TODO: revert back to res.JumioVerified after testing
-            if (!res.JumioVerified) {
+            if (res.JumioVerified) {
               let user: User;
               this.userList.forEach((userInList, idx) => {
                 if (userInList.PublicKeyBase58Check === publicKey) {
                   this.userList[idx].JumioVerified = res.JumioVerified;
                   this.userList[idx].JumioReturned = res.JumioReturned;
                   this.userList[idx].JumioFinishedTime = res.JumioFinishedTime;
-                  // TODO: uncomment this as it's only removed for testing purposes.
-                  // this.userList[idx].BalanceNanos = res.BalanceNanos;
+                  this.userList[idx].BalanceNanos = res.BalanceNanos;
                   user = this.userList[idx];
                 }
               });
-              // TODO: remove - this is just for testing - prevent mass fetti
-              if (user.TutorialStatus !== TutorialStatus.EMPTY) {
-                clearInterval(this.jumioInterval);
-                return;
-              }
               if (user) {
                 this.setLoggedInUser(user);
               }
@@ -1051,6 +1045,11 @@ export class GlobalVarsService {
                     });
                 });
               }
+              clearInterval(this.jumioInterval);
+              return;
+            }
+            // If the user wasn't verified by jumio, but Jumio did return a callback, stop polling.
+            if (res.JumioReturned) {
               clearInterval(this.jumioInterval);
             }
           },
