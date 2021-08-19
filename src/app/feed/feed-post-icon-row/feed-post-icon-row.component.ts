@@ -112,8 +112,8 @@ export class FeedPostIconRowComponent {
     if (this.diamondIdxDraggedTo != this.diamondCount) {
       this.diamondDragLeftExplainer = true;
     }
-    // If the drag box is at the alloted lower boundry or below, set cancel status to true
-    this.diamondDragCancel = event.distance.y >= 35;
+    // If the drag box is at the alloted lower boundry or below, set confirm status to true
+    this.diamondDragCancel = event.distance.y > 30;
   }
 
   // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
@@ -493,14 +493,12 @@ export class FeedPostIconRowComponent {
   }
 
   addDiamondSelection(event) {
-    // Account for the delayed hover appearance with mouse
-    const additionalDelay = event?.type === "initiateDrag" ? 0 : 1000;
     // Need to make sure hover event doesn't trigger on child elements
     if (event?.type === "initiateDrag" || event.target.id === "diamond-button") {
       for (let idx = 0; idx < this.diamondCount; idx++) {
         this.diamondTimeouts[idx] = setTimeout(() => {
           this.diamondsVisible[idx] = true;
-        }, idx * this.diamondAnimationDelay + additionalDelay);
+        }, idx * this.diamondAnimationDelay);
       }
     }
   }
@@ -513,6 +511,10 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
+    if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+      this.globalVars._alertError("Must be logged in to send diamonds");
+      return;
+    }
     // Disable diamond selection if diamonds are being sent
     if (this.sendingDiamonds) {
       return;

@@ -51,7 +51,7 @@ export class NftShowcaseComponent implements OnInit {
               (nftCollection) => nftCollection.PostEntryResponse.PostHashHex
             );
           }
-          this.lastPage = Math.floor(this.nftCollections.length / NftShowcaseComponent.PAGE_SIZE);
+          this.lastPage = Math.floor(this.nftCollections?.length / NftShowcaseComponent.PAGE_SIZE);
         },
         (error) => {
           this.globalVars._alertError(error.error.error);
