@@ -96,8 +96,7 @@ export class BuyBitcloutUSDComponent implements OnInit {
     if (this.quotationError) {
       return;
     }
-    const totalAmount = this.amount + this.fees;
-    this.wyreService.makeWalletOrderReservation(totalAmount, this.selectedCountry, this.selectedFiatCurrency).subscribe(
+    this.wyreService.makeWalletOrderReservation(this.amount, this.selectedCountry, this.selectedFiatCurrency).subscribe(
       (res) => {
         const wyreUrl = res.url;
         if (res.url) {
