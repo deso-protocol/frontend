@@ -7,9 +7,12 @@
     data-toggle="modal"
     data-target=".js-feed-post-icon-row__comment-modal"
   >
-<!--    <i class="icon-reply feed-post-icon-row__icon"></i>-->
-    <i data-feather="plus-circle"></i>
-    <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
+    <div>
+      <i-feather name="message-square" class="feed-post-icon-row__icon"></i-feather>
+    </div>
+    <div>
+      <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
+    </div>
   </div>
 
   <div
@@ -21,32 +24,34 @@
       'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RecloutedByReader : false
     }"
   >
-    <a
-      class="link--unstyled"
-      dropdownToggle
-      id="recloutActionsButton"
-      data-toggle="dropdown"
-      aria-haspopup="true"
-      aria-expanded="false"
-    >
-      <i class="icon-repost feed-post-icon-row__icon"></i>
-    </a>
+    <div>
+      <a
+        class="link--unstyled"
+        dropdownToggle
+        id="recloutActionsButton"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <i-feather name="repeat" class="feed-post-icon-row__icon"></i-feather>
+      </a>
+    </div>
     <div
-      class="dropdown-menu p-0 fs-12px border background-color-light-grey"
+      class="dropdown-menu border feed-post__dropdown-menu-item-reclout"
       style="min-width: 6rem"
       *dropdownMenu
       aria-labelledby="recloutActionsButton"
     >
       <a
         *ngIf="sendingRecloutRequest; else recloutOptions"
-        class="dropdown-menu-item d-block p-5px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block p-5px"
       >
         <div class="fc-muted">Loading...</div>
       </a>
       <ng-template #recloutOptions>
         <a
           *ngIf="userHasReclouted(); else recloutElseBlock"
-          class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-reclout-option-text"
           (click)="_undoReclout($event)"
         >
           <i class="icon-repost feed-post-icon-row__icon fs-12px"></i>
@@ -54,18 +59,18 @@
         </a>
         <ng-template #recloutElseBlock>
           <a
-            class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+            class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-reclout-option-text"
             (click)="_reclout($event)"
           >
-            <i class="icon-repost feed-post-icon-row__icon fs-12px"></i>
+            <i-feather name="repeat" class="feed-post-icon-row__icon-reclout-option"></i-feather>
             Reclout
           </a>
         </ng-template>
         <a
-          class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-reclout-option-text"
           (click)="openModal($event, true)"
         >
-          <i class="fas fa-pencil-alt feed-post-icon-row__icon pl-5px" style="font-size: 10px"></i>
+          <i-feather name="quote" class="feed-post-icon-row__icon-reclout-option"></i-feather>
           Quote
         </a>
       </ng-template>
@@ -78,15 +83,25 @@
     [ngClass]="{ 'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false }"
     class="cursor-pointer d-flex align-items-center"
   >
-    <i
+<!--    <i-->
+<!--      [ngClass]="{-->
+<!--        is_animating: animateLike,-->
+<!--        'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,-->
+<!--        'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false-->
+<!--      }"-->
+<!--      (click)="animateLike = !animateLike"-->
+<!--      class="feed-post-icon-row__icon"-->
+<!--    ></i>-->
+    <i-feather
       [ngClass]="{
         is_animating: animateLike,
-        'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-        'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
+        'heart-icon': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
+        'heart-icon-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
       }"
       (click)="animateLike = !animateLike"
+      name="heart"
       class="feed-post-icon-row__icon"
-    ></i>
+    ></i-feather>
     <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
   </div>
 

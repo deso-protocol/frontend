@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, HostListener, OnInit} from "@angular/core";
+import { ChangeDetectorRef, Component, HostListener, OnInit} from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BackendApiService, User } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
@@ -7,14 +7,13 @@ import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
-import * as Feather from "feather-icons";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit {
   constructor(
     private ref: ChangeDetectorRef,
     private themeService: ThemeService,
@@ -253,10 +252,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       return this._updateTopLevelData();
     }
   };
-
-  ngAfterViewInit() {
-    Feather.replace();
-  }
 
   ngOnInit() {
     // Load the theme

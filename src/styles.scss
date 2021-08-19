@@ -1087,6 +1087,12 @@ input.bs-timepicker-field {
   }
 }
 
+.feed-post__dropdown-menu-item-reclout {
+  background-color: var(--tilebg);
+  //padding: 16px;
+  border-radius: 8px;
+}
+
 .feed-post__embed-container {
   display: flex;
   position: relative;
@@ -1132,16 +1138,34 @@ input.bs-timepicker-field {
 }
 
 .feed-post-icon-row__icon {
-  font-size: 25px;
   border-radius: 50%;
-  margin-right: 2px;
+  margin-right: 4px;
+  svg {
+
+  }
+  width: 20px !important;
+  height: 20px !important;
+  color: var(--postfadedtext);
   &:hover {
     background-color: var(--secondary);
   }
 }
 
-.feed-post-icon-row__reply {
+.feed-post-icon-row__icon-reclout-option {
+  width: 16px !important;
+  height: 16px !important;
+  margin-right: 8px;
 
+}
+
+.feed-post-icon-row__icon-reclout-option-text {
+  color: var(--postfadedtext);
+  &:hover {
+    color: var(--posttext);
+  }
+  font-weight: normal;
+  font-size: 15px;
+  line-hieght: 24px;
 }
 
 .feed-post-icon-row__icon.icon-reply {
@@ -1160,10 +1184,17 @@ input.bs-timepicker-field {
   }
 }
 /* like button hover animation */
-.feed-post-icon-row__icon.icon-heart, .feed-post-icon-row__icon.icon-heart-fill{
+.feed-post-icon-row__icon.heart-icon, .feed-post-icon-row__icon.heart-icon-fill{
   &:hover{
     background-color: $like-hover;
+    background-size: 150%;
     color: $like-color;
+  }
+}
+
+.feed-post-icon-row__icon.icon-heart-fill{
+  svg {
+    fill: currentColor;
   }
 }
 

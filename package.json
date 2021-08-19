@@ -34,6 +34,7 @@
     "confetti-js": "github:bitclout/confetti-js",
     "core-js": "^2.5.4",
     "currency-symbol-map": "^5.0.1",
+    "angular-feather": "^6.1.0",
     "fs": "0.0.1-security",
     "google-libphonenumber": "^3.2.16",
     "hash-base": "^3.0.4",

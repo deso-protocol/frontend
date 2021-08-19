@@ -142,6 +142,7 @@ import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { DragDropModule } from "@angular/cdk/drag-drop";
+import {IconsModule} from "./icons/icons.module";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -294,6 +295,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
         localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
     }),
+    IconsModule,
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],
