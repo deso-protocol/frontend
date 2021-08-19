@@ -1041,14 +1041,11 @@ export class GlobalVarsService {
                       !res.isConfirmed /* if it's not confirmed, skip tutorial*/
                     )
                     .subscribe((response) => {
-                      console.log("loggingevent");
                       this.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
                       // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
                       this.loggedInUser.TutorialStatus = res.isConfirmed
                         ? TutorialStatus.STARTED
                         : TutorialStatus.SKIPPED;
-                      console.log(this.loggedInUser);
-                      console.log(this.loggedInUser?.TutorialStatus);
                       if (res.isConfirmed) {
                         this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
                       }
