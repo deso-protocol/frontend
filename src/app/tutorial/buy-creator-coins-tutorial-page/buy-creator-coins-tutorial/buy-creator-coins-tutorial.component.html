@@ -1,9 +1,10 @@
 <div class="flex-grow-1">
   <div
-    class="d-flex align-items-center justify-content-between w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey"
-    style="min-height: 80px; background-color: var(--secalt)"
+    class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg"
+    style="min-height: 80px"
   >
-    <div *ngIf="!investInYourself" style="background-color: var(--secalt)">
+    <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
+    <div *ngIf="!investInYourself" class="secalt-bg">
       <h3 class="mb-1">
         Invest in a Creator
       </h3>
@@ -11,7 +12,7 @@
         Step 1 of 6
       </h5>
     </div>
-    <div *ngIf="investInYourself" style="background-color: var(--secalt)">
+    <div *ngIf="investInYourself" class="secalt-bg">
       <h3 class="mb-1">
         Invest in Yourself
       </h3>
