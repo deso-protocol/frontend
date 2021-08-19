@@ -8,7 +8,7 @@
     data-target=".js-feed-post-icon-row__comment-modal"
   >
     <div>
-      <i-feather name="message-square" class="feed-post-icon-row__icon"></i-feather>
+      <i-feather name="message-square" class="feed-post-icon-row__icon reply-icon"></i-feather>
     </div>
     <div>
       <span *ngIf="!hideNumbers">{{ postContent.CommentCount }}</span>
@@ -33,7 +33,7 @@
         aria-haspopup="true"
         aria-expanded="false"
       >
-        <i-feather name="repeat" class="feed-post-icon-row__icon"></i-feather>
+        <i-feather name="repeat" class="feed-post-icon-row__icon repost-icon"></i-feather>
       </a>
     </div>
     <div

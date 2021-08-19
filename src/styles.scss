@@ -1173,27 +1173,29 @@ input.bs-timepicker-field {
   line-hieght: 24px;
 }
 
-.feed-post-icon-row__icon.icon-reply {
+.feed-post-icon-row__icon.reply-icon {
   margin-left: -6px;
   &:hover {
     background-color: $comment-hover;
     color: $comment-color;
+    transition: background-color .5s;
   }
 }
 
 /* reclout hover animation */
-.feed-post-icon-row__icon.icon-repost {
+.feed-post-icon-row__icon.repost-icon {
   &:hover {
     background-color: $reclout-hover;
     color: $reclout-color;
+    transition: background-color .5s;
   }
 }
 /* like button hover animation */
 .feed-post-icon-row__icon.heart-icon, .feed-post-icon-row__icon.heart-icon-fill{
   &:hover{
     background-color: $like-hover;
-    background-size: 150%;
     color: $like-color;
+    transition: background-color .5s;
   }
 }
 
