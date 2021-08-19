@@ -1052,6 +1052,10 @@ export class GlobalVarsService {
                 });
               }
               clearInterval(this.jumioInterval);
+              return;
+            }
+            if (res.JumioReturned) {
+              clearInterval(this.jumioInterval);
             }
           },
           (error) => {
