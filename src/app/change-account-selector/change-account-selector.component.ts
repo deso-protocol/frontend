@@ -31,7 +31,7 @@ export class ChangeAccountSelectorComponent {
     const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
       this.backendApi.setIdentityServiceUsers(res.users, Object.keys(res.users)[0]);
-      this.globalVars.updateEverything().subscribe(() => {
+      this.globalVars.updateEverything().add(() => {
         this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
       });
     });

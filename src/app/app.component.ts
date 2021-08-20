@@ -114,6 +114,7 @@ export class AppComponent implements OnInit {
     return this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false).subscribe(
       (res: any) => {
         this.problemWithNodeConnection = false;
+        this.callingUpdateTopLevelData = false;
 
         const loggedInUser: User = res.UserList[0];
         let loggedInUserFound: boolean = false;
