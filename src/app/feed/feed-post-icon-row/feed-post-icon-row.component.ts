@@ -456,7 +456,7 @@ export class FeedPostIconRowComponent {
             // Celebrate when the SendDiamonds call completes
             this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           }
-          this.globalVars.updateEverything(false, res.TxnHashHex, this.sendDiamondsSuccess, this.sendDiamondsFailure, this);
+          this.globalVars.updateEverything(res.TxnHashHex, this.sendDiamondsSuccess, this.sendDiamondsFailure, this);
         },
         (err) => {
           if (err.status === 0) {

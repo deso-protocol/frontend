@@ -91,12 +91,12 @@ export class AppComponent implements OnInit {
     const userCopy = JSON.parse(JSON.stringify(user));
   }
 
-  _updateTopLevelData(refreshAllUsers: boolean): Subscription {
+  _updateTopLevelData(): Subscription {
     if (this.callingUpdateTopLevelData) {
       return new Subscription();
     }
 
-    let publicKeys = Object.keys(this.identityService.identityServiceUsers);
+    const publicKeys = Object.keys(this.identityService.identityServiceUsers);
 
     let loggedInUserPublicKey =
       this.globalVars.loggedInUser?.PublicKeyBase58Check ||
@@ -111,33 +111,26 @@ export class AppComponent implements OnInit {
 
     this.callingUpdateTopLevelData = true;
 
-    if (!refreshAllUsers) {
-      publicKeys = [loggedInUserPublicKey];
-    }
-
-    return this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, false).subscribe(
+    return this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false).subscribe(
       (res: any) => {
         this.problemWithNodeConnection = false;
-        this.callingUpdateTopLevelData = false;
 
-        // Only update if things have changed to avoid unnecessary DOM manipulation. Only reset entire user list if refreshAllUsers is true
-        if (refreshAllUsers && !_.isEqual(this.globalVars.userList, res.UserList)) {
-          this.globalVars.userList = res.UserList || [];
+        const loggedInUser: User = res.UserList[0];
+        let loggedInUserFound: boolean = false;
+        // Find the logged in user in the user list and replace it with the logged in user from this GetUsersStateless call.
+        this.globalVars.userList.forEach((user, index) => {
+          if (user.PublicKeyBase58Check === loggedInUser.PublicKeyBase58Check) {
+            loggedInUserFound = true;
+            this.globalVars.userList[index] = loggedInUser;
+            // This breaks out of the lodash foreach.
+            return false;
+          }
+        });
+        // If the logged-in user wasn't in the list, add it to the list.
+        if (!loggedInUserFound) {
+          this.globalVars.userList.push(loggedInUser);
         }
-
-        // If we are only updating the logged in user, find that user in the user list and replace it.
-        if (!refreshAllUsers) {
-          this.globalVars.userList.forEach((user, index) => {
-            if (user.PublicKeyBase58Check === loggedInUserPublicKey && !_.isEqual(this.globalVars.loggedInUser, user)) {
-              this.globalVars.userList[index] = user;
-            }
-          });
-        }
-
-        // Find the loggedInUser in our results
-        const loggedInUser: User = _.find(res.UserList, { PublicKeyBase58Check: loggedInUserPublicKey });
-
-        // Only update if things have changed to avoid unnecessary DOM manipulation
+        // Only call setLoggedInUser if logged in user has changed.
         if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser)) {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
@@ -206,7 +199,6 @@ export class AppComponent implements OnInit {
   }
 
   _updateEverything = (
-    refreshAllUsers: boolean = false,
     waitTxn: string = "",
     successCallback: (comp: any) => void = () => {},
     errorCallback: (comp: any) => void = () => {},
@@ -244,7 +236,7 @@ export class AppComponent implements OnInit {
               this._updateBitCloutExchangeRate();
               this._updateAppState();
 
-              this._updateTopLevelData(refreshAllUsers).add(() => {
+              this._updateTopLevelData().add(() => {
                 // We make sure the logged in user is updated before the success callback triggers
                 successCallback(comp);
                 clearInterval(interval);
@@ -263,7 +255,7 @@ export class AppComponent implements OnInit {
       }
       this._updateBitCloutExchangeRate();
       this._updateAppState();
-      return this._updateTopLevelData(refreshAllUsers);
+      return this._updateTopLevelData();
     }
   };
 
@@ -316,7 +308,12 @@ export class AppComponent implements OnInit {
     }
     this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
 
-    this.globalVars.updateEverything(true);
+    this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, true).subscribe((res) => {
+      if (!_.isEqual(this.globalVars.userList, res.UserList)) {
+        this.globalVars.userList = res.UserList || [];
+      }
+      this.globalVars.updateEverything();
+    });
 
     // Clean up legacy seedinfo storage. only called when a user visits the site again after a successful import
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
