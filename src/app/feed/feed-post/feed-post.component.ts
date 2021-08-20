@@ -116,9 +116,6 @@ export class FeedPostComponent implements OnInit {
   @Output() nftBidPlaced = new EventEmitter();
 
   AppRoutingModule = AppRoutingModule;
-  stakeAmount = 1;
-  loggedInUserStakeAmount = 0;
-  loggedInUserNextStakePayout = -1;
   addingPostToGlobalFeed = false;
   reclout: any;
   postContent: any;
@@ -196,10 +193,6 @@ export class FeedPostComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.globalVars.loggedInUser) {
-      this.loggedInUserStakeAmount = this._getLoggedInUserStakeAmount();
-      this.loggedInUserNextStakePayout = this._getLoggedInUserNextStakePayout();
-    }
     if (!this.post.RecloutCount) {
       this.post.RecloutCount = 0;
     }
@@ -429,48 +422,6 @@ export class FeedPostComponent implements OnInit {
     if (abbrev.length <= 4) {
       return abbrev;
     }
-  }
-
-  _getLoggedInUserStakeAmount() {
-    if (this.post.StakeEntry.StakeList.length === 0) {
-      return 0;
-    }
-    let totalStake = 0;
-    for (let ii = 0; ii < this.post.StakeEntry.StakeList.length; ii++) {
-      if (
-        this.post.StakeEntry.StakeList[ii].StakerPublicKeyBase58Check ==
-        this.globalVars.loggedInUser.PublicKeyBase58Check
-      ) {
-        totalStake += this.post.StakeEntry.StakeList[ii].InitialStakeNanos;
-      }
-    }
-    return totalStake / 1e9;
-  }
-
-  // Returns -1 if the user is not expecting another payout.
-  _getLoggedInUserNextStakePayout() {
-    if (this.post.StakeEntry.StakeList.length == 0) {
-      return -1;
-    }
-    // Start with the current amount staked.
-    let payoutStakeAmount = this.post.StakeEntryStats.TotalStakeNanos;
-
-    const loggedInUserPK = this.globalVars.loggedInUser.PublicKeyBase58Check;
-    for (let ii = 0; ii < this.post.StakeEntry.StakeList.length; ii++) {
-      const stakerPK = this.post.StakeEntry.StakeList[ii].StakerPublicKeyBase58Check;
-
-      // If we find a stake that isn't the current user, add the remaining stake owed.
-      if (stakerPK != loggedInUserPK && this.post.StakeEntry.StakeList[ii].RemainingStakeOwedNanos > 0) {
-        payoutStakeAmount += this.post.StakeEntry.StakeList[ii].RemainingStakeOwedNanos;
-      }
-
-      // If we find a stake that *is* the current user and is unpaid, we are at the payoutStakeAmount and can return.
-      else if (stakerPK == loggedInUserPK && this.post.StakeEntry.StakeList[ii].RemainingStakeOwedNanos > 0) {
-        return payoutStakeAmount / 1e9;
-      }
-    }
-
-    return -1;
   }
 
   _addPostToGlobalFeed(event: any) {
