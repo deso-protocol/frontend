@@ -9,7 +9,7 @@
   <div class="creator-profile__avatar" [avatar]="profile.PublicKeyBase58Check"></div>
   <div class="d-flex align-items-center justify-content-end pt-15px mr-15px js-creator-profile-top-card-container">
     <div
-      *ngIf="!profileBelongsToLoggedInUser() && globalVars.loggedInUser"
+      *ngIf="globalVars.loggedInUser"
       class="fs-15px pr-15px"
       dropdown
       container="body"
@@ -21,6 +21,7 @@
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="messageUser()"
+          *ngIf="!profileBelongsToLoggedInUser()"
         >
           <i class="fas fa-envelope"></i>
           Message User
@@ -28,6 +29,7 @@
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
+          *ngIf="!profileBelongsToLoggedInUser()"
         >
           <i class="fas fa-ban"></i>
           {{ globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? "Unblock" : "Block" }} User
@@ -35,6 +37,7 @@
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="reportUser()"
+          *ngIf="!profileBelongsToLoggedInUser()"
         >
           <i class="fas fa-flag"></i>
           Report User
