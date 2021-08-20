@@ -40,17 +40,15 @@ export class ChangeAccountSelectorComponent {
   _switchToUser(user) {
     this.globalVars.setLoggedInUser(user);
     this.globalVars.messageResponse = null;
-    // We get rid of set up messages since that's handled in updateEverything
-    // this.globalVars.SetupMessages();
 
     // Now we call update everything on the newly logged in user to make sure we have the latest info this user.
-    this.globalVars.updateEverything();
+    this.globalVars.updateEverything().add(() => {
+      const currentUrl = this.router.url;
+      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]).then(() => {
+        this.router.navigateByUrl(currentUrl);
+      });
 
-    const currentUrl = this.router.url;
-    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]).then(() => {
-      this.router.navigateByUrl(currentUrl);
+      this.globalVars.isLeftBarMobileOpen = false;
     });
-
-    this.globalVars.isLeftBarMobileOpen = false;
   }
 }
