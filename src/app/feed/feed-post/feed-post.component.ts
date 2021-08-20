@@ -121,9 +121,6 @@ export class FeedPostComponent implements OnInit {
   @Output() diamondSent = new EventEmitter();
 
   AppRoutingModule = AppRoutingModule;
-  stakeAmount = 1;
-  loggedInUserStakeAmount = 0;
-  loggedInUserNextStakePayout = -1;
   addingPostToGlobalFeed = false;
   reclout: any;
   postContent: any;
