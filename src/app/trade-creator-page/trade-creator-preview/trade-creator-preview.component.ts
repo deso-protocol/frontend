@@ -135,7 +135,6 @@ export class TradeCreatorPreviewComponent implements OnInit {
               : of(null).subscribe();
           observable.add(() => {
             this.appData.updateEverything(
-              false,
               response.TxnHashHex,
               this._creatorCoinSuccess,
               this._creatorCoinFailure,
@@ -189,13 +188,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
           });
 
           // This will update the user's balance.
-          this.appData.updateEverything(
-            false,
-            response.TxnHashHex,
-            this._creatorCoinSuccess,
-            this._creatorCoinFailure,
-            this
-          );
+          this.appData.updateEverything(response.TxnHashHex, this._creatorCoinSuccess, this._creatorCoinFailure, this);
         },
         (err) => {
           this._handleRequestErrors(err);

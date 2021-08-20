@@ -200,13 +200,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.globalVars.profileUpdateTimestamp = Date.now();
         this.globalVars.logEvent("profile : update");
         // This updates things like the username that shows up in the dropdown.
-        this.globalVars.updateEverything(
-          false,
-          res.TxnHashHex,
-          this._updateProfileSuccess,
-          this._updateProfileFailure,
-          this
-        );
+        this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);

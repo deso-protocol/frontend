@@ -296,7 +296,6 @@ export class BuyBitcloutComponent implements OnInit {
 
               // This will update the balance and a bunch of other things.
               this.appData.updateEverything(
-                false,
                 res.BitCloutTxnHashHex,
                 this._clickBuyBitCloutSuccess,
                 this._clickBuyBitCloutSuccessButTimeout,
