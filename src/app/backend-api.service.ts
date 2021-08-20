@@ -210,8 +210,6 @@ export class PostEntryResponse {
   TimestampNanos: number;
   IsHidden: boolean;
   ConfirmationBlockHeight: number;
-  StakeEntry: any;
-  StakeEntryStats: any;
   // PostEntryResponse of the post that this post reclouts.
   RecloutedPostEntryResponse: PostEntryResponse;
   // The profile associated with this post.
