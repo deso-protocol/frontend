@@ -1,5 +1,5 @@
 <div
-  class="mt-5px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between unselectable"
+  class="mt-15px js-feed-post-icon-row__container fs-14px text-grey5 d-flex justify-content-between unselectable"
 >
   <div
     class="cursor-pointer d-flex align-items-center"
@@ -83,15 +83,6 @@
     [ngClass]="{ 'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false }"
     class="cursor-pointer d-flex align-items-center"
   >
-<!--    <i-->
-<!--      [ngClass]="{-->
-<!--        is_animating: animateLike,-->
-<!--        'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,-->
-<!--        'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false-->
-<!--      }"-->
-<!--      (click)="animateLike = !animateLike"-->
-<!--      class="feed-post-icon-row__icon"-->
-<!--    ></i>-->
     <i-feather
       [ngClass]="{
         is_animating: animateLike,
@@ -104,7 +95,23 @@
     ></i-feather>
     <span *ngIf="!hideNumbers">{{ postContent.LikeCount }}</span>
   </div>
-
+  <div class="d-none d-lg-flex cursor-pointer align-items-center">
+    <i-feather
+      name="link-2"
+      class="feed-post-icon-row__icon repost-icon js-feed-post-icon-row__copy-post-link-icon"
+      (click)="copyPostLinkToClipboard($event)"
+    ></i-feather>
+    <span
+      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
+      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+      mat-raised-button
+      #tooltip="matTooltip"
+      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
+      (auxclick)="onTimestampClickHandler($event)"
+    >
+      {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+    </span>
+  </div>
   <ng-template #popTemplate>
     <div id="diamond-popover" class="m-10px">
       <div *ngIf="!sendingDiamonds">
@@ -143,15 +150,22 @@
       (mouseover)="addDiamondSelection($event)"
       (mouseleave)="removeDiamondSelection()"
     >
-      <i
-        class="feed-post-icon-row__icon mr-2"
+      <i-feather
+        name="diamond"
+        class="feed-post-icon-row__icon"
         [ngClass]="{
-          'icon-diamond': !sendingDiamonds,
-          'fas fa-spinner fa-spin': sendingDiamonds,
+          'diamond-icon': !sendingDiamonds,
+          'd-none': sendingDiamonds,
           'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0
         }"
         [ngStyle]="{
           visibility: diamondDragging ? 'hidden' : 'visible'
+        }"
+      ></i-feather>
+      <i
+        [ngClass]="{
+          'd-none': !sendingDiamonds,
+          'fas fa-spinner fa-spin': sendingDiamonds
         }"
       ></i>
       <a
@@ -186,8 +200,9 @@
             (mouseleave)="diamondHovered = -1"
           >
             <label>{{ globalVars.getUSDForDiamond(diamondIndex + 1) }}</label>
-            <i
-              class="icon-diamond diamond-reaction"
+            <i-feather
+              name="diamond"
+              class="diamond-reaction"
               [ngStyle]="{
                 color:
                   diamondIndex < getCurrentDiamondLevel() ||
@@ -196,7 +211,7 @@
                     ? 'var(--cblue)'
                     : 'var(--grey)'
               }"
-            ></i>
+            ></i-feather>
           </div>
           <div
             class="reaction-icon show"
@@ -224,22 +239,5 @@
       ></div>
     </div>
     <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
-  </div>
-
-  <div class="d-none d-lg-flex cursor-pointer align-items-center">
-    <i
-      class="icon-link js-feed-post-icon-row__copy-post-link-icon feed-post-icon-row__icon"
-      (click)="copyPostLinkToClipboard($event)"
-    ></i>
-    <span
-      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
-      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-      mat-raised-button
-      #tooltip="matTooltip"
-      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
-      (auxclick)="onTimestampClickHandler($event)"
-    >
-      {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
-    </span>
   </div>
 </div>

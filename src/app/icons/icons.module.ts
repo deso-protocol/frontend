@@ -1,14 +1,20 @@
 import { NgModule } from "@angular/core";
 
 import { FeatherModule } from "angular-feather";
-import { Heart, MessageSquare, Repeat } from "angular-feather/icons";
-import { Quote } from "src/assets/img/feather";
+import { Heart, Link2, MessageSquare, Repeat, Search, ShoppingCart } from "angular-feather/icons";
+import { Bitclout, Diamond, Lock, Quote } from "src/assets/img/feather";
 
 const icons = {
-  MessageSquare,
-  Repeat,
+  Bitclout,
+  Diamond,
   Heart,
+  Link2,
+  Lock,
+  MessageSquare,
   Quote,
+  Repeat,
+  Search,
+  ShoppingCart,
 };
 
 @NgModule({

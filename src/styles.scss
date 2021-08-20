@@ -451,7 +451,7 @@ $green-font-color: #19B028;
   width: 100%;
   min-height: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: stretch;
   margin: 0;
   padding: 0;
@@ -618,7 +618,7 @@ input.bs-timepicker-field {
 }
 
 .global__nav__fixed {
-  top: 0;
+  top: 64px;
   height: 100%;
   position: fixed;
 }
@@ -660,12 +660,13 @@ input.bs-timepicker-field {
 }
 
 .global__sidebar__fixed {
-  top: 0;
+  top: 64px;
   height: 100%;
   position: fixed;
 }
 
 .global__sidebar__inner {
+  margin-top: 64px;
   width: $global__sidebar__width;
   overflow-y: auto;
   height: 100%;
@@ -892,11 +893,12 @@ input.bs-timepicker-field {
 .change-account-selector {
 	position: relative;
 	z-index: 30;
-	background-color: var(--secondary);
+	background-color: var(--tilebg);
 	width: 100%;
 	padding-top: 8px;
 	padding-bottom: 8px;
-	border: 1px solid var(--border);
+  border-radius: 16px;
+	border: 1px solid var(--nfttext);
 }
 
 .change-account-selector_list__inner {
@@ -949,24 +951,46 @@ input.bs-timepicker-field {
   color:var(--hover);
 }
 
+.search-bar {
+  border-radius: 16px;
+  color: var(--searchbartext);
+  i-feather {
+    height: 16px;
+    width: 16px;
+    color: var(--posttext);
+    svg {
+      position: relative;
+      top: -7px;
+    }
+  }
+  input {
+    background: var(--searchbarbackground) !important;
+    border: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+  }
+}
+
 .search-bar__icon {
   padding: 2px;
   padding-left: 5px;
   font-size: 19px;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
-  background-color: var(--formbg);
-  border-color: var(--border);
-  border-right-color: rgba(0,0,0,0);
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  background: var(--searchbarbackground);
+  border: none;
 }
 
 .search-bar__results-dropdown {
   box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
   border-radius: 0px 0px 3px 3px;
   cursor: pointer;
-  background-color: var(--background);
+  background-color: var(--searchbarbackground);
   position: relative;
-  top: -22px;
+  top: -10px;
   border: solid 1px var(--border);
   z-index: 5; // the input has a z-index of 3 at one point.
   max-height: 600px;
@@ -1154,6 +1178,11 @@ input.bs-timepicker-field {
   &:hover {
     background-color: var(--secondary);
   }
+  &.fa-spinner {
+    svg {
+      display: none;
+    }
+  }
 }
 
 .feed-post-icon-row__icon-reclout-option {
@@ -1206,7 +1235,7 @@ input.bs-timepicker-field {
 }
 
 /* diamond button hover animation */
-.feed-post-icon-row__icon.icon-diamond{
+.feed-post-icon-row__icon.diamond-icon{
   &:hover{
     background-color: $diamond-hover;
     color: $diamond-color;
@@ -1223,6 +1252,58 @@ input.bs-timepicker-field {
 }
 
 .feed-post__icon-row-holder {
+}
+
+.desktop-top-bar {
+  position: fixed;
+  height: 64px;
+  background: var(--tilebg);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  .bitclout-logo{
+    margin-top: 10px;
+    position: relative;
+    left: 80px;
+    svg {
+      width: 16.93px;
+      height: 24px;
+    }
+    span {
+      top: 5px;
+      position: relative;
+      color: var(--postsectext);
+      font-style: normal;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 32px;
+      letter-spacing: -.012em;
+    }
+  }
+  search-bar {
+    position: relative;
+    top: 10px;
+    width: 343px;
+    .search-bar,input {
+      height: 48px;
+      i-feather {
+        margin: 0px 12px;
+      }
+    }
+  }
+  change-account-selector {
+    position: relative;
+    top: 10px;
+    right: 80px;
+    width: 164px;
+    height: 48px;
+  }
+}
+
+.desktop-create-post{
+  background: var(--tilebg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
 }
 
 .feed-post__container {
@@ -1318,6 +1399,80 @@ input.bs-timepicker-field {
   outline: none;
 }
 
+.js-feed-post-icon-row__container{
+  span {
+    font-size: 13px;
+    line-height: 20px;
+  }
+}
+
+.feed-post__nft-footer {
+  padding: 10px 16px;
+  background: var(--nftbarbg);
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--nfttext);
+  height: 72px;
+}
+
+.nft-content {
+  margin: 0px 0px;
+  position: relative;
+}
+
+.nft-top-row {
+  width: 284px;
+  position: relative;
+  display: flex;
+}
+
+.nft-unlockable-content {
+  display: inline;
+  position: absolute;
+  right: 0px;
+  color: var(--nftfadedtext);
+  svg {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.nft-bid-btn {
+  position: absolute;
+  right: 0px;
+  top: 6px;
+  button {
+    width: 118px;
+    border-radius: 12px;
+    background: var(--tilebg);
+    margin: 0px 0px;
+    padding: 8px 12px;
+    font-style: normal;
+    font-width: normal;
+    font-size: 13px;
+    line-height: 20px;
+    border: none;
+    heigth: 20px;
+    span {
+      top: 1px;
+      i-feather {
+        height: 20px;
+        width: 20px;
+      }
+      svg {
+        height: 16px;
+        width: 16px;
+      }
+    }
+  }
+}
+
+feed-post-dropdown {
+  position: absolute;
+  right: 0px;
+}
 .left-bar__dot-active {
   font-size: 50px;
   line-height: 18px;
@@ -2619,12 +2774,12 @@ input {
         top: 50px; left: 0px;
       }
 
+      filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
       // Need to position box above top bar when explainer is triggered
       z-index: 30;
       position: absolute;
       width: 340px; height: 55px;
-      background: var(--background);
-      border: 1px solid var(--border);
+      background: var(--tilebg);
       border-radius: 20px;
       // On mobile, need to position this box further left so it doesn't leave the screen
       @media (max-width: 991.98px) {
@@ -2649,6 +2804,8 @@ input {
         text-align: center;
 
         .diamond-reaction {
+          width: 30px;
+          height: 30px;
           font-size: 25px;
           top: -30px;
           left: -2px;

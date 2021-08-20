@@ -5,8 +5,8 @@
   id="searchBarRoot"
 >
   <!-- Input -->
-  <div class="d-flex align-items-center w-100 text-grey8A fs-15px global__top-bar__height">
-    <div class="input-group">
+  <div class="d-flex align-items-center w-100 fs-15px global__top-bar__height search-bar">
+    <div class="input-group search-bar">
       <div class="input-group-prepend">
         <span
           class="input-group-text search-bar__icon"
@@ -15,7 +15,7 @@
           'border-bottom-left-radius': isSearchForUsersToSendClout ? '0.25rem' : ''
           }"
         >
-          <i class="icon-search"></i>
+          <i-feather name="search"></i-feather>
         </span>
       </div>
       <input
@@ -29,7 +29,7 @@
         class="form-control shadow-none search-bar__fix-active"
         style="font-size: 15px; padding-left: 0; border-left-color: rgba(0, 0, 0, 0)"
         [ngClass]="{ 'br-12px': !isSearchForUsersToSendClout }"
-        placeholder="Search"
+        placeholder="Search..."
       />
     </div>
   </div>
