@@ -800,7 +800,7 @@ export class GlobalVarsService {
     this.identityService.launch("/log-in").subscribe((res) => {
       this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything().subscribe(() => {
+      this.updateEverything().add(() => {
         this.flowRedirect(res.signedUp);
       });
     });
