@@ -107,10 +107,25 @@
          class="font-weight-normal">
       <div *ngFor="let linkInfo of existingLinks; let ii = index">
         <div class="mt-5px px-10px pb-10px br-3px border border-color-grey">
-          <div class="pt-10px">
-            <a href="{{ 'https://bitclout.com/r/' + linkInfo.Info.ReferralHashBase58 }}">
-            https://bitclout.com/r/{{ linkInfo.Info.ReferralHashBase58 }}
-            </a>
+          <div class="w-100 pt-10px d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <div (click)="_copyLink(ii)" 
+                   class="btn btn-outline-secondary d-flex fs-15px p-5px"
+                   style="width: fit-content">
+                <i class="far fa-copy fa-xs"></i>
+              </div>
+              <div class="px-5px">
+                <a href="{{ _getLinkForReferralHash(linkInfo.Info.ReferralHashBase58) }}" target="_blank">
+                  {{ _getLinkForReferralHash(linkInfo.Info.ReferralHashBase58) }}
+                </a>
+              </div>
+              <div *ngIf="linkCopied[ii]" class="fs-15px px-5px py-0px">
+                <i class="far fa-check-circle fa-xs fc-blue"></i>
+              </div>
+            </div>
+            <div>
+              {{ globalVars.convertTstampToDaysOrHours(linkInfo.Info.DateCreatedTStampNanos) }}
+            </div>
           </div>
 
           <!-- Referrer Amount -->

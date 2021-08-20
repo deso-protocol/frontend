@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'referral-program-mgr',
@@ -16,6 +17,7 @@ export class ReferralProgramMgrComponent implements OnInit {
   creatingNewLink: boolean = false;
   fetchingExistingLinks: boolean = false;
   existingLinks = [];
+  linkCopied = [];
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -50,7 +52,13 @@ export class ReferralProgramMgrComponent implements OnInit {
         this.refereeAmountUSD*100,
         this.requiresJumio,
       ).subscribe(
-        (res) => { console.log(res); },
+        (res) => {
+          res.ReferralInfoResponse.Info["referrerAmountUSD"] = 
+            res.ReferralInfoResponse.Info.ReferrerAmountUSDCents / 100;
+          res.ReferralInfoResponse.Info["refereeAmountUSD"] = 
+            res.ReferralInfoResponse.Info.RefereeAmountUSDCents / 100;
+          this.existingLinks.unshift(res.ReferralInfoResponse)
+        },
         (err) => {
           this.globalVars._alertError(err.error.error);
           console.error(err);
@@ -76,6 +84,8 @@ export class ReferralProgramMgrComponent implements OnInit {
               this.existingLinks[ii].Info["refereeAmountUSD"] =
                 this.existingLinks[ii].Info.RefereeAmountUSDCents / 100;
             }
+            this.existingLinks = _.sortBy(
+              this.existingLinks, [(o) => {return -o.Info.DateCreatedTStampNanos}])
           }
         },
         (err) => {
@@ -83,6 +93,21 @@ export class ReferralProgramMgrComponent implements OnInit {
           console.error(err);
         }
       ).add(() => (this.fetchingExistingLinks = false));
+  }
+
+  _copyLink(linkNum: number) {
+    this.globalVars._copyText(
+      this._getLinkForReferralHash(this.existingLinks[linkNum].Info.ReferralHashBase58)
+    );
+
+    this.linkCopied[linkNum] = true;
+    setTimeout(() => {
+      this.linkCopied[linkNum] = false;
+    }, 500);
+  }
+
+  _getLinkForReferralHash(referralHash: string) {
+    return "https://bitclout.com/r/" + referralHash
   }
 
 }
