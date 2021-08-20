@@ -128,7 +128,7 @@
             </div>
           </div>
 
-          <div *ngIf="globalVars.loggedInUser.UsersWhoHODLYouCount !== 0 && !inTutorial">
+          <div *ngIf="!inTutorial">
             <div class="mt-30px font-weight-bold">Founder Reward Percentage</div>
 
             <div class="mt-10px">
@@ -160,7 +160,6 @@
                 Please set a founder reward between 0-100.
               </div>
             </div>
-
           </div>
 
           <div class="w-100 my-30px">
