@@ -22,7 +22,6 @@ export class RightBarCreatorsComponent implements OnInit {
   activeTab: string;
   selectedOptionWidth: string;
   activeRightTabOption: RightBarTabOption;
-
   RightBarCreatorsComponent = RightBarCreatorsComponent;
   static RightBarTabKey = "RightBarTab";
 
@@ -62,6 +61,12 @@ export class RightBarCreatorsComponent implements OnInit {
     this.selectTab(true);
   }
 
+  switchCreatorTab(tabName: string, event) {
+    event.stopPropagation();
+    this.activeTab = tabName;
+    document.getElementById("trendsActionsButton").click();
+    this.selectTab();
+  }
   selectTab(skipStorage: boolean = false) {
     const rightTabOption = RightBarCreatorsComponent.chartMap[this.activeTab];
     this.activeRightTabOption = rightTabOption;

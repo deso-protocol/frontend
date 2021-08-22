@@ -18,7 +18,8 @@
     'br-12px': setBorder || cardStyle,
     'js-feed-post-hover': hoverable,
     border: setBorder || cardStyle,
-    'feed-post__quoted-content': hoverable && isQuotedContent
+    'feed-post__quoted-content': hoverable && isQuotedContent,
+    'feed-post-container': !isQuotedContent
   }"
 >
   <div class="w-100">
@@ -465,7 +466,9 @@
             }}
           </span>
         </div>
-        <div>From: 0.04 $Clout ~$7.46</div>
+        <div *ngIf="lowBid">
+          From: {{ globalVars.nanosToBitClout(lowBid, 2) }} $Clout ~{{ globalVars.nanosToUSD(lowBid) }}
+        </div>
       </div>
       <div class="nft-bid-btn">
         <button

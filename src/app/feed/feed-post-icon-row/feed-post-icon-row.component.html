@@ -37,17 +37,19 @@
       </a>
     </div>
     <div
-      class="dropdown-menu border feed-post__dropdown-menu-item-reclout"
-      style="min-width: 6rem"
+      class="dropdown-menu feed-post__dropdown-menu-item-reclout"
+      style="min-width: 7rem"
       *dropdownMenu
       aria-labelledby="recloutActionsButton"
     >
-      <a
-        *ngIf="sendingRecloutRequest; else recloutOptions"
-        class="dropdown-menu-item d-block p-5px"
-      >
-        <div class="fc-muted">Loading...</div>
-      </a>
+      <div>
+        <a
+          *ngIf="sendingRecloutRequest; else recloutOptions"
+          class="dropdown-menu-item d-block p-5px"
+        >
+          <div class="fc-muted">Loading...</div>
+        </a>
+      </div>
       <ng-template #recloutOptions>
         <a
           *ngIf="userHasReclouted(); else recloutElseBlock"

@@ -668,7 +668,6 @@ input.bs-timepicker-field {
 .global__sidebar__inner {
   margin-top: 64px;
   width: $global__sidebar__width;
-  overflow-y: auto;
   height: 100%;
   padding-left: 25px;
 }
@@ -1149,6 +1148,66 @@ tab-selector {
   text-shadow: 0 1px 0 #fff;
 }
 
+.trend-box {
+  background: var(--tilesecbg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.trend-title {
+  margin: 16px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--posttext);
+}
+
+.trend-selector {
+  position: absolute;
+  right: 16px;
+  .feed-post__dropdown-menu-item-reclout {
+    left: -190px !important;
+  }
+}
+
+.trend-entry {
+  a {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    .trend-holder {
+      margin: 12px 16px;
+    }
+  }
+  follow-button {
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--postsectext);
+    a {
+      border: none;
+    }
+  }
+}
+
+.trend-name {
+  color: var(--posttext);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 24px;
+  margin-top: 2px;
+  i-feather {
+    height: 16px;
+    width: 16px;
+  }
+}
+
+.trend-end {
+  position: absolute;
+  right: 16px;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 24px;
+}
+
 .feed-create-post__avatar_default {
   background-image: url('/assets/img/default_profile_pic.png');
 }
@@ -1162,6 +1221,10 @@ tab-selector {
   box-shadow: none;
 }
 
+.feed-post-container {
+  margin-bottom: 12px;
+}
+
 .js-feed-post-hover:hover {
   background-color: var(--secondary);
 }
@@ -1170,19 +1233,35 @@ tab-selector {
   background-color: var(--secalt) !important;
 }
 
+.bc-dropdown-menu {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  div {
+    margin: 6px;
+  }
+}
+
 .feed-post__dropdown-menu-item {
-  background-color: var(--secondary);
-  color: var(--gray);
+  color: var(--postfadedtext);
   &:hover {
-    background-color: var(--secalt);
-    color: var(--gray);
+    color: var(--posttext);
+  }
+  i-feather {
+    height: 14px;
+    width: 14px;
   }
 }
 
 .feed-post__dropdown-menu-item-reclout {
   background-color: var(--tilebg);
-  //padding: 16px;
+  border: none;
   border-radius: 8px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 0px;
+  div {
+    margin: 11px;
+  }
 }
 
 .feed-post__embed-container {
@@ -1560,10 +1639,10 @@ feed-post-dropdown {
 }
 
 .right-bar-creators-leaderboard__creator-avatar {
-  height: 28px;
-  width: 28px;
+  height: 40px;
+  width: 40px;
   margin-right: 10px;
-  border-radius: 3px;
+  border-radius: 12px;
 
   background-size: cover;
   background-repeat: no-repeat;

@@ -52,37 +52,59 @@
     <right-bar-signup></right-bar-signup>
   </div>
 
-  <!-- Title -->
-  <div
-    class="fs-15px text-grey5 font-weight-bold mb-10px d-flex flex-column"
-    [ngClass]="{ 'pb-10px': !activeRightTabOption.poweredBy }"
-  >
-    <div>
-      <select
-        #rightBarSelect
-        id="right-bar-chart-select"
-        class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer"
-        [ngStyle]="{ width: selectedOptionWidth }"
-        (change)="selectTab()"
-        [(ngModel)]="activeTab"
-      >
-        <option
-          *ngFor="let option of RightBarCreatorsComponent.chartMap | keyvalue"
-          [value]="option.key"
-          class="fs-15px text-grey5 font-weight-bold"
+  <div class="trend-box">
+    <!-- Title -->
+    <div
+      class="trend-title"
+    >
+      <div class="d-flex">
+        <span>{{activeTab}}</span>
+        <!-- Dropdown -->
+        <div
+          (click)="$event.stopPropagation()"
+          class="btn-group cursor-pointer d-flex align-items-center trend-selector"
+          dropdown
+          #dropdown="bs-dropdown"
         >
-          {{ option.key }}
-        </option>
-      </select>
+          <div>
+            <a
+              class="link--unstyled"
+              dropdownToggle
+              id="trendsActionsButton"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fas fa-ellipsis-h"></i>
+            </a>
+          </div>
+          <div
+            class="dropdown-menu feed-post__dropdown-menu-item-reclout"
+            style="min-width: 6rem"
+            *dropdownMenu
+          >
+            <div>
+              <a
+                *ngFor="let option of RightBarCreatorsComponent.chartMap | keyvalue"
+                class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-reclout-option-text"
+                (click)="this.switchCreatorTab(option.key, $event)"
+                data-toggle="dropdown"
+              >
+                {{option.key}}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex" *ngIf="activeRightTabOption.poweredBy">
+        <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
+          <i class="fas fa-external-link-alt pr-5px"></i>
+          Powered by {{ activeRightTabOption.poweredBy.name }}
+        </a>
+      </div>
     </div>
-    <div class="pt-5px" *ngIf="activeRightTabOption.poweredBy">
-      <a class="link--unstyled fs-12px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
-        <i class="fas fa-external-link-alt pr-5px"></i>
-        Powered by {{ activeRightTabOption.poweredBy.name }}
-      </a>
-    </div>
-  </div>
 
-  <!-- Creators -->
-  <right-bar-creators-leaderboard [activeTab]="activeTab"></right-bar-creators-leaderboard>
+    <!-- Creators -->
+    <right-bar-creators-leaderboard [activeTab]="activeTab"></right-bar-creators-leaderboard>
+  </div>
 </div>
