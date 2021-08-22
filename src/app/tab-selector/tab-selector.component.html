@@ -1,21 +1,25 @@
-<div class="d-flex w-100 border-bottom border-color-grey" style="cursor: pointer; height: 50px">
+<div class="d-flex w-100" style="cursor: pointer; height: 50px">
   <div
     *ngFor="let tab of tabs"
     (click)="_tabClicked(tab)"
     class="d-flex flex-column align-items-center h-100 pl-15px pr-15px"
   >
-    <div
-      class="d-flex h-100 align-items-center fs-15px"
-      [ngClass]="{ 'fc-default': tab == this.activeTab, 'fc-muted': tab != this.activeTab }"
-    >
-      {{ tab }}
+    <div class="d-flex h-100 align-items-center">
+      <div
+        class="d-flex h-100 align-items-center fs-15px"
+        *ngIf="tab !== this.activeTab"
+        [ngClass]="{ 'fc-default': tab == this.activeTab, 'fc-muted': tab != this.activeTab }"
+      >
+        {{ tab }}
+      </div>
+      <button
+        *ngIf="tab === this.activeTab"
+      >
+        <span>{{ tab }}</span>
+      </button>
+      <div class="new-tab-indicator" *ngIf="newTabs.includes(tab) && tab !== this.activeTab">
+        <span>New</span>
+      </div>
     </div>
-    <div
-      style="width: 50px"
-      [ngClass]="{
-        'tab-underline-active': tab == this.activeTab,
-        'tab-underline-inactive': tab != this.activeTab
-      }"
-    ></div>
   </div>
 </div>

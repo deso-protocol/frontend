@@ -1,15 +1,4 @@
 <div class="d-flex flex-column">
-  <!-- Top Bar -->
-  <div
-    *ngIf="!isMobile"
-    class="global__top-bar d-flex align-items-center px-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
-  >
-    <div class="d-flex align-items-center">
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-      Home
-    </div>
-  </div>
-
   <div class="global__top-bar__height"></div>
   <div *ngIf="!isMobile">
     <!-- Create Post -->
@@ -56,7 +45,7 @@
   </div>
 
   <!-- Tab Selector -->
-  <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+  <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" [newTabs]="newTabs" (tabClick)="_handleTabClick($event)"></tab-selector>
 
   <countdown-timer *ngIf="nextNFTShowcaseTime"
     [timerText]="'The next NFT showcase drops in...'"

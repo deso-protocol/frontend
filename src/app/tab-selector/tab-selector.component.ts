@@ -9,6 +9,7 @@ export class TabSelectorComponent {
   @Output() tabClick = new EventEmitter<string>();
   @Input() tabs: any; // Should be a list of strings with tab names.
   @Input() activeTab: string;
+  @Input() newTabs: string[] = [];
 
   constructor() {}
 

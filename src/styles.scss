@@ -143,7 +143,7 @@ pre, code{
 //
 
 $global__top-bar__height: 60px;
-$global__top-bar__desktop-height: 80px;
+$global__top-bar__desktop-height: 20px;
 $global__nav__width: 245px;
 $global__center__width: 600px;
 $global__sidebar__width: 375px;
@@ -680,8 +680,6 @@ input.bs-timepicker-field {
 .global__center__inner {
   min-height: 100vh;
   width: $global__center__width;
-  border-left: var(--border) solid 1px;
-  border-right: var(--border) solid 1px;
 }
 
 .global__top-bar {
@@ -706,6 +704,76 @@ input.bs-timepicker-field {
 
 .feed-create-post__image-icon {
   margin-top: 2px;
+}
+
+.create-post {
+  border-radius: 10px;
+  background: var(--tilebg);
+  font-style: normal;
+  font-weight: normal;
+  font-size: 17px;
+  line-height: 24px;
+  color: var(--postsectext);
+  textarea {
+    margin-top: 12px;
+  }
+}
+
+tab-selector {
+  button {
+    background: var(--tilebg);
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    color: var(--highlight);
+    font-weight: 600;
+    position: relative;
+    span {
+      padding: 0px 9px;
+      position: relative;
+      top: 1px;
+    }
+  }
+  .new-tab-indicator {
+    margin-left: 8px;
+    background: var(--highlightsec);
+    color: var(--highlight);
+    position: relative;
+    top: -1px;
+    height: 32px;
+    border-radius: 12px;
+    span {
+      padding: 0px 12px;
+      position: relative;
+      top: 4px;
+      font-size: 13px;
+      font-weight: normal;
+    }
+  }
+}
+
+.create-post-icon-bar {
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+  margin: 16px 16px 32px 16px;
+  i-feather {
+    cursor: pointer;
+    height: 24px;
+    width: 24px;
+    color: var(--postfadedtext);
+    margin-right: 25px;
+  }
+  button {
+    position: absolute;
+    right: 0px;
+    background: var(--highlight);
+    width: 82px;
+    height: 48px;
+    border-radius: 16px;
+    border: none;
+    color: var(--tilebg);
+  }
 }
 
 .global__top-bar__height {
