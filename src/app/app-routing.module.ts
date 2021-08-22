@@ -68,6 +68,9 @@ class RouteNames {
   public static TRENDS = "trends";
   public static NFT = "nft";
   public static VERIFY_EMAIL = "verify-email";
+
+  // CloutCast Route Prefix
+  public static CLOUTCAST_PREFIX = 'casts'
 }
 
 const routes: Routes = [

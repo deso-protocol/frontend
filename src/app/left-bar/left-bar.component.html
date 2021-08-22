@@ -109,6 +109,13 @@
         [buttonLabel]="'Messages'"
       ></left-bar-button>
 
+      <!-- CloutCast Button with Notifications for Inbox -->
+      <left-bar-button
+        [hasNotifications]="true"
+        [link]="'/' + globalVars.RouteNames.CLOUTCAST_PREFIX"
+        [buttonLabel]="'Casts'"
+      ></left-bar-button>
+
       <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
       <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
