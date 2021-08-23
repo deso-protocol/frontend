@@ -1862,6 +1862,25 @@ export class BackendApiService {
     });
   }
 
+  AdminUpdateReferralHash(
+    endpoint: string, 
+    AdminPublicKey: string, 
+    ReferralHashBase58: string,
+    ReferrerAmountUSDCents: number,
+    RefereeAmountUSDCents: number,
+    RequiresJumio: boolean,
+    IsActive: boolean,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateReferralHash, AdminPublicKey, {
+      ReferralHashBase58,
+      ReferrerAmountUSDCents,
+      RefereeAmountUSDCents,
+      RequiresJumio,
+      IsActive,
+      AdminPublicKey,
+    });
+  }
+
   RoutePathAdminGetAllReferralInfoForUser(
     endpoint: string, 
     AdminPublicKey: string, 

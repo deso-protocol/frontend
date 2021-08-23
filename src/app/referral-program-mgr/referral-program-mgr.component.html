@@ -172,8 +172,9 @@
           <div class="d-flex justify-content-between align-items-center fs-15px">
             <div class="font-weight-normal">Requires Jumio</div>
             <div class="custom-control custom-switch custom-switch-lg">
-              <input [(ngModel)]="linkInfo.Info.RequiresJumio" type="checkbox" class="custom-control-input" id="customSwitch1">
-              <label class="custom-control-label" for="customSwitch1"></label>
+              <input [(ngModel)]="linkInfo.Info.RequiresJumio"
+                     type="checkbox" class="custom-control-input" [id]="'requiresJumio'+ii">
+              <label class="custom-control-label" [for]="'requiresJumio'+ii"></label>
             </div>
           </div>
       
@@ -181,17 +182,18 @@
           <div class="d-flex justify-content-between align-items-center fs-15px">
             <div class="font-weight-normal">Is Active</div>
             <div class="custom-control custom-switch custom-switch-lg">
-              <input [(ngModel)]="linkInfo.IsActive" type="checkbox" class="custom-control-input" id="customSwitch1">
-              <label class="custom-control-label" for="customSwitch1"></label>
+              <input [(ngModel)]="linkInfo.IsActive"
+                     type="checkbox" class="custom-control-input" [id]="'isActive'+ii">
+              <label class="custom-control-label" [for]="'isActive'+ii"></label>
             </div>
           </div>
           
-          <button (click)="_createNewLink()"
-                  *ngIf="!creatingNewLink" 
+          <button (click)="_updateExistingLink(ii)"
+                  *ngIf="!updatingLink[ii]" 
                   class="btn btn-warning btn-sm fs-15px mt-5px">
             Update Link
           </button>
-          <button *ngIf="creatingNewLink" 
+          <button *ngIf="updatingLink[ii]" 
                   class="btn btn-warning btn-sm fs-15px mt-5px" disabled>
             Updating...
           </button>

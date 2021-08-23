@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
 import * as _ from 'lodash';
@@ -18,9 +18,11 @@ export class ReferralProgramMgrComponent implements OnInit {
   fetchingExistingLinks: boolean = false;
   existingLinks = [];
   linkCopied = [];
+  updatingLink = [];
 
   constructor(
     private globalVars: GlobalVarsService,
+    private ref: ChangeDetectorRef,
     private backendApi: BackendApiService
   ) { }
 
@@ -40,6 +42,15 @@ export class ReferralProgramMgrComponent implements OnInit {
     return creator?.Username || creator?.PublicKeyBase58Check || ""
   } 
 
+  _setExistingLinkStatusArrays() {
+    this.linkCopied = [];
+    this.updatingLink = [];
+    for(let ii=0; ii < this.existingLinks.length; ii++) {
+      this.linkCopied.push(false);
+      this.updatingLink.push(false);
+    }
+  }
+
   _createNewLink() {
     this.creatingNewLink = true;
     this.backendApi
@@ -58,6 +69,7 @@ export class ReferralProgramMgrComponent implements OnInit {
           res.ReferralInfoResponse.Info["refereeAmountUSD"] = 
             res.ReferralInfoResponse.Info.RefereeAmountUSDCents / 100;
           this.existingLinks.unshift(res.ReferralInfoResponse)
+          this._setExistingLinkStatusArrays();
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
@@ -86,6 +98,7 @@ export class ReferralProgramMgrComponent implements OnInit {
             }
             this.existingLinks = _.sortBy(
               this.existingLinks, [(o) => {return -o.Info.DateCreatedTStampNanos}])
+            this._setExistingLinkStatusArrays();
           }
         },
         (err) => {
@@ -93,6 +106,38 @@ export class ReferralProgramMgrComponent implements OnInit {
           console.error(err);
         }
       ).add(() => (this.fetchingExistingLinks = false));
+  }
+
+  _updateExistingLink(linkNum: number) {
+    if(linkNum >= this.existingLinks.length) {
+      return
+    }
+
+    this.updatingLink[linkNum] = true;
+    let existingLink = this.existingLinks[linkNum];
+    this.backendApi
+      .AdminUpdateReferralHash(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        existingLink.Info.ReferralHashBase58,
+        existingLink.Info.referrerAmountUSD*100,
+        existingLink.Info.refereeAmountUSD*100,
+        existingLink.Info.RequiresJumio,
+        existingLink.IsActive,
+      ).subscribe(
+        (res) => {
+          res.ReferralInfoResponse.Info["referrerAmountUSD"] = 
+            res.ReferralInfoResponse.Info.ReferrerAmountUSDCents / 100;
+          res.ReferralInfoResponse.Info["refereeAmountUSD"] = 
+            res.ReferralInfoResponse.Info.RefereeAmountUSDCents / 100;
+          this.existingLinks[linkNum] = res.ReferralInfoResponse;
+          this.globalVars._alertSuccess("Successfully updated referral link.");
+        },
+        (err) => {
+          this.globalVars._alertError(err.error.error);
+          console.error(err);
+        }
+      ).add(() => (this.updatingLink[linkNum] = false));
   }
 
   _copyLink(linkNum: number) {
