@@ -227,11 +227,9 @@ export class TradeCreatorComponent implements OnInit {
       // some error and return?
       return;
     }
-    const creatorCoinBalance = hodlings.find(
-      (hodling) => hodling.CreatorPublicKeyBase58Check === this.creatorProfile.PublicKeyBase58Check
-    );
-    // For now, just take 5%. Eventually we'll do something more sophisticated in the event a user goes through the tutorial and buys a creator they already own.
-    this.creatorCoinTrade.creatorCoinToSell = (creatorCoinBalance.BalanceNanos * 0.05) / 1e9;
+    const creatorCoinsPurchasedInTutorial = this.globalVars.loggedInUser?.CreatorCoinsPurchasedInTutorial;
+    // Sell 5% of coins purchased in buy step.
+    this.creatorCoinTrade.creatorCoinToSell = (creatorCoinsPurchasedInTutorial * 0.05) / 1e9;
     this.getBuyOrSellObservable().subscribe(
       (response) => {
         this.creatorCoinTrade.expectedBitCloutReturnedNanos = response.ExpectedBitCloutReturnedNanos || 0;

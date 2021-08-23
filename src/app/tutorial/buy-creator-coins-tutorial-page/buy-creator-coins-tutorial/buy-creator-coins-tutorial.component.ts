@@ -49,12 +49,17 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
           UpAndComingProfileEntryResponses: ProfileEntryResponse[];
         }) => {
           // Do not let users select themselves in the "Invest In Others" step.
-          this.topCreatorsToHighlight = res.WellKnownProfileEntryResponses.filter(
-            (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
-          );
-          this.upAndComingCreatorsToHighlight = res.UpAndComingProfileEntryResponses.filter(
-            (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
-          );
+          if (res.WellKnownProfileEntryResponses?.length) {
+            this.topCreatorsToHighlight = res.WellKnownProfileEntryResponses.filter(
+              (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+            );
+          }
+
+          if (res.UpAndComingProfileEntryResponses?.length) {
+            this.upAndComingCreatorsToHighlight = res.UpAndComingProfileEntryResponses.filter(
+              (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+            );
+          }
           this.loading = false;
         },
         (err) => {

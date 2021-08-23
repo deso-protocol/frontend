@@ -194,6 +194,7 @@ export class User {
 
   TutorialStatus: TutorialStatus;
   CreatorPurchasedInTutorialUsername?: string;
+  CreatorCoinsPurchasedInTutorial: number;
   MustCompleteTutorial: boolean;
 }
 
@@ -980,7 +981,7 @@ export class BackendApiService {
       Sub,
       IsHidden,
       MinFeeRateNanosPerKB,
-      InTutorial
+      InTutorial,
     });
 
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);

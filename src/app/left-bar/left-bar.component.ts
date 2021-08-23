@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostBinding } from "@angular/core";
+import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule, RouteNames } from "../app-routing.module";
 import { MessagesInboxComponent } from "../messages-page/messages-inbox/messages-inbox.component";
@@ -25,18 +25,13 @@ export class LeftBarComponent {
   currentRoute: string;
 
   AppRoutingModule = AppRoutingModule;
-  showTutorialOption: boolean;
 
   constructor(
     public globalVars: GlobalVarsService,
     private identityService: IdentityService,
     private backendApi: BackendApiService,
     private router: Router
-  ) {
-    this.showTutorialOption =
-      globalVars.loggedInUser?.BalanceNanos > 0 &&
-      [TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(globalVars.loggedInUser?.TutorialStatus) >= 0;
-  }
+  ) {}
 
   // send logged out users to the landing page
   // send logged in users to browse
@@ -67,6 +62,37 @@ export class LeftBarComponent {
 
   startTutorial(): void {
     if (this.inTutorial) {
+      return;
+    }
+    if (this.globalVars.loggedInUser?.BalanceNanos === 0) {
+      SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
+        icon: "info",
+        title: `You need $CLOUT to complete the tutorial`,
+        showConfirmButton: true,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+        },
+        confirmButtonText: "Buy $CLOUT",
+      }).then((res) => {
+        if (res.isConfirmed) {
+          this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+        }
+      });
+      return;
+    }
+    if ([TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(this.globalVars.loggedInUser?.TutorialStatus) < 0) {
+      SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
+        icon: "info",
+        title: `You have already started the tutorial`,
+        showConfirmButton: true,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+        },
+      });
       return;
     }
     SwalHelper.fire({
