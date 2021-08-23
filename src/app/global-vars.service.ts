@@ -1,30 +1,24 @@
-import { Injectable } from "@angular/core";
-import {
-  BackendApiService,
-  BalanceEntryResponse,
-  PostEntryResponse,
-  TutorialStatus,
-  User,
-} from "./backend-api.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { RouteNames } from "./app-routing.module";
+import {Injectable} from "@angular/core";
+import {BackendApiService, BalanceEntryResponse, PostEntryResponse, TutorialStatus, User,} from "./backend-api.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {RouteNames} from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
-import { Observable, Observer } from "rxjs";
-import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
-import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
-import { SwalHelper } from "../lib/helpers/swal-helper";
-import { environment } from "../environments/environment";
-import { AmplitudeClient } from "amplitude-js";
-import { DomSanitizer } from "@angular/platform-browser";
-import { IdentityService } from "./identity.service";
-import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
-import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
-import { HttpClient } from "@angular/common/http";
-import { FeedComponent } from "./feed/feed.component";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import Timer = NodeJS.Timer;
+import {Observable, Observer} from "rxjs";
+import {LoggedInUserObservableResult} from "../lib/observable-results/logged-in-user-observable-result";
+import {FollowChangeObservableResult} from "../lib/observable-results/follow-change-observable-result";
+import {SwalHelper} from "../lib/helpers/swal-helper";
+import {environment} from "../environments/environment";
+import {AmplitudeClient} from "amplitude-js";
+import {DomSanitizer} from "@angular/platform-browser";
+import {IdentityService} from "./identity.service";
+import {BithuntService, CommunityProject} from "../lib/services/bithunt/bithunt-service";
+import {LeaderboardResponse, PulseService} from "../lib/services/pulse/pulse-service";
+import {RightBarCreatorsLeaderboardComponent} from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import {HttpClient} from "@angular/common/http";
+import {FeedComponent} from "./feed/feed.component";
+import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 import Swal from "sweetalert2";
+import Timer = NodeJS.Timer;
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -317,6 +311,10 @@ export class GlobalVarsService {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
       this.followFeedPosts = [];
+    }
+
+    if (this.loggedInUser?.MustCompleteTutorial && this.loggedInUser?.TutorialStatus === TutorialStatus.EMPTY) {
+      this.startTutorialAlert();
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
@@ -979,6 +977,42 @@ export class GlobalVarsService {
     this.resentVerifyEmail = true;
   }
 
+  startTutorialAlert(): void {
+    Swal.fire({
+      target: this.getTargetComponentSelector(),
+      title: "Congrats!",
+      html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
+      showConfirmButton: true,
+      // Only show skip option to admins
+      showCancelButton: !!this.loggedInUser?.IsAdmin,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Start Tutorial",
+      cancelButtonText: "Skip",
+      // User must skip or start tutorial
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then((res) => {
+      this.backendApi
+        .StartOrSkipTutorial(
+          this.localNode,
+          this.loggedInUser?.PublicKeyBase58Check,
+          !res.isConfirmed /* if it's not confirmed, skip tutorial*/
+        )
+        .subscribe((response) => {
+          this.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+          this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
+          if (res.isConfirmed) {
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+          }
+        });
+    });
+  }
+
   jumioInterval: Timer = null;
   // If we return from the Jumio flow, poll for up to 10 minutes to see if we need to update the user's balance.
   pollLoggedInUserForJumio(publicKey: string): void {
@@ -1014,41 +1048,7 @@ export class GlobalVarsService {
               }
               this.celebrate();
               if (user.TutorialStatus === TutorialStatus.EMPTY) {
-                Swal.fire({
-                  target: this.getTargetComponentSelector(),
-                  title: "Congrats!",
-                  html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
-                  showConfirmButton: true,
-                  // Only show skip option to admins
-                  showCancelButton: !!this.loggedInUser?.IsAdmin,
-                  customClass: {
-                    confirmButton: "btn btn-light",
-                    cancelButton: "btn btn-light no",
-                  },
-                  reverseButtons: true,
-                  confirmButtonText: "Start Tutorial",
-                  cancelButtonText: "Skip",
-                  // User must skip or start tutorial
-                  allowOutsideClick: false,
-                  allowEscapeKey: false,
-                }).then((res) => {
-                  this.backendApi
-                    .StartOrSkipTutorial(
-                      this.localNode,
-                      this.loggedInUser?.PublicKeyBase58Check,
-                      !res.isConfirmed /* if it's not confirmed, skip tutorial*/
-                    )
-                    .subscribe((response) => {
-                      this.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
-                      // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
-                      this.loggedInUser.TutorialStatus = res.isConfirmed
-                        ? TutorialStatus.STARTED
-                        : TutorialStatus.SKIPPED;
-                      if (res.isConfirmed) {
-                        this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
-                      }
-                    });
-                });
+                this.startTutorialAlert();
               }
               clearInterval(this.jumioInterval);
               return;
