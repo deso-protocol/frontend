@@ -13,7 +13,6 @@ import { Observable, Observer } from "rxjs";
 import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
 import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
 import { SwalHelper } from "../lib/helpers/swal-helper";
-import Swal from "sweetalert2";
 import { environment } from "../environments/environment";
 import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer } from "@angular/platform-browser";
@@ -1021,7 +1020,7 @@ export class GlobalVarsService {
               }
               this.celebrate();
               if (user.MustCompleteTutorial && user.TutorialStatus === TutorialStatus.EMPTY) {
-                Swal.fire({
+                SwalHelper.fire({
                   target: this.getTargetComponentSelector(),
                   title: "Congrats!",
                   html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",

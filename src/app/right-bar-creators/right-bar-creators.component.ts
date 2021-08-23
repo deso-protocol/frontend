@@ -1,8 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import {BackendApiService, TutorialStatus} from "../backend-api.service";
+import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
-import { RouteNames } from "../app-routing.module";
 
 export class RightBarTabOption {
   name: string;

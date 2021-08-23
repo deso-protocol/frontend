@@ -5,7 +5,7 @@ import { MessagesInboxComponent } from "../messages-page/messages-inbox/messages
 import { IdentityService } from "../identity.service";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { Router } from "@angular/router";
-import Swal from "sweetalert2";
+import {SwalHelper} from "../../lib/helpers/swal-helper";
 
 @Component({
   selector: "left-bar",
@@ -69,7 +69,7 @@ export class LeftBarComponent {
     if (this.inTutorial) {
       return;
     }
-    Swal.fire({
+    SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Tutorial",
       html: "<b>Learn how BitClout works!</b>",
