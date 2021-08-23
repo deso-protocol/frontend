@@ -296,10 +296,9 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
-    // TODO: uncomment lines here when done testing.
-    // if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
-    this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
-    // }
+    if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
+      this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
+    }
 
     if (!isSameUserAsBefore) {
       // Store the user in localStorage
@@ -997,7 +996,6 @@ export class GlobalVarsService {
         .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
         .subscribe(
           (res: any) => {
-            // TODO: revert back to res.JumioVerified after testing
             if (res.JumioVerified) {
               let user: User;
               this.userList.forEach((userInList, idx) => {
@@ -1013,7 +1011,7 @@ export class GlobalVarsService {
                 this.setLoggedInUser(user);
               }
               this.celebrate();
-              if (user.MustCompleteTutorial && user.TutorialStatus === TutorialStatus.EMPTY) {
+              if (user.TutorialStatus === TutorialStatus.EMPTY) {
                 SwalHelper.fire({
                   target: this.getTargetComponentSelector(),
                   title: "Congrats!",
