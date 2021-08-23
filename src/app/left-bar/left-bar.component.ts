@@ -1,8 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostBinding } from "@angular/core";
+import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule } from "../app-routing.module";
+import { AppRoutingModule, RouteNames } from "../app-routing.module";
 import { MessagesInboxComponent } from "../messages-page/messages-inbox/messages-inbox.component";
 import { IdentityService } from "../identity.service";
+import { BackendApiService, TutorialStatus } from "../backend-api.service";
+import { Router } from "@angular/router";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "left-bar",
@@ -22,8 +25,18 @@ export class LeftBarComponent {
   currentRoute: string;
 
   AppRoutingModule = AppRoutingModule;
+  showTutorialOption: boolean;
 
-  constructor(public globalVars: GlobalVarsService, private identityService: IdentityService) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private identityService: IdentityService,
+    private backendApi: BackendApiService,
+    private router: Router
+  ) {
+    this.showTutorialOption =
+      globalVars.loggedInUser?.BalanceNanos > 0 &&
+      [TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(globalVars.loggedInUser?.TutorialStatus) >= 0;
+  }
 
   // send logged out users to the landing page
   // send logged in users to browse
@@ -50,5 +63,43 @@ export class LeftBarComponent {
 
   logHelp(): void {
     this.globalVars.logEvent("help : click");
+  }
+
+  startTutorial(): void {
+    if (this.inTutorial) {
+      return;
+    }
+    Swal.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Tutorial",
+      html: "<b>Learn how BitClout works!</b>",
+      showConfirmButton: true,
+      // Only show skip option to admins
+      showCancelButton: !!this.globalVars.loggedInUser?.IsAdmin || !!this.globalVars.loggedInUser?.MustCompleteTutorial,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Start Tutorial",
+      cancelButtonText: "Skip",
+    }).then((res) => {
+      this.backendApi
+        .StartOrSkipTutorial(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          !res.isConfirmed /* if it's not confirmed, skip tutorial*/
+        )
+        .subscribe((response) => {
+          this.globalVars.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+          this.globalVars.loggedInUser.TutorialStatus = res.isConfirmed
+            ? TutorialStatus.STARTED
+            : TutorialStatus.SKIPPED;
+          if (res.isConfirmed) {
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+          }
+        });
+    });
   }
 }

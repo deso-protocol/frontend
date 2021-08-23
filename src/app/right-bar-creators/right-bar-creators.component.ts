@@ -74,18 +74,4 @@ export class RightBarCreatorsComponent implements OnInit {
       this.backendApi.SetStorage(RightBarCreatorsComponent.RightBarTabKey, this.activeTab);
     }
   }
-
-  startTutorial(): void {
-    if (this.inTutorial) {
-      return;
-    }
-    this.backendApi
-      .StartOrSkipTutorial(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check, false)
-      .subscribe(() => {
-        this.globalVars.logEvent("tutorial : start");
-        // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
-        this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.STARTED;
-        this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
-      });
-  }
 }
