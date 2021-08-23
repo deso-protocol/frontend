@@ -44,7 +44,7 @@ export class CreatorCoinTrade {
   showCannotSendToSelfError: boolean = false;
 
   // If the user wishes to follow the creator after purchasing their coin
-  followCreator: boolean = true;
+  followCreator: boolean = false;
 
   constructor(public globalVars: GlobalVarsService) {
     this.clearAllFields();

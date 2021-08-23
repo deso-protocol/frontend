@@ -24,12 +24,6 @@
     Detailed Sync Info
   </span>
   <div *ngIf="isOpen.detailedSyncInfo" class="ml-15px">
-    <div *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_BITCOIN'">
-      Bitcoin Headers Left:
-      <div class="fc-blue">
-        {{ globalVars.nodeInfo.BitcoinStatus.HeadersRemaining }}
-      </div>
-    </div>
     <div *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_HEADERS'">
       BitClout Headers Left:
       <div class="fc-blue">
@@ -281,77 +275,6 @@
       />
       <div
         (click)="connectBitCloutPeer(manualBitcloutPeer)"
-        class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
-      >
-        Connect
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="fs-15px mt-15px px-15px">
-  <span (click)="isOpen.bitcoinNode = !isOpen.bitcoinNode" class="font-weight-bold cursor-pointer">
-    <i *ngIf="!isOpen.bitcoinNode" class="fas fa-caret-right"></i>
-    <i *ngIf="isOpen.bitcoinNode" class="fas fa-caret-down"></i>
-    Bitcoin Node Info
-  </span>
-  <div *ngIf="isOpen.bitcoinNode && updatingBitcoinPeer" class="ml-15px fc-muted">Updating Bitcoin peer...</div>
-  <div *ngIf="isOpen.bitcoinNode && !updatingBitcoinPeer" class="ml-15px">
-    Sync Peer:
-    <div class="fc-blue">
-      <div *ngIf="globalVars.nodeInfo.BitcoinSyncPeer == null">No sync peer currently set.</div>
-      <div *ngIf="globalVars.nodeInfo.BitcoinSyncPeer != null">
-        <div style="display: flex; align-items: center">
-          <div style="display: inline-block">
-            {{ globalVars.nodeInfo.BitcoinSyncPeer.IP + ":" + globalVars.nodeInfo.BitcoinSyncPeer.ProtocolPort }}
-          </div>
-        </div>
-      </div>
-    </div>
-    Unconnected Peers ({{ globalVars.nodeInfo.BitcoinUnconnectedPeers.length }}):
-    <div
-      class="fc-blue border border-color-grey px-5px pt-5px"
-      style="max-height: 150px; overflow-y: scroll; width: fit-content"
-    >
-      <div
-        *ngIf="
-          globalVars.nodeInfo.BitcoinUnconnectedPeers == null ||
-          globalVars.nodeInfo.BitcoinUnconnectedPeers.length === 0
-        "
-      >
-        No other peers available.
-      </div>
-      <div *ngFor="let peer of globalVars.nodeInfo.BitcoinUnconnectedPeers; index as peerIndex">
-        <div class="d-flex align-items-center justify-content-between pb-5px">
-          <div style="display: inline-block">
-            {{ peer.IP + ":" + peer.ProtocolPort }}
-          </div>
-          <div class="d-flex">
-            <div
-              *ngIf="peer.isCopied !== true"
-              (click)="copyPeer(peer)"
-              class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px"
-            >
-              <i class="far fa-copy fa-xs"></i>
-            </div>
-            <div *ngIf="peer.isCopied === true" class="fs-15px px-5px py-0px">
-              <i class="far fa-check-circle fa-xs"></i>
-            </div>
-            <div
-              (click)="connectBitcoinPeer(peer.IP + ':' + peer.ProtocolPort)"
-              class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
-            >
-              Connect
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    Manual Connection:
-    <div class="fc-blue d-flex align-items-center">
-      <input [(ngModel)]="manualBitcoinPeer" placeholder="Enter an address." style="width: 200px; border-radius: 3px" />
-      <div
-        (click)="connectBitcoinPeer(manualBitcoinPeer)"
         class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
       >
         Connect

@@ -13,7 +13,7 @@ import { environment } from "../../../environments/environment";
   styleUrls: ["./feed-create-post.component.sass"],
 })
 export class FeedCreatePostComponent implements OnInit {
-  static SHOW_POST_LENGTH_WARNING_THRESHOLD = 260; // show warning at 260 characters
+  static SHOW_POST_LENGTH_WARNING_THRESHOLD = 515; // show warning at 515 characters
 
   EmbedUrlParserService = EmbedUrlParserService;
 

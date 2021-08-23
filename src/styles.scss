@@ -2484,22 +2484,27 @@ input {
     position: absolute;
     left: -4px;
     cursor: pointer;
-
     &::before {
-      content: "."; opacity: 0;
-      display: block;
-      width: 44px;
-      // On desktop, move the diamond bar higher to prevent accidental clicking
-      @media (max-width: 991.98px) {
-        height: 10px;
-      }
-      height: 15px;
-      position: absolute;
-      top: -10px; left: 0;
+      display: none
     }
-
     // Contains box which contains all of the selectable diamond levels
     .reaction-box {
+      // This creates an invisible, hoverable space for our pointer to use without losing hover focus
+      // Basically, a bridge between the diamond button and the diamond row
+      &::after {
+        content: "."; opacity: 0;
+        display: block;
+        width: 340px;
+        // On desktop, move the diamond bar higher to prevent accidental clicking
+        @media (max-width: 991.98px) {
+          height: 10px;
+          top: 50px; left: 0px;
+        }
+        height: 30px;
+        position: absolute;
+        top: 50px; left: 0px;
+      }
+
       // Need to position box above top bar when explainer is triggered
       z-index: 30;
       position: absolute;
@@ -2511,11 +2516,8 @@ input {
       @media (max-width: 991.98px) {
         left: -300px; bottom: 35px;
       }
-      left: -125px; bottom: 40px;
-      display: block;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0s opacity, 0s visibility;
+      left: -125px; bottom: 50px;
+      display: none;
 
       // Each selectable diamond level in the diamond pop-up
       .reaction-icon {
@@ -2523,7 +2525,7 @@ input {
         transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
         opacity: 0;
         transform: translate(0, 50px) scale(0);
-        width: 47px; height: 25px;
+        width: 47px; height: 20px;
         display: inline-block;
         background: var(--secondary);
         background-color: transparent;
@@ -2574,8 +2576,6 @@ input {
       &.dragged-like {
         .reaction-box {
           display: block;
-          visibility: visible;
-          opacity: 1;
         }
       }
     }
@@ -2583,16 +2583,7 @@ input {
     @media(min-width: 601px) {
       &:hover {
         .reaction-box {
-          visibility: visible;
-          opacity: 1;
-          // Don't delay appearance of pop up on tablet click
-          @media(pointer: coarse) {
-            transition: 0s opacity, 0s visibility;
-            transition-delay: 0s;
-          }
-          transition: 1s opacity, 1s visibility;
-          // Delay appearance of pop up on mouse hover
-          transition-delay: 1s;
+          display: block;
         }
       }
     }
@@ -2620,7 +2611,6 @@ input {
             // Prevent hover effects on mobile, we use the drag interface for that
             @media (pointer: fine) {
               &.dragged-icon,&:hover {
-                height: 35px;
                 transform: scale(1.3);
                 transform-origin: bottom;
               }
