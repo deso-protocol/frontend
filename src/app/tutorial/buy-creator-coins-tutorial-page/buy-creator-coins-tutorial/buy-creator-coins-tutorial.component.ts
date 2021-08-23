@@ -44,9 +44,17 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
     this.backendApi
       .GetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 2)
       .subscribe(
-        (res) => {
-          this.topCreatorsToHighlight = res.WellKnownProfileEntryResponses;
-          this.upAndComingCreatorsToHighlight = res.UpAndComingProfileEntryResponses;
+        (res: {
+          WellKnownProfileEntryResponses: ProfileEntryResponse[];
+          UpAndComingProfileEntryResponses: ProfileEntryResponse[];
+        }) => {
+          // Do not let users select themselves in the "Invest In Others" step.
+          this.topCreatorsToHighlight = res.WellKnownProfileEntryResponses.filter(
+            (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+          );
+          this.upAndComingCreatorsToHighlight = res.UpAndComingProfileEntryResponses.filter(
+            (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+          );
           this.loading = false;
         },
         (err) => {

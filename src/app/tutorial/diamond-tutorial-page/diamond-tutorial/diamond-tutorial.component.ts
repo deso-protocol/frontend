@@ -20,7 +20,7 @@ export class DiamondTutorialComponent implements OnInit {
 
   post: PostEntryResponse;
   // TODO: replace with prod post hash hex
-  postHashHex = "7eba2b76e2b1851070f2740e25c1c70c64a228e226f0dff5734f19d3baca8224";
+  postHashHex = "75f16239b57de0531f9579f3817beb0a67515e4999947f293c112fb0260178e4";
   loading: boolean = true;
 
   ngOnInit() {

@@ -24,6 +24,7 @@ import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Timer = NodeJS.Timer;
+import Swal from "sweetalert2";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -1004,6 +1005,7 @@ export class GlobalVarsService {
                   this.userList[idx].JumioReturned = res.JumioReturned;
                   this.userList[idx].JumioFinishedTime = res.JumioFinishedTime;
                   this.userList[idx].BalanceNanos = res.BalanceNanos;
+                  this.userList[idx].MustCompleteTutorial = true;
                   user = this.userList[idx];
                 }
               });
@@ -1012,7 +1014,7 @@ export class GlobalVarsService {
               }
               this.celebrate();
               if (user.TutorialStatus === TutorialStatus.EMPTY) {
-                SwalHelper.fire({
+                Swal.fire({
                   target: this.getTargetComponentSelector(),
                   title: "Congrats!",
                   html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
