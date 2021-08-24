@@ -297,7 +297,7 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
-    if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
+    if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
       this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
     }
 
@@ -324,7 +324,7 @@ export class GlobalVarsService {
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
-    if ([TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user.TutorialStatus) < 0) {
+    if (user && [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user.TutorialStatus) < 0) {
       // drop user at correct point in tutorial.
       let route = [];
       switch (user.TutorialStatus) {
