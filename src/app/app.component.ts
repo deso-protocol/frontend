@@ -132,7 +132,7 @@ export class AppComponent implements OnInit {
           this.globalVars.userList.push(loggedInUser);
         }
         // Only call setLoggedInUser if logged in user has changed.
-        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser)) {
+        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser) && loggedInUserPublicKey) {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
