@@ -1,19 +1,27 @@
 import { NgModule } from "@angular/core";
 
 import { FeatherModule } from "angular-feather";
-import { CheckCircle, Code, ExternalLink, Flag, FolderMinus, FolderPlus, Heart, Image, Link, Link2, MessageSquare, Repeat, Search, ShoppingCart, UserX } from "angular-feather/icons";
+import { AlertTriangle, ArrowLeft, Bell, CheckCircle, ChevronRight, Clock, Code, Codesandbox, ExternalLink, Flag, FolderMinus, FolderPlus, Gift, Heart, Home, Image, Link, Link2, MessageSquare, Repeat, Search, ShoppingCart, TrendingUp, User, UserX } from "angular-feather/icons";
 import { Bitclout, Diamond, Lock, Quote } from "src/assets/img/feather";
 
 const icons = {
+  AlertTriangle,
+  ArrowLeft,
+  Bell,
   Bitclout,
   CheckCircle,
+  ChevronRight,
+  Clock,
   Code,
+  Codesandbox,
   Diamond,
   ExternalLink,
   Flag,
   FolderMinus,
   FolderPlus,
+  Gift,
   Heart,
+  Home,
   Image,
   Link,
   Link2,
@@ -23,6 +31,8 @@ const icons = {
   Repeat,
   Search,
   ShoppingCart,
+  TrendingUp,
+  User,
   UserX,
 };
 

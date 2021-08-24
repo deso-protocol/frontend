@@ -974,4 +974,13 @@ export class GlobalVarsService {
         .add(() => attempts++);
     }, timeoutMillis);
   }
+
+  // Add ownership apostrophe
+  addOwnershipApostrophe(input: string): string {
+    if (input[input.length-1] === 's') {
+      return `${input}'`;
+    } else {
+      return `${input}'s`;
+    }
+  }
 }

@@ -6,6 +6,7 @@ import { FeedComponent } from "../../feed/feed.component";
 import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
 import { ToastrService } from "ngx-toastr";
 import { Title } from "@angular/platform-browser";
+import { Location } from "@angular/common";
 
 import * as _ from "lodash";
 
@@ -32,7 +33,8 @@ export class PostThreadComponent {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private toastr: ToastrService,
-    private titleService: Title
+    private titleService: Title,
+    private location: Location
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.

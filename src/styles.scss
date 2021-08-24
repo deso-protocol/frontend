@@ -227,9 +227,9 @@ $green-font-color: #19B028;
 .max-width-420px { max-width: 420px }
 
 // Custom font classes.
-.fc-default { color: var(--norm); }
+.fc-default { color: var(--posttext); }
 .fc-muted { color: var(--textalt); }
-.fc-blue { color: var(--cblue); }
+.fc-blue { color: var(--highlight); }
 .fc-red { color: var(--cred); }
 .fc-green { color: var(--cgreen); }
 
@@ -631,6 +631,7 @@ input.bs-timepicker-field {
 }
 
 .global__content__flex {
+  margin-top: 20px;
   flex-grow: 1;
   align-items: flex-start;
   flex-shrink: 1;
@@ -666,10 +667,10 @@ input.bs-timepicker-field {
 }
 
 .global__sidebar__inner {
-  margin-top: 64px;
+  margin-top: 20px;
   width: $global__sidebar__width;
   height: 100%;
-  padding-left: 25px;
+  padding-left: 20px;
 }
 
 .global__center__width {
@@ -718,7 +719,35 @@ input.bs-timepicker-field {
   }
 }
 
+nft-post {
+  .nft-post-details {
+    background: var(--tilebg);
+    margin-top: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  post-thread {
+    .post-thread__container {
+      border: none;
+    }
+    .post-thread__comment-container {
+      border-top: none;
+      margin-top: 0px;
+      .feed-post__container {
+        border-radius: 0px;
+      }
+    }
+  }
+}
+
 tab-selector {
+  .tab-selector-links {
+    border-bottom: 1px solid var(--border);
+    .active-tab {
+      color: var(--highlight);
+      border-bottom: 1.5px solid var(--highlight);
+    }
+  }
   button {
     background: var(--tilebg);
     height: 40px;
@@ -1089,8 +1118,11 @@ tab-selector {
 }
 
 .post-thread__comment-container {
-  border-top: 4px solid var(--secondary);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--tilebg);
   flex-grow: 1;
+  margin-top: 20px;
 }
 
 .post-thread__subcomment-container {
@@ -1098,8 +1130,26 @@ tab-selector {
 }
 
 .post-thread__container {
-  display: flex;
-  flex-flow: column;
+  background: var(--tilebg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  .feed-post-container {
+    margin-bottom: 0px;
+  }
+  .post-thread__header {
+    border-bottom: 1px solid var(--border);
+    color: var(--posttext);
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 24px;
+    padding: 16px;
+    i-feather {
+      cursor: pointer;
+      height: 20px;
+      width: 20px;
+      margin-right: 12px;
+    }
+  }
 }
 
 .interaction-modal__header {
@@ -1146,6 +1196,20 @@ tab-selector {
   float: none;
   color: var(--text);
   text-shadow: 0 1px 0 #fff;
+}
+
+.jumio-status {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--tilebg);
+  color: var(--highlight);
+  font-size: 15px;
+  line-height: 24px;
+  span {
+    margin: 0px 8px;
+  }
 }
 
 .trend-box {
@@ -1468,6 +1532,7 @@ tab-selector {
     padding-right: 0px;
     margin-left: 0px;
   }
+  margin-left: 8px;
   height: 24px;
   padding: 2px 8px;
   border-radius: 10px;
@@ -1620,10 +1685,47 @@ feed-post-dropdown {
   position: absolute;
   right: 0px;
 }
+
+.left-bar-active-indicator {
+  width: 4px;
+  border-radius: 10px;
+}
+
+.left-bar-active-indicator-active {
+  background: var(--highlight);
+}
+
+
+.left-bar-button {
+  height: 56px;
+  margin-left: 12px;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--postsectext);
+  a {
+    color: var(--postsectext);
+  }
+  i-feather {
+    margin-right: 20px;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    top: -1px;
+  }
+}
+
+.left-bar-active {
+  a {
+    color: var(--highlight);
+  }
+  i-feather {
+    color: var(--highlight);
+  }
+}
+
 .left-bar__dot-active {
-  font-size: 50px;
-  line-height: 18px;
-  color: $buy-button-blue !important;
+  border-left: 2px solid var(--highlight);
+  border-end-end-radius: 10px;
 }
 
 .left-bar__dot-unread {
@@ -1638,6 +1740,14 @@ feed-post-dropdown {
   color: rgba(0,0,0,0);
 }
 
+.left-desktop-selector {
+  background: var(--tilebg);
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  margin-top: 4px;
+}
+
 .right-bar-creators-leaderboard__creator-avatar {
   height: 40px;
   width: 40px;
@@ -1650,8 +1760,25 @@ feed-post-dropdown {
 }
 
 .right-bar-creators__balance-box {
-  background-color: var(--secondary);
-  color: var(--text);
+  background-color: var(--tilesecbg);
+  color: var(--postsectext);
+  font-size: 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  .clout-metrics {
+    margin: 16px;
+  }
+  .divider {
+    width: 100%;
+    border: 1px solid var(--border);
+  }
+  .buy-clout {
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--highlight);
+    margin-top: 5px;
+    margin: 12px 0px;
+  }
 }
 
 .creator-leaderboard__load-more:hover {

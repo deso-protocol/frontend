@@ -10,6 +10,7 @@ export class TabSelectorComponent {
   @Input() tabs: any; // Should be a list of strings with tab names.
   @Input() activeTab: string;
   @Input() newTabs: string[] = [];
+  @Input() buttonSelector: boolean = true;
 
   constructor() {}
 

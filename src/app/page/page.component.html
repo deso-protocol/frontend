@@ -2,23 +2,35 @@
   Almost all pages should use this component to support both mobile and desktop views
   -->
 <div [class]="mobile ? 'global__mobile' : 'global__desktop'">
-  <left-bar *ngIf="!mobile"></left-bar>
-  <left-bar-mobile *ngIf="mobile"></left-bar-mobile>
+  <!-- Top Bar -->
+  <div *ngIf="!mobile" class="desktop-top-bar">
+    <div class="bitclout-logo">
+      <i-feather name="bitclout"></i-feather>
+      <span>bitclout</span>
+    </div>
+    <search-bar></search-bar>
+    <change-account-selector></change-account-selector>
+  </div>
+  <div class="d-flex" style="margin-top: 64px">
+    <left-bar *ngIf="!mobile"></left-bar>
+    <left-bar-mobile *ngIf="mobile"></left-bar-mobile>
 
-  <div class="global__content__flex">
-    <div [class]="mobile || hideSidebar ? 'global__content__width' : 'global__center__width'">
-      <div [class]="mobile || hideSidebar ? 'global__content__inner' : 'global__center__inner'">
-        <ng-content></ng-content>
+    <div class="global__content__flex">
+      <div [class]="mobile || hideSidebar ? 'global__content__width' : 'global__center__width'">
+        <div [class]="mobile || hideSidebar ? 'global__content__inner' : 'global__center__inner'">
+          <ng-content></ng-content>
+        </div>
       </div>
-    </div>
-    <div class="global__sidebar__width" *ngIf="!mobile && !hideSidebar">
-      <right-bar-creators class="global__sidebar__fixed"></right-bar-creators>
+      <div class="global__sidebar__width" *ngIf="!mobile && !hideSidebar">
+        <right-bar-creators class="global__sidebar__fixed"></right-bar-creators>
+      </div>
+
+      <bottom-bar-mobile
+        *ngIf="mobile"
+        class="global__bottom-bar-mobile"
+        [showPostButton]="showPostButton"
+      ></bottom-bar-mobile>
     </div>
 
-    <bottom-bar-mobile
-      *ngIf="mobile"
-      class="global__bottom-bar-mobile"
-      [showPostButton]="showPostButton"
-    ></bottom-bar-mobile>
   </div>
 </div>

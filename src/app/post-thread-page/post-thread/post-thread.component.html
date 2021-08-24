@@ -1,50 +1,53 @@
-<!-- Top Bar -->
+
 <!-- FIXME: TODO: post threads: loading skeletons -->
 <div *ngIf="currentPost" style="padding-bottom: 20vh" class="d-flex flex-column">
-  <div
-    class="global__top-bar d-flex align-items-center justify-content-between fs-18px font-weight-bold px-15px border-bottom border-color-grey"
-    *ngIf="!hideHeader"
-  >
-    <div class="d-flex align-items-center">
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+  <div class="post-thread__container">
+    <div
+      class="d-flex align-items-center justify-content-between post-thread__header"
+      *ngIf="!hideHeader"
+    >
+      <div class="d-flex align-items-center">
+        <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
-      <div>Thread with {{ currentPost.ProfileEntryResponse.Username }}</div>
+        <div>
+          <i-feather name="arrow-left" (click)="location.back()"></i-feather>
+          <span>{{ globalVars.addOwnershipApostrophe(currentPost.ProfileEntryResponse.Username) }} Post</span>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="global__top-bar__height" *ngIf="!hideHeader"></div>
+    <div *ngFor="let parentPost of currentPost.ParentPosts">
+      <!--  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a -->
+      <!--  top-level post should be prepended to the post's list of comments -->
+      <feed-post
+        [post]="parentPost"
+        [includePaddingOnPost]="true"
+        [contentShouldLinkToThread]="true"
+        [afterCommentCreatedCallback]="updateCommentCountAndShowToast.bind(this, parentPost)"
+        [isParentPostInThread]="true"
+        [showThreadConnectionLine]="true"
+        [blocked]="isPostBlocked(parentPost)"
+        (postDeleted)="onPostHidden(currentPost, null, null)"
+        (userBlocked)="afterUserBlocked($event)"
+      ></feed-post>
+    </div>
 
-  <div *ngFor="let parentPost of currentPost.ParentPosts">
-    <!--  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a -->
-    <!--  top-level post should be prepended to the post's list of comments -->
-    <feed-post
-      [post]="parentPost"
-      [includePaddingOnPost]="true"
-      [contentShouldLinkToThread]="true"
-      [afterCommentCreatedCallback]="updateCommentCountAndShowToast.bind(this, parentPost)"
-      [isParentPostInThread]="true"
-      [showThreadConnectionLine]="true"
-      [blocked]="isPostBlocked(parentPost)"
-      (postDeleted)="onPostHidden(currentPost, null, null)"
-      (userBlocked)="afterUserBlocked($event)"
-    ></feed-post>
-  </div>
-
-  <div class="border-bottom border-color-grey" *ngIf="!hideCurrentPost">
-    <!--  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a -->
-    <!--  top-level post should be prepended to the post's list of comments -->
-    <feed-post
-      [post]="currentPost"
-      [includePaddingOnPost]="true"
-      [contentShouldLinkToThread]="true"
-      [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
-      [isParentPostInThread]="true"
-      [showLeftSelectedBorder]="true"
-      [showInteractionDetails]="true"
-      [blocked]="isPostBlocked(currentPost)"
-      (postDeleted)="onPostHidden(currentPost, null, null)"
-      (userBlocked)="afterUserBlocked($event)"
-    ></feed-post>
+    <div class="border-bottom border-color-grey" *ngIf="!hideCurrentPost">
+      <!--  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a -->
+      <!--  top-level post should be prepended to the post's list of comments -->
+      <feed-post
+        [post]="currentPost"
+        [includePaddingOnPost]="true"
+        [contentShouldLinkToThread]="true"
+        [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
+        [isParentPostInThread]="true"
+        [showLeftSelectedBorder]="true"
+        [showInteractionDetails]="true"
+        [blocked]="isPostBlocked(currentPost)"
+        (postDeleted)="onPostHidden(currentPost, null, null)"
+        (userBlocked)="afterUserBlocked($event)"
+      ></feed-post>
+    </div>
   </div>
 
   <div class="post-thread__comment-container">

@@ -1,4 +1,4 @@
-<div class="d-flex w-100" style="cursor: pointer; height: 50px">
+<div class="d-flex w-100" style="cursor: pointer; height: 50px" [ngClass]="{ 'tab-selector-links': !buttonSelector }">
   <div
     *ngFor="let tab of tabs"
     (click)="_tabClicked(tab)"
@@ -7,17 +7,17 @@
     <div class="d-flex h-100 align-items-center">
       <div
         class="d-flex h-100 align-items-center fs-15px"
-        *ngIf="tab !== this.activeTab"
-        [ngClass]="{ 'fc-default': tab == this.activeTab, 'fc-muted': tab != this.activeTab }"
+        *ngIf="tab !== activeTab || !buttonSelector"
+        [ngClass]="{ 'active-tab': tab == activeTab }"
       >
         {{ tab }}
       </div>
       <button
-        *ngIf="tab === this.activeTab"
+        *ngIf="tab === activeTab && buttonSelector"
       >
         <span>{{ tab }}</span>
       </button>
-      <div class="new-tab-indicator" *ngIf="newTabs.includes(tab) && tab !== this.activeTab">
+      <div class="new-tab-indicator" *ngIf="newTabs.includes(tab) && tab !== activeTab">
         <span>New</span>
       </div>
     </div>

@@ -2,146 +2,63 @@
   <div class="global__nav__fixed">
     <!-- Logged-in Left Bar -->
     <div *ngIf="globalVars.loggedInUser != null" class="global__nav__inner">
-      <div class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
-        <a
-          class="link--unstyled d-flex align-items-center"
-          (click)="globalVars.isLeftBarMobileOpen = false"
-          [routerLink]="homeLink()"
-          queryParamsHandling="merge"
-        >
-          <img
-            src="assets/img/camelcase_logo.svg"
-            class="clout"
-            style="height: 27px; margin-left: 17px; margin-bottom: 3px"
-          />
-        </a>
-
-        <div *ngIf="isMobile" class="flex-grow-1 d-flex justify-content-end pl-30px cursor-pointer">
+      <div *ngIf="isMobile" class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
+        <div class="flex-grow-1 d-flex justify-content-end pl-30px cursor-pointer">
           <i class="fas fa-times fc-muted" (click)="closeMobile.emit()"></i>
         </div>
-      </div>
-
-      <div class="pt-10px"></div>
-
-      <div style="margin-left: 25px" class="position-relative">
-        <change-account-selector></change-account-selector>
       </div>
 
       <!-- Left Bar Buttons -->
 
       <div class="pt-15px"></div>
 
-      <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'"></left-bar-button>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.TRENDS"
-        [buttonLabel]="'Trends'"
-      ></left-bar-button>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.CREATORS"
-        [buttonLabel]="'Buy Creator Coins'"
-      ></left-bar-button>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
-        [buttonLabel]="'Buy $CLOUT'"
-      ></left-bar-button>
-
-      <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeCLOUTFlow()">
-        <a class="left-bar__dot-inactive">·</a>
-        <a class="cursor-pointer fs-15px text-grey5">Get Free $CLOUT</a>
-      </div>
-
-      <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
-      <left-bar-button
-        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
-        [queryParams]="{ 'nftTab': 'my_bids', 'tab': 'nfts' }"
-        [buttonLabel]="'My NFT Bids'"
-        *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
-      ></left-bar-button>
-      <left-bar-button
-        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
-        [queryParams]="{ 'nftTab': 'my_gallery', 'tab': 'nfts' }"
-        [buttonLabel]="'My NFT Gallery'"
-        *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
-      ></left-bar-button>
-
-      <div class="p-15px"></div>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.PICK_A_COIN"
-        [buttonLabel]="'Send Creator Coins'"
-      ></left-bar-button>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.SEND_BITCLOUT"
-        [buttonLabel]="'Send $CLOUT'"
-      ></left-bar-button>
-
-      <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'Wallet'"></left-bar-button>
-
-      <div class="p-15px"></div>
-
-      <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse?.Username; else elseBlock">
+      <div class="left-desktop-selector">
+        <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
+          [buttonLabel]="'Notifications'"
+          [isUnread]="globalVars.hasUnreadNotifications"
+          [iconName]="'bell'"
+        ></left-bar-button>
+        <left-bar-button
+          [hasNotifications]="true"
+          [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
+          [buttonLabel]="'Messages'"
+          [iconName]="'message-square'"
+        ></left-bar-button>
         <left-bar-button
           [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
           [queryParams]="{ 'tab':'posts' }"
-          [buttonLabel]="'Profile'"
+          [buttonLabel]="'My Profile'"
+          [iconName]="'user'"
         ></left-bar-button>
-      </div>
-      <ng-template #elseBlock>
+        <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
         <left-bar-button
-          [link]="'/' + this.globalVars.RouteNames.UPDATE_PROFILE"
-          [buttonLabel]="'Update Profile'"
+          [link]="'/' + globalVars.RouteNames.SEND_BITCLOUT"
+          [buttonLabel]="'Trade Bitclout'"
+          [iconName]="'trending-up'"
         ></left-bar-button>
-      </ng-template>
 
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
-        [buttonLabel]="'Notifications'"
-        [isUnread]="globalVars.hasUnreadNotifications"
-      ></left-bar-button>
+        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
+          <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
+          <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
+        </div>
 
-      <left-bar-button
-        [hasNotifications]="true"
-        [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
-        [buttonLabel]="'Messages'"
-      ></left-bar-button>
+        <div class="p-15px"></div>
 
-      <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
-
-      <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
-        <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
-        <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
+        <left-bar-button
+          *ngIf="globalVars.showAdminTools()"
+          [link]="'/' + globalVars.RouteNames.ADMIN"
+          [buttonLabel]="'Admin'"
+          [iconName]="'codesandbox'"
+        ></left-bar-button>
       </div>
-
-      <div class="p-15px"></div>
-
-      <left-bar-button
-        *ngIf="globalVars.showAdminTools()"
-        [link]="'/' + globalVars.RouteNames.ADMIN"
-        [buttonLabel]="'Admin'"
-      ></left-bar-button>
     </div>
 
     <!-- Logged-out Left Bar -->
     <div *ngIf="globalVars.loggedInUser == null" class="global__nav__inner">
-      <div class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
-        <a
-          class="link--unstyled d-flex align-items-center"
-          (click)="globalVars.isLeftBarMobileOpen = false"
-          [routerLink]="homeLink()"
-          queryParamsHandling="merge"
-        >
-          <img
-            src="assets/img/camelcase_logo.svg"
-            class="clout"
-            style="height: 27px; margin-left: 17px; margin-bottom: 3px"
-          />
-        </a>
-
-        <div *ngIf="isMobile" class="flex-grow-1 d-flex justify-content-end pl-30px">
+      <div *ngIf="isMobile" class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
+        <div class="flex-grow-1 d-flex justify-content-end pl-30px">
           <i class="fas fa-times fc-muted" (click)="closeMobile.emit()"></i>
         </div>
       </div>

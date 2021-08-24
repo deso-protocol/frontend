@@ -12,6 +12,7 @@ export class LeftBarButtonComponent {
   @Input() hasNotifications = false;
   @Input() isUnread = false;
   @Input() queryParams = null;
+  @Input() iconName: string;
   notificationCount = 1;
 
   constructor(public globalVars: GlobalVarsService) {}
