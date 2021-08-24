@@ -31,7 +31,7 @@ export class ChangeAccountSelectorComponent {
     const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
       this.backendApi.setIdentityServiceUsers(res.users, Object.keys(res.users)[0]);
-      this.globalVars.updateEverything().subscribe(() => {
+      this.globalVars.updateEverything().add(() => {
         this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
       });
     });
@@ -40,13 +40,15 @@ export class ChangeAccountSelectorComponent {
   _switchToUser(user) {
     this.globalVars.setLoggedInUser(user);
     this.globalVars.messageResponse = null;
-    this.globalVars.SetupMessages();
 
-    const currentUrl = this.router.url;
-    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]).then(() => {
-      this.router.navigateByUrl(currentUrl);
+    // Now we call update everything on the newly logged in user to make sure we have the latest info this user.
+    this.globalVars.updateEverything().add(() => {
+      const currentUrl = this.router.url;
+      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]).then(() => {
+        this.router.navigateByUrl(currentUrl);
+      });
+
+      this.globalVars.isLeftBarMobileOpen = false;
     });
-
-    this.globalVars.isLeftBarMobileOpen = false;
   }
 }

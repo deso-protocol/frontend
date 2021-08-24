@@ -21,6 +21,7 @@ export class FeedCreatePostComponent implements OnInit {
   @Input() numberOfRowsInTextArea: number = 2;
   @Input() parentPost: PostEntryResponse = null;
   @Input() isQuote: boolean = false;
+  @Input() inTutorial: boolean = false;
 
   isComment: boolean;
 
@@ -69,6 +70,9 @@ export class FeedCreatePostComponent implements OnInit {
   ngOnInit() {
     this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
+    if (this.inTutorial) {
+      this.postInput = "It's time to CLOUT!";
+    }
   }
 
   onPaste(event: any): void {
@@ -171,7 +175,8 @@ export class FeedCreatePostComponent implements OnInit {
         // TODO: Should we have different values for creator basis points and stake multiple?
         // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
         false /*IsHidden*/,
-        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/
+        this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
+        this.inTutorial,
       )
       .subscribe(
         (response) => {

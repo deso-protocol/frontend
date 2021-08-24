@@ -480,7 +480,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
 
     if (postIndex === -1) {
-      // TODO: rollbar
       console.error(`Problem finding postEntryResponse in postsToShow in onPostHidden`, {
         postEntryResponse,
         postsToShow,

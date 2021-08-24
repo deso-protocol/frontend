@@ -1,12 +1,38 @@
 <!-- Top Bar -->
 <div
   class="global__top-bar global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+  *ngIf="!inTutorial"
 >
-  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block" *ngIf="!inTutorial"></top-bar-mobile-navigation-control>
   Update Profile
 </div>
 
-<div class="global__top-bar__height"></div>
+<div class="global__top-bar__height" *ngIf="!inTutorial"></div>
+
+<div *ngIf="inTutorial" class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg">
+  <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
+  <div>
+    <h3 class="mb-1 fs-24px font-weight-semibold">
+      Update Profile
+    </h3>
+    <h5 class="fs-15px fc-muted">
+      Step 3 of 6
+    </h5>
+  </div>
+</div>
+
+<div
+  class="p-3"
+  style="margin-bottom: -20px"
+  *ngIf="inTutorial"
+>
+  <div class="d-flex flex-column justify-flex-start">
+    <h5 class="fs-15px">
+      Everyone needs a profile. Let's update yours!
+    </h5>
+  </div>
+</div>
+
 
 <div *ngIf="this.loggedInUser.CanCreateProfile; else elseBlock">
   <div class="d-flex flex-column">
@@ -16,7 +42,7 @@
       <!-- Create Profile Fee Warning -->
       <div
         *ngIf="
-          !globalVars.loggedInUser?.ProfileEntryResponse &&
+          !inTutorial && !globalVars.loggedInUser?.ProfileEntryResponse &&
           ((!globalVars.loggedInUser?.HasPhoneNumber && !globalVars.loggedInUser?.JumioVerified) || !globalVars.isCompProfileCreation) &&
           globalVars.createProfileFeeNanos > 0
         "
@@ -102,7 +128,7 @@
             </div>
           </div>
 
-<!--          <div *ngIf="globalVars.loggedInUser.UsersWhoHODLYouCount !== 0">-->
+          <div *ngIf="!inTutorial">
             <div class="mt-30px font-weight-bold">Founder Reward Percentage</div>
 
             <div class="mt-10px">
@@ -134,8 +160,7 @@
                 Please set a founder reward between 0-100.
               </div>
             </div>
-
-<!--          </div>-->
+          </div>
 
           <div class="w-100 my-30px">
             <a
@@ -143,7 +168,7 @@
               [ngClass]="{ 'btn-loading': updateProfileBeingCalled }"
               class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
             >
-              Update Profile
+              {{ inTutorial ? "Next" : "Update Profile" }}
             </a>
             <i *ngIf="profileUpdated" class="far fa-check-circle fa-lg fc-blue ml-10px"></i>
           </div>

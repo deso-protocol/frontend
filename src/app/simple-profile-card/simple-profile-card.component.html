@@ -54,6 +54,11 @@
       <div *ngIf="showRecloutIcon">
         <i class="icon-repost fs-32px d-block fc-green"></i>
       </div>
+      <div *ngIf="showTutorialBuy" (click)="onBuyClicked()">
+        <a class="btn btn-primary fs-18px text-left">
+          Buy
+        </a>
+      </div>
     </div>
   </div>
 </a>
