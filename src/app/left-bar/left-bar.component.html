@@ -112,11 +112,6 @@
 
         <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
-        <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
-          <a class="left-bar__dot-inactive">·</a>
-          <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
-        </div>
-
         <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
           <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
           <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
