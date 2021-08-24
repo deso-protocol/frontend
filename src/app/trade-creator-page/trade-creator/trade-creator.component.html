@@ -3,26 +3,26 @@
     <div *ngIf="inTutorial" class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg">
       <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
       <div *ngIf="inTutorial && !investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
-        <h3 class="mb-1">
+        <h3 class="mb-1 fs-24px font-weight-semibold">
           Invest in a Creator
         </h3>
-        <h5>
+        <h5 class="fs-15px fc-muted">
           Step 1 of 6
         </h5>
       </div>
       <div *ngIf="inTutorial && !investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">
-        <h3 class="mb-1">
+        <h3 class="mb-1 fs-24px font-weight-semibold">
           Sell a Creator
         </h3>
-        <h5>
+        <h5 class="fs-15px fc-muted">
           Step 2 of 6
         </h5>
       </div>
       <div *ngIf="inTutorial && investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
-        <h3 class="mb-1">
+        <h3 class="mb-1 fs-24px font-weight-semibold">
           Invest in Yourself
         </h3>
-        <h5>
+        <h5 class="fs-15px fc-muted">
           Step 4 of 6
         </h5>
       </div>
@@ -88,7 +88,7 @@
           <p *ngIf="!investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">Sell {{ creatorCoinTrade.creatorProfile.Username }} Coin</p>
           <p *ngIf="investInYourself && creatorCoinTrade.isBuyingCreatorCoin">Invest In Yourself</p>
         </div>
-        <div class="fs-14px py-15px pr-15px">
+        <div class="fs-15px py-15px pr-15px">
           <p *ngIf="!investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
             You can invest directly in your favorite creators by buying their coin.
             Click "Confirm Buy" to purchase {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin!

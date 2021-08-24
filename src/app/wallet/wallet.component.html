@@ -18,10 +18,10 @@
   <div class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg">
     <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
     <div *ngIf="inTutorial">
-      <h3 class="mb-1">
+      <h3 class="mb-1 fs-24px font-weight-semibold">
         {{ tutorialHeaderText }}
       </h3>
-      <h5>
+      <h5 class="fs-15px fc-muted">
         Step {{ tutorialStepNumber }} of 6
       </h5>
     </div>
@@ -31,7 +31,7 @@
     <div class="d-flex align-items-center font-weight-bold fs-18px">
       Wallet
     </div>
-    <div class="fs-14px py-15px pr-15px" *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY">
+    <div class="fs-15px py-15px pr-15px" *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY">
       <div>
         <p>
           You now have {{ globalVars.nanosToBitClout(balanceEntryToHighlight.BalanceNanos, 4) }} ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
