@@ -42,7 +42,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
       return;
     }
     this.backendApi
-      .GetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 2)
+      .GetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 3)
       .subscribe(
         (res: {
           WellKnownProfileEntryResponses: ProfileEntryResponse[];
