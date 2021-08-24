@@ -4,7 +4,7 @@ import { BackendApiService, User } from "../backend-api.service";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { Router } from "@angular/router";
 import { IdentityService } from "../identity.service";
-import { filter } from "lodash";
+import { filter, get } from "lodash";
 
 @Component({
   selector: "change-account-selector",
@@ -37,7 +37,7 @@ export class ChangeAccountSelectorComponent {
       if (!res?.users) {
         this.globalVars.userList = [];
       }
-      let loggedInUser = Object.keys(res.users)[0];
+      let loggedInUser = get(Object.keys(res?.users),"[0]");
       if (this.globalVars.userList.length === 0) {
         loggedInUser = null;
         this.globalVars.setLoggedInUser(null);
