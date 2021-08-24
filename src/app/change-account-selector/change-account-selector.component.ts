@@ -4,6 +4,7 @@ import { BackendApiService, User } from "../backend-api.service";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { Router } from "@angular/router";
 import { IdentityService } from "../identity.service";
+import { filter } from "lodash";
 
 @Component({
   selector: "change-account-selector",
@@ -30,6 +31,9 @@ export class ChangeAccountSelectorComponent {
   launchLogoutFlow() {
     const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
+      this.globalVars.userList = filter(this.globalVars.userList, (user) => {
+        return user?.PublicKeyBase58Check in res?.users;
+      });
       this.backendApi.setIdentityServiceUsers(res.users, Object.keys(res.users)[0]);
       this.globalVars.updateEverything().add(() => {
         this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
