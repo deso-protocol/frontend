@@ -64,12 +64,12 @@ export class LeftBarComponent {
     if (this.inTutorial) {
       return;
     }
-    // If the user has less 5X the amount to give a single diamond, we tell them to buy clout.
-    if (this.globalVars.loggedInUser?.BalanceNanos < this.globalVars.diamondLevelMap[1] * 5) {
+    // If the user hes less than 1/100th of a clout they need more clout for the tutorial.
+    if (this.globalVars.loggedInUser?.BalanceNanos < 0.01) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
-        title: `You need $CLOUT to complete the tutorial`,
+        title: `You need 0.01 $CLOUT to complete the tutorial`,
         showConfirmButton: true,
         focusConfirm: true,
         customClass: {
