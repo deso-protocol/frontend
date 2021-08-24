@@ -128,7 +128,7 @@ export class AppComponent implements OnInit {
           }
         });
         // If the logged-in user wasn't in the list, add it to the list.
-        if (!loggedInUserFound) {
+        if (!loggedInUserFound && loggedInUserPublicKey) {
           this.globalVars.userList.push(loggedInUser);
         }
         // Only call setLoggedInUser if logged in user has changed.

@@ -297,7 +297,7 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
-    if (user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
+    if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
       this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
     }
 

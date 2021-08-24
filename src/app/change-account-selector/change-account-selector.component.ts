@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ElementRef, ViewChild, TemplateRef } from "@angular/core";
+import { Component, Renderer2, ElementRef, ViewChild, TemplateRef } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, User } from "../backend-api.service";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
@@ -32,8 +32,11 @@ export class ChangeAccountSelectorComponent {
     const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
       this.globalVars.userList = filter(this.globalVars.userList, (user) => {
-        return user?.PublicKeyBase58Check in res?.users;
+        return res?.users && user?.PublicKeyBase58Check in res?.users;
       });
+      if (!res?.users) {
+        this.globalVars.userList = [];
+      }
       let loggedInUser = Object.keys(res.users)[0];
       if (this.globalVars.userList.length === 0) {
         loggedInUser = null;
