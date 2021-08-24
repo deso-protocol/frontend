@@ -65,7 +65,7 @@ export class LeftBarComponent {
       return;
     }
     // If the user hes less than 1/100th of a clout they need more clout for the tutorial.
-    if (this.globalVars.loggedInUser?.BalanceNanos < 0.01) {
+    if (this.globalVars.loggedInUser?.BalanceNanos < 1e7) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
