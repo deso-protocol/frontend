@@ -34,6 +34,9 @@ export class ChangeAccountSelectorComponent {
       this.globalVars.userList = filter(this.globalVars.userList, (user) => {
         return user?.PublicKeyBase58Check in res?.users;
       });
+      if (this.globalVars.userList.length === 0) {
+        this.globalVars.setLoggedInUser(null);
+      }
       this.backendApi.setIdentityServiceUsers(res.users, Object.keys(res.users)[0]);
       this.globalVars.updateEverything().add(() => {
         this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
