@@ -324,7 +324,10 @@ export class GlobalVarsService {
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
-    if (user && [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user.TutorialStatus) < 0) {
+    if (
+      user &&
+      [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user.TutorialStatus) < 0
+    ) {
       // drop user at correct point in tutorial.
       let route = [];
       switch (user.TutorialStatus) {
@@ -1016,6 +1019,35 @@ export class GlobalVarsService {
             this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
           }
         });
+    });
+  }
+
+  skipTutorial(): void {
+    Swal.fire({
+      target: this.getTargetComponentSelector(),
+      icon: "warning",
+      title: "Skip Tutorial?",
+      html: "Are you sure?",
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Skip",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
+          (response) => {
+            this.logEvent(`tutorial : skip`);
+            // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+            this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
+            this.router.navigate([RouteNames.BROWSE]);
+          },
+          (err) => {
+            this._alertError(err.error.error);
+          }
+        );
+      }
     });
   }
 

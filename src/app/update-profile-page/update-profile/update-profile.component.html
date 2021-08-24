@@ -162,15 +162,22 @@
             </div>
           </div>
 
-          <div class="w-100 my-30px">
-            <a
-              (click)="_updateProfile()"
-              [ngClass]="{ 'btn-loading': updateProfileBeingCalled }"
-              class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
-            >
-              {{ inTutorial ? "Next" : "Update Profile" }}
-            </a>
+          <div class="w-100 my-30px d-flex">
+            <div>
+              <a
+                (click)="_updateProfile()"
+                [ngClass]="{ 'btn-loading': updateProfileBeingCalled }"
+                class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
+              >
+                {{ inTutorial ? "Next" : "Update Profile" }}
+              </a>
+            </div>
             <i *ngIf="profileUpdated" class="far fa-check-circle fa-lg fc-blue ml-10px"></i>
+            <div *ngIf="inTutorial && (!globalVars.loggedInUser?.MustCompleteTutorial || globalVars.loggedInUser?.IsAdmin)" (click)="globalVars.skipTutorial()" class="px-15px">
+              <a class="btn btn-outline-primary btn-lg fs-15px text-left mt-5px">
+                Skip
+              </a>
+            </div>
           </div>
 
           <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
