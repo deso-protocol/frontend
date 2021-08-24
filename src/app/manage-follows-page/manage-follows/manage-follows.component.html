@@ -81,7 +81,7 @@
           >
             {{ profileEntry.Username }}
           </a>
-
+          <span *ngIf="profileEntry?.IsVerified" class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>
           <!-- Coin price-->
           <!-- Hidden on mobile, UI gets too crowded otherwise -->
           <a
