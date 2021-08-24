@@ -64,7 +64,8 @@ export class LeftBarComponent {
     if (this.inTutorial) {
       return;
     }
-    if (this.globalVars.loggedInUser?.BalanceNanos === 0) {
+    // If the user has less 5X the amount to give a single diamond, we tell them to buy clout.
+    if (this.globalVars.loggedInUser?.BalanceNanos < this.globalVars.diamondLevelMap[1] * 5) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
@@ -82,7 +83,12 @@ export class LeftBarComponent {
       });
       return;
     }
-    if ([TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(this.globalVars.loggedInUser?.TutorialStatus) < 0) {
+
+    if (
+      [TutorialStatus.EMPTY, TutorialStatus.SKIPPED, TutorialStatus.COMPLETE].indexOf(
+        this.globalVars.loggedInUser?.TutorialStatus
+      ) < 0
+    ) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",

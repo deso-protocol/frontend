@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { Router } from "@angular/router";
 import { FeedComponent } from "../../feed/feed.component";
+import { TutorialStatus } from "../../backend-api.service";
 
 @Component({
   selector: "create-post-form",
@@ -15,7 +16,7 @@ export class CreatePostFormComponent {
 
   onPostCreated(postEntryResponse) {
     if (this.inTutorial) {
-      // TODO: force refresh of global feed so user sees their post - or just append it to global vars.
+      this.globalVars.loggedInUser.TutorialStatus = TutorialStatus.COMPLETE;
       this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
         queryParams: { feedTab: FeedComponent.GLOBAL_TAB },
       });
