@@ -1850,6 +1850,7 @@ export class BackendApiService {
     Username: string,
     ReferrerAmountUSDCents: number,
     RefereeAmountUSDCents: number,
+    MaxReferrals: number,
     RequiresJumio: boolean,
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminCreateReferralHash, AdminPublicKey, {
@@ -1857,6 +1858,7 @@ export class BackendApiService {
       Username,
       ReferrerAmountUSDCents,
       RefereeAmountUSDCents,
+      MaxReferrals,
       RequiresJumio,
       AdminPublicKey,
     });
@@ -1868,6 +1870,7 @@ export class BackendApiService {
     ReferralHashBase58: string,
     ReferrerAmountUSDCents: number,
     RefereeAmountUSDCents: number,
+    MaxReferrals: number,
     RequiresJumio: boolean,
     IsActive: boolean,
   ): Observable<any> {
@@ -1875,6 +1878,7 @@ export class BackendApiService {
       ReferralHashBase58,
       ReferrerAmountUSDCents,
       RefereeAmountUSDCents,
+      MaxReferrals,
       RequiresJumio,
       IsActive,
       AdminPublicKey,

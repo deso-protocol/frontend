@@ -14,6 +14,7 @@ export class ReferralProgramMgrComponent implements OnInit {
   requiresJumio: boolean = true;
   refereeAmountUSD: number = 0;
   referrerAmountUSD: number = 0;
+  maxReferrals: number = 0;
   creatingNewLink: boolean = false;
   fetchingExistingLinks: boolean = false;
   existingLinks = [];
@@ -61,6 +62,7 @@ export class ReferralProgramMgrComponent implements OnInit {
         this.selectedCreator?.Username,
         this.referrerAmountUSD*100,
         this.refereeAmountUSD*100,
+        this.maxReferrals,
         this.requiresJumio,
       ).subscribe(
         (res) => {
@@ -122,6 +124,7 @@ export class ReferralProgramMgrComponent implements OnInit {
         existingLink.Info.ReferralHashBase58,
         existingLink.Info.referrerAmountUSD*100,
         existingLink.Info.refereeAmountUSD*100,
+        existingLink.Info.MaxReferrals,
         existingLink.Info.RequiresJumio,
         existingLink.IsActive,
       ).subscribe(

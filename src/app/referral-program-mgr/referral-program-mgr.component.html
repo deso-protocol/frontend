@@ -72,6 +72,20 @@
         </div>
       </div>
   
+      <!-- Max Referrals -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
+        <div class="font-weight-normal">
+          Max Referrals
+        </div>
+        <div class="d-flex flex-grow flex-wrap">
+          <input
+             [(ngModel)]="maxReferrals"
+             class="form-control fs-15px text-right d-inline-block"
+             type="number" min="0"
+             placeholder="0"/>
+        </div>
+      </div>
+  
       <!-- Requires Jumio -->
       <div class="d-flex justify-content-between align-items-center fs-15px">
         <div class="font-weight-normal">Requires Jumio</div>
@@ -168,6 +182,20 @@
             </div>
           </div>
       
+          <!-- Max Referrals -->
+          <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
+            <div class="font-weight-normal">
+              Max Referrals
+            </div>
+            <div class="d-flex flex-grow flex-wrap">
+              <input
+                 [(ngModel)]="linkInfo.Info.MaxReferrals"
+                 class="form-control fs-15px text-right d-inline-block"
+                 type="number" min="0"
+                 placeholder="0"/>
+            </div>
+          </div>
+
           <!-- Requires Jumio -->
           <div class="d-flex justify-content-between align-items-center fs-15px">
             <div class="font-weight-normal">Requires Jumio</div>
