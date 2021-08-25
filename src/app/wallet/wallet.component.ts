@@ -41,6 +41,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   tutorialStatus: TutorialStatus;
   TutorialStatus = TutorialStatus;
   balanceEntryToHighlight: BalanceEntryResponse;
+  hodlings: BalanceEntryResponse[];
 
   nextButtonText: string;
 
@@ -70,6 +71,7 @@ export class WalletComponent implements OnInit, OnDestroy {
       this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
         return balanceEntry.ProfileEntryResponse.Username.toLowerCase() === this.tutorialUsername;
       });
+      this.hodlings = [this.balanceEntryToHighlight];
       switch (this.tutorialStatus) {
         case TutorialStatus.INVEST_OTHERS_BUY: {
           this.tutorialHeaderText = "Invest in a Creator";
@@ -105,18 +107,21 @@ export class WalletComponent implements OnInit, OnDestroy {
         this.usersYouReceived.push(balanceEntryResponse);
       }
     });
+    if (!this.inTutorial) {
+      this.hodlings = this.usersYouPurchased;
+    }
     this.sortWallet("value");
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
-    if (this.inTutorial) {
-      this.subscriptions.add(
-        this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
-          // Last Item of myItems is Visible => data-padding-forward should be zero.
-          if (lastVisible.$index === 0) {
-            this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
-          }
-        })
-      );
-    }
+    // if (this.inTutorial) {
+    //   this.subscriptions.add(
+    //     this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
+    //       // Last Item of myItems is Visible => data-padding-forward should be zero.
+    //       if (lastVisible.$index === 0) {
+    //         this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+    //       }
+    //     })
+    //   );
+    // }
     this.titleService.setTitle("Wallet - BitClout");
   }
 
@@ -195,7 +200,7 @@ export class WalletComponent implements OnInit, OnDestroy {
       default:
       // do nothing
     }
-    this.scrollerReset();
+    // this.scrollerReset();
   }
 
   totalValue() {
@@ -251,8 +256,11 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.lastPage = Math.floor(
       (this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased).length / WalletComponent.PAGE_SIZE
     );
+    if (!this.inTutorial) {
+      this.hodlings = this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased;
+    }
     this.activeTab = tab;
-    this.scrollerReset();
+    // this.scrollerReset();
   }
 
   scrollerReset() {

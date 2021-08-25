@@ -159,8 +159,7 @@
           <div class="col-lg-1 col-2 d-block mb-0"></div>
         </div>
         <div
-          #uiScroll
-          *uiScroll="let creator of datasource"
+          *ngFor="let creator of hodlings"
         >
           <!-- Screen out zero balances and only show highlighted creator in tutorial-->
           <div
