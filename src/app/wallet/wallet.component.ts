@@ -14,10 +14,10 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
   templateUrl: "./wallet.component.html",
 })
 export class WalletComponent implements OnInit, OnDestroy {
-  static PAGE_SIZE = 1;
-  static BUFFER_SIZE = 1;
+  static PAGE_SIZE = 20;
+  static BUFFER_SIZE = 10;
   static WINDOW_VIEWPORT = true;
-  static PADDING = 0.01;
+  static PADDING = 0.5;
 
   @Input() inTutorial: boolean;
 
@@ -107,19 +107,16 @@ export class WalletComponent implements OnInit, OnDestroy {
     });
     this.sortWallet("value");
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
-    this.subscriptions.add(
-      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
-        // Last Item of myItems is Visible => data-padding-forward should be zero.
-        if (
-          lastVisible.$index ===
-          (this.inTutorial
-            ? 0
-            : (this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased).length - 1)
-        ) {
-          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
-        }
-      })
-    );
+    if (this.inTutorial) {
+      this.subscriptions.add(
+        this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
+          // Last Item of myItems is Visible => data-padding-forward should be zero.
+          if (lastVisible.$index === 0) {
+            this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+          }
+        })
+      );
+    }
     this.titleService.setTitle("Wallet - BitClout");
   }
 
