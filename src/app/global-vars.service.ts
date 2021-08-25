@@ -380,7 +380,7 @@ export class GlobalVarsService {
     const bitcloutNanos = this.diamondLevelMap[index];
     const val = this.nanosToUSDNumber(bitcloutNanos);
     if (val < 1) {
-      return this.formatUSD(val, 2);
+      return this.formatUSD(Math.max(val, 0.01), 2);
     }
     return this.abbreviateNumber(val, 0, true);
   }
