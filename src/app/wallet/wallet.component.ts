@@ -112,7 +112,9 @@ export class WalletComponent implements OnInit, OnDestroy {
         // Last Item of myItems is Visible => data-padding-forward should be zero.
         if (
           lastVisible.$index ===
-          (this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased).length - 1
+          (this.inTutorial
+            ? 0
+            : (this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased).length - 1)
         ) {
           this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
         }
@@ -266,7 +268,7 @@ export class WalletComponent implements OnInit, OnDestroy {
       return false;
     }
     return (
-      balanceEntryResponse.ProfileEntryResponse.Username === this.balanceEntryToHighlight.ProfileEntryResponse.Username
+      balanceEntryResponse.ProfileEntryResponse.Username.toLowerCase() === this.balanceEntryToHighlight.ProfileEntryResponse.Username.toLowerCase()
     );
   }
 
@@ -343,6 +345,12 @@ export class WalletComponent implements OnInit, OnDestroy {
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
       return [];
+    }
+    if (this.inTutorial) {
+      this.lastPage = 0;
+      return new Promise((resolve, reject) => {
+        resolve([this.balanceEntryToHighlight]);
+      });
     }
     const startIdx = page * WalletComponent.PAGE_SIZE;
     const endIdx = (page + 1) * WalletComponent.PAGE_SIZE;

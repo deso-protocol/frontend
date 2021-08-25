@@ -162,8 +162,7 @@
           #uiScroll
           *uiScroll="let creator of datasource"
         >
-          <!-- Screen out zero balances -->
-          <!-- How do we want to "highlight" the balance entry in the tutorial -->
+          <!-- Screen out zero balances and only show highlighted creator in tutorial-->
           <div
             *ngIf="
               creator &&
@@ -264,11 +263,20 @@
         </div>
       </div>
 
-      <div *ngIf="inTutorial && tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY" (click)="tutorialNext()" class="p-15px">
-        <a class="btn btn-primary fs-18px text-left">
-          Next: {{ nextButtonText }}
-        </a>
+      <div *ngIf="inTutorial" class="d-flex">
+        <div *ngIf="inTutorial && tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY" (click)="tutorialNext()" class="p-15px">
+          <a class="btn btn-primary btn-lg fs-18px text-left">
+            Next: {{ nextButtonText }}
+          </a>
+        </div>
+
+        <div *ngIf="inTutorial && (!globalVars.loggedInUser?.MustCompleteTutorial || globalVars.loggedInUser?.IsAdmin)" (click)="globalVars.skipTutorial()" class="p-15px">
+          <a class="btn btn-outline-primary btn-lg fs-18px text-left">
+            Skip
+          </a>
+        </div>
       </div>
+
 
       <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
       <div class="global__bottom-bar-mobile-height"></div>

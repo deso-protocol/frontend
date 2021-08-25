@@ -1,10 +1,8 @@
-import {Component, OnInit} from "@angular/core";
-import {GlobalVarsService} from "../../../global-vars.service";
-import {BackendApiService, ProfileEntryResponse, TutorialStatus} from "../../../backend-api.service";
-import {AppRoutingModule} from "../../../app-routing.module";
-import {CanPublicKeyFollowTargetPublicKeyHelper} from "../../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import {Title} from "@angular/platform-browser";
-import {RightBarCreatorsLeaderboardComponent} from "../../../right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
+import { Component, OnInit } from "@angular/core";
+import { GlobalVarsService } from "../../../global-vars.service";
+import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../../backend-api.service";
+import { AppRoutingModule } from "../../../app-routing.module";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "buy-creator-coins-tutorial",
@@ -20,7 +18,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   loading: boolean = true;
 
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title
   ) {}

@@ -15,13 +15,13 @@
   <div class="row no-gutters pt-3">
     <div class="col-3 mb-0" style="min-width: 100px" *ngIf="!inTutorial">
       <div class="pr-3">
-        <button class="w-100 btn btn-outline-primary fs-18px" (click)="backButtonClicked.emit()">Back</button>
+        <button class="w-100 btn btn-outline-primary btn-lg fs-18px" (click)="backButtonClicked.emit()">Back</button>
       </div>
     </div>
 
     <div class="col">
       <button
-        class="btn btn-primary w-100 h-100"
+        class="btn btn-primary btn-lg w-100 h-100"
         style="min-width: 80px"
         [ngClass]="{ 'btn-loading': creatorCoinTradeBeingCalled }"
         (click)="_tradeCreatorCoin()"
@@ -31,6 +31,13 @@
       </button>
     </div>
   </div>
+
+  <div *ngIf="inTutorial && !appData.loggedInUser?.MustCompleteTutorial" (click)="globalVars.skipTutorial()" class="p-15px pl-0px">
+    <a class="btn btn-outline-primary btn-lg fs-18px text-left">
+      Skip
+    </a>
+  </div>
+
 
   <!--Spacer (for mobile)-->
   <div class="pb-25px"></div>

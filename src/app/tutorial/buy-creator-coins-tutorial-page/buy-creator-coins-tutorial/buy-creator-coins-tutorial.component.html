@@ -90,6 +90,13 @@
       ></simple-profile-card>
     </div>
 
+    <div *ngIf="!globalVars.loggedInUser?.MustCompleteTutorial || globalVars.loggedInUser?.IsAdmin" (click)="globalVars.skipTutorial()" class="p-15px">
+      <a class="btn btn-outline-primary btn-lg fs-18px text-left">
+        Skip
+      </a>
+    </div>
+
+
 
     <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
     <div class="global__bottom-bar-mobile-height"></div>
