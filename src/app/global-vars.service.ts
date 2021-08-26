@@ -289,6 +289,12 @@ export class GlobalVarsService {
     });
   }
 
+  userInTutorial(user: User): boolean {
+    return (
+      user && [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user?.TutorialStatus) < 0
+    );
+  }
+
   // NEVER change loggedInUser property directly. Use this method instead.
   setLoggedInUser(user: User) {
     const isSameUserAsBefore =
@@ -324,10 +330,7 @@ export class GlobalVarsService {
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
-    if (
-      user &&
-      [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user.TutorialStatus) < 0
-    ) {
+    if (this.userInTutorial(user)) {
       // drop user at correct point in tutorial.
       let route = [];
       switch (user.TutorialStatus) {
@@ -779,12 +782,7 @@ export class GlobalVarsService {
       return;
     }
     // If the user is in the tutorial, add the "tutorial : " prefix.
-    if (
-      this.loggedInUser &&
-      [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(
-        this.loggedInUser?.TutorialStatus
-      ) < 0
-    ) {
+    if (this.userInTutorial(this.loggedInUser)) {
       event = "tutorial : " + event;
     }
     this.amplitude.logEvent(event, data);

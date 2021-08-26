@@ -84,11 +84,7 @@ export class LeftBarComponent {
       return;
     }
 
-    if (
-      [TutorialStatus.EMPTY, TutorialStatus.SKIPPED, TutorialStatus.COMPLETE].indexOf(
-        this.globalVars.loggedInUser?.TutorialStatus
-      ) < 0
-    ) {
+    if (this.globalVars.userInTutorial(this.globalVars.loggedInUser)) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
