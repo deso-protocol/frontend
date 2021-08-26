@@ -17,9 +17,12 @@ export class ReferralProgramMgrComponent implements OnInit {
   maxReferrals: number = 0;
   creatingNewLink: boolean = false;
   fetchingExistingLinks: boolean = false;
+  downloadingReferralCSV: boolean = false;
+  uploadingReferralCSV: boolean = false;
   existingLinks = [];
   linkCopied = [];
   updatingLink = [];
+  fileInput = "";
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -83,7 +86,7 @@ export class ReferralProgramMgrComponent implements OnInit {
   _getExistingLinks() {
     this.fetchingExistingLinks = true;
     this.backendApi
-      .RoutePathAdminGetAllReferralInfoForUser(
+      .AdminGetAllReferralInfoForUser(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.selectedCreator?.PublicKeyBase58Check,
@@ -141,6 +144,87 @@ export class ReferralProgramMgrComponent implements OnInit {
           console.error(err);
         }
       ).add(() => (this.updatingLink[linkNum] = false));
+  }
+
+  _getDateString() {
+    let date = new Date();
+    let mm = (date.getMonth() + 1).toString();
+    mm = mm.length == 1 ? '0'+mm : mm;
+    let dd = date.getDate().toString();
+    let yyyy = date.getFullYear().toString();
+    return yyyy+mm+dd
+  }
+
+  _downloadReferralCSV() {
+    this.downloadingReferralCSV = true;
+    this.backendApi
+      .AdminDownloadReferralCSV(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+      ).subscribe(
+        (res) => {
+          // We construct the CSV on the client side so that we can use our standard JWT post 
+          // request. Thanks to @isherwood and @Default for the code: https://bit.ly/3zoQRGY.
+          let csvContent = "data:text/csv;charset=utf-8,";
+
+          res.CSVRows.forEach(function(rowArray) {
+            let row = rowArray.join(",");
+            csvContent += row + "\r\n";
+          });
+
+          var encodedUri = encodeURI(csvContent);
+          var link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", this._getDateString() + "_referral_links.csv");
+          document.body.appendChild(link);
+
+          link.click();
+        },
+        (err) => {
+        }
+      ).add(() => (this.downloadingReferralCSV = false));
+  }
+
+  _handleCSVInput(files: FileList) {
+    this.uploadingReferralCSV = true;
+    // Get the CSV file.
+    let fileToUpload = files.item(0);
+    if (fileToUpload.type !== "text/csv") {
+      this.globalVars._alertError("File must have type 'text/csv'.");
+      return;
+    }
+
+    // Process the file. The CSV has a simple, expected input format so we can parse it manually.
+    fileToUpload.text().then(text => {
+      let rowStrings = text.split("\n")
+      let rows = [];
+      for(let ii=0; ii < rowStrings.length; ii++) {
+        if(rowStrings[ii].length == 0) {
+          break;
+        }
+        let row = rowStrings[ii].split(',');
+        rows.push(row);
+      }
+      this._uploadCSVRows(rows);
+    })
+  }
+
+  _uploadCSVRows(csvRows: Array<Array<String>>) {
+    this.backendApi
+      .AdminUploadReferralCSV(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        csvRows,
+      ).subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            "Successfully uploaded CSV! " + res.LinksUpdated.toString() + " links updated and " 
+            + res.LinksCreated.toString() + " links created.")
+        },
+        (err) => { 
+          this.globalVars._alertError(err.error.error) 
+        }
+      ).add(() => (this.uploadingReferralCSV = false));
   }
 
   _copyLink(linkNum: number) {

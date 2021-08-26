@@ -105,6 +105,8 @@ export class BackendRoutes {
   static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
 	static RoutePathAdminGetAllReferralInfoForUser = "/api/v0/admin/get-all-referral-info-for-user"
 	static RoutePathAdminUpdateReferralHash = "/api/v0/admin/update-referral-hash"
+	static RoutePathAdminDownloadReferralCSV = "/api/v0/admin/download-referral-csv"
+	static RoutePathAdminUploadReferralCSV = "/api/v0/admin/upload-referral-csv"
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
@@ -1885,7 +1887,7 @@ export class BackendApiService {
     });
   }
 
-  RoutePathAdminGetAllReferralInfoForUser(
+  AdminGetAllReferralInfoForUser(
     endpoint: string, 
     AdminPublicKey: string, 
     UserPublicKeyBase58Check: string,
@@ -1895,6 +1897,26 @@ export class BackendApiService {
       UserPublicKeyBase58Check,
       Username,
       AdminPublicKey,
+    });
+  }
+
+  AdminDownloadReferralCSV(
+    endpoint: string, 
+    AdminPublicKey: string, 
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminDownloadReferralCSV, AdminPublicKey, {
+      AdminPublicKey,
+    });
+  }
+
+  AdminUploadReferralCSV(
+    endpoint: string, 
+    AdminPublicKey: string, 
+    CSVRows: Array<Array<String>>,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUploadReferralCSV, AdminPublicKey, {
+      AdminPublicKey,
+      CSVRows,
     });
   }
 

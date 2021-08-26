@@ -236,7 +236,46 @@
               border-color-grey light-grey-divider">
     Here you can download detailed CSV reports for the referral program and modify referral links en masse.
   </div>
-  <div class="p-15px">
-  Let's upload a CSV. Why not?
+
+  <!-- Download -->
+  <div class="p-15px font-weight-semibold">
+    <div>Download a CSV with all referral links:</div>
+    <button (click)="_downloadReferralCSV()"
+            *ngIf="!downloadingReferralCSV" 
+            class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px">
+      <i class="fas fa-download"></i>&nbsp;Download CSV
+    </button>
+    <button *ngIf="downloadingReferralCSV" 
+            class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px" disabled>
+      Downloading...
+    </button>
+  </div>
+
+  <!-- Upload -->
+  <div class="p-15px font-weight-semibold" style="position: relative">
+    <div>Upload a CSV of links to update or create:</div>
+    <input
+      class="file-upload-button"
+      type="file"
+      accept="text/csv"
+      id="file"
+      (change)="_handleCSVInput($event.target.files)"
+      style="
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 130px;
+        padding: 0;
+      "
+    />
+    <button *ngIf="!uploadingReferralCSV" type="file" class="btn btn-warning fs-15px lh-15px p-10px mt-5px">
+      <i class="fas fa-upload"></i>&nbsp;Upload CSV
+    </button>
+    <button *ngIf="uploadingReferralCSV" type="file" class="btn btn-warning fs-15px lh-15px p-10px mt-5px" disabled>
+      Uploading...
+    </button>
   </div>
 </div>
