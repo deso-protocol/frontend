@@ -116,11 +116,17 @@ export class ManageFollowsComponent implements OnDestroy {
       case this.appData.RouteNames.FOLLOWING: {
         this.getEntriesFollowingPublicKey = false;
         this.activeTab = ManageFollowsComponent.FOLLOWING;
+        this.lastPage = null;
+        this.infiniteScroller.reset();
+        this.datasource.adapter.reset();
         break;
       }
       case this.appData.RouteNames.FOLLOWERS: {
         this.getEntriesFollowingPublicKey = true;
         this.activeTab = ManageFollowsComponent.FOLLOWERS;
+        this.lastPage = null;
+        this.infiniteScroller.reset();
+        this.datasource.adapter.reset();
         break;
       }
       default: {
