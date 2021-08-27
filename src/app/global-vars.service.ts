@@ -1,10 +1,15 @@
 import { Injectable } from "@angular/core";
-import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
-import { Router, ActivatedRoute } from "@angular/router";
-import { BackendApiService } from "./backend-api.service";
+import {
+  BackendApiService,
+  BalanceEntryResponse,
+  PostEntryResponse,
+  TutorialStatus,
+  User,
+} from "./backend-api.service";
+import { ActivatedRoute, Router } from "@angular/router";
 import { RouteNames } from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
-import { Observable, Observer, of } from "rxjs";
+import { Observable, Observer } from "rxjs";
 import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
 import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
 import { SwalHelper } from "../lib/helpers/swal-helper";
@@ -18,6 +23,7 @@ import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import Swal from "sweetalert2";
 import Timer = NodeJS.Timer;
 
 export enum ConfettiSvg {
@@ -66,6 +72,9 @@ export class GlobalVarsService {
   // We're waiting for the user to grant storage access (full-screen takeover)
   requestingStorageAccess = false;
 
+  // Track if the user is dragging the diamond selector. If so, need to disable text selection in the app.
+  userIsDragging = false;
+
   RouteNames = RouteNames;
 
   pausePolling = false; // TODO: Monkey patch for when polling conflicts with other calls.
@@ -99,9 +108,12 @@ export class GlobalVarsService {
   loggedInUser: User;
   userList: User[] = [];
 
+  // Temporarily track tutorial status here until backend it flowing
+  TutorialStatus: TutorialStatus;
+
   // map[pubkey]->bool of globomods
   globoMods: any;
-  feeRateBitCloutPerKB = 0.0;
+  feeRateBitCloutPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
   messageResponse = null;
@@ -277,6 +289,12 @@ export class GlobalVarsService {
     });
   }
 
+  userInTutorial(user: User): boolean {
+    return (
+      user && [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user?.TutorialStatus) < 0
+    );
+  }
+
   // NEVER change loggedInUser property directly. Use this method instead.
   setLoggedInUser(user: User) {
     const isSameUserAsBefore =
@@ -285,7 +303,7 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
-    if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
+    if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
       this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
     }
 
@@ -307,7 +325,42 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
+    if (this.loggedInUser?.MustCompleteTutorial && this.loggedInUser?.TutorialStatus === TutorialStatus.EMPTY) {
+      this.startTutorialAlert();
+    }
+
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
+    if (this.userInTutorial(user)) {
+      // drop user at correct point in tutorial.
+      let route = [];
+      switch (user.TutorialStatus) {
+        case TutorialStatus.STARTED: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          break;
+        }
+        case TutorialStatus.INVEST_OTHERS_BUY: {
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
+          break;
+        }
+        case TutorialStatus.INVEST_OTHERS_SELL: {
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
+          break;
+        }
+        case TutorialStatus.CREATE_PROFILE: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          break;
+        }
+        case TutorialStatus.INVEST_SELF: {
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          break;
+        }
+        case TutorialStatus.DIAMOND: {
+          route = [RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST];
+          break;
+        }
+      }
+      this.router.navigate(route);
+    }
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {
@@ -330,7 +383,7 @@ export class GlobalVarsService {
     const bitcloutNanos = this.diamondLevelMap[index];
     const val = this.nanosToUSDNumber(bitcloutNanos);
     if (val < 1) {
-      return this.formatUSD(val, 2);
+      return this.formatUSD(Math.max(val, 0.01), 2);
     }
     return this.abbreviateNumber(val, 0, true);
   }
@@ -728,7 +781,10 @@ export class GlobalVarsService {
     if (!this.amplitude) {
       return;
     }
-
+    // If the user is in the tutorial, add the "tutorial : " prefix.
+    if (this.userInTutorial(this.loggedInUser)) {
+      event = "tutorial : " + event;
+    }
     this.amplitude.logEvent(event, data);
   }
 
@@ -748,7 +804,7 @@ export class GlobalVarsService {
     this.identityService.launch("/log-in").subscribe((res) => {
       this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything().subscribe(() => {
+      this.updateEverything().add(() => {
         this.flowRedirect(res.signedUp);
       });
     });
@@ -928,6 +984,71 @@ export class GlobalVarsService {
     this.resentVerifyEmail = true;
   }
 
+  startTutorialAlert(): void {
+    Swal.fire({
+      target: this.getTargetComponentSelector(),
+      title: "Congrats!",
+      html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
+      showConfirmButton: true,
+      // Only show skip option to admins
+      showCancelButton: !!this.loggedInUser?.IsAdmin,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Start Tutorial",
+      cancelButtonText: "Skip",
+      // User must skip or start tutorial
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then((res) => {
+      this.backendApi
+        .StartOrSkipTutorial(
+          this.localNode,
+          this.loggedInUser?.PublicKeyBase58Check,
+          !res.isConfirmed /* if it's not confirmed, skip tutorial*/
+        )
+        .subscribe((response) => {
+          this.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+          this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
+          if (res.isConfirmed) {
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+          }
+        });
+    });
+  }
+
+  skipTutorial(): void {
+    Swal.fire({
+      target: this.getTargetComponentSelector(),
+      icon: "warning",
+      title: "Skip Tutorial?",
+      html: "Are you sure?",
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Skip",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
+          (response) => {
+            this.logEvent(`tutorial : skip`);
+            // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+            this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
+            this.router.navigate([RouteNames.BROWSE]);
+          },
+          (err) => {
+            this._alertError(err.error.error);
+          }
+        );
+      }
+    });
+  }
+
   jumioInterval: Timer = null;
   // If we return from the Jumio flow, poll for up to 10 minutes to see if we need to update the user's balance.
   pollLoggedInUserForJumio(publicKey: string): void {
@@ -947,13 +1068,14 @@ export class GlobalVarsService {
         .subscribe(
           (res: any) => {
             if (res.JumioVerified) {
-              let user;
+              let user: User;
               this.userList.forEach((userInList, idx) => {
                 if (userInList.PublicKeyBase58Check === publicKey) {
                   this.userList[idx].JumioVerified = res.JumioVerified;
                   this.userList[idx].JumioReturned = res.JumioReturned;
                   this.userList[idx].JumioFinishedTime = res.JumioFinishedTime;
                   this.userList[idx].BalanceNanos = res.BalanceNanos;
+                  this.userList[idx].MustCompleteTutorial = true;
                   user = this.userList[idx];
                 }
               });
@@ -961,6 +1083,14 @@ export class GlobalVarsService {
                 this.setLoggedInUser(user);
               }
               this.celebrate();
+              if (user.TutorialStatus === TutorialStatus.EMPTY) {
+                this.startTutorialAlert();
+              }
+              clearInterval(this.jumioInterval);
+              return;
+            }
+            // If the user wasn't verified by jumio, but Jumio did return a callback, stop polling.
+            if (res.JumioReturned) {
               clearInterval(this.jumioInterval);
             }
           },

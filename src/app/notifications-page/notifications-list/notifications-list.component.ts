@@ -125,16 +125,33 @@ export class NotificationsListComponent {
     };
 
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
-      let txnAmountNanos = 0;
-      for (let ii = 0; ii < notification.TxnOutputResponses.length; ii++) {
-        if (notification.TxnOutputResponses[ii].PublicKeyBase58Check === userPublicKeyBase58Check) {
-          txnAmountNanos += notification.TxnOutputResponses[ii].AmountNanos;
-        }
+      const basicTransferMeta = txnMeta.BasicTransferTxindexMetadata;
+      if (!basicTransferMeta) {
+        return null;
       }
-      result.icon = "fas fa-money-bill-wave-alt fc-green";
-      result.action =
-        `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
-        `$CLOUT!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
+      if (basicTransferMeta.DiamondLevel) {
+        result.icon = "icon-diamond fc-blue";
+        let postText = "";
+        if (basicTransferMeta.PostHashHex) {
+          const truncatedPost = this.truncatePost(basicTransferMeta.PostHashHex);
+          postText = `<i class="text-grey7">${truncatedPost}</i>`;
+          result.link = AppRoutingModule.postPath(basicTransferMeta.PostHashHex);
+        }
+        result.action = `${actorName} gave <b>${basicTransferMeta.DiamondLevel.toString()} diamond${
+          basicTransferMeta.DiamondLevel > 1 ? "s" : ""
+        }</b> (~${this.globalVars.getUSDForDiamond(basicTransferMeta.DiamondLevel)}) ${postText}`;
+      } else {
+        let txnAmountNanos = 0;
+        for (let ii = 0; ii < notification.TxnOutputResponses.length; ii++) {
+          if (notification.TxnOutputResponses[ii].PublicKeyBase58Check === userPublicKeyBase58Check) {
+            txnAmountNanos += notification.TxnOutputResponses[ii].AmountNanos;
+          }
+        }
+        result.icon = "fas fa-money-bill-wave-alt fc-green";
+        result.action =
+          `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
+          `$CLOUT!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
+      }
       return result;
     } else if (txnMeta.TxnType === "CREATOR_COIN") {
       // If we don't have the corresponding metadata then return null.

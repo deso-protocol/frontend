@@ -75,7 +75,6 @@ export class MintNftModalComponent {
     this.minBidAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
-  // TODO: Compute service fee based on number of copies.
   mintNft() {
     if (this.hasUnreasonableRoyalties() || this.hasUnreasonableNumCopies() || this.hasUnreasonableMinBidAmount()) {
       // It should not be possible to trigger this since the button is disabled w/these conditions.

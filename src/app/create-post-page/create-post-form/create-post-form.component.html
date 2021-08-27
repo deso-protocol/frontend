@@ -5,6 +5,7 @@
 
 <div
   class="global__top-bar__height d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey"
+  *ngIf="!inTutorial"
 >
   <div class="d-flex align-items-center">
     <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
@@ -13,10 +14,36 @@
   </div>
 </div>
 
-<feed-create-post
-  numberOfRowsInTextArea="4"
-  style="overflow-y: scroll"
-  (postCreated)="onPostCreated($event)"
-></feed-create-post>
+<div *ngIf="inTutorial" class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg">
+  <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
+  <div *ngIf="inTutorial">
+    <h3 class="mb-1 fs-24px font-weight-semibold">
+      Create a Post
+    </h3>
+    <h5 class="fs-15px fc-muted">
+      Step 6 of 6
+    </h5>
+  </div>
+</div>
+<div class="p-3" *ngIf="inTutorial">
+  <h5 class="fs-15px">Create your first post so other users can find you and invest in you!</h5>
+</div>
+
+<div
+  [ngStyle]="{ 'border': inTutorial ? '1px solid  #e5e5e5' : '' }">
+  <feed-create-post
+    numberOfRowsInTextArea="4"
+    style="overflow-y: scroll"
+    (postCreated)="onPostCreated($event)"
+    [inTutorial]="inTutorial"
+  ></feed-create-post>
+</div>
+
+<div *ngIf="inTutorial && (!globalVars.loggedInUser?.MustCompleteTutorial || globalVars.loggedInUser?.IsAdmin)" (click)="globalVars.skipTutorial()" class="p-15px">
+  <a class="btn btn-outline-primary btn-lg fs-18px text-left">
+    Skip
+  </a>
+</div>
+
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
 <div class="global__bottom-bar-mobile-height"></div>

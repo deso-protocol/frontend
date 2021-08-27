@@ -535,6 +535,15 @@
     <div *ngIf="loadingNextBlockStats">Loading...</div>
   </div>
 
+  <!-- Tutorial -->
+  <div
+    *ngIf="activeTab == 'Tutorial'"
+    class="w-100 d-flex flex-column disable-scrollbars"
+    style="overflow-y: scroll"
+  >
+    <admin-tutorial></admin-tutorial>
+  </div>
+
   <!-- NFTs -->
   <div
     *ngIf="activeTab == 'NFTs'"
