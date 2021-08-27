@@ -6,7 +6,10 @@
   <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
   <div class="d-flex align-items-center w-100 justify-content-between">
     <div>Wallet</div>
-    <div class="p-15px fs-14px"><span>≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}&nbsp;</span><small>USD Total</small></div>
+    <div class="p-15px fs-14px"
+      title="{{globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos + totalValue())}} $CLOUT">
+      <span>≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}&nbsp;</span><small>USD Total</small>
+    </div>
   </div>
 </div>
 
@@ -209,7 +212,9 @@
 
       <!-- Price-->
       <div class="col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
-        <div class="d-flex align-items-center justify-content-end">
+        <div class="d-flex align-items-center justify-content-end"
+          title="{{globalVars.nanosToBitClout(creator.ProfileEntryResponse.CoinPriceBitCloutNanos)}} $CLOUT"
+        >
           {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
         </div>
       </div>
@@ -217,7 +222,12 @@
       <!-- Balance -->
       <div class="col-4 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
         <div>
-          <div>
+          <div
+            title="~{{
+            globalVars.nanosToBitClout(
+              globalVars.bitcloutNanosYouWouldGetIfYouSold(creator.BalanceNanos, creator.ProfileEntryResponse.CoinEntry)
+            )}} $CLOUT"
+          >
             <i
               *ngIf="creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners"
               class="fa fa-spinner fc-muted"
