@@ -15,7 +15,7 @@
       Link to Post
     </a>
     <a
-      *ngIf="navigator.share"
+      *ngIf="navigator.share !== undefined"
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
       (click)="sharePostUrl($event)"
       >
