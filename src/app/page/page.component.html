@@ -12,8 +12,8 @@
     <change-account-selector></change-account-selector>
   </div>
   <div class="d-flex" style="margin-top: 64px">
-    <left-bar *ngIf="!mobile"></left-bar>
-    <left-bar-mobile *ngIf="mobile"></left-bar-mobile>
+    <left-bar *ngIf="!mobile" [inTutorial]="inTutorial"></left-bar>
+    <left-bar-mobile *ngIf="mobile" [inTutorial]="inTutorial"></left-bar-mobile>
 
     <div class="global__content__flex">
       <div [class]="mobile || hideSidebar ? 'global__content__width' : 'global__center__width'">
@@ -22,11 +22,11 @@
         </div>
       </div>
       <div class="global__sidebar__width" *ngIf="!mobile && !hideSidebar">
-        <right-bar-creators class="global__sidebar__fixed"></right-bar-creators>
+        <right-bar-creators [inTutorial]="inTutorial" class="global__sidebar__fixed"></right-bar-creators>
       </div>
 
       <bottom-bar-mobile
-        *ngIf="mobile"
+        *ngIf="mobile && !inTutorial"
         class="global__bottom-bar-mobile"
         [showPostButton]="showPostButton"
       ></bottom-bar-mobile>

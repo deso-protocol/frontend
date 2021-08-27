@@ -7,6 +7,9 @@ import { FollowChangeObservableResult } from "../../../lib/observable-results/fo
 import { AppRoutingModule } from "../../app-routing.module";
 import { FollowButtonComponent } from "../../follow-button/follow-button.component";
 import { Router } from "@angular/router";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { UpdateProfileModalComponent } from "../../update-profile-page/update-profile-modal/update-profile-modal.component";
+
 @Component({
   selector: "creator-profile-top-card",
   templateUrl: "./creator-profile-top-card.component.html",
@@ -31,7 +34,12 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   refreshFollowingBeingCalled = false;
   publicKeyIsCopied = false;
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {
+  constructor(
+    private _globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private router: Router,
+    private modalService: BsModalService
+  ) {
     this.globalVars = _globalVars;
 
     // If the user follows/unfollows this user, update the follower count
@@ -68,6 +76,49 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     window.open(
       `https://report.bitclout.com/account?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&ReportedAccountPublicKey=${this.profile.PublicKeyBase58Check}`
     );
+  }
+
+  openModal(event) {
+    // Prevent the post navigation click from occurring.
+    event.stopPropagation();
+
+    const initialState = { loggedInUser: this.globalVars.loggedInUser };
+    // If the user has an account and a profile, open the modal so they can comment.
+    this.modalService.show(UpdateProfileModalComponent, {
+      class: "modal-dialog-centered update-profile-modal",
+      initialState,
+    });
+  }
+
+  updateWellKnownCreatorsList(): void {
+    this.updateCreatorFeaturedTutorialList(true, this.profile.IsFeaturedTutorialWellKnownCreator);
+  }
+
+  updateUpAndComingCreatorsList(): void {
+    this.updateCreatorFeaturedTutorialList(false, this.profile.IsFeaturedTutorialUpAndComingCreator);
+  }
+
+  updateCreatorFeaturedTutorialList(isWellKnown: boolean, isRemoval: boolean) {
+    this.backendApi
+      .AdminUpdateTutorialCreators(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.profile.PublicKeyBase58Check,
+        isRemoval,
+        isWellKnown
+      )
+      .subscribe(
+        (res) => {
+          if (isWellKnown) {
+            this.profile.IsFeaturedTutorialWellKnownCreator = !isRemoval;
+          } else {
+            this.profile.IsFeaturedTutorialUpAndComingCreator = !isRemoval;
+          }
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
   }
 
   messageUser(): void {

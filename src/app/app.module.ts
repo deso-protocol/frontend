@@ -45,6 +45,7 @@ import { TradeCreatorFormComponent } from "./trade-creator-page/trade-creator-fo
 import { TradeCreatorPreviewComponent } from "./trade-creator-page/trade-creator-preview/trade-creator-preview.component";
 import { TradeCreatorCompleteComponent } from "./trade-creator-page/trade-creator-complete/trade-creator-complete.component";
 import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
+import { UpdateProfileModalComponent } from "./update-profile-page/update-profile-modal/update-profile-modal.component";
 import { NotificationsPageComponent } from "./notifications-page/notifications-page.component";
 import { SearchBarComponent } from "./search-bar/search-bar.component";
 import { SimpleCenterLoaderComponent } from "./simple-center-loader/simple-center-loader.component";
@@ -137,12 +138,24 @@ import { NftShowcaseComponent } from "./nft-showcase/nft-showcase.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { AdminJumioComponent } from "./admin/admin-jumio/admin-jumio.component";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
+import { AdminTutorialComponent } from "./admin/admin-tutorial/admin-tutorial.component";
+import { CreateProfileTutorialPageComponent } from "./tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component";
+import { BuyCreatorCoinsTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial/buy-creator-coins-tutorial.component";
+import { BuyCreatorCoinsTutorialPageComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component";
+import { BuyCreatorCoinsConfirmTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
+import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
+import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
+import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
+import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
+import { DiamondTutorialComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
+import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
+import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
+import { IconsModule } from "./icons/icons.module";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { DragDropModule } from "@angular/cdk/drag-drop";
-import {IconsModule} from "./icons/icons.module";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -188,6 +201,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     TradeCreatorPreviewComponent,
     TradeCreatorCompleteComponent,
     UpdateProfilePageComponent,
+    UpdateProfileModalComponent,
     NotificationsPageComponent,
     SearchBarComponent,
     SimpleCenterLoaderComponent,
@@ -208,6 +222,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     MessagesThreadComponent,
     MessageComponent,
     MessagesThreadViewComponent,
+    MessageRecipientModalComponent,
     TopBarMobileNavigationControlComponent,
     BottomBarMobileTabComponent,
     NotFoundComponent,
@@ -266,6 +281,17 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     VerifyEmailComponent,
     AdminJumioComponent,
     JumioStatusComponent,
+    AdminTutorialComponent,
+    CreateProfileTutorialPageComponent,
+    BuyCreatorCoinsTutorialComponent,
+    BuyCreatorCoinsConfirmTutorialComponent,
+    BuyCreatorCoinsTutorialPageComponent,
+    WalletPageComponent,
+    WalletTutorialPageComponent,
+    SellCreatorCoinsTutorialComponent,
+    DiamondTutorialPageComponent,
+    DiamondTutorialComponent,
+    CreatePostTutorialPageComponent,
   ],
   imports: [
     BrowserModule,

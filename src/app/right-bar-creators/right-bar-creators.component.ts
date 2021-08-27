@@ -1,6 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
+import { Router } from "@angular/router";
 
 export class RightBarTabOption {
   name: string;
@@ -17,7 +18,9 @@ export class RightBarTabOption {
   styleUrls: ["./right-bar-creators.component.sass"],
 })
 export class RightBarCreatorsComponent implements OnInit {
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  @Input() inTutorial: boolean = false;
+
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {}
 
   activeTab: string;
   selectedOptionWidth: string;

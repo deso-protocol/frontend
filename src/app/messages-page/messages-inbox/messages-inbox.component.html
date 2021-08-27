@@ -1,59 +1,25 @@
-<!-- Top Bar -->
-<div
-  *ngIf="!isMobile"
-  class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
->
-  <!-- Clear Inbox -->
-  <div class="d-flex justify-content-end align-items-right pr-10px">
-    <div
-      *ngIf="
-        globalVars.messageResponse != null && globalVars.messageResponse.NumberOfUnreadThreads > 0;
-        then thenEnvelopeBlock;
-        else elseEnvelopeBlock
-      "
-    ></div>
-    <ng-template #thenEnvelopeBlock>
-      <i
-        (click)="_markAllMessagesRead()"
-        class="fc-blue far fa-envelope cursor-pointer messages-header-icon-row__icon pt-2px"
-      ></i>
-    </ng-template>
-    <ng-template #elseEnvelopeBlock>
-      <i class="far fa-envelope cursor-auto fs-20px pt-2px"></i>
-    </ng-template>
+<div *ngIf="messageThreads" class="messages-inbox__threads vh-100 disable-scrollbars position-relative">
+<!--  &lt;!&ndash; Search &ndash;&gt;-->
+<!--  <search-bar-->
+<!--    [showCloutavista]="false"-->
+<!--    [isSearchForUsersToMessage]="true"-->
+<!--    [startingSearchText]="startingSearchText"-->
+<!--    (creatorToMessage)="_handleCreatorSelectedInSearch($event)"-->
+<!--    class="pb-15px border-bottom border-color-grey"-->
+<!--  ></search-bar>-->
+  <div *ngIf="_settingsTrayIsOpen()">
+    <messages-filter-menu></messages-filter-menu>
   </div>
+  <div class="messages-inbox__header d-flex align-items-center" *ngIf="!_settingsTrayIsOpen()">
+    <!-- Tabs -->
+    <tab-selector
+      [tabs]="['All', 'Holders']"
+      [activeTab]="activeTab"
+      (tabClick)="_handleTabClick($event)"
+    ></tab-selector>
 
-  Messages
-
-  <!-- Settings -->
-  <div class="d-flex w-100 justify-content-end align-items-right pr-10px">
-    <i
-      (click)="_toggleSettingsTray()"
-      class="fas fa-sliders-h cursor-pointer messages-header-icon-row__icon pt-2px"
-    ></i>
+    <i class="fas fa-ellipsis-h messages-inbox__custom-settings cursor-pointer" (click)="_toggleSettingsTray()"></i>
   </div>
-</div>
-
-<div *ngIf="_settingsTrayIsOpen()">
-  <messages-filter-menu></messages-filter-menu>
-</div>
-
-<div *ngIf="messageThreads" class="messages-inbox__threads vh-100 disable-scrollbars">
-  <!-- Search -->
-  <search-bar
-    [showCloutavista]="false"
-    [isSearchForUsersToMessage]="true"
-    [startingSearchText]="startingSearchText"
-    (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
-    class="pb-15px border-bottom border-color-grey"
-  ></search-bar>
-
-  <!-- Tabs -->
-  <tab-selector
-    [tabs]="['All', 'My Holders', 'Custom']"
-    [activeTab]="activeTab"
-    (tabClick)="_handleTabClick($event)"
-  ></tab-selector>
 
   <!-- NOTE: We add any newMessageThread to the front of our messageThread array. -->
   <!-- This is used to handle the creation of new message threads. -->

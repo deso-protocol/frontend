@@ -1,4 +1,4 @@
-<div class="d-flex w-100" style="cursor: pointer; height: 50px" [ngClass]="{ 'tab-selector-links': !buttonSelector }">
+<div class="d-flex w-100 tab-selector__container" style="cursor: pointer; height: 50px" [ngClass]="{ 'tab-selector-links': !buttonSelector }">
   <div
     *ngFor="let tab of tabs"
     (click)="_tabClicked(tab)"

@@ -1,0 +1,76 @@
+<div class="w-100 light-grey-divider border-bottom border-color-grey" style="height:10px"></div>
+<tab-selector
+  [tabs]="adminTutorialTabs"
+  [activeTab]="activeTutorialTab"
+  (tabClick)="_tutorialTabClicked($event)"
+></tab-selector>
+<simple-center-loader *ngIf="loading"></simple-center-loader>
+<div *ngIf="activeTutorialTab !== RESET_TAB">
+  <div
+    *ngFor="let profileEntryResponse of filteredProfileEntryResponses"
+    class="br-12px m-15px js-feed-post-hover border"
+  >
+    <div
+      class="link--unstyled d-flex align-items-center text-grey5 fs-15px m-2"
+    >
+      <div>
+        <i
+          (click)="removeCreatorFeaturedTutorialList(profileEntryResponse.PublicKeyBase58Check, $event)"
+          class="p-10px far fa-trash-alt fc-red cursor-pointer"
+        ></i>
+      </div>
+      <a
+        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Username]"
+        queryParamsHandling="merge"
+        class="link--unstyled d-flex align-items-center text-grey5 fs-15px"
+      >
+        <div
+          class="right-bar-creators-leaderboard__creator-avatar ml-2"
+          [avatar]="profileEntryResponse.PublicKeyBase58Check"
+        ></div>
+
+        <div style="flex-grow: 1" class="ml-2">
+          <span>{{ profileEntryResponse.Username }}</span>
+          <span
+            *ngIf="profileEntryResponse.IsReserved && !profileEntryResponse.IsVerified"
+            class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
+          >
+          <i class="far fa-clock fa-md"></i>
+        </span>
+          <span
+            *ngIf="profileEntryResponse.IsVerified"
+            (click)="tooltip.toggle()"
+            class="ml-1 cursor-pointer text-primary"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="'This account is verified'"
+            #tooltip="matTooltip"
+          >
+          <i class="fas fa-check-circle fa-md"></i>
+        </span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</div>
+<div *ngIf="activeTutorialTab === RESET_TAB">
+  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+    Reset Tutorial for Public Key:
+    <div class="d-flex mt-5px">
+      <input
+        [(ngModel)]="publicKeyToReset"
+        (keydown.enter)="_resetTutorial()"
+        class="form-control w-100 fs-15px lh-15px"
+        placeholder="Enter a public key."
+      />
+      <button *ngIf="!resettingTutorial" (click)="_resetTutorial()" class="btn btn-outline-primary fs-15px ml-5px">
+        Reset
+      </button>
+      <button *ngIf="resettingTutorial" class="btn btn-primary fs-15px ml-5px" disabled>
+        Working...
+      </button>
+    </div>
+  </div>
+</div>

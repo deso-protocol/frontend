@@ -25,6 +25,10 @@ export class MessagesFilterMenuComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  closePopUp() {
+    this.globalVars.openSettingsTray = false;
+  }
+
   updateGlobalMessagesPreferences() {
     this.messagesInbox._toggleSettingsTray(); // Close the settings tray
 

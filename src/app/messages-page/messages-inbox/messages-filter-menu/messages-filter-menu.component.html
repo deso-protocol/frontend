@@ -1,58 +1,69 @@
-<div class="fs-16px">
-  <div class="mr-15px ml-15px pt-15px pb-5px divtext font-weight-bold border-color-blue border-bottom">
+<div class="fs-16px messages-filter-menu__container">
+  <div class="mr-15px ml-15px pt-15px pb-5px font-weight-bold">
     Custom Inbox Settings
   </div>
 
-  <div class="d-flex pt-15px pb-15px flex-row">
-    <div class="divtext w-50 align-middle">Only show:</div>
+  <div class="w-100 border-color-grey border-bottom"></div>
 
-    <div class="w-100 d-flex pl-5px flex-column">
+  <div class="pt-15px pb-15px">
+    <span class="messages-filter-menu__title">Only show</span>
+
+    <div class="w-100 d-flex pl-5px mt-15px flex-column messages-filter-menu__checkboxes">
       <div class="mt-5px d-flex flex-row align-items-center">
-        <input id="holdsMeCheckbox" type="checkbox" name="holdsMe" class="w-10" [(ngModel)]="messageFilterHoldsMe" />
-        <label for="holdsMeCheckbox" class="cursor-pointer mb-0">Holders</label>
+        <button
+          class="checkbox-circle"
+          [ngClass]="{ checked: messageFilterHoldsMe }"
+          (click)="messageFilterHoldsMe = !messageFilterHoldsMe"
+        >
+          <i-feather name="check"></i-feather>
+        </button>
+        <span>Holders</span>
       </div>
 
       <div class="mt-5px d-flex flex-row align-items-center">
-        <input
-          id="iHoldCheckbox"
-          type="checkbox"
-          style="vertical-align: middle"
-          name="iHold"
-          class="w-10"
-          [(ngModel)]="messageFilterIHold"
-        />
-        <label for="iHoldCheckbox" class="cursor-pointer mb-0">Holdings</label>
+        <button
+          class="checkbox-circle"
+          [ngClass]="{ checked: messageFilterIHold }"
+          (click)="messageFilterIHold = !messageFilterIHold"
+        >
+          <i-feather name="check"></i-feather>
+        </button>
+        <span>Holdings</span>
       </div>
 
       <div class="mt-5px d-flex flex-row align-items-center">
-        <input
-          id="followingMeCheckbox"
-          type="checkbox"
-          style="vertical-align: middle"
-          name="followingMe"
-          class="w-10"
-          [(ngModel)]="messageFilterFollowingMe"
-        />
-        <label for="followingMeCheckbox" class="cursor-pointer mb-0">Followers</label>
+        <button
+          class="checkbox-circle"
+          [ngClass]="{ checked: messageFilterFollowingMe }"
+          (click)="messageFilterFollowingMe = !messageFilterFollowingMe"
+        >
+          <i-feather name="check"></i-feather>
+        </button>
+        <span>Followers</span>
       </div>
 
       <div class="mt-5px d-flex flex-row align-items-center">
-        <input id="iFollowCheckbox" type="checkbox" name="iFollow" class="w-10" [(ngModel)]="messageFilterIFollow" />
-        <label for="iFollowCheckbox" class="cursor-pointer mb-0">Following</label>
+        <button
+          class="checkbox-circle"
+          [ngClass]="{ checked: messageFilterIFollow }"
+          (click)="messageFilterIFollow = !messageFilterIFollow"
+        >
+          <i-feather name="check"></i-feather>
+        </button>
+        <span>Following</span>
       </div>
     </div>
   </div>
-
-  <div class="d-flex flex-row">
-    <div class="divtext w-40 align-middle">Sort By:</div>
-
-    <div class="w-100">
-      <div class="btn-group pl-25px" dropdown>
+  <div class="w-100 border-color-grey border-bottom"></div>
+  <div class="mt-15px">
+    <span class="messages-filter-menu__title">Order by</span>
+    <div class="w-100 mt-15px">
+      <div class="btn-group w-90" dropdown>
         <button
           id="button-basic"
           dropdownToggle
           type="button"
-          class="btn btn-secondary fs-16px dropdown-toggle text-grey5"
+          class="btn messages-filter-menu__dropdown"
           aria-controls="dropdown-basic"
         >
           {{ sortAlgorithmToText() }}
@@ -72,14 +83,15 @@
     </div>
   </div>
 
-  <div class="d-flex flex-center w-100 pb-15px border-bottom border-color-grey">
-    <div class="w-100 btn-default">
+  <div class="d-flex flex-center w-100 pb-15px">
+    <div class="w-100 messages-filter-menu__buttons">
       <button
         (click)="updateGlobalMessagesPreferences()"
-        class="btn btn-primary btn-lg font-weight-bold mr-30px fs-13px mt-5px"
+        class="btn"
       >
         Update
       </button>
+      <a (click)="closePopUp()">Cancel</a>
     </div>
   </div>
 </div>

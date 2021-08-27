@@ -2,25 +2,46 @@
   DESKTOP
   -->
 <div class="global__desktop" *ngIf="!globalVars.isMobile()">
-  <left-bar></left-bar>
+  <div class="desktop-top-bar">
+    <div class="bitclout-logo">
+      <i-feather name="bitclout"></i-feather>
+      <span>bitclout</span>
+    </div>
+    <search-bar></search-bar>
+    <change-account-selector></change-account-selector>
+  </div>
+  <div class="d-flex" style="margin-top: 64px">
+    <left-bar></left-bar>
 
-  <div class="global__content__flex">
-    <div class="global__content__width d-flex vh-100">
-      <messages-inbox
-        class="messages-inbox__desktop-column"
-        (selectedThreadEmitter)="selectedThread = $event"
-        [messageThreads]="globalVars.messageResponse ? globalVars.messageResponse.OrderedContactsWithMessages : null"
-      ></messages-inbox>
-      <messages-thread-view
-        class="messages-thread__desktop-column"
-        [messageThread]="
-          globalVars.messageResponse
-            ? selectedThread
-              ? selectedThread
-              : globalVars.messageResponse.OrderedContactsWithMessages[0]
-            : null
-        "
-      ></messages-thread-view>
+    <div class="global__content__flex">
+      <div class="global__content__width messages-page__container">
+        <div class="messages-page__header d-flex justify-content-between align-items-center">
+          <div>
+            <span>Messages</span>
+          </div>
+          <div>
+            <button (click)="openNewMessageModal()">New Message</button>
+          </div>
+        </div>
+        <div class="d-flex messages-page__height-div">
+          <messages-inbox
+            class="messages-inbox__desktop-column"
+            (selectedThreadEmitter)="selectedThread = $event"
+            [messageThreads]="globalVars.messageResponse ? globalVars.messageResponse.OrderedContactsWithMessages : null"
+          ></messages-inbox>
+          <messages-thread-view
+            class="messages-thread__desktop-column"
+            [messageThread]="
+              globalVars.messageResponse
+                ? selectedThread
+                  ? selectedThread
+                  : globalVars.messageResponse.OrderedContactsWithMessages[0]
+                : null
+            "
+          ></messages-thread-view>
+
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -31,7 +52,7 @@
 <div class="global__mobile flex-column" *ngIf="globalVars.isMobile()">
   <left-bar-mobile></left-bar-mobile>
 
-  <div class="d-flex flex-column flex-grow-1 vh-100">
+  <div class="d-flex flex-column flex-grow-1">
     <!-- Inbox Header -->
     <div
       *ngIf="!showThreadView"

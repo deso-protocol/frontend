@@ -51,8 +51,8 @@
   </div>
 
   <div class="post-thread__comment-container">
-    <div #uiScroll *uiScroll="let item of datasource">
-      <div class="border-bottom border-color-grey">
+    <div #uiScroll *uiScroll="let item of datasource; let i = index" [attr.data-index]="i">
+      <div class="post-thread__single-comment" [ngClass]="{ 'first-item': i === 0, 'last-item': i === currentPost?.Comments?.length - 1 }">
         <!--  afterCommentCreatedCallback explanation: Here, the "post" is a comment. A new comment on a -->
         <!--  comment ("original comment") should be prepended to the original comment's list of comments (i.e. subcomments).-->
         <feed-post

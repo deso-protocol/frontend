@@ -1,126 +1,152 @@
 <div *ngIf="!datasource.adapter.isLoading && datasource.adapter.itemsCount === 0" class="row no-gutters pt-10px">
-  <div class="d-flex align-items-center" style="margin-bottom: 0">
-    No one owns ${{ profile.Username }} coin yet.&nbsp;
-    <a [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username, 'buy']">Be the first!</a>
+  <div class="d-flex justify-content-center w-100">
+    <div class="circle-div"></div>
+  </div>
+  <div class="d-flex justify-content-center w-100">
+    <span>No one owns ${{ profile.Username }} coin yet.</span>
   </div>
 </div>
 <simple-center-loader *ngIf="datasource.adapter.isLoading && loadingFirstPage"></simple-center-loader>
-<div #uiScroll *uiScroll="let row of datasource">
-  <div class="row no-gutters p-10px border-bottom mb-0" *ngIf="!row.totalRow">
-    <div class="col-6 d-flex align-items-center mb-0">
-      <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
-        <div
-          class="creator-profile-details__hodler-avatar mr-10px"
-          style="background-image: url('/assets/img/default_profile_pic.png')"
-        ></div>
-        <div class="d-flex flex-column">
-          <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.HODLerPublicKeyBase58Check }}</span>
-          <div
-            class="text-grey9"
-            style="font-size: 10px"
-            (click)="stopEvent($event); tooltip.toggle()"
-            class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
-            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="getTooltipForRow(row)"
-            #tooltip="matTooltip"
-          >
-            <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px">
-              <i class="fas fa-exchange-alt pr-5px"></i>
-              Received
-            </div>
-            <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px">
-              <div *ngIf="row.HODLerPublicKeyBase58Check === profile.PublicKeyBase58Check && row.ProfileEntryResponse.IsReserved && !row.ProfileEntryResponse.IsVerified; else purchasedCoins">
-                <i class="far fa-clock fa-md pr-5px font-weight-bold"></i>
-                Reserved
+<div *ngIf="datasource.adapter.itemsCount > 0" class="w-100 d-flex justify-content-start px-15px fs-15px">
+  <div class="container font-weight-bold fs-15px pl-0px">
+    Holders of ${{ profile.Username }} coin
+  </div>
+</div>
+
+<div *ngIf="datasource.adapter.itemsCount > 0">
+  <div class="container fs-15px flex-grow-1">
+    <div class="row no-gutters border-bottom border-color-grey fc-muted">
+      <div class="col-6 d-flex py-15px mb-0">Username or PubKey</div>
+      <div class="col-3 py-15px mb-0">Coins Held</div>
+      <div class="col-3 py-15px mb-0">
+        Market Value
+        <i
+          class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="'This is computed as the number of coins times the current price.'"
+          #tooltip="matTooltip"
+          (click)="tooltip.toggle()"
+        ></i>
+      </div>
+    </div>
+    <div #uiScroll *uiScroll="let row of datasource">
+      <div class="row no-gutters p-10px border-bottom mb-0" *ngIf="!row.totalRow">
+        <div class="col-6 d-flex align-items-center mb-0">
+          <div *ngIf="!row.ProfileEntryResponse" class="d-flex align-items-center">
+            <div
+              class="creator-profile-details__hodler-avatar mr-10px"
+              style="background-image: url('/assets/img/default_profile_pic.png')"
+            ></div>
+            <div class="d-flex flex-column">
+              <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.HODLerPublicKeyBase58Check }}</span>
+              <div
+                class="text-grey9"
+                style="font-size: 10px"
+                (click)="stopEvent($event); tooltip.toggle()"
+                class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
+                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                [matTooltip]="getTooltipForRow(row)"
+                #tooltip="matTooltip"
+              >
+                <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px">
+                  <i-feather name="repeat" class="feather-small pr-5px"></i-feather>
+                  Received
+                </div>
+                <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px">
+                  <div *ngIf="row.HODLerPublicKeyBase58Check === profile.PublicKeyBase58Check && row.ProfileEntryResponse.IsReserved && !row.ProfileEntryResponse.IsVerified; else purchasedCoins">
+                    <i class="far fa-clock fa-md pr-5px font-weight-bold"></i>
+                    Reserved
+                  </div>
+                  <ng-template #purchasedCoins>
+                    <i-feather name="check-circle" class="feather-small pr-5px"></i-feather>
+                    Purchased
+                  </ng-template>
+                </div>
               </div>
-              <ng-template #purchasedCoins>
-                <i class="fas fa-check-square pr-5px"></i>
-                Purchased
-              </ng-template>
             </div>
           </div>
-        </div>
-      </div>
-      <a
-        *ngIf="row.ProfileEntryResponse"
-        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, row.ProfileEntryResponse.Username]"
-        class="d-flex align-items-center link--unstyled"
-      >
-        <div
-          class="creator-profile-details__hodler-avatar mr-10px"
-          [avatar]="row.ProfileEntryResponse.PublicKeyBase58Check"
-        ></div>
-        <div class="d-flex flex-column">
-          <div class="d-flex align-items-center">
-            <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.ProfileEntryResponse.Username }}</span>
-            <span
-              *ngIf="row.ProfileEntryResponse.IsReserved && !row.ProfileEntryResponse.IsVerified"
-              class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
-              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-              [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
-            >
+          <a
+            *ngIf="row.ProfileEntryResponse"
+            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, row.ProfileEntryResponse.Username]"
+            class="d-flex align-items-center link--unstyled"
+          >
+            <div
+              class="creator-profile-details__hodler-avatar mr-10px"
+              [avatar]="row.ProfileEntryResponse.PublicKeyBase58Check"
+            ></div>
+            <div class="d-flex flex-column">
+              <div class="d-flex align-items-center">
+                <span class="text-truncate" [ngStyle]="usernameStyle()">{{ row.ProfileEntryResponse.Username }}</span>
+                <span
+                  *ngIf="row.ProfileEntryResponse.IsReserved && !row.ProfileEntryResponse.IsVerified"
+                  class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
+                  matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                  [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
+                >
               <i class="far fa-clock fa-md"></i>
             </span>
-            <span
-              *ngIf="row.ProfileEntryResponse.IsVerified"
-              (click)="tooltip.toggle()"
-              class="ml-1 cursor-pointer text-primary align-middle"
-              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-              [matTooltip]="'This account is verified'"
-              #tooltip="matTooltip"
-            >
-              <i class="fas fa-check-circle fa-md"></i>
+                <span
+                  *ngIf="row.ProfileEntryResponse.IsVerified"
+                  (click)="tooltip.toggle()"
+                  class="ml-1 cursor-pointer text-primary align-middle"
+                  matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                  [matTooltip]="'This account is verified'"
+                  #tooltip="matTooltip"
+                >
+              <i-feather name="check-circle" class="feather-small"></i-feather>
             </span>
-          </div>
-          <div
-            class="text-grey9"
-            style="font-size: 10px"
-            (click)="stopEvent($event); tooltip.toggle()"
-            class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
-            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="getTooltipForRow(row)"
-            #tooltip="matTooltip"
-          >
-            <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px">
-              <i class="fas fa-exchange-alt pr-5px"></i>
-              Received
-            </div>
-            <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px">
-              <div *ngIf="row.HODLerPublicKeyBase58Check === profile.PublicKeyBase58Check && row.ProfileEntryResponse.IsReserved && !row.ProfileEntryResponse.IsVerified; else purchasedCoins">
-                <i class="far fa-clock fa-md pr-5px font-weight-bold"></i>
-                Reserved
               </div>
-              <ng-template #purchasedCoins>
-                <i class="fas fa-check-square pr-5px"></i>
-                Purchased
-              </ng-template>
+              <div
+                class="text-grey9"
+                style="font-size: 10px"
+                (click)="stopEvent($event); tooltip.toggle()"
+                class="ml-1 mb-1 cursor-pointer fs-20px text-primary"
+                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                [matTooltip]="getTooltipForRow(row)"
+                #tooltip="matTooltip"
+              >
+                <div *ngIf="!row.HasPurchased" class="text-grey9" style="font-size: 10px">
+                  <i-feather name="repeat" class="feather-small pr-5px"></i-feather>
+                  Received
+                </div>
+                <div *ngIf="row.HasPurchased" class="text-grey9" style="font-size: 10px">
+                  <div *ngIf="row.HODLerPublicKeyBase58Check === profile.PublicKeyBase58Check && row.ProfileEntryResponse.IsReserved && !row.ProfileEntryResponse.IsVerified; else purchasedCoins">
+                    <i class="far fa-clock fa-md pr-5px font-weight-bold"></i>
+                    Reserved
+                  </div>
+                  <ng-template #purchasedCoins>
+                    <i-feather name="check-circle" class="feather-small pr-5px"></i-feather>
+                    Purchased
+                  </ng-template>
+                </div>
+              </div>
             </div>
-          </div>
+          </a>
         </div>
-      </a>
-    </div>
-    <div class="col-3 d-flex align-items-center mb-0">
-      {{ (row.BalanceNanos / 1e9).toFixed(4) }}
-    </div>
-    <div class="col-3 d-flex align-items-center mb-0">
-      ≈ {{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceBitCloutNanos, true) }}
-    </div>
-  </div>
+        <div class="col-3 d-flex align-items-center mb-0">
+          {{ (row.BalanceNanos / 1e9).toFixed(4) }}
+        </div>
+        <div class="col-3 d-flex align-items-center mb-0">
+          ≈ {{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceBitCloutNanos, true) }}
+        </div>
+      </div>
 
-  <div class="row no-gutters font-weight-bold" *ngIf="row.totalRow">
-    <div class="col-6 py-15px mb-0">Total</div>
-    <div class="col-3 py-15px mb-0">
-      {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}
-    </div>
-    <div class="col-3 py-15px mb-0">
-      ≈
-      {{
-        globalVars.creatorCoinNanosToUSDNaive(
-          profile.CoinEntry.CoinsInCirculationNanos,
-          profile.CoinPriceBitCloutNanos,
-          true
-        )
-      }}
+      <div class="row no-gutters font-weight-bold" *ngIf="row.totalRow">
+        <div class="col-6 py-15px mb-0">Total</div>
+        <div class="col-3 py-15px mb-0">
+          {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}
+        </div>
+        <div class="col-3 py-15px mb-0">
+          ≈
+          {{
+          globalVars.creatorCoinNanosToUSDNaive(
+            profile.CoinEntry.CoinsInCirculationNanos,
+            profile.CoinPriceBitCloutNanos,
+            true
+          )
+          }}
+        </div>
+      </div>
     </div>
   </div>
 </div>

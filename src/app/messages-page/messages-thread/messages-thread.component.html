@@ -1,10 +1,9 @@
 <div
-  class="d-flex align-items-center border-bottom border-color-grey px-15px pb-15px pt-10px cursor-pointer"
+  class="d-flex align-items-center messages-thread__container border-bottom border-color-grey px-15px pb-15px pt-10px cursor-pointer"
   (mouseover)="isHovered = true"
   (mouseleave)="isHovered = false"
   [ngClass]="{
-    'messages-inbox__selected-thread': isSelected,
-    'background-color-grey': isHovered || isSelected,
+    'messages-inbox__selected-thread': isSelected || isHovered,
     'message-thread__unread-light-blue':
       !isHovered &&
       globalVars.messageResponse &&

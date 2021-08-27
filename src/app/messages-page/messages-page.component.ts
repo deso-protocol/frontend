@@ -1,10 +1,13 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
 import { Datasource, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { MessageRecipientModalComponent } from "./message-recipient-modal/message-recipient-modal.component";
+import {MessagesInboxComponent} from "./messages-inbox/messages-inbox.component";
 
 @Component({
   selector: "app-messages-page",
@@ -12,6 +15,7 @@ import { Title } from "@angular/platform-browser";
   styleUrls: ["./messages-page.component.scss"],
 })
 export class MessagesPageComponent {
+  @ViewChild(MessagesInboxComponent /* #name or Type*/, { static: false }) messagesInboxComponent;
   lastContactFetched = null;
   intervalsSet = [];
   selectedThread: any;
@@ -25,11 +29,21 @@ export class MessagesPageComponent {
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    private modalService: BsModalService
   ) {}
 
   ngOnInit() {
     this.titleService.setTitle("Messages - BitClout");
+  }
+
+  openNewMessageModal() {
+    const messageSelectorModal = this.modalService.show(MessageRecipientModalComponent, {
+      class: "modal-dialog-centered",
+    });
+    messageSelectorModal.content.userSelected.subscribe((event) => {
+      this.messagesInboxComponent._handleCreatorSelectedInSearch(event);
+    });
   }
 
   _handleMessageThreadSelectedMobile(thread: any) {

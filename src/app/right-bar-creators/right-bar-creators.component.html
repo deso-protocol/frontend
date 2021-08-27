@@ -38,7 +38,7 @@
 
   <jumio-status></jumio-status>
 
-  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified" class="bg-light br-12px p-15px mb-30px fs-13px">
+  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light br-12px p-15px mb-30px fs-13px">
     <p>Your email is not verified.</p>
     <div *ngIf="globalVars.loggedInUser.HasEmail">
       <a class="font-weight-bold" (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">Resend Verification Email</a>
@@ -52,13 +52,13 @@
     <right-bar-signup></right-bar-signup>
   </div>
 
-  <div class="trend-box">
+  <div class="trend-box" *ngIf="!inTutorial">
     <!-- Title -->
     <div
       class="trend-title"
     >
       <div class="d-flex">
-        <span>{{activeTab}}</span>
+        <span>{{ activeTab }}</span>
         <!-- Dropdown -->
         <div
           (click)="$event.stopPropagation()"
@@ -105,6 +105,6 @@
     </div>
 
     <!-- Creators -->
-    <right-bar-creators-leaderboard [activeTab]="activeTab"></right-bar-creators-leaderboard>
+    <right-bar-creators-leaderboard [activeTab]="activeTab" *ngIf="!inTutorial"></right-bar-creators-leaderboard>
   </div>
 </div>

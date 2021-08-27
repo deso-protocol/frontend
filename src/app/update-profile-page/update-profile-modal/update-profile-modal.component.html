@@ -1,0 +1,7 @@
+<div class="modal-header" *ngIf="!inTutorial">
+  <div class="modal-header-x" (click)="bsModalRef.hide()">
+    <i-feather name="x"></i-feather>
+  </div>
+</div>
+
+<update-profile [loggedInUser]="globalVars.loggedInUser"></update-profile>

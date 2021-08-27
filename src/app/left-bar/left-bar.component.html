@@ -12,7 +12,7 @@
 
       <div class="pt-15px"></div>
 
-      <div class="left-desktop-selector">
+      <div class="left-desktop-selector" *ngIf="!inTutorial">
         <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
         <left-bar-button
           [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
@@ -27,9 +27,16 @@
           [iconName]="'message-square'"
         ></left-bar-button>
         <left-bar-button
-          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
+          *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"
+          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser?.ProfileEntryResponse?.Username)"
           [queryParams]="{ 'tab':'posts' }"
           [buttonLabel]="'My Profile'"
+          [iconName]="'user'"
+        ></left-bar-button>
+        <left-bar-button
+          *ngIf="!globalVars.loggedInUser?.ProfileEntryResponse?.Username"
+          [link]="'/' + globalVars.RouteNames.UPDATE_PROFILE"
+          [buttonLabel]="'Update Profile'"
           [iconName]="'user'"
         ></left-bar-button>
         <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>

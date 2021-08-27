@@ -1,28 +1,16 @@
-<div class="w-100 d-flex flex-column justify-content-start px-15px fs-15px">
-  <div class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px">
-    Diamonds
-    <select
-      [ngModel]="activeTab"
-      (ngModelChange)="onChange($event)"
-      style="border: none; background: none; outline: none; border-bottom: solid 1px"
-      class="fs-20px font-weight-bold ddropdown"
-    >
-      <option
-        [value]="CreatorDiamondsComponent.RECEIVED"
-        class="font-weight-bold fs-20px"
-      >
-        received
-      </option>
-      <option [value]="CreatorDiamondsComponent.GIVEN" class="font-weight-bold fs-20px">
-        given
-      </option>
-    </select>
-    by @{{ profile.Username }}
+<div class="w-100 d-flex flex-column justify-content-start fs-15px">
+  <div class="creator-diamonds__tab-container">
+    <tab-selector
+      [tabs]="['Given', 'Received']"
+      [activeTab]="activeTab"
+      [buttonSelector]="false"
+      (tabClick)="_handleTabClick($event)"
+    ></tab-selector>
   </div>
   <div>
     <div class="fs-15px flex-grow-1">
       <div
-        class="row no-gutters border-bottom border-color-grey fc-muted"
+        class="row no-gutters border-bottom border-color-grey creator-diamonds__header"
         *ngIf="!isLoading && diamondSummaryList.length > 0"
       >
         <div class="col-5 d-flex align-items-center py-15px mb-0">Username</div>
@@ -44,7 +32,7 @@
         <div #uiScroll *uiScroll="let row of datasource">
           <div *ngIf="!row.totalRow && row.ProfileEntryResponse">
             <div
-              class="link--unstyled cursor-pointer"
+              class="link--unstyled cursor-pointer diamond-row"
               [routerLink]="[
               '/' + globalVars.RouteNames.USER_PREFIX,
               showDiamondsGiven ? row.ProfileEntryResponse.Username : profile.Username,
@@ -132,7 +120,7 @@
               </div>
             </div>
           </div>
-          <div *ngIf="row.totalRow" class="row no-gutters font-weight-bold">
+          <div *ngIf="row.totalRow" class="row no-gutters font-weight-bold diamond-total-row">
             <div class="col-4 py-15px mb-0">Total</div>
             <div class="col-4 py-15px mb-0"><!--Blank--></div>
             <div class="col-4 text-center py-15px mb-0">

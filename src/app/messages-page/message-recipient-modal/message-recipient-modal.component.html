@@ -1,0 +1,15 @@
+<div class="message-recipient-modal__container">
+  <div class="message-recipient-modal__header d-flex justify-content-between align-items-center">
+    <div><span>Select Creator</span></div>
+    <div>
+      <!-- Search -->
+      <search-bar
+        [showCloutavista]="false"
+        [isSearchForUsersToMessage]="true"
+        [startingSearchText]=""
+        (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+        class="pb-15px border-bottom border-color-grey"
+      ></search-bar>
+    </div>
+  </div>
+</div>

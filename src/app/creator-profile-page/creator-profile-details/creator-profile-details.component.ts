@@ -66,9 +66,28 @@ export class CreatorProfileDetailsComponent implements OnInit {
   userBlocked() {
     this.childTopCardComponent._unfollowIfBlocked();
   }
-
   unblockUser() {
     this.unblock();
+  }
+
+  coinsInCirculation() {
+    return this.profile.CoinEntry.CoinsInCirculationNanos / 1e9;
+  }
+
+  usdMarketCap() {
+    return this.globalVars.abbreviateNumber(
+      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceBitCloutNanos),
+      2,
+      true
+    );
+  }
+
+  totalUSDLocked() {
+    return this.globalVars.abbreviateNumber(
+      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.BitCloutLockedNanos),
+      2,
+      true
+    );
   }
 
   unblock() {

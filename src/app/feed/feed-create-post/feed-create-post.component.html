@@ -2,7 +2,7 @@
      It's used by both the feed and that "create post page."-->
 <div [ngClass]="{'formbg': !parentPost }" class="create-post">
   <!-- Avatar + Input -->
-  <div class="d-flex align-items-top pt-15px pr-15px pl-15px">
+  <div class="d-flex align-items-top pt-15px pr-15px pl-15px avatar-input-row">
     <div>
       <div
         *ngIf="globalVars.userList && (!globalVars.loggedInUser || !globalVars.loggedInUser.ProfileEntryResponse)"

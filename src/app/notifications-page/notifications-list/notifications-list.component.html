@@ -4,52 +4,54 @@
 
   Notifications
 </div>
-<div class="global__top-bar__height"></div>
 <div *ngIf="loadingFirstPage">
   <simple-center-loader></simple-center-loader>
 </div>
 <div *ngIf="(!totalItems || totalItems === 0) && !loadingFirstPage" class="d-flex justify-content-center mt-30px">
   <span>You don't have any notifications</span>
 </div>
+<div class="notifications__list-container">
+  <div #uiScroll *uiScroll="let item of datasource; let index = index" class="notifications__list-item" [ngClass]="{ 'last-item': index === totalItems - 1 }">
+    <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
+      <div class="d-flex flex-row align-items-center">
+        <div
+          class="notifications__avatar"
+          [avatar]="item.actor.PublicKeyBase58Check"
+          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor.Username]"
+        >
+          <div *ngIf="item.icon" class="notifications__icon">
+            <i-feather name="{{item.icon}}" class="feather-xsmall {{item.iconClass}}"></i-feather>
+          </div>
+        </div>
+        <div class="notifications__action" [innerHtml]="item.action"></div>
+      </div>
+    </div>
+    <div class="cursor-pointer" *ngIf="item.post">
+      <feed-post
+        [post]="item.post"
+        [includePaddingOnPost]="true"
+        [showReplyingToContent]="!!item.parentPost"
+        [parentPost]="item.parentPost"
+        [contentShouldLinkToThread]="true"
+        [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
+      ></feed-post>
+      <div *ngFor="let comment of item.post.Comments">
+        <div class="px-15px pb-15px post-thread__subcomment-container">
+          <feed-post
+            [includePaddingOnPost]="false"
+            [post]="comment"
+            [parentPost]="item.post"
+            [contentShouldLinkToThread]="true"
+            [showIconRow]="false"
+            [showDropdown]="false"
+            [showReplyToContent]="false"
+            [isSubcomment]="true"
+          ></feed-post>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div #uiScroll *uiScroll="let item of datasource; let index = index" class="border-bottom border-color-grey">
-  <div class="p-10px cursor-pointer" *ngIf="item.action" [routerLink]="item.link">
-    <div class="d-flex flex-row align-items-center">
-      <div *ngIf="item.icon" class="notifications__icon">
-        <i class="{{ item.icon }}"></i>
-      </div>
-      <div
-        class="notifications__avatar"
-        [avatar]="item.actor.PublicKeyBase58Check"
-        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.actor.Username]"
-      ></div>
-      <div class="notifications__action" [innerHtml]="item.action"></div>
-    </div>
-  </div>
-  <div class="cursor-pointer" *ngIf="item.post">
-    <feed-post
-      [post]="item.post"
-      [includePaddingOnPost]="true"
-      [showReplyingToContent]="!!item.parentPost"
-      [parentPost]="item.parentPost"
-      [contentShouldLinkToThread]="true"
-      [afterCommentCreatedCallback]="afterCommentCallback.bind(this, item, index)"
-    ></feed-post>
-    <div *ngFor="let comment of item.post.Comments">
-      <div class="px-15px pb-15px post-thread__subcomment-container">
-        <feed-post
-          [includePaddingOnPost]="false"
-          [post]="comment"
-          [parentPost]="item.post"
-          [contentShouldLinkToThread]="true"
-          [showIconRow]="false"
-          [showDropdown]="false"
-          [showReplyToContent]="false"
-          [isSubcomment]="true"
-        ></feed-post>
-      </div>
-    </div>
-  </div>
 </div>
 <simple-center-loader *ngIf="loadingNextPage && !loadingFirstPage" [height]="200"></simple-center-loader>
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->

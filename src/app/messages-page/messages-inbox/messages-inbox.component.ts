@@ -14,12 +14,12 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
   static QUERYTOTAB = {
     all: "All",
-    "my-holders": "My Holders",
+    "my-holders": "Holders",
     custom: "Custom",
   };
   static TABTOQUERY = {
     All: "all",
-    "My Holders": "my-holders",
+    "Holders": "my-holders",
     Custom: "custom",
   };
 
@@ -53,7 +53,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
       // Set the default active tab if there's nothing saved in local storage
       if (this.activeTab === null) {
-        this.activeTab = "My Holders";
+        this.activeTab = "Holders";
       }
 
       // Handle the tab click if the stored messages are from a different tab

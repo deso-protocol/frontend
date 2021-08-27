@@ -1,12 +1,19 @@
-<!-- Top Bar -->
 <div
-  class="global__top-bar global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
+  *ngIf="inTutorial"
+  class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg"
 >
-  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-  Update Profile
+  <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
+  <div>
+    <h3 class="mb-1 fs-24px font-weight-semibold">Update Profile</h3>
+    <h5 class="fs-15px fc-muted">Step 3 of 6</h5>
+  </div>
 </div>
 
-<div class="global__top-bar__height"></div>
+<div class="p-3" style="margin-bottom: -20px" *ngIf="inTutorial">
+  <div class="d-flex flex-column justify-flex-start">
+    <h5 class="fs-15px">Everyone needs a profile. Let's update yours!</h5>
+  </div>
+</div>
 
 <div *ngIf="this.loggedInUser.CanCreateProfile; else elseBlock">
   <div class="d-flex flex-column">
@@ -16,8 +23,10 @@
       <!-- Create Profile Fee Warning -->
       <div
         *ngIf="
+          !inTutorial &&
           !globalVars.loggedInUser?.ProfileEntryResponse &&
-          ((!globalVars.loggedInUser?.HasPhoneNumber && !globalVars.loggedInUser?.JumioVerified) || !globalVars.isCompProfileCreation) &&
+          ((!globalVars.loggedInUser?.HasPhoneNumber && !globalVars.loggedInUser?.JumioVerified) ||
+            !globalVars.isCompProfileCreation) &&
           globalVars.createProfileFeeNanos > 0
         "
         class="p-15px bg-warning"
@@ -28,102 +37,117 @@
         This helps prevent spam.
       </div>
       <!-- Form Inputs -->
-      <div *ngIf="globalVars.loggedInUser" class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars">
-        <div class="mt-30px font-weight-bold">Username</div>
-        <div class="mt-10px">
-          <input [(ngModel)]="usernameInput" class="form-control fs-15px lh-18px p-10px" placeholder="Enter username" />
-          <div
-            *ngIf="profileUpdateErrors.usernameError"
-            [ngClass]="{ 'fc-red': profileUpdateErrors.usernameError }"
-            class="fs-13px font-italic mt-5px"
-          >
-            Please set a username
-          </div>
-        </div>
-
-        <div class="mt-30px font-weight-bold">Description</div>
-
-        <div class="mt-10px">
-          <textarea
-            [(ngModel)]="descriptionInput"
-            class="fs-15px p-10px w-100"
-            style="border-radius: 3px"
-            rows="4"
-            maxlength="180"
-          ></textarea>
-          <div
-            *ngIf="profileUpdateErrors.descriptionError"
-            [ngClass]="{ 'fc-red': profileUpdateErrors.descriptionError }"
-            class="fs-13px font-italic"
-          >
-            Description can only be 180 characters
-          </div>
-        </div>
-
-        <div class="mt-30px font-weight-bold">Avatar</div>
-        <div class="mt-5px">
-          <div *ngIf="profilePicInput != null && profilePicInput.length > 0">
-            <div [style.background-image]="'url(' + profilePicInput + ')'"></div>
-            <div *ngIf="profilePicInput">
-              <div style="height: 1rem"></div>
-              <div class="update-profile__image" [style.background-image]="'url(' + profilePicInput + ')'">
-                <div (click)="_resetImage()" class="update-profile__image-delete">x</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-10px" style="position: relative">
-            <input
-              class="file-upload-button"
-              type="file"
-              accept="image/png, image/jpeg"
-              id="file"
-              (change)="_handleFileInput($event.target.files)"
-              style="
-                position: absolute;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                opacity: 0;
-                cursor: pointer;
-                width: 130px;
-                padding: 0;
-              "
-            />
-            <button type="file" class="btn btn-outline-primary fs-15px lh-15px p-10px">Upload Image</button>
-          </div>
+      <div class="mt-30px font-weight-bold update-profile__avatar-title">Avatar</div>
+      <div class="update-profile__holder">
+        <div class="update-profile__avatar">
           <div>
+            <div *ngIf="profilePicInput != null && profilePicInput.length > 0">
+              <div [style.background-image]="'url(' + profilePicInput + ')'"></div>
+              <div *ngIf="profilePicInput">
+                <div class="update-profile__image" [style.background-image]="'url(' + profilePicInput + ')'">
+                  <div (click)="_resetImage()" class="update-profile__image-delete"><i-feather name="trash-2"></i-feather></div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-10px" style="position: relative">
+              <input
+                class="file-upload-button"
+                type="file"
+                accept="image/png, image/jpeg"
+                id="file"
+                (change)="_handleFileInput($event.target.files)"
+                style="
+                  position: absolute;
+                  left: 0;
+                  top: 10px;
+                  bottom: 0;
+                  opacity: 0;
+                  cursor: pointer;
+                  width: 130px;
+                  padding: 0;
+                "
+              />
+              <button type="file">
+                <i-feather name="refresh-cw"></i-feather>
+                Upload Image
+              </button>
+            </div>
+            <div>
+              <div
+                *ngIf="profilePicInput == null || profilePicInput.length == 0"
+                [ngClass]="{ 'fc-red': profileUpdateErrors.profilePicError }"
+                class="fs-13px text-grey5 mt-5px"
+              >
+                No image selected
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div
+          *ngIf="globalVars.loggedInUser"
+          class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars update-profile__text"
+        >
+          <div class="update-profile__title update-profile__username">Username</div>
+          <div>
+            <input
+              [(ngModel)]="usernameInput"
+              class="form-control fs-15px lh-18px p-10px"
+              placeholder="Enter username"
+            />
             <div
-              *ngIf="profilePicInput == null || profilePicInput.length == 0"
-              [ngClass]="{ 'fc-red': profileUpdateErrors.profilePicError }"
-              class="fs-13px text-grey5 mt-5px"
+              *ngIf="profileUpdateErrors.usernameError"
+              [ngClass]="{ 'fc-red': profileUpdateErrors.usernameError }"
+              class="fs-13px font-italic mt-5px"
             >
-              No image selected
+              Please set a username
             </div>
           </div>
 
-          <div *ngIf="globalVars.loggedInUser.UsersWhoHODLYouCount !== 0">
-            <div class="mt-30px font-weight-bold">Founder Reward Percentage</div>
+          <div class="update-profile__title">Description</div>
 
-            <div class="mt-10px">
-              <div class="d-flex align-items-center justify-content-start h-100">
-                <input
-                  [(ngModel)]="founderRewardInput"
-                  min="0"
-                  max="100"
-                  type="number"
-                  class="form-control fs-15px lh-15px p-10px w-25 text-right"
-                  [disabled]="globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
-                />
-                <i
-                  (click)="tooltip.toggle()"
-                  class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon ml-10px"
-                  matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                  [matTooltip]="founderRewardTooltip()"
-                  #tooltip="matTooltip"
-                ></i>
-              </div>
-              <div *ngIf="this.globalVars.loggedInUser.UsersWhoHODLYouCount === 0" class="fc-muted font-italic fs-13px pt-5px">
+          <div>
+            <textarea
+              [(ngModel)]="descriptionInput"
+              class="fs-15px p-10px w-100"
+              rows="4"
+              maxlength="180"
+            ></textarea>
+            <div
+              *ngIf="profileUpdateErrors.descriptionError"
+              [ngClass]="{ 'fc-red': profileUpdateErrors.descriptionError }"
+              class="fs-13px font-italic"
+            >
+              Description can only be 180 characters
+            </div>
+          </div>
+
+          <div *ngIf="!inTutorial">
+            <div class="update-profile__title">
+              Founder Reward Percentage
+              <i-feather
+                name="info"
+                (click)="tooltip.toggle()"
+                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                [matTooltip]="founderRewardTooltip()"
+                #tooltip="matTooltip"
+              ></i-feather>
+            </div>
+
+            <div class="mt-10px position-relative">
+              <input
+                [(ngModel)]="founderRewardInput"
+                min="0"
+                max="100"
+                type="number"
+                class="form-control"
+                [disabled]="globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
+              >
+              <span class="update-profile__cc-percent-symbol"><i-feather name="percent"></i-feather></span>
+              <div
+                *ngIf="this.globalVars.loggedInUser.UsersWhoHODLYouCount === 0"
+                class="fc-muted font-italic fs-13px pt-5px"
+              >
                 * You must purchase your own coin before lowering your founder reward.
               </div>
               <div
@@ -134,23 +158,22 @@
                 Please set a founder reward between 0-100.
               </div>
             </div>
-
           </div>
 
           <div class="w-100 my-30px">
             <a
               (click)="_updateProfile()"
               [ngClass]="{ 'btn-loading': updateProfileBeingCalled }"
-              class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
+              class="btn update-profile__update-btn"
             >
-              Update Profile
+              {{ inTutorial ? "Next" : "Update Profile" }}
             </a>
             <i *ngIf="profileUpdated" class="far fa-check-circle fa-lg fc-blue ml-10px"></i>
           </div>
 
           <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-          <div class="global__bottom-bar-mobile-height"></div>
-          <div class="global__bottom-bar-mobile-height"></div>
+          <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
+          <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
         </div>
       </div>
     </div>

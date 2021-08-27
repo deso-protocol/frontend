@@ -117,6 +117,7 @@ export class NotificationsListComponent {
     const result = {
       actor, // who created the notification
       icon: null,
+      iconClass: null,
       action: null, // the action they took
       post: null, // the post involved
       parentPost: null, // the parent post involved
@@ -131,7 +132,9 @@ export class NotificationsListComponent {
           txnAmountNanos += notification.TxnOutputResponses[ii].AmountNanos;
         }
       }
-      result.icon = "fas fa-money-bill-wave-alt fc-green";
+      result.icon = "coin";
+      result.iconClass = "fc-green";
+
       result.action =
         `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
         `$CLOUT!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
@@ -143,7 +146,8 @@ export class NotificationsListComponent {
         return null;
       }
 
-      result.icon = "fas fa-money-bill-wave-alt fc-green";
+      result.icon = "coin";
+      result.iconClass = "fc-green";
 
       if (ccMeta.OperationType === "buy") {
         result.action = `${actorName} bought <b>~${this.globalVars.nanosToUSD(
@@ -167,7 +171,8 @@ export class NotificationsListComponent {
       }
 
       if (cctMeta.DiamondLevel) {
-        result.icon = "icon-diamond fc-blue";
+        result.icon = "diamond";
+        result.iconClass = "fc-blue";
         let postText = "";
         if (cctMeta.PostHashHex) {
           const truncatedPost = this.truncatePost(cctMeta.PostHashHex);
@@ -178,7 +183,8 @@ export class NotificationsListComponent {
           cctMeta.DiamondLevel > 1 ? "s" : ""
         }</b> (~${this.globalVars.getUSDForDiamond(cctMeta.DiamondLevel)}) ${postText}`;
       } else {
-        result.icon = "fas fa-paper-plane fc-blue";
+        result.icon = "send";
+        result.iconClass = "fc-blue";
         result.action = `${actorName} sent you <b>${this.globalVars.nanosToBitClout(
           cctMeta.CreatorCoinToTransferNanos,
           6
@@ -233,10 +239,12 @@ export class NotificationsListComponent {
       }
 
       if (followMeta.IsUnfollow) {
-        result.icon = "fas fa-user fc-blue";
+        result.icon = "user";
+        result.iconClass = "fc-blue";
         result.action = `${actorName} unfollowed you`;
       } else {
-        result.icon = "fas fa-user fc-blue";
+        result.icon = "user";
+        result.iconClass = "fc-blue";
         result.action = `${actorName} followed you`;
       }
 
@@ -255,7 +263,8 @@ export class NotificationsListComponent {
       }
       const action = likeMeta.IsUnlike ? "unliked" : "liked";
 
-      result.icon = likeMeta.IsUnlike ? "fas fa-heart-broken fc-red" : "fas fa-heart fc-red";
+      result.icon = likeMeta.IsUnlike ? "heart" : "heart";
+      result.iconClass = likeMeta.IsUnlike ? "fc-red" : "fc-red";
       result.action = `${actorName} ${action} <i class="text-grey7">${postText}</i>`;
       result.link = AppRoutingModule.postPath(postHash);
 
@@ -278,7 +287,8 @@ export class NotificationsListComponent {
             nftBidMeta.SerialNumber
           }`
         : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber}`;
-      result.icon = nftBidMeta.BidAmountNanos ? "fas fa-dollar-sign fc-blue" : "fas fa-dollar-sign fc-red";
+      result.icon = "coin";
+      result.iconClass = nftBidMeta.BidAmountNanos ? "fc-blue" : "fc-red";
       result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
       return result;
     } else if (txnMeta.TxnType == "ACCEPT_NFT_BID") {
@@ -294,7 +304,8 @@ export class NotificationsListComponent {
         acceptNFTBidMeta.BidAmountNanos,
         2
       )} for serial number ${acceptNFTBidMeta.SerialNumber}`;
-      result.icon = "fas fa-trophy";
+      result.icon = "award";
+      result.iconClass = "fc-blue";
       result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
       return result;
     }
