@@ -37,8 +37,7 @@
           <li class="font-weight-semibold">
             <p
               class="roboto-mono mb-10px font-weight-semibold cursor-pointer"
-              [ngStyle]="{ 'text-decoration': isPubKeyBalanceless() ? 'line-through' : 'none' }"
-              [ngClass]="!isPubKeyBalanceless() ? 'fc-blue' : ''"
+              style="text-decoration: line-through"
               (click)="globalVars.launchSignupFlow()"
             >
               Create a brand new BitClout public key.
@@ -46,10 +45,9 @@
           </li>
           <li class="font-weight-semibold">
             <p class="roboto-mono mb-10px font-weight-semibold">
-              <a *ngIf="isPubKeyBalanceless(); else pubKeyHasBalance" target="_blank" href="{{ tweetToClaimLink() }}">
+              <a target="_blank" href="{{ tweetToClaimLink() }}">
                 Tweet your BitClout public key and tag #bitclout.
               </a>
-              <ng-template #pubKeyHasBalance>Tweet your BitClout public key and add #bitclout.</ng-template>
               <span class="d-block fs-12px font-weight-normal">
                 Note: The public key you tweet will be swapped with the public key currently associated with this
                 profile. This will also swap all creator coin holdings. Please make sure that the public key you tweet
