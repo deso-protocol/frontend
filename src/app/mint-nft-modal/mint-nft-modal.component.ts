@@ -1,8 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { BsModalRef } from "ngx-bootstrap/modal";
-import { BsModalService } from "ngx-bootstrap/modal";
 import { Router } from "@angular/router";
 
 @Component({
@@ -36,9 +34,7 @@ export class MintNftModalComponent {
   constructor(
     private _globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
-    private modalService: BsModalService,
-    private router: Router,
-    public bsModalRef: BsModalRef
+    private router: Router
   ) {
     this.globalVars = _globalVars;
     this.backendApi
@@ -124,7 +120,6 @@ export class MintNftModalComponent {
   _mintNFTSuccess(comp: MintNftModalComponent) {
     comp.minting = false;
     comp.router.navigate(["/" + comp.globalVars.RouteNames.NFT + "/" + comp.post.PostHashHex]);
-    comp.bsModalRef.hide();
   }
 
   _mintNFTFailure(comp: MintNftModalComponent) {

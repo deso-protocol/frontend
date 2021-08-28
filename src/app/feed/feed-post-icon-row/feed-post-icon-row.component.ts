@@ -38,7 +38,7 @@ export class FeedPostIconRowComponent {
   // Boolean for animation on whether a heart is clicked or not
   animateLike = false;
 
-  diamondCount = 6;
+  diamondCount = GlobalVarsService.MAX_DIAMONDS_GIVABLE;
   // Indexes from 0 to diamondCount (used by *ngFor)
   diamondIndexes = Array<number>(this.diamondCount)
     .fill(0)

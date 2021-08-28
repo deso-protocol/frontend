@@ -65,6 +65,7 @@ export class GlobalVarsService {
 
   static CREATOR_COIN_RESERVE_RATIO = 0.3333333;
   static CREATOR_COIN_TRADE_FEED_BASIS_POINTS = 1;
+  static MAX_DIAMONDS_GIVABLE = 6;
 
   // This is set to false immediately after our first attempt to get a loggedInUser.
   loadingInitialAppState = true;

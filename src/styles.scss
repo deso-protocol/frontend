@@ -419,6 +419,11 @@ $green-font-color: #19B028;
 
 .vh-100 { height: 100vh !important; }
 
+.right-20px {
+  position: absolute;
+  right: 20px;
+}
+
 .position-fixed { position: fixed; }
 
 .feather-xsmall {
@@ -439,6 +444,11 @@ $green-font-color: #19B028;
 .feather-large {
   height: 24px !important;
   width: 24px !important;
+}
+
+.feather-xlarge {
+  height: 34px !important;
+  width: 34px !important;
 }
 
 .global__container {
@@ -502,7 +512,13 @@ $green-font-color: #19B028;
   width: 80px;
   background: var(--border);
   border-radius: 100%;
-  margin-bottom: 10px
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  i-feather {
+    color: var(--postfadedtext);
+  }
 }
 
 .diamond-popover-container {
@@ -692,6 +708,7 @@ input.bs-timepicker-field {
   top: 64px;
   height: 100%;
   position: fixed;
+  overflow-y: scroll;
 }
 
 .global__sidebar__inner {
@@ -1879,6 +1896,9 @@ right-bar-creators {
   margin-left: 24px;
   border-radius: 16px;
   padding-top: 12px;
+  &:hover {
+    color: var(--tilebg);
+  }
 }
 
 .creator-profile__avatar {
@@ -1998,6 +2018,13 @@ right-bar-creators {
   background: var(--highlight);
   font-size: 17px;
   font-weight: 600;
+  &:hover {
+    color: var(--tilebg);
+  }
+}
+
+.cdk-overlay-container{
+  z-index: 1050;
 }
 
 .update-profile__username {
@@ -2056,6 +2083,11 @@ update-profile {
 }
 
 creator-diamonds {
+  .creator-diamonds__no-diamonds {
+    padding-bottom: 70px;
+    background: var(--tilebg);
+  }
+
   .creator-diamonds__tab-container {
     background: var(--tilebg);
     border-top-left-radius: 10px;
@@ -3158,13 +3190,8 @@ input {
 }
 
 .notification {
-  border-radius: 3px;
-  background-color: var(--background);
-  color: #fe3537;
-  border: 1px #fe3537 solid;
   text-align: center;
   line-height: 18px;
-  height: 20px;
   padding: 0px 5px;
 }
 
@@ -3343,13 +3370,12 @@ creator-profile-details {
     margin-bottom: 15px;
   }
   .creator-profile-details__coin-container {
-    background: var(--tilebg);
+    //background: var(--tilebg);
     .font-weight-bold {
       font-weight: 600 !important;
     }
   }
   .creator-profile-details__coin-info {
-    margin-bottom: 16px;
     background: var(--nftbarbg);
     color: var(--nfttext);
     font-size: 13px;
@@ -3359,6 +3385,21 @@ creator-profile-details {
     justify-content: center;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+  }
+}
+
+creator-profile-hodlers {
+  .creator-profile-hodlers__header {
+    padding-top: 16px;
+    background: var(--tilebg);
+  }
+
+  .creator-profile-hodlers__row {
+    padding: 0px 16px;
+    background: var(--tilebg);
+  }
+  .total-row {
+    border-radius: 0px 0px 10px 10px;
   }
 }
 
@@ -3380,10 +3421,36 @@ creator-profile-details {
   border-bottom-left-radius: 0.3rem;
 }
 
+app-mint-nft-modal {
+  .mint-nft__section {
+    padding: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mint-nft__text {
+    color: var(--postfadedtext);
+    size: 15px;
+  }
+  .mint-nft__title {
+    color: var(--posttext);
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .mint-nft__type-selector {
+    width: 40%;
+    height: 186px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    &.nft-type-selected {
+      border-color: var(--highlight);
+    }
+  }
+}
+
 .nft-modal-container {
   color: var(--text);
   border: 1px solid var(--mborder);
-  background-color: var(--secondary);
+  background: var(--tilebg);
   background-clip: padding-box;
   flex-direction: column;
   width: 100%;

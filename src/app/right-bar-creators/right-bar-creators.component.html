@@ -38,13 +38,27 @@
 
   <jumio-status></jumio-status>
 
-  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light br-12px p-15px mb-30px fs-13px">
-    <p>Your email is not verified.</p>
-    <div *ngIf="globalVars.loggedInUser.HasEmail">
-      <a class="font-weight-bold" (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">Resend Verification Email</a>
-      <p *ngIf="globalVars.resentVerifyEmail">Sent!</p>
+  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light mb-30px fs-13px">
+    <div class="jumio-status">
+      <div class="cursor-pointer">
+        <div *ngIf="globalVars.loggedInUser.HasEmail">
+          <a (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">
+            <i-feather name="send"></i-feather>
+            <span>Resend Verification Email</span>
+            <i-feather name="chevron-right" class="right-20px"></i-feather>
+          </a>
+          <div *ngIf="globalVars.resentVerifyEmail">
+            <i-feather name="check"></i-feather>
+            <span>Sent</span>
+          </div>
+        </div>
+        <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">
+          <i-feather name="mail"></i-feather>
+          <span>Update your email</span>
+          <i-feather name="chevron-right" class="right-20px"></i-feather>
+        </a>
+      </div>
     </div>
-    <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
   </div>
 
   <!-- Sign Up Flow -->

@@ -92,11 +92,15 @@ export class CreatorProfileHodlersComponent {
     event.preventDefault();
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(
-    CreatorProfileHodlersComponent.PAGE_SIZE,
-    this.getPage.bind(this),
-    CreatorProfileHodlersComponent.WINDOW_VIEWPORT,
-    CreatorProfileHodlersComponent.BUFFER_SIZE
-  );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  infiniteScroller: InfiniteScroller;
+  datasource: IDatasource<IAdapter<any>>;
+  ngOnInit() {
+    this.infiniteScroller = new InfiniteScroller(
+      CreatorProfileHodlersComponent.PAGE_SIZE,
+      this.getPage.bind(this),
+      CreatorProfileHodlersComponent.WINDOW_VIEWPORT,
+      CreatorProfileHodlersComponent.BUFFER_SIZE
+    );
+    this.datasource = this.infiniteScroller.getDatasource();
+  }
 }

@@ -17,14 +17,14 @@
         <div class="col-4 text-left d-flex align-items-center py-15px mb-0">Most Diamonds</div>
         <div class="col-3 text-center d-flex align-items-center py-15px mb-0">Total Diamonds</div>
       </div>
-      <div *ngIf="!isLoading && diamondSummaryList.length == 0" class="row no-gutters pt-10px">
-        <div class="d-flex align-items-center" style="margin-bottom: 0">
-          <span>
-            @{{ profile.Username }} has not {{ activeTab.toLowerCase() }} any diamonds yet.
-            <a [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profile.Username]" *ngIf="!showDiamondsGiven">
-              &nbsp;Be the first!
-            </a>
-          </span>
+      <div *ngIf="!isLoading && diamondSummaryList.length == 0" class="row no-gutters pt-10px creator-diamonds__no-diamonds">
+        <div class="d-flex justify-content-center w-100">
+          <div class="circle-div">
+            <i-feather name="gem" class="feather-xlarge"></i-feather>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center w-100">
+          <span>{{ profile.Username }} has not {{ activeTab.toLowerCase() }} any diamonds yet</span>
         </div>
       </div>
       <simple-center-loader *ngIf="isLoading"></simple-center-loader>
@@ -73,11 +73,19 @@
                   </div>
                 </div>
                 <div class="col-4 mb-0 d-flex align-items-center justify-flex-start">
-                  <i
+<!--                  <i-->
+<!--                    *ngFor="let diamond of counter(row.HighestDiamondLevel)"-->
+<!--                    class="icon-diamond fs-20px d-block"-->
+<!--                    style="margin-right: -7px"-->
+<!--                  ></i>-->
+                  <i-feather
                     *ngFor="let diamond of counter(row.HighestDiamondLevel)"
-                    class="icon-diamond fs-20px d-block"
-                    style="margin-right: -7px"
-                  ></i>
+                    name="diamond" class="feather-medium fc-default"
+                  ></i-feather>
+                  <i-feather
+                    *ngFor="let diamond of counter(maxGivableDiamonds - row.HighestDiamondLevel)"
+                    name="diamond" class="feather-medium fc-muted"
+                  ></i-feather>
                 </div>
                 <div class="col-3 mb-0 d-flex align-items-center justify-content-center">
                   {{ row.TotalDiamonds }}
@@ -113,6 +121,7 @@
                     class="icon-diamond fs-20px d-block"
                     style="margin-right: -7px"
                   ></i>
+                  <i-feather name="diamond" class="feather-medium fc-default"></i-feather>
                 </div>
                 <div class="col-3 mb-0 d-flex align-items-center justify-content-center">
                   {{ totalAnonDiamonds }}
