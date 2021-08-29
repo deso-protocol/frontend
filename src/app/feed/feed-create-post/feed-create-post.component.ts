@@ -1,11 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import {BackendApiService, BackendRoutes, PostEntryResponse} from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { environment } from "../../../environments/environment";
+import * as tus from "tus-js-client";
 
 @Component({
   selector: "feed-create-post",
@@ -176,7 +177,7 @@ export class FeedCreatePostComponent implements OnInit {
         // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
         false /*IsHidden*/,
         this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-        this.inTutorial,
+        this.inTutorial
       )
       .subscribe(
         (response) => {
@@ -234,8 +235,50 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   _handleFileInput(file: File) {
-    if (!file.type || !file.type.startsWith("image/")) {
-      this.globalVars._alertError("File selected does not have an image file type.");
+    if (!file.type || (!file.type.startsWith("image/") && !file.type.startsWith("video/"))) {
+      this.globalVars._alertError("File selected does not have an image or video file type.");
+      return;
+    }
+    if (file.type.startsWith("video/")) {
+      let upload: tus.Upload;
+      const options = {
+        endpoint: this.backendApi._makeRequestURL(this.globalVars.localNode, BackendRoutes.RoutePathUploadVideo),
+        chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
+        // resume: true,
+        // metadata: {
+        //   filename: "test.mp4",
+        //   filetype: "video/mp4",
+        //   defaulttimestamppct: 0.5,
+        //   watermark: "$WATERMARKUID"
+        // },
+        uploadSize: file.size,
+        onError: function (error) {
+          throw error;
+        },
+        onProgress: function (bytesUploaded, bytesTotal) {
+          const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
+          console.log(bytesUploaded, bytesTotal, percentage + "%");
+        },
+        onSuccess: function () {
+          console.log("Upload finished");
+          console.log(upload);
+          console.log((upload.file as File).name);
+        },
+        onAfterResponse: function (req, res) {
+          return new Promise((resolve) => {
+            console.log(res);
+            // debugger;
+            // var mediaIdHeader = res.getHeader("stream-media-id");
+            // if (mediaIdHeader) {
+            //   mediaId = mediaIdHeader;
+            // }
+            // resolve()
+          });
+        },
+      };
+
+      upload = new tus.Upload(file, options);
+      upload.start();
       return;
     }
     if (file.size > 15 * (1024 * 1024)) {

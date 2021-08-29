@@ -97,7 +97,7 @@
   ></i>
   <ng-container *ngIf="!isComment">
     <i class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px" (click)="showImageLink = !showImageLink"></i>
-    <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
+    <input #imageInput class="d-none" type="file" accept="image/*,video/*" (change)="_handleFilesInput($event.target.files)" />
     <i
       class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
       (click)="imageInput.click()"

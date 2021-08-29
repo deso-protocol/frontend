@@ -56,6 +56,7 @@ export class BackendRoutes {
   static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
   static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
   static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
+  static RoutePathUploadVideo = "/api/v0/upload-video";
 
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
@@ -1959,6 +1960,13 @@ export class BackendApiService {
   CompleteTutorial(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathCompleteTutorial, PublicKeyBase58Check, {
       PublicKeyBase58Check,
+    });
+  }
+
+  UploadVideo(endpoint: string, PublicKeyBase58Check: string, FileSize: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathUploadVideo, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
+      FileSize,
     });
   }
 
