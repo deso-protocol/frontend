@@ -109,6 +109,12 @@
         [buttonLabel]="'Messages'"
       ></left-bar-button>
 
+      <left-bar-button
+        *ngIf="globalVars.loggedInUser.HasActiveReferralLink" 
+        [link]="'/' + globalVars.RouteNames.REFERRALS" 
+        [buttonLabel]="'Referrals'"
+      ></left-bar-button>
+
       <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
       <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">

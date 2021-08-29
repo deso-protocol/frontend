@@ -287,6 +287,21 @@ export class GlobalVarsService {
 
     this.loggedInUser = user;
 
+    // Fetch referralLinks for the userList before completing the load.
+    this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check,
+    ).subscribe(
+      (res: any) => {
+        this.loggedInUser.HasActiveReferralLink = false;
+        this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses; 
+        for(let ii=0; ii < this.loggedInUser.ReferralInfoResponses.length; ii++) {
+          if(this.loggedInUser.ReferralInfoResponses[ii].IsActive) {
+            this.loggedInUser.HasActiveReferralLink = true;
+          }
+        }
+      },
+      (err: any) => { console.log(err); }
+    )
+
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
     if (user.JumioFinishedTime > 0 && !user.JumioReturned) {
       this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
@@ -311,6 +326,10 @@ export class GlobalVarsService {
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
+  }
+
+  getLinkForReferralHash(referralHash: string) {
+    return "https://bitclout.com?r=" + referralHash
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {

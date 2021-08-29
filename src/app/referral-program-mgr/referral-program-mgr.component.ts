@@ -229,17 +229,13 @@ export class ReferralProgramMgrComponent implements OnInit {
 
   _copyLink(linkNum: number) {
     this.globalVars._copyText(
-      this._getLinkForReferralHash(this.existingLinks[linkNum].Info.ReferralHashBase58)
+      this.globalVars.getLinkForReferralHash(this.existingLinks[linkNum].Info.ReferralHashBase58)
     );
 
     this.linkCopied[linkNum] = true;
     setTimeout(() => {
       this.linkCopied[linkNum] = false;
     }, 500);
-  }
-
-  _getLinkForReferralHash(referralHash: string) {
-    return "https://bitclout.com/r/" + referralHash
   }
 
 }

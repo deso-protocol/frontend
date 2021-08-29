@@ -108,6 +108,9 @@ export class BackendRoutes {
 	static RoutePathAdminDownloadReferralCSV = "/api/v0/admin/download-referral-csv"
 	static RoutePathAdminUploadReferralCSV = "/api/v0/admin/upload-referral-csv"
 
+	// Referral program non-admin route.
+	static RoutePathGetReferralInfoForUser = "/api/v0/get-referral-info-for-user"
+
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
   // Wyre routes.
@@ -172,6 +175,9 @@ export class User {
   JumioVerified: boolean;
   JumioReturned: boolean;
   JumioFinishedTime: number;
+
+  ReferralInfoResponses: any;
+  HasActiveReferralLink: boolean;
 
   BlockedPubKeys: { [key: string]: object };
 
@@ -1917,6 +1923,15 @@ export class BackendApiService {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUploadReferralCSV, AdminPublicKey, {
       AdminPublicKey,
       CSVRows,
+    });
+  }
+
+  GetReferralInfoForUser(
+    endpoint: string, 
+    PublicKeyBase58Check: string, 
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetReferralInfoForUser, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
     });
   }
 
