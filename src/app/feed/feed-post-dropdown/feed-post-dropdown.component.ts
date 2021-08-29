@@ -196,7 +196,6 @@ export class FeedPostDropdownComponent {
 
     try {
       navigator.share({url: this._getPostUrl() });
-      console.log("Data was shared successfully");
     } catch (err) {
       console.error("Share failed:", err.message);
     }
