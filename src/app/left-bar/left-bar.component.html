@@ -110,7 +110,7 @@
       ></left-bar-button>
 
       <left-bar-button
-        *ngIf="globalVars.loggedInUser.HasActiveReferralLink" 
+        *ngIf="globalVars.loggedInUser.ReferralInfoResponses.length > 0" 
         [link]="'/' + globalVars.RouteNames.REFERRALS" 
         [buttonLabel]="'Referrals'"
       ></left-bar-button>

@@ -177,7 +177,6 @@ export class User {
   JumioFinishedTime: number;
 
   ReferralInfoResponses: any;
-  HasActiveReferralLink: boolean;
 
   BlockedPubKeys: { [key: string]: object };
 

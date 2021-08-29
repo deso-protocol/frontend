@@ -17,10 +17,11 @@
 
   <div *ngIf="globalVars.loggedInUser" class="p-15px">
     <div *ngFor="let referral of globalVars.loggedInUser?.ReferralInfoResponses">
-        <div *ngIf="referral.IsActive" class="p-10px fs-15px br-5px border border-color-grey">
+        <div class="p-10px fs-15px br-5px border border-color-grey">
           <a class="fs-18px" [href]="globalVars.getLinkForReferralHash(referral.Info.ReferralHashBase58)">
             {{ globalVars.getLinkForReferralHash(referral.Info.ReferralHashBase58) }}
           </a>
+          <div *ngIf="!referral.IsActive" class="fc-red">This link is no longer active.</div>
 
           <div class="font-weight-bold mt-15px">
             You get ${{ referral.Info.ReferrerAmountUSDCents / 100 }} USD per referral

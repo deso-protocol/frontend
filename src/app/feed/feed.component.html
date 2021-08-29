@@ -50,7 +50,7 @@
 
   <!-- Referral links alert -->
   <div
-    *ngIf="globalVars.loggedInUser.HasActiveReferralLink"
+    *ngIf="globalVars.loggedInUser.ReferralInfoResponses.length > 0"
     class="d-flex border-bottom border-color-grey background-color-lemon-chiffon py-5px px-15px fs-12px"
   >
     <div>You have a referral link!&nbsp;&nbsp;&nbsp;</div>
