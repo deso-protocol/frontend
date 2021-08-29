@@ -8,6 +8,7 @@ import {
   Bell,
   Check,
   CheckCircle,
+  ChevronDown,
   ChevronRight,
   Clock,
   Code,
@@ -40,7 +41,7 @@ import {
   UserX,
   X,
 } from "angular-feather/icons";
-import { BellNotification, Bitclout, BitcloutCircle, Coin, Diamond, Gem, Lock, MultipleNFTs, Quote, SingleNft } from "src/assets/img/feather";
+import { BellNotification, Bitclout, BitcloutCircle, Coin, Diamond, Gem, Lock, MultipleNfts, Quote, SingleNft } from "src/assets/img/feather";
 
 const icons = {
   AlertTriangle,
@@ -52,6 +53,7 @@ const icons = {
   BitcloutCircle,
   Check,
   CheckCircle,
+  ChevronDown,
   ChevronRight,
   Clock,
   Code,
@@ -75,7 +77,7 @@ const icons = {
   Lock,
   Mail,
   MessageSquare,
-  MultipleNFTs,
+  MultipleNfts,
   Percent,
   Quote,
   RefreshCw,

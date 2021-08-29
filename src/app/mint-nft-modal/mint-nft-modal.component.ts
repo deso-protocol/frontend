@@ -2,6 +2,8 @@ import { Component, Input } from "@angular/core";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
+import { isNumber } from "lodash";
+import {Location} from "@angular/common";
 
 @Component({
   selector: "app-mint-nft-modal",
@@ -19,13 +21,16 @@ export class MintNftModalComponent {
   copiesRadioValue = this.IS_SINGLE_COPY;
   numCopies: number = 1;
   putOnSale: boolean = true;
-  minBidAmountUSD: string = "0";
+  minBidInput: number = 0;
+  minBidAmountUSD: number = 0;
   minBidAmountCLOUT: number = 0;
   creatorRoyaltyPercent: number = 5;
   coinRoyaltyPercent: number = 10;
   includeUnlockable: boolean = false;
   createNFTFeeNanos: number;
   maxCopiesPerNFT: number;
+  // Whether the user is using USD or CLOUT to define the minimum bid
+  minBidCurrency: string = "USD";
 
   // Errors.
   unreasonableRoyaltiesSet: boolean = false;
@@ -34,7 +39,8 @@ export class MintNftModalComponent {
   constructor(
     private _globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     this.globalVars = _globalVars;
     this.backendApi
@@ -60,15 +66,33 @@ export class MintNftModalComponent {
   }
 
   hasUnreasonableMinBidAmount() {
-    return parseFloat(this.minBidAmountUSD) < 0 || this.minBidAmountCLOUT < 0;
+    return this.minBidAmountUSD < 0 || this.minBidAmountCLOUT < 0;
   }
 
   updateMinBidAmountUSD(cloutAmount) {
-    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2);
+    this.minBidAmountUSD = parseFloat(this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2));
+  }
+
+  minBidAmountUSDFormatted() {
+    return isNumber(this.minBidAmountUSD) ? `~${this.globalVars.formatUSD(this.minBidAmountUSD, 0)}` : "";
   }
 
   updateMinBidAmountCLOUT(usdAmount) {
     this.minBidAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  }
+
+  updateMinBidAmount(amount: number) {
+    if (this.minBidCurrency === "CLOUT") {
+      this.minBidAmountCLOUT = amount;
+      this.updateMinBidAmountUSD(amount);
+    } else {
+      this.minBidAmountUSD = amount;
+      this.updateMinBidAmountCLOUT(amount);
+    }
+  }
+
+  priceSectionTitle() {
+    return this.copiesRadioValue === this.IS_SINGLE_COPY ? "Price" : "Number of copies and price";
   }
 
   mintNft() {

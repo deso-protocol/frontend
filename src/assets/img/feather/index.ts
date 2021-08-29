@@ -5,6 +5,6 @@ export { Coin } from "./coin";
 export { Diamond } from "./diamond";
 export { Gem } from "./gem";
 export { Lock } from "./lock";
-export { MultipleNFTs } from "./MultipleNFTs";
+export { MultipleNfts } from "./MultipleNFTs";
 export { Quote } from "./quote";
 export { SingleNft } from "./SingleNFT";

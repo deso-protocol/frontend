@@ -246,6 +246,7 @@ $green-font-color: #19B028;
 .fs-22px { font-size: 22px; }
 .fs-20px { font-size: 20px; }
 .fs-18px { font-size: 18px; }
+.fs-17px { font-size: 17px; }
 .fs-16px { font-size: 16px; }
 .fs-15px { font-size: 15px; }
 .fs-15px-important { font-size: 15px !important; }
@@ -318,6 +319,14 @@ $green-font-color: #19B028;
 .py-20px { padding-top: 20px; padding-bottom: 20px;}
 .px-20px { padding-left: 20px; padding-right: 20px;}
 
+.p-16px { padding: 16px; }
+.pt-16px { padding-top: 16px; }
+.pr-16px { padding-right: 16px; }
+.pb-16px { padding-bottom: 16px; }
+.pl-16px { padding-left: 16px; }
+.py-16px { padding-top: 16px; padding-bottom: 16px;}
+.px-16px { padding-left: 16px; padding-right: 16px;}
+
 .p-15px { padding: 15px; }
 .pt-15px { padding-top: 15px; }
 .pr-15px { padding-right: 15px; }
@@ -380,6 +389,12 @@ $green-font-color: #19B028;
 .mb-10px { margin-bottom: 10px; }
 .ml-10px { margin-left: 10px; }
 
+.m-12px { margin: 12px; }
+.mt-12px { margin-top: 12px; }
+.mr-12px { margin-right: 12px; }
+.mb-12px { margin-bottom: 12px; }
+.ml-12px { margin-left: 12px; }
+
 .m-15px { margin: 15px; }
 .mt-15px { margin-top: 15px; }
 .mr-15px { margin-right: 15px; }
@@ -387,6 +402,14 @@ $green-font-color: #19B028;
 .ml-15px { margin-left: 15px; }
 .mx-15px { margin-left: 15px; margin-right: 15px; }
 .my-15px { margin-top: 15px; margin-bottom: 15px; }
+
+.m-16px { margin: 16px; }
+.mt-16px { margin-top: 16px; }
+.mr-16px { margin-right: 16px; }
+.mb-16px { margin-bottom: 16px; }
+.ml-16px { margin-left: 16px; }
+.mx-16px { margin-left: 16px; margin-right: 16px; }
+.my-16px { margin-top: 16px; margin-bottom: 16px; }
 
 .m-20px { margin: 20px; }
 .mt-20px { margin-top: 20px; }
@@ -449,6 +472,11 @@ $green-font-color: #19B028;
 .feather-xlarge {
   height: 34px !important;
   width: 34px !important;
+}
+
+.feather-xxlarge {
+  height: 90px !important;
+  width: 90px !important;
 }
 
 .global__container {
@@ -1538,6 +1566,7 @@ tab-selector {
 }
 
 .desktop-top-bar {
+  border-bottom: 1px solid var(--border);
   z-index: 1000;
   position: fixed;
   height: 64px;
@@ -3436,14 +3465,79 @@ app-mint-nft-modal {
     font-size: 20px;
     margin-bottom: 8px;
   }
+  .mint-nft__sub-title {
+    color: var(--postfadedtext);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 12px;
+    margin: 16px 0px 8px 0px;
+  }
   .mint-nft__type-selector {
     width: 40%;
     height: 186px;
     border: 1px solid var(--border);
     border-radius: 16px;
+    transition: border .5s;
     &.nft-type-selected {
       border-color: var(--highlight);
+      .mint-nft__type-selector-title {
+        color: var(--highlight);
+      }
     }
+  }
+  .mint-nft__type-selector-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--postsectext);
+    margin-top: 12px;
+    text-align: center;
+    transition: color .5s;
+  }
+  .mint-nft__dropdown-btn {
+    border: 1px solid var(--border);
+    border-radius: 16px 0px 0px 16px;
+    background: var(--tilesecbg);
+    width: 96px;
+    height: 48px;
+    padding: 12px;
+    color: var(--postsectext);
+    font-size: 15px;
+  }
+  .mint-nft__input {
+    padding: 12px;
+    height: 48px;
+    background: var(--tilesecbg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    font-size: 15px;
+    color: var(--postfadedtext);
+  }
+  .mint-nft__price-half {
+    width: 50%;
+    margin-left: 8px;
+  }
+  .mint-nft__price-full {
+    width: 100%;
+    margin-left: 0px;
+  }
+  .mint-nft__floating-span {
+    position: absolute;
+    top: 12px;
+    right: 32px;
+  }
+  .mint-nft__sub-text {
+    font-size: 15px;
+    color: var(--postsectext);
+  }
+  .mint-nft__create-btn {
+    width: 137px;
+    height: 48px;
+    border-radius: 16px;
+    background: var(--highlight);
+    color: var(--tilebg);
+    font-size: 17px;
+    margin: 24px 0px 105px 0px;
+    border: none;
   }
 }
 

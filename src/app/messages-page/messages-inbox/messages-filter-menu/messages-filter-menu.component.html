@@ -67,7 +67,7 @@
           aria-controls="dropdown-basic"
         >
           {{ sortAlgorithmToText() }}
-          <span class="caret"></span>
+          <i-feather name="chevron-down" class="feather-small position-absolute" style="right: 12px;"></i-feather>
         </button>
         <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
           <li role="menuitem"><a class="dropdown-item fs-16px" (click)="setSortAlgorithm('time')">Most recent</a></li>
