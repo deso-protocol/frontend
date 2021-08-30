@@ -53,6 +53,7 @@
     "stream-transform": "^1.0.8",
     "sweetalert2": "^10.15.5",
     "tslib": "^2.0.0",
+    "tus-js-client": "^2.3.0",
     "underscore": "^1.9.1",
     "webpack": "^4.41.2",
     "zone.js": "~0.10.2"
