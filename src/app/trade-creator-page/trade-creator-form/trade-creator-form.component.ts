@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angu
 import { Location } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
-import {BackendApiService, ProfileEntryResponse} from "../../backend-api.service";
+import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { dynamicMaxValidator } from "../../../lib/validators/dynamic-max-validator";

@@ -54,6 +54,8 @@ export class BackendRoutes {
   static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
   static RoutePathVerifyEmail = "/api/v0/verify-email";
   static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
+  static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
+  static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
 
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
@@ -68,6 +70,7 @@ export class BackendRoutes {
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
+  static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -100,6 +103,9 @@ export class BackendRoutes {
   static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
   static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
   static RoutePathAdminUpdateJumioBitClout = "/api/v0/admin/update-jumio-bitclout";
+  static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
+  static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
+  static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
 
   // Referral program admin routes.
   static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
@@ -152,6 +158,18 @@ export class ProfileEntryResponse {
   IsVerified?: boolean;
 }
 
+export enum TutorialStatus {
+  EMPTY = "",
+  STARTED = "TutorialStarted",
+  SKIPPED = "TutorialSkipped",
+  CREATE_PROFILE = "TutorialCreateProfileComplete",
+  INVEST_OTHERS_BUY = "InvestInOthersBuyComplete",
+  INVEST_OTHERS_SELL = "InvestInOthersSellComplete",
+  INVEST_SELF = "InvestInYourselfComplete",
+  DIAMOND = "GiveADiamondComplete",
+  COMPLETE = "TutorialComplete",
+}
+
 export class User {
   ProfileEntryResponse: ProfileEntryResponse;
 
@@ -178,10 +196,18 @@ export class User {
 
   ReferralInfoResponses: any;
 
+  IsFeaturedTutorialWellKnownCreator: boolean;
+  IsFeaturedTutorialUpAndComingCreator: boolean;
+
   BlockedPubKeys: { [key: string]: object };
 
   IsAdmin?: boolean;
   IsSuperAdmin?: boolean;
+
+  TutorialStatus: TutorialStatus;
+  CreatorPurchasedInTutorialUsername?: string;
+  CreatorCoinsPurchasedInTutorial: number;
+  MustCompleteTutorial: boolean;
 }
 
 export class PostEntryResponse {
@@ -197,8 +223,6 @@ export class PostEntryResponse {
   TimestampNanos: number;
   IsHidden: boolean;
   ConfirmationBlockHeight: number;
-  StakeEntry: any;
-  StakeEntryStats: any;
   // PostEntryResponse of the post that this post reclouts.
   RecloutedPostEntryResponse: PostEntryResponse;
   // The profile associated with this post.
@@ -955,7 +979,8 @@ export class BackendApiService {
     PostExtraData: any,
     Sub: string,
     IsHidden: boolean,
-    MinFeeRateNanosPerKB: number
+    MinFeeRateNanosPerKB: number,
+    InTutorial: boolean = false
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathSubmitPost, {
       UpdaterPublicKeyBase58Check,
@@ -968,6 +993,7 @@ export class BackendApiService {
       Sub,
       IsHidden,
       MinFeeRateNanosPerKB,
+      InTutorial,
     });
 
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
@@ -1291,7 +1317,8 @@ export class BackendApiService {
     ReceiverPublicKeyBase58Check: string,
     DiamondPostHashHex: string,
     DiamondLevel: number,
-    MinFeeRateNanosPerKB: number
+    MinFeeRateNanosPerKB: number,
+    InTutorial: boolean = false
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathSendDiamonds, {
       SenderPublicKeyBase58Check,
@@ -1299,6 +1326,7 @@ export class BackendApiService {
       DiamondPostHashHex,
       DiamondLevel,
       MinFeeRateNanosPerKB,
+      InTutorial,
     });
 
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
@@ -1403,7 +1431,8 @@ export class BackendApiService {
     MinCreatorCoinExpectedNanos: number,
 
     MinFeeRateNanosPerKB: number,
-    Broadcast: boolean
+    Broadcast: boolean,
+    InTutorial: boolean = false
   ): Observable<any> {
     BitCloutToSellNanos = Math.floor(BitCloutToSellNanos);
     CreatorCoinToSellNanos = Math.floor(CreatorCoinToSellNanos);
@@ -1421,6 +1450,8 @@ export class BackendApiService {
       MinBitCloutExpectedNanos,
       MinCreatorCoinExpectedNanos,
       MinFeeRateNanosPerKB,
+      // If we are not broadcasting the transaction, InTutorial should always be false so we don't update the TutorialStatus of the user.
+      InTutorial: Broadcast ? InTutorial : false,
     });
 
     if (Broadcast) {
@@ -1832,12 +1863,12 @@ export class BackendApiService {
 
   AdminResetJumioAttemptsForPublicKey(
     endpoint: string,
-    AdminPublicKeyBase58Check: string,
+    AdminPublicKey: string,
     PublicKeyBase58Check: string,
     Username: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetJumioForPublicKey, AdminPublicKeyBase58Check, {
-      AdminPublicKey: AdminPublicKeyBase58Check,
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetJumioForPublicKey, AdminPublicKey, {
+      AdminPublicKey,
       PublicKeyBase58Check,
       Username,
     });
@@ -1901,7 +1932,6 @@ export class BackendApiService {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetAllReferralInfoForUser, AdminPublicKey, {
       UserPublicKeyBase58Check,
       Username,
-      AdminPublicKey,
     });
   }
 
@@ -1931,6 +1961,43 @@ export class BackendApiService {
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathGetReferralInfoForUser, PublicKeyBase58Check, {
       PublicKeyBase58Check,
+    });
+  }
+
+  AdminResetTutorialStatus(endpoint: string, AdminPublicKey: string, PublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetTutorialStatus, AdminPublicKey, {
+      PublicKeyBase58Check,
+      AdminPublicKey,
+    });
+  }
+
+  AdminUpdateTutorialCreators(
+    endpoint: string,
+    AdminPublicKey: string,
+    PublicKeyBase58Check: string,
+    IsRemoval: boolean,
+    IsWellKnown: boolean
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateTutorialCreators, AdminPublicKey, {
+      PublicKeyBase58Check,
+      IsRemoval,
+      IsWellKnown,
+      AdminPublicKey,
+    });
+  }
+
+  GetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetTutorialCreators, {
+      ResponseLimit,
+      PublicKeyBase58Check,
+    });
+  }
+
+  AdminGetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetTutorialCreators, PublicKeyBase58Check, {
+      ResponseLimit,
+      PublicKeyBase58Check,
+      AdminPublicKey: PublicKeyBase58Check,
     });
   }
 
@@ -1973,6 +2040,20 @@ export class BackendApiService {
       SourceAmount,
       Country,
       SourceCurrency,
+    });
+  }
+
+  // Tutorial Endpoints
+  StartOrSkipTutorial(endpoint: string, PublicKeyBase58Check: string, IsSkip: boolean): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathStartOrSkipTutorial, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
+      IsSkip,
+    });
+  }
+
+  CompleteTutorial(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathCompleteTutorial, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
     });
   }
 

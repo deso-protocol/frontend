@@ -21,7 +21,6 @@ import { ViewportScroller } from "@angular/common";
 import { filter } from "rxjs/operators";
 import { LandingPageComponent } from "./landing-page/landing-page.component";
 import { GetStarterBitcloutPageComponent } from "./get-starter-bitclout-page/get-starter-bitclout-page.component";
-import { WalletComponent } from "./wallet/wallet.component";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
@@ -29,6 +28,14 @@ import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { ReferralsComponent } from "./referrals/referrals.component";
+import { CreateProfileTutorialPageComponent } from "./tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component";
+import { BuyCreatorCoinsTutorialPageComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component";
+import { BuyCreatorCoinsConfirmTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
+import { WalletPageComponent } from "./wallet/wallet-page/wallet-page.component";
+import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wallet-tutorial-page.component";
+import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
+import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
+import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -70,6 +77,10 @@ class RouteNames {
   public static REFERRALS = "referrals";
   public static NFT = "nft";
   public static VERIFY_EMAIL = "verify-email";
+
+  public static TUTORIAL = "tutorial";
+  public static CREATE_PROFILE = "create-profile";
+  public static INVEST = "invest";
 }
 
 const routes: Routes = [
@@ -83,7 +94,7 @@ const routes: Routes = [
   { path: RouteNames.INBOX_PREFIX, component: MessagesPageComponent, pathMatch: "full" },
   { path: RouteNames.REFERRALS, component: ReferralsComponent, pathMatch: "full" },
   { path: RouteNames.SIGN_UP, component: SignUpComponent, pathMatch: "full" },
-  { path: RouteNames.WALLET, component: WalletComponent, pathMatch: "full" },
+  { path: RouteNames.WALLET, component: WalletPageComponent, pathMatch: "full" },
   { path: RouteNames.UPDATE_PROFILE, component: UpdateProfilePageComponent, pathMatch: "full" },
   { path: RouteNames.NOTIFICATIONS, component: NotificationsPageComponent, pathMatch: "full" },
   { path: RouteNames.NOT_FOUND, component: NotFoundPageComponent, pathMatch: "full" },
@@ -115,6 +126,42 @@ const routes: Routes = [
   { path: RouteNames.GET_STARTER_BITCLOUT, component: GetStarterBitcloutPageComponent, pathMatch: "full" },
   { path: RouteNames.TRENDS, component: TrendsPageComponent, pathMatch: "full" },
   { path: RouteNames.VERIFY_EMAIL + "/:publicKey/:emailHash", component: VerifyEmailComponent, pathMatch: "full" },
+  // TUTORIAL ROUTES
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.CREATE_PROFILE,
+    component: CreateProfileTutorialPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.INVEST + "/" + RouteNames.BUY_CREATOR,
+    component: BuyCreatorCoinsTutorialPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.INVEST + "/" + RouteNames.SELL_CREATOR + "/:username",
+    component: SellCreatorCoinsTutorialComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.INVEST + "/" + RouteNames.BUY_CREATOR + "/:username",
+    component: BuyCreatorCoinsConfirmTutorialComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.WALLET + "/:username",
+    component: WalletTutorialPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.DIAMONDS,
+    component: DiamondTutorialPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST,
+    component: CreatePostTutorialPageComponent,
+    pathMatch: "full",
+  },
   // This NotFound route must be the last one as it catches all paths that were not matched above.
   { path: "**", component: NotFoundPageComponent, pathMatch: "full" },
 ];
