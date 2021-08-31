@@ -203,6 +203,8 @@ export class GlobalVarsService {
 
   jumioBitCloutNanos = 0;
 
+  referralUSDCents: number = 0;
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -303,11 +305,14 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     // Fetch referralLinks for the userList before completing the load.
-    this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check,
-    ).subscribe(
-      (res: any) => { this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses; },
-      (err: any) => { console.log(err); }
-    )
+    this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe(
+      (res: any) => {
+        this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
+      },
+      (err: any) => {
+        console.log(err);
+      }
+    );
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
     if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
@@ -371,7 +376,7 @@ export class GlobalVarsService {
   }
 
   getLinkForReferralHash(referralHash: string) {
-    return "https://bitclout.com?r=" + referralHash
+    return "https://bitclout.com?r=" + referralHash;
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {
@@ -803,7 +808,10 @@ export class GlobalVarsService {
   launchGetFreeCLOUTFlow() {
     this.logEvent("identity : jumio : launch");
     this.identityService
-      .launch(`/get-free-clout?public_key=${this.loggedInUser?.PublicKeyBase58Check}`)
+      .launch("/get-free-clout", {
+        public_key: this.loggedInUser?.PublicKeyBase58Check,
+        referralCode: localStorage.getItem("referralCode"),
+      })
       .subscribe(() => {
         this.logEvent("identity : jumio : success");
         this.updateEverything();
@@ -812,7 +820,7 @@ export class GlobalVarsService {
 
   launchIdentityFlow(event: string): void {
     this.logEvent(`account : ${event} : launch`);
-    this.identityService.launch("/log-in").subscribe((res) => {
+    this.identityService.launch("/log-in", { referralCode: localStorage.getItem("referralCode") }).subscribe((res) => {
       this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().add(() => {
@@ -845,6 +853,14 @@ export class GlobalVarsService {
     this._setUpLoggedInUserObservable();
     this._setUpFollowChangeObservable();
 
+    route.queryParams.subscribe((queryParams) => {
+      if (queryParams.r) {
+        localStorage.setItem("referralCode", queryParams.r);
+        this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
+      }
+    });
+
+    this.getReferralUSDCents();
     this.userList = userList;
     this.satoshisPerBitCloutExchangeRate = 0;
     this.nanosPerUSDExchangeRate = GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE;
@@ -1093,6 +1109,7 @@ export class GlobalVarsService {
               if (user) {
                 this.setLoggedInUser(user);
               }
+              localStorage.setItem("referralCode", undefined);
               this.celebrate();
               if (user.TutorialStatus === TutorialStatus.EMPTY) {
                 this.startTutorialAlert();
@@ -1111,5 +1128,28 @@ export class GlobalVarsService {
         )
         .add(() => attempts++);
     }, timeoutMillis);
+  }
+
+  getFreeCloutMessage(): string {
+    return this.referralUSDCents
+      ? this.formatUSD(this.referralUSDCents / 100, 0)
+      : this.nanosToUSD(this.jumioBitCloutNanos, 0);
+  }
+
+  getReferralUSDCents(): void {
+    const referralHash = localStorage.getItem("referralCode");
+    if (referralHash) {
+      this.backendApi
+        .GetReferralInfoForReferralHash(environment.jumioEndpointHostname, referralHash)
+        .subscribe((res) => {
+          const referralInfoResponse = res.ReferralInfoResponse;
+          if (
+            referralInfoResponse.IsActive &&
+            referralInfoResponse.Info.TotalReferrals < referralInfoResponse.Info.MaxReferrals
+          ) {
+            this.referralUSDCents = referralInfoResponse.Info.RefereeAmountUSDCents;
+          }
+        });
+    }
   }
 }
