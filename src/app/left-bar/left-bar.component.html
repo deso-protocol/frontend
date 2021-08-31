@@ -113,7 +113,7 @@
         <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
         <left-bar-button
-          *ngIf="globalVars.loggedInUser.ReferralInfoResponses.length > 0" 
+          *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0" 
           [link]="'/' + globalVars.RouteNames.REFERRALS" 
           [buttonLabel]="'Referrals'"
         ></left-bar-button>
