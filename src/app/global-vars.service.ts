@@ -1142,12 +1142,12 @@ export class GlobalVarsService {
       this.backendApi
         .GetReferralInfoForReferralHash(environment.jumioEndpointHostname, referralHash)
         .subscribe((res) => {
-          const referralInfoResponse = res.ReferralInfoResponse;
+          const referralInfo = res.ReferralInfoResponse.Info;
           if (
-            referralInfoResponse.IsActive &&
-            referralInfoResponse.Info.TotalReferrals < referralInfoResponse.Info.MaxReferrals
+            res.IsActive &&
+            (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
           ) {
-            this.referralUSDCents = referralInfoResponse.Info.RefereeAmountUSDCents;
+            this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
           }
         });
     }
