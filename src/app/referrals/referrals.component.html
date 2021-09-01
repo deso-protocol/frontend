@@ -28,7 +28,7 @@
           </div>
           <div>
             Total:
-            {{ referral.Info.TotalReferrerBitCloutNanos }} CLOUT
+            {{ globalVars.nanosToBitClout(referral.Info.TotalReferrerBitCloutNanos) }} CLOUT
             ({{ globalVars.nanosToUSD(referral.Info.TotalReferrerBitCloutNanos) }})
           </div>
 
@@ -37,7 +37,7 @@
           </div>
           <div>
             Total:
-            {{ referral.Info.TotalRefereeBitCloutNanos }} CLOUT
+            {{ globalVars.nanosToBitClout(referral.Info.TotalRefereeBitCloutNanos) }} CLOUT
             ({{ globalVars.nanosToUSD(referral.Info.TotalRefereeBitCloutNanos) }})
           </div>
         </div>

@@ -216,15 +216,23 @@
             </div>
           </div>
           
-          <button (click)="_updateExistingLink(ii)"
-                  *ngIf="!updatingLink[ii]" 
-                  class="btn btn-warning btn-sm fs-15px mt-5px">
-            Update Link
-          </button>
-          <button *ngIf="updatingLink[ii]" 
-                  class="btn btn-warning btn-sm fs-15px mt-5px" disabled>
-            Updating...
-          </button>
+          <div class="d-flex justify-content-between align-items-center mt-10px">
+            <button (click)="_updateExistingLink(ii)"
+                    *ngIf="!updatingLink[ii]" 
+                    class="btn btn-warning btn-sm fs-15px">
+              Update Link
+            </button>
+            <button *ngIf="updatingLink[ii]" 
+                    class="btn btn-warning btn-sm fs-15px" disabled>
+              Updating...
+            </button>
+            <div class="pl-15px">
+              <span class="font-weight-bold">Stats:</span>
+              {{linkInfo.Info.TotalReferrals}} referral{{linkInfo.Info.TotalReferrals == 1 ? '' : 's'}}, 
+              {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerBitCloutNanos, 2)}} paid to referrals, 
+              {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerBitCloutNanos, 2)}} paid to referee
+            </div>
+          </div>
         </div>
       </div>
     </div>

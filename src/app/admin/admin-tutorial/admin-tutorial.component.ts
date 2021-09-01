@@ -93,7 +93,9 @@ export class AdminTutorialComponent implements OnInit {
         this.publicKeyToReset
       )
       .subscribe(
-        (res) => {},
+        (res) => {
+          this.globalVars._alertSuccess("Successfully reset tutorial status");
+        },
         (err) => {
           this.globalVars._alertError(err.error.error);
         }
