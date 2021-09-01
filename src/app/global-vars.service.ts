@@ -1144,7 +1144,7 @@ export class GlobalVarsService {
         .subscribe((res) => {
           const referralInfo = res.ReferralInfoResponse.Info;
           if (
-            res.IsActive &&
+            res.ReferralInfoResponse.IsActive &&
             (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
           ) {
             this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
