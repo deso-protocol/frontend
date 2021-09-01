@@ -64,6 +64,10 @@ export class LeftBarComponent {
     if (this.inTutorial) {
       return;
     }
+    
+    // close sidebar in case of mobile
+    this.globalVars.isLeftBarMobileOpen = false;
+
     // If the user hes less than 1/100th of a clout they need more clout for the tutorial.
     if (this.globalVars.loggedInUser?.BalanceNanos < 1e7) {
       SwalHelper.fire({
