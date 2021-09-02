@@ -13,13 +13,14 @@
         <div class="global__center__inner">
           <div app-theme class="nft-modal-container">
             <div class="mint-nft__section" style="padding: 16px 12px">
-              <i-feather
-                (click)="location.back()"
-                name="arrow-left"
-                class="feather-medium mr-12px cursor-pointer position-relative"
-                style="top: -2px"
-              ></i-feather>
-              <span class="font-weight-bold fs-17px">Back to feed</span>
+              <div (click)="location.back()" class="cursor-pointer">
+                <i-feather
+                  name="arrow-left"
+                  class="feather-medium mr-12px position-relative"
+                  style="top: -2px"
+                ></i-feather>
+                <span class="font-weight-bold fs-17px">Back to feed</span>
+              </div>
             </div>
             <div class="mint-nft__section">
               <div class="mint-nft__title">Create an NFT</div>

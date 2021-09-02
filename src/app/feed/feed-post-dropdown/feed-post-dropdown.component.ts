@@ -6,11 +6,13 @@ import { PlatformLocation } from "@angular/common";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import RouteNamesService from "src/app/route-names.service";
 
 // RPH Modals
 import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.component";
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
 
+const RouteNames = RouteNamesService;
 @Component({
   selector: "feed-post-dropdown",
   templateUrl: "./feed-post-dropdown.component.html",
@@ -200,12 +202,9 @@ export class FeedPostDropdownComponent {
     return origin + path;
   }
 
-  openMintNftModal(event, component): void {
+  openMintNftPage(event, component): void {
     event.stopPropagation();
-    this.modalService.show(MintNftModalComponent, {
-      class: "modal-dialog-centered modal-lg",
-      initialState: { post: this.post },
-    });
+    this.router.navigate(["/" + RouteNames.MINT_NFT + "/" + this.postContent.PostHashHex], { queryParamsHandling: "merge" });
   }
 
   openCreateNFTAuctionModal(event): void {

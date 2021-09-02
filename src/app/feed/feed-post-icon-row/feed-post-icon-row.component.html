@@ -240,6 +240,6 @@
         cdkDrag
       ></div>
     </div>
-    <span *ngIf="!hideNumbers">{{ postContent.DiamondCount }}</span>
+    <span *ngIf="!hideNumbers" [ngClass]="{ 'fc-blue': postContent.PostEntryReaderState?.DiamondLevelBestowed > 0 }">{{ postContent.DiamondCount }}</span>
   </div>
 </div>

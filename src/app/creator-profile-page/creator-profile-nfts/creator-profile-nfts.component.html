@@ -1,23 +1,68 @@
 <!-- Posts -->
 <simple-center-loader [height]="200" *ngIf="isLoading && datasource.adapter.isLoading"></simple-center-loader>
 <div
-  class="fs-15px text-grey5 font-weight-bold d-flex flex-column px-15px pt-15px"
+  class="fs-15px text-grey5 font-weight-bold d-flex flex-column pt-15px"
   *ngIf="!isLoading"
 >
-  <div>
-    <select
-      class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer"
-      (ngModelChange)="onActiveTabChange($event)"
-      [ngModel]="activeTab"
+  <div class="creator-profile-nfts__header d-flex align-items-center">
+    <div
+      class="d-flex"
+      dropdown
+      (click)="$event.stopPropagation()"
+      container="body"
+      style="align-items: center"
     >
-      <option
-        *ngFor="let option of tabs"
-        [value]="option"
-        class="fs-15px text-grey5 font-weight-bold"
+      <button class="creator-profile-nfts__dropdown" role="button" dropdownToggle>
+        {{ activeTab }}
+        <i-feather name="chevron-down" class="feather-small"></i-feather>
+      </button>
+      <div class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu" *dropdownMenu>
+        <div>
+          <a
+            class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+            (click)="activeTab = 'For Sale'; onActiveTabChange('For Sale')"
+          >
+            For Sale
+          </a>
+          <a
+            class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+            (click)="onActiveTabChange('My Bids')"
+          >
+            My Bids
+          </a>
+          <a
+            class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+            (click)="activeTab = 'Gallery'; onActiveTabChange('Gallery')"
+          >
+            Gallery
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center">
+      <div
+        class="d-flex"
+        dropdown
+        (click)="$event.stopPropagation()"
+        container="body"
+        style="align-items: center"
       >
-        {{ option }}
-      </option>
-    </select>
+        <button class="creator-profile-nfts__dropdown" role="button" dropdownToggle>
+          Order by {{ orderNFTsBy }}
+          <i-feather name="chevron-down" class="feather-small"></i-feather>
+        </button>
+        <div class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu" *dropdownMenu>
+          <div>
+            <a
+              class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="orderNFTsBy = 'recent'"
+            >
+              For Sale
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <div
@@ -60,30 +105,21 @@
   </div>
 </div>
 <div *ngIf="!showProfileAsReserved && (!isLoading || loadingNewSelection)">
-  <div class="p-15px pb-0">
-    <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && myBids?.length">
-      Your current outstanding bids
-    </div>
-    <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_GALLERY && nftResponse?.length">
-      NFTs purchased by @{{ profile.Username }}
-    </div>
-    <div *ngIf="activeTab === CreatorProfileNftsComponent.FOR_SALE && nftResponse?.length">
-      NFTs that @{{ profile.Username }} is currently selling
-    </div>
-  </div>
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
     <div
       #uiScroll *uiScroll="let nftEntry of datasource; let index = index"
       [ngClass]="{
-      'br-12px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-      'p-10px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-      'background-color-grey': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-      'm-15px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-      'border': activeTab === CreatorProfileNftsComponent.MY_BIDS
+        'br-12px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+        'p-10px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+        'background-color-grey': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+        'm-15px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+        border: activeTab === CreatorProfileNftsComponent.MY_BIDS,
+        'last-item': index === nftResponse?.length - 1
       }"
     >
       <feed-post
         *ngIf="activeTab !== CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse.ProfileEntryResponse"
+        [isNFTListSummary]="true"
         [contentShouldLinkToThread]="true"
         [includePaddingOnPost]="true"
         [post]="nftEntry.PostEntryResponse"

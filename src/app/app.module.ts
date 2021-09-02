@@ -150,6 +150,7 @@ import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/d
 import { DiamondTutorialComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
 import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
+import { FeedCreatePostModalComponent } from "./feed/feed-create-post-modal/feed-create-post-modal.component";
 import { IconsModule } from "./icons/icons.module";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
@@ -223,6 +224,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     MessageComponent,
     MessagesThreadViewComponent,
     MessageRecipientModalComponent,
+    FeedCreatePostModalComponent,
     TopBarMobileNavigationControlComponent,
     BottomBarMobileTabComponent,
     NotFoundComponent,

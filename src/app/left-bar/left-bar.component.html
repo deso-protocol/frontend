@@ -45,20 +45,17 @@
           [buttonLabel]="'Trade Bitclout'"
           [iconName]="'trending-up'"
         ></left-bar-button>
-
         <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
           <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
           <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
         </div>
-
-        <div class="p-15px"></div>
-
         <left-bar-button
           *ngIf="globalVars.showAdminTools()"
           [link]="'/' + globalVars.RouteNames.ADMIN"
           [buttonLabel]="'Admin'"
           [iconName]="'codesandbox'"
         ></left-bar-button>
+        <button class="left-bar__post-button" (click)="openCreatePostModal()">Post</button>
       </div>
     </div>
 

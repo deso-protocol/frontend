@@ -41,6 +41,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   static MY_GALLERY = "Gallery";
   tabs = [CreatorProfileNftsComponent.FOR_SALE, CreatorProfileNftsComponent.MY_GALLERY];
   activeTab: string;
+  orderNFTsBy: string = "recent";
 
   nftTabMap = {
     my_bids: CreatorProfileNftsComponent.MY_BIDS,
@@ -94,6 +95,7 @@ export class CreatorProfileNftsComponent implements OnInit {
   }
 
   getNFTBids(): Subscription {
+    console.log('Getting bids');
     return this.backendApi
       .GetNFTBidsForUser(
         this.globalVars.localNode,
@@ -106,11 +108,14 @@ export class CreatorProfileNftsComponent implements OnInit {
           PostHashHexToPostEntryResponse: { [k: string]: PostEntryResponse };
           NFTBidEntries: NFTBidEntryResponse[];
         }) => {
+          console.log('Got bids');
           _.forIn(res.PostHashHexToPostEntryResponse, (value, key) => {
             value.ProfileEntryResponse =
               res.PublicKeyBase58CheckToProfileEntryResponse[value.PosterPublicKeyBase58Check];
             res.PostHashHexToPostEntryResponse[key] = value;
           });
+          console.log("Here are the bids");
+          console.log(this.myBids);
           this.myBids = res.NFTBidEntries.map((bidEntry) => {
             bidEntry.PostEntryResponse = res.PostHashHexToPostEntryResponse[bidEntry.PostHashHex];
             return bidEntry;
@@ -208,12 +213,14 @@ export class CreatorProfileNftsComponent implements OnInit {
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 
   onActiveTabChange(event): Subscription {
+    console.log('Changing the tab');
     if (this.activeTab !== event) {
       this.activeTab = event;
       this.loadingNewSelection = true;
       this.isLoading = true;
       this.infiniteScroller.reset();
       if (this.activeTab === CreatorProfileNftsComponent.MY_BIDS) {
+        console.log('Tab changed');
         return this.getNFTBids().add(() => {
           this.resetDatasource(event);
         });

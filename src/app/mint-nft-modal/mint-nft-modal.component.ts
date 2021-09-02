@@ -1,9 +1,9 @@
 import { Component, Input } from "@angular/core";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { isNumber } from "lodash";
-import {Location} from "@angular/common";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "app-mint-nft-modal",
@@ -12,8 +12,7 @@ import {Location} from "@angular/common";
 export class MintNftModalComponent {
   IS_SINGLE_COPY = "isSingleCopy";
   IS_MULTIPLE_COPIES = "isMultipleCopies";
-  @Input() post: any;
-
+  postHashHex: string;
   globalVars: GlobalVarsService;
   minting = false;
 
@@ -40,8 +39,12 @@ export class MintNftModalComponent {
     private _globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private route: ActivatedRoute
   ) {
+    this.route.params.subscribe((params) => {
+      this.postHashHex = params.postHashHex;
+    });
     this.globalVars = _globalVars;
     this.backendApi
       .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
@@ -115,13 +118,12 @@ export class MintNftModalComponent {
     if (this.coinRoyaltyPercent) {
       coinRoyaltyBasisPoints = this.coinRoyaltyPercent * 100;
     }
-
     this.minting = true;
     this.backendApi
       .CreateNft(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.post.PostHashHex,
+        this.postHashHex,
         numCopiesToMint,
         creatorRoyaltyBasisPoints,
         coinRoyaltyBasisPoints,
@@ -143,7 +145,7 @@ export class MintNftModalComponent {
 
   _mintNFTSuccess(comp: MintNftModalComponent) {
     comp.minting = false;
-    comp.router.navigate(["/" + comp.globalVars.RouteNames.NFT + "/" + comp.post.PostHashHex]);
+    comp.router.navigate(["/" + comp.globalVars.RouteNames.NFT + "/" + comp.postHashHex]);
   }
 
   _mintNFTFailure(comp: MintNftModalComponent) {

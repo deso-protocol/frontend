@@ -5,9 +5,8 @@ import { BidPlacedModalComponent } from "../bid-placed-modal/bid-placed-modal.co
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import * as _ from "lodash";
 import { Router } from "@angular/router";
-import { filter, take } from "rxjs/operators";
-import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { isNumber } from "lodash";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: "place-bid-modal",
@@ -22,7 +21,7 @@ export class PlaceBidModalComponent implements OnInit {
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
   bidAmountCLOUT: number;
-  bidAmountUSD: string;
+  bidAmountUSD: number;
   selectedSerialNumber: NFTEntryResponse = null;
   availableCount: number;
   availableSerialNumbers: NFTEntryResponse[];
@@ -34,14 +33,22 @@ export class PlaceBidModalComponent implements OnInit {
   saveSelectionDisabled = false;
   showSelectedSerialNumbers = false;
   placingBids: boolean = false;
-  errors: string;
+  errors: string[] = [];
+  SN_FIELD = "SerialNumber";
+  HIGH_BID_FIELD = "HighestBidAmountNanos";
+  MIN_BID_FIELD = "MinBidAmountNanos";
+  sortByField = this.SN_FIELD;
+  sortByOrder: "desc" | "asc" = "asc";
+  minBidCurrency: string = "USD";
+  minBidInput: number = 0;
 
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private modalService: BsModalService,
     public bsModalRef: BsModalRef,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -52,20 +59,22 @@ export class PlaceBidModalComponent implements OnInit {
         this.post.PostHashHex
       )
       .subscribe((res) => {
-        this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse).sort(
-          (a, b) => a.SerialNumber - b.SerialNumber
-        );
+        this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse);
         this.availableCount = res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
-        this.biddableSerialNumbers = this.availableSerialNumbers.filter(
-          (nftEntryResponse) =>
-            nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
+        this.biddableSerialNumbers = _.orderBy(
+          this.availableSerialNumbers.filter(
+            (nftEntryResponse) =>
+              nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
+          ),
+          [this.sortByField],
+          [this.sortByOrder]
         );
       })
       .add(() => (this.loading = false));
   }
 
   updateBidAmountUSD(cloutAmount) {
-    this.bidAmountUSD = this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2);
+    this.bidAmountUSD = parseFloat(this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2));
     this.setErrors();
   }
 
@@ -75,25 +84,27 @@ export class PlaceBidModalComponent implements OnInit {
   }
 
   setErrors(): void {
-    const bidAmountExceedsBalance = this.bidAmountCLOUT * 1e9 > this.globalVars.loggedInUser.BalanceNanos;
-    this.errors = !this.bidAmountCLOUT && this.selectedSerialNumber.MinBidAmountNanos === 0 ? "You must bid more than 0 CLOUT.\n\n" : "";
-    this.errors += !this.selectedSerialNumber ? "You must select an edition to bid.\n\n" : "";
-    this.errors += bidAmountExceedsBalance
-      ? `You do not have ${this.bidAmountCLOUT} CLOUT to fulfill this bid.\n\n`
-      : "";
-    this.errors +=
-      this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountCLOUT * 1e9
-        ? `Your bid of ${
-            this.bidAmountCLOUT
-          } does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
-            this.selectedSerialNumber.MinBidAmountNanos
-          )} CLOUT (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})\n\n`
-        : "";
+    this.errors = [];
+    if (this.bidAmountCLOUT * 1e9 > this.globalVars.loggedInUser.BalanceNanos) {
+      this.errors.push(`You do not have ${this.bidAmountCLOUT} CLOUT to fulfill this bid.`);
+    }
+    if (this.bidAmountCLOUT * 1e9 === 0) {
+      this.errors.push(`You must bid more than 0 CLOUT`);
+    } else if (this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountCLOUT * 1e9) {
+      this.errors.push(
+        `Your bid of ${
+          this.bidAmountCLOUT
+        } does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
+          this.selectedSerialNumber.MinBidAmountNanos
+        )} CLOUT (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})`
+      );
+    }
+    console.log(this.errors);
   }
 
   placeBid() {
     this.setErrors();
-    if (this.errors) {
+    if (this.errors.length) {
       return;
     }
     this.saveSelectionDisabled = true;
@@ -133,6 +144,7 @@ export class PlaceBidModalComponent implements OnInit {
   }
 
   saveSelection(): void {
+    this.toastr.show('Toast test');
     if (!this.saveSelectionDisabled) {
       this.isSelectingSerialNumber = false;
       this.showSelectedSerialNumbers = true;
@@ -144,7 +156,6 @@ export class PlaceBidModalComponent implements OnInit {
 
   selectSerialNumber(idx: number) {
     this.selectedSerialNumber = this.availableSerialNumbers.find((sn) => sn.SerialNumber === idx);
-    this.saveSelection();
   }
 
   deselectSerialNumber() {
@@ -158,14 +169,6 @@ export class PlaceBidModalComponent implements OnInit {
     this.setErrors();
   }
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(
-    PlaceBidModalComponent.PAGE_SIZE,
-    this.getPage.bind(this),
-    PlaceBidModalComponent.WINDOW_VIEWPORT,
-    PlaceBidModalComponent.BUFFER_SIZE,
-    PlaceBidModalComponent.PADDING
-  );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
   lastPage = null;
 
   getPage(page: number) {
@@ -178,5 +181,29 @@ export class PlaceBidModalComponent implements OnInit {
     return new Promise((resolve, reject) => {
       resolve(this.biddableSerialNumbers.slice(startIdx, Math.min(endIdx, this.biddableSerialNumbers.length)));
     });
+  }
+
+  updateBidSort(sortField: string) {
+    if (this.sortByField === sortField) {
+      this.sortByOrder = this.sortByOrder === "asc" ? "desc" : "asc";
+    } else {
+      this.sortByOrder = "asc";
+    }
+    this.sortByField = sortField;
+    this.biddableSerialNumbers = _.orderBy(this.biddableSerialNumbers, [this.sortByField], [this.sortByOrder]);
+  }
+
+  bidAmountUSDFormatted() {
+    return isNumber(this.bidAmountUSD) ? `~${this.globalVars.formatUSD(this.bidAmountUSD, 0)}` : "";
+  }
+
+  updateBidAmount(amount: number) {
+    if (this.minBidCurrency === "CLOUT") {
+      this.bidAmountCLOUT = amount;
+      this.updateBidAmountUSD(amount);
+    } else {
+      this.bidAmountUSD = amount;
+      this.updateBidAmountCLOUT(amount);
+    }
   }
 }

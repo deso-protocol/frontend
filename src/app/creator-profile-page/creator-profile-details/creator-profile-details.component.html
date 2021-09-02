@@ -82,8 +82,14 @@
   </div>
 
   <!-- Creator Coin Info -->
-  <div class="w-100 d-flex flex-column creator-profile-details__coin-container" *ngIf="activeTab == 'Creator Coin' && !loading">
-    <div class="creator-profile-details__coin-info">
+  <div
+    class="w-100 d-flex flex-column creator-profile-details__coin-container"
+    *ngIf="activeTab == 'Creator Coin' && !loading"
+  >
+    <div
+      *ngIf="profile.PublicKeyBase58Check !== globalVars?.loggedInUser?.PublicKeyBase58Check"
+      class="creator-profile-details__coin-info"
+    >
       <div>
         <div class="d-inline-block col-4 mb-0" style="text-align: center">
           <span class="font-weight-bold">≈ {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(2) }}</span>

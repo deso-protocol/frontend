@@ -38,7 +38,7 @@
 
   <jumio-status></jumio-status>
 
-  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light mb-30px fs-13px">
+  <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light mb-20px fs-13px">
     <div class="jumio-status">
       <div class="cursor-pointer">
         <div *ngIf="globalVars.loggedInUser.HasEmail">
@@ -57,6 +57,29 @@
           <span>Update your email</span>
           <i-feather name="chevron-right" class="right-20px"></i-feather>
         </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Creator Coin Info -->
+  <div class="w-100 d-flex flex-column right-bar-creators__wallet-container">
+    <div>
+      <div class="font-weight-bold fc-default">
+        Wallet of @{{ globalVars?.loggedInUser?.ProfileEntryResponse?.Username }}
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-16px">
+        <span>Coins In Circulation</span>
+        <span>
+          ≈ {{ (globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(2) }}
+        </span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-16px">
+        <span>Total USD Locked</span>
+        <span>≈ {{ totalUSDLocked() }}</span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-16px">
+        <span>USD Market Cap</span>
+        <span>≈ {{ usdMarketCap() }}</span>
       </div>
     </div>
   </div>

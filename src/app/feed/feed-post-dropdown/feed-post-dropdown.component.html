@@ -18,7 +18,7 @@
       <a
         *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT && !post.ParentStakeID"
         class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
-        (click)="openMintNftModal($event)"
+        (click)="openMintNftPage($event)"
       >
         <i class="fas fa-stamp"></i>
         Mint NFT

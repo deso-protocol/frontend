@@ -2,43 +2,48 @@
      It's used by both the feed and that "create post page."-->
 <div [ngClass]="{'formbg': !parentPost }" class="create-post">
   <!-- Avatar + Input -->
-  <div class="d-flex align-items-top pt-15px pr-15px pl-15px avatar-input-row">
-    <div>
-      <div
-        *ngIf="globalVars.userList && (!globalVars.loggedInUser || !globalVars.loggedInUser.ProfileEntryResponse)"
-        class="feed-create-post__avatar feed-create-post__avatar_default"
-      ></div>
-      <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
+  <div class="d-flex flex-column align-items-top pt-15px pr-15px pl-15px avatar-input-row">
+     <div class="d-flex">
+      <div>
         <div
-          class="feed-create-post__avatar"
-          [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+          *ngIf="globalVars.userList && (!globalVars.loggedInUser || !globalVars.loggedInUser.ProfileEntryResponse)"
+          class="feed-create-post__avatar feed-create-post__avatar_default"
         ></div>
+        <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
+          <div
+            class="feed-create-post__avatar"
+            [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+          ></div>
+        </div>
       </div>
-    </div>
-    <div class="flex-fill">
-      <textarea
-        [(ngModel)]="postInput"
-        rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
-        [ngClass]="{
-          'border-0': !parentPost,
-          'feed-create-post__textarea': !parentPost,
-          'm-5px': !parentPost,
-          'p-0': !parentPost,
-          'br-12px': parentPost,
-          'feed-create-comment__textarea': parentPost,
-          'lh-18px': parentPost
-        }"
-        class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
-        [placeholder]="getPlaceholderText()"
-        (paste)="onPaste($event)"
-        dropUpload
-        (onFileDropped)="uploadFile($event)"
-        cdkTextareaAutosize
-        #autosize="cdkTextareaAutosize"
-      ></textarea>
+      <div class="flex-fill">
+        <textarea
+          [(ngModel)]="postInput"
+          rows="{{ parentPost ? 3 : numberOfRowsInTextArea }}"
+          [ngClass]="{
+            'border-0': !parentPost,
+            'feed-create-post__textarea': !parentPost,
+            'm-5px': !parentPost,
+            'p-0': !parentPost,
+            'br-12px': parentPost,
+            'feed-create-comment__textarea': parentPost,
+            'lh-18px': parentPost
+          }"
+         class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
+         [placeholder]="getPlaceholderText()"
+         (paste)="onPaste($event)"
+         dropUpload
+         (onFileDropped)="uploadFile($event)"
+         cdkTextareaAutosize
+         #autosize="cdkTextareaAutosize"
+       ></textarea>
+     </div>
+
+     </div>
+    <div>
       <!-- Post image -->
       <div class="feed-post__image-container" *ngIf="!isComment && postImageSrc">
-        <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
+        <div (click)="postImageSrc = null" class="update-profile__image-delete"><i-feather name="trash-2"></i-feather></div>
         <img class="feed-post__image" src="{{ postImageSrc }}" />
       </div>
       <!-- Embedded Content -->
@@ -57,6 +62,10 @@
           allowfullscreen
         ></iframe>
       </div>
+
+    </div>
+    <div class="flex-fill">
+
     </div>
   </div>
 </div>

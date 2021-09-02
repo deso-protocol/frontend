@@ -1,4 +1,4 @@
-<div *ngIf="!datasource.adapter.isLoading && datasource.adapter.itemsCount === 0" class="row no-gutters pt-10px">
+<div *ngIf="!datasource.adapter.isLoading && datasource.adapter.itemsCount === 0" class="row no-gutters pt-10px creator-profile-details__no-results">
   <div class="d-flex justify-content-center w-100">
     <div class="circle-div">
       <i-feather name="bitclout-circle" class="feather-xlarge"></i-feather>
@@ -9,7 +9,14 @@
   </div>
 </div>
 <simple-center-loader *ngIf="datasource.adapter.isLoading && loadingFirstPage"></simple-center-loader>
-<div *ngIf="datasource.adapter.itemsCount > 0" class="w-100 d-flex justify-content-start px-15px fs-15px creator-profile-hodlers__header">
+<div
+  *ngIf="datasource.adapter.itemsCount > 0"
+  class="w-100 d-flex justify-content-start px-15px fs-15px creator-profile-hodlers__header"
+  [ngStyle]="{
+    'border-radius':
+      profile.PublicKeyBase58Check === globalVars?.loggedInUser?.PublicKeyBase58Check ? '10px 10px 0px 0px' : '0px'
+  }"
+>
   <div class="container font-weight-bold fs-15px pl-0px">
     Holders of ${{ profile.Username }} coin
   </div>

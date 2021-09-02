@@ -12,7 +12,33 @@
      - feed-create-comment-form component (i.e. create comment view)
 
      - market-feed component -->
+<div *ngIf="isNFTListSummary && postContent" class="creator-profile-nfts__list-container">
+  <div class="d-flex justify-content-between">
+    <div class="feed-post__avatar-container">
+      <a
+        class="feed-post__avatar"
+        [avatar]="postContent?.ProfileEntryResponse.PublicKeyBase58Check"
+        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent?.ProfileEntryResponse.Username]"
+        queryParamsHandling="merge"
+      ></a>
+    </div>
+    <div class="creator-profile-nfts__list-body d-flex flex-column">
+      <div>{{ postContent?.Body }}</div>
+      <div>{{ postContent?.NumNFTCopiesForSale }} of {{ postContent?.NumNFTCopies }} for sale</div>
+      <div>From: {{ globalVars.nanosToBitClout(lowBid, 2) }} $Clout ~{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+    </div>
+
+    <div *ngIf="postContent?.ImageURLs[0]">
+      <img
+        data-toggle="modal"
+        class="feed-post__image creator-profile-nfts__nft-image-preview"
+        src="{{ mapImageURLs(postContent.ImageURLs[0]) }}"
+      />
+    </div>
+  </div>
+</div>
 <div
+  *ngIf="!isNFTListSummary"
   class="d-flex flex-column"
   [ngClass]="{
     'br-12px': setBorder || cardStyle,
@@ -427,10 +453,10 @@
     class="fs-15px w-100 feed-post__nft-footer"
     [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : '' }"
   >
-    <div class="d-flex justify-content-between nft-content">
-      <div>
-        <span *ngIf="showAvailableSerialNumbers">{{ serialNumbersDisplay }}&nbsp;</span>
-        <div class="nft-top-row">
+    <div class="d-flex justify-content-between h-100">
+      <div class="d-flex flex-column justify-content-center">
+        <div class="d-flex">
+          <span *ngIf="showAvailableSerialNumbers">{{ serialNumbersDisplay }}&nbsp;</span>
           <div
             *ngIf="!showAvailableSerialNumbers"
             class="cursor-pointer"
@@ -463,17 +489,15 @@
           From: {{ globalVars.nanosToBitClout(lowBid, 2) }} $Clout ~{{ globalVars.nanosToUSD(lowBid) }}
         </div>
       </div>
-      <div class="nft-bid-btn">
-        <button
-          [ngClass]="{ 'mt-15px': isQuotedContent }"
-          (click)="openPlaceBidModal($event)"
-          *ngIf="showPlaceABid"
-        >
-          <span>
-            <i-feather name="shopping-cart"></i-feather>
-            Place a bid
-          </span>
-        </button>
+      <div class="d-flex align-items-center">
+        <div class="nft-bid-btn">
+          <button [ngClass]="{ 'mt-15px': isQuotedContent }" (click)="openPlaceBidModal($event)" *ngIf="showPlaceABid">
+            <span>
+              <i-feather name="shopping-cart"></i-feather>
+              Place a bid
+            </span>
+          </button>
+        </div>
       </div>
     </div>
     <div *ngIf="showUnlockableContent">

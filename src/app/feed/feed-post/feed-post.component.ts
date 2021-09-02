@@ -68,6 +68,7 @@ export class FeedPostComponent implements OnInit {
   //   - https://github.com/regexhq/mentions-regex
   static MENTIONS_REGEX = /\B\@([\w\-]+)/gim;
 
+  @Input() isNFTListSummary = false;
   @Input() showIconRow = true;
   @Input() showAdminRow = false;
   @Input() contentShouldLinkToThread: boolean;

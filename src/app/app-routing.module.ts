@@ -95,7 +95,7 @@ const routes: Routes = [
   { path: RouteNames.SIGN_UP, component: SignUpComponent, pathMatch: "full" },
   { path: RouteNames.WALLET, component: WalletPageComponent, pathMatch: "full" },
   { path: RouteNames.UPDATE_PROFILE, component: UpdateProfilePageComponent, pathMatch: "full" },
-  { path: RouteNames.MINT_NFT, component: MintNftModalComponent, pathMatch: "full" },
+  { path: RouteNames.MINT_NFT + "/:postHashHex", component: MintNftModalComponent, pathMatch: "full" },
   { path: RouteNames.NOTIFICATIONS, component: NotificationsPageComponent, pathMatch: "full" },
   { path: RouteNames.NOT_FOUND, component: NotFoundPageComponent, pathMatch: "full" },
   // CREATE_POST needs to be above the POSTS route, since both involve the prefix /posts

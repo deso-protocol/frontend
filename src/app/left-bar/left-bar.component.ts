@@ -6,6 +6,9 @@ import { IdentityService } from "../identity.service";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import {CommentModalComponent} from "../comment-modal/comment-modal.component";
+import {BsModalService} from "ngx-bootstrap/modal";
+import {FeedCreatePostModalComponent} from "../feed/feed-create-post-modal/feed-create-post-modal.component";
 
 @Component({
   selector: "left-bar",
@@ -28,6 +31,7 @@ export class LeftBarComponent {
 
   constructor(
     public globalVars: GlobalVarsService,
+    private modalService: BsModalService,
     private identityService: IdentityService,
     private backendApi: BackendApiService,
     private router: Router
@@ -43,6 +47,12 @@ export class LeftBarComponent {
       return "/" + this.globalVars.RouteNames.LANDING;
     }
     return "/" + this.globalVars.RouteNames.BROWSE;
+  }
+
+  openCreatePostModal() {
+    this.modalService.show(FeedCreatePostModalComponent, {
+      class: "modal-dialog-centered",
+    });
   }
 
   getHelpMailToAttr(): string {
