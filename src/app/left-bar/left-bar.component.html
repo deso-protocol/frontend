@@ -31,83 +31,86 @@
 
       <div class="pt-15px"></div>
 
-      <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'"></left-bar-button>
+      <div *ngIf="!inTutorial">
+        <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'"></left-bar-button>
 
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.TRENDS"
-        [buttonLabel]="'Trends'"
-      ></left-bar-button>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.CREATORS"
-        [buttonLabel]="'Buy Creator Coins'"
-      ></left-bar-button>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
-        [buttonLabel]="'Buy $CLOUT'"
-      ></left-bar-button>
-
-      <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeCLOUTFlow()">
-        <a class="left-bar__dot-inactive">·</a>
-        <a class="cursor-pointer fs-15px text-grey5">Get Free $CLOUT</a>
-      </div>
-
-      <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
-      <left-bar-button
-        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
-        [queryParams]="{ 'nftTab': 'my_bids', 'tab': 'nfts' }"
-        [buttonLabel]="'My NFT Bids'"
-        *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
-      ></left-bar-button>
-      <left-bar-button
-        [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
-        [queryParams]="{ 'nftTab': 'my_gallery', 'tab': 'nfts' }"
-        [buttonLabel]="'My NFT Gallery'"
-        *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
-      ></left-bar-button>
-
-      <div class="p-15px"></div>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.PICK_A_COIN"
-        [buttonLabel]="'Send Creator Coins'"
-      ></left-bar-button>
-
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.SEND_BITCLOUT"
-        [buttonLabel]="'Send $CLOUT'"
-      ></left-bar-button>
-
-      <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'Wallet'"></left-bar-button>
-
-      <div class="p-15px"></div>
-
-      <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse?.Username; else elseBlock">
         <left-bar-button
-          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
-          [queryParams]="{ 'tab':'posts' }"
-          [buttonLabel]="'Profile'"
+          [link]="'/' + globalVars.RouteNames.TRENDS"
+          [buttonLabel]="'Trends'"
         ></left-bar-button>
-      </div>
-      <ng-template #elseBlock>
+
         <left-bar-button
-          [link]="'/' + this.globalVars.RouteNames.UPDATE_PROFILE"
-          [buttonLabel]="'Update Profile'"
+          [link]="'/' + globalVars.RouteNames.CREATORS"
+          [buttonLabel]="'Buy Creator Coins'"
         ></left-bar-button>
-      </ng-template>
 
-      <left-bar-button
-        [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
-        [buttonLabel]="'Notifications'"
-        [isUnread]="globalVars.hasUnreadNotifications"
-      ></left-bar-button>
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
+          [buttonLabel]="'Buy $CLOUT'"
+        ></left-bar-button>
 
-      <left-bar-button
-        [hasNotifications]="true"
-        [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
-        [buttonLabel]="'Messages'"
-      ></left-bar-button>
+        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeCLOUTFlow()">
+          <a class="left-bar__dot-inactive">·</a>
+          <a class="cursor-pointer fs-15px text-grey5">Get Free $CLOUT</a>
+        </div>
+
+        <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
+        <left-bar-button
+          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
+          [queryParams]="{ 'nftTab': 'my_bids', 'tab': 'nfts' }"
+          [buttonLabel]="'My NFT Bids'"
+          *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
+        ></left-bar-button>
+        <left-bar-button
+          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
+          [queryParams]="{ 'nftTab': 'my_gallery', 'tab': 'nfts' }"
+          [buttonLabel]="'My NFT Gallery'"
+          *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
+        ></left-bar-button>
+
+        <div class="p-15px"></div>
+
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.PICK_A_COIN"
+          [buttonLabel]="'Send Creator Coins'"
+        ></left-bar-button>
+
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.SEND_BITCLOUT"
+          [buttonLabel]="'Send $CLOUT'"
+        ></left-bar-button>
+
+        <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'Wallet'"></left-bar-button>
+
+        <div class="p-15px"></div>
+
+        <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse?.Username; else elseBlock">
+          <left-bar-button
+            [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
+            [queryParams]="{ 'tab':'posts' }"
+            [buttonLabel]="'Profile'"
+          ></left-bar-button>
+        </div>
+        <ng-template #elseBlock>
+          <left-bar-button
+            [link]="'/' + this.globalVars.RouteNames.UPDATE_PROFILE"
+            [buttonLabel]="'Update Profile'"
+          ></left-bar-button>
+        </ng-template>
+
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
+          [buttonLabel]="'Notifications'"
+          [isUnread]="globalVars.hasUnreadNotifications"
+        ></left-bar-button>
+
+        <left-bar-button
+          [hasNotifications]="true"
+          [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
+          [buttonLabel]="'Messages'"
+        ></left-bar-button>
+
+        <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
       <!-- CloutCast Button with Notifications for Inbox -->
       <left-bar-button
@@ -117,12 +120,16 @@
       ></left-bar-button>
 
       <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
+        <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
+          <a class="left-bar__dot-inactive">·</a>
+          <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
+        </div>
 
-      <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
-        <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
-        <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
+        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
+          <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
+          <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
+        </div>
       </div>
-
       <div class="p-15px"></div>
 
       <left-bar-button
@@ -133,7 +140,7 @@
     </div>
 
     <!-- Logged-out Left Bar -->
-    <div *ngIf="globalVars.loggedInUser == null" class="global__nav__inner">
+    <div *ngIf="globalVars.loggedInUser == null && !inTutorial" class="global__nav__inner">
       <div class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
         <a
           class="link--unstyled d-flex align-items-center"

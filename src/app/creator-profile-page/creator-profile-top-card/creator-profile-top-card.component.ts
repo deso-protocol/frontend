@@ -70,6 +70,37 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     );
   }
 
+  updateWellKnownCreatorsList(): void {
+    this.updateCreatorFeaturedTutorialList(true, this.profile.IsFeaturedTutorialWellKnownCreator);
+  }
+
+  updateUpAndComingCreatorsList(): void {
+    this.updateCreatorFeaturedTutorialList(false, this.profile.IsFeaturedTutorialUpAndComingCreator);
+  }
+
+  updateCreatorFeaturedTutorialList(isWellKnown: boolean, isRemoval: boolean) {
+    this.backendApi
+      .AdminUpdateTutorialCreators(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.profile.PublicKeyBase58Check,
+        isRemoval,
+        isWellKnown
+      )
+      .subscribe(
+        (res) => {
+          if (isWellKnown) {
+            this.profile.IsFeaturedTutorialWellKnownCreator = !isRemoval;
+          } else {
+            this.profile.IsFeaturedTutorialUpAndComingCreator = !isRemoval;
+          }
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+  }
+
   messageUser(): void {
     this.router.navigate(["/" + this.globalVars.RouteNames.INBOX_PREFIX], {
       queryParams: { username: this.profile.Username },

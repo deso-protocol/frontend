@@ -81,7 +81,7 @@
           >
             {{ profileEntry.Username }}
           </a>
-
+          <span *ngIf="profileEntry?.IsVerified" class="ml-1 d-inline-block align-center text-primary"><i class="fas fa-check-circle fa-md align-middle"></i></span>
           <!-- Coin price-->
           <!-- Hidden on mobile, UI gets too crowded otherwise -->
           <a
@@ -115,11 +115,14 @@
       </div>
     </a>
   </div>
-  <simple-center-loader *ngIf="loadingNextPage" [height]="200"></simple-center-loader>
+  <simple-center-loader *ngIf="loadingNextPage && !loadingFirstPage" [height]="100"></simple-center-loader>
   <!-- Num anonymous followers-->
   <div *ngIf="anonymousFollowerCount > 0" class="fs-15px d-flex justify-content-left w-100 p-15px">
     <!--TODO: pluralize-->
     ... Plus {{ anonymousFollowerCount }} anonymous {{ this.activeTab.toLowerCase() }}
   </div>
+  <div class="d-lg-none global__bottom-bar-mobile-height"></div>
+  <div class="d-lg-none global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
   <div class="global__bottom-bar-mobile-height"></div>
 </div>

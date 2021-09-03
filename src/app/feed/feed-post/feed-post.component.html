@@ -30,7 +30,7 @@
       <a
         (click)="onPostClicked($event)"
         class="link--unstyled"
-        [routerLink]="['/' + globalVars.RouteNames.POSTS, post.PostHashHex]"
+        [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, post.PostHashHex])"
         queryParamsHandling="merge"
       >
         This post was removed by the author.
@@ -44,7 +44,7 @@
       <a
         class="link--unstyled"
         style="text-align: center"
-        [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, post.ProfileEntryResponse.Username]"
+        [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, post.ProfileEntryResponse.Username])"
         queryParamsHandling="merge"
       >
         This is a post from {{ post.ProfileEntryResponse.Username }} who you have blocked. Click here to visit their
@@ -72,7 +72,7 @@
           <a
             class="fc-muted font-weight-semibold fs-15px"
             queryParamsHandling="merge"
-            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, post.ParentPosts[0].ProfileEntryResponse.Username]"
+            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, post.ParentPosts[0].ProfileEntryResponse.Username])"
           >
             replying to {{ post.ParentPosts[0].ProfileEntryResponse.Username }}
           </a>
@@ -90,7 +90,7 @@
           <a
             class="fc-muted font-weight-semibold align-items-center"
             queryParamsHandling="merge"
-            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, reclouterProfile.Username]"
+            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, reclouterProfile.Username])"
           >
             <i class="icon-repost fs-20px" style="vertical-align: middle"></i>
             <span style="vertical-align: middle" class="fs-15px">@{{ reclouterProfile.Username }} reclouted</span>
@@ -122,7 +122,7 @@
           <a
             (click)="onPostClicked($event)"
             class="link--unstyled"
-            [routerLink]="['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex]"
+            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
             queryParamsHandling="merge"
           >
             The original post was removed by its author.
@@ -134,7 +134,7 @@
           <a
             style="padding: 3px"
             class="creator-coin-info fs-12px font-weight-bold feed-post__coin-price-holder br-12px"
-            [routerLink]="AppRoutingModule.buyCreatorPath(postContent.ProfileEntryResponse.Username)"
+            [routerLink]="getRouterLink(AppRoutingModule.buyCreatorPath(postContent.ProfileEntryResponse.Username))"
             queryParamsHandling="merge"
           >
             <span class="text-grey5">
@@ -156,7 +156,7 @@
             'feed-post__parent-post-font-size': isParentPostInThread
           }"
           [ngStyle]="{
-            'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT ? '12px 0' : '12px') : ''
+            'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT && showNFTDetails ? '12px 0' : '12px') : ''
           }"
           *ngIf="!postContent.IsHidden"
         >
@@ -165,7 +165,7 @@
             <a
               class="feed-post__avatar br-12px"
               [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
-              [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
+              [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username])"
               queryParamsHandling="merge"
             ></a>
             <div *ngIf="showThreadConnectionLine" class="feed-post__parent-thread-connector"></div>
@@ -177,7 +177,7 @@
               <!-- Username-->
               <a
                 class="fc-default font-weight-bold"
-                [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username]"
+                [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username])"
                 queryParamsHandling="merge"
               >
                 {{ postContent.ProfileEntryResponse.Username }}
@@ -227,7 +227,7 @@
             <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
               replying to
               <a
-                [routerLink]="['/' + this.globalVars.RouteNames.USER_PREFIX, parentPost.ProfileEntryResponse.Username]"
+                [routerLink]="getRouterLink(['/' + this.globalVars.RouteNames.USER_PREFIX, parentPost.ProfileEntryResponse.Username])"
                 queryParamsHandling="merge"
               >
                 @{{ parentPost.ProfileEntryResponse.Username }}
@@ -298,6 +298,8 @@
                 [parentPost]="parentPost"
                 [afterCommentCreatedCallback]="afterCommentCreatedCallback"
                 [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+                [inTutorial]="inTutorial"
+                (diamondSent)="diamondSent.emit()"
               ></feed-post-icon-row>
 
               <!-- Admin Buttons -->
@@ -336,7 +338,7 @@
                 <div>
                   &nbsp;&middot;
                   <a
-                    [routerLink]="['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex]"
+                    [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
                     queryParamsHandling="merge"
                   >
                     View
@@ -428,6 +430,7 @@
             [hideNumbers]="true"
             [afterCommentCreatedCallback]="afterCommentCreatedCallback"
             [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+            (diamondSent)="diamondSent.emit()"
           ></feed-post-icon-row>
         </div>
       </div>

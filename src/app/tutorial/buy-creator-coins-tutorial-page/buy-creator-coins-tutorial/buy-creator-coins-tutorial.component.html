@@ -1,0 +1,105 @@
+<div class="flex-grow-1">
+  <div
+    class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg"
+    style="min-height: 80px"
+  >
+    <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
+    <div *ngIf="!investInYourself" class="secalt-bg">
+      <h3 class="mb-1 fs-24px font-weight-semibold">
+        Invest in a Creator
+      </h3>
+      <h5 class="fs-15px fc-muted">
+        Step 1 of 6
+      </h5>
+    </div>
+    <div *ngIf="investInYourself" class="secalt-bg">
+      <h3 class="mb-1 fs-24px font-weight-semibold">
+        Invest in Yourself
+      </h3>
+      <h5 class="fs-15px fc-muted">
+        Step 4 of 6
+      </h5>
+    </div>
+  </div>
+
+  <simple-center-loader *ngIf="loading"></simple-center-loader>
+
+  <div>
+    <div *ngIf="!investInYourself">
+      <div class="p-3">
+        <h5 class="fs-15px">
+          Every creator on BitClout has a coin that you can buy and sell.
+        </h5>
+        <h5 class="mt-3 fs-15px">
+          Prices go up when people buy, or when cashflows go to the coin.
+          Prices go down when people sell.
+        </h5>
+        <h5 class="mt-3 fs-15px">
+          <b>Choose a creator to invest in below!</b>
+        </h5>
+      </div>
+      <div>
+        <h2 class="px-3 pt-3 pb-1 fs-24px font-weight-semibold" style="border-bottom: 1px solid #e5e5e5;">Well-Known Creators</h2>
+        <div *ngFor="let profile of topCreatorsToHighlight">
+          <div class="p-2" style="border-bottom: 1px solid #e5e5e5;">
+            <simple-profile-card
+              [profile]="profile"
+              [showTutorialBuy]="true"
+              [inTutorial]="true"
+              [hideFollowLink]="true"
+              [singleColumn]="true"
+            ></simple-profile-card>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="px-3 pb-1 pt-3 mt-3 fs-24px font-weight-semibold" style="border-bottom: 1px solid #e5e5e5;">Hot New Creators</h2>
+        <div *ngFor="let profile of upAndComingCreatorsToHighlight">
+          <div class="p-2" style="border-bottom: 1px solid #e5e5e5;">
+            <simple-profile-card
+              [profile]="profile"
+              [showTutorialBuy]="true"
+              [inTutorial]="true"
+              [hideFollowLink]="true"
+              [singleColumn]="true"
+            ></simple-profile-card>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="investInYourself" class="p-15px">
+      <div class="mb-3">
+        <h2 class="mb-3 fs-15px">
+          You can have a coin too!
+        </h2>
+        <h5 class="fs-15px">
+          Now that you have a profile, we can set up your coin.
+        </h5>
+        <h5 class="mt-3 fs-15px font-weight-bold">
+          The first step is always to invest in yourself!
+        </h5>
+      </div>
+      <simple-profile-card
+        [profile]="loggedInUserProfile"
+        [showTutorialBuy]="true"
+        [inTutorial]="true"
+        [hideFollowLink]="true"
+        [singleColumn]="true"
+      ></simple-profile-card>
+    </div>
+
+    <div *ngIf="!globalVars.loggedInUser?.MustCompleteTutorial || globalVars.loggedInUser?.IsAdmin" (click)="globalVars.skipTutorial()" class="p-15px">
+      <a class="btn btn-outline-primary btn-lg fs-18px text-left">
+        Skip
+      </a>
+    </div>
+
+
+
+    <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+    <div class="global__bottom-bar-mobile-height"></div>
+    <div class="global__bottom-bar-mobile-height"></div>
+  </div>
+</div>

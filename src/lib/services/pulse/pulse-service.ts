@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { GlobalVarsService } from "../../../app/global-vars.service";
 import { map, switchMap } from "rxjs/operators";
 import * as _ from "lodash";
@@ -101,6 +101,9 @@ export class PulseService {
     skipFilters: boolean = false
   ): Observable<LeaderboardResponse[]> {
     const results = res.results;
+    if (results.length === 0) {
+      return of([]);
+    }
     return this.backendApi
       .GetUsersStateless(
         this.globalVars.localNode,
