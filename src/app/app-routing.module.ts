@@ -28,6 +28,7 @@ import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-pa
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
+import { CloutCastPageComponent } from "./cloutcast-page/cloutcast-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -115,6 +116,13 @@ const routes: Routes = [
   { path: RouteNames.GET_STARTER_BITCLOUT, component: GetStarterBitcloutPageComponent, pathMatch: "full" },
   { path: RouteNames.TRENDS, component: TrendsPageComponent, pathMatch: "full" },
   { path: RouteNames.VERIFY_EMAIL + "/:publicKey/:emailHash", component: VerifyEmailComponent, pathMatch: "full" },
+
+  // CloutCast routes
+  { path: RouteNames.CLOUTCAST_PREFIX, component: CloutCastPageComponent, pathMatch: "full" },
+  { path: RouteNames.CLOUTCAST_PREFIX + "/:cloutCastId", component: CloutCastPageComponent, pathMatch: "full" },
+  // End CloutCast routes
+
+
   // This NotFound route must be the last one as it catches all paths that were not matched above.
   { path: "**", component: NotFoundPageComponent, pathMatch: "full" },
 ];

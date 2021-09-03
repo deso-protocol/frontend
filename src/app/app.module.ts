@@ -142,6 +142,8 @@ import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { DragDropModule } from "@angular/cdk/drag-drop";
+import { CloutCastPageComponent } from './cloutcast-page/cloutcast-page.component';
+import { CloutCastModalComponent } from './cloutcast-modal/cloutcast-modal.component';
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -265,6 +267,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     VerifyEmailComponent,
     AdminJumioComponent,
     JumioStatusComponent,
+    CloutCastPageComponent,
+    CloutCastModalComponent,
   ],
   imports: [
     BrowserModule,
