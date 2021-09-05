@@ -1,19 +1,8 @@
-<div class="d-flex flex-column align-items-center justify-content-center" [ngStyle]="{ height: getHeight() }">
-  <div class="lds-default"
-  >
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
+<div class="d-flex flex-column align-items-center justify-content-center loading-container" [ngStyle]="{ height: getHeight() }">
+  <ng-lottie
+    [height]="getLoaderHeight()"
+    [options]="options"
+  ></ng-lottie>
   <div
     [ngClass]="{
       'text-grey5': textColor === 'gray',
@@ -21,6 +10,7 @@
       'text-white': textColor === 'white',
       'text-center': true
     }"
+    class="mt-12px"
   >
     <div class="text-grey-loading fs-24px">{{ titleLoadingText }}</div>
     <div *ngIf="subtitleLoadingText">

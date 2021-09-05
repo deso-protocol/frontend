@@ -81,7 +81,7 @@ export class RightBarCreatorsComponent implements OnInit {
   totalUSDLocked() {
     return this.globalVars.abbreviateNumber(
       this.globalVars.nanosToUSDNumber(
-        this.globalVars?.loggedInUser?.ProfileEntryResponse.CoinEntry.BitCloutLockedNanos
+        this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry.BitCloutLockedNanos
       ),
       3,
       true

@@ -485,8 +485,8 @@
             }}
           </span>
         </div>
-        <div *ngIf="lowBid">
-          From: {{ globalVars.nanosToBitClout(lowBid, 2) }} $Clout ~{{ globalVars.nanosToUSD(lowBid) }}
+        <div *ngIf="lowBid !== undefined">
+          From: {{ globalVars.nanosToBitClout(lowBid, 2) }} $Clout ~{{ globalVars.nanosToUSD(lowBid, 2) }}
         </div>
       </div>
       <div class="d-flex align-items-center">
@@ -504,17 +504,6 @@
       <div *ngFor="let nftEntry of decryptableNFTEntryResponses" class="d-flex flex-row">
         <div>#{{ nftEntry.SerialNumber }}:&nbsp;</div>
         <div [innerHTML]="nftEntry.DecryptedUnlockableText | sanitizeAndAutoLink"></div>
-      </div>
-    </div>
-    <div></div>
-    <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)" [ngClass]="{ 'pt-15px': globalVars.isMobile() }">
-      <div *ngIf="highBid != null">
-        Highest: {{ globalVars.nanosToBitClout(highBid, 5) }} CLOUT
-        <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
-      </div>
-      <div *ngIf="lowBid != null">
-        From: {{ globalVars.nanosToBitClout(lowBid, 5) }} CLOUT
-        <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
       </div>
     </div>
   </div>

@@ -62,7 +62,7 @@
   </div>
 
   <!-- Creator Coin Info -->
-  <div class="w-100 d-flex flex-column right-bar-creators__wallet-container">
+  <div class="w-100 d-flex flex-column right-bar-creators__wallet-container" *ngIf="this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry">
     <div>
       <div class="font-weight-bold fc-default">
         Wallet of @{{ globalVars?.loggedInUser?.ProfileEntryResponse?.Username }}

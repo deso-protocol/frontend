@@ -19,6 +19,7 @@ import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/clo
 import { Subscription } from "rxjs";
 import { AddUnlockableModalComponent } from "../../add-unlockable-modal/add-unlockable-modal.component";
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "nft-post",
@@ -43,6 +44,7 @@ export class NftPostComponent {
   selectedBids: boolean[];
   selectedBid: NFTBidEntryResponse;
   showBidsView: boolean = true;
+  selectAllSelected: boolean = false;
   bids: NFTBidEntryResponse[];
   owners: NFTEntryResponse[];
 
@@ -52,7 +54,7 @@ export class NftPostComponent {
 
   static ALL_BIDS = "All Bids";
   static MY_BIDS = "My Bids";
-  static MY_AUCTIONS = "My Auctions";
+  static MY_AUCTIONS = "My Auction";
   static OWNERS = "Owners";
   static THREAD = "Thread";
 
@@ -72,7 +74,8 @@ export class NftPostComponent {
     private changeRef: ChangeDetectorRef,
     private modalService: BsModalService,
     private titleService: Title,
-    private location: Location
+    private location: Location,
+    private toastr: ToastrService
   ) {
     // This line forces the component to reload when only a url param changes.  Without this, the UiScroll component
     // behaves strangely and can reuse data from a previous post.
@@ -262,6 +265,7 @@ export class NftPostComponent {
   }
 
   checkSelectedBidEntries(bidEntry: NFTBidEntryResponse): void {
+    this.selectAllSelected = false;
     if (bidEntry.selected) {
       // De-select any bid entries for the same serial number.
       this.nftBidData.BidEntryResponses.forEach((bidEntryResponse) => {
@@ -286,7 +290,7 @@ export class NftPostComponent {
 
   closeAuction(): void {
     const closeNftAuctionModalDetails = this.modalService.show(CloseNftAuctionModalComponent, {
-      class: "modal-dialog-centered",
+      class: "modal-dialog-centered modal-dialog-thin",
       initialState: {
         post: this.nftPost,
         myAvailableSerialNumbers: this.myAvailableSerialNumbers,
@@ -427,27 +431,37 @@ export class NftPostComponent {
   }
 
   selectHighestBids(): void {
-    let highestNFTMap: { [k: number]: NFTBidEntryResponse } = {};
-    this.bids.forEach((bid) => {
-      const highestBid = highestNFTMap[bid.SerialNumber];
-      if (
-        (!highestBid || highestBid.BidAmountNanos < bid.BidAmountNanos) &&
-        bid.BidderBalanceNanos >= bid.BidAmountNanos
-      ) {
-        highestNFTMap[bid.SerialNumber] = bid;
-      }
-    });
-    this.bids.forEach((bid) => {
-      const highestBid = highestNFTMap[bid.SerialNumber];
-      bid.selected =
-        highestBid.PublicKeyBase58Check === bid.PublicKeyBase58Check &&
-        highestBid.BidAmountNanos === bid.BidAmountNanos &&
-        highestBid.SerialNumber === bid.SerialNumber;
-      if (this.nftPost.NumNFTCopies === 1 && bid.selected) {
-        this.selectedBid = highestBid;
-      }
-    });
-    this.sellNFTDisabled = false;
+    // If all highest are already selected, deselect all
+    if (this.selectAllSelected) {
+      this.bids.forEach((bid) => {
+        bid.selected = false;
+      });
+      this.selectAllSelected = false;
+      this.sellNFTDisabled = true;
+    } else {
+      let highestNFTMap: { [k: number]: NFTBidEntryResponse } = {};
+      this.bids.forEach((bid) => {
+        const highestBid = highestNFTMap[bid.SerialNumber];
+        if (
+          (!highestBid || highestBid.BidAmountNanos < bid.BidAmountNanos) &&
+          bid.BidderBalanceNanos >= bid.BidAmountNanos
+        ) {
+          highestNFTMap[bid.SerialNumber] = bid;
+        }
+      });
+      this.bids.forEach((bid) => {
+        const highestBid = highestNFTMap[bid.SerialNumber];
+        bid.selected =
+          highestBid.PublicKeyBase58Check === bid.PublicKeyBase58Check &&
+          highestBid.BidAmountNanos === bid.BidAmountNanos &&
+          highestBid.SerialNumber === bid.SerialNumber;
+        if (this.nftPost.NumNFTCopies === 1 && bid.selected) {
+          this.selectedBid = highestBid;
+        }
+      });
+      this.sellNFTDisabled = false;
+      this.selectAllSelected = true;
+    }
   }
 
   cancelBid(bidEntry: NFTBidEntryResponse): void {
@@ -475,6 +489,10 @@ export class NftPostComponent {
           .subscribe(
             (res) => {
               this.refreshBidData();
+              this.toastr.show("Your bid was cancelled", null, {
+                toastClass: "info-toast",
+                positionClass: "toast-bottom-center",
+              });
             },
             (err) => {
               console.error(err);

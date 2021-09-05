@@ -3,6 +3,7 @@ import { NgModule } from "@angular/core";
 import { FeatherModule } from "angular-feather";
 import {
   AlertCircle,
+  AlertOctagon,
   AlertTriangle,
   ArrowDown,
   ArrowLeft,
@@ -48,6 +49,7 @@ import { BellNotification, Bitclout, BitcloutCircle, Coin, Diamond, Gem, Lock, M
 
 const icons = {
   AlertCircle,
+  AlertOctagon,
   AlertTriangle,
   ArrowDown,
   ArrowLeft,

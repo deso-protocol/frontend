@@ -4,6 +4,7 @@ import { GlobalVarsService } from "../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { isNumber } from "lodash";
 import { Location } from "@angular/common";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-mint-nft-modal",
@@ -40,7 +41,8 @@ export class MintNftModalComponent {
     private backendApi: BackendApiService,
     private router: Router,
     private location: Location,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastr: ToastrService
   ) {
     this.route.params.subscribe((params) => {
       this.postHashHex = params.postHashHex;
@@ -135,6 +137,12 @@ export class MintNftModalComponent {
       .subscribe(
         (res) => {
           this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
+          const link = `/${this.globalVars.RouteNames.NFT}/${this.postHashHex}`;
+          this.toastr.show(`NFT Created<a href="${link}" class="toast-link cursor-pointer">View</a>`, null, {
+            toastClass: "info-toast",
+            enableHtml: true,
+            positionClass: "toast-bottom-center",
+          });
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
@@ -145,7 +153,6 @@ export class MintNftModalComponent {
 
   _mintNFTSuccess(comp: MintNftModalComponent) {
     comp.minting = false;
-    comp.router.navigate(["/" + comp.globalVars.RouteNames.NFT + "/" + comp.postHashHex]);
   }
 
   _mintNFTFailure(comp: MintNftModalComponent) {

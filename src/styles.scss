@@ -621,6 +621,11 @@ input.bs-timepicker-field {
   border-color: var(--border) !important;
 }
 
+.loading-container {
+  font-family: Gilroy;
+  font-size: 17px;
+  font-weight: 500;
+}
 
 //
 // Top-level css for the feed.
@@ -3457,6 +3462,10 @@ input {
   max-width: 630px;
 }
 
+.modal-dialog-thin {
+  max-width: 360px;
+}
+
 .modal-content {
   font-family: Gilroy;
   background: none;
@@ -3719,6 +3728,21 @@ creator-profile-hodlers {
   left: -48px !important;;
 }
 
+.danger-button {
+  width: 137px;
+  height: 48px;
+  background: var(--error);
+  border-radius: 16px;
+  color: var(--tilebg);
+  border: none;
+  &:hover {
+    color: var(--tilebg);
+  }
+  &.disabled-button {
+    background: var(--error-light)
+  }
+}
+
 .primary-button {
   width: 137px;
   height: 48px;
@@ -3755,6 +3779,29 @@ creator-profile-hodlers {
 
 [class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {
   color: var(--text);
+}
+
+.toast-bottom-center {
+  width: auto;
+  bottom: 20px;
+  left: 50vw;
+  right: auto;
+  pointer-events: auto;
+}
+
+.info-toast {
+  background: var(--highlight);
+  padding: 8px 16px;
+  color: var(--tilebg);
+  font-size: 17px;
+  border-radius: 4px;
+  font-family: Gilroy;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  right: 50vw;
+  .toast-link {
+    font-weight: 600;
+    margin-left: 16px;
+  }
 }
 
 .mat-option, option {

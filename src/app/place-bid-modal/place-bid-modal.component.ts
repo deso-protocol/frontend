@@ -6,7 +6,7 @@ import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backe
 import * as _ from "lodash";
 import { Router } from "@angular/router";
 import { isNumber } from "lodash";
-import {ToastrService} from "ngx-toastr";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "place-bid-modal",
@@ -92,14 +92,11 @@ export class PlaceBidModalComponent implements OnInit {
       this.errors.push(`You must bid more than 0 CLOUT`);
     } else if (this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountCLOUT * 1e9) {
       this.errors.push(
-        `Your bid of ${
-          this.bidAmountCLOUT
-        } does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
+        `Your bid does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
           this.selectedSerialNumber.MinBidAmountNanos
         )} CLOUT (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})`
       );
     }
-    console.log(this.errors);
   }
 
   placeBid() {
@@ -122,10 +119,8 @@ export class PlaceBidModalComponent implements OnInit {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
-          this.modalService.show(BidPlacedModalComponent, {
-            class: "modal-dialog-centered modal-sm",
-          });
           this.modalService.setDismissReason("bid placed");
+          this.showToast();
         },
         (err) => {
           console.error(err);
@@ -143,8 +138,16 @@ export class PlaceBidModalComponent implements OnInit {
     this.router.navigate(["/" + this.globalVars.RouteNames.BUY_BITCLOUT]);
   }
 
+  showToast(): void {
+    const link = `/${this.globalVars.RouteNames.NFT}/${this.post.PostHashHex}`;
+    this.toastr.show(`Bid placed<a href="${link}" class="toast-link cursor-pointer">View</a>`, null, {
+      toastClass: "info-toast",
+      enableHtml: true,
+      positionClass: "toast-bottom-center",
+    });
+  }
+
   saveSelection(): void {
-    this.toastr.show('Toast test');
     if (!this.saveSelectionDisabled) {
       this.isSelectingSerialNumber = false;
       this.showSelectedSerialNumbers = true;

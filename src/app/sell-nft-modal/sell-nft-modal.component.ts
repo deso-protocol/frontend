@@ -8,6 +8,7 @@ import { concatMap, filter, last, map, take } from "rxjs/operators";
 import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
 import { AddUnlockableModalComponent } from "../add-unlockable-modal/add-unlockable-modal.component";
 import { Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "sell-nft-modal",
@@ -32,7 +33,8 @@ export class SellNftModalComponent implements OnInit {
     private modalService: BsModalService,
     private backendApi: BackendApiService,
     public bsModalRef: BsModalRef,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) {}
 
   // TODO: compute service fee.
@@ -85,8 +87,9 @@ export class SellNftModalComponent implements OnInit {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
-          this.modalService.show(NftSoldModalComponent, {
-            class: "modal-dialog-centered modal-sm",
+          this.toastr.show("Your bid was cancelled", null, {
+            toastClass: "info-toast",
+            positionClass: "toast-bottom-center",
           });
           this.modalService.setDismissReason("nft sold");
         },

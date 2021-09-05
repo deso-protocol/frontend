@@ -5,6 +5,7 @@ import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { AnimationOptions } from 'ngx-lottie';
 
 @Component({
   selector: "app-notifications-list",

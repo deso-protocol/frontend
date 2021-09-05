@@ -152,6 +152,8 @@ import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial
 import { MessageRecipientModalComponent } from "./messages-page/message-recipient-modal/message-recipient-modal.component";
 import { FeedCreatePostModalComponent } from "./feed/feed-create-post-modal/feed-create-post-modal.component";
 import { IconsModule } from "./icons/icons.module";
+import { LottieModule } from "ngx-lottie";
+import player from "lottie-web";
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -163,6 +165,10 @@ const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
 const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
 const cakeTheme: Theme = { key: "cake", name: "Cake Theme" };
 const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
+
+export function playerFactory() {
+  return player;
+}
 
 @NgModule({
   declarations: [
@@ -324,6 +330,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
         (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
     }),
     IconsModule,
+    LottieModule,
+    LottieModule.forRoot({ player: playerFactory }),
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],

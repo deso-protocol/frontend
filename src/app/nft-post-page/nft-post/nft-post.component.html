@@ -50,48 +50,50 @@
         </button>
       </div>
       <div *ngIf="!loading && bids?.length">
-        <div class="d-flex align-items-center p-15px pb-0 justify-content-between" *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && myAvailableSerialNumbers?.length">
-          <div
-            class="fs-14px cursor-pointer"
-            (click)="selectHighestBids()"
-            *ngIf="activeTab === NftPostComponent.MY_AUCTIONS"
-          >
-            Select Highest Bids
-          </div>
-          <div>
-            <div class="d-lg-inline-block d-block px-10px py-5px text-align-center">
-              <button
-                class="btn btn-primary font-weight-bold fs-15px br-12px"
-                style="height: 36px; width: 115px; line-height: 15px"
-                [disabled]="sellNFTDisabled"
-                (click)="sellNFT()" *ngIf="!loading && bids?.length"
-              >
-                Sell NFT
-              </button>
-            </div>
-            <div class="d-lg-inline-block d-block px-10px py-5px text-align-center">
-              <button
-                class="btn btn-danger font-weight-bold fs-15px br-12px"
-                (click)="closeAuction()"
-              >
-                Close my auctions
-              </button>
-            </div>
-          </div>
-        </div>
         <div class="container d-flex align-items-center fs-14px py-15px border-bottom border-color-grey link--unstyled">
-          <div class="col-5 p-0 text-align-center cursor-pointer" (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_USERNAME)">
+          <div *ngIf="activeTab === NftPostComponent.MY_AUCTIONS" class="col-5 p-0">
+            <button
+              class="checkbox-circle mr-16px"
+              [ngClass]="{ checked: selectAllSelected }"
+              (click)="selectHighestBids()"
+            >
+              <i-feather name="check"></i-feather>
+            </button>
+            Select All
+          </div>
+          <div *ngIf="activeTab !== NftPostComponent.MY_AUCTIONS" class="col-5 p-0 cursor-pointer" (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_USERNAME)">
             Bidder
-            <i class="fas fs-14px" [ngClass]="{'fa-arrows-alt-v': sortByField !== NftPostComponent.SORT_BY_USERNAME, 'fa-sort-alpha-up-alt': sortByField === NftPostComponent.SORT_BY_USERNAME && sortDescending, 'fa-sort-alpha-down': sortByField === NftPostComponent.SORT_BY_USERNAME && !sortDescending}"></i>
+            <i-feather
+              class="feather-small"
+              *ngIf="sortByField === NftPostComponent.SORT_BY_USERNAME"
+              name="{{ sortDescending ? 'arrow-down' : 'arrow-up' }}"
+            ></i-feather>
           </div>
-          <div class="col-2 p-0 text-align-center cursor-pointer" *ngIf="nftPost.NumNFTCopies > 1" (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_EDITION)">
-            Edition
-            <i class="fas fs-14px" [ngClass]="{'fa-arrows-alt-v': sortByField !== NftPostComponent.SORT_BY_EDITION, 'fa-sort-amount-up-alt': sortByField === NftPostComponent.SORT_BY_EDITION && !sortDescending, 'fa-sort-amount-down': sortByField === NftPostComponent.SORT_BY_EDITION && sortDescending}"></i>
-
+          <div
+            class="col-2 p-0 text-align-center cursor-pointer"
+            *ngIf="nftPost.NumNFTCopies > 1"
+            (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_EDITION)"
+          >
+            Number
+            <i-feather
+              class="feather-small"
+              *ngIf="sortByField === NftPostComponent.SORT_BY_EDITION"
+              name="{{ sortDescending ? 'arrow-down' : 'arrow-up' }}"
+            ></i-feather>
           </div>
-          <div class="p-0 text-align-center cursor-pointer" [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }" (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_PRICE)">
-            Bid Amount
-            <i class="fas fs-14px" [ngClass]="{'fa-arrows-alt-v': sortByField !== NftPostComponent.SORT_BY_PRICE, 'fa-sort-amount-up-alt': sortByField === NftPostComponent.SORT_BY_PRICE && !sortDescending, 'fa-sort-amount-down': sortByField === NftPostComponent.SORT_BY_PRICE && sortDescending}"></i>
+          <div
+            class="p-0 text-align-center cursor-pointer d-flex justify-content-end"
+            [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }"
+            (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_PRICE)"
+          >
+            <div>
+              Bid Amount
+              <i-feather
+                class="feather-small"
+                *ngIf="sortByField === NftPostComponent.SORT_BY_PRICE"
+                name="{{ sortDescending ? 'arrow-down' : 'arrow-up' }}"
+              ></i-feather>
+            </div>
           </div>
         </div>
         <simple-center-loader *ngIf="refreshingBids"></simple-center-loader>
@@ -102,26 +104,20 @@
             <div class="row no-gutters w-100">
               <div class="col-5 d-flex align-items-center mb-0 p-0">
                 <!-- checkbox or radio button -->
-                <input
-                  class="pr-10px cursor-pointer"
-                  type="checkbox"
-                  style="width: 35px"
-                  *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && nftPost.NumNFTCopies > 1 && userOwnsSerialNumber(bidEntry.SerialNumber)"
-                  [(ngModel)]="bidEntry.selected"
-                  (ngModelChange)="checkSelectedBidEntries(bidEntry)"/>
-                <input
-                  class="pr-10px cursor-pointer"
-                  type="radio"
-                  style="width: 35px"
-                  *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && nftPost.NumNFTCopies === 1 && userOwnsSerialNumber(bidEntry.SerialNumber)"
-                  [value]="bidEntry"
-                  [(ngModel)]="selectedBid"
-                  (ngModelChange)="selectBidEntry(bidEntry)"/>
-                <i
-                  class="fas fa-trash pr-10px text-danger cursor-pointer fs-18px"
+                <button
+                  class="checkbox-circle mr-16px"
+                  *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && nftPost.NumNFTCopies >= 1 && userOwnsSerialNumber(bidEntry.SerialNumber)"
+                  [ngClass]="{ checked: bidEntry.selected, radio: nftPost.NumNFTCopies === 1 }"
+                  (click)="bidEntry.selected = !bidEntry.selected; checkSelectedBidEntries(bidEntry)"
+                >
+                  <i-feather name="check"></i-feather>
+                </button>
+                <i-feather
+                  name="trash-2"
+                  class="feather-large mr-10px cursor-pointer"
                   *ngIf="activeTab === NftPostComponent.MY_BIDS"
                   (click)="cancelBid(bidEntry)"
-                ></i>
+                ></i-feather>
                 <!-- Avatar -->
                 <div class="simple-profile-card__avatar-container">
                   <div
@@ -165,6 +161,22 @@
                 <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 2) }}</span>
               </div>
             </div>
+          </div>
+          <div class="d-flex justify-content-end align-items-center p-16px" *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && myAvailableSerialNumbers?.length">
+            <div class="mr-25px cursor-pointer" (click)="closeAuction()">
+              <i-feather name="alert-octagon" class="feather-small mr-5px"></i-feather>
+              <span>Close my auction</span>
+            </div>
+            <button
+              class="primary-button"
+              style="width: 110px"
+              [disabled]="sellNFTDisabled"
+              [ngClass]="{ 'disabled-button': sellNFTDisabled }"
+              (click)="sellNFT()"
+              *ngIf="!loading && bids?.length"
+            >
+              Sell NFT
+            </button>
           </div>
         </div>
       </div>
