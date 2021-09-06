@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-cloutcast-modal',
@@ -6,10 +7,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./cloutcast-modal.component.scss']
 })
 export class CloutCastModalComponent implements OnInit {
+  @Input() postHashHex: string;
+  loading = false;
+  errorLoading = false;
 
-  constructor() { }
+  constructor(
+    public bsModalRef: BsModalRef
+  ) { }
 
   ngOnInit(): void {
+    this.loading = true;
   }
 
 }

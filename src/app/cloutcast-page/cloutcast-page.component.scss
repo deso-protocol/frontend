@@ -5,9 +5,29 @@
 .flex-row { 
   display: flex;
   flex-direction: row;
+  box-sizing: content-box;
 }
 
-.w-thirty {
-  width: 30%;
+.w-fourty {
+  width: 40%;
 }
 
+.ccListItem:hover {
+  background-color: var(--border)!important;
+  cursor: pointer;
+}
+
+.listActive {
+  background-color: var(--border)!important;
+}
+
+.ovy {
+  overflow-y: auto !important;
+  height:100%;
+}
+
+
+.profilePic {
+  border-radius: 10px; 
+  height: 5rem;
+}
