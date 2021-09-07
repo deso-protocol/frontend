@@ -153,6 +153,7 @@ import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { DragDropModule } from "@angular/cdk/drag-drop";
+import { CloutCastBarButtonComponent } from "./left-bar/cloutcast-bar-button/cloutcast-bar-button.component";
 import { CloutCastPageComponent } from './cloutcast-page/cloutcast-page.component';
 import { CloutCastModalComponent } from './cloutcast-modal/cloutcast-modal.component';
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
@@ -291,6 +292,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     CreatePostTutorialPageComponent,
     CloutCastPageComponent,
     CloutCastModalComponent,
+    CloutCastBarButtonComponent
   ],
   imports: [
     BrowserModule,

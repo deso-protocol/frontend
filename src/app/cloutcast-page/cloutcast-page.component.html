@@ -4,18 +4,18 @@
     <div class="global__content__width d-flex vh-100">
       <div class="flex-down w-100">
         <div class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey">
-          
+
           <div class="flex-row w-100">
             <div class="flex-grow-1">
               Casts powered by CloutCast
             </div>
-            <div class="justify-content-end align-items-right pr-50px">
+            <div class="justify-content-end align-items-right pr-icon-settings">
               <i class="fas fa-sliders-h cursor-pointer pt-2px">
               </i>
             </div>
-            
+
           </div>
-          
+
         </div>
         <br />
         <div class="flex-row ovy">
@@ -30,9 +30,9 @@
                 (tabClick)="ccTabClick($event)"
               ></tab-selector>
 
-              
+
               <span *ngIf="showCasts.length > 0">
-                <div 
+                <div
                   class="flex-row align-items-center p-2 border-bottom ccListItem"
                   (click)="ccListItemClick(item.Id)"
                   [ngClass]="{'listActive' : item.Id==selectedCast}"
@@ -41,7 +41,7 @@
                   <img src="https://bitclout.com/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
                   <span class="ml-2">
                     <div>
-                      {{item.BitcloutUsername}} 
+                      {{ item.BitcloutUsername }}
                       <span
                         class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
                         style="width: fit-content">
@@ -62,13 +62,21 @@
             </div>
           </div>
 
-          <div class="flex-grow-1">
+          <div class="flex-grow-1 w-sixty-max">
             <div *ngIf="showContentLoading">
               <simple-center-loader></simple-center-loader>
             </div>
-          </div>  
+            <div *ngIf="!showContentLoading && selectedPost">
+              <feed-post [post]="selectedPost.PostFound">
+
+              </feed-post>
+              <div class="cc-info p-3">
+                <h6>By performing the requested engagement, $CLOUT will be sent to your CloutCast escrow wallet.</h6>
+              </div>
+            </div>
+          </div>
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -85,7 +93,7 @@
       <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
       Casts powered by CloutCast
-    
+
     </div>
     <div class="w-100 ovy">
       <div *ngIf="showListLoading">
@@ -98,9 +106,9 @@
           (tabClick)="ccTabClick($event)"
         ></tab-selector>
 
-        
+
         <span *ngIf="showCasts.length > 0">
-          <div 
+          <div
             class="flex-row align-items-center p-2 border-bottom ccListItem"
             (click)="ccListItemClick(item.Id)"
             [ngClass]="{'listActive' : item.Id==selectedCast}"
@@ -109,7 +117,7 @@
             <img src="https://bitclout.com/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
             <span class="ml-2">
               <div>
-                {{item.BitcloutUsername}} 
+                {{item.BitcloutUsername}}
                 <span
                   class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
                   style="width: fit-content">
@@ -124,7 +132,7 @@
           </div>
         </span>
         <span *ngIf="showCasts.length == 0">
-          <h4>No Promos found in {{selectedTab}}</h4>
+          <h4>No Casts available in here! ({{selectedTab}})</h4>
           <h6>Try later when there are new promos, or when your criteria has changed!</h6>
         </span>
       </div>

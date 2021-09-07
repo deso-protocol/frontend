@@ -139,6 +139,9 @@ export class AppComponent implements OnInit {
         // Setup messages for the logged in user
         this.globalVars.SetupMessages();
 
+        // Setup cloutcast inbox notifications for logged in user
+        this.globalVars.SetupCloutCastNotifications();
+
         // Convert the lists of coin balance entries into maps.
         // TODD: I've intermittently seen errors here where UsersYouHODL is null.
         // That's why I added this || [] thing. We should figure

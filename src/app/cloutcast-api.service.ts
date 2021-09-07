@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
 import { BackendApiService } from './backend-api.service';
 import { GlobalVarsService } from './global-vars.service';
 import { IdentityService } from './identity.service';
@@ -16,14 +17,18 @@ export class CloutcastApiService {
     private identityService: IdentityService,
     private globalVars: GlobalVarsService
   ) {
-    
+
   }
-  
+
+  public async getCastCount(): Promise<number> {
+    return 0;
+  }
+
   public async getActive(): Promise<any> {
     try {
       let tToken = await this.getToken();
 
-      let getActiveReq = await this.httpClient.get("http://localhost:3000/api/promotion/get/all/Active.json", {
+      let getActiveReq = await this.httpClient.get(`${environment.cloutcastUri}/api/promotion/get/all/Active.json`, {
         headers: {
           "Content-Type" : 'application/json',
           "Authorization" : `Bearer ${tToken}`
@@ -42,7 +47,7 @@ export class CloutcastApiService {
   public async getInbox(): Promise<any> {
     try {
       let tToken = await this.getToken();
-      let getInboxReq = await this.httpClient.get("https://cloutcast.io/api/promotion/get/my.json", {
+      let getInboxReq = await this.httpClient.get(`${environment.cloutcastUri}/api/promotion/get/my.json`, {
         headers: {
           "Content-Type" : "application/json",
           "Authorization" : `Bearer ${tToken}`
@@ -75,10 +80,10 @@ export class CloutcastApiService {
         .toPromise();
         CoinPriceBitCloutNanos = this.globalVars.loggedInUser.ProfileEntryResponse.CoinPriceBitCloutNanos;
         followerCount = getFollowers.NumFollowers;
-      
+
       }
 
-      let getInboxReq = await this.httpClient.post("http://localhost:3000/api/promotion/get/my.json",{
+      let getInboxReq = await this.httpClient.post(`${environment.cloutcastUri}/api/promotion/get/my.json`,{
         CoinPriceBitCloutNanos,
         followerCount
       },{
@@ -89,12 +94,12 @@ export class CloutcastApiService {
       }).toPromise();
 
       return getInboxReq;
-      
+
     } catch (ex) {
       throw ex;
     }
   }
-  
+
   private async getToken(): Promise<string> {
     let currentUser = this.globalVars.loggedInUser;
 
@@ -107,7 +112,7 @@ export class CloutcastApiService {
       return this.ccToken;
     }
 
-    
+
     const tokenReq = await this.identityService.jwt({
       ...this.identityService.identityServiceParamsForKey(currentUser.PublicKeyBase58Check)
     }).toPromise();
@@ -118,19 +123,19 @@ export class CloutcastApiService {
       throw new Error("auth needed");
     }
 
-    let ccTokenReq = await this.httpClient.post(`http://localhost:3000/api/auth/${currentUser.PublicKeyBase58Check}.json`, jwt, {
+    let ccTokenReq = await this.httpClient.post(`${environment.cloutcastUri}/api/auth/${currentUser.PublicKeyBase58Check}.json`, jwt, {
       headers: {
         'Content-Type': 'text/plain'
       },
       responseType: 'arraybuffer'
     }).toPromise();
 
-    const tt = String.fromCharCode.apply(null, new Uint8Array(ccTokenReq)); 
+    const tt = String.fromCharCode.apply(null, new Uint8Array(ccTokenReq));
     console.log(tt);
-   
+
     this.ccToken = tt;
     return tt;
-    
+
   }
-  
+
 }

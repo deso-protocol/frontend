@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { BackendApiService } from '../backend-api.service';
+import { NavigationStart, Router } from '@angular/router';
+import { BackendApiService, PostEntryResponse } from '../backend-api.service';
 import { CloutcastApiService } from '../cloutcast-api.service';
 import { GlobalVarsService } from '../global-vars.service';
 import { IdentityService } from '../identity.service';
@@ -12,9 +12,11 @@ import { IdentityService } from '../identity.service';
   styleUrls: ['./cloutcast-page.component.scss']
 })
 export class CloutCastPageComponent implements OnInit {
+  isInitialized: boolean;
   needsApproval: boolean;
   selectedTab: any;
-  selectedCast: any; 
+  selectedCast: any;
+  selectedPost: PostEntryResponse;
   allCasts: any;
   showCasts: any = [];
   showListLoading: boolean = false;
@@ -26,53 +28,98 @@ export class CloutCastPageComponent implements OnInit {
     private identityService: IdentityService,
     private router: Router,
     private titleService: Title
-  ) { 
-    
+  ) {
+    this.router.onSameUrlNavigation = 'reload';
   }
- 
-  async ngOnInit(): Promise<void> {
-    try {
-      console.log(history.state);
-      let {
-        selectedTab = "Inbox",
-        selectedCast = null
-      } = history.state
-      this.showListLoading = true;
-      this.selectedTab = selectedTab;
-      if (selectedCast !== null) {
-        this.selectedCast = selectedCast;
-      }
-      let getActive = await this.cloutcastApi.getActive();
-      // let getInbox = await this.cloutcastApi.getInbox();
-      // let getForMe = await this.cloutcastApi.getForMe();
-    
 
-      this.allCasts = getActive;
-      // this.myCasts = getForMe;
-      console.log({a: this.allCasts});
-      // this.showCasts = this.allCasts;
-      await this.ccTabClick(this.selectedTab);
+
+  async ngOnInit(): Promise<void> {
+    if (!!!this.isInitialized) {
+      this.showListLoading = true;
+      await this.getActive(true);
+      await this.handleEvent(this.router.url);
+      this.isInitialized = true;
+
+    }
+
+    this.router.events.subscribe(async event => {
+      if (event instanceof NavigationStart) {
+        await this.handleEvent(event.url);
+      }
+
+   });
+
+  }
+
+  private async handleEvent(url:string) : Promise<any> {
+    try {
+
+      this.showListLoading = true;
+      // console.log(event);
+      if (url.startsWith("/casts/")) {
+        // we have a castID!
+        if (!!!this.isInitialized) {
+          await this.ccTabClick('All');
+        }
+
+        let castString = url.split("/")[2];
+        let castInt = parseInt(castString);
+
+        if (castInt !== this.selectedCast) {
+          this.showContentLoading = true;
+          this.selectedCast = castInt;
+          this.selectedPost = null;
+          await this.getPostByCastId(castInt);
+        }
+      } else if (url == "/casts") {
+        await this.ccTabClick("Inbox");
+        this.selectedCast = null;
+      }
+    } catch (ex) {
+      console.error(ex);
+    } finally {
+      this.showListLoading = false;
+      this.showContentLoading = false;
+    }
+  }
+
+  private async getActive(updateActive: boolean = false): Promise<any> {
+    let tError = null;
+    try {
+      let out = await this.cloutcastApi.getActive();
+      if (updateActive == true) {
+        this.allCasts = out;
+      }
+
+      return out;
+
 
     } catch (ex) {
-      console.error(ex);  
+      console.error(ex);
+      console.error(ex);
       let {message = "Unspecified error"} = ex;
       if (message == "auth needed") {
         // reroute
         this.router.navigateByUrl("/", {replaceUrl: true});
       }
-    } 
+    } finally {
+      if (tError !== null) {
+        console.warn("cloutcast error in getAll");
+        return [];
+      }
+    }
   }
 
-  ccListItemClick(castID) {
+
+  async ccListItemClick(castID) {
     if (this.selectedCast != castID) {
-      this.selectedCast = castID;
-      this.router.navigateByUrl("/casts/" + castID, {
+      await this.router.navigateByUrl("/casts/" + castID, {
         state: {
           selectedTab: this.selectedTab,
           selectedCast: this.selectedCast
-        }
+        },
+        skipLocationChange: false
       });
-      console.log(castID);
     }
   }
 
@@ -101,7 +148,7 @@ export class CloutCastPageComponent implements OnInit {
               }
             }
             break;
-          case "For Me": 
+          case "For Me":
             let coinPrice = 0;
             let followerCount = 0;
 
@@ -139,11 +186,11 @@ export class CloutCastPageComponent implements OnInit {
               }
             }
             break;
-          case "All": 
+          case "All":
             this.showCasts = this.allCasts;
             break;
         }
-        console.log(tabName);
+        // console.log(tabName);
         } catch (ex) {
           console.error(ex);
         } finally {
@@ -158,17 +205,57 @@ export class CloutCastPageComponent implements OnInit {
 
   bitcloutToUSD(clout:number): number {
     // console.log()
-    
+
     let t = Math.round(100 * ((this.globalVars.ExchangeUSDCentsPerBitClout / 100) * clout)) / 100;
     console.log({t, clout, ex: this.globalVars.ExchangeUSDCentsPerBitClout / 100});
     return t;
   }
 
   rounded(num: number, roundTo: number = 1): number {
-    return Math.round(roundTo * num) / roundTo; 
+    return Math.round(roundTo * num) / roundTo;
   }
   floored(num: number, flooredTo: number = 1): number {
-    return Math.floor(flooredTo* num) / flooredTo; 
+    return Math.floor(flooredTo* num) / flooredTo;
+  }
+
+  async getPostByCastId(id: number): Promise<void> {
+    try {
+      let thePostHex = null;
+      for (var item of this.allCasts) {
+        let {Id = null} = item;
+        if (id == Id) {
+          thePostHex = item.gigPostHash;
+        }
+      }
+
+      if (thePostHex == null) {
+        throw new Error("could not find post");
+      }
+
+      await this.getPost(thePostHex);
+    } catch (ex) {
+      console.error(ex);
+      return null;
+    }
+  }
+
+  async getPost(postHex: string): Promise<void> {
+    try {
+      let thePost = await this.backendApi.GetSinglePost(
+        this.globalVars.localNode,
+        postHex,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        false,
+        undefined,
+        0,
+        false
+      ).toPromise();
+      this.selectedPost = thePost;
+      return;
+    } catch (ex) {
+      console.error(ex);
+      return null;
+    }
   }
 
 

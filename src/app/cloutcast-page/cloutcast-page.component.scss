@@ -1,8 +1,8 @@
-.flex-down { 
+.flex-down {
   flex-direction: column;
 }
 
-.flex-row { 
+.flex-row {
   display: flex;
   flex-direction: row;
   box-sizing: content-box;
@@ -10,6 +10,10 @@
 
 .w-fourty {
   width: 40%;
+}
+
+.w-sixty-max {
+  max-width: 60%;
 }
 
 .ccListItem:hover {
@@ -28,6 +32,14 @@
 
 
 .profilePic {
-  border-radius: 10px; 
+  border-radius: 10px;
   height: 5rem;
+}
+
+.pr-icon-settings {
+  padding-right: 100px;
+}
+
+.cc-info {
+  background-color: var(--secondary);
 }

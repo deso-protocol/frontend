@@ -113,11 +113,11 @@
         <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
       <!-- CloutCast Button with Notifications for Inbox -->
-      <left-bar-button
+      <cloutcast-bar-button
         [hasNotifications]="true"
         [link]="'/' + globalVars.RouteNames.CLOUTCAST_PREFIX"
         [buttonLabel]="'Casts'"
-      ></left-bar-button>
+      ></cloutcast-bar-button>
 
       <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
         <a class="left-bar__dot-inactive">·</a>
