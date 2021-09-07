@@ -109,6 +109,7 @@ export class CloutcastApiService {
           "Authorization": `Bearer ${tToken}`
         },
         responseType: "arraybuffer"
+
       }).toPromise();
       let tt = String.fromCharCode.apply(null, new Uint8Array(proveWorkRequest));
       if (tt == 'OK') {
