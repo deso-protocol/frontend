@@ -48,7 +48,7 @@
                           ${{floored(item.BitCloutUserPrice, 100)}}
                       </span>
                     </div>
-                    <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
+                    <div [innerText]="'Earn ~' + nanosToUSD(item.RateNanos) + ' USD'"></div>
                     <div>
                       {{item.TargetActionText}}
                     </div>
@@ -67,11 +67,22 @@
               <simple-center-loader></simple-center-loader>
             </div>
             <div *ngIf="!showContentLoading && selectedPost">
-              <feed-post [post]="selectedPost.PostFound">
+              <feed-post
+                [post]="selectedPost.PostFound"
+              >
 
               </feed-post>
               <div class="cc-info p-3">
-                <h6>By performing the requested engagement, $CLOUT will be sent to your CloutCast escrow wallet.</h6>
+                <h6>After performing the requested engagement, click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+                <button
+                  class="btn-block my-2 btn-primary"
+                  (click)="proveWork()"
+                >
+                  Earn {{ nanosToBitClout(selectedCastObject.RateNanos) }} $CLOUT
+                </button>
+                <span class="text-muted">
+                  $CLOUT earned from engaging with Casts is put into an escrow account. For more details, click the settings icon above.
+                </span>
               </div>
             </div>
           </div>

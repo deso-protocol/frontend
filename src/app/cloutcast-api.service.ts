@@ -100,6 +100,28 @@ export class CloutcastApiService {
     }
   }
 
+  public async proveWork(id: number): Promise<any> {
+    try {
+      let tToken = await this.getToken();
+      let proveWorkRequest = await this.httpClient.get(`${environment.cloutcastUri}/api/promotion/provework/${id}.json`, {
+        headers: {
+          'Content-Type' : 'application/json',
+          "Authorization": `Bearer ${tToken}`
+        },
+        responseType: "arraybuffer"
+      }).toPromise();
+      let tt = String.fromCharCode.apply(null, new Uint8Array(proveWorkRequest));
+      if (tt == 'OK') {
+        return true;
+      } else {
+        console.warn(tt);
+        throw new Error("Something happened while trying to prove CloutCast work.");
+      }
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
   private async getToken(): Promise<string> {
     let currentUser = this.globalVars.loggedInUser;
 

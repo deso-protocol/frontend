@@ -16,6 +16,7 @@ export class CloutCastPageComponent implements OnInit {
   needsApproval: boolean;
   selectedTab: any;
   selectedCast: any;
+  selectedCastObject: any;
   selectedPost: PostEntryResponse;
   allCasts: any;
   showCasts: any = [];
@@ -95,7 +96,6 @@ export class CloutCastPageComponent implements OnInit {
 
 
     } catch (ex) {
-      console.error(ex);
       console.error(ex);
       let {message = "Unspecified error"} = ex;
       if (message == "auth needed") {
@@ -204,11 +204,15 @@ export class CloutCastPageComponent implements OnInit {
   }
 
   bitcloutToUSD(clout:number): number {
-    // console.log()
-
     let t = Math.round(100 * ((this.globalVars.ExchangeUSDCentsPerBitClout / 100) * clout)) / 100;
-    console.log({t, clout, ex: this.globalVars.ExchangeUSDCentsPerBitClout / 100});
+    // console.log({t, clout, ex: this.globalVars.ExchangeUSDCentsPerBitClout / 100});
     return t;
+  }
+  nanosToUSD(nanos: number): string {
+    return this.globalVars.nanosToUSD(nanos, 2);
+  }
+  nanosToBitClout(nanos: number): string {
+    return this.globalVars.nanosToBitClout(nanos,2);
   }
 
   rounded(num: number, roundTo: number = 1): number {
@@ -225,6 +229,8 @@ export class CloutCastPageComponent implements OnInit {
         let {Id = null} = item;
         if (id == Id) {
           thePostHex = item.gigPostHash;
+          this.selectedCastObject = item;
+          console.dir(this.selectedCastObject);
         }
       }
 
@@ -236,6 +242,30 @@ export class CloutCastPageComponent implements OnInit {
     } catch (ex) {
       console.error(ex);
       return null;
+    }
+  }
+
+  async proveWork(): Promise<void> {
+    this.showListLoading = true;
+    this.showContentLoading = true;
+
+    let theError = null;
+    try {
+      // console.log(this.selectedCastObject.Id);
+      let didWork = await this.cloutcastApi.proveWork(this.selectedCastObject.Id);
+      if (didWork == true) {
+        this.globalVars._alertSuccess(`${this.nanosToBitClout(this.selectedCastObject.RateNanos)} was added to your CloutCast escrow wallet!`)
+      }
+    } catch (ex) {
+      console.error(ex);
+      theError = ex;
+      this.globalVars._alertError(JSON.stringify(ex));
+    } finally {
+      if (theError !== null) {
+        console.warn("provework did not complete");
+      }
+      this.showListLoading = false;
+      this.showContentLoading = false;
     }
   }
 
@@ -257,6 +287,8 @@ export class CloutCastPageComponent implements OnInit {
       return null;
     }
   }
+
+  async
 
 
 }
