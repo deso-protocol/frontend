@@ -28,7 +28,8 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
-    https://cloutcastapimgtdev.azure-api.net
+    https://dev.cloutcast.io
+    https://cloutcast.io
     bitclout.com:*
     api.bitclout.com
     bithunt.bitclout.com
