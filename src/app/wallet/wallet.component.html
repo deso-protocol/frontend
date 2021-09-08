@@ -121,7 +121,7 @@
       <a [routerLink]="'/' + globalVars.RouteNames.SEND_BITCLOUT" queryParamsHandling="merge">
         <button class="plain-button mr-20px font-weight-bold">Send $Clout</button>
       </a>
-      <a [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT" queryParamsHandling="merge">
+      <a (click)="openBuyCloutModal()">
         <button class="primary-button font-weight-bold">Buy $Clout</button>
       </a>
     </div>
@@ -152,7 +152,7 @@
 
       <div class="fs-15px">
         <div
-          class="row no-gutters d-flex align-items-center border-bottom border-color-grey p-16px fs-15px"
+          class="row no-gutters d-flex align-items-center p-16px fs-15px"
         >
           <div class="col-3 mb-0 cursor-pointer fc-muted text-link_hover" (click)="sortWallet('username')">
             <i-feather
@@ -201,7 +201,7 @@
               creator &&
               (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
             "
-            class="row no-gutters fc-default py-10px px-16px"
+            class="row no-gutters fc-default py-10px px-16px border-top"
             [ngStyle]="{
             'border': isHighlightedCreator(creator) ? '1px solid var(--cblue)' : '',
             'border-radius': isHighlightedCreator(creator) ? '12px' : ''
@@ -299,11 +299,11 @@
         </a>
       </div>
 
-      <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-      <div class="global__bottom-bar-mobile-height"></div>
-      <div class="global__bottom-bar-mobile-height"></div>
     </div>
   </div>
+  <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+  <div class="global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
 </div>
 <div *ngIf="!globalVars.loggedInUser">
   <simple-center-loader></simple-center-loader>

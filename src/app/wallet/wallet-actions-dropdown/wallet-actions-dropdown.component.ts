@@ -12,10 +12,23 @@ export class WalletActionsDropdownComponent implements OnInit {
   @Input() inTutorial: boolean = false;
   @Input() isHighlightedCreator: boolean = false;
   AppRoutingModule = AppRoutingModule;
+  showIcons = false;
 
   showSellOnly: boolean = false;
   RouteNames = RouteNames;
+  iconHideTimeout: NodeJS.Timer;
+
   constructor(public globalVars: GlobalVarsService) {}
+
+  hideIcons(): void {
+    this.iconHideTimeout = setTimeout(() => {
+      this.showIcons = false;
+    }, 1000);
+  }
+
+  stopIconHide() {
+    clearTimeout(this.iconHideTimeout);
+  }
 
   ngOnInit(): void {
     if (this.inTutorial && this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {

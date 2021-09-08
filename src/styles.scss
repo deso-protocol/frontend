@@ -2204,6 +2204,10 @@ wallet-page {
   margin-top: 20px;
 }
 
+.buy-clout-modal {
+  max-width: 630px;
+}
+
 .cdk-overlay-container{
   z-index: 1050;
 }
@@ -2382,6 +2386,33 @@ creator-profile-nfts {
   }
 }
 
+.buy-bitclout__container {
+  background: var(--tilebg);
+  border-radius: 10px;
+  padding-top: 16px;
+}
+
+.buy-bitclout__currency-dropdown {
+  max-height: 45vh;
+  overflow-y: scroll;
+}
+
+.buy-bitclout__country-selector {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--tilesecbg);
+  width: 105px;
+  height: 48px;
+  padding: 12px;
+  color: var(--postsectext);
+  font-size: 15px;
+}
+
+.buy-bitclout__country-dropdown {
+  max-height: 28vh;
+  overflow-y: scroll;
+  right: 138px !important;
+}
 .buy-bitclout__copy-button {
   display: flex;
   align-items: center;
@@ -3875,6 +3906,22 @@ sell-nft-modal {
   color: var(--postsectext);
   &:hover {
     color: var(--postsectext);
+  }
+  &.disabled-button {
+    background: var(--tilebg)
+  }
+}
+
+.light-button {
+  width: 137px;
+  height: 48px;
+  background: var(--tilebg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--posttext);
+  font-weight: 600;
+  &:hover {
+    color: var(--posttext);
   }
   &.disabled-button {
     background: var(--tilebg)

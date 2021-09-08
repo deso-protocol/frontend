@@ -8,6 +8,7 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import Swal from "sweetalert2";
 import { IdentityService } from "../../identity.service";
 import { WyreService } from "../../../lib/services/wyre/wyre";
+import {BsModalRef} from "ngx-bootstrap/modal";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -35,10 +36,12 @@ export class BuyBitcloutComponent implements OnInit {
   queryingBitcoinAPI = false;
   wyreService: WyreService;
   showBuyComplete: boolean = false;
+  buyWithBTCStep = 1;
+  keyIsCopied = false;
 
   BuyBitcloutComponent = BuyBitcloutComponent;
 
-  static BUY_WITH_USD = "Buy with USD";
+  static BUY_WITH_USD = "Buy with fiat";
   static BUY_WITH_BTC = "Buy with Bitcoin";
 
   buyTabs = [BuyBitcloutComponent.BUY_WITH_USD, BuyBitcloutComponent.BUY_WITH_BTC];
@@ -50,7 +53,8 @@ export class BuyBitcloutComponent implements OnInit {
     private identityService: IdentityService,
     private route: ActivatedRoute,
     private router: Router,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    public bsModalRef: BsModalRef
   ) {
     this.appData = globalVars;
     this.route.queryParams.subscribe((params: Params) => {
@@ -120,6 +124,14 @@ export class BuyBitcloutComponent implements OnInit {
       "the Bitcoin blockchain. For this reason, we must add a network fee to " +
       "incentivize miners to process the transaction."
     );
+  }
+
+  _copyPublicKey() {
+    this.appData._copyText(this.btcDepositAddress());
+    this.keyIsCopied = true;
+    setInterval(() => {
+      this.keyIsCopied = false;
+    }, 1000);
   }
 
   _extractBurnError(err: any): string {

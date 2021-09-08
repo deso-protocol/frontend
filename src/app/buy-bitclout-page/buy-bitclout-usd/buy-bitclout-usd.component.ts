@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedComponent } from "../../feed/feed.component";
 import currencyToSymbolMap from "currency-symbol-map/map";
+import { BsModalRef } from "ngx-bootstrap/modal";
 
 @Component({
   selector: "buy-bitclout-usd",
@@ -45,7 +46,8 @@ export class BuyBitcloutUSDComponent implements OnInit {
     private identityService: IdentityService,
     private backendApi: BackendApiService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public bsModalRef: BsModalRef
   ) {
     this.wyreService = new WyreService(this.httpClient, this.globalVars, this.backendApi);
     this.supportedFiatCurrencies = this.wyreService.getSupportedFiatCurrencies();

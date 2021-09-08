@@ -8,6 +8,9 @@ import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { UpdateProfileModalComponent } from "../update-profile-page/update-profile-modal/update-profile-modal.component";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
 
 @Component({
   selector: "wallet",
@@ -50,7 +53,8 @@ export class WalletComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private router: Router,
     private route: ActivatedRoute,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private modalService: BsModalService
   ) {
     this.globalVars = appData;
     this.route.params.subscribe((params) => {
@@ -124,6 +128,14 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  openBuyCloutModal() {
+
+    // If the user has an account and a profile, open the modal so they can comment.
+    this.modalService.show(BuyBitcloutComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+    });
   }
 
   _copyPublicKey() {
