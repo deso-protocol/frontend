@@ -153,6 +153,7 @@ import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { DragDropModule } from "@angular/cdk/drag-drop";
+import { BuyBitcloutEthComponent } from "./buy-bitclout-page/buy-bitclout-eth/buy-bitclout-eth.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -287,6 +288,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     DiamondTutorialPageComponent,
     DiamondTutorialComponent,
     CreatePostTutorialPageComponent,
+    BuyBitcloutEthComponent,
   ],
   imports: [
     BrowserModule,
