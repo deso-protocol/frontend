@@ -103,20 +103,37 @@ export class CloutcastApiService {
   public async proveWork(id: number): Promise<any> {
     try {
       let tToken = await this.getToken();
-      let proveWorkRequest = await this.httpClient.get(`${environment.cloutcastUri}/api/promotion/provework/${id}.json`, {
-        headers: {
-          'Content-Type' : 'application/json',
-          "Authorization": `Bearer ${tToken}`
-        },
-        responseType: "arraybuffer"
 
-      }).toPromise();
-      let tt = String.fromCharCode.apply(null, new Uint8Array(proveWorkRequest));
-      if (tt == 'OK') {
+      // the angular httpClient doesn't give me access to response body if there's an error. Using fetch instead.
+      // let proveWorkRequest = await this.httpClient.get(`${environment.cloutcastUri}/api/promotion/provework/${id}.json`, {
+      //   headers: {
+      //     'Content-Type' : 'application/json',
+      //     "Authorization": `Bearer ${tToken}`
+      //   },
+      //   responseType: "arraybuffer"
+
+      // }).toPromise();
+      // let tt = String.fromCharCode.apply(null, new Uint8Array(proveWorkRequest));
+      // if (tt == 'OK') {
+      //   return true;
+      // } else {
+      //   console.warn(tt);
+      //   throw new Error("Something happened while trying to prove CloutCast work.");
+      // }
+
+      let proveWorkRequest = await fetch(`${environment.cloutcastUri}/api/promotion/provework/${id}.json`, {
+        headers: [
+          ['Content-Type', 'application/json'],
+          ['Authorization', `Bearer ${tToken}`],
+          ['Accept', 'txt/plain']
+        ]
+      });
+      let response = await proveWorkRequest.text();
+      if (response == 'OK') {
         return true;
       } else {
-        console.warn(tt);
-        throw new Error("Something happened while trying to prove CloutCast work.");
+        console.warn(response);
+        throw new Error(response);
       }
     } catch (ex) {
       throw ex;

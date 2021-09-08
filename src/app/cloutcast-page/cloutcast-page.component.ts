@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Title } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
 import { BackendApiService, PostEntryResponse } from '../backend-api.service';
@@ -13,6 +14,11 @@ import { IdentityService } from '../identity.service';
 })
 export class CloutCastPageComponent implements OnInit {
   isInitialized: boolean;
+  userFollowerCount = {
+    username: "",
+    count: 0
+  };
+  userCoinPrice = 0;
   needsApproval: boolean;
   selectedTab: any;
   selectedCast: any;
@@ -39,12 +45,37 @@ export class CloutCastPageComponent implements OnInit {
       this.showListLoading = true;
       await this.getActive(true);
       await this.handleEvent(this.router.url);
+      if (!!this.globalVars.loggedInUser.ProfileEntryResponse) {
+        if (this.globalVars.loggedInUser.ProfileEntryResponse.Username != this.userFollowerCount.username) {
+          try {
+            const getFollowers = await this.backendApi
+                  .GetFollows(
+                    this.globalVars.localNode,
+                    this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+                    "" /* PublicKeyBase58Check */,
+                    true /* get followers */,
+                    "" /* GetEntriesFollowingUsername */,
+                    0 /* NumToFetch */
+                  )
+                  .toPromise();
+                this.userFollowerCount.count = getFollowers.NumFollowers;
+            } catch (ex) {
+              console.error(ex);
+              this.userFollowerCount.count = 0;
+            } finally {
+              this.userFollowerCount.username = this.globalVars.loggedInUser.ProfileEntryResponse.Username;
+            }
+        }
+      }
       this.isInitialized = true;
 
     }
 
     this.router.events.subscribe(async event => {
       if (event instanceof NavigationStart) {
+        if (event.restoredState) {
+          console.log(event);
+        }
         await this.handleEvent(event.url);
       }
 
@@ -60,10 +91,11 @@ export class CloutCastPageComponent implements OnInit {
       if (url.startsWith("/casts/")) {
         // we have a castID!
         if (!!!this.isInitialized) {
-          await this.ccTabClick('All');
+          let {selectedTab = "All"} = history.state;
+          await this.ccTabClick(selectedTab);
         }
 
-        let castString = url.split("/")[2];
+        let castString = url.split("/")[2].split("?")[0];
         let castInt = parseInt(castString);
 
         if (castInt !== this.selectedCast) {
@@ -72,8 +104,14 @@ export class CloutCastPageComponent implements OnInit {
           this.selectedPost = null;
           await this.getPostByCastId(castInt);
         }
-      } else if (url == "/casts") {
-        await this.ccTabClick("Inbox");
+      } else if (url.startsWith("/casts")) {
+        if (!this.selectedTab) {
+          // console.log(history.state);
+          let {selectedTab = "Inbox"} = history.state;
+          await this.ccTabClick(selectedTab);
+        } else {
+          await this.ccTabClick(this.selectedTab);
+        }
         this.selectedCast = null;
       }
     } catch (ex) {
@@ -154,17 +192,21 @@ export class CloutCastPageComponent implements OnInit {
 
             if (this.globalVars.loggedInUser.ProfileEntryResponse !== null) {
               coinPrice = this.globalVars.loggedInUser.ProfileEntryResponse.CoinPriceBitCloutNanos;
-              const getFollowers = await this.backendApi
-                .GetFollows(
-                  this.globalVars.localNode,
-                  this.globalVars.loggedInUser.ProfileEntryResponse.Username,
-                  "" /* PublicKeyBase58Check */,
-                  true /* get followers */,
-                  "" /* GetEntriesFollowingUsername */,
-                  0 /* NumToFetch */
-                )
-                .toPromise();
-              followerCount = getFollowers.NumFollowers;
+              if (this.globalVars.loggedInUser.ProfileEntryResponse.Username == this.userFollowerCount.username) {
+                followerCount = this.userFollowerCount.count;
+              } else {
+                const getFollowers = await this.backendApi
+                  .GetFollows(
+                    this.globalVars.localNode,
+                    this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+                    "" /* PublicKeyBase58Check */,
+                    true /* get followers */,
+                    "" /* GetEntriesFollowingUsername */,
+                    0 /* NumToFetch */
+                  )
+                  .toPromise();
+                followerCount = getFollowers.NumFollowers;
+              }
             }
             for (var cast of this.allCasts) {
               let isFound = false;
@@ -259,7 +301,9 @@ export class CloutCastPageComponent implements OnInit {
     } catch (ex) {
       console.error(ex);
       theError = ex;
-      this.globalVars._alertError(JSON.stringify(ex));
+      let {message = null} = ex;
+      let tMessage = message == null ? JSON.stringify(ex) : message;
+      this.globalVars._alertError(tMessage);
     } finally {
       if (theError !== null) {
         console.warn("provework did not complete");
@@ -288,7 +332,18 @@ export class CloutCastPageComponent implements OnInit {
     }
   }
 
-  async
+  async mobileBack(): Promise<void> {
+    this.selectedCast = undefined;
+    this.selectedCastObject = undefined;
+    this.selectedPost = undefined;
+    this.router.navigate(["/casts"], {
+      replaceUrl: true,
+      state: {
+        selectedTab: this.selectedTab
+      }
+      // skipLocationChange: true
+    });
+  }
 
 
 }

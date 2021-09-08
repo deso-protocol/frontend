@@ -62,11 +62,11 @@
             </div>
           </div>
 
-          <div class="flex-grow-1 w-sixty-max">
+          <div class="flex-grow-1 w-sixty-max ovy">
             <div *ngIf="showContentLoading">
               <simple-center-loader></simple-center-loader>
             </div>
-            <div *ngIf="!showContentLoading && selectedPost">
+            <div *ngIf="!showContentLoading && selectedPost" class="ovy p-3">
               <feed-post
                 [post]="selectedPost.PostFound"
               >
@@ -102,15 +102,23 @@
     <!-- Header -->
     <div class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey">
       <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+      <span>
+          <button
+            *ngIf="!!selectedPost"
+            (click)="mobileBack()"
+          >
+            <i class="fas fa-chevron-left cursor-pointer pt-2px"></i>
+          </button>
+        Casts powered by CloutCast
+      </span>
 
-      Casts powered by CloutCast
 
     </div>
     <div class="w-100 ovy">
-      <div *ngIf="showListLoading">
+      <div *ngIf="showListLoading || showContentLoading">
         <simple-center-loader></simple-center-loader>
       </div>
-      <div *ngIf="!showListLoading" class="ovy">
+      <div *ngIf="(!showContentLoading && !showListLoading) && !!!this.selectedPost" class="ovy">
         <tab-selector
           [tabs]="['Inbox', 'For Me', 'All']"
           [activeTab]="selectedTab"
@@ -125,7 +133,7 @@
             [ngClass]="{'listActive' : item.Id==selectedCast}"
             *ngFor="let item of showCasts; index as i;"
           >
-            <img src="https://bitclout.com/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
+            <img src="//{{this.globalVars.localNode}}/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
             <span class="ml-2">
               <div>
                 {{item.BitcloutUsername}}
@@ -146,6 +154,25 @@
           <h4>No Casts available in here! ({{selectedTab}})</h4>
           <h6>Try later when there are new promos, or when your criteria has changed!</h6>
         </span>
+      </div>
+      <div *ngIf="!showContentLoading && selectedPost" class="ovy p-3">
+        <feed-post
+          [post]="selectedPost.PostFound"
+        >
+
+        </feed-post>
+        <div class="cc-info p-3">
+          <h6>After performing the requested engagement, click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+          <button
+            class="btn-block my-2 btn-primary"
+            (click)="proveWork()"
+          >
+            Earn {{ nanosToBitClout(selectedCastObject.RateNanos) }} $CLOUT
+          </button>
+          <span class="text-muted">
+            $CLOUT earned from engaging with Casts is put into an escrow account. For more details, click the settings icon above.
+          </span>
+        </div>
       </div>
     </div>
   </div>
