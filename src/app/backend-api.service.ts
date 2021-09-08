@@ -308,6 +308,7 @@ export class NFTBidEntryResponse {
   BidderBalanceNanos: number;
 
   selected?: boolean;
+  EarningsAmountNanos?: number;
 }
 
 export class NFTCollectionResponse {

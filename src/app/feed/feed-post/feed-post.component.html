@@ -12,7 +12,11 @@
      - feed-create-comment-form component (i.e. create comment view)
 
      - market-feed component -->
-<div *ngIf="isNFTListSummary && postContent" class="creator-profile-nfts__list-container">
+<div
+  *ngIf="isNFTListSummary && postContent"
+  class="creator-profile-nfts__list-container cursor-pointer"
+  (click)="onPostClicked($event)"
+>
   <div class="d-flex justify-content-between">
     <div class="feed-post__avatar-container">
       <a
@@ -24,7 +28,13 @@
     </div>
     <div class="creator-profile-nfts__list-body d-flex flex-column">
       <div>{{ postContent?.Body }}</div>
-      <div>{{ postContent?.NumNFTCopiesForSale }} of {{ postContent?.NumNFTCopies }} for sale</div>
+      <div>
+        {{ postContent?.NumNFTCopiesForSale }} of {{ postContent?.NumNFTCopies }} for sale
+        <span *ngIf="postContent.HasUnlockable" class="feed-post__nft-list-view-unlockable">
+          <i-feather name="lock"></i-feather>
+          <span>Unlockable content</span>
+        </span>
+      </div>
       <div>From: {{ globalVars.nanosToBitClout(lowBid, 2) }} $Clout ~{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
     </div>
 

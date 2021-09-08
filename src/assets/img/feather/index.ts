@@ -1,8 +1,10 @@
 export { BellNotification } from "./bellNotification";
 export { Bitclout } from "./bitclout";
 export { BitcloutCircle } from "./bitcloutCircle";
+export { Card } from "./card";
 export { Coin } from "./coin";
 export { Diamond } from "./diamond";
+export { Frame } from "./frame";
 export { Gem } from "./gem";
 export { Lock } from "./lock";
 export { MultipleNfts } from "./MultipleNFTs";

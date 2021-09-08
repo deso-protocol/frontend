@@ -18,6 +18,7 @@ import {
   Code,
   Codesandbox,
   Copy,
+  CreditCard,
   ExternalLink,
   Flag,
   FolderMinus,
@@ -42,10 +43,24 @@ import {
   Trash2,
   TrendingUp,
   User,
+  UserPlus,
   UserX,
   X,
 } from "angular-feather/icons";
-import { BellNotification, Bitclout, BitcloutCircle, Coin, Diamond, Gem, Lock, MultipleNfts, Quote, SingleNft } from "src/assets/img/feather";
+import {
+  BellNotification,
+  Bitclout,
+  BitcloutCircle,
+  Card,
+  Coin,
+  Diamond,
+  Frame,
+  Gem,
+  Lock,
+  MultipleNfts,
+  Quote,
+  SingleNft,
+} from "src/assets/img/feather";
 
 const icons = {
   AlertCircle,
@@ -59,6 +74,7 @@ const icons = {
   BellNotification,
   Bitclout,
   BitcloutCircle,
+  Card,
   Check,
   CheckCircle,
   ChevronDown,
@@ -68,11 +84,13 @@ const icons = {
   Codesandbox,
   Coin,
   Copy,
+  CreditCard,
   Diamond,
   ExternalLink,
   Flag,
   FolderMinus,
   FolderPlus,
+  Frame,
   Gem,
   Gift,
   Heart,
@@ -98,6 +116,7 @@ const icons = {
   Trash2,
   TrendingUp,
   User,
+  UserPlus,
   UserX,
   X,
 };

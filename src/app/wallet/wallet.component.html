@@ -1,16 +1,16 @@
-<!-- Top Bar -->
-<div
-  class="global__top-bar  global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
-  *ngIf="!inTutorial"
->
-  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-  <div class="d-flex align-items-center w-100 justify-content-between">
-    <div>Wallet</div>
-    <div class="p-15px fs-14px"><span>≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}&nbsp;</span><small>USD Total</small></div>
-  </div>
-</div>
+<!--&lt;!&ndash; Top Bar &ndash;&gt;-->
+<!--<div-->
+<!--  class="global__top-bar  global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"-->
+<!--  *ngIf="!inTutorial"-->
+<!--&gt;-->
+<!--  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>-->
+<!--&lt;!&ndash;  <div class="d-flex align-items-center w-100 justify-content-between">&ndash;&gt;-->
+<!--&lt;!&ndash;    <div>Wallet</div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="p-15px fs-14px"><span>≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}&nbsp;</span><small>USD Total</small></div>&ndash;&gt;-->
+<!--&lt;!&ndash;  </div>&ndash;&gt;-->
+<!--</div>-->
 
-<div class="global__top-bar__height" *ngIf="!inTutorial"></div>
+<!--<div class="global__top-bar__height" *ngIf="!inTutorial"></div>-->
 <div
   class=""
   *ngIf="inTutorial"
@@ -53,108 +53,140 @@
 
 </div>
 
+<div class="d-flex flex-column wallet__container" *ngIf="globalVars.loggedInUser">
+  <!--First row-->
+  <div class="d-flex justify-content-between m-16px">
+    <!--Avatar, username, and balance-->
+    <div class="d-flex align-items-center">
+      <!--Avatar-->
+      <div>
+        <div class="creator-profile__avatar" [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"></div>
+      </div>
+      <!--Username/balance-->
+      <div class="d-flex flex-column fc-default font-weight-bold ml-20px">
+        <!--Username-->
+        <div class="fs-20px mb-5px">
+          {{ globalVars.addOwnershipApostrophe(globalVars.loggedInUser.ProfileEntryResponse.Username) }} Wallet
+        </div>
+        <!--Balance-->
+        <div class="fs-17px">
+          {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}
+          <span class="fc-secondary">&nbsp;Total Balance</span>
+        </div>
+      </div>
+    </div>
+    <!--Key-->
+    <div class="d-flex align-items-center fc-secondary fs-17px">
+      <i-feather name="key" class="feather-large mr-10px"></i-feather>
+      <span class="creator-profile__ellipsis-restriction mr-10px">
+        {{ globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check }}
+      </span>
+      <i-feather
+        *ngIf="publicKeyIsCopied"
+        class="feather-small check-indicator position-relative"
+        name="check-circle"
+        style="top: '-5px'"
+      ></i-feather>
+      <i-feather
+        *ngIf="!publicKeyIsCopied"
+        (click)="_copyPublicKey()"
+        class="feather-small copy-button cursor-pointer position-relative"
+        style="top:'-5px'"
+        name="copy"
+      ></i-feather>
+    </div>
+  </div>
+  <div class="w-100 border-bottom"></div>
+  <!--Second Row-->
+  <div class="d-flex justify-content-between mx-16px my-25px">
+    <div class="d-flex flex-column">
+      <!--Total clout-->
+      <div class="mb-5px fs-17px">
+        {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }} $Clout
+      </div>
+      <!--Clout in USD-->
+      <div class="fc-secondary fs-15px">
+        <span class="mr-5px">{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
+        <a
+          *ngIf="!globalVars.loggedInUser.JumioFinishedTime"
+          (click)="globalVars.launchGetFreeCLOUTFlow()"
+          class="fc-blue"
+        >
+          Claim your free {{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 0) }} 💰
+        </a>
+      </div>
+    </div>
+    <!--Buy/send Clout-->
+    <div class="d-flex">
+      <a [routerLink]="'/' + globalVars.RouteNames.SEND_BITCLOUT" queryParamsHandling="merge">
+        <button class="plain-button mr-20px font-weight-bold">Send $Clout</button>
+      </a>
+      <a [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT" queryParamsHandling="merge">
+        <button class="primary-button font-weight-bold">Buy $Clout</button>
+      </a>
+    </div>
+  </div>
+  <!--Third row-->
+  <div class="d-flex justify-content-between feed-post__nft-footer align-items-center">
+    <!--Creator coin balance-->
+    <div class="d-flex flex-column">
+      <div class="fs-17px">{{ this.globalVars.loggedInUser.UsersYouHODL.length }} Creator Coin{{ this.globalVars.loggedInUser.UsersYouHODL.length > 1 ? "s" : "" }}</div>
+      <div class="fs-15px">{{ globalVars.nanosToBitClout(totalValue(), 0) }}$Clout / {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
+    </div>
+    <!--Purchase creator coins-->
+    <div class="nft-bid-btn d-flex align-items-center">
+      <a [routerLink]="'/' + globalVars.RouteNames.CREATORS" queryParamsHandling="merge">
+        <button style="width: '159px'">
+          <i-feather name="user-plus" class="feather-small mr-10px"></i-feather>
+          <span class="fs-13px">Buy Creator Coins</span>
+        </button>
+      </a>
+    </div>
+  </div>
+</div>
 
 <div class="d-flex flex-column" *ngIf="globalVars.loggedInUser">
-  <div style="flex-grow: 1">
+  <div style="flex-grow: 1" class="wallet__table">
     <div class="global__mobile-scrollable-section disable-scrollbars">
-      <!-- $CLOUT Divider Bar -->
-      <div
-        class="d-flex align-items-center justify-content-between fs-18px font-weight-bold p-15px holdings__divider border-bottom border-color-grey"
-        *ngIf="!inTutorial"
-      >
-        <div>$CLOUT</div>
-        <div class="fs-15px" style="margin-top: 2px" *ngIf="!inTutorial">
-          <a
-            *ngIf="globalVars.loggedInUser"
-            href="{{ 'https://explorer.bitclout.com/?public-key=' + globalVars.loggedInUser.PublicKeyBase58Check }}"
-            class="fc-blue"
-          >
-            Transactions
-          </a>
-          <span class="px-5px">·</span>
-          <a [routerLink]="'/' + globalVars.RouteNames.SEND_BITCLOUT" queryParamsHandling="merge" class="fc-blue">
-            Send
-          </a>
-        </div>
-      </div>
-
-      <!-- $CLOUT Holdings -->
-      <!-- Override .container's max-width property with max-width: inherit-->
-      <div class="container fs-15px p-15px border-bottom border-color-grey" style="max-width: inherit" *ngIf="!inTutorial">
-        <div class="row pt-5px">
-          <div class="col-3 font-weight-bold">Balance</div>
-          <div class="col-9">
-            <div>
-              {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos, 9) }} $CLOUT
-              <i
-                *ngIf="globalVars.loggedInUser.UnminedBalanceNanos != 0 && globalVars.showProcessingSpinners"
-                class="fa fa-spinner fc-muted"
-                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                [matTooltip]="unminedBitCloutToolTip()"
-                #tooltip="matTooltip"
-                (click)="tooltip.toggle()"
-              ></i>
-            </div>
-            <div class="fc-muted">≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }} USD</div>
-            <div *ngIf="!globalVars.loggedInUser?.JumioVerified"><jumio-status></jumio-status></div>
-          </div>
-        </div>
-        <div class="row pt-15px pb-15px">
-          <div class="col-3 font-weight-bold mb-0">Public Key</div>
-          <div class="col-9 d-flex align-items-center holdings__pub-key mb-0">
-            {{ globalVars.loggedInUser.PublicKeyBase58Check }}
-            <i
-              class="far fa-copy ml-15px holdings__copy"
-              (click)="globalVars._copyText(globalVars.loggedInUser.PublicKeyBase58Check)"
-            ></i>
-          </div>
-        </div>
-        <div class="row"></div>
-      </div>
-
-      <!-- Creator Coins Divider Bar -->
-      <div
-        class="d-flex align-items-center justify-content-between fs-18px p-15px holdings__divider border-bottom border-color-grey"
-        *ngIf="!inTutorial"
-      >
-        <div class="font-weight-bold">Creator Coins  <span style="font-size:13px;">({{ this.globalVars.loggedInUser.UsersYouHODL.length }} Held)</span>
-        </div>
-        <div class="fs-14px">
-          <span class="font-weight-bold">≈ {{ globalVars.nanosToUSD(totalValue(), 2) }}</span>
-          USD<br>
-          <span class="font-weight-bold" style="font-size:13px;">≈ {{ globalVars.nanosToBitClout(totalValue(), 4) }}</span>
-          $CLOUT
-        </div>
-      </div>
-
-      <!-- Tab Selector -->
-      <tab-selector [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+      <tab-selector [buttonSelector]="false" [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
 
       <div class="fs-15px">
         <div
-          class="row no-gutters d-flex align-items-center border-bottom border-color-grey pl-15px py-15px"
+          class="row no-gutters d-flex align-items-center border-bottom border-color-grey p-16px fs-15px"
         >
-          <div class="col mb-0 cursor-pointer fc-muted text-link_hover" (click)="sortWallet('username')">
-            <i class="fas fs-15px" [ngClass]="{'fa-arrows-alt-v':sortedUsernameFromHighToLow === 0, 'fa-sort-alpha-up-alt':sortedUsernameFromHighToLow === 1, 'fa-sort-alpha-down':sortedUsernameFromHighToLow === -1}"></i>
-            Name
+          <div class="col-3 mb-0 cursor-pointer fc-muted text-link_hover" (click)="sortWallet('username')">
+            <i-feather
+              class="feather-small position-relative"
+              *ngIf="sortedUsernameFromHighToLow !== 0"
+              name="{{ sortedUsernameFromHighToLow === -1 ? 'arrow-down' : 'arrow-up' }}"
+              style="top: -2px"
+            ></i-feather>
+            Username
           </div>
           <div class="col-2 d-lg-block d-none mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end" (click)="sortWallet('price')">
-            <i class="fas fs-15px" [ngClass]="{'fa-arrows-alt-v':sortedPriceFromHighToLow === 0, 'fa-sort-amount-down':sortedPriceFromHighToLow === -1, 'fa-sort-amount-up-alt':sortedPriceFromHighToLow === 1}"></i>
+            <i-feather
+              class="feather-small position-relative"
+              *ngIf="sortedPriceFromHighToLow !== 0"
+              name="{{ sortedPriceFromHighToLow === -1 ? 'arrow-down' : 'arrow-up' }}"
+              style="top: -2px"
+            ></i-feather>
             Price
           </div>
-          <div class="col-4 mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end">
+          <div class="col-3 mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end">
             <span (click)="sortWallet('value')">
-              <i class="fas fs-15px"
-                [ngClass]="{'fa-arrows-alt-v':sortedUSDValueFromHighToLow === 0, 'fa-sort-amount-down':sortedUSDValueFromHighToLow === -1, 'fa-sort-amount-up-alt':sortedUSDValueFromHighToLow === 1}"></i>
-              USD Value
+              <i-feather
+                class="feather-small position-relative"
+                *ngIf="sortedUSDValueFromHighToLow !== 0"
+                name="{{ sortedUSDValueFromHighToLow === -1 ? 'arrow-down' : 'arrow-up' }}"
+                style="top: -2px"
+              ></i-feather>
+              Value
             </span>
-            <i
-              class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
-              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-              [matTooltip]="'This is the amount you would get if you sold your holdings.'"
-              #tooltip="matTooltip"
-              (click)="tooltip.toggle()"
-            ></i>
+          </div>
+          <div class="col-4 mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end">
+            <span>
+              Actions
+            </span>
           </div>
           <div class="col-lg-1 col-2 d-block mb-0"></div>
         </div>
@@ -169,7 +201,7 @@
               creator &&
               (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
             "
-            class="row no-gutters fc-default mt-5px mb-5px ml-10px mr-10px p-5px"
+            class="row no-gutters fc-default py-10px px-16px"
             [ngStyle]="{
             'border': isHighlightedCreator(creator) ? '1px solid var(--cblue)' : '',
             'border-radius': isHighlightedCreator(creator) ? '12px' : ''
@@ -177,7 +209,7 @@
           >
             <!-- Name-->
             <a
-              class="col-lg-5 col-6 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
+              class="col-lg-3 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
               [routerLink]="inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
               queryParamsHandling="merge"
               [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
@@ -219,7 +251,7 @@
             </div>
 
             <!-- Balance -->
-            <div class="col-4 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
+            <div class="col-3 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
               <div>
                 <div>
                   <i
@@ -230,22 +262,19 @@
                     #tooltip="matTooltip"
                     (click)="tooltip.toggle()"
                   ></i>
-                  ~{{
+                  {{
                     globalVars.usdYouWouldGetIfYouSoldDisplay(
                       creator.BalanceNanos,
                       creator.ProfileEntryResponse.CoinEntry
                     )
                   }}
                 </div>
-                <div class="text-grey8A fs-12px text-right">
-                  {{ globalVars.nanosToBitClout(creator.BalanceNanos, 4) }}
-                </div>
               </div>
             </div>
 
             <!-- Buy / Sell / Transfer Dropdown -->
             <div
-              class="wallet__dropdown-parent col-lg-1 col-2 d-flex align-items-center justify-content-center text-grey8A m-0"
+              class="wallet__dropdown-parent col-lg-4 d-flex align-items-center justify-content-end text-grey8A m-0"
             >
               <wallet-actions-dropdown
                 [hodlingUsername]="creator.ProfileEntryResponse.Username"

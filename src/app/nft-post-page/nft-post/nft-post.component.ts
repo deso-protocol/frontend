@@ -230,38 +230,46 @@ export class NftPostComponent {
     if (this.sellNFTDisabled) {
       return;
     }
-    const sellNFTModalDetails = this.modalService.show(SellNftModalComponent, {
-      class: "modal-dialog-center",
-      initialState: {
+    this.router.navigate(["/" + RouteNames.SELL_NFT + "/" + this.nftPost.PostHashHex], {
+      queryParamsHandling: "merge",
+      state: {
         post: this.nftPost,
         nftEntries: this.nftBidData.NFTEntryResponses,
         selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
       },
     });
-    const onHiddenEvent = sellNFTModalDetails.onHidden;
-    onHiddenEvent.subscribe((response) => {
-      if (response === "nft sold") {
-        this.loading = true;
-        this.refreshPosts();
-        this.feedPost.getNFTEntries();
-      } else if (response === "unlockable content opened") {
-        const unlockableModalDetails = this.modalService.show(AddUnlockableModalComponent, {
-          class: "modal-dialog-centered",
-          initialState: {
-            post: this.nftPost,
-            selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
-          },
-        });
-        const onHiddenEvent = unlockableModalDetails.onHidden;
-        onHiddenEvent.subscribe((response) => {
-          if (response === "nft sold") {
-            this.loading = true;
-            this.refreshPosts();
-            this.feedPost.getNFTEntries();
-          }
-        });
-      }
-    });
+    // const sellNFTModalDetails = this.modalService.show(SellNftModalComponent, {
+    //   class: "modal-dialog-center",
+    //   initialState: {
+    //     post: this.nftPost,
+    //     nftEntries: this.nftBidData.NFTEntryResponses,
+    //     selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
+    //   },
+    // });
+    // const onHiddenEvent = sellNFTModalDetails.onHidden;
+    // onHiddenEvent.subscribe((response) => {
+    //   if (response === "nft sold") {
+    //     this.loading = true;
+    //     this.refreshPosts();
+    //     this.feedPost.getNFTEntries();
+    //   } else if (response === "unlockable content opened") {
+    //     const unlockableModalDetails = this.modalService.show(AddUnlockableModalComponent, {
+    //       class: "modal-dialog-centered",
+    //       initialState: {
+    //         post: this.nftPost,
+    //         selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
+    //       },
+    //     });
+    //     const onHiddenEvent = unlockableModalDetails.onHidden;
+    //     onHiddenEvent.subscribe((response) => {
+    //       if (response === "nft sold") {
+    //         this.loading = true;
+    //         this.refreshPosts();
+    //         this.feedPost.getNFTEntries();
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   checkSelectedBidEntries(bidEntry: NFTBidEntryResponse): void {
@@ -299,6 +307,10 @@ export class NftPostComponent {
     const onHiddenEvent = closeNftAuctionModalDetails.onHidden;
     onHiddenEvent.subscribe((response) => {
       if (response === "auction cancelled") {
+        this.toastr.show("Your auction was closed", null, {
+          toastClass: "info-toast",
+          positionClass: "toast-bottom-center",
+        });
         this.refreshBidData();
         this.feedPost.getNFTEntries();
       }

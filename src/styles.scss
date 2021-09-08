@@ -233,6 +233,8 @@ $green-font-color: #19B028;
 .fc-blue { color: var(--highlight); }
 .fc-red { color: var(--cred); }
 .fc-green { color: var(--cgreen); }
+.fc-success { color: var(--success); }
+.fc-error { color: var(--error); }
 
 .font-weight-500 { font-weight: 500 }
 
@@ -280,6 +282,14 @@ $green-font-color: #19B028;
 .background-color-white { background-color: var(--tilebg); }
 
 // Custom padding classes.
+.p-40px { padding: 40px; }
+.pt-40px { padding-top: 40px; }
+.pr-40px { padding-right: 40px; }
+.pb-40px { padding-bottom: 40px; }
+.pl-40px { padding-left: 40px; }
+.py-40px { padding-top: 40px; padding-bottom: 40px; }
+.px-40px { padding-left: 40px; padding-right: 40px; }
+
 .p-35px { padding: 35px; }
 .pt-35px { padding-top: 35px; }
 .pr-35px { padding-right: 35px; }
@@ -1020,11 +1030,11 @@ feed-create-post {
 }
 
 .holdings__avatar {
-  height: 28px;
-  width: 28px;
+  height: 50px;
+  width: 50px;
   min-width: 28px;
   margin-right: 15px;
-  border-radius: 3px;
+  border-radius: 12px;
 
   background-size: cover;
   background-repeat: no-repeat;
@@ -1445,6 +1455,16 @@ feed-create-post {
 
 .feed-post__quoted-content:hover {
   background-color: var(--secalt) !important;
+}
+
+.feed-post__nft-list-view-unlockable {
+  color: var(--postfadedtext);
+  font-size: 15px;
+  i-feather {
+    margin: 0px 8px;
+    width: 11.33px;
+    height: 15.33px;
+  }
 }
 
 bs-dropdown-container {
@@ -2001,6 +2021,25 @@ right-bar-creators {
   }
 }
 
+.creator-profile__bid-details {
+  font-size: 15px;
+  color: var(--postfadedtext);
+  padding: 0px 16px 8px 16px;
+  background: var(--tilebg);
+  border: 1px solid var(--border);
+  border-top: none;
+  i-feather {
+    position: relative;
+    top: -1px;
+  }
+}
+
+.creator-profile-nfts__bid-card {
+  .creator-profile-nfts__list-container {
+    border-bottom: none;
+  }
+}
+
 .creator-profile-top-card__edit-btn {
   color: var(--highlight);
 }
@@ -2146,6 +2185,25 @@ right-bar-creators {
   }
 }
 
+wallet-page {
+  .global__content__inner {
+    border: none !important;
+  }
+}
+
+.wallet__container {
+  background: var(--tilebg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.wallet__table {
+  background: var(--tilebg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
 .cdk-overlay-container{
   z-index: 1050;
 }
@@ -2233,62 +2291,96 @@ creator-diamonds {
   }
 }
 
-  .creator-profile-nfts__header {
-    background: var(--tilebg);
-    height: 80px;
-    border-radius: 10px 10px 0px 0px;
-    border: 1px solid var(--border);
+.creator-profile-nfts__header {
+  background: var(--tilebg);
+  height: 80px;
+  border-radius: 10px 10px 0px 0px;
+  border: 1px solid var(--border);
+  &.card-view {
+    border-radius: 10px;
+    margin-bottom: 12px;
   }
+}
 
-  .creator-profile-nfts__dropdown {
-    color: var(--tilesecbg);
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    height: 48px;
-    width: 193px;
-    margin-left: 16px;
-    color: var(--posttext);
-    font-size: 15px;
-    text-align: left;
-    padding: 12px;
-    position: relative;
-    i-feather {
-      position: absolute;
-      right: 12px;
-    }
-  }
+.creator-profile-nfts__no-nfts {
+  padding: 70px 0px;
+  background: var(--tilebg);
+}
 
-  .creator-profile-nfts__dropdown-menu {
-      left: -55px;
-  }
-
-  creator-profile-nfts {
-    .creator-profile-nfts__list-container {
-      background: var(--tilebg);
-      padding: 16px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-    }
-    .last-item {
-      .creator-profile-nfts__list-container {
-        border-radius: 0px 0px 10px 10px;
+creator-profile-nfts {
+  .card-view.bid-view {
+    feed-post {
+      .feed-post-container {
+        border-radius: 12px 12px 0px 0px;
+        margin-bottom: 0px;
+        border-bottom: none !important;
+      }
+      .feed-post__nft-footer {
+        border-radius: 0px !important;
       }
     }
-    .feed-post__avatar-container {
-      height: 50px;
-      width: 50px;
-    }
-    .creator-profile-nfts__list-body {
-      width: 100%;
-    }
-    .creator-profile-nfts__nft-image-preview {
-      height: 50px;
-      width: 50px;
-      border-radius: 4px;
+    .creator-profile__bid-details {
+      background: var(--nftbarbg);
+      color: var(--nftfadedtext);
+      border-radius: 0px 0px 12px 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      border-top: none;
+      position: relative;
+      top: -1px;
     }
   }
+}
+
+.creator-profile-nfts__dropdown {
+  color: var(--tilesecbg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  height: 48px;
+  width: 193px;
+  margin-left: 16px;
+  color: var(--posttext);
+  font-size: 15px;
+  text-align: left;
+  padding: 12px;
+  position: relative;
+  i-feather {
+    position: absolute;
+    right: 12px;
+  }
+}
+
+.creator-profile-nfts__dropdown-menu {
+    left: -55px;
+}
+
+creator-profile-nfts {
+  .creator-profile-nfts__list-container {
+    background: var(--tilebg);
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .last-item {
+    .creator-profile-nfts__list-container {
+      border-radius: 0px 0px 10px 10px;
+    }
+  }
+  .feed-post__avatar-container {
+    height: 50px;
+    width: 50px;
+  }
+  .creator-profile-nfts__list-body {
+    width: 100%;
+  }
+  .creator-profile-nfts__nft-image-preview {
+    height: 50px;
+    width: 50px;
+    border-radius: 4px;
+  }
+}
 
 .buy-bitclout__copy-button {
   display: flex;
@@ -3550,6 +3642,7 @@ input {
 .creator-profile__container {
   background: var(--tilebg);
   border-radius: 10px;
+  border: 1px solid var(--border);
   padding: 16px;
   margin-bottom: 15px;
 }
@@ -3724,6 +3817,21 @@ creator-profile-hodlers {
   margin: 16px 0px;
 }
 
+sell-nft-modal {
+  .mint-nft__section {
+    border-bottom: none;
+  }
+}
+
+.sell-nft__row {
+  background: var(--tilesecbg);
+  border-radius: 10px;
+  padding: 16px 0px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  width: 100%
+}
+
 .place-bid-dropdown {
   left: -48px !important;;
 }
@@ -3755,6 +3863,21 @@ creator-profile-hodlers {
   }
   &.disabled-button {
     background: var(--highlightsec)
+  }
+}
+
+.plain-button {
+  width: 137px;
+  height: 48px;
+  background: var(--tilebg);
+  border: 1px solid var(--postsectext);
+  border-radius: 16px;
+  color: var(--postsectext);
+  &:hover {
+    color: var(--postsectext);
+  }
+  &.disabled-button {
+    background: var(--tilebg)
   }
 }
 

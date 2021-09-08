@@ -1,6 +1,6 @@
 <div class="btn-group" dropdown #dropdown="bs-dropdown">
   <a dropdownToggle id="walletActionsButton" class="dropdown-basic link--unstyled" aria-controls="dropdown-basic">
-    <i class="fas fa-exchange-alt fs-18px" [ngClass]="{ 'fc-blue': dropdown.isOpen && (!inTutorial || isHighlightedCreator) }"></i>
+    <i class="fas fa-ellipsis-h fs-18px" [ngClass]="{ 'fc-blue': dropdown.isOpen && (!inTutorial || isHighlightedCreator) }"></i>
   </a>
   <div *ngIf="!inTutorial || (isHighlightedCreator && showSellOnly)">
     <div

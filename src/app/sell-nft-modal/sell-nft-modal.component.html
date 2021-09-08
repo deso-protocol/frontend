@@ -1,121 +1,107 @@
-<div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="'Sell NFT'" [bsModalRef]="bsModalRef"></nft-modal-header>
-
-  <div *ngIf="selectedBidEntries?.length">
-    <div class="fs-15px pt-15px pb-30px text-grey5">
-      You are about to sell your NFT. Are you sure?
-    </div>
-
-    <div class="container d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled">
-      <div class="col-5 p-0 text-align-center">Bidder</div>
-      <div class="col-2 p-0 text-align-center" *ngIf="post.NumNFTCopies > 1">Edition</div>
-      <div class="p-0 text-align-center" [ngClass]="{ 'col-7': post.NumNFTCopies == 1, 'col-5': post.NumNFTCopies > 1 }">Bid Amount</div>
-    </div>
-    <div class="pb-15px">
-      <div style="max-height: 200px; overflow-y: scroll;">
-        <div
-          class="container d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled formbg"
-          *ngFor="let bidEntry of selectedBidEntries; let i = index">
-          <div class="row no-gutters w-100">
-            <div class="col-5 d-flex align-items-center mb-0 p-0">
-              <i class="fas fa-trash text-danger pr-5px fs-18px" (click)="remove(bidEntry)"></i>
-              <!-- Avatar -->
-              <div class="simple-profile-card__avatar-container">
-                <div
-                  class="simple-profile-card__avatar br-12px"
-                  [avatar]="bidEntry.PublicKeyBase58Check"
-                ></div>
-              </div>
-              <div class="text-truncate holdings__name fs-14px">
-                <div>
-                  <div
-                    class="fc-default font-weight-bold text-truncate holdings__name fs-14px"
-                    [ngClass]="{'cursor-pointer': bidEntry.ProfileEntryResponse?.Username }"
-                    (click)="navigateToProfile(bidEntry)"
-                  >{{ bidEntry.ProfileEntryResponse?.Username || bidEntry.PublicKeyBase58Check }}</div>
-                  <span
-                    *ngIf="bidEntry.ProfileEntryResponse?.IsVerified"
-                    (click)="tooltip.toggle()"
-                    class="ml-1 mb-1 cursor-pointer text-primary"
-                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                    [matTooltip]="'This account is verified'"
-                    #tooltip="matTooltip"
-                  >
-                <i class="fas fa-check-circle fa-md align-middle"></i>
-              </span>
-                </div>
-                <div class="text-grey9" *ngIf="bidEntry.ProfileEntryResponse">
-                  {{ globalVars.nanosToUSD(bidEntry.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
-                </div>
-              </div>
-            </div>
-            <div class="col-2 d-flex align-items-center justify-content-center mb-0 p-0" *ngIf="post.NumNFTCopies > 1">{{ bidEntry.SerialNumber > 0 && "#" + bidEntry.SerialNumber.toString() }}</div>
-            <div
-              class="d-flex align-items-center mb-0 justify-content-between p-0"
-              [ngClass]="{ 'col-7': post.NumNFTCopies == 1, 'col-5': post.NumNFTCopies > 1 }"
-            >
-              <span>{{ globalVars.nanosToBitClout(bidEntry.BidAmountNanos, 5) }} $CLOUT</span>
-              <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 2) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- Summary data -->
-    <div class="content fs-15px mb-30px py-5px formbg">
-      <div class="row p-10px">
-        <div class="col-6 m-0px">Selling Price</div>
-        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
-          <div>
-            {{globalVars.abbreviateNumber(sellingPrice, 3)}} $CLOUT
-          </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(sellingPrice*1e9, 2) }})</div>
-        </div>
-      </div>
-      <div class="row px-10px pb-10px">
-        <div class="col-6 m-0px">Earnings</div>
-        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
-          <div>
-            {{globalVars.abbreviateNumber(earnings, 3)}} $CLOUT
-          </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(earnings*1e9, 2) }})</div>
-        </div>
-      </div>
-      <div class="row px-10px pb-10px">
-        <div class="col-6 m-0px">Creator royalty</div>
-        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
-          <div>
-            {{globalVars.abbreviateNumber(creatorRoyalty, 3)}} $CLOUT
-          </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(creatorRoyalty*1e9, 2) }})</div>
-        </div>
-      </div>
-      <div class="row px-10px pb-10px">
-        <div class="col-6 m-0px">Coin-holder royalty</div>
-        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
-          <div>
-            {{globalVars.abbreviateNumber(coinRoyalty, 3)}} $CLOUT
-          </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(coinRoyalty*1e9, 2) }})</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="d-flex align-items-center mb-15px">
-      <button
-        class="btn btn-primary font-weight-bold fs-15px br-12px"
-        style="height: 36px; width: 140px; line-height: 15px"
-        (click)="sellNFT()"
-        [disabled]="sellNFTDisabled || !selectedBidEntries?.length"
-      >
-        {{ sellingNFT ? "Selling NFTs" : "Sell NFTs" }}
-      </button>
-      <div *ngIf="sellingNFT" class="pl-15px fs-15px">{{ sellNFTCounter }} of {{ sellNFTTotal }} sold</div>
-    </div>
+<div class="desktop-top-bar">
+  <div class="bitclout-logo">
+    <i-feather name="bitclout"></i-feather>
+    <span>bitclout</span>
   </div>
-  <div *ngIf="!selectedBidEntries?.length">
-    You must select at least one bid in order to sell this NFT.
+  <search-bar></search-bar>
+  <change-account-selector></change-account-selector>
+</div>
+<div class="d-flex justify-content-center" style="margin-top: 64px">
+  <div class="global__content__flex" style="flex-grow: inherit">
+    <div class="global__center__width">
+      <div class="global__center__inner">
+        <div app-theme class="nft-modal-container">
+          <div class="mint-nft__section border-bottom" style="padding: 16px 12px">
+            <div (click)="location.back()" class="cursor-pointer">
+              <i-feather
+                name="arrow-left"
+                class="feather-medium mr-12px position-relative"
+                style="top: -2px"
+              ></i-feather>
+              <span class="font-weight-bold fs-17px">Back to NFT</span>
+            </div>
+          </div>
+          <div *ngIf="selectedBidEntries?.length">
+            <div class="fs-15px fc-muted mint-nft__section">
+              <div class="mint-nft__title">Sell an NFT</div>
+              <span>You are about to sell your NFT to </span>
+              <span class="fc-default" *ngIf="bidEntryUsernames.length === 1">@{{ bidEntryUsernames[0] }}</span>
+              <span *ngIf="bidEntryUsernames.length === 2">
+                <span class="fc-default">@{{ bidEntryUsernames[0] }}</span>
+                <span> and </span>
+                <span class="fc-default">@{{ bidEntryUsernames[1] }}</span>
+              </span>
+              <span *ngIf="bidEntryUsernames.length === 3">
+                <span class="fc-default">@{{ bidEntryUsernames[0] }}</span>
+                <span>, </span>
+                <span class="fc-default">@{{ bidEntryUsernames[1] }}</span>
+                <span> and </span>
+                <span class="fc-default">@{{ bidEntryUsernames[2] }}</span>
+              </span>
+              <span *ngIf="bidEntryUsernames.length > 3">
+                <span class="fc-default">@{{ bidEntryUsernames[0] }}</span>
+                <span>, </span>
+                <span class="fc-default">@{{ bidEntryUsernames[1] }}</span>
+                <span> and </span>
+                <span class="fc-default">@{{ bidEntryUsernames.length - 2 }}</span>
+              </span>
+              <span>. Are you sure?</span>
+            </div>
+
+            <div class="px-40px">
+              <div>
+                <div
+                  class="d-flex align-items-center fs-14px link--unstyled formbg"
+                  *ngFor="let bidEntry of selectedBidEntries; let i = index">
+                  <div class="d-flex justify-content-between align-items-center sell-nft__row">
+                    <div class="d-flex flex-column col-2 border-right">
+                      <div class="font-weight-bold">Number</div>
+                      <div>#{{ bidEntry.SerialNumber }}</div>
+                    </div>
+                    <div class="d-flex flex-column col-4 border-right px-16px">
+                      <div class="font-weight-bold">Selling Price</div>
+                      <div>
+                        <span>{{ globalVars.nanosToBitClout(bidEntry.BidAmountNanos, 5) }} $Clout</span>
+                        <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 0) }}</span>
+                      </div>
+                    </div>
+                    <div class="d-flex flex-column col-4 border-right px-16px">
+                      <div class="font-weight-bold">Earnings</div>
+                      <div>
+                        <span>{{ globalVars.nanosToBitClout(bidEntry.EarningsAmountNanos, 5) }} $Clout</span>
+                        <span>~{{ globalVars.nanosToUSD(bidEntry.EarningsAmountNanos, 0) }}</span>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center col-2 px-16px">
+                      <i-feather
+                        name="trash-2"
+                        class="feather-medium fc-error cursor-pointer"
+                        (click)="remove(bidEntry)"
+                      ></i-feather>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex fs-15px px-40px pb-40px">
+              <span class="font-weight-bold">Creator Royalty:&nbsp;</span>
+              <span class="mr-30px">{{ post.NFTRoyaltyToCreatorBasisPoints / (100 * 100) * 100 }}%</span>
+              <span class="font-weight-bold">Coin-holder Royalty:&nbsp;</span>
+              <span>{{ post.NFTRoyaltyToCoinBasisPoints / (100 * 100) * 100 }}%</span>
+            </div>
+          </div>
+          <div *ngIf="!selectedBidEntries?.length">
+            You must select at least one bid in order to sell this NFT.
+          </div>
+        </div>
+        <button
+          [disabled]="sellNFTDisabled || !selectedBidEntries?.length"
+          (click)="sellNFT()"
+          class="mint-nft__create-btn"
+        >
+          {{ sellingNFT ? "Selling NFTs" : "Sell NFTs" }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

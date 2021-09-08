@@ -29,6 +29,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   sortedUSDValueFromHighToLow: number = 0;
   sortedPriceFromHighToLow: number = 0;
   sortedUsernameFromHighToLow: number = 0;
+  publicKeyIsCopied = false;
 
   usersYouReceived: BalanceEntryResponse[] = [];
   usersYouPurchased: BalanceEntryResponse[] = [];
@@ -123,6 +124,14 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  _copyPublicKey() {
+    this.globalVars._copyText(this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check);
+    this.publicKeyIsCopied = true;
+    setInterval(() => {
+      this.publicKeyIsCopied = false;
+    }, 1000);
   }
 
   // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.

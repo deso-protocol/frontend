@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <simple-center-loader *ngIf="isLoading"></simple-center-loader>
+    <simple-center-loader *ngIf="loading"></simple-center-loader>
     <div *ngIf="nftPost && nftBidData">
       <!--  afterCommentCreatedCallback explanation: Here, the "post" is a top-level post. A new comment on a -->
       <!--  top-level post should be prepended to the post's list of comments -->
@@ -34,20 +34,17 @@
       ></feed-post>
     </div>
   </div>
-  <div class="nft-post-details">
-    <div *ngIf="!loading">
+  <div class="nft-post-details" *ngIf="!loading">
+    <div>
       <tab-selector [tabs]="tabs" [activeTab]="activeTab" [buttonSelector]="false" (tabClick)="_handleTabClick($event)"></tab-selector>
     </div>
     <div *ngIf="showBidsView">
-      <div *ngIf="!loading && !bids?.length" class="fs-15px p-15px pb-0 d-flex justify-content-between">
+      <div *ngIf="!loading && !bids?.length" class="fs-15px p-15px d-flex justify-content-between">
         There are no bids yet.
-        <button
-          class="btn btn-danger font-weight-bold fs-15px br-12px"
-          *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && myAvailableSerialNumbers?.length"
-          (click)="closeAuction()"
-        >
-          Close my auctions
-        </button>
+        <div class="mr-25px cursor-pointer" (click)="closeAuction()">
+          <i-feather name="alert-octagon" class="feather-small mr-5px"></i-feather>
+          <span>Close my auction</span>
+        </div>
       </div>
       <div *ngIf="!loading && bids?.length">
         <div class="container d-flex align-items-center fs-14px py-15px border-bottom border-color-grey link--unstyled">
@@ -59,7 +56,7 @@
             >
               <i-feather name="check"></i-feather>
             </button>
-            Select All
+            Select {{ nftBidData.NFTEntryResponses.length > 1 ? "All" : "Highest" }}
           </div>
           <div *ngIf="activeTab !== NftPostComponent.MY_AUCTIONS" class="col-5 p-0 cursor-pointer" (click)="handleColumnHeaderClick(NftPostComponent.SORT_BY_USERNAME)">
             Bidder

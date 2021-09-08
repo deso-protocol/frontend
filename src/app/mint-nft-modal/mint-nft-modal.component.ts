@@ -136,13 +136,14 @@ export class MintNftModalComponent {
       )
       .subscribe(
         (res) => {
-          this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
           const link = `/${this.globalVars.RouteNames.NFT}/${this.postHashHex}`;
+          this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
           this.toastr.show(`NFT Created<a href="${link}" class="toast-link cursor-pointer">View</a>`, null, {
             toastClass: "info-toast",
             enableHtml: true,
             positionClass: "toast-bottom-center",
           });
+          this.location.back();
         },
         (err) => {
           this.globalVars._alertError(err.error.error);

@@ -4,41 +4,10 @@
   class="fs-15px text-grey5 font-weight-bold d-flex flex-column pt-15px"
   *ngIf="!isLoading"
 >
-  <div class="creator-profile-nfts__header d-flex align-items-center">
-    <div
-      class="d-flex"
-      dropdown
-      (click)="$event.stopPropagation()"
-      container="body"
-      style="align-items: center"
-    >
-      <button class="creator-profile-nfts__dropdown" role="button" dropdownToggle>
-        {{ activeTab }}
-        <i-feather name="chevron-down" class="feather-small"></i-feather>
-      </button>
-      <div class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu" *dropdownMenu>
-        <div>
-          <a
-            class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="activeTab = 'For Sale'; onActiveTabChange('For Sale')"
-          >
-            For Sale
-          </a>
-          <a
-            class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="onActiveTabChange('My Bids')"
-          >
-            My Bids
-          </a>
-          <a
-            class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-            (click)="activeTab = 'Gallery'; onActiveTabChange('Gallery')"
-          >
-            Gallery
-          </a>
-        </div>
-      </div>
-    </div>
+  <div
+    class="creator-profile-nfts__header d-flex justify-content-between align-items-center"
+    [ngClass]="{ 'card-view': cardView }"
+  >
     <div class="d-flex align-items-center">
       <div
         class="d-flex"
@@ -48,60 +17,152 @@
         style="align-items: center"
       >
         <button class="creator-profile-nfts__dropdown" role="button" dropdownToggle>
-          Order by {{ orderNFTsBy }}
+          {{ activeTab }}
           <i-feather name="chevron-down" class="feather-small"></i-feather>
         </button>
         <div class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu" *dropdownMenu>
           <div>
             <a
               class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-              (click)="orderNFTsBy = 'recent'"
+              (click)="onActiveTabChange(CreatorProfileNftsComponent.FOR_SALE)"
             >
               For Sale
+            </a>
+            <a
+              *ngIf="this.globalVars.loggedInUser?.PublicKeyBase58Check === this.profile.PublicKeyBase58Check"
+              class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="onActiveTabChange(CreatorProfileNftsComponent.MY_BIDS)"
+            >
+              My Bids
+            </a>
+            <a
+              class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+              (click)="onActiveTabChange(CreatorProfileNftsComponent.MY_GALLERY)"
+            >
+              Gallery
             </a>
           </div>
         </div>
       </div>
+      <div class="d-flex align-items-center">
+        <div
+          class="d-flex"
+          dropdown
+          (click)="$event.stopPropagation()"
+          container="body"
+          style="align-items: center"
+        >
+          <button class="creator-profile-nfts__dropdown" role="button" dropdownToggle>
+            Order by
+            {{
+              orderNFTsBy === CreatorProfileNftsComponent.ORDER_PRICE_ASC ||
+              orderNFTsBy === CreatorProfileNftsComponent.ORDER_PRICE_DESC
+                ? CreatorProfileNftsComponent.ORDER_PRICE
+                : orderNFTsBy
+            }}
+            <i-feather
+              *ngIf="
+                orderNFTsBy === CreatorProfileNftsComponent.ORDER_PRICE_ASC ||
+                orderNFTsBy === CreatorProfileNftsComponent.ORDER_PRICE_DESC
+              "
+              name="{{ orderNFTsBy === CreatorProfileNftsComponent.ORDER_PRICE_ASC ? 'arrow-up' : 'arrow-down' }}"
+              class="feather-small position-relative ml-5px"
+              style="top: -2px; right: 0px"
+            ></i-feather>
+            <i-feather name="chevron-down" class="feather-small dropdown-chevron"></i-feather>
+          </button>
+          <div class="dropdown-menu p-0 bc-dropdown-menu creator-profile-nfts__dropdown-menu" *dropdownMenu>
+            <div>
+              <a
+                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_RECENT)"
+              >
+                Order by {{ CreatorProfileNftsComponent.ORDER_RECENT }}
+              </a>
+              <a
+                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_POPULAR)"
+              >
+                Order by {{ CreatorProfileNftsComponent.ORDER_POPULAR }}
+              </a>
+              <a
+                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_PRICE_DESC)"
+              >
+                Order by {{ CreatorProfileNftsComponent.ORDER_PRICE }}
+                <i-feather name="arrow-down" class="feather-xsmall position-relative" style="top:'-2px'"></i-feather>
+              </a>
+              <a
+                class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                (click)="updateNFTOrder(CreatorProfileNftsComponent.ORDER_PRICE_ASC)"
+              >
+                Order by {{ CreatorProfileNftsComponent.ORDER_PRICE }}
+                <i-feather name="arrow-up" class="feather-xsmall position-relative" style="top:'-2px'"></i-feather>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <i-feather
+      *ngIf="
+        !showProfileAsReserved &&
+        !isLoading &&
+        ((nftResponse?.length && activeTab !== CreatorProfileNftsComponent.MY_BIDS) ||
+          (myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS))
+      "
+      name="credit-card"
+      class="cursor-pointer position-relative"
+      style="right: 16px; transform: 'rotate(180deg)'"
+      (click)="cardView = !cardView"
+      [ngClass]="{ 'fc-blue': cardView }"
+    ></i-feather>
   </div>
 </div>
 <div
   *ngIf="
     !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.FOR_SALE
   "
-  class="p-15px"
+  class="row no-gutters pt-10px creator-profile-nfts__no-nfts"
 >
-  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
-    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No NFTs for sale right now.</span>
-    <ng-template #elseMissingPostBlock>
-      <span>@{{ profile.Username }} is on the platform but doesn't have any NFTs for sale.</span>
-    </ng-template>
+  <div class="d-flex justify-content-center w-100">
+    <div class="circle-div">
+      <i-feather name="frame" class="feather-xlarge"></i-feather>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center w-100">
+    <span *ngIf="profileBelongsToLoggedInUser()">No NFTs for sale right now.</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} is on the platform but doesn't have any NFTs for sale.</span>
   </div>
 </div>
 <div
   *ngIf="
     !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.MY_GALLERY
   "
-  class="p-15px"
+  class="row no-gutters pt-10px creator-profile-nfts__no-nfts"
 >
-  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
-    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No NFTs purchased yet.</span>
-    <ng-template #elseMissingPostBlock>
-      <span>@{{ profile.Username }} has not acquired any NFTs yet.</span>
-    </ng-template>
+  <div class="d-flex justify-content-center w-100">
+    <div class="circle-div">
+      <i-feather name="frame" class="feather-xlarge"></i-feather>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center w-100">
+    <span *ngIf="profileBelongsToLoggedInUser()">No NFTs purchased yet.</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} has not acquired any NFTs yet.</span>
   </div>
 </div>
 <div
-  *ngIf="
-    !showProfileAsReserved && !isLoading && !myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS
-  "
-  class="p-15px"
+  *ngIf="!showProfileAsReserved && !isLoading && !myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS"
+  class="row no-gutters pt-10px creator-profile-nfts__no-nfts"
 >
-  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
-    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No bids yet.</span>
-    <ng-template #elseMissingPostBlock>
-      <span>@{{ profile.Username }} is on the platform but hasn't bid on NFTs yet.</span>
-    </ng-template>
+  <div class="d-flex justify-content-center w-100">
+    <div class="circle-div">
+      <i-feather name="frame" class="feather-xlarge"></i-feather>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center w-100">
+    <span *ngIf="profileBelongsToLoggedInUser()">No bids yet.</span>
+    <span *ngIf="!profileBelongsToLoggedInUser()">@{{ profile.Username }} is on the platform but hasn't bid on NFTs yet.</span>
   </div>
 </div>
 <div *ngIf="!showProfileAsReserved && (!isLoading || loadingNewSelection)">
@@ -109,17 +170,16 @@
     <div
       #uiScroll *uiScroll="let nftEntry of datasource; let index = index"
       [ngClass]="{
-        'br-12px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-        'p-10px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-        'background-color-grey': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-        'm-15px': activeTab === CreatorProfileNftsComponent.MY_BIDS,
-        border: activeTab === CreatorProfileNftsComponent.MY_BIDS,
-        'last-item': index === nftResponse?.length - 1
+        'card-view': cardView,
+        'bid-view': activeTab === CreatorProfileNftsComponent.MY_BIDS,
+        'last-item': index === nftResponse?.length - 1,
+        'creator-profile-nfts__bid-card':
+          activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse
       }"
     >
       <feed-post
-        *ngIf="activeTab !== CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse.ProfileEntryResponse"
-        [isNFTListSummary]="true"
+        *ngIf="nftEntry.PostEntryResponse.ProfileEntryResponse"
+        [isNFTListSummary]="!cardView"
         [contentShouldLinkToThread]="true"
         [includePaddingOnPost]="true"
         [post]="nftEntry.PostEntryResponse"
@@ -135,51 +195,41 @@
         (userBlocked)="userBlocked()"
       ></feed-post>
       <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse">
-        <div class="row no-gutters w-100 pb-5px justify-content-start">
-          <div class="d-flex align-items-center mb-0 p-5px pr-10px">
-            <i
-              class="fas fa-trash text-danger cursor-pointer fs-18px"
-              (click)="cancelBid(nftEntry)"
-            ></i>
+        <div class="d-flex align-items-center justify-content-between creator-profile__bid-details">
+          <div class="d-flex justify-content-start">
+            <span
+              class="fc-success mr-10px"
+              *ngIf="
+                nftEntry.HighestBidAmountNanos === nftEntry.BidAmountNanos &&
+                nftEntry.BidderBalanceNanos >= nftEntry.BidAmountNanos
+              "
+            >
+              Highest!
+            </span>
+            <div
+              class="d-flex align-items-center justify-content-center mr-10px"
+              [ngStyle]="{
+                'margin-left':
+                  !(
+                    nftEntry.HighestBidAmountNanos === nftEntry.BidAmountNanos &&
+                    nftEntry.BidderBalanceNanos >= nftEntry.BidAmountNanos
+                  ) && !cardView
+                    ? '65px'
+                    : '0px'
+              }"
+            >
+              Serial #{{ nftEntry.SerialNumber }}
+            </div>
+            <div class="d-flex align-items-center">
+              Bid:
+              <span class="px-5px">{{ globalVars.nanosToBitClout(nftEntry.BidAmountNanos, 5) }} $CLOUT</span>
+              <span>(~{{ globalVars.nanosToUSD(nftEntry.BidAmountNanos, 2) }})</span>
+            </div>
           </div>
-          <div
-            class="d-flex align-items-center justify-content-center mb-0 p-5px fs-12px"
-          >Serial #{{ nftEntry.SerialNumber }}</div>
-          <div
-            class="d-flex align-items-center mb-0 justify-content-around p-5px fs-12px"
-          >
-            Bid:
-            <span class="px-5px">{{ globalVars.nanosToBitClout(nftEntry.BidAmountNanos, 5) }} $CLOUT</span>
-            <span>(~{{ globalVars.nanosToUSD(nftEntry.BidAmountNanos, 2) }})</span>
+          <div class="d-flex cursor-pointer" (click)="cancelBid(nftEntry)">
+            <i-feather name="x" class="feather-small"></i-feather>
+            <span class="ml-10px">Cancel</span>
           </div>
-        </div>
-        <div class="fs-12px p-5px pt-0px">
-          <div
-            class="fc-red"
-            *ngIf="nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos">
-            There is a higher bid of {{ globalVars.nanosToBitClout(nftEntry.HighestBidAmountNanos) }} CLOUT (~{{ globalVars.nanosToUSD(nftEntry.HighestBidAmountNanos, 2) }}) for this serial number.
-          </div>
-          <div
-            class="fc-green"
-            *ngIf="nftEntry.HighestBidAmountNanos === nftEntry.BidAmountNanos && nftEntry.BidderBalanceNanos >= nftEntry.BidAmountNanos">
-            Your bid is the highest one for this serial number.
-          </div>
-          <div class="fs-12px fc-red" *ngIf="nftEntry.BidderBalanceNanos < nftEntry.BidAmountNanos" [ngClass]="{ 'pt-5px': nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos }">
-            You do not have enough CLOUT for this bid. Place a lower bid or <a class="link--unstyled" style="text-decoration: underline" [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT">buy CLOUT</a>.
-          </div>
-        </div>
-
-        <div class="br-12px background-color-white">
-          <feed-post
-            *ngIf="nftEntry.PostEntryResponse.ProfileEntryResponse"
-            [contentShouldLinkToThread]="true"
-            [includePaddingOnPost]="true"
-            [post]="nftEntry.PostEntryResponse"
-            [afterCommentCreatedCallback]="_prependComment.bind(this, nftEntry.PostEntryResponse, index)"
-            [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
-            [setBorder]="true"
-            (userBlocked)="userBlocked()"
-          ></feed-post>
         </div>
       </div>
     </div>

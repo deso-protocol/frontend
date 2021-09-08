@@ -7,8 +7,9 @@ import { of } from "rxjs";
 import { concatMap, filter, last, map, take } from "rxjs/operators";
 import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
 import { AddUnlockableModalComponent } from "../add-unlockable-modal/add-unlockable-modal.component";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "sell-nft-modal",
@@ -16,9 +17,10 @@ import { ToastrService } from "ngx-toastr";
 })
 export class SellNftModalComponent implements OnInit {
   @Input() postHashHex: string;
-  @Input() post: PostEntryResponse;
-  @Input() nftEntries: NFTEntryResponse[];
-  @Input() selectedBidEntries: NFTBidEntryResponse[];
+  post: PostEntryResponse;
+  nftEntries: NFTEntryResponse[];
+  selectedBidEntries: NFTBidEntryResponse[];
+  bidEntryUsernames: string[];
   loading = false;
   sellNFTDisabled = false;
   sellingPrice = 2.0887;
@@ -32,13 +34,26 @@ export class SellNftModalComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private modalService: BsModalService,
     private backendApi: BackendApiService,
-    public bsModalRef: BsModalRef,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    public location: Location,
+    public activatedRoute: ActivatedRoute
   ) {}
 
   // TODO: compute service fee.
   ngOnInit(): void {
+    const state = window.history.state;
+    // If the state is lost, redirect back to the NFT found in the url params.
+    if (!state?.post) {
+      this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.activatedRoute.snapshot.params["postHashHex"]]);
+      return;
+    }
+    this.post = state.post;
+    this.nftEntries = state.nftEntries;
+    this.selectedBidEntries = state.selectedBidEntries;
+    console.log("Here are the bid entries");
+    console.log(this.selectedBidEntries);
+    this.sellToNamesString();
     this.sellingPrice = _.sumBy(this.selectedBidEntries, "BidAmountNanos") / 1e9;
     const coinRoyaltyBasisPoints = this.post.NFTRoyaltyToCoinBasisPoints;
     const creatorRoyaltyBasisPoints = this.post.NFTRoyaltyToCreatorBasisPoints;
@@ -46,15 +61,34 @@ export class SellNftModalComponent implements OnInit {
     this.creatorRoyalty = this.sellingPrice * (creatorRoyaltyBasisPoints / (100 * 100));
     this.coinRoyalty = this.sellingPrice * (coinRoyaltyBasisPoints / (100 * 100));
     this.earnings = this.sellingPrice - this.coinRoyalty - this.creatorRoyalty;
+    this.addEarningsToSelectedBidEntries();
+    console.log('New bid entries');
+    console.log(this.selectedBidEntries);
   }
 
   sellNFTTotal: number;
   sellNFTCounter: number = 0;
 
+  sellToNamesString(): void {
+    this.bidEntryUsernames = _.uniq(
+      _.map(_.orderBy(this.selectedBidEntries, ["BidAmountNanos"], ["desc"]), "ProfileEntryResponse.Username")
+    );
+  }
+
+  // Calculate earnings for each bid entry, add to selected bid entry object
+  addEarningsToSelectedBidEntries(): void {
+    this.selectedBidEntries = _.map(this.selectedBidEntries, (selectedBidEntry: NFTBidEntryResponse) => {
+      const sellingPrice = selectedBidEntry.BidAmountNanos;
+      const creatorRoyalty = sellingPrice * (this.post.NFTRoyaltyToCreatorBasisPoints / (100 * 100));
+      const coinRoyalty = sellingPrice * (this.post.NFTRoyaltyToCoinBasisPoints / (100 * 100));
+      const earnings = sellingPrice - creatorRoyalty - coinRoyalty;
+      return { ...selectedBidEntry, ...{ EarningsAmountNanos: earnings } };
+    });
+  }
+
   sellNFT(): void {
     if (this.post.HasUnlockable) {
       this.modalService.setDismissReason("unlockable content opened");
-      this.bsModalRef.hide();
       return;
     }
     this.sellNFTTotal = this.selectedBidEntries.length;
@@ -85,8 +119,6 @@ export class SellNftModalComponent implements OnInit {
       .pipe(last((res) => res))
       .subscribe(
         (res) => {
-          // Hide this modal and open the next one.
-          this.bsModalRef.hide();
           this.toastr.show("Your bid was cancelled", null, {
             toastClass: "info-toast",
             positionClass: "toast-bottom-center",
@@ -112,7 +144,6 @@ export class SellNftModalComponent implements OnInit {
     if (!bidEntry.ProfileEntryResponse?.Username) {
       return;
     }
-    this.bsModalRef.hide();
     this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, bidEntry.ProfileEntryResponse.Username], {
       queryParamsHandling: "merge",
     });
