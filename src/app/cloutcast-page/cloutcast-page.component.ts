@@ -91,7 +91,7 @@ export class CloutCastPageComponent implements OnInit {
       if (url.startsWith("/casts/")) {
         // we have a castID!
         if (!!!this.isInitialized) {
-          let {selectedTab = "All"} = history.state;
+          let {selectedTab = "Available"} = history.state;
           await this.ccTabClick(selectedTab);
         }
 
@@ -228,7 +228,7 @@ export class CloutCastPageComponent implements OnInit {
               }
             }
             break;
-          case "All":
+          case "Available":
             this.showCasts = this.allCasts;
             break;
         }

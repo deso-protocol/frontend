@@ -25,35 +25,37 @@
             </div>
             <div *ngIf="!showListLoading" class="ovy">
               <tab-selector
-                [tabs]="['Inbox', 'For Me', 'All']"
+                [tabs]="['Inbox', 'For Me', 'Available']"
                 [activeTab]="selectedTab"
                 (tabClick)="ccTabClick($event)"
               ></tab-selector>
 
 
               <span *ngIf="showCasts.length > 0">
-                <div
-                  class="flex-row align-items-center p-2 border-bottom ccListItem"
-                  (click)="ccListItemClick(item.Id)"
-                  [ngClass]="{'listActive' : item.Id==selectedCast}"
-                  *ngFor="let item of showCasts; index as i;"
-                >
-                  <img src="https://bitclout.com/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
-                  <span class="ml-2">
-                    <div>
-                      {{ item.BitcloutUsername }}
-                      <span
-                        class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
-                        style="width: fit-content">
-                          ${{floored(item.BitCloutUserPrice, 100)}}
-                      </span>
-                    </div>
-                    <div [innerText]="'Earn ~' + nanosToUSD(item.RateNanos) + ' USD'"></div>
-                    <div>
-                      {{item.TargetActionText}}
-                    </div>
-                  </span>
-                </div>
+                <ng-container *ngFor="let item of showCasts; index as i;">
+                  <div
+                    class="flex-row align-items-center p-2 border-bottom ccListItem"
+                    (click)="ccListItemClick(item.Id)"
+                    [ngClass]="{'listActive' : item.Id==selectedCast}"
+                    *ngIf="item.isDoneAlready !== true"
+                  >
+                    <img src="//{{this.globalVars.localNode}}/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
+                    <span class="ml-2">
+                      <div>
+                        {{item.BitcloutUsername}}
+                        <span
+                          class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
+                          style="width: fit-content">
+                            ${{floored(item.BitCloutUserPrice, 100)}}
+                        </span>
+                      </div>
+                      <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
+                      <div>
+                        {{item.TargetActionText}}
+                      </div>
+                    </span>
+                  </div>
+                </ng-container>
               </span>
               <span *ngIf="showCasts.length == 0">
                 <h4>No Promos found in {{selectedTab}}</h4>
@@ -73,7 +75,7 @@
 
               </feed-post>
               <div class="cc-info p-3">
-                <h6>After performing the requested engagement, click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+                <h6>After performing the requested engagement -- {{selectedCastObject.TargetActionText}} -- click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
                 <button
                   class="btn-block my-2 btn-primary"
                   (click)="proveWork()"
@@ -120,35 +122,37 @@
       </div>
       <div *ngIf="(!showContentLoading && !showListLoading) && !!!this.selectedPost" class="ovy">
         <tab-selector
-          [tabs]="['Inbox', 'For Me', 'All']"
+          [tabs]="['Inbox', 'For Me', 'Available']"
           [activeTab]="selectedTab"
           (tabClick)="ccTabClick($event)"
         ></tab-selector>
 
 
         <span *ngIf="showCasts.length > 0">
-          <div
-            class="flex-row align-items-center p-2 border-bottom ccListItem"
-            (click)="ccListItemClick(item.Id)"
-            [ngClass]="{'listActive' : item.Id==selectedCast}"
-            *ngFor="let item of showCasts; index as i;"
-          >
-            <img src="//{{this.globalVars.localNode}}/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
-            <span class="ml-2">
-              <div>
-                {{item.BitcloutUsername}}
-                <span
-                  class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
-                  style="width: fit-content">
-                    ${{floored(item.BitCloutUserPrice, 100)}}
-                </span>
-              </div>
-              <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
-              <div>
-                {{item.TargetActionText}}
-              </div>
-            </span>
-          </div>
+          <ng-container *ngFor="let item of showCasts; index as i;">
+            <div
+              class="flex-row align-items-center p-2 border-bottom ccListItem"
+              (click)="ccListItemClick(item.Id)"
+              [ngClass]="{'listActive' : item.Id==selectedCast}"
+              *ngIf="item.isDoneAlready !== true"
+            >
+              <img src="//{{this.globalVars.localNode}}/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
+              <span class="ml-2">
+                <div>
+                  {{item.BitcloutUsername}}
+                  <span
+                    class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
+                    style="width: fit-content">
+                      ${{floored(item.BitCloutUserPrice, 100)}}
+                  </span>
+                </div>
+                <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
+                <div>
+                  {{item.TargetActionText}}
+                </div>
+              </span>
+            </div>
+          </ng-container>
         </span>
         <span *ngIf="showCasts.length == 0">
           <h4>No Casts available in here! ({{selectedTab}})</h4>
@@ -162,7 +166,7 @@
 
         </feed-post>
         <div class="cc-info p-3">
-          <h6>After performing the requested engagement, click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+          <h6>After performing the requested engagement  ({{selectedCastObject.TargetActionText}}) click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~{{nanosToUSD(selectedCastObject.RateNanos)}}USD)</h6>
           <button
             class="btn-block my-2 btn-primary"
             (click)="proveWork()"
