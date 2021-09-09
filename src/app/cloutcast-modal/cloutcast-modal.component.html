@@ -6,4 +6,14 @@
   </div>
 
   <simple-center-loader *ngIf="loading"></simple-center-loader>
+  <ng-container *ngIf="!loading">
+    <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
+      <div class="pr-5px">Cast Users</div>
+      <div class="flex-grow-1 nft-modal-separator"></div>
+    </div>
+    
+    <div class="fs-15px text-grey7 mt-15px mb-30px">
+      Specify users who you'd like to engage with this post.
+    </div>
+  </ng-container>
 </div>

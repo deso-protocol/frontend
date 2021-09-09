@@ -17,6 +17,9 @@ export class CloutCastModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
+    setTimeout(() => {
+      this.loading = false;
+    }, 1000);
   }
 
 }
