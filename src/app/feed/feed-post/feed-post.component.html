@@ -437,6 +437,41 @@
     </div>
   </div>
 
+  <div style="border: red solid 1px">
+    <div>NFT TRANSFER / BURN TESTING</div>
+    <div class="d-flex align-items-center">
+      <input [(ngModel)]="receiverPK" style="width: 250px" class="ml-5px" placeholder="Receiver pubkey."/>
+      <input [(ngModel)]="serialNum" style="width: 100px" class="ml-5px" placeholder="#" type="number"/>
+      <button
+        class="btn btn-primary font-weight-bold br-8px fs-13px ml-5px"
+        (click)="transfer()"
+      >
+        Transfer NFT
+      </button>
+    </div>
+    <div class="d-flex align-items-center">
+      <input [(ngModel)]="acceptSerialNum" style="width: 100px" class="ml-5px" placeholder="#" type="number"/>
+      <button
+        class="btn btn-primary font-weight-bold br-8px fs-13px ml-5px"
+        (click)="acceptTransfer()"
+      >
+        Accept NFT Transfer
+      </button>
+    </div>
+    <div class="d-flex align-items-center">
+      <input [(ngModel)]="burnSerialNum" style="width: 100px" class="ml-5px" placeholder="#" type="number"/>
+      <button
+        class="btn btn-primary font-weight-bold br-8px fs-13px ml-5px"
+        (click)="burn()"
+      >
+        Burn NFT
+      </button>
+    </div>
+    <div *ngFor="let nft of nftEntryResponses">
+      #{{nft.SerialNumber}} is for sale? {{nft.IsForSale}} is pending? {{nft.IsPending}}
+    </div>
+  </div>
+
   <div
     *ngIf="showNFTDetails && postContent.IsNFT"
     class="p-15px fs-15px w-100 background-color-grey"
@@ -461,7 +496,8 @@
           [matTooltip]="mOfNNFTTooltip"
           #NFTMOfNTooltip="matTooltip"
         >
-          <b>{{ postContent.NumNFTCopiesForSale }} of {{ postContent.NumNFTCopies }} available&nbsp;</b>
+          <b>{{ postContent.NumNFTCopiesForSale }} of {{ postContent.NumNFTCopies }} available,&nbsp;</b>
+          <b>{{ postContent.NumNFTCopiesBurned }} of {{ postContent.NumNFTCopies }} burned&nbsp;</b>
         </span>
         <span *ngIf="postContent.HasUnlockable" class="d-lg-inline-block d-none">|&nbsp;</span>
         <span

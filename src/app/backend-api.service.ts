@@ -69,6 +69,10 @@ export class BackendRoutes {
   static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
+  static RoutePathTransferNFT = "/api/v0/transfer-nft";
+  static RoutePathAcceptNFTTransfer = "/api/v0/accept-nft-transfer";
+  static RoutePathBurnNFT = "/api/v0/burn-nft";
+
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
   static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
 
@@ -804,6 +808,61 @@ export class BackendApiService {
       SerialNumber,
       IsForSale,
       MinBidAmountNanos,
+      MinFeeRateNanosPerKB,
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  TransferNFT(
+    endpoint: string,
+    SenderPublicKeyBase58Check: string,
+    ReceiverPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    EncryptedUnlockableText: string,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathTransferNFT, {
+      SenderPublicKeyBase58Check,
+      ReceiverPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
+      EncryptedUnlockableText,
+      MinFeeRateNanosPerKB,
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+  }
+
+  AcceptNFTTransfer(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathAcceptNFTTransfer, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
+      MinFeeRateNanosPerKB,
+    });
+
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  BurnNFT(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    NFTPostHashHex: string,
+    SerialNumber: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathBurnNFT, {
+      UpdaterPublicKeyBase58Check,
+      NFTPostHashHex,
+      SerialNumber,
       MinFeeRateNanosPerKB,
     });
 

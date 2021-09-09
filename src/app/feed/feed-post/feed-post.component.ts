@@ -142,6 +142,11 @@ export class FeedPostComponent implements OnInit {
   nftEntryResponses: NFTEntryResponse[];
   decryptableNFTEntryResponses: NFTEntryResponse[];
 
+  receiverPK = "";
+  serialNum = 1;
+  acceptSerialNum = 1;
+  burnSerialNum = 1;
+
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
   mOfNNFTTooltip =
@@ -196,6 +201,69 @@ export class FeedPostComponent implements OnInit {
         this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
       });
   }
+
+  transfer() {
+    this.backendApi
+      .TransferNFT(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.receiverPK,
+        this._post.PostHashHex,
+        this.serialNum,
+        "",
+        this.globalVars.feeRateBitCloutPerKB * 1e9,
+      )
+      .subscribe(
+        (response) => {
+          this.globalVars._alertSuccess("Successfully transferred!");
+        },
+        (err) => {
+          this.globalVars._alertError("Error transferrring.");
+          console.error(err);
+        }
+      );
+  }
+
+  acceptTransfer() {
+    this.backendApi
+      .AcceptNFTTransfer(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this._post.PostHashHex,
+        this.acceptSerialNum,
+        this.globalVars.feeRateBitCloutPerKB * 1e9,
+      )
+      .subscribe(
+        (response) => {
+          this.globalVars._alertSuccess("Successfully accepted!");
+        },
+        (err) => {
+          this.globalVars._alertError("Error accepting.");
+          console.error(err);
+        }
+      );
+  }
+
+  burn() {
+    this.backendApi
+      .BurnNFT(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this._post.PostHashHex,
+        this.burnSerialNum,
+        this.globalVars.feeRateBitCloutPerKB * 1e9,
+      )
+      .subscribe(
+        (response) => {
+          this.globalVars._alertSuccess("Successfully burned!");
+        },
+        (err) => {
+          this.globalVars._alertError("Error burning.");
+          console.error(err);
+        }
+      );
+  }
+
 
   ngOnInit() {
     if (!this.post.RecloutCount) {
