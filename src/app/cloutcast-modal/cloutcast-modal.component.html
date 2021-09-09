@@ -1,10 +1,8 @@
-<div class="cloutcast-modal-container">
-  <div class="w-100 d-flex justify-content-end border-bottom border-color-grey cursor-pointer text-grey5">
-    <div class="p-15px fs-25px font-weight-bold" (click)="bsModalRef.hide()">&times;</div>
-  </div>
+<div class="cloutcast-modal-container p-15px">
+  <nft-modal-header [header]="'Cast this Post'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
-  <div class="flex-grow-1">
-    Whoa!
+  <div class="flex-grow-1 p-15px">
+    Cast {{postHashHex}}
   </div>
 
   <simple-center-loader *ngIf="loading"></simple-center-loader>
