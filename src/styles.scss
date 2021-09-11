@@ -262,6 +262,7 @@ $green-font-color: #19B028;
 .background-color-light-grey { background-color: var(--secondary); }
 .background-color-light-grey-important { background-color: var(--secondary) !important }
 .background-color-light-pink { background-color: lightpink; }
+.background-color-lemon-chiffon { background-color: lemonchiffon; }
 .background-color-white { background-color: var(--background); }
 
 // Custom padding classes.
@@ -401,6 +402,7 @@ $green-font-color: #19B028;
 
 .br-3px { border-radius: 3px; }
 .br-4px { border-radius: 4px; }
+.br-5px { border-radius: 5px; }
 .br-8px { border-radius: 8px; }
 .br-12px { border-radius: $feed-border-radius; }
 
@@ -2802,4 +2804,8 @@ input {
   padding-left: .5rem !important;
   padding-right: .5rem !important;
   margin-left: .5rem !important;
+}
+
+.referral-link-info__blue-border {
+  border-left: 5px solid $buy-button-blue !important;
 }

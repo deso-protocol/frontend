@@ -153,6 +153,8 @@ import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 import { DragDropModule } from "@angular/cdk/drag-drop";
+import { ReferralProgramMgrComponent } from './referral-program-mgr/referral-program-mgr.component';
+import { ReferralsComponent } from './referrals/referrals.component';
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -276,6 +278,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     VerifyEmailComponent,
     AdminJumioComponent,
     JumioStatusComponent,
+    ReferralProgramMgrComponent,
+    ReferralsComponent,
     AdminTutorialComponent,
     CreateProfileTutorialPageComponent,
     BuyCreatorCoinsTutorialComponent,

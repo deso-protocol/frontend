@@ -40,7 +40,10 @@ export class IdentityService {
 
   // Launch a new identity window
 
-  launch(path?: string, params?: { publicKey?: string; tx?: string }): Observable<any> {
+  launch(
+    path?: string,
+    params?: { publicKey?: string; tx?: string; referralCode?: string; public_key?: string }
+  ): Observable<any> {
     let url = this.identityServiceURL as string;
     if (path) {
       url += path;
@@ -57,6 +60,14 @@ export class IdentityService {
 
     if (params?.tx) {
       httpParams = httpParams.append("tx", params.tx);
+    }
+
+    if (params?.referralCode) {
+      httpParams = httpParams.append("referralCode", params.referralCode);
+    }
+
+    if (params?.public_key) {
+      httpParams.append("public_key", params.public_key);
     }
 
     const paramsStr = httpParams.toString();
