@@ -67,7 +67,7 @@ export class IdentityService {
     }
 
     if (params?.public_key) {
-      httpParams.append("public_key", params.public_key);
+      httpParams = httpParams.append("public_key", params.public_key);
     }
 
     const paramsStr = httpParams.toString();
