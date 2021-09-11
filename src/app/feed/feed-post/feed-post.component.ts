@@ -95,7 +95,7 @@ export class FeedPostComponent implements OnInit {
   @Input() nftCollectionHighBid = 0;
   @Input() nftCollectionLowBid = 0;
   @Input() isForSaleOnly: boolean = false;
-  @Input() nftLastAcceptedBidAmountNanos: number;
+  nftLastAcceptedBidAmountNanos: number;
 
   @Input() showNFTDetails = false;
   @Input() showExpandedNFTDetails = false;
