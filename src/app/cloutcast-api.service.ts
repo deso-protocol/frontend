@@ -10,6 +10,7 @@ import { IdentityService } from './identity.service';
 })
 export class CloutcastApiService {
   private ccToken: string = "";
+  private ccTokenUser: string;
 
   constructor(
     private httpClient: HttpClient,
@@ -140,6 +141,24 @@ export class CloutcastApiService {
     }
   }
 
+  public async getWallet() {
+    try {
+      let tToken = await this.getToken();
+      let getWalletReq = await this.httpClient.get(`${environment.cloutcastUri}/api/user/${this.ccTokenUser}/wallet.json`, {
+        headers: {
+          "Content-Type" : "application/json",
+          "Authorization" : `Bearer ${tToken}`
+        }
+      }).toPromise();
+
+      return getWalletReq;
+    } catch (ex) {
+      // throw ex;
+      console.error(ex);
+      return {available: 0, escrow: 0};
+    }
+  }
+
   private async getToken(): Promise<string> {
     let currentUser = this.globalVars.loggedInUser;
 
@@ -148,7 +167,7 @@ export class CloutcastApiService {
       throw new Error("auth needed");
     }
 
-    if (this.ccToken !== "") {
+    if (this.ccToken !== "" && this.ccTokenUser == currentUser.PublicKeyBase58Check) {
       return this.ccToken;
     }
 
@@ -174,6 +193,7 @@ export class CloutcastApiService {
     console.log(tt);
 
     this.ccToken = tt;
+    this.ccTokenUser = currentUser.PublicKeyBase58Check;
     return tt;
 
   }

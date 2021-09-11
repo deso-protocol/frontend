@@ -20,6 +20,7 @@ export class CreateNftAuctionModalComponent {
   selectedSerialNumbers: boolean[] = [];
   selectAll: boolean = false;
   creatingAuction: boolean = false;
+  castType = 'Quote';
 
   constructor(
     private backendApi: BackendApiService,

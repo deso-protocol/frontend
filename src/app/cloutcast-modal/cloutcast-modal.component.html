@@ -1,19 +1,305 @@
-<div class="cloutcast-modal-container p-15px">
+<div class="nft-modal-container p-15px">
   <nft-modal-header [header]="'Cast this Post'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
-  <div class="flex-grow-1 p-15px">
-    Cast {{postHashHex}}
+  <div class="flex-grow-1 p-15px" *ngIf="!!!userCastBalances">
+    Loading balances...
   </div>
-
+  <div class="flex-grow-1 p-15px" *ngIf="!!userCastBalances">
+    {{userCastBalances.data.settled / 1e9 }} CLOUT available in your CloutCast wallet.
+  </div>
+  
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <ng-container *ngIf="!loading">
     <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
-      <div class="pr-5px">Cast Users</div>
+      <div class="pr-5px">Cast Type</div>
       <div class="flex-grow-1 nft-modal-separator"></div>
     </div>
-    
-    <div class="fs-15px text-grey7 mt-15px mb-30px">
-      Specify users who you'd like to engage with this post.
+    <div class="pt-30px font-weight-500 flex-flow-row">
+      <div class="d-flex align-items-center fs-15px">
+        <input [(ngModel)]="castType"
+               [value]="0"
+               type="radio"
+               name="castType"
+               class="mr-15px nft-modal-radio-size cursor-pointer">
+        Comment
+      </div>
+      <div class="d-flexalign-items-center fs-15px">
+        <div class="d-flex align-items-center">
+          <input [(ngModel)]="castType"
+                 [value]="1"
+                 type="radio"
+                 name="castType"
+                 class="mr-15px nft-modal-radio-size cursor-pointer">
+          Quote
+        </div>
+      </div>
+      <div class="d-flex align-items-center fs-15px">
+        <div class="d-flex align-items-center">
+          <input [(ngModel)]="castType"
+                 [value]="2"
+                 type="radio"
+                 name="castType"
+                 class="mr-15px nft-modal-radio-size cursor-pointer">
+          ReClout
+        </div>
+      </div>
     </div>
+    <ng-container *ngIf="useCriteria == true">
+      <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
+        <div class="pr-5px">Cast Criteria</div>
+        <div class="flex-grow-1 nft-modal-separator"></div>
+      </div>
+      <div class="pt-15px pb-15px font-weight-500">
+        <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
+          <div>
+            <span class="text-grey7">Min Coin Price</span>
+          </div>
+            <div class="d-flex flex-wrap flex-row">
+              <div class="input-group py-5px"
+                   [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+                <div class="input-group-prepend" id="clout-label">
+                  <span class="input-group-text fs-15px">CLOUT  </span>
+                </div>
+                <input
+                  [(ngModel)]="castAmountHours"
+                  (ngModelChange)="updateCastAmountHours($event)"
+                  aria-describedby="clout-label"
+                  class="form-control fs-15px text-right d-inline-block"
+                  type="number" min="0"
+                  placeholder="0"
+                  [disabled]="creatingCast"/>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="pt-15px pb-15px font-weight-500">
+        <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
+          <div>
+            <span class="text-grey7">Min Followers</span>
+          </div>
+            <div class="d-flex flex-wrap flex-row">
+              <div class="input-group py-5px"
+                   [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+                <div class="input-group-prepend" id="clout-label">
+                  <span class="input-group-text fs-15px">FOLLOWERS  </span>
+                </div>
+                <input
+                  [(ngModel)]="castAmountHours"
+                  (ngModelChange)="updateCastAmountHours($event)"
+                  aria-describedby="clout-label"
+                  class="form-control fs-15px text-right d-inline-block"
+                  type="number" min="0"
+                  placeholder="0"
+                  [disabled]="creatingCast"/>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="fs-15px text-grey7 mb-15px">
+        Specify the criteria for the promoters of this cast above.
+      </div>
+      <div class="pt-15px pb-15px font-weight-500">
+        <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
+          <div>
+            <span class="text-grey7">Engagement Count</span>
+          </div>
+            <div class="d-flex flex-wrap flex-row">
+              <div class="input-group py-5px"
+                   [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+                <div class="input-group-prepend" id="clout-label">
+                  <span class="input-group-text fs-15px">COUNT  </span>
+                </div>
+                <input
+                  [(ngModel)]="castAmountHours"
+                  (ngModelChange)="updateCastAmountHours($event)"
+                  aria-describedby="clout-label"
+                  class="form-control fs-15px text-right d-inline-block"
+                  type="number" min="0"
+                  placeholder="0"
+                  [disabled]="creatingCast"/>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="fs-15px text-grey7 mb-15px">
+        How many promoters would you like to run this cast?
+      </div>
+      
+      <div class="fs-15px text-grey7 mb-30px">
+        To specify specific BitClout users instead, <a (click)="criteriaSwitch(false)">click here.</a>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="useCriteria == false">
+      <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
+        <div class="pr-5px">Cast Users</div>
+        <div class="flex-grow-1 nft-modal-separator"></div>
+      </div>
+      
+      <search-bar
+        [showCloutavista]="false"
+        [startingSearchText]="startingSearchText"
+        [isSearchForUsersToSendClout]="true"
+        (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+      ></search-bar>
+      <div class="fs-15px text-grey7 mb-15px">
+        Specify users who you'd like to engage with this post by searching for their usernames above.
+      </div>
+      <div class="fs-15px text-grey7 mb-30px">
+        To specify acceptance criteria instead, <a (click)="criteriaSwitch(true)">click here.</a>
+      </div>
+
+      <ng-container *ngIf="selectedCreators.length > 0">
+        <ng-container *ngFor="let item of selectedCreators; index as i;">
+          <div class="row">
+            <div class="col">
+              <simple-profile-card
+                [profile]="item"
+                [singleColumn]="true"
+                [hideFollowLink]="true" 
+              ></simple-profile-card>
+            </div>
+            <div class="col col-auto">
+              <i
+                (click)="removeCreator(i)" 
+                class="fas fa-trash-alt cursor-pointer pt-10px">
+              </i>
+            </div>
+          </div>
+          
+        </ng-container>
+      </ng-container>
+    </ng-container>
+    <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
+      <div class="pr-5px">Cast Duration</div>
+      <div class="flex-grow-1 nft-modal-separator"></div>
+    </div>
+    <div class="pt-15px pb-15px font-weight-500">
+      <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
+        <div>
+          <span class="text-grey7">(Required)</span>
+        </div>
+          <div class="d-flex flex-wrap flex-row">
+            <div class="input-group py-5px"
+                 [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+              <div class="input-group-prepend" id="clout-label">
+                <span class="input-group-text fs-15px">HOURS  </span>
+              </div>
+              <input
+                [(ngModel)]="castAmountHours"
+                (ngModelChange)="updateCastAmountHours($event)"
+                aria-describedby="clout-label"
+                class="form-control fs-15px text-right d-inline-block"
+                type="number" min="0"
+                placeholder="0"
+                [disabled]="creatingCast"/>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="fs-15px text-grey7 mt-15px mb-15px">
+      Enter the amount of time (in hours) from now this cast should expire. Default is two days.
+    </div>
+
+
+    <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
+      <div class="pr-5px">Engagament Value</div>
+      <div class="flex-grow-1 nft-modal-separator"></div>
+    </div>
+    <div class="pt-15px pb-15px font-weight-500">
+      <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
+        <div>
+          <span class="text-grey7">(Required)</span>
+        </div>
+          <div class="d-flex flex-wrap flex-row">
+            <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
+                 [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+              <div class="input-group-prepend" id="usd-label">
+                <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
+              </div>
+              <input
+                [(ngModel)]="castAmountUSD"
+                (ngModelChange)="updateCastAmountCLOUT($event)"
+                [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}"
+                aria-describedby="usd-label"
+                class="form-control fs-15px text-right d-inline-block"
+                type="number" min="0"
+                placeholder="0"
+                [disabled]="creatingCast"/>
+            </div>
+            <div class="input-group py-5px"
+                 [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+              <div class="input-group-prepend" id="clout-label">
+                <span class="input-group-text fs-15px">CLOUT</span>
+              </div>
+              <input
+                [(ngModel)]="castAmountCLOUT"
+                (ngModelChange)="updateCastAmountUSD($event)"
+                aria-describedby="clout-label"
+                class="form-control fs-15px text-right d-inline-block"
+                type="number" min="0"
+                placeholder="0"
+                [disabled]="creatingCast"/>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="fs-15px text-grey7 mt-15px mb-30px">
+      How much $CLOUT should be awarded to each promoter?
+    </div>
+
+    <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
+      <div class="pr-5px">Cast Details</div>
+      <div class="flex-grow-1 nft-modal-separator"></div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center pt-15px pb-15px">
+      <div class="fs-15px">
+        <div class="font-weight-500">Duration</div>
+      </div>
+      <div class="fs-15px">
+        {{ castDurationHours }} HOURS
+        <span class="text-grey7">(~{{ castDurationHours / 24 }} DAYS)</span>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center pt-15px pb-15px">
+      <div class="fs-15px">
+        <div class="font-weight-500">Total Runs</div>
+      </div>
+      <div class="fs-15px">
+        {{ selectedCreators.length ? selectedCreators.length : criteriaAmountEngagements }} RUNS
+        <span class="text-grey7">(Potential)</span>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center pt-15px pb-15px">
+      <div class="fs-15px">
+        <div class="font-weight-500">Fee</div>
+      </div>
+      <div class="fs-15px">
+        {{ selectedCreators.length ? (selectedCreators.length * castAmountCLOUT) * 0.12 : (criteriaAmountEngagements * castAmountCLOUT) * 0.12 }} CLOUT
+        <span class="text-grey7">(~{{ selectedCreators.length ? (selectedCreators.length * castAmountUSDFloat) * 0.12 : (criteriaAmountEngagements * castAmountUSDFloat) * 0.12 }} USD)</span>
+      </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center pt-15px pb-30px">
+      <div class="fs-15px">
+        <div class="font-weight-500">Total</div>
+      </div>
+      <div class="fs-15px">
+        {{ selectedCreators.length ? (selectedCreators.length * castAmountCLOUT) * 1.12 : (criteriaAmountEngagements * castAmountCLOUT) * 1.12 }} CLOUT
+        <span class="text-grey7">(~{{ selectedCreators.length ? (selectedCreators.length * castAmountUSDFloat) * 1.12 : (criteriaAmountEngagements * castAmountUSDFloat) * 1.12 }} USD)</span>
+      </div>
+    </div>
+    
+    <button
+      [disabled]="creatingCast"
+    (click)="createCast()"
+    class="btn btn-primary font-weight-bold fs-15px br-12px mb-15px"
+    style="height: 36px; width: 135px; line-height: 15px"
+  >
+    {{ creatingCast ? "Casting Post" : "Cast Post" }}
+  </button>
+
+
+    
+
   </ng-container>
 </div>
