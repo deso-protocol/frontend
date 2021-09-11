@@ -159,6 +159,24 @@ export class CloutcastApiService {
     }
   }
 
+  public async createCast(castPayload: any): Promise<boolean> {
+    try {
+      let tToken = await this.getToken();
+      await this.httpClient.post(`${environment.cloutcastUri}/api/promotion/create.ext.json`, castPayload, {
+        headers: {
+          "Content-Type" : 'application/json', 
+          "Authorization" : `Bearer ${tToken}`
+        }
+      }).toPromise();
+
+      return true;
+
+    } catch (ex) {
+      console.error(ex);
+      throw ex;
+    }
+  }
+
   private async getToken(): Promise<string> {
     let currentUser = this.globalVars.loggedInUser;
 

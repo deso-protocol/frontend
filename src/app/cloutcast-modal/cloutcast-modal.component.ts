@@ -26,9 +26,10 @@ export class CloutCastModalComponent implements OnInit {
   castAmountUSD: string = "0";
   castAmountUSDFloat: number = 0;
   castAmountCLOUT: number = 0;
-  castDurationHours: number  = 48;
+  castAmountHours: number  = 48;
   creatingCast = false;
   castType: any;
+  castError: string;
 
   userCastBalances: any;
 
@@ -70,10 +71,10 @@ export class CloutCastModalComponent implements OnInit {
   }
   updateCastAmountHours(v: any) {
     if (v > 168) {
-      this.castDurationHours = 168;
+      this.castAmountHours = 168;
       return false;
     } else {
-      this.castDurationHours = v;
+      this.castAmountHours = v;
     }
     // this.castDurationHours = v > 168 ? 168 : v;
   }
@@ -97,14 +98,54 @@ export class CloutCastModalComponent implements OnInit {
       this.criteriaMinCoinPrice = 0;
     }
   }
+  bitcloutToUSD(clout:number): number {
+    let t = Math.round(100 * ((this.globalVars.ExchangeUSDCentsPerBitClout / 100) * clout)) / 100;
+    // console.log({t, clout, ex: this.globalVars.ExchangeUSDCentsPerBitClout / 100});
+    return t;
+  }
 
   async createCast(): Promise<void> {
-    let outPayload = {
+    try {
+      this.creatingCast = true;
+      let action = 
+        parseInt(this.castType) == 0 ? 
+          "Comment" : parseInt(this.castType) == 1 ? "Quote" : "Reclout";
+      let engagements = this.useCriteria == true ? this.criteriaAmountEngagements : this.selectedCreators.length;
+      let criteria = this.useCriteria == true ? {
+        minCoinPrice: this.criteriaMinCoinPrice * 1e9,
+        minFollowerCount: this.criteriaMinFollowers
+      } : {
+        allowedUsers: this.selectedCreators.map(v => v.PublicKeyBase58Check)
+      };
+      
+      let outPayload: any = {
+        header: {
+          engagements,
+          duration: this.castAmountHours * 60,
+          rate: this.castAmountCLOUT * 1e9,
+          fee: 1,
+          bitCloutToUsdRate: this.bitcloutToUSD(1)
+        },
+        criteria,
+        target: {
+          action,
+          hex: this.postHashHex
+        }
+      }
 
-    }
-    if (this.useCriteria) {
+      await this.cloutcastApi.createCast(outPayload);
 
+      this.globalVars._alertSuccess("Your cast has been created.", "Success!");
+
+      this.bsModalRef.hide();
+    } catch (ex) {
+      console.error(ex);
+      let errorMessage = ex.message || "Unspecified Error."
+      this.castError = errorMessage;
+    } finally {
+      this.creatingCast = false;
     }
+
   }
 
 }

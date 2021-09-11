@@ -10,12 +10,12 @@
   
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <ng-container *ngIf="!loading">
-    <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
+    <div class="d-flex align-items-center fs-15px pt-15px pb-15px text-grey7">
       <div class="pr-5px">Cast Type</div>
       <div class="flex-grow-1 nft-modal-separator"></div>
     </div>
     <div class="pt-30px font-weight-500 flex-flow-row">
-      <div class="d-flex align-items-center fs-15px">
+      <div class="castRadios d-flex align-items-center fs-15px">
         <input [(ngModel)]="castType"
                [value]="0"
                type="radio"
@@ -23,7 +23,7 @@
                class="mr-15px nft-modal-radio-size cursor-pointer">
         Comment
       </div>
-      <div class="d-flexalign-items-center fs-15px">
+      <div class="castRadios d-flex align-items-center fs-15px">
         <div class="d-flex align-items-center">
           <input [(ngModel)]="castType"
                  [value]="1"
@@ -33,7 +33,7 @@
           Quote
         </div>
       </div>
-      <div class="d-flex align-items-center fs-15px">
+      <div class="castRadios d-flex align-items-center fs-15px">
         <div class="d-flex align-items-center">
           <input [(ngModel)]="castType"
                  [value]="2"
@@ -61,8 +61,7 @@
                   <span class="input-group-text fs-15px">CLOUT  </span>
                 </div>
                 <input
-                  [(ngModel)]="castAmountHours"
-                  (ngModelChange)="updateCastAmountHours($event)"
+                  [(ngModel)]="criteriaMinCoinPrice"
                   aria-describedby="clout-label"
                   class="form-control fs-15px text-right d-inline-block"
                   type="number" min="0"
@@ -84,8 +83,7 @@
                   <span class="input-group-text fs-15px">FOLLOWERS  </span>
                 </div>
                 <input
-                  [(ngModel)]="castAmountHours"
-                  (ngModelChange)="updateCastAmountHours($event)"
+                [(ngModel)]="criteriaMinFollowers"
                   aria-describedby="clout-label"
                   class="form-control fs-15px text-right d-inline-block"
                   type="number" min="0"
@@ -110,8 +108,7 @@
                   <span class="input-group-text fs-15px">COUNT  </span>
                 </div>
                 <input
-                  [(ngModel)]="castAmountHours"
-                  (ngModelChange)="updateCastAmountHours($event)"
+                  [(ngModel)]="criteriaAmountEngagements"
                   aria-describedby="clout-label"
                   class="form-control fs-15px text-right d-inline-block"
                   type="number" min="0"
@@ -257,8 +254,8 @@
         <div class="font-weight-500">Duration</div>
       </div>
       <div class="fs-15px">
-        {{ castDurationHours }} HOURS
-        <span class="text-grey7">(~{{ castDurationHours / 24 }} DAYS)</span>
+        {{ castAmountHours }} HOURS
+        <span class="text-grey7">(~{{ castAmountHours / 24 }} DAYS)</span>
       </div>
     </div>
     <div class="d-flex justify-content-between align-items-center pt-15px pb-15px">
@@ -302,4 +299,7 @@
     
 
   </ng-container>
+  <div class="alert alert-error" *ngIf="castError">
+    Error: {{castError}}
+  </div>
 </div>

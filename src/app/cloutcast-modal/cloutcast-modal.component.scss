@@ -1,6 +1,11 @@
 .flex-flow-row {
   display: flex;
-  // flex-direction: row;
+  flex-direction: row;
+
   // box-sizing: content-box
   flex-flow: row nowrap;
+}
+
+.castRadios {
+  margin-left: 20px;
 }
