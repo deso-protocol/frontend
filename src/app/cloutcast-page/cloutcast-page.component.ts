@@ -394,6 +394,10 @@ export class CloutCastPageComponent implements OnInit {
     }
   }
 
+  async fillMaxWithdraw() {
+    this.withdrawCloutAmount = this.walletData.available / 1e9;
+  }
+
   async doDeposit() {
     let res = await SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),

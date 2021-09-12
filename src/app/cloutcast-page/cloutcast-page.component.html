@@ -44,13 +44,12 @@
               </div>
             </div>
             <div *ngIf="showWithdraw == true" class="row">
-              <div class="col">
-                <div class="text-grey7">
-                  Specify the amount of $CLOUT to withdraw from your CloutCast wallet. 
-                </div>
+              <div class="col-12 col-sm-6">
+                <button class="btn btn-block btn-info" (click)="fillMaxWithdraw()">
+                  Maximum
+                </button>
               </div>
-              <div class="input-group py-5px col-auto"
-                 [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+              <div class="input-group py-5px col-12 col-sm-6">
               <div class="input-group-prepend" id="clout-label">
                 <span class="input-group-text fs-15px">CLOUT  </span>
               </div>
@@ -61,6 +60,9 @@
                 type="number" min="0"
                 placeholder="0"
                 [disabled]="sendingWithdrawRequest"/>
+              </div>
+              <div class="text-grey7 col-12">
+                Specify the amount of $CLOUT to withdraw from your CloutCast wallet. 
               </div>
               <btn class="btn btn-block btn-warning col-12" (click)="doWithdraw()">
                 Initiate Withdrawl
@@ -214,14 +216,13 @@
                 </button>
               </div>
             </div>
-            <div *ngIf="showWithdraw == true" class="row">
-              <div class="col">
-                <div class="text-grey7">
-                  Specify the amount of $CLOUT to withdraw from your CloutCast wallet. 
-                </div>
+            <div *ngIf="showWithdraw == true" class="row m-3">
+              <div class="col-12 col-sm-6">
+                <button class="btn btn-block btn-info" (click)="fillMaxWithdraw()">
+                  Maximum
+                </button>
               </div>
-              <div class="input-group py-5px col-auto"
-                 [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+              <div class="input-group py-5px col-12 col-sm-6">
               <div class="input-group-prepend" id="clout-label">
                 <span class="input-group-text fs-15px">CLOUT  </span>
               </div>
@@ -233,6 +234,9 @@
                 placeholder="0"
                 [disabled]="sendingWithdrawRequest"/>
               </div>
+              <div class="text-grey7 col-12">
+                Specify the amount of $CLOUT to withdraw from your CloutCast wallet. 
+              </div>
               <btn class="btn btn-block btn-warning col-12" (click)="doWithdraw()">
                 Initiate Withdrawl
               </btn>
@@ -243,6 +247,8 @@
             Loading...
           </div>
         </div>
+
+
         <tab-selector
           [tabs]="['Inbox', 'For Me', 'Available']"
           [activeTab]="selectedTab"
