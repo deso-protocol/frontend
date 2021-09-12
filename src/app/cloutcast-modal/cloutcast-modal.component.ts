@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { SwalHelper } from 'src/lib/helpers/swal-helper';
 import { ProfileEntryResponse } from '../backend-api.service';
 import { CloutcastApiService } from '../cloutcast-api.service';
 import { GlobalVarsService } from "../global-vars.service";
@@ -36,7 +38,8 @@ export class CloutCastModalComponent implements OnInit {
   constructor(
     public bsModalRef: BsModalRef,
     public globalVars: GlobalVarsService,
-    private cloutcastApi: CloutcastApiService
+    private cloutcastApi: CloutcastApiService,
+    private router: Router
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -146,6 +149,25 @@ export class CloutCastModalComponent implements OnInit {
       this.creatingCast = false;
     }
 
+  }
+  async doDeposit() {
+    let res = await SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Heads Up!",
+      html: `Deposits are handled by sending $CLOUT to our broker wallet. Deposits take 15-20 minutes to confirm. Click 'OK' to be sent to the send $CLOUT page.`,
+      showCancelButton: true,
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    });
+    if (res.isConfirmed == true) {
+      await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
+      this.bsModalRef.hide();
+    }
+    console.log(res);
   }
 
 }

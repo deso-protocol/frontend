@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 
 import { Title } from '@angular/platform-browser';
 import { NavigationStart, Router } from '@angular/router';
+import { SwalHelper } from 'src/lib/helpers/swal-helper';
 import { BackendApiService, PostEntryResponse } from '../backend-api.service';
 import { CloutcastApiService } from '../cloutcast-api.service';
 import { GlobalVarsService } from '../global-vars.service';
 import { IdentityService } from '../identity.service';
+import { sprintf } from "sprintf-js";
 
 @Component({
   selector: 'app-cloutcast-page',
@@ -28,6 +30,17 @@ export class CloutCastPageComponent implements OnInit {
   showCasts: any = [];
   showListLoading: boolean = false;
   showContentLoading: boolean = false;
+  walletOpen: boolean = false;
+  walletData = {
+    publicKey: "",
+    available: 0,
+    escrow: 0
+  };
+  walletLoading: boolean = false;
+  showWithdraw: boolean = false;
+  withdrawCloutAmount = 0;
+  sendingWithdrawRequest = false;
+
   constructor(
     public globalVars: GlobalVarsService,
     private cloutcastApi: CloutcastApiService,
@@ -185,6 +198,8 @@ export class CloutCastPageComponent implements OnInit {
                 this.showCasts.push(cast);
               }
             }
+            this.showCasts.sort((a, b) => {return b.RateNanos - a.RateNanos})
+
             break;
           case "For Me":
             let coinPrice = 0;
@@ -229,9 +244,13 @@ export class CloutCastPageComponent implements OnInit {
                 }
               }
             }
+            this.showCasts.sort((a, b) => {return b.RateNanos - a.RateNanos})
+
             break;
           case "Available":
             this.showCasts = this.allCasts;
+            this.showCasts.sort((a, b) => {return b.RateNanos - a.RateNanos})
+
             break;
         }
         // console.log(tabName);
@@ -255,8 +274,8 @@ export class CloutCastPageComponent implements OnInit {
   nanosToUSD(nanos: number): string {
     return this.globalVars.nanosToUSD(nanos, 2);
   }
-  nanosToBitClout(nanos: number): string {
-    return this.globalVars.nanosToBitClout(nanos,2);
+  nanosToBitClout(nanos: number, toPlace = 2): string {
+    return this.globalVars.nanosToBitClout(nanos,toPlace);
   }
 
   rounded(num: number, roundTo: number = 1): number {
@@ -347,7 +366,85 @@ export class CloutCastPageComponent implements OnInit {
       // skipLocationChange: true
     });
   }
+  async _toggleWithdraw() {
+    this.showWithdraw = !this.showWithdraw;
+    this.withdrawCloutAmount = 0;
+  }
+  async _toggleWallet(doSwitch = true) {
+    if (doSwitch) {
+      this.walletOpen = !this.walletOpen;
+    }
+    if (this.walletData.publicKey !== this.globalVars.loggedInUser.PublicKeyBase58Check && this.walletOpen == true) {
+      try {
+        this.walletLoading = true;
+      let balances = await this.cloutcastApi.getWallet();
+      console.log(balances);
+      this.walletData.publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      let {data = {settled: 0, unSettled: 0}} = balances;
+      this.walletData.available = data.settled;
+      this.walletData.escrow = data.unSettled;
+      } catch (ex) {
+        console.error(ex);
+        this.walletData.available = 0;
+        this.walletData.escrow = 0;
+      } finally {
+        this.walletLoading = false;
+      }
 
+    }
+  }
+
+  async doDeposit() {
+    let res = await SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Heads Up!",
+      html: `Deposits are handled by sending $CLOUT to our broker wallet. Deposits take 15-20 minutes to confirm. Click 'OK' to be sent to the send $CLOUT page.`,
+      showCancelButton: true,
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    });
+    if (res.isConfirmed == true) {
+      await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE")
+    }
+    console.log(res);
+  }
+
+  async doWithdraw() {
+    try {
+      if (this.withdrawCloutAmount > 0) {
+        // SwalHelper.fire()
+        let res = await SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
+          title: "Are you ready?",
+          html: `Are you sure you want to withdraw ${this.withdrawCloutAmount} $CLOUT (~${this.bitcloutToUSD(this.withdrawCloutAmount)} USD) from your CloutCast Wallet? Deposits take 24-48 hours to verify, and fulfill.`,
+          showCancelButton: true,
+          showConfirmButton: true,
+          customClass: {
+            confirmButton: "btn btn-light",
+            cancelButton: "btn btn-light no",
+          },
+          reverseButtons: true,
+        });
+        console.log(res);
+        if (res.isConfirmed == true) {
+          // sending withdraw request... 
+          this.sendingWithdrawRequest = true;
+          let withdrawSuccess = await this.cloutcastApi.createWithdrawlRequest(Math.floor(this.withdrawCloutAmount * 1e9));
+          if (withdrawSuccess == true) {
+            this.globalVars._alertSuccess("Your CloutCast withdrawl request has been received!");
+          }
+        }
+      } else {
+        this.globalVars._alertError("Please enter a value greater than zero to withdraw from your CloutCast wallet", false, false);
+      }
+    } catch (ex) {
+      this.globalVars._alertError(ex.message || "Unspecified Error trying to withdraw.");
+    }
+  }
 
 }
 

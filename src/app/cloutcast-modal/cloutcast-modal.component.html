@@ -5,7 +5,8 @@
     Loading balances...
   </div>
   <div class="flex-grow-1 p-15px" *ngIf="!!userCastBalances">
-    {{userCastBalances.data.settled / 1e9 }} CLOUT available in your CloutCast wallet.
+    {{userCastBalances.data.settled / 1e9 }} CLOUT available in your CloutCast wallet. <br />
+    <a (click)="doDeposit()">Click Here to add $CLOUT to your CloutCast wallet.</a>
   </div>
   
   <simple-center-loader *ngIf="loading"></simple-center-loader>
@@ -16,32 +17,32 @@
     </div>
     <div class="pt-30px font-weight-500 flex-flow-row">
       <div class="castRadios d-flex align-items-center fs-15px">
+        <div class="castRadios d-flex align-items-center fs-15px">
+          <div class="d-flex align-items-center">
+            <input [(ngModel)]="castType"
+                   [value]="1"
+                   type="radio"
+                   name="castType"
+                   class="mr-15px nft-modal-radio-size cursor-pointer">
+            Quote
+          </div>
+        </div>
+        <div class="castRadios d-flex align-items-center fs-15px">
+          <div class="d-flex align-items-center">
+            <input [(ngModel)]="castType"
+                   [value]="2"
+                   type="radio"
+                   name="castType"
+                   class="mr-15px nft-modal-radio-size cursor-pointer">
+            ReClout
+          </div>
+        </div>
         <input [(ngModel)]="castType"
                [value]="0"
                type="radio"
                name="castType"
                class="mr-15px nft-modal-radio-size cursor-pointer">
         Comment
-      </div>
-      <div class="castRadios d-flex align-items-center fs-15px">
-        <div class="d-flex align-items-center">
-          <input [(ngModel)]="castType"
-                 [value]="1"
-                 type="radio"
-                 name="castType"
-                 class="mr-15px nft-modal-radio-size cursor-pointer">
-          Quote
-        </div>
-      </div>
-      <div class="castRadios d-flex align-items-center fs-15px">
-        <div class="d-flex align-items-center">
-          <input [(ngModel)]="castType"
-                 [value]="2"
-                 type="radio"
-                 name="castType"
-                 class="mr-15px nft-modal-radio-size cursor-pointer">
-          ReClout
-        </div>
       </div>
     </div>
     <ng-container *ngIf="useCriteria == true">
@@ -142,7 +143,7 @@
         Specify users who you'd like to engage with this post by searching for their usernames above.
       </div>
       <div class="fs-15px text-grey7 mb-30px">
-        To specify acceptance criteria instead, <a (click)="criteriaSwitch(true)">click here.</a>
+        To specify acceptance criteria instead, <a class="superBold" (click)="criteriaSwitch(true)">click here.</a>
       </div>
 
       <ng-container *ngIf="selectedCreators.length > 0">

@@ -10,14 +10,69 @@
               Casts powered by CloutCast
             </div>
             <div class="justify-content-end align-items-right pr-icon-settings">
-              <i class="fas fa-wallet cursor-pointer pt-2px">
+              <i (click)="_toggleWallet()" class="fas fa-wallet cursor-pointer pt-2px">
               </i>
             </div>
 
           </div>
 
         </div>
-        <br />
+        <div *ngIf="walletOpen == true">
+          <div class="mr-15px ml-15px pt-15px pb-5px divtext font-weight-bold border-color-blue border-bottom">
+            My CloutCast Wallet
+          </div>
+          <ng-container *ngIf="walletLoading == false">
+            <div class="row m-3">
+              <div class="col">
+                Available<br />
+                {{nanosToBitClout(walletData.available, 4)}} $CLOUT<br />
+                (~{{nanosToUSD(walletData.available)}} USD)<br />
+                <button (click)="doDeposit()" class="btn btn-block btn-primary">
+                  Deposit
+                </button>
+              </div>
+              <div class="col">
+                Escrow<br />
+                {{nanosToBitClout(walletData.escrow, 4)}} $CLOUT<br />
+                (~{{nanosToUSD(walletData.escrow)}} USD)<br />
+                <button 
+                  (click) = "_toggleWithdraw()"
+                  class="btn btn-block btn-info"
+                  [disabled]="sendingWithdrawRequest">
+                  Withdraw
+                </button>
+              </div>
+            </div>
+            <div *ngIf="showWithdraw == true" class="row">
+              <div class="col">
+                <div class="text-grey7">
+                  Specify the amount of $CLOUT to withdraw from your CloutCast wallet. 
+                </div>
+              </div>
+              <div class="input-group py-5px col-auto"
+                 [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+              <div class="input-group-prepend" id="clout-label">
+                <span class="input-group-text fs-15px">CLOUT  </span>
+              </div>
+              <input
+                [(ngModel)]="withdrawCloutAmount"
+                aria-describedby="clout-label"
+                class="form-control fs-15px text-right d-inline-block"
+                type="number" min="0"
+                placeholder="0"
+                [disabled]="sendingWithdrawRequest"/>
+              </div>
+              <btn class="btn btn-block btn-warning col-12" (click)="doWithdraw()">
+                Initiate Withdrawl
+              </btn>
+            </div>
+            
+          </ng-container>
+          <div *ngIf="walletLoading == true">
+            Loading...
+          </div>
+        </div>
+      
         <div class="flex-row ovy">
           <div class="w-fourty ovy">
             <div *ngIf="showListLoading">
@@ -43,11 +98,11 @@
                     <span class="ml-2">
                       <div>
                         {{item.BitcloutUsername}}
-                        <span
+                        <!-- <span
                           class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
                           style="width: fit-content">
                             ${{floored(item.BitCloutUserPrice, 100)}}
-                        </span>
+                        </span> -->
                       </div>
                       <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
                       <div>
@@ -102,21 +157,29 @@
 
   <div class="d-flex flex-column flex-grow-1 vh-100">
     <!-- Header -->
-    <div class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey">
+    <div class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey w-100">
       <top-bar-mobile-navigation-control 
       *ngIf="!!!selectedPost"
       class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-      <span>
-        <a 
-          class="link--unstyled" 
-          style="text-align: center" 
-          *ngIf="!!selectedPost"
-          (click)="mobileBack()"
+      <a 
+        class="link--unstyled mr-15px d-lg-none d-inline-block" 
+        style="text-align: center" 
+        *ngIf="!!selectedPost"
+        (click)="mobileBack()"
         queryParamsHandling="merge">
-          <i class="fa fa-angle-left"></i>
-        </a>
-        Casts powered by CloutCast
+        <i class="fa fa-angle-left"></i>
+      </a>
+      <span class="flex-grow-1">
+        Casts <sup class="smallerTitle">powered by CloutCast</sup>
       </span>
+      <div 
+      *ngIf="!!!selectedPost"
+      class="d-flex justify-content-end align-items-right pr-10px">
+        <i
+          (click)="_toggleWallet()"
+          class="fas fa-wallet cursor-pointer messages-header-icon-row__icon pt-2px"
+        ></i>
+      </div>
 
 
     </div>
@@ -125,13 +188,66 @@
         <simple-center-loader></simple-center-loader>
       </div>
       <div *ngIf="(!showContentLoading && !showListLoading) && !!!this.selectedPost" class="ovy">
+        <div *ngIf="walletOpen == true">
+          <div class="mr-15px ml-15px pt-15px pb-5px divtext font-weight-bold border-color-blue border-bottom">
+            My CloutCast Wallet
+          </div>
+          <ng-container *ngIf="walletLoading == false">
+            <div class="row m-3">
+              <div class="col">
+                Available<br />
+                {{nanosToBitClout(walletData.available, 4)}} $CLOUT<br />
+                (~{{nanosToUSD(walletData.available)}} USD)<br />
+                <button (click)="doDeposit()" class="btn btn-block btn-primary">
+                  Deposit
+                </button>
+              </div>
+              <div class="col">
+                Escrow<br />
+                {{nanosToBitClout(walletData.escrow, 4)}} $CLOUT<br />
+                (~{{nanosToUSD(walletData.escrow)}} USD)<br />
+                <button 
+                  (click) = "_toggleWithdraw()"
+                  class="btn btn-block btn-info"
+                  [disabled]="sendingWithdrawRequest">
+                  Withdraw
+                </button>
+              </div>
+            </div>
+            <div *ngIf="showWithdraw == true" class="row">
+              <div class="col">
+                <div class="text-grey7">
+                  Specify the amount of $CLOUT to withdraw from your CloutCast wallet. 
+                </div>
+              </div>
+              <div class="input-group py-5px col-auto"
+                 [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+              <div class="input-group-prepend" id="clout-label">
+                <span class="input-group-text fs-15px">CLOUT  </span>
+              </div>
+              <input
+                [(ngModel)]="withdrawCloutAmount"
+                aria-describedby="clout-label"
+                class="form-control fs-15px text-right d-inline-block"
+                type="number" min="0"
+                placeholder="0"
+                [disabled]="sendingWithdrawRequest"/>
+              </div>
+              <btn class="btn btn-block btn-warning col-12" (click)="doWithdraw()">
+                Initiate Withdrawl
+              </btn>
+            </div>
+            
+          </ng-container>
+          <div *ngIf="walletLoading == true">
+            Loading...
+          </div>
+        </div>
         <tab-selector
           [tabs]="['Inbox', 'For Me', 'Available']"
           [activeTab]="selectedTab"
           (tabClick)="ccTabClick($event)"
         ></tab-selector>
-
-
         <span *ngIf="showCasts.length > 0">
           <ng-container *ngFor="let item of showCasts; index as i;">
             <div

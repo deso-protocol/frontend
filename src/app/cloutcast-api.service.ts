@@ -141,7 +141,7 @@ export class CloutcastApiService {
     }
   }
 
-  public async getWallet() {
+  public async getWallet(): Promise<any> {
     try {
       let tToken = await this.getToken();
       let getWalletReq = await this.httpClient.get(`${environment.cloutcastUri}/api/user/${this.ccTokenUser}/wallet.json`, {
@@ -155,7 +155,10 @@ export class CloutcastApiService {
     } catch (ex) {
       // throw ex;
       console.error(ex);
-      return {available: 0, escrow: 0};
+      return {data: {
+        settled: 0,
+        unSettled: 0
+      }};
     }
   }
 
@@ -171,6 +174,28 @@ export class CloutcastApiService {
 
       return true;
 
+    } catch (ex) {
+      console.error(ex);
+      throw ex;
+    }
+  }
+
+  public async createWithdrawlRequest(amountNanos: any): Promise<boolean> {
+    try {
+      let tToken = await this.getToken();
+      let withdrawReq = await this.httpClient.get(`${environment.cloutcastUri}/api/user/${this.ccTokenUser}/withdraw/${amountNanos}.json`, {
+        headers: {
+          "Content-Type" : "application/json",
+          "Authorization" : `Bearer ${tToken}`
+        },
+        responseType: 'arraybuffer'
+      }).toPromise();
+      const tt = String.fromCharCode.apply(null, new Uint8Array(withdrawReq));
+      if (tt == 'OK') {
+        return true;
+      } else {
+        throw new Error(tt);
+      }
     } catch (ex) {
       console.error(ex);
       throw ex;
