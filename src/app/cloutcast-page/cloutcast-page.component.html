@@ -103,14 +103,18 @@
   <div class="d-flex flex-column flex-grow-1 vh-100">
     <!-- Header -->
     <div class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey">
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+      <top-bar-mobile-navigation-control 
+      *ngIf="!!!selectedPost"
+      class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
       <span>
-          <button
-            *ngIf="!!selectedPost"
-            (click)="mobileBack()"
-          >
-            <i class="fas fa-chevron-left cursor-pointer pt-2px"></i>
-          </button>
+        <a 
+          class="link--unstyled" 
+          style="text-align: center" 
+          *ngIf="!!selectedPost"
+          (click)="mobileBack()"
+        queryParamsHandling="merge">
+          <i class="fa fa-angle-left"></i>
+        </a>
         Casts powered by CloutCast
       </span>
 

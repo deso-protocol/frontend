@@ -223,7 +223,9 @@ export class CloutCastPageComponent implements OnInit {
                 this.showCasts.push(cast);
               } else {
                 if (cast.MinCoinPriceNanos <= coinPrice && cast.MinFollowerCount <= followerCount) {
-                  this.showCasts.push(cast);
+                  if (!cast.AllowedUsers.length) {
+                    this.showCasts.push(cast);
+                  }
                 }
               }
             }
@@ -308,6 +310,7 @@ export class CloutCastPageComponent implements OnInit {
       if (theError !== null) {
         console.warn("provework did not complete");
       }
+      await this.getActive(true);
       this.showListLoading = false;
       this.showContentLoading = false;
     }
