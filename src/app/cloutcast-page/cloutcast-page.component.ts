@@ -368,7 +368,10 @@ export class CloutCastPageComponent implements OnInit {
   }
   async _toggleWithdraw() {
     this.showWithdraw = !this.showWithdraw;
-    this.withdrawCloutAmount = 0;
+    if (this.showWithdraw == true) {
+      this.withdrawCloutAmount = this.walletData.available;
+
+    }
   }
   async _toggleWallet(doSwitch = true) {
     if (doSwitch) {
