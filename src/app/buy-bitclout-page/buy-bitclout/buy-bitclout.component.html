@@ -65,12 +65,12 @@
                   </div>
                   <div class="position-relative w-100">
                     <div class="mint-nft__input" style="border-radius: 0px 16px 16px 0px">
-                      {{ (appData.latestBitcoinAPIResponse.final_balance / 1e8).toFixed(8) }}
+                      {{ (appData.latestBitcoinAPIResponse?.final_balance / 1e8).toFixed(8) }}
                     </div>
                     <span class="mint-nft__floating-span fc-muted">
                       {{
                         appData.formatUSD(
-                          (appData.latestBitcoinAPIResponse.final_balance * appData.usdPerBitcoinExchangeRate) / 1e8,
+                          (appData.latestBitcoinAPIResponse?.final_balance * appData.usdPerBitcoinExchangeRate) / 1e8,
                           2
                         )
                       }} USD</span>

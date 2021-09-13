@@ -60,13 +60,13 @@
     <div class="d-flex align-items-center">
       <!--Avatar-->
       <div>
-        <div class="creator-profile__avatar" [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"></div>
+        <div class="creator-profile__avatar" [avatar]="globalVars.loggedInUser.ProfileEntryResponse?.PublicKeyBase58Check"></div>
       </div>
       <!--Username/balance-->
       <div class="d-flex flex-column fc-default font-weight-bold ml-20px">
         <!--Username-->
         <div class="fs-20px mb-5px">
-          {{ globalVars.addOwnershipApostrophe(globalVars.loggedInUser.ProfileEntryResponse.Username) }} Wallet
+          {{ globalVars.addOwnershipApostrophe(globalVars.loggedInUser.ProfileEntryResponse?.Username) }} Wallet
         </div>
         <!--Balance-->
         <div class="fs-17px">
@@ -79,7 +79,7 @@
     <div class="d-flex align-items-center fc-secondary fs-17px">
       <i-feather name="key" class="feather-large mr-10px"></i-feather>
       <span class="creator-profile__ellipsis-restriction mr-10px">
-        {{ globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check }}
+        {{ globalVars.loggedInUser.ProfileEntryResponse?.PublicKeyBase58Check }}
       </span>
       <i-feather
         *ngIf="publicKeyIsCopied"
@@ -118,7 +118,7 @@
     </div>
     <!--Buy/send Clout-->
     <div class="d-flex">
-      <a [routerLink]="'/' + globalVars.RouteNames.SEND_BITCLOUT" queryParamsHandling="merge">
+      <a (click)="openSendCloutModal()">
         <button class="plain-button mr-20px font-weight-bold">Send $Clout</button>
       </a>
       <a (click)="openBuyCloutModal()">
@@ -135,7 +135,7 @@
     </div>
     <!--Purchase creator coins-->
     <div class="nft-bid-btn d-flex align-items-center">
-      <a [routerLink]="'/' + globalVars.RouteNames.CREATORS" queryParamsHandling="merge">
+      <a (click)="openBuyCreatorCoinsModal()">
         <button style="width: '159px'">
           <i-feather name="user-plus" class="feather-small mr-10px"></i-feather>
           <span class="fs-13px">Buy Creator Coins</span>

@@ -6,6 +6,8 @@ import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/fo
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Title } from "@angular/platform-browser";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
+import {TradeCreatorComponent} from "../../trade-creator-page/trade-creator/trade-creator.component";
 
 @Component({
   selector: "creators-leaderboard",
@@ -38,7 +40,9 @@ export class CreatorsLeaderboardComponent implements OnInit {
   constructor(
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
-    private titleService: Title
+    private titleService: Title,
+    public bsModalRef: BsModalRef,
+    private modalService: BsModalService
   ) {
     this.appData = globalVars;
   }
@@ -91,6 +95,16 @@ export class CreatorsLeaderboardComponent implements OnInit {
           console.error(this.backendApi.stringifyError(err));
         }
       );
+  }
+
+  openBuyCreatorCoinModal(event, username: string) {
+    event.stopPropagation();
+    this.bsModalRef.hide();
+    const initialState = { username: username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
+    this.modalService.show(TradeCreatorComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+      initialState,
+    });
   }
 
   ngOnInit() {

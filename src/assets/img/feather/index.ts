@@ -6,6 +6,7 @@ export { Coin } from "./coin";
 export { Diamond } from "./diamond";
 export { Frame } from "./frame";
 export { Gem } from "./gem";
+export { Home } from "./home";
 export { Lock } from "./lock";
 export { MultipleNfts } from "./MultipleNFTs";
 export { Quote } from "./quote";

@@ -2208,6 +2208,32 @@ wallet-page {
   max-width: 630px;
 }
 
+transfer-bitclout {
+  .search-bar__icon {
+    border-radius: 16px 0px 0px 16px !important;
+  }
+  .search-bar__results-dropdown {
+    margin-top: 20px;
+  }
+  .search-bar {
+    margin-top: 8px;
+  }
+  simple-profile-card {
+    .container {
+      margin-top: 28px;
+      margin-bottom: 6px;
+    }
+  }
+  .mint-nft__sub-title {
+    margin-top: 30px;
+  }
+}
+
+.viewport {
+  height: 600px;
+  overflow-y: auto;
+}
+
 .cdk-overlay-container{
   z-index: 1050;
 }
@@ -2774,9 +2800,17 @@ creator-profile-nfts {
   height: 55px;
   width: 58px;
   text-align: center;
-  border: 2px solid #3498db;
+  border: none;
   color: white;
   line-height: 0.65;
+  background: var(--highlight);
+}
+
+.bottom-bar-mobile__text{
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.01em;
 }
 
 
@@ -2826,6 +2860,14 @@ creator-profile-nfts {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+trade-creator-form {
+  search-bar {
+    .search-bar__fix-active {
+      height: 48px;
+    }
+  }
 }
 
 //

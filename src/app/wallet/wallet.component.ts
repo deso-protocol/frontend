@@ -11,6 +11,8 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { UpdateProfileModalComponent } from "../update-profile-page/update-profile-modal/update-profile-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
+import { TransferBitcloutComponent } from "../transfer-bitclout/transfer-bitclout.component";
+import {CreatorsLeaderboardComponent} from "../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
 
 @Component({
   selector: "wallet",
@@ -130,9 +132,19 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  openBuyCloutModal() {
+  openBuyCreatorCoinsModal() {
+    this.modalService.show(CreatorsLeaderboardComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+    });
+  }
 
-    // If the user has an account and a profile, open the modal so they can comment.
+  openSendCloutModal() {
+    this.modalService.show(TransferBitcloutComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+    });
+  }
+
+  openBuyCloutModal() {
     this.modalService.show(BuyBitcloutComponent, {
       class: "modal-dialog-centered buy-clout-modal",
     });

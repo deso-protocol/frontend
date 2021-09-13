@@ -2,9 +2,13 @@
   <div class="global__nav__fixed">
     <!-- Logged-in Left Bar -->
     <div *ngIf="globalVars.loggedInUser != null" class="global__nav__inner">
-      <div *ngIf="isMobile" class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
-        <div class="flex-grow-1 d-flex justify-content-end pl-30px cursor-pointer">
-          <i class="fas fa-times fc-muted" (click)="closeMobile.emit()"></i>
+      <div *ngIf="isMobile" class="w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
+        <div class="d-flex justify-content-between fc-secondary">
+          <div class="bitclout-logo">
+            <i-feather name="bitclout" class="mr-5px"></i-feather>
+            <span>bitclout</span>
+          </div>
+          <i-feather name="x" class="feather-large cursor-pointer" (click)="closeMobile.emit()"></i-feather>
         </div>
       </div>
 

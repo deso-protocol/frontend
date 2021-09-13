@@ -1075,6 +1075,9 @@ export class GlobalVarsService {
 
   // Add possessive apostrophe
   addOwnershipApostrophe(input: string): string {
+    if (!input) {
+      return null;
+    }
     if (input[input.length-1] === 's') {
       return `${input}'`;
     } else {

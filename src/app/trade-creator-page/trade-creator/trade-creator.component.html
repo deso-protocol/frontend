@@ -1,3 +1,8 @@
+<div class="modal-header">
+  <div class="modal-header-x" (click)="bsModalRef.hide()">
+    <i-feather name="x"></i-feather>
+  </div>
+</div>
 <div *ngIf="readyForDisplay(); else loadingElseBlock">
   <div *ngIf="this.appData.loggedInUser; else elseBlock">
     <div *ngIf="inTutorial" class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg">
@@ -27,118 +32,64 @@
         </h5>
       </div>
     </div>
-    <!-- Top Bar -->
-    <div
-      class="d-flex align-items-center justify-content-between w-100 pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
-      style="min-height: 80px"
-    >
-      <!-- not in tutorial header -->
-      <div class="d-flex align-items-center" *ngIf="!inTutorial">
-        <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
-
-        <a
-          class="d-none d-lg-block trade-creator__avatar mr-15px"
-          [avatar]="creatorCoinTrade.creatorProfile.PublicKeyBase58Check"
-        ></a>
-        <p *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN" class="font-weight-bold fs-18px">
-          {{ creatorCoinTrade.tradeVerbString() }}
-          <span>{{ creatorCoinTrade.creatorProfile.Username }}</span>
-          <span
-            *ngIf="creatorCoinTrade.creatorProfile.IsReserved && !creatorCoinTrade.creatorProfile.IsVerified"
-            class="ml-5px d-inline-block cursor-pointer lh-12px fc-muted"
-            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
-          >
-            <i class="far fa-clock fa-md"></i>
-          </span>
-          <span
-            *ngIf="creatorCoinTrade.creatorProfile.IsVerified"
-            (click)="tooltip.toggle()"
-            class="ml-5px cursor-pointer text-primary"
-            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="'This account is verified'"
-            #tooltip="matTooltip"
-          >
-            <i class="fas fa-check-circle fa-md"></i>
-          </span>
-          coin
-        </p>
-
-        <span *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
-          Confirm Coin
-          {{ creatorCoinTrade.tradeVerbString() }}
-        </span>
-
-        <span *ngIf="screenToShow == this.TRADE_CREATOR_COMPLETE_SCREEN">
-          <i class="far fa-check-circle text-primary"></i>
-          <span class="ml-10px text-primary">
-            Success!
-            {{ creatorCoinTrade.tradeVerbString() }}
-            Complete
-          </span>
-        </span>
-      </div>
-      <div class="d-flex flex-column justify-flex-start" *ngIf="inTutorial">
-        <div class="pt-15px d-flex align-items-center font-weight-bold fs-18px">
+    <div class="buy-bitclout__container">
+      <div class="px-16px" *ngIf="screenToShow !== this.TRADE_CREATOR_PREVIEW_SCREEN">
+        <div class="d-flex">
           <a
-            class="d-block trade-creator__avatar mr-15px"
+            class="d-none d-lg-block creator-profile__avatar mr-15px"
             [avatar]="creatorCoinTrade.creatorProfile.PublicKeyBase58Check"
           ></a>
-          <p *ngIf="!investInYourself && creatorCoinTrade.isBuyingCreatorCoin">Buy {{ creatorCoinTrade.creatorProfile.Username }} Coin</p>
-          <p *ngIf="!investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">Sell {{ creatorCoinTrade.creatorProfile.Username }} Coin</p>
-          <p *ngIf="investInYourself && creatorCoinTrade.isBuyingCreatorCoin">Invest In Yourself</p>
-        </div>
-        <div class="fs-15px py-15px pr-15px">
-          <p *ngIf="!investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
-            You can invest directly in your favorite creators by buying their coin.
-            Click "Confirm Buy" to purchase {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin!
-          </p>
-          <div *ngIf="!investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">
-            <p>
-              When a creator's coin goes up in value you can sell.
-            </p>
-            <p class="mt-3 mb-1">
-              <b>Click "Confirm Sell" to sell {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of {{ creatorCoinTrade.creatorProfile.Username }}'s coin!</b>
-            </p>
+          <div class="d-flex flex-column justify-content-center fc-default">
+            <div class="fs-24px">{{globalVars.addOwnershipApostrophe(creatorCoinTrade.creatorProfile.Username)}} coin</div>
+            <div class="fs-17px">
+              <span>≈{{ globalVars.nanosToUSD(creatorCoinTrade.creatorProfile.CoinPriceBitCloutNanos, 2) }} </span>
+              <span class="fc-muted">Coin Price</span>
+            </div>
           </div>
-          <p *ngIf="investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
-            Even you have a creator coin! Invest in yourself by purchasing {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }} worth of your coin.
-          </p>
         </div>
       </div>
-    </div>
 
-    <!-- Tabs -->
-    <tab-selector
-      [tabs]="tabList"
-      [activeTab]="creatorCoinTrade.tradeType"
-      (tabClick)="_handleTabClick($event)"
-      *ngIf="!inTutorial"
-    ></tab-selector>
+      <!-- Tabs -->
+      <tab-selector
+        [buttonSelector]="false"
+        [tabs]="tabList"
+        [activeTab]="creatorCoinTrade.tradeType"
+        (tabClick)="_handleTabClick($event)"
+        *ngIf="!inTutorial && screenToShow !== this.TRADE_CREATOR_PREVIEW_SCREEN"
+      ></tab-selector>
 
-    <!-- Content -->
-    <div *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN">
-      <trade-creator-form
-        [creatorCoinTrade]="creatorCoinTrade"
-        (previewClicked)="_onPreviewClicked()"
-      ></trade-creator-form>
-    </div>
+      <!--Preview Header-->
+      <div *ngIf="screenToShow === this.TRADE_CREATOR_PREVIEW_SCREEN" class="mt-5px m-16px mint-nft__title">
+        Confirm Operation
+      </div>
 
-    <div *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
-      <trade-creator-preview
-        [inTutorial]="inTutorial"
-        [creatorCoinTrade]="creatorCoinTrade"
-        (slippageError)="_onSlippageError()"
-        (backButtonClicked)="_onBackButtonClicked()"
-        (tradeExecuted)="_onTradeExecuted()"
-      ></trade-creator-preview>
-    </div>
+      <!-- Content -->
+      <div *ngIf="screenToShow == this.TRADE_CREATOR_FORM_SCREEN">
+        <trade-creator-form
+          [creatorCoinTrade]="creatorCoinTrade"
+          [hideWarning]="hideWarning"
+          (previewClicked)="_onPreviewClicked()"
+          (buyCloutClicked)="openBuyCloutModal()"
+          (closeModal)="bsModalRef.hide()"
+        ></trade-creator-form>
+      </div>
 
-    <div *ngIf="screenToShow == this.TRADE_CREATOR_COMPLETE_SCREEN">
-      <trade-creator-complete
-        [creatorCoinTrade]="creatorCoinTrade"
-        (tradeAgainButtonClicked)="_onBackButtonClicked()"
-      ></trade-creator-complete>
+      <div *ngIf="screenToShow == this.TRADE_CREATOR_PREVIEW_SCREEN">
+        <trade-creator-preview
+          [inTutorial]="inTutorial"
+          [creatorCoinTrade]="creatorCoinTrade"
+          (slippageError)="_onSlippageError()"
+          (backButtonClicked)="_onBackButtonClicked()"
+          (tradeExecuted)="_onTradeExecuted()"
+        ></trade-creator-preview>
+      </div>
+
+      <div *ngIf="screenToShow == this.TRADE_CREATOR_COMPLETE_SCREEN">
+        <trade-creator-complete
+          [creatorCoinTrade]="creatorCoinTrade"
+          (tradeAgainButtonClicked)="_onBackButtonClicked()"
+        ></trade-creator-complete>
+      </div>
     </div>
   </div>
 

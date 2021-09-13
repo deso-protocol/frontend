@@ -31,10 +31,15 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
   MIN_BITCLOUT_NANOS_TO_LEAVE_WHEN_BUYING_CREATOR_COINS = 100_000;
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
+  @Input() hideWarning: boolean;
   @Output() previewClicked = new EventEmitter();
+  @Output() buyCloutClicked = new EventEmitter();
+  @Output() closeModal = new EventEmitter();
 
   router: Router;
   appData: GlobalVarsService;
+
+  buyTab = CreatorCoinTrade.BUY_VERB;
 
   // buy creator coin data
   bitCloutToSell: number;
@@ -94,6 +99,14 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     }
 
     this.previewClicked.emit();
+  }
+
+  _onBuyCloutClicked() {
+    this.buyCloutClicked.emit();
+  }
+
+  _closeModal() {
+    this.closeModal.emit();
   }
 
   _setAssetToSellAmount() {
@@ -361,7 +374,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     this.router = _router;
   }
 
-  ngOnInit() {
+  initializeForm() {
     // Populate a default currency if it's not already set. selectedCurrency may be already set
     // if the user is going back from the Preview screen.
     //
@@ -426,8 +439,9 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       this.creatorCoinTrade.currentFeeForSellNanos = 0;
       if (
         this.globalVars.loggedInUser.PublicKeyBase58Check ===
-          this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
-        !this.creatorCoinTrade.isCreatorCoinTransfer()
+        this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
+        !this.creatorCoinTrade.isCreatorCoinTransfer() &&
+        !this.hideWarning
       ) {
         const hodlersCount = this.globalVars.loggedInUser.UsersWhoHODLYouCount;
         SwalHelper.fire({
@@ -441,7 +455,7 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
           showConfirmButton: false,
           icon: "warning",
           denyButtonText: "Proceed",
-          cancelButtonText: "Go Back",
+          cancelButtonText: "Cancel",
           customClass: {
             denyButton: "btn btn-light",
             cancelButton: "btn btn-light no",
@@ -454,6 +468,10 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
         });
       }
     }
+  }
+
+  ngOnInit() {
+    this.initializeForm();
   }
 
   ngOnDestroy() {

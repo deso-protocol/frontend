@@ -12,24 +12,18 @@
     {{ creatorCoinTrade.tradeVerbString() | lowercase }}s.
   </div>
 
-  <div class="row no-gutters pt-3">
-    <div class="col-3 mb-0" style="min-width: 100px" *ngIf="!inTutorial">
-      <div class="pr-3">
-        <button class="w-100 btn btn-outline-primary fs-18px" (click)="backButtonClicked.emit()">Back</button>
-      </div>
+  <div class="d-flex justify-content-between align-items-center mt-16px">
+    <div style="min-width: 100px" *ngIf="!inTutorial">
+      <a class="fc-default fs-15px" (click)="backButtonClicked.emit()">Back</a>
     </div>
-
-    <div class="col">
-      <button
-        class="btn btn-primary w-100 h-100"
-        style="min-width: 80px"
-        [ngClass]="{ 'btn-loading': creatorCoinTradeBeingCalled }"
-        (click)="_tradeCreatorCoin()"
-      >
-        Confirm
-        {{ creatorCoinTrade.tradeVerbString() }}
-      </button>
-    </div>
+    <button
+      class="primary-button"
+      [ngClass]="{ 'btn-loading': creatorCoinTradeBeingCalled }"
+      (click)="_tradeCreatorCoin()"
+    >
+      Confirm
+      {{ creatorCoinTrade.tradeVerbString() }}
+    </button>
   </div>
 
   <!--Spacer (for mobile)-->

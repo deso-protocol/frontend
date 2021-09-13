@@ -1,19 +1,14 @@
 <div class="w-100 h-100 d-flex">
   <div class="w-100 d-flex justify-content-between align-items-center border-top border-color-grey">
-    <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.BROWSE">
-      <i class="icon-home fs-25px"></i>
-    </bottom-bar-mobile-tab>
-
     <bottom-bar-mobile-tab
-      *ngIf="globalVars.loggedInUser"
       class="w-100 h-100 text-center"
-      [link]="'/' + globalVars.RouteNames.WALLET"
+      [link]="'/' + globalVars.RouteNames.BROWSE"
+      [queryParams]="{ feedTab: globalTab }"
     >
-      <i class="icon-wallet fs-25px"></i>
-    </bottom-bar-mobile-tab>
-
-    <bottom-bar-mobile-tab class="w-100 h-100 text-center" [link]="'/' + globalVars.RouteNames.TRENDS">
-      <i class="icon-up-arrow fs-25px"></i>
+      <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
+        <i-feather name="home" class="feather-medium"></i-feather>
+        <div class="mt-5px">Home</div>
+      </div>
     </bottom-bar-mobile-tab>
 
     <bottom-bar-mobile-tab
@@ -21,7 +16,10 @@
       class="w-100 h-100 text-center"
       [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
     >
-      <i class="icon-notifications fs-25px"></i>
+      <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
+        <i-feather name="bell" class="feather-medium"></i-feather>
+        <div class="mt-5px">Notifications</div>
+      </div>
     </bottom-bar-mobile-tab>
 
     <bottom-bar-mobile-tab
@@ -29,18 +27,44 @@
       class="w-100 h-100 text-center"
       [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
     >
-      <i class="icon-messages fs-25px">
-        <div
-          *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
-          class="bottom-bar__message-notifications-bubble roboto-mono"
-        >
-          {{
-            globalVars.messageResponse.NumberOfUnreadThreads > 999
-              ? "999+"
-              : globalVars.messageResponse.NumberOfUnreadThreads
-          }}
-        </div>
-      </i>
+      <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
+        <i-feather name="message-square" class="feather-medium">
+          <div
+            *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
+            class="bottom-bar__message-notifications-bubble roboto-mono"
+          >
+            {{
+              globalVars.messageResponse.NumberOfUnreadThreads > 999
+                ? "999+"
+                : globalVars.messageResponse.NumberOfUnreadThreads
+            }}
+          </div>
+        </i-feather>
+        <div class="mt-5px">Messages</div>
+      </div>
+    </bottom-bar-mobile-tab>
+
+    <bottom-bar-mobile-tab
+      *ngIf="globalVars.loggedInUser"
+      class="w-100 h-100 text-center"
+      [link]="'/' + globalVars.RouteNames.BROWSE"
+      [queryParams]="{ feedTab: showcaseTab }"
+    >
+      <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
+        <i-feather name="shopping-bag" class="feather-medium"></i-feather>
+        <div class="mt-5px">Market</div>
+      </div>
+    </bottom-bar-mobile-tab>
+
+    <bottom-bar-mobile-tab
+      *ngIf="globalVars.loggedInUser"
+      class="w-100 h-100 text-center"
+      [link]="'/' + globalVars.RouteNames.WALLET"
+    >
+      <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
+        <i-feather name="diamond" class="feather-medium"></i-feather>
+        <div class="mt-5px">Wallet</div>
+      </div>
     </bottom-bar-mobile-tab>
   </div>
 
@@ -51,6 +75,6 @@
     [routerLink]="'/' + globalVars.RouteNames.CREATE_POST"
     queryParamsHandling="merge"
   >
-    +
+    <i-feather name="feather"></i-feather>
   </a>
 </div>

@@ -5,14 +5,16 @@
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import { Component, Input, OnInit } from "@angular/core";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Observable, Subscription } from "rxjs";
-import {SwalHelper} from "../../../lib/helpers/swal-helper";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { BuyBitcloutComponent } from "../../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
+import {TradeCreatorFormComponent} from "../trade-creator-form/trade-creator-form.component";
 
 @Component({
   selector: "trade-creator",
@@ -20,8 +22,11 @@ import {SwalHelper} from "../../../lib/helpers/swal-helper";
   styleUrls: ["./trade-creator.component.scss"],
 })
 export class TradeCreatorComponent implements OnInit {
+  @ViewChild(TradeCreatorFormComponent, { static: false }) childTradeCreatorFormComponent;
   @Input() inTutorial: boolean = false;
   @Input() tutorialBuy: boolean;
+  @Input() username: string;
+  @Input() tradeType: string;
   TRADE_CREATOR_FORM_SCREEN = "trade_creator_form_screen";
   TRADE_CREATOR_PREVIEW_SCREEN = "trade_creator_preview_screen";
   TRADE_CREATOR_COMPLETE_SCREEN = "trade_creator_complete_screen";
@@ -48,6 +53,9 @@ export class TradeCreatorComponent implements OnInit {
   // show different header text if we're at the "Invest In Yourself" stage of the tutorial
   investInYourself: boolean = false;
 
+  // Hide the warning that users selling their own coin will notify other users
+  hideWarning = false;
+
   _onSlippageError() {
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
     this.creatorCoinTrade.showSlippageError = true;
@@ -55,6 +63,7 @@ export class TradeCreatorComponent implements OnInit {
 
   _onBackButtonClicked() {
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
+    this.hideWarning = true;
   }
 
   _onPreviewClicked() {
@@ -103,21 +112,17 @@ export class TradeCreatorComponent implements OnInit {
 
     // Reset us back to the form page.
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
-
-    // Swap out the URL.
-    let newRoute = AppRoutingModule.buyCreatorPath(this.route.snapshot.params.username);
-    if (tab === CreatorCoinTrade.SELL_VERB) {
-      newRoute = AppRoutingModule.sellCreatorPath(this.route.snapshot.params.username);
-    } else if (tab === CreatorCoinTrade.TRANSFER_VERB) {
-      newRoute = AppRoutingModule.transferCreatorPath(this.route.snapshot.params.username);
+    this.childTradeCreatorFormComponent.initializeForm();
+    // After warning the user about selling their own coin the first time, hide the warning
+    if (this.creatorCoinTrade.tradeType === CreatorCoinTrade.SELL_VERB) {
+      this.hideWarning = true;
     }
-    this.router.navigate([newRoute], { queryParamsHandling: "merge" });
   }
 
   _setStateFromActivatedRoute(route) {
     // get the username of the creator
-    let creatorUsername = route.snapshot.params.username;
-    let tradeType = route.snapshot.params.tradeType;
+    let creatorUsername = this.username;
+    let tradeType = this.tradeType;
     if (!this.creatorProfile || creatorUsername != this.creatorProfile.Username) {
       this._getCreatorProfile(creatorUsername);
     }
@@ -171,11 +176,20 @@ export class TradeCreatorComponent implements OnInit {
     private globalVars: GlobalVarsService,
     private _route: ActivatedRoute,
     private _router: Router,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    public bsModalRef: BsModalRef,
+    private modalService: BsModalService
   ) {
     this.appData = globalVars;
     this.router = _router;
     this.route = _route;
+  }
+
+  openBuyCloutModal() {
+    this.bsModalRef.hide();
+    this.modalService.show(BuyBitcloutComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+    });
   }
 
   ngOnInit() {

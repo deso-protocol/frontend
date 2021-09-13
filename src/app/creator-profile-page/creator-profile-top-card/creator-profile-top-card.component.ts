@@ -9,6 +9,8 @@ import { FollowButtonComponent } from "../../follow-button/follow-button.compone
 import { Router } from "@angular/router";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { UpdateProfileModalComponent } from "../../update-profile-page/update-profile-modal/update-profile-modal.component";
+import {CreatorsLeaderboardComponent} from "../../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
+import {TradeCreatorComponent} from "../../trade-creator-page/trade-creator/trade-creator.component";
 
 @Component({
   selector: "creator-profile-top-card",
@@ -156,6 +158,15 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
         this.followerCount -= 1;
       }
     }
+  }
+
+  openBuyCreatorCoinModal(event) {
+    event.stopPropagation();
+    const initialState = { username: this.profile.Username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
+    this.modalService.show(TradeCreatorComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+      initialState,
+    });
   }
 
   _copyPublicKey() {

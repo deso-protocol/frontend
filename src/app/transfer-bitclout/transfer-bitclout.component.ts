@@ -6,6 +6,7 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { Title } from "@angular/platform-browser";
 import { RouteNames } from "../app-routing.module";
 import { ActivatedRoute } from "@angular/router";
+import { BsModalRef } from "ngx-bootstrap/modal";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -45,6 +46,7 @@ export class TransferBitcloutComponent implements OnInit {
     private backendApi: BackendApiService,
     private globalVarsService: GlobalVarsService,
     private titleService: Title,
+    public bsModalRef: BsModalRef,
     private route: ActivatedRoute
   ) {
     this.globalVars = globalVarsService;

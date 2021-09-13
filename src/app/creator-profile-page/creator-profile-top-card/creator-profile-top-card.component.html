@@ -113,8 +113,7 @@
 
       <a
         class="btn creator-profile-top-card__buy-btn"
-        [routerLink]="AppRoutingModule.buyCreatorPath(profile.Username)"
-        queryParamsHandling="merge"
+        (click)="openBuyCreatorCoinModal($event)"
       >
         Buy
       </a>
