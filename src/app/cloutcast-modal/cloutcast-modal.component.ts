@@ -34,7 +34,7 @@ export class CloutCastModalComponent implements OnInit {
   castType: any;
   castError: string;
 
-  userCastBalances: any;
+  // userCastBalances: any;
 
   constructor(
     public bsModalRef: BsModalRef,
@@ -50,9 +50,10 @@ export class CloutCastModalComponent implements OnInit {
     try {
       let t = await this.cloutcastApi.getWallet();
       console.log(t);
-      this.userCastBalances = t;
+      // this.userCastBalances = t;
       let {data = {settled: 0}} = t;
       this.nanosAvailableInCloutCastWallet = data.settled;
+      
       if (data.settled <= 0) {
         let res = await SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),

@@ -1,11 +1,11 @@
 <div class="nft-modal-container p-15px">
   <nft-modal-header [header]="'Cast this Post'" [bsModalRef]="bsModalRef"></nft-modal-header>
 
-  <div class="flex-grow-1 p-15px" *ngIf="!!!userCastBalances">
+  <div class="flex-grow-1 p-15px" *ngIf="!!!nanosAvailableInCloutCastWallet">
     Loading balances...
   </div>
-  <div class="flex-grow-1 p-15px" *ngIf="!!userCastBalances">
-    {{floored(userCastBalances.data.settled / 1e9, 4) }} CLOUT available in your CloutCast wallet. <br />
+  <div class="flex-grow-1 p-15px" *ngIf="!!nanosAvailableInCloutCastWallet">
+    {{floored(nanosAvailableInCloutCastWallet / 1e9, 4) }} CLOUT available in your CloutCast wallet. <br />
     <a (click)="doDeposit()">Click Here to add $CLOUT to your CloutCast wallet.</a>
   </div>
   
