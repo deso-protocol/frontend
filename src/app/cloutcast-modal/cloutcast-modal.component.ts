@@ -49,7 +49,7 @@ export class CloutCastModalComponent implements OnInit {
     this.castType = 1;
     try {
       let t = await this.cloutcastApi.getWallet();
-      console.log(t);
+      // console.log(t);
       // this.userCastBalances = t;
       let {data = {settled: 0}} = t;
       this.nanosAvailableInCloutCastWallet = data.settled;
@@ -276,7 +276,7 @@ export class CloutCastModalComponent implements OnInit {
       await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
       this.bsModalRef.hide();
     }
-    console.log(res);
+    // console.log(res);
   }
   async showTotalAlert() {
     let msg = "All unused payment and fee amount is returned upon completion of the cast.";
