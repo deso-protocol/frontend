@@ -553,6 +553,15 @@
       <nft-drop-mgr></nft-drop-mgr>
   </div>
 
+  <!-- Referral Program -->
+  <div
+    *ngIf="activeTab == 'Referral Program'"
+    class="w-100 h-100 d-flex flex-column disable-scrollbars"
+    style="overflow-y: scroll; min-height: 400px"
+  >
+      <referral-program-mgr></referral-program-mgr>
+  </div>
+
   <!-- Super Info -->
   <div
     *ngIf="activeTab == 'Super' && globalVars.showSuperAdminTools()"

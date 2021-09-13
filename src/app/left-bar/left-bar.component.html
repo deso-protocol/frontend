@@ -112,17 +112,23 @@
 
         <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
-      <!-- CloutCast Button with Notifications for Inbox -->
-      <cloutcast-bar-button
+        <cloutcast-bar-button
         [hasNotifications]="true"
         [link]="'/' + globalVars.RouteNames.CLOUTCAST_PREFIX"
         [buttonLabel]="'Casts'"
-      ></cloutcast-bar-button>
+        ></cloutcast-bar-button>
 
-      <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
-        <a class="left-bar__dot-inactive">·</a>
-        <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
-      </div>
+        
+        <left-bar-button
+          *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0" 
+          [link]="'/' + globalVars.RouteNames.REFERRALS" 
+          [buttonLabel]="'Referrals'"
+        ></left-bar-button>
+
+        <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
+          <a class="left-bar__dot-inactive">·</a>
+          <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
+        </div>
 
         <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
           <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>

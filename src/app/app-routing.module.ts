@@ -27,6 +27,7 @@ import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-pa
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
+import { ReferralsComponent } from "./referrals/referrals.component";
 import { CreateProfileTutorialPageComponent } from "./tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component";
 import { BuyCreatorCoinsTutorialPageComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component";
 import { BuyCreatorCoinsConfirmTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
@@ -73,6 +74,7 @@ class RouteNames {
   public static LANDING = "/";
   public static DIAMONDS = "diamonds";
   public static TRENDS = "trends";
+  public static REFERRALS = "referrals";
   public static NFT = "nft";
   public static VERIFY_EMAIL = "verify-email";
 
@@ -93,6 +95,7 @@ const routes: Routes = [
   { path: RouteNames.BUY_BITCLOUT, component: BuyBitcloutPageComponent, pathMatch: "full" },
   { path: RouteNames.PICK_A_COIN, component: PickACoinPageComponent, pathMatch: "full" },
   { path: RouteNames.INBOX_PREFIX, component: MessagesPageComponent, pathMatch: "full" },
+  { path: RouteNames.REFERRALS, component: ReferralsComponent, pathMatch: "full" },
   { path: RouteNames.SIGN_UP, component: SignUpComponent, pathMatch: "full" },
   { path: RouteNames.WALLET, component: WalletPageComponent, pathMatch: "full" },
   { path: RouteNames.UPDATE_PROFILE, component: UpdateProfilePageComponent, pathMatch: "full" },
