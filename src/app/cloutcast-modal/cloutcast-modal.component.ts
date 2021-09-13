@@ -13,7 +13,7 @@ import { GlobalVarsService } from "../global-vars.service";
 })
 export class CloutCastModalComponent implements OnInit {
   @Input() postHashHex: string;
-  @Input() nanosAvailableInCloutCastWallet: string;
+  nanosAvailableInCloutCastWallet: number;
 
   loading = false;
   errorLoading = false;
@@ -51,6 +51,26 @@ export class CloutCastModalComponent implements OnInit {
       let t = await this.cloutcastApi.getWallet();
       console.log(t);
       this.userCastBalances = t;
+      let {data = {settled: 0}} = t;
+      this.nanosAvailableInCloutCastWallet = data.settled;
+      if (data.settled <= 0) {
+        let res = await SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
+          title: "Not Enough $CLOUT in CloutCast wallet!",
+          html: `Before creating casts, please send $CLOUT to the CloutCast wallet public key, and wait 15-20 minutes. Click 'OK' to be sent to the 'Send $CLOUT' page.`,
+          showCancelButton: true,
+          showConfirmButton: true,
+          customClass: {
+            confirmButton: "btn btn-light",
+            cancelButton: "btn btn-light no",
+          },
+          reverseButtons: true,
+        });
+        if (res.isConfirmed == true) {
+          await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
+          this.bsModalRef.hide();
+        }
+      }
       // this.userCastBalances = JSON.stringify(t);
     } catch (ex) {
       console.error(ex);
@@ -180,9 +200,6 @@ export class CloutCastModalComponent implements OnInit {
         allowedUsers: this.selectedCreators.map(v => v.PublicKeyBase58Check)
       };
       
-      if (engagements == 0 || ((criteria.minCoinPrice <= 0 && criteria.minFollowerCount <= 0) && criteria.allowedUsers.length <= 0) ) {
-        throw new Error("Please enter values greater than 0");
-      }
       let outPayload: any = {
         header: {
           engagements,
@@ -197,22 +214,13 @@ export class CloutCastModalComponent implements OnInit {
           hex: this.postHashHex
         }
       }
-      if (engagements == 0 || ((criteria.minCoinPrice <= 0 && criteria.minFollowerCount <= 0) && criteria.allowedUsers.length <= 0) ) {
-        throw new Error("Please enter values greater than 0");
-      }
-      if (outPayload.header.rate <= 0) {
-        throw new Error("Please enter a rate greater than 0");
 
-      } 
-      if (outPayload.header.duration <= 0) {
-        throw new Error("Please enter a duration greater than 0");
-      }
-
-      if (parseInt(this.nanosAvailableInCloutCastWallet) < (this.criteriaAmountEngagements * this.castAmountCLOUT) * 1.12) {
+      if (this.nanosAvailableInCloutCastWallet < (this.criteriaAmountEngagements * this.castAmountCLOUT) * 1.12) {
         let res = await SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),
           title: "Not Enough CLOUT in CloutCast wallet!",
           html: `There isn't enough $CLOUT available in your CloutCast wallet. Before creating casts, please send $CLOUT to the CloutCast wallet public key, and wait 15-20 minutes. Click 'OK' to be sent to the 'Send $CLOUT' page.`,
+          showCancelButton: true,
           showConfirmButton: true,
           customClass: {
             confirmButton: "btn btn-light",
@@ -222,8 +230,19 @@ export class CloutCastModalComponent implements OnInit {
         });
         if (res.isConfirmed == true) {
           await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
+          this.bsModalRef.hide();
         }
       } else {
+        if (engagements == 0 || ((criteria.minCoinPrice <= 0 && criteria.minFollowerCount <= 0) && criteria.allowedUsers.length <= 0) ) {
+          throw new Error("Please enter values greater than 0");
+        }
+        if (outPayload.header.rate <= 0) {
+          throw new Error("Please enter a rate greater than 0");
+  
+        } 
+        if (outPayload.header.duration <= 0) {
+          throw new Error("Please enter a duration greater than 0");
+        }
         await this.cloutcastApi.createCast(outPayload);
         this.globalVars._alertSuccess("Your cast has been created.", "Success!");
         this.bsModalRef.hide();
