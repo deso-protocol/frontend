@@ -22,7 +22,8 @@ export class CloutCastModalComponent implements OnInit {
 
   criteriaAmountEngagements: number = 0;
   criteriaMinFollowers: number = 50;
-  criteriaMinCoinPrice: number = 50;
+  criteriaMinCoinPriceUSD: number;
+  criteriaMinCoinPriceCLOUT: number;
   useCriteria: boolean = false;
 
   castAmountUSD: string = "0";
@@ -95,6 +96,10 @@ export class CloutCastModalComponent implements OnInit {
     
   }
 
+  floored(num: number, flooredTo: number = 1): number {
+    return Math.floor(flooredTo* num) / flooredTo;
+  }
+
   updateCastAmountUSD(v: any) {
     this.castAmountUSD = this.globalVars.nanosToUSDNumber(v * 1e9).toFixed(2);
     this.castAmountUSDFloat = this.globalVars.nanosToUSDNumber(v * 1e9)
@@ -104,6 +109,25 @@ export class CloutCastModalComponent implements OnInit {
     this.castAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(v)) / 1e9;
     this.castAmountUSDFloat = parseFloat(v);
   }
+
+
+  updateCoinAmountUSD(v: any) {
+    this.criteriaMinCoinPriceCLOUT = this.globalVars.usdToNanosNumber(v) / 1e9;
+    // this.criteriaMinCoinPriceCLOUT = v / 1e9;
+    // this.castAmountUSD = this.globalVars.nanosToUSDNumber(v * 1e9).toFixed(2);
+    // this.castAmountUSDFloat = this.globalVars.nanosToUSDNumber(v * 1e9)
+  }
+
+  updateCoinAmountCLOUT(v: any) {
+    // this.criteriaMinCoinPriceCLOUT = Math.trunc(v * 1e9);
+    this.criteriaMinCoinPriceUSD = this.globalVars.nanosToUSDNumber(v * 1e9)
+    // this.castAmountUSDFloat = parseFloat(v);
+  }
+
+  showFixed(v:number, fixTo = 2) {
+    return v.toFixed(fixTo);
+  }
+
   updateCastAmountHours(v: any) {
     if (v > 168) {
       this.castAmountHours = 168;
@@ -132,7 +156,8 @@ export class CloutCastModalComponent implements OnInit {
     } else {
       this.useCriteria = false;
       // this.criteriaAmountEngagements = 0;
-      this.criteriaMinCoinPrice = 0;
+      this.criteriaMinCoinPriceCLOUT = 0;
+      this.criteriaMinCoinPriceUSD = 0;
     }
   }
   bitcloutToUSD(clout:number): number {
@@ -149,12 +174,15 @@ export class CloutCastModalComponent implements OnInit {
           "Comment" : parseInt(this.castType) == 1 ? "Quote" : "Reclout";
       let engagements = this.criteriaAmountEngagements;
       let criteria = this.useCriteria == true ? {
-        minCoinPrice: this.criteriaMinCoinPrice * 1e9,
+        minCoinPrice: this.criteriaMinCoinPriceCLOUT * 1e9,
         minFollowerCount: this.criteriaMinFollowers
       } : {
         allowedUsers: this.selectedCreators.map(v => v.PublicKeyBase58Check)
       };
       
+      if (engagements == 0 || ((criteria.minCoinPrice <= 0 && criteria.minFollowerCount <= 0) && criteria.allowedUsers.length <= 0) ) {
+        throw new Error("Please enter values greater than 0");
+      }
       let outPayload: any = {
         header: {
           engagements,
@@ -168,6 +196,12 @@ export class CloutCastModalComponent implements OnInit {
           action,
           hex: this.postHashHex
         }
+      }
+      if (engagements == 0 || ((criteria.minCoinPrice <= 0 && criteria.minFollowerCount <= 0) && criteria.allowedUsers.length <= 0) ) {
+        throw new Error("Please enter values greater than 0");
+      }
+      if (outPayload.header.rate <= 0 || outPayload.header.duration <= 0) {
+        throw new Error("Please enter values greater than 0");
       }
 
       await this.cloutcastApi.createCast(outPayload);
@@ -203,9 +237,23 @@ export class CloutCastModalComponent implements OnInit {
     }
     console.log(res);
   }
-
+  async showTotalAlert() {
+    let msg = "All unused payment and fee amount is returned upon completion of the cast.";
+    let res = await SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Total Explanation",
+      html: msg,
+      showCancelButton: false,
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    });
+  }
   async showFeeAlert() {
-    let msg = "This represents the total possible fee to pay for this cast, assuming all users engage with this post. Fee is split by engagement, and is only paid if a user engages with the cast."
+    let msg = "This represents the total possible fee amount for this cast, assuming all users engage with this post. Fee is split by engagement, and is only paid if a user engages with the cast.";
     let res = await SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Fee Explanation",
@@ -220,3 +268,4 @@ export class CloutCastModalComponent implements OnInit {
     });
   }
 }
+

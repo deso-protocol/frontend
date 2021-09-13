@@ -317,7 +317,7 @@ export class CloutCastPageComponent implements OnInit {
       // console.log(this.selectedCastObject.Id);
       let didWork = await this.cloutcastApi.proveWork(this.selectedCastObject.Id);
       if (didWork == true) {
-        this.globalVars._alertSuccess(`${this.nanosToBitClout(this.selectedCastObject.RateNanos)} (~ ${this.nanosToUSD(this.selectedCastObject.RateNanos)} USD) was added to your CloutCast escrow wallet!`)
+        this.globalVars._alertSuccess(`${this.nanosToBitClout(this.selectedCastObject.RateNanos)} $CLOUT (~ ${this.nanosToUSD(this.selectedCastObject.RateNanos)} USD) was added to your CloutCast escrow wallet!`)
       }
     } catch (ex) {
       console.error(ex);
@@ -332,6 +332,7 @@ export class CloutCastPageComponent implements OnInit {
       await this.getActive(true);
       this.showListLoading = false;
       this.showContentLoading = false;
+      this.router.navigateByUrl("/casts");
     }
   }
 
@@ -380,7 +381,7 @@ export class CloutCastPageComponent implements OnInit {
       try {
         this.walletLoading = true;
       let balances = await this.cloutcastApi.getWallet();
-      console.log(balances);
+      // console.log(balances);
       this.walletData.publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
       let {data = {settled: 0, unSettled: 0}} = balances;
       this.walletData.available = data.settled;
