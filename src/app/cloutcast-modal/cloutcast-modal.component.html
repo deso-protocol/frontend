@@ -5,7 +5,7 @@
     Loading balances...
   </div>
   <div class="flex-grow-1 p-15px" *ngIf="!!nanosAvailableInCloutCastWallet">
-    {{floored(nanosAvailableInCloutCastWallet / 1e9, 4) }} CLOUT available in your CloutCast wallet. <br />
+    {{nanosAvailableInCloutCastWallet / 1e9}} CLOUT available in your CloutCast wallet. <br />
     <a (click)="doDeposit()">Click Here to add $CLOUT to your CloutCast wallet.</a>
   </div>
   
