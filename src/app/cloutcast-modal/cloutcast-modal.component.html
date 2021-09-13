@@ -5,7 +5,7 @@
     Loading balances...
   </div>
   <div class="flex-grow-1 p-15px" *ngIf="!!nanosAvailableInCloutCastWallet">
-    {{nanosAvailableInCloutCastWallet / 1e9}} CLOUT available in your CloutCast wallet. <br />
+    {{floored(nanosAvailableInCloutCastWallet / 1e9, 10000)}} CLOUT available in your CloutCast wallet. <br />
     <a (click)="doDeposit()">Click Here to add $CLOUT to your CloutCast wallet.</a>
   </div>
   
@@ -277,7 +277,7 @@
       </div>
       <div class="fs-15px">
         {{ castAmountHours }} HOURS
-        <span class="text-grey7">(~{{ floored(castAmountHours / 24, 4) }} DAYS)</span>
+        <span class="text-grey7">(~{{ floored(castAmountHours / 24, 1000) }} DAYS)</span>
       </div>
     </div>
     <div class="d-flex justify-content-between align-items-center pt-15px pb-15px">
@@ -300,8 +300,8 @@
       </div>
       </div>
       <div class="fs-15px">
-        {{ floored((criteriaAmountEngagements * castAmountCLOUT) * 0.12, 4) }} CLOUT
-        <span class="text-grey7">(~{{ floored((criteriaAmountEngagements * castAmountUSDFloat) * 0.12, 2) }} USD)</span>
+        {{ floored((criteriaAmountEngagements * castAmountCLOUT) * 0.12, 10000) }} CLOUT
+        <span class="text-grey7">(~{{ floored((criteriaAmountEngagements * castAmountUSDFloat) * 0.12, 100) }} USD)</span>
       </div>
     </div>
     <div class="d-flex justify-content-between align-items-center pt-15px pb-30px">
@@ -315,8 +315,8 @@
         </div>
       </div>
       <div class="fs-15px">
-        {{ floored((criteriaAmountEngagements * castAmountCLOUT) * 1.12, 4) }} CLOUT
-        <span class="text-grey7">(~{{ floored((criteriaAmountEngagements * castAmountUSDFloat) * 1.12, 2) }} USD)</span>
+        {{ floored((criteriaAmountEngagements * castAmountCLOUT) * 1.12, 10000) }} CLOUT
+        <span class="text-grey7">(~{{ floored((criteriaAmountEngagements * castAmountUSDFloat) * 1.12, 100) }} USD)</span>
       </div>
     </div>
     
