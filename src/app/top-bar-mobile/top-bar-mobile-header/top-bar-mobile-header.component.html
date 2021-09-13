@@ -1,0 +1,38 @@
+<left-bar-mobile></left-bar-mobile>
+
+<!-- The staked posts have a z-index > 0 so we have to put the top bar above them. -->
+<div class="w-100 position-fixed background-color-white" style="z-index: 10">
+  <div
+    class="global__top-bar__height d-flex align-items-center w-100 px-15px mr-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
+  >
+    <div *ngIf="!isSearching" class="d-flex align-items-center fc-secondary">
+      <top-bar-mobile-navigation-control class="mr-15px d-inline-block"></top-bar-mobile-navigation-control>
+      <div class="bitclout-logo fs-24px font-weight-bold ml-5px">
+        <i-feather name="bitclout" class="mr-10px position-relative" style="top: -2px"></i-feather>
+        <span>bitclout</span>
+      </div>
+      <span class="fc-muted fs-15px font-weight-normal ml-10px position-relative" style="top: 3px">≈{{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD</span>
+    </div>
+
+    <i-feather
+      *ngIf="!isSearching"
+      name="search"
+      class="feather-medium cursor-pointer position-relative"
+      style="top: -3px"
+      (click)="isSearching = true"
+    ></i-feather>
+    <div *ngIf="isSearching" class="d-flex justify-content-center align-items-center w-100">
+      <search-bar class="w-100"></search-bar>
+      <i-feather name="x" class="feather-large cursor-pointer ml-5px" (click)="isSearching = false"></i-feather>
+    </div>
+  </div>
+
+  <!-- Mobile login row-->
+  <div
+    *ngIf="!this.globalVars.loggedInUser"
+    class="d-lg-none p-5px background-color-light-grey border-color-grey font-weight-bold"
+  >
+    <a class="pl-10px" (click)="globalVars.launchLoginFlow()">Log in</a>
+    <a class="pl-15px" (click)="globalVars.launchSignupFlow()">Sign up</a>
+  </div>
+</div>

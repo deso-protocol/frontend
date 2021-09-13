@@ -1,61 +1,78 @@
 <div class="global__nav__width">
   <div class="global__nav__fixed">
     <!-- Logged-in Left Bar -->
-    <div *ngIf="globalVars.loggedInUser != null" class="global__nav__inner">
-      <div *ngIf="isMobile" class="w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
-        <div class="d-flex justify-content-between fc-secondary">
-          <div class="bitclout-logo">
-            <i-feather name="bitclout" class="mr-5px"></i-feather>
-            <span>bitclout</span>
+    <div *ngIf="globalVars.loggedInUser != null" class="global__nav__inner d-flex flex-column justify-content-between">
+      <div>
+        <div *ngIf="isMobile" class="w-100 align-items-center fs-24px font-weight-bold pl-16px pr-25px">
+          <div class="d-flex justify-content-between fc-secondary">
+            <div class="bitclout-logo">
+              <i-feather name="bitclout" class="mr-5px"></i-feather>
+              <span>bitclout</span>
+            </div>
+            <i-feather name="x" class="feather-large cursor-pointer" (click)="closeMobile.emit()"></i-feather>
           </div>
-          <i-feather name="x" class="feather-large cursor-pointer" (click)="closeMobile.emit()"></i-feather>
+        </div>
+
+        <!-- Left Bar Buttons -->
+
+        <div class="pt-20px"></div>
+
+        <div class="left-desktop-selector" *ngIf="!inTutorial">
+          <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
+          <left-bar-button
+            [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
+            [buttonLabel]="'Notifications'"
+            [isUnread]="globalVars.hasUnreadNotifications"
+            [iconName]="'bell'"
+          ></left-bar-button>
+          <left-bar-button
+            [hasNotifications]="true"
+            [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
+            [buttonLabel]="'Messages'"
+            [iconName]="'message-square'"
+          ></left-bar-button>
+          <left-bar-button
+            *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"
+            [link]="AppRoutingModule.profilePath(globalVars.loggedInUser?.ProfileEntryResponse?.Username)"
+            [queryParams]="{ 'tab':'posts' }"
+            [buttonLabel]="'My Profile'"
+            [iconName]="'user'"
+          ></left-bar-button>
+          <left-bar-button
+            *ngIf="!globalVars.loggedInUser?.ProfileEntryResponse?.Username"
+            [link]="'/' + globalVars.RouteNames.UPDATE_PROFILE"
+            [buttonLabel]="'Update Profile'"
+            [iconName]="'user'"
+          ></left-bar-button>
+          <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
+          <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
+            <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
+            <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
+          </div>
+          <left-bar-button
+            *ngIf="globalVars.showAdminTools()"
+            [link]="'/' + globalVars.RouteNames.ADMIN"
+            [buttonLabel]="'Admin'"
+            [iconName]="'codesandbox'"
+          ></left-bar-button>
+          <button *ngIf="!isMobile" class="left-bar__post-button" (click)="openCreatePostModal()">Post</button>
+        </div>
+      </div>
+      <div *ngIf="isMobile">
+        <div class="d-flex justify-content-between left-bar-mobile__clout-price mb-16px mx-16px">
+          <div>
+            <i-feather name="bitclout" class="feather-xsmall position-relative mr-5px" style="top: -2px"></i-feather>
+            <span>1≈{{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD</span>
+          </div>
+          <a href="/buy-bitclout" class="fc-blue fs-15px font-weight-bold">Buy</a>
+        </div>
+        <div class="w-100 border-bottom"></div>
+        <div class="fc-secondary cursor-pointer p-16px my-16px ml-4px" (click)="launchLogoutFlow()">
+          <i-feather name="power" class="feather-medium"></i-feather>
+          <span class="fc-17px font-weight-bold ml-10px">Logout</span>
         </div>
       </div>
 
-      <!-- Left Bar Buttons -->
-
-      <div class="pt-15px"></div>
-
-      <div class="left-desktop-selector" *ngIf="!inTutorial">
-        <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
-        <left-bar-button
-          [link]="'/' + globalVars.RouteNames.NOTIFICATIONS"
-          [buttonLabel]="'Notifications'"
-          [isUnread]="globalVars.hasUnreadNotifications"
-          [iconName]="'bell'"
-        ></left-bar-button>
-        <left-bar-button
-          [hasNotifications]="true"
-          [link]="'/' + globalVars.RouteNames.INBOX_PREFIX"
-          [buttonLabel]="'Messages'"
-          [iconName]="'message-square'"
-        ></left-bar-button>
-        <left-bar-button
-          *ngIf="globalVars.loggedInUser?.ProfileEntryResponse?.Username"
-          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser?.ProfileEntryResponse?.Username)"
-          [queryParams]="{ 'tab':'posts' }"
-          [buttonLabel]="'My Profile'"
-          [iconName]="'user'"
-        ></left-bar-button>
-        <left-bar-button
-          *ngIf="!globalVars.loggedInUser?.ProfileEntryResponse?.Username"
-          [link]="'/' + globalVars.RouteNames.UPDATE_PROFILE"
-          [buttonLabel]="'Update Profile'"
-          [iconName]="'user'"
-        ></left-bar-button>
-        <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
-        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
-          <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
-          <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
-        </div>
-        <left-bar-button
-          *ngIf="globalVars.showAdminTools()"
-          [link]="'/' + globalVars.RouteNames.ADMIN"
-          [buttonLabel]="'Admin'"
-          [iconName]="'codesandbox'"
-        ></left-bar-button>
-        <button class="left-bar__post-button" (click)="openCreatePostModal()">Post</button>
-      </div>
     </div>
 
     <!-- Logged-out Left Bar -->

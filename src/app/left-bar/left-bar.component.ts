@@ -9,6 +9,7 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
 import {CommentModalComponent} from "../comment-modal/comment-modal.component";
 import {BsModalService} from "ngx-bootstrap/modal";
 import {FeedCreatePostModalComponent} from "../feed/feed-create-post-modal/feed-create-post-modal.component";
+import {filter, get} from "lodash";
 
 @Component({
   selector: "left-bar",
@@ -68,6 +69,27 @@ export class LeftBarComponent {
 
   logHelp(): void {
     this.globalVars.logEvent("help : click");
+  }
+
+  launchLogoutFlow() {
+    const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
+      this.globalVars.userList = filter(this.globalVars.userList, (user) => {
+        return res?.users && user?.PublicKeyBase58Check in res?.users;
+      });
+      if (!res?.users) {
+        this.globalVars.userList = [];
+      }
+      let loggedInUser = get(Object.keys(res?.users),"[0]");
+      if (this.globalVars.userList.length === 0) {
+        loggedInUser = null;
+        this.globalVars.setLoggedInUser(null);
+      }
+      this.backendApi.setIdentityServiceUsers(res.users, loggedInUser);
+      this.globalVars.updateEverything().add(() => {
+        this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
+      });
+    });
   }
 
   startTutorial(): void {

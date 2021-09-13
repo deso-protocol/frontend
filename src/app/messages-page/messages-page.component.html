@@ -14,7 +14,7 @@
     <left-bar></left-bar>
 
     <div class="global__content__flex">
-      <div class="global__content__width messages-page__container">
+      <div class="global__content__width messages-page__container" style="margin-top: 4px">
         <div class="messages-page__header d-flex justify-content-between align-items-center">
           <div>
             <span>Messages</span>
@@ -53,43 +53,7 @@
   <left-bar-mobile></left-bar-mobile>
 
   <div class="d-flex flex-column flex-grow-1">
-    <!-- Inbox Header -->
-    <div
-      *ngIf="!showThreadView"
-      class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
-    >
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-
-      <div class="d-flex justify-content-end align-items-right pr-10px">
-        <div
-          *ngIf="
-            this.globalVars.messageResponse != null && this.globalVars.messageResponse.NumberOfUnreadThreads > 0;
-            then thenEnvelopeBlock;
-            else elseEnvelopeBlock
-          "
-        ></div>
-        <ng-template #thenEnvelopeBlock>
-          <i
-            (click)="_markAllMessagesReadMobile()"
-            class="fc-blue far fa-envelope cursor-pointer messages-header-icon-row__icon pt-2px"
-          ></i>
-        </ng-template>
-        <ng-template #elseEnvelopeBlock>
-          <i class="far fa-envelope cursor-auto fs-20px pt-2px"></i>
-        </ng-template>
-      </div>
-
-      Messages
-
-      <!-- Settings -->
-      <div class="d-flex w-100 justify-content-end align-items-right pr-10px">
-        <i
-          (click)="_toggleSettingsTray()"
-          class="fas fa-sliders-h cursor-pointer messages-header-icon-row__icon pt-2px"
-        ></i>
-      </div>
-    </div>
-
+    <top-bar-mobile-header></top-bar-mobile-header>
     <!-- Thread View Header -->
     <div
       *ngIf="showThreadView"
@@ -124,28 +88,31 @@
       </span>
     </div>
 
-    <!-- Scrollable Content -->
-    <div class="global__mobile-scrollable-section">
-      <messages-inbox
-        *ngIf="!showThreadView"
-        class="global__mobile-scrollable-section"
-        (selectedThreadEmitter)="_handleMessageThreadSelectedMobile($event)"
-        [isMobile]="true"
-        [messageThreads]="globalVars.messageResponse ? globalVars.messageResponse.OrderedContactsWithMessages : null"
-      ></messages-inbox>
-      <messages-thread-view
-        *ngIf="showThreadView"
-        class="messages-thread__desktop-column"
-        [isMobile]="true"
-        [messageThread]="
-          globalVars.messageResponse
-            ? selectedThread
+    <div class="d-flex" id="header-content-spacer" [ngStyle]="{ 'margin-top': globalVars.isMobile() ? '94px' : '64px' }">
+      <!-- Scrollable Content -->
+      <div class="global__mobile-scrollable-section">
+        <messages-inbox
+          *ngIf="!showThreadView"
+          class="global__mobile-scrollable-section"
+          (selectedThreadEmitter)="_handleMessageThreadSelectedMobile($event)"
+          [isMobile]="true"
+          [messageThreads]="globalVars.messageResponse ? globalVars.messageResponse.OrderedContactsWithMessages : null"
+        ></messages-inbox>
+        <messages-thread-view
+          *ngIf="showThreadView"
+          class="messages-thread__desktop-column"
+          [isMobile]="true"
+          [messageThread]="
+            globalVars.messageResponse
               ? selectedThread
-              : globalVars.messageResponse.OrderedContactsWithMessages[0]
-            : null
-        "
-      ></messages-thread-view>
+                ? selectedThread
+                : globalVars.messageResponse.OrderedContactsWithMessages[0]
+              : null
+          "
+        ></messages-thread-view>
+      </div>
     </div>
+    <bottom-bar-mobile *ngIf="!showThreadView" class="global__bottom-bar-mobile"></bottom-bar-mobile>
   </div>
-  <bottom-bar-mobile *ngIf="!showThreadView" class="global__bottom-bar-mobile"></bottom-bar-mobile>
+
 </div>

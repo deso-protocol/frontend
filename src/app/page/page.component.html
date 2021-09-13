@@ -11,9 +11,9 @@
     <search-bar></search-bar>
     <change-account-selector></change-account-selector>
   </div>
-  <div class="d-flex" style="margin-top: 64px">
+  <top-bar-mobile-header *ngIf="mobile"></top-bar-mobile-header>
+  <div class="d-flex" id="header-content-spacer" [ngStyle]="{ 'margin-top': mobile ? '94px' : '64px' }">
     <left-bar *ngIf="!mobile" [inTutorial]="inTutorial"></left-bar>
-    <left-bar-mobile *ngIf="mobile" [inTutorial]="inTutorial"></left-bar-mobile>
 
     <div class="global__content__flex">
       <div [class]="mobile || hideSidebar ? 'global__content__width' : 'global__center__width'">

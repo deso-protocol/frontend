@@ -703,10 +703,16 @@ input.bs-timepicker-field {
 
 .global__nav__width {
   width: $global__nav__width;
+  @media (max-width: 992px) {
+    width: 100%;
+  }
 }
 
 .global__nav__fixed {
   top: 64px;
+  @media (max-width: 992px) {
+    top: 42px;
+  }
   height: 100%;
   position: fixed;
 }
@@ -715,10 +721,19 @@ input.bs-timepicker-field {
   width: $global__nav__width;
   overflow-y: auto;
   height: 100%;
+  @media (max-width: 992px) {
+    height: calc(100vh - 42px);
+    width: 75vw;
+    max-width: 280px;
+    min-width: 245px;
+  }
   padding: 0 10px;
 }
 
 .global__content__flex {
+  @media (max-width: 992px) {
+    margin-top: 5px;
+  }
   margin-top: 20px;
   flex-grow: 1;
   align-items: flex-start;
@@ -933,6 +948,7 @@ tab-selector {
 
   @media (max-width: 991.98px) {
     height: $global__top-bar__height;
+    margin-top: 30px;
   }
 }
 
@@ -953,7 +969,25 @@ tab-selector {
   max-width: 280px;
   min-width: 245px;
   height: 100vh;
-  background-color: var(--background);
+  background-color: var(--tilebg);
+}
+
+.left-bar-mobile__clout-price {
+  background: var(--tilesecbg);
+  padding: 7px 8px 5px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+left-bar-mobile {
+  .left-desktop-selector {
+    background: none;
+    border: none;
+    padding: 0px;
+  }
+  .global__nav__inner {
+    padding: 0px;
+  }
 }
 
 .right-bar-select-box {
@@ -1180,6 +1214,15 @@ feed-create-post {
 
 .text-link_hover:hover{
   color:var(--hover);
+}
+top-bar-mobile-header {
+  search-bar {
+    @media (max-width: 992px) {
+      .global__top-bar__height {
+        margin-top: 0px !important;
+      }
+    }
+  }
 }
 
 .search-bar {
@@ -2905,6 +2948,17 @@ trade-creator-form {
     position: absolute;
     right: 3px;
     bottom: 6px;
+  }
+}
+
+app-notifications-page {
+  @media (max-width: 992px) {
+    .global__content__flex {
+      margin-top: 0px;
+    }
+    #header-content-spacer {
+      margin-top: 90px;
+    }
   }
 }
 

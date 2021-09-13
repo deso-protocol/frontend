@@ -67,6 +67,7 @@ import { MessagesThreadComponent } from "./messages-page/messages-thread/message
 import { MessageComponent } from "./messages-page/message/message.component";
 import { MessagesThreadViewComponent } from "./messages-page/messages-thread-view/messages-thread-view.component";
 import { TopBarMobileNavigationControlComponent } from "./top-bar-mobile/top-bar-mobile-navigation-control/top-bar-mobile-navigation-control.component";
+import { TopBarMobileHeaderComponent } from "./top-bar-mobile/top-bar-mobile-header/top-bar-mobile-header.component";
 import { BottomBarMobileTabComponent } from "./bottom-bar-mobile/bottom-bar-mobile-tab/bottom-bar-mobile-tab.component";
 import { NotFoundComponent } from "./not-found-page/not-found/not-found.component";
 import { CreatePostPageComponent } from "./create-post-page/create-post-page.component";
@@ -232,6 +233,7 @@ export function playerFactory() {
     MessageRecipientModalComponent,
     FeedCreatePostModalComponent,
     TopBarMobileNavigationControlComponent,
+    TopBarMobileHeaderComponent,
     BottomBarMobileTabComponent,
     NotFoundComponent,
     CreatePostPageComponent,
