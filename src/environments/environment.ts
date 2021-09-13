@@ -12,6 +12,6 @@ export const environment = {
     ajaxListenerPath: "bitclout.com/api",
     endpoint: "https://bitclout.com/js/",
   },
-  cloutcastUri: "http://localhost:3000"
+  cloutcastUri: "https://dev.cloutcast.io"
 
 };
