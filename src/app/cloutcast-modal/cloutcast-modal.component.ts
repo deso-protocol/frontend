@@ -236,8 +236,8 @@ export class CloutCastModalComponent implements OnInit {
         if (engagements == 0 || ((criteria.minCoinPrice <= 0 && criteria.minFollowerCount <= 0) && criteria.allowedUsers.length <= 0) ) {
           throw new Error("Please enter values greater than 0");
         }
-        if (outPayload.header.rate <= 0) {
-          throw new Error("Please enter a rate greater than 0");
+        if (this.globalVars.nanosToUSDNumber(outPayload.header.rate) <= 0.1 ) {
+          throw new Error("Please enter a rate greater than $0.10 USD");
   
         } 
         if (outPayload.header.duration <= 0) {
