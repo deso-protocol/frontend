@@ -58,9 +58,19 @@ export class CloutCastModalComponent implements OnInit {
   }
 
 
-  _handleCreatorSelectedInSearch(creator: ProfileEntryResponse) {
+  async _handleCreatorSelectedInSearch(creator: ProfileEntryResponse) {
     // console.log(creator);
-    this.selectedCreators.push(creator);
+    let isFound = false;
+    for (var ctor of this.selectedCreators) {
+      if (ctor.PublicKeyBase58Check == creator.PublicKeyBase58Check) {
+        isFound = true;
+      }
+    }
+
+    if (isFound == false) {
+      this.selectedCreators.push(creator);
+    }
+    
   }
 
   updateCastAmountUSD(v: any) {
@@ -83,7 +93,7 @@ export class CloutCastModalComponent implements OnInit {
   }
 
   removeCreator(i: number) {
-    this.selectedCreators.splice(i);
+    this.selectedCreators.splice(i, 1);
   }
 
   stopEvent(event: any) {

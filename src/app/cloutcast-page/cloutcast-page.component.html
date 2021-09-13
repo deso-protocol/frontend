@@ -43,12 +43,12 @@
                 </button>
               </div>
             </div>
-            <div *ngIf="showWithdraw == true" class="row">
-              <div class="col-12 col-sm-6">
+            <div *ngIf="showWithdraw == true" class="row m-3">
+              <!-- <div class="col-12 col-sm-6">
                 <button class="btn btn-block btn-info" (click)="fillMaxWithdraw()">
                   Maximum
                 </button>
-              </div>
+              </div> -->
               <div class="input-group py-5px col-12 col-sm-6">
               <div class="input-group-prepend" id="clout-label">
                 <span class="input-group-text fs-15px">CLOUT  </span>
@@ -108,7 +108,7 @@
                       </div>
                       <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
                       <div>
-                        {{item.TargetActionText}}
+                        {{item.TargetActionText == 'ReClout' ? 'ReClout or Quote' : item.TargetActionText}}
                       </div>
                     </span>
                   </div>
@@ -132,7 +132,7 @@
 
               </feed-post>
               <div class="cc-info p-3">
-                <h6>After performing the requested engagement -- {{selectedCastObject.TargetActionText}} -- click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+                <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'ReClout or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
                 <button
                   class="btn-block my-2 btn-primary"
                   (click)="proveWork()"
@@ -140,7 +140,7 @@
                   Earn {{ nanosToBitClout(selectedCastObject.RateNanos) }} $CLOUT
                 </button>
                 <span class="text-muted">
-                  $CLOUT earned from engaging with Casts is put into an escrow account. For more details, click the settings icon above.
+                  $CLOUT earned from engaging with Casts is put into an escrow account. For more details, click the wallet icon above.
                 </span>
               </div>
             </div>
@@ -217,11 +217,11 @@
               </div>
             </div>
             <div *ngIf="showWithdraw == true" class="row m-3">
-              <div class="col-12 col-sm-6">
+              <!-- <div class="col-12 col-sm-6">
                 <button class="btn btn-block btn-info" (click)="fillMaxWithdraw()">
                   Maximum
                 </button>
-              </div>
+              </div> -->
               <div class="input-group py-5px col-12 col-sm-6">
               <div class="input-group-prepend" id="clout-label">
                 <span class="input-group-text fs-15px">CLOUT  </span>
@@ -274,7 +274,7 @@
                 </div>
                 <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
                 <div>
-                  {{item.TargetActionText}}
+                  {{item.TargetActionText == 'ReClout' ? 'ReClout or Quote' : item.TargetActionText}}
                 </div>
               </span>
             </div>
@@ -292,7 +292,7 @@
 
         </feed-post>
         <div class="cc-info p-3">
-          <h6>After performing the requested engagement  ({{selectedCastObject.TargetActionText}}) click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~{{nanosToUSD(selectedCastObject.RateNanos)}}USD)</h6>
+          <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'ReClout or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
           <button
             class="btn-block my-2 btn-primary"
             (click)="proveWork()"

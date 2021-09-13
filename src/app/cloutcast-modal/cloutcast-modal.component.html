@@ -37,12 +37,16 @@
             ReClout
           </div>
         </div>
-        <input [(ngModel)]="castType"
-               [value]="0"
-               type="radio"
-               name="castType"
-               class="mr-15px nft-modal-radio-size cursor-pointer">
-        Comment
+        <div class="castRadios d-flex align-items-center fs-15px">
+          <div class="d-flex align-items-center">
+            <input [(ngModel)]="castType"
+                   [value]="0"
+                   type="radio"
+                   name="castType"
+                   class="mr-15px nft-modal-radio-size cursor-pointer">
+            Comment
+          </div>
+        </div>
       </div>
     </div>
     <ng-container *ngIf="useCriteria == true">
@@ -124,7 +128,7 @@
       </div>
       
       <div class="fs-15px text-grey7 mb-30px">
-        To specify specific BitClout users instead, <a (click)="criteriaSwitch(false)">click here.</a>
+        To specify specific BitClout users instead, <a class="ccLink" (click)="criteriaSwitch(false)">click here.</a>
       </div>
     </ng-container>
     <ng-container *ngIf="useCriteria == false">
@@ -143,7 +147,7 @@
         Specify users who you'd like to engage with this post by searching for their usernames above.
       </div>
       <div class="fs-15px text-grey7 mb-30px">
-        To specify acceptance criteria instead, <a class="superBold" (click)="criteriaSwitch(true)">click here.</a>
+        To specify acceptance criteria instead, <a class="ccLink" (click)="criteriaSwitch(true)">click here.</a>
       </div>
 
       <ng-container *ngIf="selectedCreators.length > 0">
@@ -270,7 +274,16 @@
     </div>
     <div class="d-flex justify-content-between align-items-center pt-15px pb-15px">
       <div class="fs-15px">
-        <div class="font-weight-500">Fee</div>
+        <div class="font-weight-500">
+          Fee
+          <i
+            (click)="feeTooltip.toggle()"
+            class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon ml-2 upz"
+            matTooltipClass="upz global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="'This represents the total possible fee to pay for this cast, assuming all users engage with this post. Fee is split by engagement, and is only paid if a user engages with the cast.'"
+            #feeTooltip="matTooltip"
+          ></i>
+      </div>
       </div>
       <div class="fs-15px">
         {{ selectedCreators.length ? (selectedCreators.length * castAmountCLOUT) * 0.12 : (criteriaAmountEngagements * castAmountCLOUT) * 0.12 }} CLOUT

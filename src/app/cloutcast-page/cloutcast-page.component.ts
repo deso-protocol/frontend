@@ -317,7 +317,7 @@ export class CloutCastPageComponent implements OnInit {
       // console.log(this.selectedCastObject.Id);
       let didWork = await this.cloutcastApi.proveWork(this.selectedCastObject.Id);
       if (didWork == true) {
-        this.globalVars._alertSuccess(`${this.nanosToBitClout(this.selectedCastObject.RateNanos)} was added to your CloutCast escrow wallet!`)
+        this.globalVars._alertSuccess(`${this.nanosToBitClout(this.selectedCastObject.RateNanos)} (~ ${this.nanosToUSD(this.selectedCastObject.RateNanos)} USD) was added to your CloutCast escrow wallet!`)
       }
     } catch (ex) {
       console.error(ex);
