@@ -86,9 +86,9 @@ export class CloutCastPageComponent implements OnInit {
 
     this.router.events.subscribe(async event => {
       if (event instanceof NavigationStart) {
-        if (event.restoredState) {
-          console.log(event);
-        }
+        // if (event.restoredState) {
+        //   console.log(event);
+        // }
         await this.handleEvent(event.url);
       }
 
@@ -293,7 +293,7 @@ export class CloutCastPageComponent implements OnInit {
         if (id == Id) {
           thePostHex = item.gigPostHash;
           this.selectedCastObject = item;
-          console.dir(this.selectedCastObject);
+          // console.dir(this.selectedCastObject);
         }
       }
 
@@ -417,7 +417,7 @@ export class CloutCastPageComponent implements OnInit {
     if (res.isConfirmed == true) {
       await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE")
     }
-    console.log(res);
+    // console.log(res);
   }
 
   async doWithdraw() {
@@ -436,7 +436,7 @@ export class CloutCastPageComponent implements OnInit {
           },
           reverseButtons: true,
         });
-        console.log(res);
+        // console.log(res);
         if (res.isConfirmed == true) {
           // sending withdraw request... 
           this.sendingWithdrawRequest = true;

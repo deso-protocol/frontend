@@ -233,7 +233,7 @@ export class CloutcastApiService {
     }).toPromise();
 
     const tt = String.fromCharCode.apply(null, new Uint8Array(ccTokenReq));
-    console.log(tt);
+    // console.log(tt);
 
     this.ccToken = tt;
     this.ccTokenUser = currentUser.PublicKeyBase58Check;
