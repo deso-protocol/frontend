@@ -5,7 +5,7 @@
     Loading balances...
   </div>
   <div class="flex-grow-1 p-15px" *ngIf="!!userCastBalances">
-    {{userCastBalances.data.settled / 1e9 }} CLOUT available in your CloutCast wallet. <br />
+    {{floored(userCastBalances.data.settled / 1e9, 4) }} CLOUT available in your CloutCast wallet. <br />
     <a (click)="doDeposit()">Click Here to add $CLOUT to your CloutCast wallet.</a>
   </div>
   
@@ -57,7 +57,7 @@
       <div class="pt-15px pb-15px font-weight-500">
         <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
           <div>
-            <span class="text-grey7">(Required)</span>
+            <span class="text-grey7">Min Coin Price</span>
           </div>
             <div class="d-flex flex-wrap flex-row">
               <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
@@ -195,7 +195,7 @@
     <div class="pt-15px pb-15px font-weight-500">
       <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
         <div>
-          <span class="text-grey7">Min Coin Price</span>
+          <span class="text-grey7">(Required)</span>
         </div>
           <div class="d-flex flex-wrap flex-row">
             <div class="input-group py-5px"

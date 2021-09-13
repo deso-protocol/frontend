@@ -200,15 +200,36 @@ export class CloutCastModalComponent implements OnInit {
       if (engagements == 0 || ((criteria.minCoinPrice <= 0 && criteria.minFollowerCount <= 0) && criteria.allowedUsers.length <= 0) ) {
         throw new Error("Please enter values greater than 0");
       }
-      if (outPayload.header.rate <= 0 || outPayload.header.duration <= 0) {
-        throw new Error("Please enter values greater than 0");
+      if (outPayload.header.rate <= 0) {
+        throw new Error("Please enter a rate greater than 0");
+
+      } 
+      if (outPayload.header.duration <= 0) {
+        throw new Error("Please enter a duration greater than 0");
       }
 
-      await this.cloutcastApi.createCast(outPayload);
+      if (parseInt(this.nanosAvailableInCloutCastWallet) < (this.criteriaAmountEngagements * this.castAmountCLOUT) * 1.12) {
+        let res = await SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
+          title: "Not Enough CLOUT in CloutCast wallet!",
+          html: `There isn't enough $CLOUT available in your CloutCast wallet. Before creating casts, please send $CLOUT to the CloutCast wallet public key, and wait 15-20 minutes. Click 'OK' to be sent to the 'Send $CLOUT' page.`,
+          showConfirmButton: true,
+          customClass: {
+            confirmButton: "btn btn-light",
+            cancelButton: "btn btn-light no",
+          },
+          reverseButtons: true,
+        });
+        if (res.isConfirmed == true) {
+          await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
+        }
+      } else {
+        await this.cloutcastApi.createCast(outPayload);
+        this.globalVars._alertSuccess("Your cast has been created.", "Success!");
+        this.bsModalRef.hide();
+      }
 
-      this.globalVars._alertSuccess("Your cast has been created.", "Success!");
-
-      this.bsModalRef.hide();
+      
     } catch (ex) {
       console.error(ex);
       let errorMessage = ex.message || "Unspecified Error."
