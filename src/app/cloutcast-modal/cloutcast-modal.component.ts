@@ -55,6 +55,27 @@ export class CloutCastModalComponent implements OnInit {
       console.error(ex);
     }
 
+    // let coll = 
+    // Array.from(document.querySelectorAll<HTMLElement>('[tip]')).forEach(el => {
+    //   let tip = document.createElement('div');
+    //   tip.classList.add('cctooltip');
+    //   tip.innerText = el.getAttribute('tip');
+    //   let delay = el.getAttribute('tip-delay');
+    //   if (delay) {
+    //     tip.style.transitionDelay = delay + 's';
+    //   }
+    //   tip.style.transform =
+    //     'translate(' +
+    //       (el.hasAttribute('tip-left') ? 'calc(-100% - 5px)' : '15px') + ', ' +
+    //       (el.hasAttribute('tip-top') ? '-100%' : '0') +
+    //     ')';
+    //   el.appendChild(tip);
+    //   el.onmousemove = e => {
+    //     tip.style.left = e.clientX + 'px'
+    //     tip.style.top = e.clientY + 'px';
+    //   };
+    // });
+
   }
 
 
@@ -68,6 +89,7 @@ export class CloutCastModalComponent implements OnInit {
     }
 
     if (isFound == false) {
+      this.criteriaAmountEngagements++;
       this.selectedCreators.push(creator);
     }
     
@@ -94,6 +116,8 @@ export class CloutCastModalComponent implements OnInit {
 
   removeCreator(i: number) {
     this.selectedCreators.splice(i, 1);
+    this.criteriaAmountEngagements--;
+
   }
 
   stopEvent(event: any) {
@@ -107,7 +131,7 @@ export class CloutCastModalComponent implements OnInit {
       this.selectedCreators = [];
     } else {
       this.useCriteria = false;
-      this.criteriaAmountEngagements = 0;
+      // this.criteriaAmountEngagements = 0;
       this.criteriaMinCoinPrice = 0;
     }
   }
@@ -123,7 +147,7 @@ export class CloutCastModalComponent implements OnInit {
       let action = 
         parseInt(this.castType) == 0 ? 
           "Comment" : parseInt(this.castType) == 1 ? "Quote" : "Reclout";
-      let engagements = this.useCriteria == true ? this.criteriaAmountEngagements : this.selectedCreators.length;
+      let engagements = this.criteriaAmountEngagements;
       let criteria = this.useCriteria == true ? {
         minCoinPrice: this.criteriaMinCoinPrice * 1e9,
         minFollowerCount: this.criteriaMinFollowers
@@ -180,4 +204,19 @@ export class CloutCastModalComponent implements OnInit {
     console.log(res);
   }
 
+  async showFeeAlert() {
+    let msg = "This represents the total possible fee to pay for this cast, assuming all users engage with this post. Fee is split by engagement, and is only paid if a user engages with the cast."
+    let res = await SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Fee Explanation",
+      html: msg,
+      showCancelButton: false,
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    });
+  }
 }
