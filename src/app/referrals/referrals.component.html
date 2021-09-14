@@ -16,11 +16,21 @@
   </div>
 
   <div *ngIf="globalVars.loggedInUser" class="p-15px">
-    <div *ngFor="let referral of globalVars.loggedInUser?.ReferralInfoResponses">
+    <div *ngFor="let referral of globalVars.loggedInUser?.ReferralInfoResponses; let ii = index">
         <div class="p-15px fs-15px br-5px border border-color-grey referral-link-info__blue-border">
-          <a class="fs-18px" [href]="globalVars.getLinkForReferralHash(referral.Info.ReferralHashBase58)">
-            {{ globalVars.getLinkForReferralHash(referral.Info.ReferralHashBase58) }}
-          </a>
+          <div class="d-flex align-items-center">
+            <div (click)="_copyLink(ii)" 
+                 class="btn btn-outline-secondary d-flex fs-15px p-5px mr-5px"
+                 style="width: fit-content">
+              <i class="far fa-copy fa-sm"></i>
+            </div>
+            <a class="fs-15px" (click)="_copyLink(ii)">
+              {{ globalVars.getLinkForReferralHash(referral.Info.ReferralHashBase58) }}
+            </a>
+            <div *ngIf="linkCopied[ii]" class="fs-15px px-5px py-0px">
+              <i class="far fa-check-circle fa-xs fc-blue"></i>
+            </div>
+          </div>
           <div *ngIf="!referral.IsActive" class="fc-red">This link is no longer active.</div>
 
           <div class="font-weight-bold mt-15px">
