@@ -1051,14 +1051,14 @@ export class GlobalVarsService {
     Swal.fire({
       target: this.getTargetComponentSelector(),
       icon: "warning",
-      title: "Skip Tutorial?",
+      title: "Stop Tutorial?",
       html: "Are you sure?",
       showConfirmButton: true,
       customClass: {
         confirmButton: "btn btn-light",
       },
       reverseButtons: true,
-      confirmButtonText: "Skip",
+      confirmButtonText: "Yes",
     }).then((res) => {
       if (res.isConfirmed) {
         this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
