@@ -280,6 +280,7 @@ export class NftPostComponent {
   }
 
   selectBidEntry(bidEntry: NFTBidEntryResponse): void {
+    this.bids.forEach((bidEntry) => (bidEntry.selected = false));
     bidEntry.selected = true;
     this.sellNFTDisabled = false;
   }
