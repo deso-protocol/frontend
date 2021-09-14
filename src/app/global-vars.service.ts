@@ -857,6 +857,7 @@ export class GlobalVarsService {
       if (queryParams.r) {
         localStorage.setItem("referralCode", queryParams.r);
         this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
+        this.getReferralUSDCents();
       }
     });
 
