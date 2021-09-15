@@ -110,7 +110,7 @@ export class LeftBarComponent {
       },
       reverseButtons: true,
       confirmButtonText: "Start Tutorial",
-      cancelButtonText: "Skip",
+      cancelButtonText: "Cancel",
     }).then((res) => {
       this.backendApi
         .StartOrSkipTutorial(

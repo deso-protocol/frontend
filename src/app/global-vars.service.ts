@@ -1051,7 +1051,7 @@ export class GlobalVarsService {
     Swal.fire({
       target: this.getTargetComponentSelector(),
       icon: "warning",
-      title: "Stop Tutorial?",
+      title: "Exit Tutorial?",
       html: "Are you sure?",
       showConfirmButton: true,
       customClass: {
