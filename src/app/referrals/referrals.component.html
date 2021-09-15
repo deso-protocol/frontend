@@ -17,7 +17,7 @@
 
   <div *ngIf="globalVars.loggedInUser" class="p-15px">
     <div *ngFor="let referral of globalVars.loggedInUser?.ReferralInfoResponses; let ii = index">
-        <div class="p-15px fs-15px br-5px border border-color-grey referral-link-info__blue-border">
+        <div class="mb-15px p-15px fs-15px br-5px border border-color-grey referral-link-info__blue-border">
           <div class="d-flex align-items-center">
             <div (click)="_copyLink(ii)" 
                  class="btn btn-outline-secondary d-flex fs-15px p-5px mr-5px"
