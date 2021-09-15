@@ -14,10 +14,8 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { RouteNames } from "../../app-routing.module";
 import { Location } from "@angular/common";
 import * as _ from "lodash";
-import { SellNftModalComponent } from "../../sell-nft-modal/sell-nft-modal.component";
 import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
 import { Subscription } from "rxjs";
-import { AddUnlockableModalComponent } from "../../add-unlockable-modal/add-unlockable-modal.component";
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 import { ToastrService } from "ngx-toastr";
 
@@ -238,38 +236,6 @@ export class NftPostComponent {
         selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
       },
     });
-    // const sellNFTModalDetails = this.modalService.show(SellNftModalComponent, {
-    //   class: "modal-dialog-center",
-    //   initialState: {
-    //     post: this.nftPost,
-    //     nftEntries: this.nftBidData.NFTEntryResponses,
-    //     selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
-    //   },
-    // });
-    // const onHiddenEvent = sellNFTModalDetails.onHidden;
-    // onHiddenEvent.subscribe((response) => {
-    //   if (response === "nft sold") {
-    //     this.loading = true;
-    //     this.refreshPosts();
-    //     this.feedPost.getNFTEntries();
-    //   } else if (response === "unlockable content opened") {
-    //     const unlockableModalDetails = this.modalService.show(AddUnlockableModalComponent, {
-    //       class: "modal-dialog-centered",
-    //       initialState: {
-    //         post: this.nftPost,
-    //         selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
-    //       },
-    //     });
-    //     const onHiddenEvent = unlockableModalDetails.onHidden;
-    //     onHiddenEvent.subscribe((response) => {
-    //       if (response === "nft sold") {
-    //         this.loading = true;
-    //         this.refreshPosts();
-    //         this.feedPost.getNFTEntries();
-    //       }
-    //     });
-    //   }
-    // });
   }
 
   checkSelectedBidEntries(bidEntry: NFTBidEntryResponse): void {

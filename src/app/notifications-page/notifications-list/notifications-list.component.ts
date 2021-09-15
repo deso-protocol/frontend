@@ -338,7 +338,7 @@ export class NotificationsListComponent {
     // If we don't recognize the transaction type we return null
     return null;
   }
-  
+
   truncatePost(postHashHex: any): string | null {
     const post = this.postMap[postHashHex];
     if (!post) {
