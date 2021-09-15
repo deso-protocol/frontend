@@ -215,10 +215,27 @@ export class BuyBitcloutEthComponent implements OnInit {
           );
         }, err => {
           this.globalVars.logEvent("bitpop : buy : error");
-          this.parentComponent._clickBuyBitCloutFailure(this.parentComponent, err.error.error);
+          this.parentComponent._clickBuyBitCloutFailure(this.parentComponent, this.extractError(err));
         });
       }
     });
+  }
+
+  extractError(err: any): string {
+    if (err.error != null && err.error.error != null) {
+      let rawError = err.error.error;
+      if (rawError.includes("Not enough funds")) {
+        return Messages.INSUFFICIENT_BALANCE;
+      } else {
+        return rawError;
+      }
+    }
+    if (err.status != null && err.status != 200) {
+      return Messages.CONNECTION_PROBLEM;
+    }
+    // If we get here we have no idea what went wrong so just return the
+    // errorString.
+    return sprintf(Messages.UNKOWN_PROBLEM, JSON.stringify(err));
   }
 
   clickMaxBitClout() {
