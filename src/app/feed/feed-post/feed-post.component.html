@@ -377,62 +377,6 @@
           </div>
         </div>
       </a>
-      <!--
-        This HTML is used on the main post in a thread in order to show detailed info
-        about the interactions with that thread.  TODO: We should probably break the
-        "main" post in a thread into it's own file so it can have more custom styling
-        with less code complexity.
-      -->
-<!--      <div class="feed-post__blue-border px-30px pb-5px" *ngIf="showInteractionDetails">-->
-<!--        <div class="container w-100 p-0px">-->
-<!--          &lt;!&ndash; DESKTOP &ndash;&gt;-->
-<!--          <div-->
-<!--            class="row no-gutters d-none d-lg-block py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer"-->
-<!--          >-->
-<!--            <div class="d-flex justify-content-between">-->
-<!--              <span (click)="openRecloutsModal($event)" class="interaction-detail">-->
-<!--                <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b>-->
-<!--                Reclouts&nbsp;-->
-<!--              </span>-->
-<!--              <span (click)="openQuoteRecloutsModal($event)" class="interaction-detail">-->
-<!--                <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b>-->
-<!--                Quote Reclouts&nbsp;-->
-<!--              </span>-->
-<!--              <span (click)="openLikesModal($event)" class="interaction-detail">-->
-<!--                <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b>-->
-<!--                Likes-->
-<!--              </span>-->
-<!--              <span (click)="openDiamondsModal($event)" class="interaction-detail">-->
-<!--                <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b>-->
-<!--                Diamonds-->
-<!--              </span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          &lt;!&ndash; MOBILE &ndash;&gt;-->
-<!--          <div-->
-<!--            class="row no-gutters d-lg-none py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer"-->
-<!--          >-->
-<!--            <div class="col-6 mb-0 interaction-detail" (click)="openRecloutsModal($event)">-->
-<!--              <b>{{ globalVars.abbreviateNumber(postContent.RecloutCount) }}</b>-->
-<!--              Reclouts&nbsp;-->
-<!--            </div>-->
-<!--            <div class="col-6 mb-0 interaction-detail" (click)="openQuoteRecloutsModal($event)">-->
-<!--              <b>{{ globalVars.abbreviateNumber(postContent.QuoteRecloutCount) }}</b>-->
-<!--              Quote Reclouts&nbsp;-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="row no-gutters d-lg-none py-10px fs-15px border-bottom border-color-light-grey cursor-pointer">-->
-<!--            <div (click)="openLikesModal($event)" class="col-6 mb-0 interaction-detail">-->
-<!--              <b>{{ globalVars.abbreviateNumber(postContent.LikeCount) }}</b>-->
-<!--              Likes-->
-<!--            </div>-->
-<!--            <div (click)="openDiamondsModal($event)" class="col-6 mb-0 interaction-detail">-->
-<!--              <b>{{ globalVars.abbreviateNumber(postContent.DiamondCount) }}</b>-->
-<!--              Diamonds-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
       <div
         *ngIf="showInteractionDetails"
         class="feed-post__container d-flex justify-content-left w-100"

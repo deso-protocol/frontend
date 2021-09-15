@@ -27,21 +27,6 @@
         [showNFTDetails]="true"
         (userBlocked)="userBlocked()"
       ></feed-post>
-      <div *ngFor="let comment of post.Comments">
-        <div class="pl-15px pb-15px post-thread__subcomment-container">
-          <feed-post
-            [includePaddingOnPost]="true"
-            [post]="comment"
-            [parentPost]="post"
-            [contentShouldLinkToThread]="true"
-            [showIconRow]="false"
-            [showDropdown]="false"
-            [showReplyToContent]="false"
-            [isSubcomment]="true"
-            [cardStyle]="true"
-          ></feed-post>
-        </div>
-      </div>
     </div>
   </div>
 </ng-container>
