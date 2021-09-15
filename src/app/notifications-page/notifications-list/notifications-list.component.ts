@@ -124,6 +124,7 @@ export class NotificationsListComponent {
       parentPost: null, // the parent post involved
       link: AppRoutingModule.profilePath(actor.Username),
       bidInfo: null,
+      comment: null, // the text of the comment
     };
 
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
@@ -134,7 +135,7 @@ export class NotificationsListComponent {
         }
       }
       result.icon = "coin";
-      result.iconClass = "fc-green";
+      result.iconClass = "fc-blue";
 
       result.action =
         `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
@@ -148,13 +149,13 @@ export class NotificationsListComponent {
       }
 
       result.icon = "coin";
-      result.iconClass = "fc-green";
+      result.iconClass = "fc-blue";
 
       if (ccMeta.OperationType === "buy") {
         result.action = `${actorName} bought <b>~${this.globalVars.nanosToUSD(
           ccMeta.BitCloutToSellNanos,
           2
-        )}</b> worth of <b>$${userProfile.Username}</b>!`;
+        )}</b> worth of <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a>!`;
         return result;
       } else if (ccMeta.OperationType === "sell") {
         // TODO: We cannot compute the USD value of the sale without saving the amount of BitClout
@@ -211,6 +212,12 @@ export class NotificationsListComponent {
 
         // In this case, we are dealing with a reply to a post we made.
         if (currentPkObj.Metadata === "ParentPosterPublicKeyBase58Check") {
+          result.icon = "message-square";
+          result.iconClass = "fc-blue";
+          const truncatedPost = this.truncatePost(spMeta.ParentPostHashHex);
+          const postContent = `<i class="fc-muted">${truncatedPost}</i>`;
+          result.action = `${actorName} Replying to <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${postContent}`;
+          result.comment = this.postMap[postHash]?.Body;
           result.post = this.postMap[postHash];
           result.parentPost = this.postMap[spMeta.ParentPostHashHex];
           if (result.post === null || result.parentPost === null) {
@@ -226,6 +233,22 @@ export class NotificationsListComponent {
 
           return result;
         } else if (currentPkObj.Metadata === "RecloutedPublicKeyBase58Check") {
+          const post = this.postMap[postHash];
+          result.icon = "repeat";
+          result.iconClass = "fc-blue";
+          const recloutAction = post.Body === "" ? "Reclouting" : "Quote reclouting";
+          const recloutedPost = post.RecloutedPostEntryResponse;
+          const truncatedPost = _.truncate(_.escape(`${recloutedPost.Body} ${recloutedPost.ImageURLs?.[0] || ""}`));
+          const recloutedPostContent = `<i class="fc-muted">${truncatedPost}</i>`;
+          // Reclout
+          if (post.Body === "") {
+            result.action = `${actorName} ${recloutAction} <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${recloutedPostContent}`;
+          } else {
+            // Quote Reclout
+            const truncatedQuoteReclout = this.truncatePost(postHash);
+            const quoteRecloutContent = `<i class="fc-muted">"${truncatedQuoteReclout}"</i>`;
+            result.action = `${actorName} ${recloutAction} <a href="/${this.globalVars.RouteNames.USER_PREFIX}/${userProfile.Username}">@${userProfile.Username}</a> ${quoteRecloutContent} ${recloutedPostContent}`;
+          }
           result.post = this.postMap[postHash];
           if (result.post === null) {
             return;
@@ -279,15 +302,16 @@ export class NotificationsListComponent {
       const postHash = nftBidMeta.NFTPostHashHex;
 
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
-      result.post = this.postMap[postHash];
+      const truncatedPost = this.truncatePost(postHash);
+      const postText = `<i class="fc-muted">${truncatedPost}</i>`;
       result.action = nftBidMeta.BidAmountNanos
         ? `${actorName} bid ${this.globalVars.nanosToBitClout(
             nftBidMeta.BidAmountNanos,
             2
           )} CLOUT (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
             nftBidMeta.SerialNumber
-          }`
-        : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber}`;
+          } ${postText}`
+        : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber} ${postText}`;
       result.icon = "coin";
       result.iconClass = nftBidMeta.BidAmountNanos ? "fc-blue" : "fc-red";
       result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
@@ -313,6 +337,11 @@ export class NotificationsListComponent {
 
     // If we don't recognize the transaction type we return null
     return null;
+  }
+
+  printPost(index, post) {
+    console.log(index);
+    console.log(post);
   }
 
   truncatePost(postHashHex: any): string | null {
