@@ -49,6 +49,7 @@ export class FeedCreatePostComponent implements OnInit {
   postInput = "";
   postImageSrc = null;
 
+  // postVideoSrc = "82eee472d4e0b5d64e0c713839e337ea";
   postVideoSrc = null;
   videoUploadPercentage = null;
 
@@ -288,6 +289,7 @@ export class FeedCreatePostComponent implements OnInit {
       if (this.videoStreamInterval != null) {
         clearInterval(this.videoStreamInterval);
       }
+      this.readyToStream = false;
       upload = new tus.Upload(file, options);
       upload.start();
       return;

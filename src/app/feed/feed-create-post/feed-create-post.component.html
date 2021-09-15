@@ -52,6 +52,14 @@
           [controls]="true"
           [src]="postVideoSrc"
         ></cloudflare-stream>
+<!--        <iframe-->
+<!--          [src]="postVideoSrc | sanitizeVideoUrl"-->
+<!--          class="br-12px"-->
+<!--          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"-->
+<!--          allowfullscreen-->
+<!--          style="height: 400px; width: 100%"-->
+<!--        >-->
+<!--        </iframe>-->
       </div>
       <!-- Embedded Content -->
       <div class="feed-post__embed-container" *ngIf="constructedEmbedURL">
@@ -71,7 +79,7 @@
       </div>
       <!-- Video Upload Progress bar -->
       <div class="d-flex flex-column align-items-center" *ngIf="videoUploadPercentage !== null">
-        <div>{{videoUploadPercentage}}%</div>
+        <div>Uploading: {{videoUploadPercentage}}% Complete</div>
         <mat-progress-bar [value]="videoUploadPercentage" [mode]="'determinate'"></mat-progress-bar>
       </div>
     </div>
