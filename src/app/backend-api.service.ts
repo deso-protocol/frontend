@@ -57,6 +57,7 @@ export class BackendRoutes {
   static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
   static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
   static RoutePathUploadVideo = "/api/v0/upload-video";
+  static RoutePathGetVideoStatus = "/api/v0/get-video-status";
 
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
@@ -1968,6 +1969,10 @@ export class BackendApiService {
       PublicKeyBase58Check,
       FileSize,
     });
+  }
+
+  GetVideoStatus(endpoint: string, videoId: string): Observable<any> {
+    return this.get(endpoint, `${BackendRoutes.RoutePathGetVideoStatus}/${videoId}`);
   }
 
   // Error parsing

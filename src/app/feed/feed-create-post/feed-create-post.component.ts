@@ -1,12 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import {BackendApiService, BackendRoutes, PostEntryResponse} from "../../backend-api.service";
+import { BackendApiService, BackendRoutes, PostEntryResponse } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { environment } from "../../../environments/environment";
 import * as tus from "tus-js-client";
+import Timer = NodeJS.Timer;
 
 @Component({
   selector: "feed-create-post",
@@ -47,6 +48,9 @@ export class FeedCreatePostComponent implements OnInit {
   submittingPost = false;
   postInput = "";
   postImageSrc = null;
+
+  postVideoSrc = null;
+  videoUploadPercentage = null;
 
   showEmbedURL = false;
   showImageLink = false;
@@ -240,7 +244,13 @@ export class FeedCreatePostComponent implements OnInit {
       return;
     }
     if (file.type.startsWith("video/")) {
+      // if (file.size > 200 * (1024 * 1024)) {
+      //   this.globalVars._alertError("File is too large. Please choose a file less than 200MB");
+      //   return;
+      // }
       let upload: tus.Upload;
+      let mediaId = "";
+      const comp: FeedCreatePostComponent = this;
       const options = {
         endpoint: this.backendApi._makeRequestURL(this.globalVars.localNode, BackendRoutes.RoutePathUploadVideo),
         chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
@@ -253,30 +263,31 @@ export class FeedCreatePostComponent implements OnInit {
         // },
         uploadSize: file.size,
         onError: function (error) {
+          comp.globalVars._alertError(error);
           throw error;
         },
         onProgress: function (bytesUploaded, bytesTotal) {
-          const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-          console.log(bytesUploaded, bytesTotal, percentage + "%");
+          comp.videoUploadPercentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
         },
         onSuccess: function () {
-          console.log("Upload finished");
-          console.log(upload);
-          console.log((upload.file as File).name);
+          comp.postVideoSrc = mediaId;
+          comp.postImageSrc = null;
+          comp.videoUploadPercentage = null;
+          comp.pollForReadyToStream();
         },
         onAfterResponse: function (req, res) {
           return new Promise((resolve) => {
-            console.log(res);
-            // debugger;
-            // var mediaIdHeader = res.getHeader("stream-media-id");
-            // if (mediaIdHeader) {
-            //   mediaId = mediaIdHeader;
-            // }
-            // resolve()
+            let mediaIdHeader = res.getHeader("stream-media-id");
+            if (mediaIdHeader) {
+              mediaId = mediaIdHeader;
+            }
+            resolve(res);
           });
         },
       };
-
+      if (this.videoStreamInterval != null) {
+        clearInterval(this.videoStreamInterval);
+      }
       upload = new tus.Upload(file, options);
       upload.start();
       return;
@@ -290,10 +301,40 @@ export class FeedCreatePostComponent implements OnInit {
       .subscribe(
         (res) => {
           this.postImageSrc = res.ImageURL;
+          this.postVideoSrc = null;
         },
         (err) => {
           this.globalVars._alertError(JSON.stringify(err.error.error));
         }
       );
+  }
+
+  videoStreamInterval: Timer = null;
+  readyToStream: boolean = false;
+  pollForReadyToStream(): void {
+    let attempts = 0;
+    let numTries = 1200;
+    let timeoutMillis = 500;
+    this.videoStreamInterval = setInterval(() => {
+      if (attempts >= numTries) {
+        clearInterval(this.videoStreamInterval);
+        return;
+      }
+      this.backendApi
+        .GetVideoStatus(this.globalVars.localNode, this.postVideoSrc)
+        .subscribe(
+          (res) => {
+            if (res.ReadyToStream) {
+              clearInterval(this.videoStreamInterval);
+              this.readyToStream = true;
+            }
+          },
+          (err) => {
+            console.log(err);
+            clearInterval(this.videoStreamInterval);
+          }
+        )
+        .add(() => attempts++);
+    }, timeoutMillis);
   }
 }

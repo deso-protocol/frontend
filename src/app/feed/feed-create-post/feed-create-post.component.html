@@ -41,6 +41,18 @@
         <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
         <img class="feed-post__image" src="{{ postImageSrc }}" />
       </div>
+      <!-- Video is processing - please wait -->
+      <div class="d-flex flex-column align-items-center" *ngIf="!isComment && postVideoSrc && !readyToStream">
+        <div>Video Processing In Progress</div>
+        <simple-center-loader [height]="150"></simple-center-loader>
+      </div>
+      <!-- Video Player -->
+      <div *ngIf="!isComment && postVideoSrc && readyToStream">
+        <cloudflare-stream
+          [controls]="true"
+          [src]="postVideoSrc"
+        ></cloudflare-stream>
+      </div>
       <!-- Embedded Content -->
       <div class="feed-post__embed-container" *ngIf="constructedEmbedURL">
         <i
@@ -56,6 +68,11 @@
           [ngStyle]="{'max-width': EmbedUrlParserService.isValidTiktokEmbedURL(constructedEmbedURL) ? '325px' : '' }"
           allowfullscreen
         ></iframe>
+      </div>
+      <!-- Video Upload Progress bar -->
+      <div class="d-flex flex-column align-items-center" *ngIf="videoUploadPercentage !== null">
+        <div>{{videoUploadPercentage}}%</div>
+        <mat-progress-bar [value]="videoUploadPercentage" [mode]="'determinate'"></mat-progress-bar>
       </div>
     </div>
   </div>
