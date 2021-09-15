@@ -50,6 +50,14 @@
             {{ globalVars.nanosToBitClout(referral.Info.TotalRefereeBitCloutNanos) }} CLOUT
             ({{ globalVars.nanosToUSD(referral.Info.TotalRefereeBitCloutNanos) }})
           </div>
+
+          <div class="mt-15px">
+            <span class="font-weight-bold">Referrals remaining: </span>
+            {{ referral.Info.MaxReferrals > 0 ? 
+                 referral.Info.MaxReferrals - referral.Info.TotalReferrals
+                 : 'Unlimited'
+            }}
+          </div>
         </div>
     </div>
   </div>
