@@ -365,6 +365,10 @@ export class GlobalVarsService {
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
+    this.navigateToCurrentStepInTutorial(user);
+  }
+
+  navigateToCurrentStepInTutorial(user: User): Promise<boolean> {
     if (this.userInTutorial(user)) {
       // drop user at correct point in tutorial.
       let route = [];
@@ -394,7 +398,7 @@ export class GlobalVarsService {
           break;
         }
       }
-      this.router.navigate(route);
+      return this.router.navigate(route);
     }
   }
 
@@ -880,6 +884,7 @@ export class GlobalVarsService {
       if (queryParams.r) {
         localStorage.setItem("referralCode", queryParams.r);
         this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
+        this.getReferralUSDCents();
       }
     });
 
@@ -1074,14 +1079,14 @@ export class GlobalVarsService {
     Swal.fire({
       target: this.getTargetComponentSelector(),
       icon: "warning",
-      title: "Skip Tutorial?",
+      title: "Exit Tutorial?",
       html: "Are you sure?",
       showConfirmButton: true,
       customClass: {
         confirmButton: "btn btn-light",
       },
       reverseButtons: true,
-      confirmButtonText: "Skip",
+      confirmButtonText: "Yes",
     }).then((res) => {
       if (res.isConfirmed) {
         this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(

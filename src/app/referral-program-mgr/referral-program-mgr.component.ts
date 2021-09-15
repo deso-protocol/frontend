@@ -107,6 +107,9 @@ export class ReferralProgramMgrComponent implements OnInit {
               },
             ]);
             this._setExistingLinkStatusArrays();
+          } else {
+            // If no links are returned, empty out the array.
+            this.existingLinks = []
           }
         },
         (err) => {
