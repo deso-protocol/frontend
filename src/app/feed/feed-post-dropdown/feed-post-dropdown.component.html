@@ -6,99 +6,81 @@
   <a class="js-feed-post__dropdown-toggle link--unstyled text-grey9" role="button" dropdownToggle>
     <i class="fas fa-ellipsis-h"></i>
   </a>
-  <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu" *dropdownMenu>
+  <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu fs-15px fc-muted" style="width: 164px" *dropdownMenu>
     <div>
       <a
-        class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="copyPostLinkToClipboard($event)"
       >
-        <i-feather name="link-2"></i-feather>
         Link to Post
       </a>
       <a
         *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT && !post.ParentStakeID"
-        class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="openMintNftPage($event)"
       >
-        <i class="fas fa-stamp"></i>
-        Mint NFT
+        Create NFT
       </a>
       <a
         *ngIf="showCreateNFTAuction()"
-        class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="openCreateNFTAuctionModal($event)"
       >
         Put On Sale
       </a>
       <a
         *ngIf="post.IsNFT && globalVars.showAdminTools()"
-        class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="dropNFT()"
       >
-        <i class="fas fa-tint"></i>
         Add NFT to drop
       </a>
       <a
-        *ngIf="post.InMempool"
-        class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-        style="cursor: default"
-      >
-        <i class="fas fa-spinner"></i>
-        Status: Mining...
-      </a>
-      <a
-        class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="reportPost()"
       >
-        <i-feather name="flag"></i-feather>
         Report Content
       </a>
       <a
         *ngIf="showHidePostDropdownItem()"
-        class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="hidePost()"
       >
-        <i class="fas fa-trash"></i>
         Hide
       </a>
       <a
         *ngIf="showBlockUserDropdownItem()"
-        class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="blockUser()"
       >
-        <i-feather name="user-x"></i-feather>
         Block User
       </a>
       <a
         *ngIf="showAddToGlobalFeedDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success fs-12px"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="_addPostToGlobalFeed($event)"
       >
-        <i-feather name="folder-plus"></i-feather>
         Add To Feed
       </a>
       <a
         *ngIf="showRemoveFromGlobalFeedDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger fs-12px"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="_addPostToGlobalFeed($event)"
       >
-        <i-feather name="folder-minus"></i-feather>
         Remove From Feed
       </a>
       <a
         *ngIf="showPinPostToGlobalFeedDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success fs-12px"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="_pinPostToGlobalFeed($event)"
       >
-        <i class="fas fa-thumbtack"></i>
         Pin To Feed
       </a>
       <a
         *ngIf="showUnpinPostFromGlobalFeedDropdownItem()"
-        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-danger fs-12px"
+        class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
         (click)="_pinPostToGlobalFeed($event)"
       >
-        <i class="fas fa-undo"></i>
         Unpin From Feed
       </a>
     </div>

@@ -23,4 +23,10 @@ export class RightBarCreatorsLeaderboardComponent implements OnInit {
   ngOnInit() {
     this.globalVars.updateLeaderboard();
   }
+  // [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Profile.Username]"
+  navigateToUser(username: string) {
+    this._router.navigate(
+        ["/" + this.globalVars.RouteNames.USER_PREFIX, username],
+    )
+  }
 }

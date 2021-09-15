@@ -6,16 +6,12 @@
 
   <!-- Buttons -->
   <div class="row no-gutters pt-3">
-    <div class="col-3 mb-0" style="min-width: 100px">
-      <div class="pr-3">
-        <button class="w-100 btn btn-outline-primary fs-18px" (click)="this._buyMoreClicked()">Back</button>
-      </div>
-    </div>
-
-    <div class="col">
+    <div class="d-flex justify-content-end w-100">
+      <button class="plain-button mr-10px" (click)="this._buyMoreClicked()">Back</button>
       <button
-        class="w-100 btn btn-primary fs-18px"
+        class="primary-button"
         [routerLink]="'/' + this.appData.RouteNames.WALLET"
+        (click)="viewWalletClicked.emit()"
         queryParamsHandling="merge"
       >
         View Wallet

@@ -1,5 +1,8 @@
 <div class="message-recipient-modal__container">
-  <div class="message-recipient-modal__header d-flex justify-content-between align-items-center">
+  <div
+    class="message-recipient-modal__header d-flex justify-content-between align-items-center"
+    [ngStyle]="{ 'border-radius': searchHasResults ? '10px 10px 0px 0px' : '10px' }"
+  >
     <div><span>Select Creator</span></div>
     <div>
       <!-- Search -->
@@ -8,6 +11,7 @@
         [isSearchForUsersToMessage]="true"
         [startingSearchText]=""
         (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+        (searchUpdated)="_handleSearchUpdated($event)"
         class="pb-15px border-bottom border-color-grey"
       ></search-bar>
     </div>

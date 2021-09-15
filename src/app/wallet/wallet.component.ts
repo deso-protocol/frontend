@@ -151,7 +151,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   }
 
   _copyPublicKey() {
-    this.globalVars._copyText(this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check);
+    this.globalVars._copyText(this.globalVars.loggedInUser.PublicKeyBase58Check);
     this.publicKeyIsCopied = true;
     setInterval(() => {
       this.publicKeyIsCopied = false;

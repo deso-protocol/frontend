@@ -1,15 +1,12 @@
 <div class="d-flex flex-column">
   <div *ngIf="!isMobile">
     <!-- Create Post -->
-    <div class="desktop-create-post">
+    <div *ngIf="globalVars.loggedInUser != null" class="desktop-create-post">
       <feed-create-post
         [numberOfRowsInTextArea]="2"
         [postRefreshFunc]="prependPostToFeed.bind(this)"
       ></feed-create-post>
     </div>
-
-    <!-- Light Grey Divider -->
-<!--    <div class="w-100 border-bottom border-color-grey light-grey-divider" style="min-height: 10px"></div>-->
   </div>
 
   <!-- Mobile BitClout Price -->

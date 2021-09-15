@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
+import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
+import {BsModalService} from "ngx-bootstrap/modal";
 
 export class RightBarTabOption {
   name: string;
@@ -20,7 +22,12 @@ export class RightBarTabOption {
 export class RightBarCreatorsComponent implements OnInit {
   @Input() inTutorial: boolean = false;
 
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private router: Router,
+    private modalService: BsModalService
+  ) {}
 
   activeTab: string;
   selectedOptionWidth: string;
@@ -98,5 +105,10 @@ export class RightBarCreatorsComponent implements OnInit {
       3,
       true
     );
+  }
+  openBuyCloutModal() {
+    this.modalService.show(BuyBitcloutComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+    });
   }
 }

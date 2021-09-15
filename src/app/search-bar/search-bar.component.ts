@@ -17,7 +17,11 @@ export class SearchBarComponent implements OnInit {
   @Input() showCloutavista: boolean = true;
   @Input() isSearchForUsersToSendClout: boolean;
   @Input() startingSearchText: string;
+  // If the results appear right under the bar.
+  // If true, make the bottom border radii for the search bar 0 to connect with the results
+  @Input() resultsUnderBar: boolean = false;
   @Output() creatorToMessage = new EventEmitter<any>();
+  @Output() searchUpdated = new EventEmitter<any>();
   searchText: string;
   creators: ProfileEntryResponse[] = [];
   loading: boolean;
@@ -65,6 +69,7 @@ export class SearchBarComponent implements OnInit {
               return;
             }
             this.creators = [res.Profile];
+            this.searchUpdated.emit(this.creators?.length > 0);
             if (this.startingSearchText) {
               // If starting search text is set, we handle the selection of the creator.
               this._handleCreatorSelect(res.Profile);
@@ -74,6 +79,7 @@ export class SearchBarComponent implements OnInit {
         (err) => {
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
             this.loading = false;
+            this.searchUpdated.emit(this.loading);
             // a 404 occurs for anonymous public keys.
             if (err.status === 404 && this.globalVars.isMaybePublicKey(requestedSearchText)) {
               const anonProfile = { PublicKeyBase58Check: requestedSearchText, Username: "", Description: "" };
@@ -110,6 +116,7 @@ export class SearchBarComponent implements OnInit {
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
             this.loading = false;
             this.creators = response.ProfilesFound;
+            this.searchUpdated.emit(this.creators?.length > 0);
             // If starting search text is set, we handle the selection of the creator.
             if (this.startingSearchText && response.ProfilesFound.length) {
               this._handleCreatorSelect(response.ProfilesFound[0]);
@@ -121,6 +128,7 @@ export class SearchBarComponent implements OnInit {
           // the request for the current search text
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
             this.loading = false;
+            this.searchUpdated.emit(this.loading);
           }
           console.error(err);
           this.globalVars._alertError("Error loading profiles: " + this.backendApi.stringifyError(err));
@@ -202,11 +210,12 @@ export class SearchBarComponent implements OnInit {
       // show the loader now before calling the debounced search
       // to improve the user experience
       this.loading = true;
+      this.searchUpdated.emit(this.loading);
       // Then we filter the creator list based on the search text.
       this.debouncedSearchFunction();
     }
   }
-  
+
   _handleMouseOut(creator: string, index: number) {
       if (this.creatorSelected === creator) {
         this.creatorSelected = "";

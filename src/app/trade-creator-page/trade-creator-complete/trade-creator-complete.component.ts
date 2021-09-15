@@ -12,6 +12,7 @@ import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-t
 export class TradeCreatorCompleteComponent implements OnInit {
   @Input() creatorCoinTrade: CreatorCoinTrade;
   @Output() tradeAgainButtonClicked = new EventEmitter();
+  @Output() viewWalletClicked = new EventEmitter();
 
   router: Router;
   appData: GlobalVarsService;

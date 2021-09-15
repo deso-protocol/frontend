@@ -1,21 +1,5 @@
 <app-page>
-  <!--Header-->
-  <div
-    class="d-flex align-items-center justify-content-between w-100 px-15px fs-18px fc-default border-bottom border-color-grey"
-    style="min-height: 80px"
-  >
-    <div class="d-flex align-items-center">
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-
-      <span class="font-weight-bold">Sign up&nbsp;</span>
-      <div *ngIf="stepNum == 1">
-        &middot;
-        <a class="font-weight-bold" (click)="globalVars.launchLoginFlow()">Log in</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="w-100 pl-15px pr-15px">
+  <div class="nft-modal-container w-100 pl-15px pr-15px">
     <!-- Step 3 -->
     <div *ngIf="stepNum == 3">
       <!-- Get starter Bitclout -->
@@ -36,9 +20,9 @@
         </div>
       </div>
 
-      <div class="pt-15px fs-15px fc-muted">STEP 4 of 4</div>
-      <div class="fs-24px font-weight-bold pt-15px">Stay in the loop</div>
-      <div class="fs-18px pt-15px">Get notified when someone buys your coin.</div>
+      <div class="mint-nft__title mt-20px">Stay in the loop</div>
+      <div class="mint-nft__sub-title">STEP 4 of 4</div>
+      <div class="mint-nft__text mt-16px">Get notified when someone buys your coin.</div>
       <div class="fs-15px pt-30px">E-mail</div>
       <div class="form-group pt-10px">
         <input
@@ -46,18 +30,21 @@
           class="form-control fs-15px"
           placeholder="Enter an email address."
           [(ngModel)]="emailAddress"
+          style="border-radius: 16px"
         />
         <div class="fc-red fs-15px mt-10px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
       </div>
-      <div class="d-flex justify-content-end">
-        <button (click)="notificationsStepSkipped()" class="btn btn-outline-primary font-weight-bold fs-15px">Skip</button>
+      <div class="d-flex justify-content-end mb-20px">
+        <button (click)="notificationsStepSkipped()" class="plain-button" style="width: 80px">Skip</button>
         <button
           *ngIf="!storingEmailAndPhone"
           (click)="notificationsStepNext()"
-          class="btn btn-primary font-weight-bold fs-15px ml-10px"
+          class="primary-button ml-10px"
           [ngClass]="{
             'btn-loading': storingEmailAndPhone
-          }">
+          }"
+          style="width: 80px"
+        >
           Next
         </button>
       </div>
@@ -65,8 +52,7 @@
 
     <!-- Finished -->
     <div *ngIf="stepNum == 5">
-      <div class="fs-24px font-weight-bold pt-15px">
-        <i class=""></i>
+      <div class="mint-nft__title mt-20px">
         Buy $CLOUT
       </div>
       <div class="fs-18px pt-15px">
@@ -82,9 +68,9 @@
         You can use $CLOUT to trade creator coins, give Diamonds, buy NFTs, and much more.
       </div>
 
-      <div class="d-flex justify-content-end mt-15px pt-10px">
-        <button (click)="buyBitCloutSkipped()" class="btn btn-outline-primary font-weight-bold fs-15px">Skip</button>
-        <button (click)="buyBitCloutClicked()" class="btn btn-primary font-weight-bold fs-15px ml-10px">
+      <div class="d-flex justify-content-end mt-15px pt-10px mb-20px">
+        <button (click)="buyBitCloutSkipped()" class="plain-button" style="width: 80px">Skip</button>
+        <button (click)="buyBitCloutClicked()" class="primary-button ml-10px" style="width: 120px">
           Buy $CLOUT
         </button>
       </div>

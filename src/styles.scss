@@ -1259,8 +1259,8 @@ top-bar-mobile-header {
 }
 
 .search-bar__results-dropdown {
-  margin-top: 5px;
-  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+  margin-top: 10px;
+  box-shadow: rgba(101, 119, 134, 0.2) 0px 10px 15px, rgba(101, 119, 134, 0.15) 0px 10px 3px 1px;
   border-radius: 0px 0px 3px 3px;
   cursor: pointer;
   background: var(--background);
@@ -1989,7 +1989,6 @@ feed-post-dropdown {
   border-radius: 10px;
   padding: 16px;
   border: 1px solid var(--border);
-  margin-top: 4px;
 }
 
 right-bar-creators {
@@ -2024,6 +2023,7 @@ right-bar-creators {
   font-size: 15px;
   border: 1px solid var(--border);
   border-radius: 10px;
+  margin-bottom: 20px;
   .clout-metrics {
     margin: 16px;
   }
@@ -2294,6 +2294,7 @@ modal-container {
 update-profile {
   .update-profile__holder {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
   }
   .update-profile__avatar-title {
     display: none;
@@ -2732,7 +2733,6 @@ creator-profile-nfts {
 .message-recipient-modal__header {
   height: 80px;
   background: var(--tilebg);
-  border-radius: 10px 10px 0px 0px;
   padding: 16px;
   search-bar {
     .border-bottom {
@@ -2749,6 +2749,7 @@ creator-profile-nfts {
       position: absolute;
       top: 80px;
       left: 0px;
+      margin-top: 0px;
       background: var(--background);
     }
   }

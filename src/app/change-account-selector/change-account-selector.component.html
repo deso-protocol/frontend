@@ -1,4 +1,10 @@
-<div *ngIf="!globalVars.loggedInUser" class="fs-15px fc-blue font-weight-bold cursor-pointer pl-20px" (click)="globalVars.launchLoginFlow()"> Log In </div>
+<div
+  *ngIf="!globalVars.loggedInUser"
+  class="fs-15px fc-blue font-weight-bold cursor-pointer pl-20px d-flex align-items-center h-100"
+  (click)="globalVars.launchLoginFlow()"
+>
+  <span>Log In</span>
+</div>
 <div class="btn-group" dropdown #dropdown="bs-dropdown" style="width: 100%" *ngIf="globalVars.loggedInUser">
   <div
     class="fs-14px fc-default px-5px cursor-pointer change-account-selector br-4px change-account-selector__hover"

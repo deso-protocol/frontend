@@ -11,7 +11,7 @@
         ? globalVars.topCreatorsAllTimeLeaderboard
         : []
     "
-    [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Profile.Username]"
+    (click)="navigateToUser(profileEntryResponse.Profile.Username)"
     queryParamsHandling="merge"
     class="link--unstyled d-flex align-items-center"
   >
