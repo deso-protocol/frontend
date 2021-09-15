@@ -129,7 +129,7 @@
   <tab-selector [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
 
   <div
-    class="row no-gutters d-flex align-items-center border-bottom border-color-grey pl-15px py-15px"
+    class="row no-gutters fs-15px d-flex align-items-center border-bottom border-color-grey pl-15px py-15px"
   >
     <div class="col mb-0 cursor-pointer fc-muted text-link_hover" (click)="sortWallet('username')">
       <i class="fas fs-15px" [ngClass]="{'fa-arrows-alt-v':sortedUsernameFromHighToLow === 0, 'fa-sort-alpha-up-alt':sortedUsernameFromHighToLow === 1, 'fa-sort-alpha-down':sortedUsernameFromHighToLow === -1}"></i>
@@ -165,7 +165,7 @@
           creator &&
           (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
         "
-      class="row no-gutters fc-default mt-5px mb-5px ml-10px mr-10px p-5px"
+      class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px"
       [ngStyle]="{
         'border': isHighlightedCreator(creator) ? '1px solid var(--cblue)' : '',
         'border-radius': isHighlightedCreator(creator) ? '12px' : ''
@@ -251,6 +251,16 @@
       </div>
     </div>
   </div>
+
+  <div *ngIf="inTutorial" class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px">
+    <div class="col"></div>
+    <div class="col-lg-1 col-2 d-flex flex-column align-items-center justify-content-center">
+      <i class="fas fa-hand-point-up fc-red fa-lg mb-5px"></i>
+      <div class="fc-red fs-12px">Click</div>
+      <div class="fc-red fs-12px">here!</div>
+    </div>
+  </div>
+
   <div
     *ngIf="(showTransferredCoins ? usersYouReceived : usersYouPurchased).length == 0"
     class="d-flex justify-content-center fs-15px fc-muted w-100 mt-30px px-15px"
