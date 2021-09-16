@@ -491,7 +491,7 @@ export class BuyBitcloutComponent implements OnInit {
 
     // Add extra tabs
     if (this.globalVars.showBuyWithUSD) {
-      this.buyTabs.push(BuyBitcloutComponent.BUY_WITH_USD);
+      this.buyTabs.unshift(BuyBitcloutComponent.BUY_WITH_USD);
       this.activeTab = BuyBitcloutComponent.BUY_WITH_USD;
     }
 

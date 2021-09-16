@@ -52,6 +52,7 @@ export class BackendRoutes {
   static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
   static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
   static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
+  static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
 
   // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
@@ -74,9 +75,6 @@ export class BackendRoutes {
   static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
-
-  // Verify
-  static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
 
   // ETH
   static RoutePathGetETHFees = "/api/v0/get-eth-fees";
