@@ -53,7 +53,13 @@ export class BuyBitcloutEthComponent implements OnInit {
 
   ethDepositAddress(): string {
     const pubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
-    return this.identityService.identityServiceUsers[pubKey]?.ethDepositAddress;
+    const ethAddress = this.identityService.identityServiceUsers[pubKey]?.ethDepositAddress;
+
+    if (ethAddress != null) {
+      return ethAddress;
+    } else {
+      return "Please re-login to generate an ETH address"
+    }
   }
 
   stepOneTooltip() {
