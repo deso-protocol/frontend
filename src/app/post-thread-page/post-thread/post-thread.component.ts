@@ -25,6 +25,7 @@ export class PostThreadComponent {
 
   @Input() hideHeader: boolean = false;
   @Input() hideCurrentPost: boolean = false;
+  @Output() postLoaded = new EventEmitter();
 
   constructor(
     private route: ActivatedRoute,
@@ -317,6 +318,10 @@ export class PostThreadComponent {
         }
         // Set current post
         this.currentPost = res.PostFound;
+        const postType = this.currentPost.RecloutedPostEntryResponse ? "Reclout" : "Post";
+        this.postLoaded.emit(
+          `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse.Username)} ${postType}`
+        );
         this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
       },
       (err) => {

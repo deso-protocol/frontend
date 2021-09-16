@@ -123,6 +123,7 @@ import { TrendsComponent } from "./trends-page/trends/trends.component";
 import { UploadDirective } from "./directives/upload.directive";
 import { SanitizeQRCodePipe } from "../lib/pipes/sanitize-qrcode-pipe";
 import { MintNftModalComponent } from "./mint-nft-modal/mint-nft-modal.component";
+import { MintNftPageComponent } from "./mint-nft-modal/mint-nft-page.component";
 import { CreateNftAuctionModalComponent } from "./create-nft-auction-modal/create-nft-auction-modal.component";
 import { BidPlacedModalComponent } from "./bid-placed-modal/bid-placed-modal.component";
 import { PlaceBidModalComponent } from "./place-bid-modal/place-bid-modal.component";
@@ -130,6 +131,7 @@ import { NftSoldModalComponent } from "./nft-sold-modal/nft-sold-modal.component
 import { NftModalHeaderComponent } from "./nft-modal-header/nft-modal-header.component";
 import { CloseNftAuctionModalComponent } from "./close-nft-auction-modal/close-nft-auction-modal.component";
 import { SellNftModalComponent } from "./sell-nft-modal/sell-nft-modal.component";
+import { SellNftPageComponent } from "./sell-nft-modal/sell-nft-page.component";
 import { AddUnlockableModalComponent } from "./add-unlockable-modal/add-unlockable-modal.component";
 import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { NftPostComponent } from "./nft-post-page/nft-post/nft-post.component";
@@ -275,6 +277,7 @@ export function playerFactory() {
     TrendsComponent,
     SanitizeQRCodePipe,
     MintNftModalComponent,
+    MintNftPageComponent,
     CreateNftAuctionModalComponent,
     BidPlacedModalComponent,
     PlaceBidModalComponent,
@@ -282,6 +285,7 @@ export function playerFactory() {
     NftModalHeaderComponent,
     CloseNftAuctionModalComponent,
     SellNftModalComponent,
+    SellNftPageComponent,
     AddUnlockableModalComponent,
     NftPostPageComponent,
     NftPostComponent,

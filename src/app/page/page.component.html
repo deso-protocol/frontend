@@ -11,9 +11,10 @@
     <search-bar [resultsUnderBar]="true"></search-bar>
     <change-account-selector></change-account-selector>
   </div>
-  <top-bar-mobile-header *ngIf="mobile"></top-bar-mobile-header>
+  <top-bar-mobile-header *ngIf="mobile" [simpleTopBar]="simpleTopBar" [title]="title"></top-bar-mobile-header>
   <div class="d-flex" id="header-content-spacer" [ngStyle]="{ 'margin-top': mobile ? '94px' : '64px' }">
-    <left-bar *ngIf="!mobile" [inTutorial]="inTutorial"></left-bar>
+    <left-bar *ngIf="!mobile && !onlyContent" [inTutorial]="inTutorial"></left-bar>
+    <div *ngIf="onlyContent" class="global__nav__width"></div>
 
     <div class="global__content__flex">
       <div [class]="mobile || hideSidebar ? 'global__content__width' : 'global__center__width'">
@@ -21,7 +22,7 @@
           <ng-content></ng-content>
         </div>
       </div>
-      <div class="global__sidebar__width" *ngIf="!mobile && !hideSidebar">
+      <div class="global__sidebar__width" *ngIf="!mobile && !hideSidebar && !onlyContent">
         <right-bar-creators [inTutorial]="inTutorial" class="global__sidebar__fixed"></right-bar-creators>
       </div>
 

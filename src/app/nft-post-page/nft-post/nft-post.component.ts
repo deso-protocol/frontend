@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import {ChangeDetectorRef, Component, EventEmitter, Output, ViewChild} from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import {
@@ -26,6 +26,7 @@ import { ToastrService } from "ngx-toastr";
 })
 export class NftPostComponent {
   @ViewChild(FeedPostComponent) feedPost: FeedPostComponent;
+  @Output() postLoaded = new EventEmitter();
 
   nftPost: PostEntryResponse;
   nftPostHashHex: string;
@@ -134,6 +135,9 @@ export class NftPostComponent {
         }
         // Set current post
         this.nftPost = res.PostFound;
+        this.postLoaded.emit(
+          `${this.globalVars.addOwnershipApostrophe(this.nftPost.ProfileEntryResponse.Username)} NFT`
+        );
         this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on BitClout");
         this.refreshBidData();
       },

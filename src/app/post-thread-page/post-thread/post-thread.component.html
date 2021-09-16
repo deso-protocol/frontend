@@ -4,7 +4,7 @@
   <div class="post-thread__container">
     <div
       class="d-flex align-items-center justify-content-between post-thread__header"
-      *ngIf="!hideHeader"
+      *ngIf="!hideHeader && !globalVars.isMobile()"
     >
       <div class="d-flex align-items-center">
         <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>

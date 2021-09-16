@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
   selector: "nft-post-page",
@@ -7,6 +8,6 @@ import { Component, OnInit } from "@angular/core";
 })
 export class NftPostPageComponent {
   isLeftBarMobileOpen: boolean = false;
-
-  constructor() {}
+  title: string = null;
+  constructor(public globalVars: GlobalVarsService) {}
 }

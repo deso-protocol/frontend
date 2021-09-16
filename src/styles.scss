@@ -28,7 +28,7 @@ $feed-border-radius: 12px;
 .main {
   background: var(--background);
   color: var(--text);
-  font-family: Gilroy;
+  font-family: Gilroy, Arial, sans-serif;
 }
 
 html {
@@ -266,8 +266,8 @@ $green-font-color: #19B028;
 .lh-14px { line-height: 14px; }
 .lh-13px { line-height: 13px; }
 .lh-12px { line-height: 12px; }
-.roboto-regular { font-family: 'Roboto' }
-.roboto-mono { font-family: 'Roboto Mono' }
+.roboto-regular { font-family: Gilroy, Arial, sans-serif }
+.roboto-mono { font-family: Gilroy, Arial, sans-serif }
 
 // Custom border classes.
 .border-color-grey { border-color: var(--border) !important; }
@@ -544,7 +544,97 @@ $green-font-color: #19B028;
   .global__mobile {
       display: flex;
   }
+  feed {
+    tab-selector {
+      .tab-selector__container {
+        position: fixed;
+        background: var(--tilebg);
+        z-index: 1;
+      }
+    }
+  }
+  .mobile-scroll {
+    padding: 0px 8px;
+  }
+  browse-page {
+    top-bar-mobile-header {
+      .global__top-bar__height {
+        border-bottom: none !important;
+      }
+    }
+  }
+  top-bar-mobile-header {
+    search-bar {
+      .global__top-bar__height {
+        margin-top: 0px !important;
+      }
+    }
+  }
+  post-thread-page {
+    #header-content-spacer {
+      margin-top: 84px !important;
+    }
+    .feed-post__container {
+      border-radius: 0px 0px 10px 10px;
+    }
+  }
+  mint-nft-page {
+    #header-content-spacer {
+      margin-top: 84px !important;
+    }
+    .nft-modal-container {
+      border-radius: 0px;
+    }
+    .global__content__inner {
+      background: var(--tilebg);
+    }
+    .mint-nft__create-btn {
+      width: calc(100vw - 32px);
+      margin: 16px 16px 80px 16px;
+    }
+  }
+  nft-post-page {
+    #header-content-spacer {
+      margin-top: 84px !important;
+    }
+    .feed-post__container {
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+    }
+    .nft-auction-table-container {
+      height: 356px;
+      overflow-y: scroll;
+    }
+    .nft-post-auction-action {
+      width: calc(50vw - 28px) !important;
+    }
+  }
+  sell-nft-page {
+    #header-content-spacer {
+      margin-top: 84px !important;
+    }
+    .nft-modal-container {
+      border-radius: 0px;
+    }
+    .global__content__inner {
+      background: var(--tilebg);
+    }
+    .mint-nft__create-btn {
+      width: calc(100vw - 32px);
+      margin: 16px 16px 80px 16px;
+    }
+  }
+  .modal-dialog-centered {
+    margin: 1.75rem auto;
+  }
+  .modal-header {
+    justify-content: center !important;
+    .modal-header-x {
+      right: auto !important;
+    }
+  }
 }
+
 
 .circle-div {
   height: 80px;
@@ -588,6 +678,7 @@ $green-font-color: #19B028;
 }
 
 .global__mobile-scrollable-section {
+  padding-left: 10px;
   height: -webkit-fill-available;
   flex-grow: 1;
   overflow-y: scroll;
@@ -632,7 +723,7 @@ input.bs-timepicker-field {
 }
 
 .loading-container {
-  font-family: Gilroy;
+  font-family: Gilroy, Arial, sans-serif;
   font-size: 17px;
   font-weight: 500;
 }
@@ -988,6 +1079,14 @@ left-bar-mobile {
   .global__nav__inner {
     padding: 0px;
   }
+  jumio-status {
+    .jumio-status {
+      background: var(--tilebg);
+      padding: 7px 8px 5px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+  }
 }
 
 .right-bar-select-box {
@@ -1214,15 +1313,6 @@ feed-create-post {
 
 .text-link_hover:hover{
   color:var(--hover);
-}
-top-bar-mobile-header {
-  search-bar {
-    @media (max-width: 992px) {
-      .global__top-bar__height {
-        margin-top: 0px !important;
-      }
-    }
-  }
 }
 
 .search-bar {
@@ -1755,7 +1845,7 @@ bs-dropdown-container {
   padding: 2px 8px;
   border-radius: 10px;
   background-color: var(--tilesecbg);
-  font-family: Gilroy;
+  font-family: Gilroy, Arial, sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
@@ -1796,12 +1886,6 @@ bs-dropdown-container {
   width: 56px; // TODO: figure out why chrome doesn't render this as 50px
   height: 56px;
   margin-right: 15px;
-}
-
-.feed-post__second-header-ln {
-  @media (max-width: 992px) {
-    //margin-top: 5px;
-  }
 }
 
 .feed-post__follow-btn {
@@ -2952,8 +3036,8 @@ trade-creator-form {
   }
 }
 
-app-notifications-page {
-  @media (max-width: 992px) {
+@media (max-width: 992px) {
+  app-notifications-page {
     .global__content__flex {
       margin-top: 0px;
     }
@@ -2962,6 +3046,7 @@ app-notifications-page {
     }
   }
 }
+
 
 app-notifications-list {
   .global__top-bar {
@@ -3687,7 +3772,7 @@ input {
 }
 
 .modal-content {
-  font-family: Gilroy;
+  font-family: Gilroy, Arial, sans-serif;
   background: none;
   border: none;
   position: relative;
@@ -4065,7 +4150,7 @@ sell-nft-modal {
   color: var(--tilebg);
   font-size: 17px;
   border-radius: 4px;
-  font-family: Gilroy;
+  font-family: Gilroy, Arial, sans-serif;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   right: 50vw;
   .toast-link {
@@ -4176,7 +4261,7 @@ sell-nft-modal {
 }
 
 .cloutavista-button {
-  font-family: Gilroy;
+  font-family: Gilroy, Arial, sans-serif;
   position: sticky;
   bottom: 0px;
   a {

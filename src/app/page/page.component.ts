@@ -7,9 +7,12 @@ import { GlobalVarsService } from "../global-vars.service";
   styleUrls: ["./page.component.scss"],
 })
 export class PageComponent implements OnInit {
-  @Input() hideSidebar: string;
+  @Input() hideSidebar: boolean = false;
+  @Input() simpleTopBar: boolean = false;
+  @Input() title: string = null;
   @Input() showPostButton = false;
   @Input() inTutorial: boolean = false;
+  @Input() onlyContent: boolean = false;
   mobile = false;
 
   @HostListener("window:resize") onResize() {

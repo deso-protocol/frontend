@@ -7,6 +7,7 @@ import { Component, OnInit } from "@angular/core";
 })
 export class PostThreadPageComponent {
   isLeftBarMobileOpen: boolean = false;
+  title: string = null;
 
   constructor() {}
 }

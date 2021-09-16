@@ -1,212 +1,194 @@
-<div *ngIf="!globalVars.isMobile()" class="global__desktop">
-  <div class="desktop-top-bar">
-    <div class="bitclout-logo">
-      <i-feather name="bitclout"></i-feather>
-      <span>bitclout</span>
+<div app-theme class="nft-modal-container">
+  <div *ngIf="!globalVars.isMobile()" class="mint-nft__section" style="padding: 16px 12px">
+    <div (click)="location.back()" class="cursor-pointer">
+      <i-feather
+        name="arrow-left"
+        class="feather-medium mr-12px position-relative"
+        style="top: -2px"
+      ></i-feather>
+      <span class="font-weight-bold fs-17px">Back to feed</span>
     </div>
-    <search-bar></search-bar>
-    <change-account-selector></change-account-selector>
   </div>
-  <div class="d-flex justify-content-center" style="margin-top: 64px">
-    <div class="global__content__flex" style="flex-grow: inherit">
-      <div class="global__center__width">
-        <div class="global__center__inner">
-          <div app-theme class="nft-modal-container">
-            <div class="mint-nft__section" style="padding: 16px 12px">
-              <div (click)="location.back()" class="cursor-pointer">
-                <i-feather
-                  name="arrow-left"
-                  class="feather-medium mr-12px position-relative"
-                  style="top: -2px"
-                ></i-feather>
-                <span class="font-weight-bold fs-17px">Back to feed</span>
-              </div>
-            </div>
-            <div class="mint-nft__section">
-              <div class="mint-nft__title">Create an NFT</div>
-              <div class="mint-nft__text">
-                Non-Fungible Tokens (NFTs) are digital assets that can be bought and sold, typically representing a
-                piece of digital content
-              </div>
-            </div>
-            <!-- Type of NFT -->
-            <div class="mint-nft__section">
-              <div class="mint-nft__title">Type of NFT</div>
-              <div class="mint-nft__text">
-                An NFT can have multiple editions, each with its own unique serial number.
-              </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <div
-                  class="mint-nft__type-selector cursor-pointer d-flex justify-content-center align-items-center"
-                  (click)="copiesRadioValue = IS_SINGLE_COPY"
-                  [ngClass]="{ 'nft-type-selected': copiesRadioValue === IS_SINGLE_COPY }"
-                >
-                  <div>
-                    <i-feather name="single-nft" class="feather-xxlarge"></i-feather>
-                    <div class="mint-nft__type-selector-title">Single</div>
-                  </div>
-                </div>
-                <div
-                  class="mint-nft__type-selector cursor-pointer d-flex justify-content-center align-items-center"
-                  (click)="copiesRadioValue = IS_MULTIPLE_COPIES"
-                  [ngClass]="{ 'nft-type-selected': copiesRadioValue === IS_MULTIPLE_COPIES }"
-                >
-                  <div>
-                    <i-feather name="multiple-nfts" class="feather-xxlarge"></i-feather>
-                    <div class="mint-nft__type-selector-title">Multiple</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="mint-nft__section">
-              <div class="mint-nft__title">{{ priceSectionTitle() }}</div>
-              <div class="d-flex justify-content-between">
-                <div *ngIf="copiesRadioValue === IS_MULTIPLE_COPIES" class="w-50" style="margin-right: 8px">
-                  <div class="mint-nft__sub-title">Number of copies</div>
-                  <input
-                    [(ngModel)]="numCopies"
-                    class="mint-nft__input"
-                    type="number"
-                    min="1"
-                    [max]="maxCopiesPerNFT"
-                    placeholder="1"
-                  />
-                </div>
-                <div [ngClass]="{ 'mint-nft__price-half': copiesRadioValue === IS_MULTIPLE_COPIES, 'mint-nft__price-full': copiesRadioValue === IS_SINGLE_COPY }">
-                  <div class="mint-nft__sub-title">Minimum bid</div>
-                  <div class="d-flex">
-                    <div
-                      class="d-flex"
-                      dropdown
-                      (click)="$event.stopPropagation()"
-                      container="body"
-                      style="align-items: center"
-                    >
-                      <button class="mint-nft__dropdown-btn" role="button" dropdownToggle>
-                        {{ minBidCurrency }}
-                        <i-feather name="chevron-down" class="feather-small"></i-feather>
-                      </button>
-                      <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu" *dropdownMenu>
-                        <div>
-                          <a
-                            class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-                            (click)="minBidCurrency='USD'"
-                          >
-                            USD
-                          </a>
-                          <a
-                            class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-                            (click)="minBidCurrency='CLOUT'"
-                          >
-                            CLOUT
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="position-relative w-100">
-                      <input
-                        [(ngModel)]="minBidInput"
-                        (ngModelChange)="updateMinBidAmount($event)"
-                        style="border-radius: 0px 16px 16px 0px"
-                        aria-describedby="usd-label"
-                        class="mint-nft__input"
-                        type="number"
-                        min="0"
-                        placeholder="0"
-                      />
-                      <span *ngIf="minBidCurrency === 'CLOUT'" class="mint-nft__floating-span">{{ minBidAmountUSDFormatted() }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="mint-nft__sub-text mt-16px">
-                Network Fee: {{ globalVars.nanosToBitClout(createNFTFeeNanos * numCopies, 5) }} CLOUT (~{{
-                  globalVars.nanosToUSD(createNFTFeeNanos * numCopies, 2)
-                }})
-              </div>
-              <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
-                <div class="custom-control custom-switch custom-switch-lg">
-                  <input [(ngModel)]="putOnSale" type="checkbox" class="custom-control-input" id="putOnSaleCheckbox" />
-                  <label class="custom-control-label mt-2px" for="putOnSaleCheckbox"></label>
-                </div>
-                <div>Put it on sale</div>
-              </div>
-
-            </div>
-            <div class="mint-nft__section">
-              <div class="mint-nft__title">Royalties</div>
-              <div class="mint-nft__text">
-                On every sale, including resale, a customizable percentage goes to you, the creator, and to your coin-holders.
-              </div>
-              <div class="d-flex justify-content-between">
-                <div style="width: calc(50% - 8px)">
-                  <div class="mint-nft__sub-title">
-                    % Creator Royalty
-                  </div>
-                  <div class="position-relative">
-                    <input
-                      [(ngModel)]="creatorRoyaltyPercent"
-                      class="mint-nft__input"
-                      type="number"
-                      min="1"
-                      [max]="maxCopiesPerNFT"
-                      placeholder="1"
-                    />
-                    <span class="mint-nft__floating-span">
-                      <i-feather name="percent" class="feather-small"></i-feather>
-                    </span>
-                  </div>
-                </div>
-                <div style="width: calc(50% - 8px)">
-                  <div class="mint-nft__sub-title">
-                    % Coin-Holder Royalty
-                  </div>
-                  <div class="position-relative">
-                    <input
-                      [(ngModel)]="coinRoyaltyPercent"
-                      class="mint-nft__input"
-                      type="number"
-                      min="1"
-                      [max]="maxCopiesPerNFT"
-                      placeholder="1"
-                    />
-                    <span class="mint-nft__floating-span">
-                      <i-feather name="percent" class="feather-small"></i-feather>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="mint-nft__section" style="border-bottom: none">
-              <div class="mint-nft__title">Unlock once purchased</div>
-              <div class="mint-nft__text">
-                Include exclusive text, like a URL, encrypted for NFT purchasers.
-              </div>
-              <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
-                <div class="custom-control custom-switch custom-switch-lg">
-                  <input
-                    [(ngModel)]="includeUnlockable"
-                    type="checkbox"
-                    class="custom-control-input"
-                    id="unlockableContentCheckbox"
-                  />
-                  <label class="custom-control-label mt-2px" for="unlockableContentCheckbox"></label>
-                </div>
-                <div>Enable Unlockable Content</div>
-              </div>
-            </div>
-          </div>
-          <button
-            [disabled]="
-              hasUnreasonableRoyalties() || hasUnreasonableNumCopies() || hasUnreasonableMinBidAmount() || minting
-            "
-            (click)="mintNft()"
-            class="mint-nft__create-btn"
-          >
-            {{ minting ? "Creating NFT" : "Create NFT" }}
-          </button>
+  <div class="mint-nft__section">
+    <div class="mint-nft__title">Create an NFT</div>
+    <div class="mint-nft__text">
+      Non-Fungible Tokens (NFTs) are digital assets that can be bought and sold, typically representing a
+      piece of digital content
+    </div>
+  </div>
+  <!-- Type of NFT -->
+  <div class="mint-nft__section">
+    <div class="mint-nft__title">Type of NFT</div>
+    <div class="mint-nft__text">
+      An NFT can have multiple editions, each with its own unique serial number.
+    </div>
+    <div class="d-flex justify-content-between align-items-center">
+      <div
+        class="mint-nft__type-selector cursor-pointer d-flex justify-content-center align-items-center"
+        (click)="copiesRadioValue = IS_SINGLE_COPY"
+        [ngClass]="{ 'nft-type-selected': copiesRadioValue === IS_SINGLE_COPY }"
+      >
+        <div>
+          <i-feather name="single-nft" class="feather-xxlarge"></i-feather>
+          <div class="mint-nft__type-selector-title">Single</div>
+        </div>
+      </div>
+      <div
+        class="mint-nft__type-selector cursor-pointer d-flex justify-content-center align-items-center"
+        (click)="copiesRadioValue = IS_MULTIPLE_COPIES"
+        [ngClass]="{ 'nft-type-selected': copiesRadioValue === IS_MULTIPLE_COPIES }"
+      >
+        <div>
+          <i-feather name="multiple-nfts" class="feather-xxlarge"></i-feather>
+          <div class="mint-nft__type-selector-title">Multiple</div>
         </div>
       </div>
     </div>
   </div>
+  <div class="mint-nft__section">
+    <div class="mint-nft__title">{{ priceSectionTitle() }}</div>
+    <div class="d-flex justify-content-between">
+      <div *ngIf="copiesRadioValue === IS_MULTIPLE_COPIES" class="w-50" style="margin-right: 8px">
+        <div class="mint-nft__sub-title">Number of copies</div>
+        <input
+          [(ngModel)]="numCopies"
+          class="mint-nft__input"
+          type="number"
+          min="1"
+          [max]="maxCopiesPerNFT"
+          placeholder="1"
+        />
+      </div>
+      <div [ngClass]="{ 'mint-nft__price-half': copiesRadioValue === IS_MULTIPLE_COPIES, 'mint-nft__price-full': copiesRadioValue === IS_SINGLE_COPY }">
+        <div class="mint-nft__sub-title">Minimum bid</div>
+        <div class="d-flex">
+          <div
+            class="d-flex"
+            dropdown
+            (click)="$event.stopPropagation()"
+            container="body"
+            style="align-items: center"
+          >
+            <button class="mint-nft__dropdown-btn" role="button" dropdownToggle>
+              {{ minBidCurrency }}
+              <i-feather name="chevron-down" class="feather-small"></i-feather>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right p-0 bc-dropdown-menu" *dropdownMenu>
+              <div>
+                <a
+                  class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                  (click)="minBidCurrency='USD'"
+                >
+                  USD
+                </a>
+                <a
+                  class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+                  (click)="minBidCurrency='CLOUT'"
+                >
+                  CLOUT
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="position-relative w-100">
+            <input
+              [(ngModel)]="minBidInput"
+              (ngModelChange)="updateMinBidAmount($event)"
+              style="border-radius: 0px 16px 16px 0px"
+              aria-describedby="usd-label"
+              class="mint-nft__input"
+              type="number"
+              min="0"
+              placeholder="0"
+            />
+            <span *ngIf="minBidCurrency === 'CLOUT'" class="mint-nft__floating-span">{{ minBidAmountUSDFormatted() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mint-nft__sub-text mt-16px">
+      Network Fee: {{ globalVars.nanosToBitClout(createNFTFeeNanos * numCopies, 5) }} CLOUT (~{{
+        globalVars.nanosToUSD(createNFTFeeNanos * numCopies, 2)
+      }})
+    </div>
+    <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
+      <div class="custom-control custom-switch custom-switch-lg">
+        <input [(ngModel)]="putOnSale" type="checkbox" class="custom-control-input" id="putOnSaleCheckbox" />
+        <label class="custom-control-label mt-2px" for="putOnSaleCheckbox"></label>
+      </div>
+      <div>Put it on sale</div>
+    </div>
+
+  </div>
+  <div class="mint-nft__section">
+    <div class="mint-nft__title">Royalties</div>
+    <div class="mint-nft__text">
+      On every sale, including resale, a customizable percentage goes to you, the creator, and to your coin-holders.
+    </div>
+    <div class="d-flex justify-content-between" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
+      <div [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }">
+        <div class="mint-nft__sub-title">
+          % Creator Royalty
+        </div>
+        <div class="position-relative">
+          <input
+            [(ngModel)]="creatorRoyaltyPercent"
+            class="mint-nft__input"
+            type="number"
+            min="1"
+            [max]="maxCopiesPerNFT"
+            placeholder="1"
+          />
+          <span class="mint-nft__floating-span">
+            <i-feather name="percent" class="feather-small"></i-feather>
+          </span>
+        </div>
+      </div>
+      <div [ngStyle]="{ width: globalVars.isMobile() ? '100%' : 'calc(50% - 8px)' }">
+        <div class="mint-nft__sub-title">
+          % Coin-Holder Royalty
+        </div>
+        <div class="position-relative">
+          <input
+            [(ngModel)]="coinRoyaltyPercent"
+            class="mint-nft__input"
+            type="number"
+            min="1"
+            [max]="maxCopiesPerNFT"
+            placeholder="1"
+          />
+          <span class="mint-nft__floating-span">
+            <i-feather name="percent" class="feather-small"></i-feather>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mint-nft__section" style="border-bottom: none">
+    <div class="mint-nft__title">Unlock once purchased</div>
+    <div class="mint-nft__text">
+      Include exclusive text, like a URL, encrypted for NFT purchasers.
+    </div>
+    <div class="d-flex justify-content-start align-items-center fs-15px mt-10px">
+      <div class="custom-control custom-switch custom-switch-lg">
+        <input
+          [(ngModel)]="includeUnlockable"
+          type="checkbox"
+          class="custom-control-input"
+          id="unlockableContentCheckbox"
+        />
+        <label class="custom-control-label mt-2px" for="unlockableContentCheckbox"></label>
+      </div>
+      <div>Enable Unlockable Content</div>
+    </div>
+  </div>
 </div>
+<button
+  [disabled]="
+    hasUnreasonableRoyalties() || hasUnreasonableNumCopies() || hasUnreasonableMinBidAmount() || minting
+  "
+  (click)="mintNft()"
+  class="mint-nft__create-btn"
+>
+  {{ minting ? "Creating NFT" : "Create NFT" }}
+</button>

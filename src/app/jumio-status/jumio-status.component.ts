@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import {Component, Input} from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 
 @Component({
@@ -7,5 +7,6 @@ import { GlobalVarsService } from "../global-vars.service";
   styleUrls: ["./jumio-status.component.scss"],
 })
 export class JumioStatusComponent {
+  @Input() message: string = "Click here to get";
   constructor(public globalVars: GlobalVarsService) {}
 }

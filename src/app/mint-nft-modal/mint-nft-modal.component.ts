@@ -40,7 +40,7 @@ export class MintNftModalComponent {
     private _globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private router: Router,
-    private location: Location,
+    public location: Location,
     private route: ActivatedRoute,
     private toastr: ToastrService
   ) {

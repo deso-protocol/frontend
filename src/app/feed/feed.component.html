@@ -32,16 +32,14 @@
       <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
     </div>
   </div>
-
-  <div
-    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"
-    class="border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
-  >
-    <jumio-status></jumio-status>
-  </div>
-
   <!-- Tab Selector -->
-  <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" [newTabs]="newTabs" (tabClick)="_handleTabClick($event)"></tab-selector>
+  <tab-selector
+    [buttonSelector]="!isMobile"
+    [tabs]="feedTabs"
+    [activeTab]="activeTab"
+    [newTabs]="newTabs"
+    (tabClick)="_handleTabClick($event)"
+  ></tab-selector>
 
   <countdown-timer *ngIf="nextNFTShowcaseTime"
     [timerText]="'The next NFT showcase drops in...'"
@@ -49,10 +47,11 @@
     [timerEnd]="nextNFTShowcaseTime"></countdown-timer>
 
   <div [id]="getPullToRefreshMarkerId()"></div>
+  <div *ngIf="isMobile" style="margin-top: 60px"></div>
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingPosts()">
-    <div *ngFor="let post of postsToShow()">
+    <div class="mobile-scroll" *ngFor="let post of postsToShow()">
       <div *ngIf="post.ProfileEntryResponse">
         <!--
             The post.parentPost stuff is a hack to make it so that a new comment shows up

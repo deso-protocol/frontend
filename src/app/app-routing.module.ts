@@ -35,8 +35,8 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
-import { MintNftModalComponent } from "./mint-nft-modal/mint-nft-modal.component";
-import { SellNftModalComponent } from "./sell-nft-modal/sell-nft-modal.component";
+import { MintNftPageComponent } from "./mint-nft-modal/mint-nft-page.component";
+import { SellNftPageComponent } from "./sell-nft-modal/sell-nft-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -97,8 +97,8 @@ const routes: Routes = [
   { path: RouteNames.SIGN_UP, component: SignUpComponent, pathMatch: "full" },
   { path: RouteNames.WALLET, component: WalletPageComponent, pathMatch: "full" },
   { path: RouteNames.UPDATE_PROFILE, component: UpdateProfilePageComponent, pathMatch: "full" },
-  { path: RouteNames.MINT_NFT + "/:postHashHex", component: MintNftModalComponent, pathMatch: "full" },
-  { path: RouteNames.SELL_NFT + "/:postHashHex", component: SellNftModalComponent, pathMatch: "full" },
+  { path: RouteNames.MINT_NFT + "/:postHashHex", component: MintNftPageComponent, pathMatch: "full" },
+  { path: RouteNames.SELL_NFT + "/:postHashHex", component: SellNftPageComponent, pathMatch: "full" },
   { path: RouteNames.NOTIFICATIONS, component: NotificationsPageComponent, pathMatch: "full" },
   { path: RouteNames.NOT_FOUND, component: NotFoundPageComponent, pathMatch: "full" },
   // CREATE_POST needs to be above the POSTS route, since both involve the prefix /posts
