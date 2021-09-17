@@ -33,7 +33,7 @@ export class BuyBitcloutEthComponent implements OnInit {
   loadingBalance = false;
 
   // Network fees in ETH (with sane default)
-  ethFeeEstimate = 0.0003;
+  ethFeeEstimate = 0.002;
 
   // ETH to exchange (not including fees)
   ethToExchange = 0;
@@ -109,59 +109,6 @@ export class BuyBitcloutEthComponent implements OnInit {
     );
   }
 
-  /*
-  _updateBitcoinFee(bitcoinToExchange: number): Promise<any> {
-    if (this.globalVars == null || this.globalVars.loggedInUser == null || this.globalVars.latestBitcoinAPIResponse == null) {
-      SwalHelper.fire({
-        target: this.globalVars.getTargetComponentSelector(),
-        icon: "error",
-        title: `Oops...`,
-        html: `Please wait for at least one balance update before hitting this button.`,
-        showConfirmButton: true,
-        showCancelButton: false,
-        focusConfirm: true,
-        customClass: {
-          confirmButton: "btn btn-light",
-          cancelButton: "btn btn-light no",
-        },
-      });
-
-      return;
-    }
-
-    // Update the total fee to account for the extra Bitcoin.
-    return this.backendApi
-      .ExchangeBitcoin(
-        this.globalVars.localNode,
-        this.globalVars.latestBitcoinAPIResponse,
-        this.ethDepositAddress(),
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        Math.floor(bitcoinToExchange * 1e8),
-        Math.floor(this.buyBitCloutFields.bitcoinTransactionFeeRateSatoshisPerKB),
-        false
-      )
-      .toPromise()
-      .then(
-        (res) => {
-          if (res == null || res.FeeSatoshis == null) {
-            this.buyBitCloutFields.bitcoinTotalTransactionFeeSatoshis = "0";
-            this.buyBitCloutFields.error = Messages.UNKOWN_PROBLEM;
-            return null;
-          }
-          this.buyBitCloutFields.error = "";
-          this.buyBitCloutFields.bitcoinTotalTransactionFeeSatoshis = res.FeeSatoshis;
-          return res;
-        },
-        (err) => {
-          console.error("Problem updating Bitcoin fee Satoshis Per KB", err);
-          this.buyBitCloutFields.bitcoinTotalTransactionFeeSatoshis = "0";
-          this.buyBitCloutFields.error = this._extractBurnError(err);
-          return null;
-        }
-      );
-  }
-  */
-
   clickBuyBitClout() {
     if (this.globalVars == null || this.globalVars.loggedInUser == null) {
       return;
@@ -205,7 +152,7 @@ export class BuyBitcloutEthComponent implements OnInit {
           this.globalVars.localNode, 
           this.globalVars.loggedInUser.PublicKeyBase58Check,
           this.ethDepositAddress(), 
-          (this.ethToExchange - this.ethFeeEstimate) * GlobalVarsService.WEI_PER_ETH,
+          Math.round(this.ethToExchange * GlobalVarsService.WEI_PER_ETH),
         ).subscribe(res => {
           // Reset all the form fields
           this.error = "";
