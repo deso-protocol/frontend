@@ -12,6 +12,7 @@ import { BuyBitcloutComponent } from "../buy-bitclout/buy-bitclout.component";
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static INSUFFICIENT_BALANCE = `Your balance is insufficient to process the transaction.`;
+  static INSUFFICIENT_FEES = `Your purchase is insufficient to cover the transaction fees.`;
   static CONNECTION_PROBLEM = `We had a problem processing your transaction. Please wait a few minutes and try again.`;
   static UNKOWN_PROBLEM = `There was a weird problem with the transaction. Debug output: %s`;
 
@@ -118,8 +119,19 @@ export class BuyBitcloutEthComponent implements OnInit {
       this.globalVars._alertError(Messages.ZERO_bitclout_ERROR);
       return;
     }
+
     if (this.bitcloutToBuy < 0) {
       this.globalVars._alertError(Messages.NEGATIVE_bitclout_ERROR);
+      return;
+    }
+
+    if (this.ethBalance < this.ethFeeEstimate) {
+      this.globalVars._alertError(Messages.INSUFFICIENT_BALANCE);
+      return;
+    }
+
+    if (this.ethToExchange < this.ethFeeEstimate) {
+      this.globalVars._alertError(Messages.INSUFFICIENT_FEES);
       return;
     }
 
