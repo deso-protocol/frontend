@@ -342,6 +342,10 @@ export class GlobalVarsService {
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
+    this.navigateToCurrentStepInTutorial(user);
+  }
+
+  navigateToCurrentStepInTutorial(user: User): Promise<boolean> {
     if (this.userInTutorial(user)) {
       // drop user at correct point in tutorial.
       let route = [];
@@ -371,7 +375,7 @@ export class GlobalVarsService {
           break;
         }
       }
-      this.router.navigate(route);
+      return this.router.navigate(route);
     }
   }
 
@@ -857,6 +861,7 @@ export class GlobalVarsService {
       if (queryParams.r) {
         localStorage.setItem("referralCode", queryParams.r);
         this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
+        this.getReferralUSDCents();
       }
     });
 
