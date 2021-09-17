@@ -205,7 +205,7 @@ export class BuyBitcloutEthComponent implements OnInit {
           this.globalVars.localNode, 
           this.globalVars.loggedInUser.PublicKeyBase58Check,
           this.ethDepositAddress(), 
-          this.ethToExchange * GlobalVarsService.WEI_PER_ETH - this.ethFeeEstimate
+          (this.ethToExchange - this.ethFeeEstimate) * GlobalVarsService.WEI_PER_ETH,
         ).subscribe(res => {
           // Reset all the form fields
           this.error = "";
@@ -304,6 +304,7 @@ export class BuyBitcloutEthComponent implements OnInit {
       (res: any) => {
         this.loadingBalance = false;
         this.ethBalance = res.Balance / GlobalVarsService.WEI_PER_ETH;
+        this.ethFeeEstimate = res.Fees / GlobalVarsService.WEI_PER_ETH;
       },
       (error) => {
         this.loadingBalance = false;
@@ -316,10 +317,6 @@ export class BuyBitcloutEthComponent implements OnInit {
     window.scroll(0, 0);
 
     this.refreshBalance();
-
-    this.backendApi.GetETHFees(this.globalVars.localNode).subscribe((res) => {
-      this.ethFeeEstimate = res.FeeEstimate / GlobalVarsService.WEI_PER_ETH;
-    });
 
     // Force an update of the exchange rate when loading the Buy BitClout page to ensure our computations are using the latest rates.
     this.globalVars._updateBitCloutExchangeRate();

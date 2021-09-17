@@ -77,7 +77,6 @@ export class BackendRoutes {
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
 
   // ETH
-  static RoutePathGetETHFees = "/api/v0/get-eth-fees";
   static RoutePathCreateETHTx = "/api/v0/create-eth-tx";
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
   static RoutePathGetETHBalance = "/api/v0/get-eth-balance";
@@ -1627,10 +1626,6 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.RoutePathGetETHBalance, {
       Address,
     });
-  }
-
-  GetETHFees(endpoint: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetETHFees, {});
   }
 
   AdminGetVerifiedUsers(endpoint: string, AdminPublicKey: string): Observable<any> {
