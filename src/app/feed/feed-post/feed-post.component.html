@@ -490,6 +490,9 @@
         <div *ngIf="nftLastAcceptedBidAmountNanos">
           <b>Last price: {{ globalVars.nanosToBitClout(nftLastAcceptedBidAmountNanos) }} $CLOUT</b>
         </div>
+        <div *ngIf="nftMinBidAmountNanos">
+          <b>Min bid: {{ globalVars.nanosToBitClout(nftMinBidAmountNanos) }} $CLOUT</b>
+        </div>
       </div>
       <button
         class="btn btn-primary font-weight-bold br-8px fs-13px"
