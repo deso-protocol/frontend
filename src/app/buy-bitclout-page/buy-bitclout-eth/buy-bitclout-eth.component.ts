@@ -164,7 +164,7 @@ export class BuyBitcloutEthComponent implements OnInit {
           this.globalVars.localNode, 
           this.globalVars.loggedInUser.PublicKeyBase58Check,
           this.ethDepositAddress(), 
-          Math.round(this.ethToExchange * GlobalVarsService.WEI_PER_ETH),
+          Math.floor(this.ethToExchange * GlobalVarsService.WEI_PER_ETH),
         ).subscribe(res => {
           // Reset all the form fields
           this.error = "";
