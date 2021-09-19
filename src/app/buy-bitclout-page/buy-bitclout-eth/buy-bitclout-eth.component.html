@@ -34,7 +34,7 @@
       <span>
         Minimum deposit is currently
         <b>
-          {{ ethFeeEstimate.toFixed(4) }} ETH
+          {{ (ethFeeEstimate * 2).toFixed(4) }} ETH
         </b>
         <i
           (click)="tooltip3.toggle()"
