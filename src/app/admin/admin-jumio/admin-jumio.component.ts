@@ -11,7 +11,9 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 })
 export class AdminJumioComponent {
   usernameToResetJumio = "";
+  usernameToExecuteJumioCallback = "";
   resettingJumio = false;
+  executingJumioCallback = false;
 
   jumioBitCloutNanos: number = 0;
   updatingJumioBitCloutNanos = false;
@@ -42,12 +44,41 @@ export class AdminJumioComponent {
         username
       )
       .subscribe(
-        (res) => {},
+        (res) => {
+          this.globalVars._alertSuccess("Successfully reset jumio status");
+        },
         (err) => {
           this.globalVars._alertError(err.error.error);
         }
       )
       .add(() => (this.resettingJumio = false));
+  }
+
+  _executeJumioCallback(): void {
+    this.executingJumioCallback = true;
+    let pubKey = "";
+    let username = "";
+    if (this.globalVars.isMaybePublicKey(this.usernameToExecuteJumioCallback)) {
+      pubKey = this.usernameToExecuteJumioCallback;
+    } else {
+      username = this.usernameToExecuteJumioCallback;
+    }
+    this.backendApi
+      .AdminJumioCallback(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        pubKey,
+        username
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess("Successfully executed jumio callback");
+        },
+        (err) => {
+          this.globalVars._alertError(err.error.error);
+        }
+      )
+      .add(() => (this.executingJumioCallback = false));
   }
 
   updateJumioBitCloutNanos(): void {

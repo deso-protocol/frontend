@@ -115,6 +115,18 @@ export class BackendRoutes {
   static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
   static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
   static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
+  static RoutePathAdminJumioCallback = "/api/v0/admin/jumio-callback";
+
+  // Referral program admin routes.
+  static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
+  static RoutePathAdminGetAllReferralInfoForUser = "/api/v0/admin/get-all-referral-info-for-user";
+  static RoutePathAdminUpdateReferralHash = "/api/v0/admin/update-referral-hash";
+  static RoutePathAdminDownloadReferralCSV = "/api/v0/admin/download-referral-csv";
+  static RoutePathAdminUploadReferralCSV = "/api/v0/admin/upload-referral-csv";
+
+  // Referral program non-admin routes
+  static RoutePathGetReferralInfoForUser = "/api/v0/get-referral-info-for-user";
+  static RoutePathGetReferralInfoForReferralHash = "/api/v0/get-referral-info-for-referral-hash";
 
   static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
 
@@ -192,6 +204,8 @@ export class User {
   JumioVerified: boolean;
   JumioReturned: boolean;
   JumioFinishedTime: number;
+
+  ReferralInfoResponses: any;
 
   IsFeaturedTutorialWellKnownCreator: boolean;
   IsFeaturedTutorialUpAndComingCreator: boolean;
@@ -1924,6 +1938,106 @@ export class BackendApiService {
     });
   }
 
+  AdminJumioCallback(
+    endpoint: string,
+    AdminPublicKey: string,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminJumioCallback, AdminPublicKey, {
+      PublicKeyBase58Check,
+      Username,
+      AdminPublicKey,
+    });
+  }
+
+  AdminCreateReferralHash(
+    endpoint: string,
+    AdminPublicKey: string,
+    UserPublicKeyBase58Check: string,
+    Username: string,
+    ReferrerAmountUSDCents: number,
+    RefereeAmountUSDCents: number,
+    MaxReferrals: number,
+    RequiresJumio: boolean
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminCreateReferralHash, AdminPublicKey, {
+      UserPublicKeyBase58Check,
+      Username,
+      ReferrerAmountUSDCents,
+      RefereeAmountUSDCents,
+      MaxReferrals,
+      RequiresJumio,
+      AdminPublicKey,
+    });
+  }
+
+  AdminUpdateReferralHash(
+    endpoint: string,
+    AdminPublicKey: string,
+    ReferralHashBase58: string,
+    ReferrerAmountUSDCents: number,
+    RefereeAmountUSDCents: number,
+    MaxReferrals: number,
+    RequiresJumio: boolean,
+    IsActive: boolean
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateReferralHash, AdminPublicKey, {
+      ReferralHashBase58,
+      ReferrerAmountUSDCents,
+      RefereeAmountUSDCents,
+      MaxReferrals,
+      RequiresJumio,
+      IsActive,
+      AdminPublicKey,
+    });
+  }
+
+  AdminGetAllReferralInfoForUser(
+    endpoint: string,
+    AdminPublicKey: string,
+    UserPublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetAllReferralInfoForUser, AdminPublicKey, {
+      UserPublicKeyBase58Check,
+      Username,
+      AdminPublicKey,
+    });
+  }
+
+  AdminDownloadReferralCSV(endpoint: string, AdminPublicKey: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminDownloadReferralCSV, AdminPublicKey, {
+      AdminPublicKey,
+    });
+  }
+
+  AdminUploadReferralCSV(endpoint: string, AdminPublicKey: string, CSVRows: Array<Array<String>>): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUploadReferralCSV, AdminPublicKey, {
+      AdminPublicKey,
+      CSVRows,
+    });
+  }
+
+  GetReferralInfoForUser(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetReferralInfoForUser, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
+    });
+  }
+
+  GetReferralInfoForReferralHash(endpoint: string, ReferralHash: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetReferralInfoForReferralHash, {
+      ReferralHash,
+    });
+  }
+
+  AdminResetTutorialStatus(endpoint: string, AdminPublicKey: string, PublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetTutorialStatus, AdminPublicKey, {
+      PublicKeyBase58Check,
+      AdminPublicKey,
+    });
+  }
+
   AdminUpdateTutorialCreators(
     endpoint: string,
     AdminPublicKey: string,
@@ -1935,13 +2049,6 @@ export class BackendApiService {
       PublicKeyBase58Check,
       IsRemoval,
       IsWellKnown,
-      AdminPublicKey,
-    });
-  }
-
-  AdminResetTutorialStatus(endpoint: string, AdminPublicKey: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetTutorialStatus, AdminPublicKey, {
-      PublicKeyBase58Check,
       AdminPublicKey,
     });
   }
