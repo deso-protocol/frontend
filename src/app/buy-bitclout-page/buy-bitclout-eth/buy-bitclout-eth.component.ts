@@ -209,14 +209,14 @@ export class BuyBitcloutEthComponent implements OnInit {
   }
 
   computeETHToBurnGivenBitCloutNanos(amountNanos: number) {
-    return (
-      amountNanos / (this.globalVars.nanosPerETHExchangeRate * this.nodeFee())
-    );
+    const ethMinusFees = amountNanos / (this.globalVars.nanosPerETHExchangeRate * this.nodeFee());
+    return ethMinusFees + this.ethFeeEstimate;
   }
 
   computeNanosToCreateGivenETHToBurn(ethToBurn: number): number {
+    const ethMinusFees = Math.max(ethToBurn - this.ethFeeEstimate, 0);
     return (
-      (ethToBurn *
+      (ethMinusFees *
         (this.globalVars.nanosPerETHExchangeRate *
           this.nodeFee()))
     );
@@ -264,6 +264,7 @@ export class BuyBitcloutEthComponent implements OnInit {
         this.loadingBalance = false;
         this.ethBalance = res.Balance / GlobalVarsService.WEI_PER_ETH;
         this.ethFeeEstimate = res.Fees / GlobalVarsService.WEI_PER_ETH;
+        this.ethToExchange = this.ethFeeEstimate;
       },
       (error) => {
         this.loadingBalance = false;
