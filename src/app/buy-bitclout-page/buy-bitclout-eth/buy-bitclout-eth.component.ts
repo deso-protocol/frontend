@@ -15,6 +15,7 @@ class Messages {
   static INSUFFICIENT_FEES = `Your purchase is insufficient to cover the transaction fees.`;
   static CONNECTION_PROBLEM = `We had a problem processing your transaction. Please wait a few minutes and try again.`;
   static UNKOWN_PROBLEM = `There was a weird problem with the transaction. Debug output: %s`;
+  static NOT_MINED = `Your ETH is still mining. Please try again in one minute.`
 
   static CONFIRM_BUY_bitclout = `Are you ready to exchange %s ETH for %s BitClout?`;
   static ZERO_bitclout_ERROR = `You must purchase a non-zero amount BitClout`;
@@ -164,7 +165,7 @@ export class BuyBitcloutEthComponent implements OnInit {
           this.globalVars.localNode, 
           this.globalVars.loggedInUser.PublicKeyBase58Check,
           this.ethDepositAddress(), 
-          Math.round(this.ethToExchange * GlobalVarsService.WEI_PER_ETH),
+          Math.floor(this.ethToExchange * GlobalVarsService.WEI_PER_ETH),
         ).subscribe(res => {
           // Reset all the form fields
           this.error = "";
@@ -191,6 +192,8 @@ export class BuyBitcloutEthComponent implements OnInit {
       let rawError = err.error.error;
       if (rawError.includes("Not enough funds")) {
         return Messages.INSUFFICIENT_BALANCE;
+      } else if (rawError.includes("Failed to create fee transaction")) {
+        return Messages.NOT_MINED;
       } else {
         return rawError;
       }
