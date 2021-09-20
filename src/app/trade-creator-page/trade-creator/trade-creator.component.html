@@ -45,10 +45,20 @@
           ></div>
           <div class="ml-16px fs-20px font-weight-bold">Buy {{ creatorCoinTrade.creatorProfile.Username }} Coin</div>
         </div>
-        <div class="mt-20px">
+        <div class="mt-20px" *ngIf="creatorCoinTrade.tradeType === buyVerb">
           You can invest directly in your favorite creators by buying their coin. Click "Confirm Buy" to purchase
           {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
           worth of {{ globalVars.addOwnershipApostrophe(creatorCoinTrade.creatorProfile.Username) }} coin!
+        </div>
+        <div class="mt-20px" *ngIf="creatorCoinTrade.tradeType === sellVerb">
+          When a creator's coin goes up in value you can sell.
+          <br />
+          <br />
+          <b>
+            Click "Confirm Sell" to sell
+            {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
+            worth of {{ globalVars.addOwnershipApostrophe(creatorCoinTrade.creatorProfile.Username) }} coin!
+          </b>
         </div>
       </div>
 

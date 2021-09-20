@@ -2505,6 +2505,30 @@ wallet-tutorial-page {
         border: none;
       }
     }
+    .wallet-actions-icon {
+      animation: shake 5s cubic-bezier(.36,.07,.19,.97) both infinite;
+      animation-delay: 5s;
+      transform: translate3d(0, 0, 0);
+      perspective: 1000px;
+    }
+  }
+}
+
+@keyframes shake {
+  2.5%, 27.5% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  5%, 20% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  7.5%, 12.5%, 17.5% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  10%, 15% {
+    transform: translate3d(4px, 0, 0);
   }
 }
 

@@ -56,6 +56,9 @@ export class TradeCreatorComponent implements OnInit {
   // Hide the warning that users selling their own coin will notify other users
   hideWarning = false;
 
+  buyVerb = CreatorCoinTrade.BUY_VERB;
+  sellVerb = CreatorCoinTrade.SELL_VERB;
+
   _onSlippageError() {
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
     this.creatorCoinTrade.showSlippageError = true;
