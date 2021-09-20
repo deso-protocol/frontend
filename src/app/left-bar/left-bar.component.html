@@ -46,12 +46,12 @@
 
         <left-bar-button
           [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
-          [buttonLabel]="'Buy $CLOUT'"
+          [buttonLabel]="'Buy $DESO'"
         ></left-bar-button>
 
         <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeCLOUTFlow()">
           <a class="left-bar__dot-inactive">·</a>
-          <a class="cursor-pointer fs-15px text-grey5">Get Free $CLOUT</a>
+          <a class="cursor-pointer fs-15px text-grey5">Get Free $DESO</a>
         </div>
 
         <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
@@ -77,7 +77,7 @@
 
         <left-bar-button
           [link]="'/' + globalVars.RouteNames.SEND_BITCLOUT"
-          [buttonLabel]="'Send $CLOUT'"
+          [buttonLabel]="'Send $DESO'"
         ></left-bar-button>
 
         <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'Wallet'"></left-bar-button>
@@ -113,8 +113,8 @@
         <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
         <left-bar-button
-          *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0" 
-          [link]="'/' + globalVars.RouteNames.REFERRALS" 
+          *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
+          [link]="'/' + globalVars.RouteNames.REFERRALS"
           [buttonLabel]="'Referrals'"
         ></left-bar-button>
 
@@ -176,7 +176,7 @@
 
       <left-bar-button
         [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
-        [buttonLabel]="'Buy $CLOUT'"
+        [buttonLabel]="'Buy $DESO'"
       ></left-bar-button>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <div class="w-100">
   <div class="px-15px">
-    <div class="fs-18px font-weight-bold mb-10px">Enter an amount in USD to convert to $CLOUT</div>
-    <p class="mb-5px">You can purchase up to ${{ maxUsdAmount }} of $CLOUT per week using USD.</p>
+    <div class="fs-18px font-weight-bold mb-10px">Enter an amount in USD to convert to $DESO</div>
+    <p class="mb-5px">You can purchase up to ${{ maxUsdAmount }} of $DESO per week using USD.</p>
     <p class="mb-10px">
       For larger purchases,
       <a [routerLink]="['', 'buy-bitclout']" [queryParams]="{ btc: true }">buy with Bitcoin.</a>
@@ -20,7 +20,7 @@
         <div class="py-15px" style="width: 48%">
           <div class="input-group">
             <div class="input-group-prepend">
-              <span class="input-group-text">$CLOUT</span>
+              <span class="input-group-text">$DESO</span>
             </div>
             <input
               class="form-control"
@@ -72,7 +72,7 @@
       (click)="onBuyClicked()"
       [ngClass]="{ disabled: quotationError }"
     >
-      Buy $CLOUT
+      Buy $DESO
     </button>
   </div>
 </div>

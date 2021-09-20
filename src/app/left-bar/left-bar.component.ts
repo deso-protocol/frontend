@@ -69,13 +69,13 @@ export class LeftBarComponent {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
-        title: `You need 0.01 $CLOUT to complete the tutorial`,
+        title: `You need 0.01 $DESO to complete the tutorial`,
         showConfirmButton: true,
         focusConfirm: true,
         customClass: {
           confirmButton: "btn btn-light",
         },
-        confirmButtonText: "Buy $CLOUT",
+        confirmButtonText: "Buy $DESO",
       }).then((res) => {
         if (res.isConfirmed) {
           this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });

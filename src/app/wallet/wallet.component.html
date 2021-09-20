@@ -55,12 +55,12 @@
 
 
 <div class="d-flex flex-column flex-grow-1" *ngIf="globalVars.loggedInUser">
-  <!-- $CLOUT Divider Bar -->
+  <!-- $DESO Divider Bar -->
   <div
     class="d-flex align-items-center justify-content-between fs-18px font-weight-bold p-15px holdings__divider border-bottom border-color-grey"
     *ngIf="!inTutorial"
   >
-    <div>$CLOUT</div>
+    <div>$DESO</div>
     <div class="fs-15px" style="margin-top: 2px" *ngIf="!inTutorial">
       <a
         *ngIf="globalVars.loggedInUser"
@@ -76,14 +76,14 @@
     </div>
   </div>
 
-  <!-- $CLOUT Holdings -->
+  <!-- $DESO Holdings -->
   <!-- Override .container's max-width property with max-width: inherit-->
   <div class="container fs-15px p-15px border-bottom border-color-grey" style="max-width: inherit" *ngIf="!inTutorial">
     <div class="row pt-5px">
       <div class="col-3 font-weight-bold">Balance</div>
       <div class="col-9">
         <div>
-          {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos, 9) }} $CLOUT
+          {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos, 9) }} $DESO
           <i
             *ngIf="globalVars.loggedInUser.UnminedBalanceNanos != 0 && globalVars.showProcessingSpinners"
             class="fa fa-spinner fc-muted"
@@ -121,7 +121,7 @@
       <span class="font-weight-bold">≈ {{ globalVars.nanosToUSD(totalValue(), 2) }}</span>
       USD<br>
       <span class="font-weight-bold" style="font-size:13px;">≈ {{ globalVars.nanosToBitClout(totalValue(), 4) }}</span>
-      $CLOUT
+      $DESO
     </div>
   </div>
 

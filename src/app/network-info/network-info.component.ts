@@ -8,7 +8,7 @@ class NetworkConstants {
   static MISSING_REQUIRED_FIELD = `You are missing required field with label: %s`;
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static INSUFFICIENT_BALANCE = `Your balance is insufficient to process the transaction.`;
-  static TOTAL_bitclout_INVALID = `The total BitClout is currently an invalid value. Is your balance insufficient?`;
+  static TOTAL_bitclout_INVALID = `The total DESO is currently an invalid value. Is your balance insufficient?`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
 }
 

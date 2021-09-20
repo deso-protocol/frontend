@@ -156,7 +156,7 @@
               class="d-flex align-items-center mb-0 justify-content-around p-0"
               [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }"
             >
-              <span>{{ globalVars.nanosToBitClout(bidEntry.BidAmountNanos, 5) }} $CLOUT</span>
+              <span>{{ globalVars.nanosToBitClout(bidEntry.BidAmountNanos, 5) }} $DESO</span>
               <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 2) }}</span>
             </div>
           </div>
@@ -225,7 +225,7 @@
               class="d-flex align-items-center mb-0 justify-content-around p-0"
               [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }"
             >
-              <span>{{ globalVars.nanosToBitClout(owner.LastAcceptedBidAmountNanos, 5) }} $CLOUT</span>
+              <span>{{ globalVars.nanosToBitClout(owner.LastAcceptedBidAmountNanos, 5) }} $DESO</span>
               <span>~{{ globalVars.nanosToUSD(owner.LastAcceptedBidAmountNanos, 2) }}</span>
             </div>
           </div>

@@ -10,8 +10,8 @@ import { Title } from "@angular/platform-browser";
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
-  static INSUFFICIENT_BALANCE = `You don't have enough BitClout to process the transaction. Try reducing the fee rate.`;
-  static SEND_BITCLOUT_MIN = `You must send a non-zero amount of BitClout`;
+  static INSUFFICIENT_BALANCE = `You don't have enough DESO to process the transaction. Try reducing the fee rate.`;
+  static SEND_BITCLOUT_MIN = `You must send a non-zero amount of DESO`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
 }
 
@@ -107,7 +107,7 @@ export class AdminComponent implements OnInit {
   adminTabs = ["Posts", "Profiles", "NFTs", "Tutorial", "Network", "Mempool", "Wyre", "Jumio", "Referral Program"];
 
   POSTS_TAB = "Posts";
-  POSTS_BY_CLOUT_TAB = "Posts By Clout";
+  POSTS_BY_CLOUT_TAB = "Posts By DESO";
   adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_CLOUT_TAB];
 
   // Fields for SwapIdentity
@@ -768,7 +768,7 @@ export class AdminComponent implements OnInit {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the reserve exchange rate of USD to BitClout to be $${this.usdToBitCloutReserveExchangeRate}`,
+      html: `You are about to update the reserve exchange rate of USD to DESO be $${this.usdToBitCloutReserveExchangeRate}`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
@@ -789,7 +789,7 @@ export class AdminComponent implements OnInit {
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the reserve exchange to $%d/BitClout", res.USDCentsPerBitClout / 100)
+                sprintf("Successfully updated the reserve exchange to $%d/DESO", res.USDCentsPerBitClout / 100)
               );
             },
             (err: any) => {
@@ -805,7 +805,7 @@ export class AdminComponent implements OnInit {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the Buy BitClout Fee to be ${this.buyBitCloutFeeRate}%`,
+      html: `You are about to update the Buy DESO Fee to be ${this.buyBitCloutFeeRate}%`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
@@ -826,7 +826,7 @@ export class AdminComponent implements OnInit {
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the Buy BitClout Fee to %d%", res.USDCentsPerBitClout / 100)
+                sprintf("Successfully updated the Buy DESO Fee to %d%", res.USDCentsPerBitClout / 100)
               );
             },
             (err: any) => {
@@ -847,11 +847,11 @@ export class AdminComponent implements OnInit {
   ) {
     const updateBitcoinMessage = usdPerBitcoin >= 0 ? `Update Bitcoin to USD exchange rate: ${usdPerBitcoin}\n` : "";
     const createProfileFeeNanosMessage =
-      createProfileFeeNanos >= 0 ? `Create Profile Fee (in $CLOUT): ${createProfileFeeNanos}\n` : "";
+      createProfileFeeNanos >= 0 ? `Create Profile Fee (in $DESO): ${createProfileFeeNanos}\n` : "";
     const minimumNetworkFeeNanosPerKBMessage =
       minimumNetworkFeeNanosPerKB >= 0 ? `Minimum Network Fee Nanos Per KB: ${minimumNetworkFeeNanosPerKB}\n` : "";
     const maxCopiesMessage = maxCopiesPerNFT >= 0 ? `Max Copies Per NFT: ${maxCopiesPerNFT}\n` : "";
-    const createNFTFeeNanosMessage = createNFTFeeNanos >= 0 ? `Create NFT Fee (in $CLOUT): ${createNFTFeeNanos}\n` : "";
+    const createNFTFeeNanosMessage = createNFTFeeNanos >= 0 ? `Create NFT Fee (in $DESO): ${createNFTFeeNanos}\n` : "";
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
@@ -898,7 +898,7 @@ export class AdminComponent implements OnInit {
 
                 this.globalVars._alertSuccess(
                   sprintf(
-                    "Successfully updated global params rate. TxID: %s for a fee of %d BitClout",
+                    "Successfully updated global params rate. TxID: %s for a fee of %d DESO",
                     res.TransactionIDBase58Check,
                     totalFeeBitClout
                   )

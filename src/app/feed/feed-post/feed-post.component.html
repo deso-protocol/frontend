@@ -488,7 +488,7 @@
           }}
         </span>
         <div *ngIf="nftLastAcceptedBidAmountNanos">
-          <b>Last price: {{ globalVars.nanosToBitClout(nftLastAcceptedBidAmountNanos) }} $CLOUT</b>
+          <b>Last price: {{ globalVars.nanosToBitClout(nftLastAcceptedBidAmountNanos) }} $DESO</b>
         </div>
       </div>
       <button
@@ -509,11 +509,11 @@
     <div></div>
     <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)" [ngClass]="{ 'pt-15px': globalVars.isMobile() }">
       <div *ngIf="highBid != null">
-        Highest: {{ globalVars.nanosToBitClout(highBid, 5) }} CLOUT
+        Highest: {{ globalVars.nanosToBitClout(highBid, 5) }} DESO
         <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
       </div>
       <div *ngIf="lowBid != null">
-        From: {{ globalVars.nanosToBitClout(lowBid, 5) }} CLOUT
+        From: {{ globalVars.nanosToBitClout(lowBid, 5) }} DESO
         <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
       </div>
     </div>
