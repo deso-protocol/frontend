@@ -165,8 +165,7 @@
           <!-- Coin price-->
           <a
             class="feed-post__coin-price-holder"
-            [routerLink]="getRouterLink(AppRoutingModule.buyCreatorPath(postContent.ProfileEntryResponse.Username))"
-            queryParamsHandling="merge"
+            (click)="openBuyCreatorCoinModal($event, postContent.ProfileEntryResponse.Username)"
           >
             <span class="feed-post__coin-price">
               ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
@@ -408,7 +407,7 @@
     [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : '' }"
   >
     <div class="d-flex justify-content-between h-100">
-      <div class="d-flex flex-column justify-content-center">
+      <div class="d-flex flex-column justify-content-between">
         <div class="d-flex">
           <span *ngIf="showAvailableSerialNumbers">{{ serialNumbersDisplay }}&nbsp;</span>
           <div
@@ -422,7 +421,7 @@
             {{ postContent.NumNFTCopiesForSale }} of {{ postContent.NumNFTCopies }} for sale
           </div>
           <span
-            *ngIf="postContent.HasUnlockable"
+            *ngIf="postContent.HasUnlockable && !globalVars.isMobile()"
             class="cursor-pointer d-lg-inline-block d-block nft-unlockable-content"
             (click)="tooltip.toggle(); toggleShowUnlockableContent()"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
@@ -443,9 +442,29 @@
           From: {{ globalVars.nanosToBitClout(lowBid, 2) }} $Clout ~{{ globalVars.nanosToUSD(lowBid, 2) }}
         </div>
       </div>
-      <div class="d-flex align-items-center">
+      <div
+        class="d-flex flex-column justify-content-center align-items-end"
+        [ngClass]="{ 'justify-content-between': postContent.HasUnlockable && globalVars.isMobile() }"
+      >
+        <span
+          *ngIf="postContent.HasUnlockable && globalVars.isMobile()"
+          class="cursor-pointer d-lg-inline-block d-block nft-unlockable-content mb-8px"
+          (click)="tooltip.toggle(); toggleShowUnlockableContent()"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="unlockableTooltip"
+          #tooltip="matTooltip"
+        >
+          <i-feather name="Lock"></i-feather>
+          {{
+            decryptableNFTEntryResponses?.length
+              ? showUnlockableContent
+                ? "Hide Unlockable"
+                : "Show Unlockable"
+              : "Unlockable Content"
+          }}
+        </span>
         <div class="nft-bid-btn">
-          <button [ngClass]="{ 'mt-15px': isQuotedContent }" (click)="openPlaceBidModal($event)" *ngIf="showPlaceABid">
+          <button style="height: 32px" [ngClass]="{ 'mt-15px': isQuotedContent }" (click)="openPlaceBidModal($event)" *ngIf="showPlaceABid">
             <span>
               <i-feather name="shopping-cart"></i-feather>
               Place a bid

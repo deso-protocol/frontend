@@ -19,7 +19,7 @@
       name="search"
       class="feather-medium cursor-pointer position-relative"
       style="top: -3px"
-      (click)="isSearching = true"
+      (click)="initiateSearch()"
     ></i-feather>
     <div *ngIf="!simpleTopBar && isSearching" class="d-flex justify-content-center align-items-center w-100">
       <search-bar class="w-100"></search-bar>
@@ -27,8 +27,17 @@
     </div>
     <div *ngIf="simpleTopBar" class="d-flex flex-column justify-content-end w-100 px-15px">
       <div class="d-flex justify-content-between w-100">
-        <i-feather name="arrow-left" class="feather-medium cursor-pointer" (click)="location.back()"></i-feather>
-        <div>{{ title }}</div>
+        <i-feather name="arrow-left" class="feather-medium cursor-pointer" (click)="backButtonFn()"></i-feather>
+        <div class="d-flex align-items-center">
+          <div
+            class="messages-thread__avatar mr-15px"
+            [avatar]="publicKeyBase58Check"
+            [ngClass]="{ 'cursor-pointer': profileEntryResponse }"
+            [routerLink]="profileEntryResponse ? AppRoutingModule.profilePath(profileEntryResponse.Username) : []"
+            queryParamsHandling="merge"
+          ></div>
+          {{ title }}
+        </div>
         <div></div>
       </div>
     </div>

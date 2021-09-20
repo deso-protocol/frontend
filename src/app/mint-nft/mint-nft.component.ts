@@ -8,9 +8,9 @@ import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-mint-nft-modal",
-  templateUrl: "./mint-nft-modal.component.html",
+  templateUrl: "./mint-nft.component.html",
 })
-export class MintNftModalComponent {
+export class MintNftComponent {
   IS_SINGLE_COPY = "isSingleCopy";
   IS_MULTIPLE_COPIES = "isMultipleCopies";
   postHashHex: string;
@@ -152,11 +152,11 @@ export class MintNftModalComponent {
       );
   }
 
-  _mintNFTSuccess(comp: MintNftModalComponent) {
+  _mintNFTSuccess(comp: MintNftComponent) {
     comp.minting = false;
   }
 
-  _mintNFTFailure(comp: MintNftModalComponent) {
+  _mintNFTFailure(comp: MintNftComponent) {
     comp.minting = false;
     comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
   }

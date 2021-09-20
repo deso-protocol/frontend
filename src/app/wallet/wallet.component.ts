@@ -8,11 +8,10 @@ import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { UpdateProfileModalComponent } from "../update-profile-page/update-profile-modal/update-profile-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
 import { TransferBitcloutComponent } from "../transfer-bitclout/transfer-bitclout.component";
-import {CreatorsLeaderboardComponent} from "../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
+import { CreatorsLeaderboardComponent } from "../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
 
 @Component({
   selector: "wallet",

@@ -1,33 +1,16 @@
 <div class="w-100 d-flex">
-  <!-- I couldn't get "open in new tab" to work without the "; true" in (click) -->
-<!--  <a-->
-<!--    (click)="globalVars.isLeftBarMobileOpen = false; (true)"-->
-<!--    [routerLink]="[link]"-->
-<!--    [queryParams]="_queryParamsForLink(link)"-->
-<!--    queryParamsHandling="merge"-->
-<!--    routerLinkActive-->
-<!--    #rla="routerLinkActive"-->
-<!--    [ngClass]="{-->
-<!--      'left-bar__dot-unread': isUnread,-->
-<!--      'left-bar__dot-inactive': !rla.isActive,-->
-<!--      'left-bar__dot-active': rla.isActive-->
-<!--    }"-->
-<!--  >-->
-<!--    ·-->
-<!--  </a>-->
-
   <div
     class="left-bar-active-indicator"
     [routerLink]="[link]"
     routerLinkActive
     #rla="routerLinkActive"
-    [ngClass]="{'left-bar-active-indicator-active': rla.isActive}">
+    [ngClass]="{ 'left-bar-active-indicator-active': rla.isActive }">
   </div>
   <div
     [routerLink]="[link]"
     routerLinkActive
     #rla="routerLinkActive"
-    [ngClass]="{'left-bar-active': rla.isActive}"
+    [ngClass]="{ 'left-bar-active': rla.isActive }"
     class="d-flex justify-content-center align-items-center left-bar-button">
     <!-- I couldn't get "open in new tab" to work without the "; true" in (click) -->
     <a
@@ -37,7 +20,7 @@
       [queryParams]="_queryParamsForLink(link)"
       queryParamsHandling="merge"
     >
-      <i-feather *ngIf="iconName" name="{{iconName}}"></i-feather>
+      <i-feather *ngIf="iconName" name="{{ iconName }}"></i-feather>
       {{ buttonLabel }}
     </a>
     <div

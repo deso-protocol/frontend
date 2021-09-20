@@ -1,11 +1,7 @@
-<div class="modal-header">
-  <div class="modal-header-x" (click)="bsModalRef.hide()">
-    <i-feather name="x"></i-feather>
-  </div>
-</div>
 <div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="isSelectingSerialNumber ? 'Select an edition' : 'Place a bid'" [bsModalRef]="bsModalRef"></nft-modal-header>
-
+  <div class="w-100 d-flex justify-content-between nft-modal__header">
+    <div class="d-flex align-items-center">{{ isSelectingSerialNumber ? "Select an edition" : "Place a bid" }}</div>
+  </div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
     <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
@@ -13,7 +9,7 @@
         You are about to place a bid for an NFT auctioned by @{{ post.ProfileEntryResponse.Username}}.
       </div>
 
-      <div class="d-flex justify-content-between nft-modal-bid-details">
+      <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
         <div class="col-2 d-flex flex-column m-16px" style="border-right: 1px solid var(--border)">
           <span>Number</span>
           <span class="mt-5px">#{{ selectedSerialNumber?.SerialNumber }}</span>
@@ -28,9 +24,35 @@
         </div>
       </div>
 
+      <div *ngIf="globalVars.isMobile()">
+        <div class="nft-modal-bid-details d-flex justify-content-between p-16px">
+          <span class="font-weight-bold">Number</span>
+          <div>
+            <span class="mt-5px">#{{ selectedSerialNumber?.SerialNumber }}</span>
+            <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()">Change</a>
+          </div>
+        </div>
+        <div class="nft-modal-bid-details d-flex flex-column justify-content-center p-16px">
+          <div class="border-bottom pb-10px d-flex justify-content-between">
+            <span class="font-weight-bold">Highest Bid</span>
+            <span>
+              {{ globalVars.nanosToBitClout(highBid) }} $Clout (~{{ globalVars.nanosToUSD(highBid, 2) }})
+            </span>
+          </div>
+          <div class="pt-10px d-flex justify-content-between">
+            <span class="font-weight-bold">Min Bid Amount</span>
+            <span>
+              {{ globalVars.nanosToBitClout(selectedSerialNumber?.MinBidAmountNanos) }} $Clout (~{{
+                globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)
+              }})
+            </span>
+          </div>
+        </div>
+      </div>
+
       <!-- Availability metadata -->
       <div class="fs-15px" *ngIf="!loading">
-        <div>
+        <div class="d-flex">
           <span class="d-lg-inline-block d-block">Creator Royalty {{ post.NFTRoyaltyToCreatorBasisPoints / 100 }}%</span>
           <span class="d-lg-inline-block d-block ml-30px">Coin-holder Royalty {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
         </div>
@@ -44,7 +66,7 @@
       <!-- The bid -->
       <div class="pb-10px">
         <span class="fs-17px font-weight-bold">Your Bid</span>
-        <div class="d-flex">
+        <div class="d-flex mt-10px">
           <div
             class="d-flex"
             dropdown
@@ -84,7 +106,7 @@
               min="0"
               placeholder="0"
             />
-            <span *ngIf="minBidCurrency === 'CLOUT'" class="mint-nft__floating-span">{{ bidAmountUSDFormatted() }}</span>
+            <span class="mint-nft__floating-span">{{ bidAmountOtherCurrencyFormatted() }}</span>
           </div>
         </div>
       </div>
@@ -93,10 +115,17 @@
         <i-feather name="alert-circle" class="feather-large"></i-feather>
         {{ error }}
       </div>
-      <div class="d-flex align-items-center mb-15px mt-30px">
+      <div
+        [ngClass]="{
+          'floating-bottom-bar': globalVars.isMobile(),
+          'mb-15px': !globalVars.isMobile(),
+          'mt-30px': !globalVars.isMobile()
+        }"
+        class="d-flex align-items-center"
+      >
         <button
-          class="btn btn-primary font-weight-bold fs-15px br-12px"
-          style="height: 36px; width: 140px; line-height: 15px"
+          class="primary-button font-weight-bold fs-15px br-12px"
+          style="height: 48px; width: 140px; line-height: 15px"
           (click)="placeBid()"
           [disabled]="placingBids || errors.length > 0 || !bidAmountCLOUT"
           [class]="{ 'disabled-button': placingBids || errors.length > 0 || !bidAmountCLOUT }"
@@ -138,7 +167,7 @@
             ></i-feather>
           </div>
         </div>
-        <div style="max-height: 250px; overflow-y: scroll" class="mb-30px">
+        <div class="place-bid-rows mb-30px">
           <div
             *ngFor="let nft of biddableSerialNumbers"
             class="row no-gutters background-color-white py-15px mb-0px create-nft-auction-row-border cursor-pointer"
@@ -168,17 +197,19 @@
           </div>
         </div>
       </div>
-      <button
-        class="primary-button"
-        [ngClass]="{ 'disabled-button': !selectedSerialNumber }"
-        [disabled]="!selectedSerialNumber"
-        (click)="saveSelection()"
-      >
-        Place a bid
-      </button>
-      <a class="ml-25px fc-blue fs-15px" [routerLink]="['/' + this.globalVars.RouteNames.BUY_BITCLOUT]" queryParamsHandling="merge" (click)="bsModalRef.hide()">
-        Buy Bitclout
-      </a>
+      <div [ngClass]="{ 'floating-bottom-bar': globalVars.isMobile() }">
+        <button
+          class="primary-button"
+          [ngClass]="{ 'disabled-button': !selectedSerialNumber }"
+          [disabled]="!selectedSerialNumber"
+          (click)="saveSelection()"
+        >
+          Set your bid
+        </button>
+        <a class="ml-25px fc-blue fs-15px" (click)="navigateToBuyCLOUT()">
+          Buy Bitclout
+        </a>
+      </div>
     </div>
     <div *ngIf="!biddableSerialNumbers.length" class="fs-15px">
       There are no serial numbers available for you to bid on.

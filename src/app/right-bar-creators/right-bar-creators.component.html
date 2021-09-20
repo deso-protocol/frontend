@@ -66,27 +66,7 @@
   </div>
 
   <!-- Creator Coin Info -->
-  <div class="w-100 d-flex flex-column right-bar-creators__wallet-container" *ngIf="this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry">
-    <div>
-      <div class="font-weight-bold fc-default">
-        Wallet of @{{ globalVars?.loggedInUser?.ProfileEntryResponse?.Username }}
-      </div>
-      <div class="d-flex justify-content-between align-items-center mt-16px">
-        <span>Coins In Circulation</span>
-        <span>
-          ≈ {{ (globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(2) }}
-        </span>
-      </div>
-      <div class="d-flex justify-content-between align-items-center mt-16px">
-        <span>Total USD Locked</span>
-        <span>≈ {{ totalUSDLocked() }}</span>
-      </div>
-      <div class="d-flex justify-content-between align-items-center mt-16px">
-        <span>USD Market Cap</span>
-        <span>≈ {{ usdMarketCap() }}</span>
-      </div>
-    </div>
-  </div>
+  <wallet-widget></wallet-widget>
 
   <div class="trend-box" *ngIf="!inTutorial">
     <!-- Title -->

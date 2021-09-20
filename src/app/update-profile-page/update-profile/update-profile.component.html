@@ -158,6 +158,29 @@
                 Please set a founder reward between 0-100.
               </div>
             </div>
+            <div class="update-profile__title">Email</div>
+            <div class="form-group">
+              <input
+                type="email"
+                class="form-control fs-15px"
+                placeholder="Enter an email address."
+                [(ngModel)]="emailAddress"
+                (ngModelChange)="_validateEmail($event)"
+              />
+              <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+            </div>
+            <div class="update-profile__title">BitClout Theme</div>
+            <select
+              name="theme"
+              id="theme"
+              (change)="selectChangeHandler($event)"
+              style="padding: 6px 12px"
+              class="form-control selector">
+              <option
+                *ngFor="let theme of themeService.themes"
+                [value]="theme.key"
+                [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
+            </select>
           </div>
 
           <div class="w-100 my-30px">
@@ -168,12 +191,7 @@
             >
               {{ inTutorial ? "Next" : "Update Profile" }}
             </a>
-            <i *ngIf="profileUpdated" class="far fa-check-circle fa-lg fc-blue ml-10px"></i>
           </div>
-
-          <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-          <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
-          <div *ngIf="globalVars.isMobile()" class="global__bottom-bar-mobile-height"></div>
         </div>
       </div>
     </div>

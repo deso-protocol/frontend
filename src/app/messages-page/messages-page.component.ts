@@ -1,13 +1,12 @@
 import { Component, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
-import { Datasource, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { MessageRecipientModalComponent } from "./message-recipient-modal/message-recipient-modal.component";
-import {MessagesInboxComponent} from "./messages-inbox/messages-inbox.component";
+import { MessagesInboxComponent } from "./messages-inbox/messages-inbox.component";
 
 @Component({
   selector: "app-messages-page",
@@ -25,6 +24,10 @@ export class MessagesPageComponent {
   showThreadView = false;
   AppRoutingModule = AppRoutingModule;
 
+  backButtonFunction = () => {
+    this.showThreadView = false;
+  };
+
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
@@ -38,8 +41,14 @@ export class MessagesPageComponent {
   }
 
   openNewMessageModal() {
+    const modalClass = this.globalVars.isMobile()
+      ? "modal-dialog-centered modal-dialog-high modal-dialog-light"
+      : "modal-dialog-centered";
+    const backdrop = !this.globalVars.isMobile();
     const messageSelectorModal = this.modalService.show(MessageRecipientModalComponent, {
-      class: "modal-dialog-centered",
+      class: modalClass,
+      backdrop,
+      animated: !this.globalVars.isMobile(),
     });
     messageSelectorModal.content.userSelected.subscribe((event) => {
       this.messagesInboxComponent._handleCreatorSelectedInSearch(event);

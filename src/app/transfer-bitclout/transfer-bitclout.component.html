@@ -3,8 +3,6 @@
     <i-feather name="x"></i-feather>
   </div>
 </div>
-<!-- Top Bar -->
-<top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
 
 <div class="buy-bitclout__container">
   <div class="p-16px">
@@ -22,6 +20,7 @@
       [showCloutavista]="false"
       [startingSearchText]="startingSearchText"
       [isSearchForUsersToSendClout]="true"
+      [resultsUnderBar]="true"
       (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
     ></search-bar>
 

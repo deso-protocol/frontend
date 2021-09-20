@@ -103,7 +103,7 @@
         </div>
       </div>
     </div>
-    <div class="d-flex fs-15px px-40px pb-40px">
+    <div class="d-flex fs-15px px-40px pb-40px" [ngClass]="{ 'fs-14px': globalVars.isMobile() }">
       <span class="font-weight-bold">Creator Royalty:&nbsp;</span>
       <span class="mr-30px">{{ post.NFTRoyaltyToCreatorBasisPoints / (100 * 100) * 100 }}%</span>
       <span class="font-weight-bold">Coin-holder Royalty:&nbsp;</span>
@@ -114,10 +114,12 @@
     You must select at least one bid in order to sell this NFT.
   </div>
 </div>
-<button
-  [disabled]="sellNFTDisabled || !selectedBidEntries?.length"
-  (click)="sellNFT()"
-  class="mint-nft__create-btn"
->
-  {{ sellingNFT ? "Selling NFTs" : "Sell NFTs" }}
-</button>
+<div [ngClass]="{ 'floating-bottom-bar': globalVars.isMobile() }">
+  <button
+    [disabled]="sellNFTDisabled || !selectedBidEntries?.length"
+    (click)="sellNFT()"
+    class="mint-nft__create-btn"
+  >
+    {{ sellingNFT ? "Selling NFTs" : "Sell NFTs" }}
+  </button>
+</div>

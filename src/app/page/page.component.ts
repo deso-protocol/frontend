@@ -11,6 +11,7 @@ export class PageComponent implements OnInit {
   @Input() simpleTopBar: boolean = false;
   @Input() title: string = null;
   @Input() showPostButton = false;
+  @Input() showBottomBar = true;
   @Input() inTutorial: boolean = false;
   @Input() onlyContent: boolean = false;
   mobile = false;

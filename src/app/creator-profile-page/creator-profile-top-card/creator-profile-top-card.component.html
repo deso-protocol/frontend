@@ -114,6 +114,7 @@
       <a
         class="btn creator-profile-top-card__buy-btn"
         (click)="openBuyCreatorCoinModal($event)"
+        *ngIf="!globalVars.isMobile()"
       >
         Buy
       </a>
@@ -136,7 +137,7 @@
     <div class="fs-15px d-flex flex-column flex-wrap">
       <div class="d-flex flex-column">
         <div class="d-flex justify-content-center creator-profile__public-key">
-          <div class="d-lg-flex d-none">
+          <div class="d-flex">
             <i-feather name="key"></i-feather>
             <span class="fs-15px cursor-pointer creator-profile__ellipsis-restriction">
               {{ profile.PublicKeyBase58Check }}
@@ -145,7 +146,7 @@
             <i-feather *ngIf="!publicKeyIsCopied" (click)="_copyPublicKey()" class="copy-button cursor-pointer" name="copy"></i-feather>
           </div>
         </div>
-        <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center" [ngClass]="{ 'justify-content-between': globalVars.isMobile() }">
           <a
             class="link--unstyled"
             *ngIf="followerCount != null"
@@ -165,22 +166,19 @@
             <span class="font-weight-bold">{{ followingCount }}&nbsp;</span>
             <span class="fc-muted">Following&nbsp;&nbsp;</span>
           </a>
-          <span class="font-weight-bold">&nbsp;{{ getFoundersRewardPercent() | number: "0.0-9" }}%</span>
-          <span class="fc-muted">FR</span>
+          <div>
+            <span class="font-weight-bold">&nbsp;{{ getFoundersRewardPercent() | number: "0.0-9" }}% </span>
+            <span class="fc-muted">FR</span>
+          </div>
         </div>
       </div>
-
-      <div class="d-lg-none d-flex pt-5px">
-        <span (click)="_copyPublicKey()" class="fs-15px cursor-pointer creator-profile__ellipsis-restriction">
-          <i *ngIf="!publicKeyIsCopied" class="fas fa-key"></i>
-          <i *ngIf="publicKeyIsCopied" class="far fa-check-circle fc-blue"></i>
-          {{ profile.PublicKeyBase58Check }}
-        </span>
-        <div class="px-5px">
-          <span class="font-weight-bold">&nbsp;{{ getFoundersRewardPercent() | number: "0.0-9" }}%</span>
-          FR
-        </div>
-      </div>
+      <button
+        class="primary-button w-100 mt-20px"
+        (click)="openBuyCreatorCoinModal($event)"
+        *ngIf="globalVars.isMobile()"
+      >
+        Buy
+      </button>
 
     </div>
   </div>

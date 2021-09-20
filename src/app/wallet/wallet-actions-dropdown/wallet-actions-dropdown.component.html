@@ -1,24 +1,22 @@
 <div class="btn-group" dropdown #dropdown="bs-dropdown" (mouseenter)="stopIconHide()" (mouseleave)="hideIcons()">
-  <div class="d-flex align-content-between" *ngIf="showIcons && (!inTutorial || (isHighlightedCreator && showSellOnly))">
+  <div class="wallet-actions-container d-flex align-content-between" *ngIf="showIcons && (!inTutorial || (isHighlightedCreator && showSellOnly))">
     <a
-      class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
-      [routerLink]="AppRoutingModule.buyCreatorPath(hodlingUsername)"
-      queryParamsHandling="merge"
+      class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
+      (click)="openBuyCreatorCoinModal($event, buyTradeType)"
       *ngIf="!showSellOnly"
     >
       <i class="fas fa-plus fs-12px"></i>
       Buy
     </a>
     <a
-      class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
-      [routerLink]="inTutorial ? ['', RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, hodlingUsername].join('/') : AppRoutingModule.sellCreatorPath(hodlingUsername)"
-      queryParamsHandling="merge"
+      class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
+      (click)="openBuyCreatorCoinModal($event, sellTradeType)"
     >
       <i class="fas fa-minus fs-12px"></i>
       Sell
     </a>
     <a
-      class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
+      class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
       [routerLink]="AppRoutingModule.transferCreatorPath(hodlingUsername)"
       queryParamsHandling="merge"
       *ngIf="!showSellOnly"
@@ -26,8 +24,15 @@
       <i class="fas fa-paper-plane fs-12px"></i>
       Send
     </a>
+    <a
+      class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
+      (click)="showIcons = false"
+      *ngIf="!showSellOnly && globalVars.isMobile()"
+    >
+      <i-feather name="x" class="feather-small fc-secondary"></i-feather>
+    </a>
   </div>
   <a (click)="showIcons = true" *ngIf="!showIcons">
-    <i class="fas fa-ellipsis-h fs-18px" [ngClass]="{ 'fc-blue': dropdown.isOpen && (!inTutorial || isHighlightedCreator) }"></i>
+    <i class="fas fa-ellipsis-h fs-18px fc-secondary"></i>
   </a>
 </div>

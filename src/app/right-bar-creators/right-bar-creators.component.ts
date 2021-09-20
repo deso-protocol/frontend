@@ -85,27 +85,6 @@ export class RightBarCreatorsComponent implements OnInit {
       this.backendApi.SetStorage(RightBarCreatorsComponent.RightBarTabKey, this.activeTab);
     }
   }
-  totalUSDLocked() {
-    return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(
-        this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry.BitCloutLockedNanos
-      ),
-      3,
-      true
-    );
-  }
-  coinsInCirculation() {
-    return this.globalVars?.loggedInUser?.ProfileEntryResponse.CoinEntry.CoinsInCirculationNanos / 1e9;
-  }
-  usdMarketCap() {
-    return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(
-        this.coinsInCirculation() * this.globalVars?.loggedInUser?.ProfileEntryResponse.CoinPriceBitCloutNanos
-      ),
-      3,
-      true
-    );
-  }
   openBuyCloutModal() {
     this.modalService.show(BuyBitcloutComponent, {
       class: "modal-dialog-centered buy-clout-modal",

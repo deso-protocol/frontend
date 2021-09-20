@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { AppRoutingModule } from "../../app-routing.module";
+import {AppRoutingModule, RouteNames} from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
@@ -12,9 +12,11 @@ import { QuoteRecloutsModalComponent } from "../../quote-reclouts-modal/quote-re
 import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
 import * as _ from "lodash";
-import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
+import { PlaceBidComponent } from "../../place-bid/place-bid.component";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
+import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
+import {TradeCreatorComponent} from "../../trade-creator-page/trade-creator/trade-creator.component";
 
 @Component({
   selector: "feed-post",
@@ -208,6 +210,15 @@ export class FeedPostComponent implements OnInit {
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
       this.getNFTEntries();
     }
+  }
+
+  openBuyCreatorCoinModal(event, username: string) {
+    event.stopPropagation();
+    const initialState = { username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
+    this.modalService.show(TradeCreatorComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+      initialState,
+    });
   }
 
   onPostClicked(event) {
@@ -537,17 +548,27 @@ export class FeedPostComponent implements OnInit {
       return;
     }
     event.stopPropagation();
-    const modalDetails = this.modalService.show(PlaceBidModalComponent, {
-      class: "modal-dialog-centered modal-lg",
-      initialState: { post: this.postContent },
-    });
-    const onHideEvent = modalDetails.onHide;
-    onHideEvent.subscribe((response) => {
-      if (response === "bid placed") {
-        this.getNFTEntries();
-        this.nftBidPlaced.emit();
-      }
-    });
+    if (!this.globalVars.isMobile()) {
+      const modalDetails = this.modalService.show(PlaceBidModalComponent, {
+        class: "modal-dialog-centered modal-lg",
+        initialState: { post: this.postContent },
+      });
+      const onHideEvent = modalDetails.onHide;
+      onHideEvent.subscribe((response) => {
+        if (response === "bid placed") {
+          this.getNFTEntries();
+          this.nftBidPlaced.emit();
+        }
+      });
+    } else {
+      this.router.navigate(["/" + RouteNames.BID_NFT + "/" + this.postContent.PostHashHex], {
+        queryParamsHandling: "merge",
+        state: {
+          post: this.postContent,
+          postHashHex: this.postContent.PostHashHex,
+        },
+      });
+    }
   }
 
   showUnlockableContent = false;

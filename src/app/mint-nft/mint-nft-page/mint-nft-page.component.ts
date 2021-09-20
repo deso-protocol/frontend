@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
+import { GlobalVarsService } from "../../global-vars.service";
 
 @Component({
   selector: "mint-nft-page",

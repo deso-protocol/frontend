@@ -56,7 +56,11 @@
           class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-reclout-option-text"
           (click)="_undoReclout($event)"
         >
-          <i class="icon-repost feed-post-icon-row__icon fs-12px"></i>
+          <i-feather
+            name="repeat"
+            class="feed-post-icon-row__icon repost-icon position-relative"
+            style="right: 5px"
+          ></i-feather>
           Hide
         </a>
         <ng-template #recloutElseBlock>

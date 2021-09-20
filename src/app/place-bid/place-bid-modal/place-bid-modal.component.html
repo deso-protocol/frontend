@@ -1,0 +1,6 @@
+<div class="modal-header">
+  <div class="modal-header-x" (click)="closeModal()">
+    <i-feather name="x"></i-feather>
+  </div>
+</div>
+<place-bid [post]="post" [postHashHex]="postHashHex" (closeModal)="closeModalEvent($event)"></place-bid>

@@ -1,7 +1,9 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {Component, HostListener, Input, OnInit} from "@angular/core";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { GlobalVarsService } from "../../global-vars.service";
 import { TutorialStatus } from "../../backend-api.service";
+import {TradeCreatorComponent} from "../../trade-creator-page/trade-creator/trade-creator.component";
+import {BsModalService} from "ngx-bootstrap/modal";
 
 @Component({
   selector: "wallet-actions-dropdown",
@@ -17,17 +19,29 @@ export class WalletActionsDropdownComponent implements OnInit {
   showSellOnly: boolean = false;
   RouteNames = RouteNames;
   iconHideTimeout: NodeJS.Timer;
+  buyTradeType = this.globalVars.RouteNames.BUY_CREATOR;
+  sellTradeType = this.globalVars.RouteNames.SELL_CREATOR;
 
-  constructor(public globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService, private modalService: BsModalService) {}
 
   hideIcons(): void {
     this.iconHideTimeout = setTimeout(() => {
-      this.showIcons = false;
+      // this.showIcons = false;
     }, 1000);
   }
 
   stopIconHide() {
     clearTimeout(this.iconHideTimeout);
+  }
+
+  openBuyCreatorCoinModal(event, tradeType: string) {
+    event.stopPropagation();
+    const initialState = { username: this.hodlingUsername, tradeType };
+    this.modalService.show(TradeCreatorComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+      initialState,
+    });
+    this.showIcons = false;
   }
 
   ngOnInit(): void {

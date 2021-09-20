@@ -1,21 +1,19 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, NFTBidEntryResponse, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import * as _ from "lodash";
 import { of } from "rxjs";
-import { concatMap, filter, last, map, take } from "rxjs/operators";
-import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
-import { AddUnlockableModalComponent } from "../add-unlockable-modal/add-unlockable-modal.component";
+import { concatMap, last, map } from "rxjs/operators";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { Location } from "@angular/common";
 
 @Component({
   selector: "sell-nft-modal",
-  templateUrl: "./sell-nft-modal.component.html",
+  templateUrl: "./sell-nft.component.html",
 })
-export class SellNftModalComponent implements OnInit {
+export class SellNftComponent implements OnInit {
   @Input() postHashHex: string;
   post: PostEntryResponse;
   nftEntries: NFTEntryResponse[];
@@ -51,8 +49,6 @@ export class SellNftModalComponent implements OnInit {
     this.post = state.post;
     this.nftEntries = state.nftEntries;
     this.selectedBidEntries = state.selectedBidEntries;
-    console.log("Here are the bid entries");
-    console.log(this.selectedBidEntries);
     this.sellToNamesString();
     this.sellingPrice = _.sumBy(this.selectedBidEntries, "BidAmountNanos") / 1e9;
     const coinRoyaltyBasisPoints = this.post.NFTRoyaltyToCoinBasisPoints;
@@ -62,8 +58,6 @@ export class SellNftModalComponent implements OnInit {
     this.coinRoyalty = this.sellingPrice * (coinRoyaltyBasisPoints / (100 * 100));
     this.earnings = this.sellingPrice - this.coinRoyalty - this.creatorRoyalty;
     this.addEarningsToSelectedBidEntries();
-    console.log('New bid entries');
-    console.log(this.selectedBidEntries);
   }
 
   sellNFTTotal: number;

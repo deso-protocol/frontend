@@ -29,18 +29,21 @@
     >
       <div class="d-flex flex-column justify-content-center align-items-center bottom-bar-mobile__text">
         <i-feather name="message-square" class="feather-medium">
-          <div
-            *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
-            class="bottom-bar__message-notifications-bubble roboto-mono"
-          >
-            {{
+        </i-feather>
+        <div
+          *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0"
+          class="bottom-bar__message-notifications-bubble roboto-mono"
+        ></div>
+        <div class="mt-5px">
+          Messages
+          <span *ngIf="globalVars.messageResponse && globalVars.messageResponse.NumberOfUnreadThreads != 0">
+            ({{
               globalVars.messageResponse.NumberOfUnreadThreads > 999
                 ? "999+"
                 : globalVars.messageResponse.NumberOfUnreadThreads
-            }}
-          </div>
-        </i-feather>
-        <div class="mt-5px">Messages</div>
+            }})
+          </span>
+        </div>
       </div>
     </bottom-bar-mobile-tab>
 
@@ -72,8 +75,7 @@
   <a
     *ngIf="globalVars.loggedInUser && showPostButton"
     class="bottom-bar-mobile__create-post-circle rounded-circle link--unstyled bg-primary text-white"
-    [routerLink]="'/' + globalVars.RouteNames.CREATE_POST"
-    queryParamsHandling="merge"
+    (click)="openCreatePostModal()"
   >
     <i-feather name="feather"></i-feather>
   </a>

@@ -3,7 +3,7 @@
 <!--Profile not found-->
 <not-found *ngIf="!profile && !loading"></not-found>
 
-<div *ngIf="profile && !loading" class="flex-grow-1">
+<div *ngIf="profile && !loading" class="flex-grow-1" [ngClass]="{ 'px-8px': globalVars.isMobile() }">
   <!-- Top Card With Creator Info -->
   <creator-profile-top-card
     *ngIf="profile && !loading"
@@ -11,7 +11,7 @@
     (userUnblocked)="unblockUser()"
     (userBlocked)="blockUser()"
   ></creator-profile-top-card>
-
+  <wallet-widget *ngIf="globalVars.isMobile() && profile.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check"></wallet-widget>
   <!-- Feed Selector -->
   <tab-selector
     [tabs]="['Posts', 'Creator Coin', 'Diamonds', 'NFTs']"
@@ -90,16 +90,28 @@
       *ngIf="profile.PublicKeyBase58Check !== globalVars?.loggedInUser?.PublicKeyBase58Check"
       class="creator-profile-details__coin-info"
     >
-      <div>
-        <div class="d-inline-block col-4 mb-0" style="text-align: center">
+      <div [ngClass]="{ 'd-flex flex-column': globalVars.isMobile() }">
+        <div
+          class="d-inline-block"
+          [ngClass]="{ 'col-4 ml-0px mb-0': !globalVars.isMobile(), 'ml-16px mb-5px': globalVars.isMobile() }"
+          [ngStyle]="{ 'text-align': globalVars.isMobile() ? 'left' : 'center' }"
+        >
           <span class="font-weight-bold">≈ {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(2) }}</span>
           <span> Coins In Circulation</span>
         </div>
-        <div class="d-inline-block col-4 align-items-center mb-0" style="text-align: center">
+        <div
+          class="d-inline-block align-items-center"
+          [ngClass]="{ 'col-4 ml-0px mb-0': !globalVars.isMobile(), 'ml-16px mb-5px': globalVars.isMobile() }"
+          [ngStyle]="{ 'text-align': globalVars.isMobile() ? 'left' : 'center' }"
+        >
           <span class="font-weight-bold">≈ {{ totalUSDLocked() }}</span>
           <span> Total USD Locked</span>
         </div>
-        <div class="d-inline-block col-4 align-items-center mb-0" style="text-align: center">
+        <div
+          class="d-inline-block align-items-center mb-0"
+          [ngClass]="{ 'col-4 ml-0px': !globalVars.isMobile(), 'ml-16px': globalVars.isMobile() }"
+          [ngStyle]="{ 'text-align': globalVars.isMobile() ? 'left' : 'center' }"
+        >
           <span class="font-weight-bold">≈ {{ usdMarketCap() }}</span>
           <span> USD Market Cap</span>
         </div>

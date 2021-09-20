@@ -9,7 +9,7 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import RouteNamesService from "src/app/route-names.service";
 
 // RPH Modals
-import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.component";
+import { MintNftComponent } from "../../mint-nft/mint-nft.component";
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
 
 const RouteNames = RouteNamesService;

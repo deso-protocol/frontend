@@ -5,6 +5,7 @@ import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
+import {ThemeService} from "../../theme/theme.service";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -46,13 +47,17 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     founderRewardError: false,
   };
   profileUpdated = false;
+  emailAddress = "";
+  initialEmailAddress = "";
+  invalidEmailEntered = false;
 
   constructor(
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    public themeService: ThemeService
   ) {}
 
   ngOnInit() {
@@ -92,6 +97,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _updateFormBasedOnLoggedInUser() {
     if (this.globalVars.loggedInUser) {
+      this._getUserMetadata();
       const profileEntryResponse = this.globalVars.loggedInUser.ProfileEntryResponse;
       this.usernameInput = profileEntryResponse?.Username || "";
       this.descriptionInput = profileEntryResponse?.Description || "";
@@ -112,6 +118,48 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.founderRewardInput = this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints / 100;
       }
     }
+  }
+
+  _getUserMetadata() {
+    this.backendApi
+      .GetUserGlobalMetadata(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/
+      )
+      .subscribe(
+        (res) => {
+          this.emailAddress = res.Email;
+          this.initialEmailAddress = this.emailAddress;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
+
+  _validateEmail(email) {
+    if (email === "" || this.globalVars.emailRegExp.test(email)) {
+      this.invalidEmailEntered = false;
+    } else {
+      this.invalidEmailEntered = true;
+    }
+  }
+
+  _updateEmail() {
+    this.backendApi
+      .UpdateUserGlobalMetadata(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+        this.emailAddress /*EmailAddress*/,
+        null /*MessageReadStateUpdatesByContact*/
+      )
+      .subscribe(
+        (res) => {},
+        (err) => {
+          console.log(err);
+          this.globalVars.logEvent("profile : update : error", { err });
+        }
+      )
   }
 
   _setProfileUpdates() {
@@ -187,6 +235,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     // browsers may do this.
     this.usernameInput = this.usernameInput.trim();
 
+    // TODO: Add errors for emails
     const hasErrors = this._setProfileErrors();
     if (hasErrors) {
       this.globalVars.logEvent("profile : update : has-errors", this.profileUpdateErrors);
@@ -194,6 +243,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     }
 
     this.updateProfileBeingCalled = true;
+    if (this.initialEmailAddress != this.emailAddress) {
+      this._updateEmail();
+    }
     this._setProfileUpdates();
     this._callBackendUpdateProfile().subscribe(
       (res) => {
@@ -290,5 +342,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   _resetImage() {
     this.profilePicInput = "";
+  }
+
+  selectChangeHandler(event: any) {
+    const newTheme = event.target.value;
+    this.themeService.setTheme(newTheme);
   }
 }
