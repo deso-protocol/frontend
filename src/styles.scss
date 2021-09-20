@@ -2631,11 +2631,19 @@ update-profile {
 }
 
 create-profile-tutorial-page {
-  .update-profile__holder {
-    border-radius: 0px 0px 10px 10px;
-  }
-  .update-profile__avatar {
+  .update-profile__holder,.update-profile__avatar,.update-profile__text {
     border-radius: 0px;
+    box-shadow: none;
+  }
+  .update-profile__holder {
+    border-right: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+}
+
+create-post-tutorial-page {
+  feed-create-post {
+    background: var(--tilebg);
   }
 }
 

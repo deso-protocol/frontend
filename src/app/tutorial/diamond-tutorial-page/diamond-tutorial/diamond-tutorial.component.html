@@ -1,29 +1,21 @@
-<div class="flex-grow-1">
-  <div class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg">
-    <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
-    <div>
-      <h3 class="mb-1 fs-24px font-weight-semibold">
-        Give a Diamond
-      </h3>
-      <h5 class="fs-15px fc-muted">
-        Step 5 of 6
-      </h5>
+<div class="flex-grow-1 border br-10px">
+  <div class="tutorial-header">
+    <div class="d-flex justify-content-between">
+      <div class="tutorial-title">Give a Diamond</div>
+      <div class="fc-secondary fs-15px">Step 5/6</div>
     </div>
   </div>
   <!-- Top Bar -->
-  <div
-  >
-    <div class="p-3 fs-15px">
-      <p>
-        Diamonds are tips that send money directly to the poster.
-      </p>
-      <p class="mt-3">
-        <b>Tap the diamond button to give your first diamond!</b>
-      </p>
-    </div>
+  <div class="fs-15px p-16px background-color-white">
+    <p>
+      Diamonds are tips that send money directly to the poster.
+    </p>
+    <p class="mt-3">
+      <b>Tap the diamond button to give your first diamond!</b>
+    </p>
   </div>
 
-  <div style="margin-top: -15px">
+  <div class="p-5px background-color-white">
     <simple-center-loader *ngIf="loading"></simple-center-loader>
     <div *ngIf="!loading">
       <feed-post
@@ -36,8 +28,8 @@
         (diamondSent)="onDiamondSent()"
       ></feed-post>
     </div>
-    <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-    <div class="global__bottom-bar-mobile-height"></div>
-    <div class="global__bottom-bar-mobile-height"></div>
+  </div>
+  <div class="background-color-white p-16px" style="border-radius: 0px 0px 16px 16px">
+    <a class="fs-15px fc-secondary" (click)="globalVars.skipTutorial()">Cancel</a>
   </div>
 </div>

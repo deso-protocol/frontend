@@ -12,7 +12,7 @@ import { Router } from "@angular/router";
 })
 export class DiamondTutorialComponent implements OnInit {
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
     private router: Router
@@ -20,8 +20,8 @@ export class DiamondTutorialComponent implements OnInit {
 
   post: PostEntryResponse;
   // Use this posthash in testnet.
-  // postHashHex = "3e42215a120a6e9d4848117f5829a2c4d9f692360fd14b78daea483a72d142dc";
-  postHashHex = "75f16239b57de0531f9579f3817beb0a67515e4999947f293c112fb0260178e4";
+  postHashHex = "3e42215a120a6e9d4848117f5829a2c4d9f692360fd14b78daea483a72d142dc";
+  // postHashHex = "75f16239b57de0531f9579f3817beb0a67515e4999947f293c112fb0260178e4";
   loading: boolean = true;
 
   ngOnInit() {
