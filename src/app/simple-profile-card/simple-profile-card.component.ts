@@ -59,7 +59,12 @@ export class SimpleProfileCardComponent implements OnInit {
   openBuyCreatorCoinModal(event) {
     this.globalVars.logEvent("buy : creator : select");
     event.stopPropagation();
-    const initialState = { username: this.profile.Username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
+    const initialState = {
+      username: this.profile.Username,
+      tradeType: this.globalVars.RouteNames.BUY_CREATOR,
+      inTutorial: this.inTutorial,
+      tutorialBuy: this.showTutorialBuy,
+    };
     this.modalService.show(TradeCreatorComponent, {
       class: "modal-dialog-centered buy-clout-modal",
       initialState,

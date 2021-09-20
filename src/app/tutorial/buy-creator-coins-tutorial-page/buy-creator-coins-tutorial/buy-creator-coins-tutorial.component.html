@@ -49,14 +49,8 @@
         <div class="background-color-secondary p-16px">
           <span class="fs-17px fc-secondary font-weight-bold">Hot New Creators</span>
         </div>
-        <div
-          *ngFor="let profile of upAndComingCreatorsToHighlight; let idx = index"
-          class="background-color-white"
-          [ngStyle]="{
-            'border-radius': idx === upAndComingCreatorsToHighlight?.length - 1 ? '0px 0px 10px 10px' : '0px'
-          }"
-        >
-          <div class="p-2" [ngClass]="{ 'border-bottom': idx !== upAndComingCreatorsToHighlight?.length - 1 }">
+        <div *ngFor="let profile of upAndComingCreatorsToHighlight" class="background-color-white">
+          <div class="p-2 border-bottom">
             <simple-profile-card
               [profile]="profile"
               [showTutorialBuy]="true"
@@ -65,6 +59,9 @@
               [singleColumn]="true"
             ></simple-profile-card>
           </div>
+        </div>
+        <div class="background-color-white p-16px" style="border-radius: 0px 0px 16px 16px">
+          <a class="fs-15px fc-secondary">Cancel</a>
         </div>
       </div>
     </div>

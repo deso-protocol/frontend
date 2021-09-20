@@ -203,7 +203,7 @@ export class TradeCreatorComponent implements OnInit {
       this.screenToShow = this.TRADE_CREATOR_PREVIEW_SCREEN;
       this.creatorCoinTrade.isBuyingCreatorCoin = !!this.tutorialBuy;
       this.creatorCoinTrade.tradeType = !!this.tutorialBuy ? CreatorCoinTrade.BUY_VERB : CreatorCoinTrade.SELL_VERB;
-      this._getCreatorProfile(this.route.snapshot.params.username).add(() => {
+      this._getCreatorProfile(this.username).add(() => {
         this.investInYourself =
           this.globalVars.loggedInUser?.ProfileEntryResponse?.Username ===
           this.creatorCoinTrade.creatorProfile.Username;

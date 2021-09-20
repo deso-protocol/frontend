@@ -5,33 +5,6 @@
 </div>
 <div *ngIf="readyForDisplay(); else loadingElseBlock">
   <div *ngIf="this.appData.loggedInUser; else elseBlock">
-    <div *ngIf="inTutorial" class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg">
-      <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
-      <div *ngIf="inTutorial && !investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
-        <h3 class="mb-1 fs-24px font-weight-semibold">
-          Invest in a Creator
-        </h3>
-        <h5 class="fs-15px fc-muted">
-          Step 1 of 6
-        </h5>
-      </div>
-      <div *ngIf="inTutorial && !investInYourself && !creatorCoinTrade.isBuyingCreatorCoin">
-        <h3 class="mb-1 fs-24px font-weight-semibold">
-          Sell a Creator
-        </h3>
-        <h5 class="fs-15px fc-muted">
-          Step 2 of 6
-        </h5>
-      </div>
-      <div *ngIf="inTutorial && investInYourself && creatorCoinTrade.isBuyingCreatorCoin">
-        <h3 class="mb-1 fs-24px font-weight-semibold">
-          Invest in Yourself
-        </h3>
-        <h5 class="fs-15px fc-muted">
-          Step 4 of 6
-        </h5>
-      </div>
-    </div>
     <div class="buy-bitclout__container">
       <div class="px-16px" *ngIf="screenToShow !== this.TRADE_CREATOR_PREVIEW_SCREEN">
         <div class="d-flex">
@@ -59,8 +32,24 @@
       ></tab-selector>
 
       <!--Preview Header-->
-      <div *ngIf="screenToShow === this.TRADE_CREATOR_PREVIEW_SCREEN" class="mt-5px m-16px mint-nft__title">
+      <div *ngIf="screenToShow === this.TRADE_CREATOR_PREVIEW_SCREEN && !inTutorial" class="mt-5px m-16px mint-nft__title">
         Confirm Operation
+      </div>
+
+      <!--Preview Header-->
+      <div *ngIf="screenToShow === this.TRADE_CREATOR_PREVIEW_SCREEN && inTutorial" class="p-16px">
+        <div class="d-flex align-items-center">
+          <div
+            class="simple-profile-card__avatar br-12px"
+            [avatar]="creatorCoinTrade.creatorProfile.PublicKeyBase58Check"
+          ></div>
+          <div class="ml-16px fs-20px font-weight-bold">Buy {{ creatorCoinTrade.creatorProfile.Username }} Coin</div>
+        </div>
+        <div class="mt-20px">
+          You can invest directly in your favorite creators by buying their coin. Click "Confirm Buy" to purchase
+          {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
+          worth of {{ globalVars.addOwnershipApostrophe(creatorCoinTrade.creatorProfile.Username) }} coin!
+        </div>
       </div>
 
       <!-- Content -->
