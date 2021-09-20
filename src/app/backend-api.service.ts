@@ -52,10 +52,16 @@ export class BackendRoutes {
   static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
   static RoutePathGetRecloutsForPost = "/api/v0/get-reclouts-for-post";
   static RoutePathGetQuoteRecloutsForPost = "/api/v0/get-quote-reclouts-for-post";
+  static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
+
+  // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
   static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
+
+  // Tutorial
   static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
   static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
+  static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
 
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
@@ -69,8 +75,11 @@ export class BackendRoutes {
   static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
   static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
-  static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
-  static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
+
+  // ETH
+  static RoutePathCreateETHTx = "/api/v0/create-eth-tx";
+  static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
+  static RoutePathGetETHBalance = "/api/v0/get-eth-balance";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -1584,6 +1593,52 @@ export class BackendApiService {
   GetJumioStatusForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathGetJumioStatusForPublicKey, PublicKeyBase58Check, {
       PublicKeyBase58Check,
+    });
+  }
+
+  ExchangeETH(endpoint: string, PublicKeyBase58Check: string, Address: string, Amount: number): Observable<any> {
+    let req = this.CreateETHTx(endpoint, Address, Amount);
+
+    req = req.pipe(
+      switchMap((res) =>
+        this.identityService
+          .burn({
+            ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
+            unsignedHashes: res.ToSign,
+          })
+          .pipe(map((signed) => ({ ...res, ...signed })))
+      )
+    );
+
+    req = req.pipe(
+      switchMap((res) =>
+        this.SubmitETHTx(endpoint, PublicKeyBase58Check, res.Tx, res.ToSign, res.signedHashes)
+          .pipe(map((submitted) => ({ ...res, ...submitted })))
+      )
+    );
+
+    return req;
+  }
+
+  CreateETHTx(endpoint: string, Address: string, Amount: number): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathCreateETHTx, {
+      Address,
+      Amount,
+    });
+  }
+
+  SubmitETHTx(endpoint: string, PublicKeyBase58Check: string, Tx: any, ToSign: string[], SignedHashes: string[]): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathSubmitETHTx, {
+      PublicKeyBase58Check,
+      Tx,
+      ToSign,
+      SignedHashes,
+    });
+  }
+
+  GetETHBalance(endpoint: string, Address: string): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetETHBalance, {
+      Address,
     });
   }
 

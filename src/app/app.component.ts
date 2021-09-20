@@ -176,6 +176,7 @@ export class AppComponent implements OnInit {
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
+        this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioBitCloutNanos = res.JumioBitCloutNanos;
         // Setup amplitude on first run

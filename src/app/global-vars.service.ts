@@ -50,6 +50,8 @@ export class GlobalVarsService {
   // loading spinner until we get a correct value. That said, I'm not going to fix that
   // right now, I'm just moving this magic number into a constant.
   static DEFAULT_NANOS_PER_USD_EXCHANGE_RATE = 1e9;
+  static NANOS_PER_UNIT = 1e9;
+  static WEI_PER_ETH = 1e18;
 
   constructor(
     private backendApi: BackendApiService,
@@ -162,6 +164,9 @@ export class GlobalVarsService {
   // Whether or not to show the Buy BitClout with USD flow.
   showBuyWithUSD = false;
 
+  // Buy Bitclout with ETH
+  showBuyWithETH = false;
+
   // Whether or not to show the Jumio verification flow.
   showJumio = false;
 
@@ -174,11 +179,17 @@ export class GlobalVarsService {
   // Support email for this node (renders Help in the left bar nav)
   supportEmail: string = null;
 
+  // ETH exchange rates
+  usdPerETHExchangeRate: number;
+  nanosPerETHExchangeRate: number;
+
+  // BTC exchange rates
   satoshisPerBitCloutExchangeRate: number;
-  nanosPerUSDExchangeRate: number;
-  // This is the USD to Bitcoin exchange rate according to external
-  // sources.
   usdPerBitcoinExchangeRate: number;
+
+  // USD exchange rates
+  nanosPerUSDExchangeRate: number;
+
   defaultFeeRateNanosPerKB: number;
 
   NanosSold: number;
@@ -977,18 +988,23 @@ export class GlobalVarsService {
   _updateBitCloutExchangeRate() {
     this.backendApi.GetExchangeRate(this.localNode).subscribe(
       (res: any) => {
+        // BTC
         this.satoshisPerBitCloutExchangeRate = res.SatoshisPerBitCloutExchangeRate;
-
-        this.NanosSold = res.NanosSold;
         this.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
+        this.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
 
+        // ETH
+        this.usdPerETHExchangeRate = res.USDCentsPerETHExchangeRate / 100;
+        this.nanosPerETHExchangeRate = res.NanosPerETHExchangeRate;
+
+        // CLOUT
+        this.NanosSold = res.NanosSold;
         this.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
         this.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
         this.BuyBitCloutFeeBasisPoints = res.BuyBitCloutFeeBasisPoints;
 
-        const nanosPerUnit = 1e9;
+        const nanosPerUnit = GlobalVarsService.NANOS_PER_UNIT;
         this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerBitClout / 100);
-        this.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
         this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, null);
         this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, 2);
       },
@@ -1056,14 +1072,14 @@ export class GlobalVarsService {
     Swal.fire({
       target: this.getTargetComponentSelector(),
       icon: "warning",
-      title: "Skip Tutorial?",
+      title: "Exit Tutorial?",
       html: "Are you sure?",
       showConfirmButton: true,
       customClass: {
         confirmButton: "btn btn-light",
       },
       reverseButtons: true,
-      confirmButtonText: "Skip",
+      confirmButtonText: "Yes",
     }).then((res) => {
       if (res.isConfirmed) {
         this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
