@@ -5,16 +5,16 @@
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import {Component, Input, OnInit, ViewChild} from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { RouteNames } from "../../app-routing.module";
 import { Observable, Subscription } from "rxjs";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { BuyBitcloutComponent } from "../../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
-import {TradeCreatorFormComponent} from "../trade-creator-form/trade-creator-form.component";
+import { TradeCreatorFormComponent } from "../trade-creator-form/trade-creator-form.component";
 
 @Component({
   selector: "trade-creator",
@@ -75,6 +75,7 @@ export class TradeCreatorComponent implements OnInit {
     if (!this.inTutorial) {
       this.screenToShow = this.TRADE_CREATOR_COMPLETE_SCREEN;
     } else {
+      this.bsModalRef.hide();
       if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
         this.router.navigate([
           RouteNames.TUTORIAL,

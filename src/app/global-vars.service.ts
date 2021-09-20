@@ -1020,6 +1020,35 @@ export class GlobalVarsService {
     });
   }
 
+  skipTutorial(): void {
+    Swal.fire({
+      target: this.getTargetComponentSelector(),
+      icon: "warning",
+      title: "Exit Tutorial?",
+      html: "Are you sure?",
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
+          (response) => {
+            this.logEvent(`tutorial : skip`);
+            // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+            this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
+            this.router.navigate([RouteNames.BROWSE]);
+          },
+          (err) => {
+            this._alertError(err.error.error);
+          }
+        );
+      }
+    });
+  }
+
   jumioInterval: Timer = null;
   // If we return from the Jumio flow, poll for up to 10 minutes to see if we need to update the user's balance.
   pollLoggedInUserForJumio(publicKey: string): void {
