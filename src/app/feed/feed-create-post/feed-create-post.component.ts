@@ -71,7 +71,7 @@ export class FeedCreatePostComponent implements OnInit {
     this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
     if (this.inTutorial) {
-      this.postInput = "It's time to CLOUT!";
+      this.postInput = "It's time to DESO!";
     }
   }
 
@@ -116,7 +116,7 @@ export class FeedCreatePostComponent implements OnInit {
     if (!this.parentPost) {
       return this.randomMovieQuote;
     }
-    // Creating comment or quote reclout;
+    // Creating comment or quote repost;
     return this.isQuote ? "Add a quote" : "Post your reply";
   }
 
@@ -154,10 +154,10 @@ export class FeedCreatePostComponent implements OnInit {
 
     const bodyObj = {
       Body: this.postInput,
-      // Only submit images if the post is a quoted reclout or a vanilla post.
+      // Only submit images if the post is a quoted repost or a vanilla post.
       ImageURLs: !this.isComment ? [this.postImageSrc].filter((n) => n) : [],
     };
-    const recloutedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
+    const repostedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
     const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
 
@@ -169,7 +169,7 @@ export class FeedCreatePostComponent implements OnInit {
         this.isComment ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
         "" /*Title*/,
         bodyObj /*BodyObj*/,
-        recloutedPostHashHex,
+        repostedPostHashHex,
         postExtraData,
         "" /*Sub*/,
         // TODO: Should we have different values for creator basis points and stake multiple?

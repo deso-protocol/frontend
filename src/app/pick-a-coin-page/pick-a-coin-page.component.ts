@@ -22,15 +22,15 @@ export class PickACoinPageComponent implements OnInit {
         this.hasUnminedCreatorCoins = true;
       }
     }
-    this.titleService.setTitle("Send Creator Coins - BitClout");
+    this.titleService.setTitle("Send Creator Coins - DeSo");
   }
 
   usersYouHODL() {
     const creators = this.globalVars.loggedInUser.UsersYouHODL;
     creators.sort((a, b) => {
       return (
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) -
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry)
+        this.globalVars.desoNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) -
+        this.globalVars.desoNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry)
       );
     });
     return creators;

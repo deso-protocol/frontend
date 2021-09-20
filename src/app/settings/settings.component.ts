@@ -33,7 +33,7 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this._getUserMetadata();
-    this.titleService.setTitle("Settings - BitClout");
+    this.titleService.setTitle("Settings - DeSo");
   }
 
   _getUserMetadata() {

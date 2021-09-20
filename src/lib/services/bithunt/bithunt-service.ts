@@ -31,7 +31,7 @@ export class CommunityProject {
 const bithuntURL = "https://bithunt.bitclout.com/public/projects";
 
 export class BithuntService {
-  static bithuntPageSize = 25
+  static bithuntPageSize = 25;
   constructor(
     private httpClient: HttpClient,
     private backendApi: BackendApiService,
@@ -46,7 +46,7 @@ export class BithuntService {
         return projects
           .filter((project: CommunityProject) => project.Profile)
           .sort((a, b) => {
-            return b.Profile.CoinEntry.BitCloutLockedNanos - a.Profile.CoinEntry.BitCloutLockedNanos;
+            return b.Profile.CoinEntry.DeSoLockedNanos - a.Profile.CoinEntry.DeSoLockedNanos;
           });
       })
     );

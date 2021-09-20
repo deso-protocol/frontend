@@ -93,7 +93,7 @@ export class SignUpComponent {
     this.nextPage();
   }
 
-  skipButtonClickedOnStarterBitCloutStep() {
+  skipButtonClickedOnStarterDeSoStep() {
     this.globalVars.logEvent("account : create : create-phone-number-verification : skip");
     this.nextPage();
   }
@@ -121,16 +121,16 @@ export class SignUpComponent {
       });
   }
 
-  buyBitCloutClicked(): void {
-    this.globalVars.logEvent("account : create : buy-bitclout");
-    this.router.navigate(["/" + this.globalVars.RouteNames.BUY_BITCLOUT], {
+  buyDeSoClicked(): void {
+    this.globalVars.logEvent("account : create : buy-deso");
+    this.router.navigate(["/" + this.globalVars.RouteNames.BUY_DESO], {
       queryParams: { stepNum: null },
       queryParamsHandling: "merge",
     });
   }
 
-  buyBitCloutSkipped(): void {
-    this.globalVars.logEvent("account : create : buy-bitclout : skip");
+  buyDeSoSkipped(): void {
+    this.globalVars.logEvent("account : create : buy-deso : skip");
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
       queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
       queryParamsHandling: "merge",
