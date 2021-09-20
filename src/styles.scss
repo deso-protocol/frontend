@@ -2484,6 +2484,30 @@ wallet-page {
   margin-top: 20px;
 }
 
+wallet-tutorial-page {
+  .global__mobile-scrollable-section {
+    padding-left: 0px;
+  }
+  .wallet-highlighted-creator {
+    border: 1px solid var(--highlight) !important;
+    border-radius: 10px;
+  }
+  .wallet__table {
+    margin-top: 0px;
+    border-radius: 0px 0px 10px 10px;
+    tab-selector {
+      .tab-selector__container {
+        background: var(--backgroundsecondary);
+      }
+      .active-tab {
+        color: var(--postsectext);
+        font-weight: 600;
+        border: none;
+      }
+    }
+  }
+}
+
 .buy-clout-modal {
   max-width: 630px;
 }

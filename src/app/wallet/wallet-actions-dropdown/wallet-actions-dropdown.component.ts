@@ -36,7 +36,7 @@ export class WalletActionsDropdownComponent implements OnInit {
 
   openBuyCreatorCoinModal(event, tradeType: string) {
     event.stopPropagation();
-    const initialState = { username: this.hodlingUsername, tradeType };
+    const initialState = { username: this.hodlingUsername, tradeType, inTutorial: this.inTutorial };
     this.modalService.show(TradeCreatorComponent, {
       class: "modal-dialog-centered buy-clout-modal",
       initialState,

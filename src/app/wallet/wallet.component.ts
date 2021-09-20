@@ -78,7 +78,7 @@ export class WalletComponent implements OnInit, OnDestroy {
       });
       switch (this.tutorialStatus) {
         case TutorialStatus.INVEST_OTHERS_BUY: {
-          this.tutorialHeaderText = "Invest in a Creator";
+          this.tutorialHeaderText = "Sell a Creator";
           this.tutorialStepNumber = 1;
           this.nextButtonText = `Sell ${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins`;
           break;
