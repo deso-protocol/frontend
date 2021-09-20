@@ -20,7 +20,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   loading: boolean = true;
 
   constructor(
-    private globalVars: GlobalVarsService,
+    public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title
   ) {}

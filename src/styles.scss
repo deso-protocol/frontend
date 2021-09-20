@@ -2505,11 +2505,13 @@ wallet-tutorial-page {
         border: none;
       }
     }
-    .wallet-actions-icon {
-      animation: shake 5s cubic-bezier(.36,.07,.19,.97) both infinite;
-      animation-delay: 5s;
-      transform: translate3d(0, 0, 0);
-      perspective: 1000px;
+    .wiggle {
+      .wallet-actions-icon {
+        animation: shake 5s cubic-bezier(.36,.07,.19,.97) both infinite;
+        animation-delay: 5s;
+        transform: translate3d(0, 0, 0);
+        perspective: 1000px;
+      }
     }
   }
 }
@@ -2625,6 +2627,15 @@ update-profile {
       height: 16px;
       width: 16px;
     }
+  }
+}
+
+create-profile-tutorial-page {
+  .update-profile__holder {
+    border-radius: 0px 0px 10px 10px;
+  }
+  .update-profile__avatar {
+    border-radius: 0px;
   }
 }
 

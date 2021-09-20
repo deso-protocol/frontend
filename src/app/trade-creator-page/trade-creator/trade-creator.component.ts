@@ -88,7 +88,7 @@ export class TradeCreatorComponent implements OnInit {
       } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
         this.router.navigate([
           RouteNames.TUTORIAL,
-          RouteNames.WALLET,
+          RouteNames.UPDATE_PROFILE,
           this.globalVars.loggedInUser?.CreatorPurchasedInTutorialUsername,
         ]);
       } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_SELF) {

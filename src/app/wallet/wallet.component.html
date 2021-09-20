@@ -10,8 +10,8 @@
     </div>
   </div>
 
-  <div class="pl-3 pr-3 pt-3 d-flex flex-column justify-flex-start background-color-white">
-    <div class="fs-15px py-15px pr-15px" *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY">
+  <div *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY" class="pl-3 pr-3 pt-3 d-flex flex-column justify-flex-start background-color-white">
+    <div class="fs-15px py-15px pr-15px">
       <div>
         <p>
           You now have {{ globalVars.nanosToBitClout(balanceEntryToHighlight.BalanceNanos, 4) }} ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
@@ -272,6 +272,7 @@
                   [inTutorial]="inTutorial"
                   [isHighlightedCreator]="isHighlightedCreator(creator)"
                   *ngIf="!inTutorial || isHighlightedCreator(creator)"
+                  [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY }"
                 ></wallet-actions-dropdown>
               </div>
             </div>
@@ -282,16 +283,17 @@
 
       <div
         *ngIf="inTutorial"
-        class="background-color-white p-16px d-flex justify-content-between"
+        class="background-color-white p-16px d-flex justify-content-between align-items-center"
         style="border-radius: 0px 0px 16px 16px"
       >
         <a class="fs-15px fc-secondary" (click)="globalVars.skipTutorial()">Cancel</a>
         <button
-          class="plain-button fs-18px"
+          class="plain-button fs-18px font-weight-bold"
           *ngIf="tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY"
           (click)="tutorialNext()"
+          style="height: 48px; width: 85px"
         >
-          Next: {{ nextButtonText }}
+          Next
         </button>
       </div>
 

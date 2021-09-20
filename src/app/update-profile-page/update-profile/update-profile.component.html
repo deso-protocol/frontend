@@ -1,17 +1,16 @@
 <div
   *ngIf="inTutorial"
-  class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg"
+  class="flex-grow-1 border"
+  style="border-radius: 10px 10px 0px 0px"
 >
-  <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
-  <div>
-    <h3 class="mb-1 fs-24px font-weight-semibold">Update Profile</h3>
-    <h5 class="fs-15px fc-muted">Step 3 of 6</h5>
+  <div class="tutorial-header">
+    <div class="d-flex justify-content-between">
+      <div class="tutorial-title">Update Your Profile</div>
+      <div class="fc-secondary fs-15px">Step 3/6</div>
+    </div>
   </div>
-</div>
-
-<div class="p-3" style="margin-bottom: -20px" *ngIf="inTutorial">
-  <div class="d-flex flex-column justify-flex-start">
-    <h5 class="fs-15px">Everyone needs a profile. Let's update yours!</h5>
+  <div class="fs-15px p-16px background-color-white">
+    Everyone needs a profile. Let's update yours!
   </div>
 </div>
 
