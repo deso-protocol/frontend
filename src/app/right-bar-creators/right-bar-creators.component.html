@@ -4,7 +4,7 @@
     <right-bar-signup></right-bar-signup>
   </div>
   <!-- BitClout Price / Balance -->
-  <div class="right-bar-creators__balance-box">
+  <div class="right-bar-creators__balance-box" *ngIf="!inTutorial">
     <div>
       <div class="d-flex">
         <div class="w-100 clout-metrics">
@@ -40,7 +40,7 @@
     </div>
   </div>
 
-  <jumio-status></jumio-status>
+  <jumio-status *ngIf="!inTutorial"></jumio-status>
 
   <div *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified && !inTutorial" class="bg-light mb-20px fs-13px">
     <div class="jumio-status">
@@ -66,7 +66,7 @@
   </div>
 
   <!-- Creator Coin Info -->
-  <wallet-widget></wallet-widget>
+  <wallet-widget *ngIf="!inTutorial"></wallet-widget>
 
   <div class="trend-box" *ngIf="!inTutorial">
     <!-- Title -->

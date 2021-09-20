@@ -8,10 +8,15 @@
       <i-feather name="bitclout"></i-feather>
       <span>bitclout</span>
     </div>
-    <search-bar [resultsUnderBar]="true"></search-bar>
+    <search-bar *ngIf="!inTutorial" [resultsUnderBar]="true"></search-bar>
     <change-account-selector></change-account-selector>
   </div>
-  <top-bar-mobile-header *ngIf="mobile" [simpleTopBar]="simpleTopBar" [title]="title"></top-bar-mobile-header>
+  <top-bar-mobile-header
+    *ngIf="mobile"
+    [inTutorial]="inTutorial"
+    [simpleTopBar]="simpleTopBar"
+    [title]="title"
+  ></top-bar-mobile-header>
   <div class="d-flex" id="header-content-spacer" [ngStyle]="{ 'margin-top': mobile ? '94px' : '64px' }">
     <left-bar *ngIf="!mobile && !onlyContent" [inTutorial]="inTutorial"></left-bar>
     <div *ngIf="onlyContent" class="global__nav__width"></div>

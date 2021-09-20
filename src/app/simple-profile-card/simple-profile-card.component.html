@@ -1,5 +1,5 @@
 <a
-  class="container d-flex align-items-center fs-15px p-10px border-color-grey link--unstyled"
+  class="d-flex align-items-center fs-15px p-10px border-color-grey link--unstyled"
   [ngClass]="{ 'border-bottom': !singleColumn }"
   [ngStyle]="{ 'cursor': !profile.Username ? 'default' : '' }"
   (click)="onClick()"
@@ -54,10 +54,10 @@
       <div *ngIf="showRecloutIcon">
         <i class="icon-repost fs-32px d-block fc-green"></i>
       </div>
-      <div *ngIf="showTutorialBuy" (click)="onBuyClicked()">
-        <a class="btn btn-primary fs-18px text-left">
+      <div *ngIf="showTutorialBuy" (click)="openBuyCreatorCoinModal($event)">
+        <button class="primary-button fs-18px" style="width: 78px; height: 48px">
           Buy
-        </a>
+        </button>
       </div>
     </div>
   </div>

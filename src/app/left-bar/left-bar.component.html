@@ -46,6 +46,10 @@
             [buttonLabel]="'Update Profile'"
             [iconName]="'user'"
           ></left-bar-button>
+          <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
+            <a class="left-bar__dot-inactive">·</a>
+            <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
+          </div>
           <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
           <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
             <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>

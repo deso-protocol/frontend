@@ -6,7 +6,10 @@
     class="global__top-bar__height d-flex align-items-center w-100 px-15px mr-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
   >
     <div *ngIf="!simpleTopBar && !isSearching" class="d-flex align-items-center fc-secondary">
-      <top-bar-mobile-navigation-control class="mr-15px d-inline-block"></top-bar-mobile-navigation-control>
+      <top-bar-mobile-navigation-control
+        *ngIf="!inTutorial"
+        class="mr-15px d-inline-block"
+      ></top-bar-mobile-navigation-control>
       <div class="bitclout-logo fs-24px font-weight-bold ml-5px">
         <i-feather name="bitclout" class="mr-10px position-relative" style="top: -2px"></i-feather>
         <span>bitclout</span>
@@ -15,7 +18,7 @@
     </div>
 
     <i-feather
-      *ngIf="!simpleTopBar && !isSearching"
+      *ngIf="!simpleTopBar && !isSearching && !inTutorial"
       name="search"
       class="feather-medium cursor-pointer position-relative"
       style="top: -3px"

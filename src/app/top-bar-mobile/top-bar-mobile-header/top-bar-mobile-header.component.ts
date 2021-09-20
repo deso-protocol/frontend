@@ -12,6 +12,7 @@ import { AppRoutingModule } from "../../app-routing.module";
 export class TopBarMobileHeaderComponent {
   // Certain pages only have a back button and a title for the top bar.
   @Input() simpleTopBar: boolean = false;
+  @Input() inTutorial: boolean = false;
   @Input() title: string = null;
   @Input() publicKeyBase58Check: string = null;
   @Input() profileEntryResponse: ProfileEntryResponse = null;

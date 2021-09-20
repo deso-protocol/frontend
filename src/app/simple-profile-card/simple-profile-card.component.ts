@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 import { ProfileEntryResponse } from "../backend-api.service";
+import { TradeCreatorComponent } from "../trade-creator-page/trade-creator/trade-creator.component";
+import { BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
   selector: "simple-profile-card",
@@ -18,7 +20,7 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() inTutorial: boolean = false;
   @Input() showTutorialBuy: boolean = false;
 
-  constructor(public globalVars: GlobalVarsService, private router: Router) {}
+  constructor(public globalVars: GlobalVarsService, private router: Router, private modalService: BsModalService) {}
 
   ngOnInit(): void {}
 
@@ -52,5 +54,15 @@ export class SimpleProfileCardComponent implements OnInit {
       ],
       { queryParamsHandling: "merge" }
     );
+  }
+
+  openBuyCreatorCoinModal(event) {
+    this.globalVars.logEvent("buy : creator : select");
+    event.stopPropagation();
+    const initialState = { username: this.profile.Username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
+    this.modalService.show(TradeCreatorComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+      initialState,
+    });
   }
 }
