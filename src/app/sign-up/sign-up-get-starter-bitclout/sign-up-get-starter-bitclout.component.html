@@ -10,13 +10,13 @@ can refactor.
 <div *ngIf="screenToShow == SignUpGetStarterBitcloutComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN">
   <div *ngIf="displayForSignupFlow">
     <div class="mt-15px fs-15px fc-muted">STEP 3 of 4</div>
-    <div class="mt-15px fs-24px font-weight-bold">Get Starter BitClout</div>
+    <div class="mt-15px fs-24px font-weight-bold">Get Starter DESO</div>
 
-    <div class="fs-18px mt-15px mb-15px">BitClout is a cryptocurrency that's required to use the site.</div>
+    <div class="fs-18px mt-15px mb-15px">DESO is a cryptocurrency that's required to use the site.</div>
   </div>
 
   <div class="fs-18px">
-    Verify your phone number for free BitClout. Your phone number will never be shared with anyone.
+    Verify your phone number for free DESO. Your phone number will never be shared with anyone.
   </div>
 
   <form #f="ngForm" [formGroup]="phoneForm" class="form-group mt-15px">
@@ -58,7 +58,7 @@ can refactor.
 
       <div *ngIf="sendPhoneNumberVerificationTextServerErrors.chineseNumberNotAllowed" class="mt-10px">
         Currently we can't send text messages to China. If you have a non-Chinese number, please try that. If not, click
-        "skip" below. You can still use the site by buying BitClout.
+        "skip" below. You can still use the site by buying DESO.
       </div>
     </div>
   </form>
@@ -157,11 +157,11 @@ can refactor.
 <div *ngIf="screenToShow == SignUpGetStarterBitcloutComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN">
   <div *ngIf="displayForSignupFlow">
     <div class="mt-15px fs-15px fc-muted">STEP 3 of 4</div>
-    <div class="mt-15px mb-15px fs-24px font-weight-bold">Get Starter BitClout</div>
+    <div class="mt-15px mb-15px fs-24px font-weight-bold">Get Starter DESO</div>
   </div>
 
   <div class="fs-15px mb-15px">
-    Your phone number was verified. We sent you a small amount of BitClout, which is enough to post and follow people.
+    Your phone number was verified. We sent you a small amount of DESO, which is enough to post and follow people.
   </div>
 
   <div *ngIf="displayForSignupFlow; else elseBlock" class="d-flex mt-15px justify-content-between">
@@ -175,7 +175,7 @@ can refactor.
       queryParamsHandling="merge"
       class="btn btn-primary font-weight-bold fs-15px mt-5px mb-5px mr-15px"
     >
-      Buy BitClout
+      Buy DESO
     </a>
 
     <a
