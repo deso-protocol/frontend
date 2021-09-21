@@ -35,6 +35,6 @@ export class SellCreatorCoinsTutorialComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle("Buy Creator Coins Tutorial - BitClout");
+    this.titleService.setTitle("Buy Creator Coins Tutorial - DeSo");
   }
 }

@@ -103,7 +103,7 @@
       {{ (row.BalanceNanos / 1e9).toFixed(4) }}
     </div>
     <div class="col-3 d-flex align-items-center mb-0">
-      ≈ {{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceBitCloutNanos, true) }}
+      ≈ {{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceDeSoNanos, true) }}
     </div>
   </div>
 
@@ -117,7 +117,7 @@
       {{
         globalVars.creatorCoinNanosToUSDNaive(
           profile.CoinEntry.CoinsInCirculationNanos,
-          profile.CoinPriceBitCloutNanos,
+          profile.CoinPriceDeSoNanos,
           true
         )
       }}

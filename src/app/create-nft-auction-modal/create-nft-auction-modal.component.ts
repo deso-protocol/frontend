@@ -16,7 +16,7 @@ export class CreateNftAuctionModalComponent {
   @Input() nftEntryResponses: NFTEntryResponse[];
   loading = false;
   minBidAmountUSD: string;
-  minBidAmountCLOUT: number;
+  minBidAmountDESO: number;
   selectedSerialNumbers: boolean[] = [];
   selectAll: boolean = false;
   creatingAuction: boolean = false;
@@ -28,12 +28,12 @@ export class CreateNftAuctionModalComponent {
     private router: Router
   ) {}
 
-  updateMinBidAmountUSD(cloutAmount) {
-    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2);
+  updateMinBidAmountUSD(desoAmount) {
+    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
   }
 
-  updateMinBidAmountCLOUT(usdAmount) {
-    this.minBidAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  updateMinBidAmountDESO(usdAmount) {
+    this.minBidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
   auctionTotal: number;
@@ -52,7 +52,7 @@ export class CreateNftAuctionModalComponent {
                 this.post.PostHashHex,
                 val,
                 true,
-                Math.trunc(this.minBidAmountCLOUT * 1e9),
+                Math.trunc(this.minBidAmountDESO * 1e9),
                 this.globalVars.defaultFeeRateNanosPerKB
               )
               .pipe(

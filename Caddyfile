@@ -58,6 +58,9 @@ header @html Content-Security-Policy "
     https://ka-f.fontawesome.com;
   frame-src 'self'
     localhost:*
+    identity.deso.org
+    identity.deso.blue
+    identity.deso.green
     identity.bitclout.com
     identity.bitclout.blue
     identity.bitclout.green

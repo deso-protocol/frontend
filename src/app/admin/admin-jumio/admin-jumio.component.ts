@@ -15,8 +15,8 @@ export class AdminJumioComponent {
   resettingJumio = false;
   executingJumioCallback = false;
 
-  jumioBitCloutNanos: number = 0;
-  updatingJumioBitCloutNanos = false;
+  jumioDeSoNanos: number = 0;
+  updatingJumioDeSoNanos = false;
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -24,7 +24,7 @@ export class AdminJumioComponent {
     private route: ActivatedRoute,
     private backendApi: BackendApiService
   ) {
-    this.jumioBitCloutNanos = globalVars.jumioBitCloutNanos;
+    this.jumioDeSoNanos = globalVars.jumioDeSoNanos;
   }
 
   _resetJumio(): void {
@@ -81,12 +81,12 @@ export class AdminJumioComponent {
       .add(() => (this.executingJumioCallback = false));
   }
 
-  updateJumioBitCloutNanos(): void {
+  updateJumioDeSoNanos(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the amount of $CLOUT sent for verifying with Jumio to ${this.globalVars.nanosToBitClout(
-        this.jumioBitCloutNanos
+      html: `You are about to update the amount of $DESO sent for verifying with Jumio to ${this.globalVars.nanosToDeSo(
+        this.jumioDeSoNanos
       )}.`,
       showConfirmButton: true,
       showCancelButton: true,
@@ -99,22 +99,22 @@ export class AdminJumioComponent {
       cancelButtonText: "Cancel",
     }).then((res) => {
       if (res.isConfirmed) {
-        this.updatingJumioBitCloutNanos = true;
+        this.updatingJumioDeSoNanos = true;
         this.backendApi
-          .AdminUpdateJumioBitClout(
+          .AdminUpdateJumioDeSo(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.jumioBitCloutNanos
+            this.jumioDeSoNanos
           )
           .subscribe(
             (res) => {
-              this.globalVars.jumioBitCloutNanos = res.BitCloutNanos;
+              this.globalVars.jumioDeSoNanos = res.DeSoNanos;
             },
             (err) => {
               console.error(err);
             }
           )
-          .add(() => (this.updatingJumioBitCloutNanos = false));
+          .add(() => (this.updatingJumioDeSoNanos = false));
       }
     });
   }
