@@ -152,6 +152,7 @@ export class AppComponent implements OnInit {
           this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         }
         this.globalVars.globoMods = res.GloboMods;
+
         this.ref.detectChanges();
         this.globalVars.loadingInitialAppState = false;
       },
@@ -176,6 +177,7 @@ export class AppComponent implements OnInit {
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
+        this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioBitCloutNanos = res.JumioBitCloutNanos;
         // Setup amplitude on first run

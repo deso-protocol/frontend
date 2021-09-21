@@ -283,6 +283,7 @@ $green-font-color: #19B028;
 .background-color-main { background-color: var(--tilebg); }
 .background-color-secondary { background-color: var(--tilesecbg); }
 .background-color-background { background-color: var(--background); }
+.background-color-lemon-chiffon { background-color: lemonchiffon; }
 
 // Custom padding classes.
 .p-40px { padding: 40px; }
@@ -465,6 +466,7 @@ $green-font-color: #19B028;
 
 .br-3px { border-radius: 3px; }
 .br-4px { border-radius: 4px; }
+.br-5px { border-radius: 5px; }
 .br-8px { border-radius: 8px; }
 .br-10px { border-radius: 10px; }
 .br-12px { border-radius: $feed-border-radius; }
@@ -4851,4 +4853,19 @@ sell-nft-modal {
     padding-left: 0px;
   }
   display: none;
+}
+
+.creator-coin-info {
+  @media (max-width: 992px) {
+    padding-left: 0rem !important;
+    padding-right: 0rem !important;
+    margin-left: 0rem !important;
+  }
+  padding-left: .5rem !important;
+  padding-right: .5rem !important;
+  margin-left: .5rem !important;
+}
+
+.referral-link-info__blue-border {
+  border-left: 5px solid $buy-button-blue !important;
 }

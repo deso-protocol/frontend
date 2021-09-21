@@ -18,10 +18,10 @@ import { CreatorsLeaderboardComponent } from "../creators-leaderboard/creators-l
   templateUrl: "./wallet.component.html",
 })
 export class WalletComponent implements OnInit, OnDestroy {
-  static PAGE_SIZE = 1;
-  static BUFFER_SIZE = 1;
+  static PAGE_SIZE = 20;
+  static BUFFER_SIZE = 10;
   static WINDOW_VIEWPORT = true;
-  static PADDING = 0.01;
+  static PADDING = 0.5;
 
   @Input() inTutorial: boolean;
 
@@ -113,17 +113,16 @@ export class WalletComponent implements OnInit, OnDestroy {
     });
     this.sortWallet("value");
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
-    this.subscriptions.add(
-      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
-        // Last Item of myItems is Visible => data-padding-forward should be zero.
-        if (
-          lastVisible.$index ===
-          (this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased).length - 1
-        ) {
-          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
-        }
-      })
-    );
+    if (this.inTutorial) {
+      this.subscriptions.add(
+        this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
+          // Last Item of myItems is Visible => data-padding-forward should be zero.
+          if (lastVisible.$index === 0) {
+            this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+          }
+        })
+      );
+    }
     this.titleService.setTitle("Wallet - BitClout");
   }
 
@@ -298,7 +297,7 @@ export class WalletComponent implements OnInit, OnDestroy {
       return false;
     }
     return (
-      balanceEntryResponse.ProfileEntryResponse.Username === this.balanceEntryToHighlight.ProfileEntryResponse.Username
+      balanceEntryResponse.ProfileEntryResponse.Username.toLowerCase() === this.balanceEntryToHighlight.ProfileEntryResponse.Username.toLowerCase()
     );
   }
 
@@ -375,6 +374,12 @@ export class WalletComponent implements OnInit, OnDestroy {
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
       return [];
+    }
+    if (this.inTutorial) {
+      this.lastPage = 0;
+      return new Promise((resolve, reject) => {
+        resolve([this.balanceEntryToHighlight]);
+      });
     }
     const startIdx = page * WalletComponent.PAGE_SIZE;
     const endIdx = (page + 1) * WalletComponent.PAGE_SIZE;

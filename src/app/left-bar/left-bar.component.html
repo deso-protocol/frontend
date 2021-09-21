@@ -56,6 +56,11 @@
             <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
           </div>
           <left-bar-button
+            *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
+            [link]="'/' + globalVars.RouteNames.REFERRALS"
+            [buttonLabel]="'Referrals'"
+          ></left-bar-button>
+          <left-bar-button
             *ngIf="globalVars.showAdminTools()"
             [link]="'/' + globalVars.RouteNames.ADMIN"
             [buttonLabel]="'Admin'"

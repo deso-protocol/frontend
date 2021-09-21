@@ -116,21 +116,8 @@ export class LeftBarComponent {
       return;
     }
 
-    if (
-      [TutorialStatus.EMPTY, TutorialStatus.SKIPPED, TutorialStatus.COMPLETE].indexOf(
-        this.globalVars.loggedInUser?.TutorialStatus
-      ) < 0
-    ) {
-      SwalHelper.fire({
-        target: this.globalVars.getTargetComponentSelector(),
-        icon: "info",
-        title: `You have already started the tutorial`,
-        showConfirmButton: true,
-        focusConfirm: true,
-        customClass: {
-          confirmButton: "btn btn-light",
-        },
-      });
+    if (this.globalVars.userInTutorial(this.globalVars.loggedInUser)) {
+      this.globalVars.navigateToCurrentStepInTutorial(this.globalVars.loggedInUser);
       return;
     }
     SwalHelper.fire({
@@ -146,7 +133,7 @@ export class LeftBarComponent {
       },
       reverseButtons: true,
       confirmButtonText: "Start Tutorial",
-      cancelButtonText: "Skip",
+      cancelButtonText: "Cancel",
     }).then((res) => {
       this.backendApi
         .StartOrSkipTutorial(

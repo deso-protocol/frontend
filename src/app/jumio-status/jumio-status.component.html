@@ -4,7 +4,7 @@
        class="d-flex align-items-center font-weight-normal justify-content-between">
     <div>
       <i-feather name="clock"></i-feather>
-      <span>Your free {{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 0) }} will arrive in about a minute.</span>
+      <span>Your free {{ globalVars.getFreeCloutMessage() }} will arrive in about a minute.</span>
     </div>
   </div>
   <!-- User hasn't tried jumio flow -->
@@ -12,7 +12,7 @@
        class="d-flex align-items-center font-weight-normal justify-content-between">
     <div class="cursor-pointer">
       <i-feather name="gift"></i-feather>
-      <span>{{ message }} your free {{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 0) }}</span>
+      <span>{{ message }} your free {{ globalVars.getFreeCloutMessage() }}</span>
       <i-feather name="chevron-right" class="right-20px"></i-feather>
     </div>
   </div>

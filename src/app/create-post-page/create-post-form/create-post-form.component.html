@@ -39,6 +39,6 @@
     [inTutorial]="inTutorial"
   ></feed-create-post>
 </div>
-<div class="background-color-white p-16px border" style="border-radius: 0px 0px 16px 16px">
+<div *ngIf="inTutorial" class="background-color-white p-16px border" style="border-radius: 0px 0px 16px 16px">
   <a class="fs-15px fc-secondary" (click)="globalVars.skipTutorial()">Cancel</a>
 </div>

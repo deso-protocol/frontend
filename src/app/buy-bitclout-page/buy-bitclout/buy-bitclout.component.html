@@ -257,6 +257,9 @@
             </div>
           </div>
         </div>
+        <div *ngIf="activeTab === BuyBitcloutComponent.BUY_WITH_ETH">
+          <buy-bitclout-eth [parentComponent]="this"></buy-bitclout-eth>
+        </div>
       </div>
       <div *ngIf="waitingOnTxnConfirmation" class="px-5">
         <simple-center-loader

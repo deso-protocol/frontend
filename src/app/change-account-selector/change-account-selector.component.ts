@@ -1,7 +1,7 @@
-import { Component, Renderer2, ElementRef, ViewChild, TemplateRef } from "@angular/core";
+import { Component, Renderer2, ElementRef, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, User } from "../backend-api.service";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { BackendApiService } from "../backend-api.service";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { Router } from "@angular/router";
 import { IdentityService } from "../identity.service";
 import { filter, get } from "lodash";
@@ -37,14 +37,16 @@ export class ChangeAccountSelectorComponent {
       if (!res?.users) {
         this.globalVars.userList = [];
       }
-      let loggedInUser = get(Object.keys(res?.users),"[0]");
+      let loggedInUser = get(Object.keys(res?.users), "[0]");
       if (this.globalVars.userList.length === 0) {
         loggedInUser = null;
         this.globalVars.setLoggedInUser(null);
       }
       this.backendApi.setIdentityServiceUsers(res.users, loggedInUser);
       this.globalVars.updateEverything().add(() => {
-        this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
+        if (!this.globalVars.userInTutorial(this.globalVars.loggedInUser)) {
+          this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
+        }
       });
     });
   }
@@ -55,11 +57,12 @@ export class ChangeAccountSelectorComponent {
 
     // Now we call update everything on the newly logged in user to make sure we have the latest info this user.
     this.globalVars.updateEverything().add(() => {
-      const currentUrl = this.router.url;
-      this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]).then(() => {
-        this.router.navigateByUrl(currentUrl);
-      });
-
+      if (!this.globalVars.userInTutorial(this.globalVars.loggedInUser)) {
+        const currentUrl = this.router.url;
+        this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]).then(() => {
+          this.router.navigateByUrl(currentUrl);
+        });
+      }
       this.globalVars.isLeftBarMobileOpen = false;
     });
   }

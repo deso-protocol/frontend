@@ -6,7 +6,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { TextFieldModule } from "@angular/cdk/text-field";
-
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { BackendApiService } from "./backend-api.service";
@@ -160,11 +159,15 @@ import { FeedCreatePostModalComponent } from "./feed/feed-create-post-modal/feed
 import { IconsModule } from "./icons/icons.module";
 import { LottieModule } from "ngx-lottie";
 import player from "lottie-web";
+import { DragDropModule } from "@angular/cdk/drag-drop";
+import { BuyBitcloutEthComponent } from "./buy-bitclout-page/buy-bitclout-eth/buy-bitclout-eth.component";
+import { ReferralProgramMgrComponent } from './referral-program-mgr/referral-program-mgr.component';
+import { ReferralsComponent } from './referrals/referrals.component';
 
 // Modular Themes for BitClout by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
-import { DragDropModule } from "@angular/cdk/drag-drop";
+
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -301,6 +304,8 @@ export function playerFactory() {
     VerifyEmailComponent,
     AdminJumioComponent,
     JumioStatusComponent,
+    ReferralProgramMgrComponent,
+    ReferralsComponent,
     AdminTutorialComponent,
     CreateProfileTutorialPageComponent,
     BuyCreatorCoinsTutorialComponent,
@@ -312,6 +317,7 @@ export function playerFactory() {
     DiamondTutorialPageComponent,
     DiamondTutorialComponent,
     CreatePostTutorialPageComponent,
+    BuyBitcloutEthComponent,
   ],
   imports: [
     BrowserModule,

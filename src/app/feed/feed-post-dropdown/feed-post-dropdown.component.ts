@@ -28,6 +28,8 @@ export class FeedPostDropdownComponent {
   @Output() toggleGlobalFeed = new EventEmitter();
   @Output() togglePostPin = new EventEmitter();
 
+  showSharePost: boolean = false;
+
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
@@ -35,7 +37,11 @@ export class FeedPostDropdownComponent {
     private router: Router,
     private modalService: BsModalService,
     private platformLocation: PlatformLocation
-  ) {}
+  ) {
+    if (!!navigator.share) {
+      this.showSharePost = true;
+    }
+  }
 
   reportPost(): void {
     this.globalVars.logEvent("post : report-content");
@@ -188,6 +194,19 @@ export class FeedPostDropdownComponent {
     event.stopPropagation();
 
     this.globalVars._copyText(this._getPostUrl());
+  }
+
+  sharePostUrl(event): void {
+    this.globalVars.logEvent("post : webapishare");
+
+    // Prevent the post from navigating.
+    event.stopPropagation();
+
+    try {
+      navigator.share({ url: this._getPostUrl() });
+    } catch (err) {
+      console.error("Share failed:", err.message);
+    }
   }
 
   _getPostUrl() {
