@@ -113,7 +113,7 @@
             class="d-flex align-items-center mb-0 justify-content-around p-5px fs-12px"
           >
             Bid:
-            <span class="px-5px">{{ globalVars.nanosToBitClout(nftEntry.BidAmountNanos, 5) }} $CLOUT</span>
+            <span class="px-5px">{{ globalVars.nanosToBitClout(nftEntry.BidAmountNanos, 5) }} $DESO</span>
             <span>(~{{ globalVars.nanosToUSD(nftEntry.BidAmountNanos, 2) }})</span>
           </div>
         </div>
@@ -121,7 +121,7 @@
           <div
             class="fc-red"
             *ngIf="nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos">
-            There is a higher bid of {{ globalVars.nanosToBitClout(nftEntry.HighestBidAmountNanos) }} CLOUT (~{{ globalVars.nanosToUSD(nftEntry.HighestBidAmountNanos, 2) }}) for this serial number.
+            There is a higher bid of {{ globalVars.nanosToBitClout(nftEntry.HighestBidAmountNanos) }} DESO (~{{ globalVars.nanosToUSD(nftEntry.HighestBidAmountNanos, 2) }}) for this serial number.
           </div>
           <div
             class="fc-green"
@@ -129,7 +129,7 @@
             Your bid is the highest one for this serial number.
           </div>
           <div class="fs-12px fc-red" *ngIf="nftEntry.BidderBalanceNanos < nftEntry.BidAmountNanos" [ngClass]="{ 'pt-5px': nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos }">
-            You do not have enough CLOUT for this bid. Place a lower bid or <a class="link--unstyled" style="text-decoration: underline" [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT">buy CLOUT</a>.
+            You do not have enough DESO for this bid. Place a lower bid or <a class="link--unstyled" style="text-decoration: underline" [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT">buy DESO</a>.
           </div>
         </div>
 

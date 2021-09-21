@@ -85,7 +85,7 @@ export class AdminJumioComponent {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the amount of $CLOUT sent for verifying with Jumio to ${this.globalVars.nanosToBitClout(
+      html: `You are about to update the amount of $DESO sent for verifying with Jumio to ${this.globalVars.nanosToBitClout(
         this.jumioBitCloutNanos
       )}.`,
       showConfirmButton: true,

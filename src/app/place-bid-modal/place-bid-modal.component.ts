@@ -76,10 +76,10 @@ export class PlaceBidModalComponent implements OnInit {
 
   setErrors(): void {
     const bidAmountExceedsBalance = this.bidAmountCLOUT * 1e9 > this.globalVars.loggedInUser.BalanceNanos;
-    this.errors = !this.bidAmountCLOUT && this.selectedSerialNumber.MinBidAmountNanos === 0 ? "You must bid more than 0 CLOUT.\n\n" : "";
+    this.errors = !this.bidAmountCLOUT && this.selectedSerialNumber.MinBidAmountNanos === 0 ? "You must bid more than 0 DESO.\n\n" : "";
     this.errors += !this.selectedSerialNumber ? "You must select an edition to bid.\n\n" : "";
     this.errors += bidAmountExceedsBalance
-      ? `You do not have ${this.bidAmountCLOUT} CLOUT to fulfill this bid.\n\n`
+      ? `You do not have ${this.bidAmountCLOUT} DESO to fulfill this bid.\n\n`
       : "";
     this.errors +=
       this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountCLOUT * 1e9
@@ -87,7 +87,7 @@ export class PlaceBidModalComponent implements OnInit {
             this.bidAmountCLOUT
           } does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
             this.selectedSerialNumber.MinBidAmountNanos
-          )} CLOUT (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})\n\n`
+          )} DESO (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})\n\n`
         : "";
   }
 

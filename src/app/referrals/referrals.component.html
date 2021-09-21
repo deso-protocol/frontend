@@ -10,16 +10,16 @@
   <div
     class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
   >
-    The link{{globalVars.loggedInUser.ReferralInfoResponses?.length > 1 ? 's' : ''}} 
-    below gives you and your referrals a bonus on sign up. Note that all 
-    bonuses are shown in USD but paid in the CLOUT equivalent at the time of sign up.
+    The link{{globalVars.loggedInUser.ReferralInfoResponses?.length > 1 ? 's' : ''}}
+    below gives you and your referrals a bonus on sign up. Note that all
+    bonuses are shown in USD but paid in the DESO equivalent at the time of sign up.
   </div>
 
   <div *ngIf="globalVars.loggedInUser" class="p-15px">
     <div *ngFor="let referral of globalVars.loggedInUser?.ReferralInfoResponses; let ii = index">
         <div class="mb-15px p-15px fs-15px br-5px border border-color-grey referral-link-info__blue-border">
           <div class="d-flex align-items-center">
-            <div (click)="_copyLink(ii)" 
+            <div (click)="_copyLink(ii)"
                  class="btn btn-outline-secondary d-flex fs-15px p-5px mr-5px"
                  style="width: fit-content">
               <i class="far fa-copy fa-sm"></i>
@@ -38,7 +38,7 @@
           </div>
           <div>
             Total:
-            {{ globalVars.nanosToBitClout(referral.Info.TotalReferrerBitCloutNanos) }} CLOUT
+            {{ globalVars.nanosToBitClout(referral.Info.TotalReferrerBitCloutNanos) }} DESO
             ({{ globalVars.nanosToUSD(referral.Info.TotalReferrerBitCloutNanos) }})
           </div>
 
@@ -47,13 +47,13 @@
           </div>
           <div>
             Total:
-            {{ globalVars.nanosToBitClout(referral.Info.TotalRefereeBitCloutNanos) }} CLOUT
+            {{ globalVars.nanosToBitClout(referral.Info.TotalRefereeBitCloutNanos) }} DESO
             ({{ globalVars.nanosToUSD(referral.Info.TotalRefereeBitCloutNanos) }})
           </div>
 
           <div class="mt-15px">
             <span class="font-weight-bold">Referrals remaining: </span>
-            {{ referral.Info.MaxReferrals > 0 ? 
+            {{ referral.Info.MaxReferrals > 0 ?
                  referral.Info.MaxReferrals - referral.Info.TotalReferrals
                  : 'Unlimited'
             }}

@@ -21,8 +21,8 @@ export class UpdateProfileGetStarterBitcloutComponent {
 
   getCreateProfileMessage(): string {
     return this.globalVars.showPhoneNumberVerification
-      ? `You need to verify a phone number or purchase BitClout with Bitcoin in order to create a profile.
+      ? `You need to verify a phone number or purchase DESO with Bitcoin in order to create a profile.
   This helps prevent spam.`
-      : `You need to buy BitClout with Bitcoin in order to create a profile.  This helps prevent spam.`;
+      : `You need to buy DESO with Bitcoin in order to create a profile.  This helps prevent spam.`;
   }
 }

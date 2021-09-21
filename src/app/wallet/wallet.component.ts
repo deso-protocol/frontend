@@ -217,10 +217,10 @@ export class WalletComponent implements OnInit, OnDestroy {
       "Mining in progress. Feel free to transact in the meantime.\n\n" +
       "Mined balance:\n" +
       this.globalVars.nanosToBitClout(this.globalVars.loggedInUser.BalanceNanos, 9) +
-      " BitClout.\n\n" +
+      " DESO.\n\n" +
       "Unmined balance:\n" +
       this.globalVars.nanosToBitClout(this.globalVars.loggedInUser.UnminedBalanceNanos, 9) +
-      " BitClout."
+      " DESO."
     );
   }
 
@@ -229,10 +229,10 @@ export class WalletComponent implements OnInit, OnDestroy {
       "Mining in progress. Feel free to transact in the meantime.\n\n" +
       "Net unmined transactions:\n" +
       this.globalVars.nanosToBitClout(creator.NetBalanceInMempool, 9) +
-      " BitClout.\n\n" +
+      " DESO.\n\n" +
       "Balance w/unmined transactions:\n" +
       this.globalVars.nanosToBitClout(creator.BalanceNanos, 9) +
-      " BitClout.\n\n"
+      " DESO.\n\n"
     );
   }
 

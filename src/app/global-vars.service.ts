@@ -719,7 +719,7 @@ export class GlobalVarsService {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: showBuyBitClout ? "Buy BitClout" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
+      confirmButtonText: showBuyBitClout ? "Buy DESO" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
       reverseButtons: true,
     }).then((res) => {
       if (showBuyBitClout && res.isConfirmed) {
@@ -997,7 +997,7 @@ export class GlobalVarsService {
         this.usdPerETHExchangeRate = res.USDCentsPerETHExchangeRate / 100;
         this.nanosPerETHExchangeRate = res.NanosPerETHExchangeRate;
 
-        // CLOUT
+        // DESO
         this.NanosSold = res.NanosSold;
         this.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
         this.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;

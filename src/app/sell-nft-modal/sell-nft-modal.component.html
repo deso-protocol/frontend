@@ -54,7 +54,7 @@
               class="d-flex align-items-center mb-0 justify-content-between p-0"
               [ngClass]="{ 'col-7': post.NumNFTCopies == 1, 'col-5': post.NumNFTCopies > 1 }"
             >
-              <span>{{ globalVars.nanosToBitClout(bidEntry.BidAmountNanos, 5) }} $CLOUT</span>
+              <span>{{ globalVars.nanosToBitClout(bidEntry.BidAmountNanos, 5) }} $DESO</span>
               <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 2) }}</span>
             </div>
           </div>
@@ -69,7 +69,7 @@
         <div class="col-6 m-0px">Selling Price</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
           <div>
-            {{globalVars.abbreviateNumber(sellingPrice, 3)}} $CLOUT
+            {{globalVars.abbreviateNumber(sellingPrice, 3)}} $DESO
           </div>
           <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(sellingPrice*1e9, 2) }})</div>
         </div>
@@ -78,7 +78,7 @@
         <div class="col-6 m-0px">Earnings</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
           <div>
-            {{globalVars.abbreviateNumber(earnings, 3)}} $CLOUT
+            {{globalVars.abbreviateNumber(earnings, 3)}} $DESO
           </div>
           <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(earnings*1e9, 2) }})</div>
         </div>
@@ -87,7 +87,7 @@
         <div class="col-6 m-0px">Creator royalty</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
           <div>
-            {{globalVars.abbreviateNumber(creatorRoyalty, 3)}} $CLOUT
+            {{globalVars.abbreviateNumber(creatorRoyalty, 3)}} $DESO
           </div>
           <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(creatorRoyalty*1e9, 2) }})</div>
         </div>
@@ -96,7 +96,7 @@
         <div class="col-6 m-0px">Coin-holder royalty</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
           <div>
-            {{globalVars.abbreviateNumber(coinRoyalty, 3)}} $CLOUT
+            {{globalVars.abbreviateNumber(coinRoyalty, 3)}} $DESO
           </div>
           <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(coinRoyalty*1e9, 2) }})</div>
         </div>
