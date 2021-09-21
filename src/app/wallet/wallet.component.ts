@@ -288,8 +288,13 @@ export class WalletComponent implements OnInit, OnDestroy {
   }
 
   scrollerReset() {
-    this.infiniteScroller.reset();
-    this.datasource.adapter.reset().then(() => this.datasource.adapter.check());
+    // this.infiniteScroller.reset();
+    console.log('Beforebefore')
+    this.datasource.adapter.reset().then(() => {
+      console.log('Before')
+      this.datasource.adapter.check()
+      console.log('After')
+    });
   }
 
   isHighlightedCreator(balanceEntryResponse: BalanceEntryResponse): boolean {

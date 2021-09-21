@@ -158,9 +158,6 @@ export class NotificationsListComponent {
       result.icon = "coin";
       result.iconClass = "fc-blue";
 
-      result.action =
-        `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
-        `$CLOUT!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
       return result;
     } else if (txnMeta.TxnType === "CREATOR_COIN") {
       // If we don't have the corresponding metadata then return null.
