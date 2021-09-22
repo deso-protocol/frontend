@@ -8,7 +8,7 @@ import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-se
 import { environment } from "../../../environments/environment";
 import * as tus from "tus-js-client";
 import Timer = NodeJS.Timer;
-import { StreamService } from "../../../lib/services/stream/stream-service";
+import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 
 @Component({
   selector: "feed-create-post",
@@ -70,7 +70,7 @@ export class FeedCreatePostComponent implements OnInit {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private appData: GlobalVarsService,
-    private streamService: StreamService
+    private streamService: CloudflareStreamService,
   ) {
     this.globalVars = appData;
   }

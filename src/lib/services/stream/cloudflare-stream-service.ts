@@ -1,15 +1,14 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
-import { Observable, of, Subscription } from "rxjs";
+import { BackendApiService } from "../../../app/backend-api.service";
+import { Observable, of } from "rxjs";
 import { GlobalVarsService } from "../../../app/global-vars.service";
-import { catchError, map, switchMap } from "rxjs/operators";
-import * as _ from "lodash";
+import { catchError, map } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
 })
-export class StreamService {
+export class CloudflareStreamService {
   constructor(
     private httpClient: HttpClient,
     private backendApi: BackendApiService,
