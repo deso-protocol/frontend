@@ -269,6 +269,7 @@ export class FeedCreatePostComponent implements OnInit {
         uploadSize: file.size,
         onError: function (error) {
           comp.globalVars._alertError(error);
+          upload.abort(true);
           throw error;
         },
         onProgress: function (bytesUploaded, bytesTotal) {
