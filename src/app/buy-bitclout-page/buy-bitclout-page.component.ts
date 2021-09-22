@@ -11,7 +11,7 @@ export class BuyBitcloutPageComponent implements OnInit {
   isLeftBarMobileOpen: boolean = false;
 
   ngOnInit() {
-    this.titleService.setTitle("Buy $CLOUT - BitClout");
+    this.titleService.setTitle("Buy $DESO - BitClout");
   }
 
   constructor(public globalVars: GlobalVarsService, private titleService: Title) {}

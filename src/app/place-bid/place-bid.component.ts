@@ -7,7 +7,7 @@ import { isNumber } from "lodash";
 import { ToastrService } from "ngx-toastr";
 import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
 import { BsModalService } from "ngx-bootstrap/modal";
-import {Location} from "@angular/common";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "place-bid",
@@ -90,15 +90,15 @@ export class PlaceBidComponent implements OnInit {
   setErrors(): void {
     this.errors = [];
     if (this.bidAmountCLOUT * 1e9 > this.globalVars.loggedInUser.BalanceNanos) {
-      this.errors.push(`You do not have ${this.bidAmountCLOUT} CLOUT to fulfill this bid.`);
+      this.errors.push(`You do not have ${this.bidAmountCLOUT} DESO to fulfill this bid.`);
     }
     if (this.bidAmountCLOUT * 1e9 === 0) {
-      this.errors.push(`You must bid more than 0 CLOUT`);
+      this.errors.push(`You must bid more than 0 DESO`);
     } else if (this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountCLOUT * 1e9) {
       this.errors.push(
         `Your bid does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
           this.selectedSerialNumber.MinBidAmountNanos
-        )} CLOUT (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})`
+        )} DESO (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})`
       );
     }
   }
@@ -224,11 +224,11 @@ export class PlaceBidComponent implements OnInit {
   }
 
   bidAmountCloutFormatted() {
-    return isNumber(this.bidAmountCLOUT) ? `~${this.bidAmountCLOUT.toFixed(2)} $CLOUT` : "";
+    return isNumber(this.bidAmountCLOUT) ? `~${this.bidAmountCLOUT.toFixed(2)} $DESO` : "";
   }
 
   bidAmountOtherCurrencyFormatted() {
-    if (this.minBidCurrency === "CLOUT") {
+    if (this.minBidCurrency === "DESO") {
       return this.bidAmountUSDFormatted();
     } else {
       return this.bidAmountCloutFormatted();
@@ -236,7 +236,7 @@ export class PlaceBidComponent implements OnInit {
   }
 
   updateBidAmount(amount: number) {
-    if (this.minBidCurrency === "CLOUT") {
+    if (this.minBidCurrency === "DESO") {
       this.bidAmountCLOUT = amount;
       this.updateBidAmountUSD(amount);
     } else {

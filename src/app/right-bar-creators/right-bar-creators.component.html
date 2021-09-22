@@ -3,20 +3,20 @@
   <div *ngIf="globalVars.loggedInUser == null" class="mb-30px">
     <right-bar-signup></right-bar-signup>
   </div>
-  <!-- BitClout Price / Balance -->
+  <!-- DESO Price / Balance -->
   <div class="right-bar-creators__balance-box" *ngIf="!inTutorial">
     <div>
       <div class="d-flex">
         <div class="w-100 clout-metrics">
           <div class="d-flex justify-content-between">
-            <div>$CLOUT Price</div>
+            <div>$DESO Price</div>
             <div>
               <span>1≈{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
               <span>&nbsp;USD</span>
             </div>
           </div>
           <div *ngIf="globalVars.loggedInUser" class="d-flex justify-content-between pt-10px">
-            <div class="d-flex" style="min-width: 150px">Your $CLOUT</div>
+            <div class="d-flex" style="min-width: 150px">Your $DESO</div>
             <div class="d-flex flex-column justify-content-end flex-wrap" style="align-items: flex-end">
               <div>
                 <!-- Amount in BitClout-->
@@ -33,7 +33,7 @@
       <a (click)="openBuyCloutModal()">
         <div class="d-flex justify-content-center cursor-pointer">
           <div class="buy-clout">
-            <span>Buy $Clout</span>
+            <span>Buy $DESO</span>
           </div>
         </div>
       </a>

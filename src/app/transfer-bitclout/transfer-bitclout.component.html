@@ -7,7 +7,7 @@
 <div class="buy-bitclout__container">
   <div class="p-16px">
     <div class="mint-nft__title">
-      Send $Clout
+      Send $DESO
     </div>
     <div class="mint-nft__sub-text">
       Just enter a public key below and the protocol will handle the rest
@@ -37,7 +37,7 @@
     <div class="d-flex">
       <div class="d-flex" container="body" style="align-items: center">
         <div class="mint-nft__dropdown-btn">
-          $Clout
+          $DESO
         </div>
       </div>
       <div class="position-relative w-100">
@@ -88,13 +88,13 @@
       [disabled]="sendingBitClout"
       [ngClass]="{ 'disabled-button': sendingBitClout }"
     >
-      {{ !sendingBitClout ? "Send $Clout" : "Working..." }}
+      {{ !sendingBitClout ? "Send $DESO" : "Working..." }}
     </button>
     <a class="fc-muted ml-25px" (click)="bsModalRef.hide()">Cancel</a>
   </div>
   <div class="w-100 border-bottom"></div>
   <div class="p-15px d-flex flex-column align-items-center">
-    <p>Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $CLOUT</p>
+    <p>Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO</p>
     <img [src]="sendBitCloutQRCode | sanitizeQRCode"/>
   </div>
 </div>

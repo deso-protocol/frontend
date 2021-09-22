@@ -87,7 +87,7 @@ export class MintNftComponent {
   }
 
   updateMinBidAmount(amount: number) {
-    if (this.minBidCurrency === "CLOUT") {
+    if (this.minBidCurrency === "DESO") {
       this.minBidAmountCLOUT = amount;
       this.updateMinBidAmountUSD(amount);
     } else {

@@ -7,7 +7,7 @@ export class CreatorCoinTrade {
   static SELL_VERB = "Sell";
   static TRANSFER_VERB = "Transfer";
 
-  static BITCLOUT_CURRENCY_STRING = "BitClout";
+  static BITCLOUT_CURRENCY_STRING = "DESO";
   static USD_CURRENCY_STRING = "USD";
   static CREATOR_COIN_CURRENCY_STRING = "Creator coin";
 

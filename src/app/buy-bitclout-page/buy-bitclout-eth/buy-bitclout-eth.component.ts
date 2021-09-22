@@ -17,9 +17,9 @@ class Messages {
   static UNKOWN_PROBLEM = `There was a weird problem with the transaction. Debug output: %s`;
   static NOT_MINED = `Your ETH is still mining. Please try again in one minute.`
 
-  static CONFIRM_BUY_bitclout = `Are you ready to exchange %s ETH for %s BitClout?`;
-  static ZERO_bitclout_ERROR = `You must purchase a non-zero amount BitClout`;
-  static NEGATIVE_bitclout_ERROR = `You must purchase a non-negative amount of BitClout`;
+  static CONFIRM_BUY_bitclout = `Are you ready to exchange %s ETH for %s DESO?`;
+  static ZERO_bitclout_ERROR = `You must purchase a non-zero amount DESO`;
+  static NEGATIVE_bitclout_ERROR = `You must purchase a non-negative amount of DESO`;
 }
 
 @Component({
@@ -67,17 +67,17 @@ export class BuyBitcloutEthComponent implements OnInit {
 
   stepOneTooltip() {
     return (
-      "BitClout can be purchased in just a few minutes using ETH.\n\n" +
+      "DESO can be purchased in just a few minutes using ETH.\n\n" +
       "To get started, simply send ETH to your deposit address below. Note that deposits should show up " +
       "within thirty seconds or so but sometimes, for various technical reasons, it can take up to an hour " +
       "(though this should be extremely rare).\n\n" +
-      "Once you've deposited ETH, you can swap it for BitClout in step two below. If it's your first " +
+      "Once you've deposited ETH, you can swap it for DESO in step two below. If it's your first " +
       "time doing this, we recommend starting with a small test amount of ETH to get comfortable with the flow."
     );
   }
 
   depositEthTooltip() {
-    return "Send ETH to this address so that you can swap it for BitClout in step two below.";
+    return "Send ETH to this address so that you can swap it for DESO in step two below.";
   }
 
   minDepositTooltip() {
@@ -106,7 +106,7 @@ export class BuyBitcloutEthComponent implements OnInit {
 
   ethereumNetworkFeeTooltip() {
     return (
-      "The process of exchanging ETH for BitClout requires posting a transaction to " +
+      "The process of exchanging ETH for DESO requires posting a transaction to " +
       "the Ethereum blockchain. For this reason, we must add a network fee to " +
       "incentivize miners to process the transaction."
     );
@@ -163,16 +163,16 @@ export class BuyBitcloutEthComponent implements OnInit {
         // Execute the buy
         this.parentComponent.waitingOnTxnConfirmation = true;
         this.backendApi.ExchangeETH(
-          this.globalVars.localNode, 
+          this.globalVars.localNode,
           this.globalVars.loggedInUser.PublicKeyBase58Check,
-          this.ethDepositAddress(), 
+          this.ethDepositAddress(),
           Math.floor(this.ethToExchange * GlobalVarsService.WEI_PER_ETH),
         ).subscribe(res => {
           // Reset all the form fields
           this.error = "";
           this.bitcloutToBuy = 0;
           this.ethToExchange = 0;
-          
+
           // This will update the balance and a bunch of other things.
           this.globalVars.updateEverything(
             res.BitCloutTxnHash,

@@ -153,7 +153,7 @@ export class NotificationsListComponent {
         result.icon = "fas fa-money-bill-wave-alt fc-green";
         result.action =
           `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
-          `$CLOUT!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
+          `$DESO!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
       }
       result.icon = "coin";
       result.iconClass = "fc-blue";
@@ -326,7 +326,7 @@ export class NotificationsListComponent {
         ? `${actorName} bid ${this.globalVars.nanosToBitClout(
             nftBidMeta.BidAmountNanos,
             2
-          )} CLOUT (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
+          )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
             nftBidMeta.SerialNumber
           } ${postText}`
         : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber} ${postText}`;

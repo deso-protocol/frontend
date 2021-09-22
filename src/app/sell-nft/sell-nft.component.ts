@@ -113,11 +113,12 @@ export class SellNftComponent implements OnInit {
       .pipe(last((res) => res))
       .subscribe(
         (res) => {
-          this.toastr.show("Your bid was cancelled", null, {
+          this.toastr.show("Your nft was sold", null, {
             toastClass: "info-toast",
             positionClass: "toast-bottom-center",
           });
           this.modalService.setDismissReason("nft sold");
+          this.location.back();
         },
         (err) => {
           console.error(err);

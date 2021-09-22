@@ -316,15 +316,17 @@ export class GlobalVarsService {
 
     this.loggedInUser = user;
 
-    // Fetch referralLinks for the userList before completing the load.
-    this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe(
-      (res: any) => {
-        this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
-      },
-      (err: any) => {
-        console.log(err);
-      }
-    );
+    if (this.loggedInUser) {
+      // Fetch referralLinks for the userList before completing the load.
+      this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe(
+        (res: any) => {
+          this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
+        },
+        (err: any) => {
+          console.log(err);
+        }
+      );
+    }
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
     if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
@@ -720,7 +722,7 @@ export class GlobalVarsService {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: showBuyBitClout ? "Buy BitClout" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
+      confirmButtonText: showBuyBitClout ? "Buy DESO" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
       reverseButtons: true,
     }).then((res) => {
       if (showBuyBitClout && res.isConfirmed) {
@@ -998,7 +1000,7 @@ export class GlobalVarsService {
         this.usdPerETHExchangeRate = res.USDCentsPerETHExchangeRate / 100;
         this.nanosPerETHExchangeRate = res.NanosPerETHExchangeRate;
 
-        // CLOUT
+        // DESO
         this.NanosSold = res.NanosSold;
         this.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
         this.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
@@ -1076,11 +1078,13 @@ export class GlobalVarsService {
       title: "Exit Tutorial?",
       html: "Are you sure?",
       showConfirmButton: true,
+      showCancelButton: true,
       customClass: {
         confirmButton: "btn btn-light",
       },
       reverseButtons: true,
       confirmButtonText: "Yes",
+      cancelButtonText: "No",
     }).then((res) => {
       if (res.isConfirmed) {
         this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(

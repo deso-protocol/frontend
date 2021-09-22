@@ -86,9 +86,9 @@
   <!--Second Row-->
   <div class="d-flex justify-content-between mx-16px my-25px" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
     <div class="d-flex flex-column">
-      <!--Total clout-->
+      <!--Total DESO-->
       <div class="mb-5px fs-17px">
-        {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }} $Clout
+        {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }} $DESO
       </div>
       <!--Clout in USD-->
       <div class="fc-secondary fs-15px">
@@ -102,13 +102,13 @@
         </a>
       </div>
     </div>
-    <!--Buy/send Clout-->
+    <!--Buy/send DESO-->
     <div class="d-flex" [ngClass]="{ 'mt-20px justify-content-center': globalVars.isMobile() }">
       <a (click)="openSendCloutModal()">
-        <button class="plain-button mr-20px font-weight-bold wallet__buy-button">Send $Clout</button>
+        <button class="plain-button mr-20px font-weight-bold wallet__buy-button">Send $DESO</button>
       </a>
       <a (click)="openBuyCloutModal()">
-        <button class="primary-button font-weight-bold wallet__buy-button">Buy $Clout</button>
+        <button class="primary-button font-weight-bold wallet__buy-button">Buy $DESO</button>
       </a>
     </div>
   </div>
@@ -117,7 +117,7 @@
     <!--Creator coin balance-->
     <div class="d-flex flex-column">
       <div class="fs-17px">{{ this.globalVars.loggedInUser.UsersYouHODL.length }} Creator Coin{{ this.globalVars.loggedInUser.UsersYouHODL.length > 1 ? "s" : "" }}</div>
-      <div class="fs-15px">{{ globalVars.nanosToBitClout(totalValue(), 0) }}$Clout / {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
+      <div class="fs-15px">{{ globalVars.nanosToBitClout(totalValue(), 0) }}$DESO / {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
     </div>
     <!--Purchase creator coins-->
     <div class="nft-bid-btn d-flex align-items-center">

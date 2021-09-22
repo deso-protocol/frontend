@@ -66,7 +66,7 @@ export class BuyBitcloutUSDComponent implements OnInit {
           title: `Purchase Completed`,
           html: `Your purchase of approximately ${this.getBitCloutReceived(btcPurchased).toFixed(
             4
-          )} BitClout was successful. It may take a few minutes to appear in your wallet.`,
+          )} DESO was successful. It may take a few minutes to appear in your wallet.`,
           showConfirmButton: true,
           showCancelButton: true,
           reverseButtons: true,
@@ -104,8 +104,8 @@ export class BuyBitcloutUSDComponent implements OnInit {
         if (res.url) {
           Swal.fire({
             target: this.globalVars.getTargetComponentSelector(),
-            title: "Purchase BitClout",
-            html: `You will complete your purchase through Wyre. Your ${this.selectedFiatCurrency} will be converted to <b>Bitcoin</b> and then into <b>BitClout</b> automatically.`,
+            title: "Purchase DESO",
+            html: `You will complete your purchase through Wyre. Your ${this.selectedFiatCurrency} will be converted to <b>Bitcoin</b> and then into <b>DESO</b> automatically.`,
             showCancelButton: true,
             showConfirmButton: true,
             confirmButtonText: "Buy",

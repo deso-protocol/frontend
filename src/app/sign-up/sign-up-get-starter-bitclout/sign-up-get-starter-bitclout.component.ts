@@ -226,7 +226,7 @@ export class SignUpGetStarterBitcloutComponent implements OnInit {
 
   _getStarterBitCloutFailure(comp: any): void {
     comp.globalVars._alertError(
-      "Your starter BitClout is on it's way.  The transaction broadcast successfully but read node timeout exceeded. Please refresh."
+      "Your starter DESO is on it's way.  The transaction broadcast successfully but read node timeout exceeded. Please refresh."
     );
     comp.screenToShow = SignUpGetStarterBitcloutComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
     comp.submittingPhoneNumberVerificationCode = false;

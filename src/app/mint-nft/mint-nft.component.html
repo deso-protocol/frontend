@@ -83,9 +83,9 @@
                 </a>
                 <a
                   class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-                  (click)="minBidCurrency='CLOUT'"
+                  (click)="minBidCurrency='DESO'"
                 >
-                  CLOUT
+                  DESO
                 </a>
               </div>
             </div>
@@ -101,13 +101,13 @@
               min="0"
               placeholder="0"
             />
-            <span *ngIf="minBidCurrency === 'CLOUT'" class="mint-nft__floating-span">{{ minBidAmountUSDFormatted() }}</span>
+            <span *ngIf="minBidCurrency === 'DESO'" class="mint-nft__floating-span">{{ minBidAmountUSDFormatted() }}</span>
           </div>
         </div>
       </div>
     </div>
     <div class="mint-nft__sub-text mt-16px">
-      Network Fee: {{ globalVars.nanosToBitClout(createNFTFeeNanos * numCopies, 5) }} CLOUT (~{{
+      Network Fee: {{ globalVars.nanosToBitClout(createNFTFeeNanos * numCopies, 5) }} DESO (~{{
         globalVars.nanosToUSD(createNFTFeeNanos * numCopies, 2)
       }})
     </div>
