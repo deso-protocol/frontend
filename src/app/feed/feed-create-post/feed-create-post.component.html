@@ -135,7 +135,7 @@
     class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
     style="height: 36px; width: 75px; line-height: 15px"
     [ngClass]="{
-      disabled: (postInput.length <= 0 && !postImageSrc) || characterCountExceedsMaxLength(),
+      disabled: (postInput.length <= 0 && !postImageSrc && !postVideoSrc) || characterCountExceedsMaxLength(),
       'btn-loading': submittingPost
     }"
     (click)="_createPost()"
