@@ -70,7 +70,7 @@ export class FeedCreatePostComponent implements OnInit {
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
     private appData: GlobalVarsService,
-    private streamService: CloudflareStreamService,
+    private streamService: CloudflareStreamService
   ) {
     this.globalVars = appData;
   }
@@ -261,7 +261,7 @@ export class FeedCreatePostComponent implements OnInit {
       let mediaId = "";
       const comp: FeedCreatePostComponent = this;
       const options = {
-        endpoint: this.backendApi._makeRequestURL(this.globalVars.localNode, BackendRoutes.RoutePathUploadVideo),
+        endpoint: this.backendApi._makeRequestURL(environment.uploadVideoHostname, BackendRoutes.RoutePathUploadVideo),
         chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
         // resume: true,
         // metadata: {

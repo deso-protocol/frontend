@@ -4,6 +4,7 @@ import { BackendApiService } from "../../../app/backend-api.service";
 import { Observable, of } from "rxjs";
 import { GlobalVarsService } from "../../../app/global-vars.service";
 import { catchError, map } from "rxjs/operators";
+import { environment } from "../../../environments/environment";
 
 @Injectable({
   providedIn: "root",
@@ -27,7 +28,7 @@ export class CloudflareStreamService {
       console.error("invalid VideoID");
       return of([false, true]);
     }
-    return this.backendApi.GetVideoStatus(this.globalVars.localNode, videoID).pipe(
+    return this.backendApi.GetVideoStatus(environment.uploadVideoHostname, videoID).pipe(
       catchError((error) => {
         console.error(error);
         return of({
