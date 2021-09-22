@@ -67,7 +67,7 @@ export class ManageFollowsComponent implements OnDestroy {
         // Filter out null / undefined values and sort by coin price.
         const sortedProfileEntries: ProfileEntryResponse[] = (Object.values(chunk) as ProfileEntryResponse[])
           .filter((val) => val)
-          .sort((ii: any, jj: any) => jj.CoinEntry.BitCloutLockedNanos - ii.CoinEntry.BitCloutLockedNanos);
+          .sort((ii: any, jj: any) => jj.CoinEntry.DeSoLockedNanos - ii.CoinEntry.DeSoLockedNanos);
 
         if (sortedProfileEntries.length > 0) {
           // Set pagedKeys so we have the last public key for the next page.

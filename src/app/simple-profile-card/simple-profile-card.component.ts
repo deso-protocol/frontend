@@ -11,10 +11,11 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() profile: ProfileEntryResponse;
   @Input() diamondLevel = -1;
   @Input() showHeartIcon = false;
-  @Input() showRecloutIcon = false;
+  @Input() showRepostIcon = false;
   @Input() containerModalRef: any = null;
   @Input() singleColumn = false;
   @Input() hideFollowLink = false;
+  @Input() isBold = true;
   @Input() inTutorial: boolean = false;
   @Input() showTutorialBuy: boolean = false;
 

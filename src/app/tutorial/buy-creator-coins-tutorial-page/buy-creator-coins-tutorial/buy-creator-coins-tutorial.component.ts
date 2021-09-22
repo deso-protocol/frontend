@@ -31,7 +31,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
 
   ngOnInit() {
     // this.isLoadingProfilesForFirstTime = true;
-    this.titleService.setTitle("Buy Creator Coins Tutorial - BitClout");
+    this.titleService.setTitle("Buy Creator Coins Tutorial - DeSo");
     // If the user just completed their profile, we instruct them to buy their own coin.
     if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
       this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;

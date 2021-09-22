@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
 
   showUsernameTooltip = false;
 
-  bitcloutToUSDExchangeRateToDisplay = "fetching...";
+  desoToUSDExchangeRateToDisplay = "fetching...";
 
   // Throttle the calls to update the top-level data so they only happen after a
   // previous call has finished.
@@ -151,6 +151,7 @@ export class AppComponent implements OnInit {
           this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         }
         this.globalVars.globoMods = res.GloboMods;
+
         this.ref.detectChanges();
         this.globalVars.loadingInitialAppState = false;
       },
@@ -163,8 +164,8 @@ export class AppComponent implements OnInit {
     );
   }
 
-  _updateBitCloutExchangeRate() {
-    this.globalVars._updateBitCloutExchangeRate();
+  _updateDeSoExchangeRate() {
+    this.globalVars._updateDeSoExchangeRate();
   }
 
   _updateAppState() {
@@ -175,8 +176,9 @@ export class AppComponent implements OnInit {
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
+        this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
-        this.globalVars.jumioBitCloutNanos = res.JumioBitCloutNanos;
+        this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
         // Setup amplitude on first run
         if (!this.globalVars.amplitude && res.AmplitudeKey) {
           this.globalVars.amplitude = require("amplitude-js");
@@ -193,7 +195,7 @@ export class AppComponent implements OnInit {
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
         this.globalVars.supportEmail = res.SupportEmail;
-        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterBitCloutSeed;
+        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
       });
@@ -234,7 +236,7 @@ export class AppComponent implements OnInit {
                 return;
               }
 
-              this._updateBitCloutExchangeRate();
+              this._updateDeSoExchangeRate();
               this._updateAppState();
 
               this._updateTopLevelData().add(() => {
@@ -254,7 +256,7 @@ export class AppComponent implements OnInit {
       if (this.globalVars.pausePolling) {
         return;
       }
-      this._updateBitCloutExchangeRate();
+      this._updateDeSoExchangeRate();
       this._updateAppState();
       return this._updateTopLevelData();
     }
@@ -264,16 +266,16 @@ export class AppComponent implements OnInit {
     // Load the theme
     this.themeService.init();
 
-    // Update the BitClout <-> Bitcoin exchange rate every five minutes. This prevents
+    // Update the DeSo <-> Bitcoin exchange rate every five minutes. This prevents
     // a stale price from showing in a tab that's been open for a while
     setInterval(() => {
-      this._updateBitCloutExchangeRate();
+      this._updateDeSoExchangeRate();
     }, 5 * 60 * 1000);
 
     this.globalVars.updateEverything = this._updateEverything;
 
     // We need to fetch this data before we start an import. Can remove once import code is gone.
-    this._updateBitCloutExchangeRate();
+    this._updateDeSoExchangeRate();
     this._updateAppState();
 
     this.identityService.info().subscribe((res) => {

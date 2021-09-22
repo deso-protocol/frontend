@@ -8,6 +8,7 @@ import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-se
 import { environment } from "../../../environments/environment";
 import * as tus from "tus-js-client";
 import Timer = NodeJS.Timer;
+import { StreamService } from "../../../lib/services/stream/stream-service";
 
 @Component({
   selector: "feed-create-post",
@@ -68,7 +69,8 @@ export class FeedCreatePostComponent implements OnInit {
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
-    private appData: GlobalVarsService
+    private appData: GlobalVarsService,
+    private streamService: StreamService
   ) {
     this.globalVars = appData;
   }
@@ -77,7 +79,7 @@ export class FeedCreatePostComponent implements OnInit {
     this.isComment = !this.isQuote && !!this.parentPost;
     this._setRandomMovieQuote();
     if (this.inTutorial) {
-      this.postInput = "It's time to CLOUT!";
+      this.postInput = "It's time to DESO!";
     }
   }
 
@@ -122,7 +124,7 @@ export class FeedCreatePostComponent implements OnInit {
     if (!this.parentPost) {
       return this.randomMovieQuote;
     }
-    // Creating comment or quote reclout;
+    // Creating comment or quote repost;
     return this.isQuote ? "Add a quote" : "Post your reply";
   }
 
@@ -160,10 +162,11 @@ export class FeedCreatePostComponent implements OnInit {
 
     const bodyObj = {
       Body: this.postInput,
-      // Only submit images if the post is a quoted reclout or a vanilla post.
+      // Only submit images if the post is a quoted repost or a vanilla post.
       ImageURLs: !this.isComment ? [this.postImageSrc].filter((n) => n) : [],
+      VideoURLs: !this.isComment ? [this.postVideoSrc].filter((n) => n) : [],
     };
-    const recloutedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
+    const repostedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
     const postType = this.isQuote ? "quote" : this.isComment ? "reply" : "create";
 
@@ -175,7 +178,7 @@ export class FeedCreatePostComponent implements OnInit {
         this.isComment ? this.parentPost.PostHashHex : "" /*ParentPostHashHex*/,
         "" /*Title*/,
         bodyObj /*BodyObj*/,
-        recloutedPostHashHex,
+        repostedPostHashHex,
         postExtraData,
         "" /*Sub*/,
         // TODO: Should we have different values for creator basis points and stake multiple?
@@ -192,6 +195,7 @@ export class FeedCreatePostComponent implements OnInit {
 
           this.postInput = "";
           this.postImageSrc = null;
+          this.postVideoSrc = null;
           this.embedURL = "";
           this.constructedEmbedURL = "";
           this.changeRef.detectChanges();
@@ -271,7 +275,7 @@ export class FeedCreatePostComponent implements OnInit {
           comp.videoUploadPercentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
         },
         onSuccess: function () {
-          comp.postVideoSrc = mediaId;
+          comp.postVideoSrc = `https://iframe.videodelivery.net/${mediaId}`;
           comp.postImageSrc = null;
           comp.videoUploadPercentage = null;
           comp.pollForReadyToStream();
@@ -322,20 +326,19 @@ export class FeedCreatePostComponent implements OnInit {
         clearInterval(this.videoStreamInterval);
         return;
       }
-      this.backendApi
-        .GetVideoStatus(this.globalVars.localNode, this.postVideoSrc)
-        .subscribe(
-          (res) => {
-            if (res.ReadyToStream) {
-              clearInterval(this.videoStreamInterval);
-              this.readyToStream = true;
-            }
-          },
-          (err) => {
-            console.log(err);
+      this.streamService
+        .checkVideoStatusByURL(this.postVideoSrc)
+        .subscribe(([readyToStream, exitPolling]) => {
+          if (readyToStream) {
+            this.readyToStream = true;
             clearInterval(this.videoStreamInterval);
+            return;
           }
-        )
+          if (exitPolling) {
+            clearInterval(this.videoStreamInterval);
+            return;
+          }
+        })
         .add(() => attempts++);
     }, timeoutMillis);
   }

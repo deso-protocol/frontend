@@ -117,7 +117,7 @@ export class WalletComponent implements OnInit, OnDestroy {
         })
       );
     }
-    this.titleService.setTitle("Wallet - BitClout");
+    this.titleService.setTitle("Wallet - DeSo");
   }
 
   ngOnDestroy(): void {
@@ -141,8 +141,8 @@ export class WalletComponent implements OnInit, OnDestroy {
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
         this.sortedUSDValueFromHighToLow *
-        (this.globalVars.bitcloutNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry) -
-          this.globalVars.bitcloutNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry))
+        (this.globalVars.desoNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry) -
+          this.globalVars.desoNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry))
       );
     });
   }
@@ -155,7 +155,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
         this.sortedPriceFromHighToLow *
-        (a.ProfileEntryResponse.CoinEntry.BitCloutLockedNanos - b.ProfileEntryResponse.CoinEntry.BitCloutLockedNanos)
+        (a.ProfileEntryResponse.CoinEntry.DeSoLockedNanos - b.ProfileEntryResponse.CoinEntry.DeSoLockedNanos)
       );
     });
   }
@@ -203,7 +203,7 @@ export class WalletComponent implements OnInit, OnDestroy {
 
     for (const holding of this.globalVars.loggedInUser.UsersYouHODL) {
       result +=
-        this.globalVars.bitcloutNanosYouWouldGetIfYouSold(
+        this.globalVars.desoNanosYouWouldGetIfYouSold(
           holding.BalanceNanos,
           holding.ProfileEntryResponse.CoinEntry
         ) || 0;
@@ -212,15 +212,15 @@ export class WalletComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  unminedBitCloutToolTip() {
+  unminedDeSoToolTip() {
     return (
       "Mining in progress. Feel free to transact in the meantime.\n\n" +
       "Mined balance:\n" +
-      this.globalVars.nanosToBitClout(this.globalVars.loggedInUser.BalanceNanos, 9) +
-      " BitClout.\n\n" +
+      this.globalVars.nanosToDeSo(this.globalVars.loggedInUser.BalanceNanos, 9) +
+      " DeSo.\n\n" +
       "Unmined balance:\n" +
-      this.globalVars.nanosToBitClout(this.globalVars.loggedInUser.UnminedBalanceNanos, 9) +
-      " BitClout."
+      this.globalVars.nanosToDeSo(this.globalVars.loggedInUser.UnminedBalanceNanos, 9) +
+      " DeSo."
     );
   }
 
@@ -228,11 +228,11 @@ export class WalletComponent implements OnInit, OnDestroy {
     return (
       "Mining in progress. Feel free to transact in the meantime.\n\n" +
       "Net unmined transactions:\n" +
-      this.globalVars.nanosToBitClout(creator.NetBalanceInMempool, 9) +
-      " BitClout.\n\n" +
+      this.globalVars.nanosToDeSo(creator.NetBalanceInMempool, 9) +
+      " DeSo.\n\n" +
       "Balance w/unmined transactions:\n" +
-      this.globalVars.nanosToBitClout(creator.BalanceNanos, 9) +
-      " BitClout.\n\n"
+      this.globalVars.nanosToDeSo(creator.BalanceNanos, 9) +
+      " DeSo.\n\n"
     );
   }
 
@@ -309,7 +309,7 @@ export class WalletComponent implements OnInit, OnDestroy {
                 10 * 100,
                 1.25 * 100 * 100,
                 false,
-                this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+                this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
               )
               .subscribe(
                 () => {

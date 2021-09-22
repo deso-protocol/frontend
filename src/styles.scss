@@ -262,6 +262,7 @@ $green-font-color: #19B028;
 .background-color-light-grey { background-color: var(--secondary); }
 .background-color-light-grey-important { background-color: var(--secondary) !important }
 .background-color-light-pink { background-color: lightpink; }
+.background-color-lemon-chiffon { background-color: lemonchiffon; }
 .background-color-white { background-color: var(--background); }
 
 // Custom padding classes.
@@ -401,6 +402,7 @@ $green-font-color: #19B028;
 
 .br-3px { border-radius: 3px; }
 .br-4px { border-radius: 4px; }
+.br-5px { border-radius: 5px; }
 .br-8px { border-radius: 8px; }
 .br-12px { border-radius: $feed-border-radius; }
 
@@ -1103,6 +1105,27 @@ input.bs-timepicker-field {
   width: 100%;
 }
 
+.feed-post__video-container {
+  position: relative;
+  padding-top: 56.25%;
+  width: 100%;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+}
+
+.feed-post__video {
+  border: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
 .feed-post__blue-border {
   border-left: 5px solid $buy-button-blue;
 }
@@ -1135,11 +1158,11 @@ input.bs-timepicker-field {
   }
 }
 
-/* reclout hover animation */
+/* repost hover animation */
 .feed-post-icon-row__icon.icon-repost {
   &:hover {
-    background-color: $reclout-hover;
-    color: $reclout-color;
+    background-color: $repost-hover;
+    color: $repost-color;
   }
 }
 /* like button hover animation */
@@ -1311,7 +1334,7 @@ input.bs-timepicker-field {
   text-overflow: ellipsis;
 }
 
-.buy-bitclout__copy-button {
+.buy-deso__copy-button {
   display: flex;
   align-items: center;
   justify-content: middle;
@@ -1322,21 +1345,21 @@ input.bs-timepicker-field {
   padding: 5px;
 }
 
-.buy-bitclout__copy-button:hover {
+.buy-deso__copy-button:hover {
   background-color: $buy-button-blue;
   color: white;
 }
 
-.buy-bitclout__title-holder {
+.buy-deso__title-holder {
   position: relative;
   top: 20px;
 }
 
-.buy-bitclout__amount-background {
+.buy-deso__amount-background {
   background-color: var(--background);
 }
 
-.buy-bitclout__box-label-adjustment {
+.buy-deso__box-label-adjustment {
   position: relative;
   width: fit-content;
   background-color: var(--background) !important;
@@ -1785,7 +1808,7 @@ input.bs-timepicker-field {
 
 
 //
-// Simple profile card (for likes, reclouts, diamonds modal)
+// Simple profile card (for likes, reposts, diamonds modal)
 //
 
 .simple-profile-card__avatar {
@@ -2051,7 +2074,7 @@ em {
   }
 }
 
-/*Begin BitClout config*/
+/*Begin DeSo config*/
 .flex-center {
   display: flex;
   align-items: center;
@@ -2161,7 +2184,7 @@ input {
   color: var(--text) !important;
 }
 
-.clout {
+.deso {
   filter: var(--filter);
 }
 
@@ -2298,7 +2321,7 @@ input {
   border-top-right-radius: calc(.3rem - 1px);
 }
 
-.likes-modal-container, .quote-reclouts-modal-container, .reclouts-modal-container, .diamonds-modal-container {
+.likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
   background-color: var(--background);
   color: var(--text);
   border: var(--mborder);
@@ -2806,4 +2829,8 @@ input {
 
 cloudflare-stream iframe {
   border-radius: 12px;
+}
+
+.referral-link-info__blue-border {
+  border-left: 5px solid $buy-button-blue !important;
 }

@@ -47,20 +47,23 @@
         <simple-center-loader [height]="150"></simple-center-loader>
       </div>
       <!-- Video Player -->
-      <div *ngIf="!isComment && postVideoSrc && readyToStream">
-        <cloudflare-stream
-          [controls]="true"
-          [src]="postVideoSrc"
-        ></cloudflare-stream>
-<!--        <iframe-->
-<!--          [src]="postVideoSrc | sanitizeVideoUrl"-->
-<!--          class="br-12px"-->
-<!--          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"-->
-<!--          allowfullscreen-->
-<!--          style="height: 400px; width: 100%"-->
-<!--        >-->
-<!--        </iframe>-->
+      <div
+        *ngIf="!isComment && postVideoSrc && readyToStream"
+        class="feed-post__video-container"
+      >
+        <iframe
+          [src]="postVideoSrc | sanitizeVideoUrl"
+          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+          allowfullscreen
+          class="feed-post__video"
+        >
+        </iframe>
       </div>
+      <!--        <cloudflare-stream-->
+      <!--          [controls]="true"-->
+      <!--          [src]="postVideoSrc"-->
+      <!--        ></cloudflare-stream>-->
+
       <!-- Embedded Content -->
       <div class="feed-post__embed-container" *ngIf="constructedEmbedURL">
         <i

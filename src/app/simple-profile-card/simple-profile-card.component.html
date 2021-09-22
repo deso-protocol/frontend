@@ -16,7 +16,9 @@
       <div class="d-flex">
         <div class="text-truncate holdings__name fs-15px">
           <div class="d-flex">
-            <div class="fc-default font-weight-bold text-truncate holdings__name link--unstyled">{{ profile.Username || profile.PublicKeyBase58Check }}</div>
+            <div class="fc-default text-truncate holdings__name link--unstyled"i
+                 [ngClass]="{'font-weight-bold': isBold }">
+              {{ profile.Username || profile.PublicKeyBase58Check }}</div>
             <span
               *ngIf="profile.IsVerified"
               (click)="tooltip.toggle()"
@@ -28,8 +30,8 @@
             <i class="fas fa-check-circle fa-md align-middle"></i>
           </span>
           </div>
-          <div class="text-grey9" *ngIf="profile.CoinPriceBitCloutNanos">
-            {{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}
+          <div class="text-grey9" *ngIf="profile.CoinPriceDeSoNanos">
+            {{ globalVars.nanosToUSD(profile.CoinPriceDeSoNanos, 2) }}
           </div>
         </div>
         <div class="d-flex">
@@ -51,7 +53,7 @@
       <div *ngIf="showHeartIcon">
         <i class="icon-heart-fill fs-32px d-block fc-red"></i>
       </div>
-      <div *ngIf="showRecloutIcon">
+      <div *ngIf="showRepostIcon">
         <i class="icon-repost fs-32px d-block fc-green"></i>
       </div>
       <div *ngIf="showTutorialBuy" (click)="onBuyClicked()">

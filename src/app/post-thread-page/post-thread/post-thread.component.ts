@@ -315,7 +315,7 @@ export class PostThreadComponent {
         }
         // Set current post
         this.currentPost = res.PostFound;
-        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
+        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on DeSo");
       },
       (err) => {
         // TODO: post threads: rollbar

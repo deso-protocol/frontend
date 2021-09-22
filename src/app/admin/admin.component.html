@@ -44,7 +44,7 @@
       (tabClick)="_postTabClicked($event)"
     ></tab-selector>
     <div
-      *ngIf="activePostTab == POSTS_BY_CLOUT_TAB"
+      *ngIf="activePostTab == POSTS_BY_DESO_TAB"
       class="w-100 px-15px py-5px fs-15px border-bottom border-color-grey d-flex"
       style="justify-content: flex-start; align-items: center;"
     >
@@ -65,14 +65,14 @@
         <a
           class="btn btn-primary"
           style="vertical-align: middle; float: right; text-align: center;"
-          (click)="_searchPostsByClout()"
+          (click)="_searchPostsByDESO()"
         >
           Search
         </a>
       </div>
 
     </div>
-    <simple-center-loader *ngIf="searchingForPostsByClout; else showPosts"></simple-center-loader>
+    <simple-center-loader *ngIf="searchingForPostsByDESO; else showPosts"></simple-center-loader>
     <ng-template #showPosts>
       <div *ngFor="let post of activePosts; let ii = index">
         <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
@@ -464,7 +464,7 @@
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
-      See the state of your bitclout node below.
+      See the state of your deso node below.
     </div>
     <network-info class="w-100"></network-info>
   </div>
@@ -551,6 +551,15 @@
     style="overflow-y: scroll"
   >
       <nft-drop-mgr></nft-drop-mgr>
+  </div>
+
+  <!-- Referral Program -->
+  <div
+    *ngIf="activeTab == 'Referral Program'"
+    class="w-100 h-100 d-flex flex-column disable-scrollbars"
+    style="overflow-y: scroll; min-height: 400px"
+  >
+      <referral-program-mgr></referral-program-mgr>
   </div>
 
   <!-- Super Info -->
@@ -701,7 +710,7 @@
     </div>
 
     <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
-      Create Profile Fee In BitClout
+      Create Profile Fee In DeSo
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
         <input
           [(ngModel)]="updateGlobalParamsValues.CreateProfileFeeNanos"
@@ -794,7 +803,7 @@
     </div>
 
     <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
-      Create NFT Fee in BitClout
+      Create NFT Fee in DeSo
       <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
         <input
           [(ngModel)]="updateGlobalParamsValues.CreateNFTFeeNanos"
@@ -851,7 +860,7 @@
       <div class="d-flex mt-5px">
         <input
           [(ngModel)]="usernameForWhomToRemoveVerification"
-          (keydown.enter)="RemoveVerificationBadge()"
+          (keydown.enter)="RemoveVerification()"
           class="form-control w-100 fs-15px lh-15px"
           placeholder="Enter a username from whom to remove verification."
         />
@@ -902,47 +911,47 @@
       </ul>
     </ul>
 
-    <!-- USD Cents Per BitClout Reserve Price  -->
+    <!-- USD Cents Per DeSo Reserve Price  -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Update USD to BitClout Reserve Price ($)
+      Update USD to DeSo Reserve Price ($)
       <div class="d-flex mt-5px">
         <input
-          [(ngModel)]="usdToBitCloutReserveExchangeRate"
-          (keydown.enter)="updateUSDToBitCloutReserveExchangeRate()"
+          [(ngModel)]="usdToDeSoReserveExchangeRate"
+          (keydown.enter)="updateUSDToDeSoReserveExchangeRate()"
           class="form-control w-100 fs-15px lh-15px"
-          placeholder="Enter the new USD to BitClout Reserve Exchange Rate"
+          placeholder="Enter the new USD to DeSo Reserve Exchange Rate"
           type="number"
         />
         <button
-          *ngIf="!submittingUSDToBitCloutReserveExchangeRateUpdate"
-          (click)="updateUSDToBitCloutReserveExchangeRate()"
+          *ngIf="!submittingUSDToDeSoReserveExchangeRateUpdate"
+          (click)="updateUSDToDeSoReserveExchangeRate()"
           class="btn btn-outline-primary fs-15px ml-5px"
         >
          Update
         </button>
-        <button *ngIf="submittingUSDToBitCloutReserveExchangeRateUpdate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+        <button *ngIf="submittingUSDToDeSoReserveExchangeRateUpdate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
       </div>
     </div>
 
-    <!-- Buy BitClout Fee Rate-->
+    <!-- Buy DeSo Fee Rate-->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Update Buy BitClout Fee Rate (%)
+      Update Buy DeSo Fee Rate (%)
       <div class="d-flex mt-5px">
         <input
-          [(ngModel)]="buyBitCloutFeeRate"
-          (keydown.enter)="updateBuyBitCloutFeeRate()"
+          [(ngModel)]="buyDeSoFeeRate"
+          (keydown.enter)="updateBuyDeSoFeeRate()"
           class="form-control w-100 fs-15px lh-15px"
-          placeholder="Enter Buy BitClout Fee Rate"
+          placeholder="Enter Buy DeSo Fee Rate"
           type="number"
         />
         <button
-          *ngIf="!submittingBuyBitCloutFeeRate"
-          (click)="updateBuyBitCloutFeeRate()"
+          *ngIf="!submittingBuyDeSoFeeRate"
+          (click)="updateBuyDeSoFeeRate()"
           class="btn btn-outline-primary fs-15px ml-5px"
         >
           Update
         </button>
-        <button *ngIf="submittingBuyBitCloutFeeRate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+        <button *ngIf="submittingBuyDeSoFeeRate" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
       </div>
     </div>
 

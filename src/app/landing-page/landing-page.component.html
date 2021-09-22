@@ -5,16 +5,16 @@
       <div class="input-group w-auto">
         <div class="input-group-prepend">
           <label class="landing__nav-buy input-group-text">
-            {{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD
+            {{ globalVars.desoToUSDExchangeRateToDisplay }} USD
           </label>
         </div>
         <div class="input-group-append">
           <a
             class="landing__nav-buy btn btn-sm btn-primary"
-            [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
+            [routerLink]="'/' + globalVars.RouteNames.BUY_DESO"
             queryParamsHandling="merge"
           >
-            Buy $CLOUT
+            Buy $DESO
           </a>
         </div>
       </div>
@@ -23,39 +23,39 @@
 </div>
 <div class="w-100 d-lg-none d-flex align-items-center justify-content-center">
   <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">
-    Sign Up and Get <b>{{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 0) }} Free</b>
+    Sign Up and Get <b>{{ globalVars.getFreeDESOMessage() }} Free</b>
   </a>
 </div>
 
 <div class="w-100 border-bottom px-10px">
   <div class="container-lg landing__header">
     <div class="row">
-      <div class="col landing__logo clout">BitClout</div>
+      <div class="col landing__logo deso">DeSo</div>
       <div class="col d-lg-flex d-none align-items-center">
         <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">
-          Sign Up and Get <b>{{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 0) }} Free</b>
+          Sign Up and Get <b>{{ globalVars.getFreeDESOMessage() }} Free</b>
         </a>
       </div>
       <div class="d-flex align-items-center">
         <div class="input-group w-auto d-none d-sm-flex" style="margin-left: 25px">
           <div class="input-group-prepend">
             <label class="landing__nav-buy input-group-text">
-              {{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD
+              {{ globalVars.desoToUSDExchangeRateToDisplay }} USD
             </label>
           </div>
           <div class="input-group-append">
             <a
               class="landing__nav-buy btn btn-sm btn-primary"
-              [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
+              [routerLink]="'/' + globalVars.RouteNames.BUY_DESO"
               queryParamsHandling="merge"
             >
-              Buy $CLOUT
+              Buy $DESO
             </a>
           </div>
         </div>
-        <a class="landing__nav-link" href="https://docs.bitclout.com/" target="_blank">About</a>
-        <a class="landing__nav-link" href="https://docs.bitclout.com/the-vision" target="_blank">Vision</a>
-        <a class="landing__nav-link" href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
+        <a class="landing__nav-link" href="https://docs.deso.org/" target="_blank">About</a>
+        <a class="landing__nav-link" href="https://docs.deso.org/#the-ultimate-vision" target="_blank">Vision</a>
+        <a class="landing__nav-link" href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>
         <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">Sign Up</a>
       </div>
     </div>
@@ -76,7 +76,7 @@
             Sign Up
           </div>
           <div class="mt-1 fs-15px">
-            Get {{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 0) }} Free
+            Get {{ globalVars.getFreeDESOMessage() }} Free
           </div>
         </a>
         <a class="landing__log-in d-none d-sm-block" (click)="globalVars.launchLoginFlow()" style="font-size: 15px;">Log in</a>
@@ -95,10 +95,10 @@
         <b>You can have your own coin too.</b>
         <br />
         <br />
-        <a href="https://docs.bitclout.com/" target="_blank">Learn More</a>
+        <a href="https://docs.deso.org/" target="_blank">Learn More</a>
         &nbsp;
         &nbsp;
-        <a href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
+        <a href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
         <div class="col-sm-10 col-xs-12 mb-0 landing__example">
@@ -171,16 +171,16 @@
     <div class="col-lg-8 col-md-9 col-sm-12 text-center landing__prop">
       <h3 class="landing__prop-header">Decentralized like Bitcoin</h3>
       <p class="landing__prop-desc">
-        <b>BitClout is not a company.</b>
+        <b>DeSo is not a company.</b>
         It's an open-source blockchain like Bitcoin.
         <br class="d-none d-md-block" />
-        You can own a piece by buying the BitClout coin $CLOUT.
+        You can own a piece by buying the DeSo coin $DESO.
         <br />
         <br />
-        <a href="https://docs.bitclout.com/the-vision" target="_blank">Learn More</a>
+        <a href="https://docs.deso.org/https://docs.deso.org/#the-ultimate-vision" target="_blank">Learn More</a>
         &nbsp;
         &nbsp;
-        <a href="https://docs.bitclout.com/zhong-wen" target="_blank">中文</a>
+        <a href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
         <div class="col-sm-10 col-xs-12 mb-0 landing__example">
@@ -235,10 +235,10 @@
         <b>money,</b>
         <br />
         <br />
-        BitClout is decentralizing
+        DeSo is decentralizing
         <b>social media.</b>
       </h4>
-      <a class="btn btn-sm btn-outline-primary landing__btn-cta" href="https://docs.bitclout.com/" target="_blank">
+      <a class="btn btn-sm btn-outline-primary landing__btn-cta" href="https://docs.deso.org/" target="_blank">
         Learn More
       </a>
     </div>

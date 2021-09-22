@@ -133,7 +133,7 @@ export class NftPostComponent {
         }
         // Set current post
         this.nftPost = res.PostFound;
-        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on BitClout");
+        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on DeSo");
         this.refreshBidData();
       },
       (err) => {
@@ -280,6 +280,7 @@ export class NftPostComponent {
   }
 
   selectBidEntry(bidEntry: NFTBidEntryResponse): void {
+    this.bids.forEach((bidEntry) => (bidEntry.selected = false));
     bidEntry.selected = true;
     this.sellNFTDisabled = false;
   }

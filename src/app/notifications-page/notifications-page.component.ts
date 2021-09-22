@@ -10,6 +10,6 @@ export class NotificationsPageComponent {
   constructor(private titleService: Title) {}
 
   ngOnInit() {
-    this.titleService.setTitle("Notifications - BitClout");
+    this.titleService.setTitle("Notifications - DeSo");
   }
 }

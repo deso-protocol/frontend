@@ -11,7 +11,7 @@
         >
           <img
             src="assets/img/camelcase_logo.svg"
-            class="clout"
+            class="deso"
             style="height: 27px; margin-left: 17px; margin-bottom: 3px"
           />
         </a>
@@ -45,13 +45,13 @@
         ></left-bar-button>
 
         <left-bar-button
-          [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
-          [buttonLabel]="'Buy $CLOUT'"
+          [link]="'/' + globalVars.RouteNames.BUY_DESO"
+          [buttonLabel]="'Buy $DESO'"
         ></left-bar-button>
 
-        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeCLOUTFlow()">
+        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeDESOFlow()">
           <a class="left-bar__dot-inactive">·</a>
-          <a class="cursor-pointer fs-15px text-grey5">Get Free $CLOUT</a>
+          <a class="cursor-pointer fs-15px text-grey5">Get Free $DESO</a>
         </div>
 
         <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
@@ -76,8 +76,8 @@
         ></left-bar-button>
 
         <left-bar-button
-          [link]="'/' + globalVars.RouteNames.SEND_BITCLOUT"
-          [buttonLabel]="'Send $CLOUT'"
+          [link]="'/' + globalVars.RouteNames.SEND_DESO"
+          [buttonLabel]="'Send $DESO'"
         ></left-bar-button>
 
         <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'Wallet'"></left-bar-button>
@@ -112,6 +112,12 @@
 
         <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
+        <left-bar-button
+          *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
+          [link]="'/' + globalVars.RouteNames.REFERRALS"
+          [buttonLabel]="'Referrals'"
+        ></left-bar-button>
+
         <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
           <a class="left-bar__dot-inactive">·</a>
           <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
@@ -142,7 +148,7 @@
         >
           <img
             src="assets/img/camelcase_logo.svg"
-            class="clout"
+            class="deso"
             style="height: 27px; margin-left: 17px; margin-bottom: 3px"
           />
         </a>
@@ -169,8 +175,8 @@
       ></left-bar-button>
 
       <left-bar-button
-        [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
-        [buttonLabel]="'Buy $CLOUT'"
+        [link]="'/' + globalVars.RouteNames.BUY_DESO"
+        [buttonLabel]="'Buy $DESO'"
       ></left-bar-button>
     </div>
   </div>

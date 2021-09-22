@@ -20,23 +20,23 @@ class PulseLeaderboardResponse {
   };
 }
 
-const BitCloutLocked = "bitclout_locked_24h";
+const DeSoLocked = "bitclout_locked_24h";
 const Diamonds = "diamonds_received_24h";
 
 export enum PulseLeaderboardType {
-  BitCloutLocked = "bitclout_locked_24h",
+  DeSoLocked = "bitclout_locked_24h",
   Diamonds = "diamonds_received_24h",
 }
 
 export class LeaderboardResponse {
   Profile: ProfileEntryResponse;
-  BitCloutLockedGained: number;
+  DeSoLockedGained: number;
   DiamondsReceived: number;
   User: User;
 }
 
 export const LeaderboardToDataAttribute = {
-  [PulseLeaderboardType.BitCloutLocked]: "net_change_24h_bitclout_nanos",
+  [PulseLeaderboardType.DeSoLocked]: "net_change_24h_bitclout_nanos",
   [PulseLeaderboardType.Diamonds]: "diamonds",
 };
 
@@ -77,20 +77,20 @@ export class PulseService {
     );
   }
 
-  getBitCloutLockedLeaderboard(): Observable<LeaderboardResponse[]> {
-    return this.getBitCloutLockedPage(0);
+  getDeSoLockedLeaderboard(): Observable<LeaderboardResponse[]> {
+    return this.getDeSoLockedPage(0);
   }
 
-  getBitCloutLockedPage(
+  getDeSoLockedPage(
     pageNumber: number,
     pageSize: number = PulseService.pulsePageSize,
     skipFilters = false
   ): Observable<any> {
     return this.httpClient
-      .get(this.constructPulseURL(PulseLeaderboardType.BitCloutLocked, pageNumber, pageSize))
+      .get(this.constructPulseURL(PulseLeaderboardType.DeSoLocked, pageNumber, pageSize))
       .pipe(
         switchMap((res: PulseLeaderboardResponse) =>
-          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.BitCloutLocked, skipFilters)
+          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.DeSoLocked, skipFilters)
         )
       );
   }
@@ -126,8 +126,8 @@ export class PulseService {
             return {
               User: user,
               Profile: user.ProfileEntryResponse,
-              BitCloutLockedGained:
-                leaderboardType === PulseLeaderboardType.BitCloutLocked
+              DeSoLockedGained:
+                leaderboardType === PulseLeaderboardType.DeSoLocked
                   ? results[index][LeaderboardToDataAttribute[leaderboardType]]
                   : null,
               DiamondsReceived:

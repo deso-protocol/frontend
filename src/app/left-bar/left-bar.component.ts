@@ -64,43 +64,34 @@ export class LeftBarComponent {
     if (this.inTutorial) {
       return;
     }
-    // If the user hes less than 1/100th of a clout they need more clout for the tutorial.
+    // If the user hes less than 1/100th of a deso they need more deso for the tutorial.
     if (this.globalVars.loggedInUser?.BalanceNanos < 1e7) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
         icon: "info",
-        title: `You need 0.01 $CLOUT to complete the tutorial`,
+        title: `You need 0.01 $DESO to complete the tutorial`,
         showConfirmButton: true,
         focusConfirm: true,
         customClass: {
           confirmButton: "btn btn-light",
         },
-        confirmButtonText: "Buy $CLOUT",
+        confirmButtonText: "Buy $DESO",
       }).then((res) => {
         if (res.isConfirmed) {
-          this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+          this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
         }
       });
       return;
     }
 
     if (this.globalVars.userInTutorial(this.globalVars.loggedInUser)) {
-      SwalHelper.fire({
-        target: this.globalVars.getTargetComponentSelector(),
-        icon: "info",
-        title: `You have already started the tutorial`,
-        showConfirmButton: true,
-        focusConfirm: true,
-        customClass: {
-          confirmButton: "btn btn-light",
-        },
-      });
+      this.globalVars.navigateToCurrentStepInTutorial(this.globalVars.loggedInUser);
       return;
     }
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Tutorial",
-      html: "Learn how BitClout works!",
+      html: "Learn how DeSo works!",
       showConfirmButton: true,
       // Only show skip option to admins and users who do not need to complete tutorial
       showCancelButton: !!this.globalVars.loggedInUser?.IsAdmin || !this.globalVars.loggedInUser?.MustCompleteTutorial,
@@ -110,7 +101,7 @@ export class LeftBarComponent {
       },
       reverseButtons: true,
       confirmButtonText: "Start Tutorial",
-      cancelButtonText: "Skip",
+      cancelButtonText: "Cancel",
     }).then((res) => {
       this.backendApi
         .StartOrSkipTutorial(
