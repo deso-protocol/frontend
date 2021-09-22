@@ -244,6 +244,10 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   _handleFileInput(file: File) {
+    if (!file) {
+      return;
+    }
+
     if (!file.type || (!file.type.startsWith("image/") && !file.type.startsWith("video/"))) {
       this.globalVars._alertError("File selected does not have an image or video file type.");
       return;
@@ -294,6 +298,7 @@ export class FeedCreatePostComponent implements OnInit {
       if (this.videoStreamInterval != null) {
         clearInterval(this.videoStreamInterval);
       }
+      this.postVideoSrc = null;
       this.readyToStream = false;
       upload = new tus.Upload(file, options);
       upload.start();
