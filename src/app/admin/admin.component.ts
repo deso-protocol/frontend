@@ -1146,7 +1146,7 @@ export class AdminComponent implements OnInit {
             return null;
           }
           console.log(res)
-          this.globalVars._alertSuccess(`Please pay the user ${res.ToPay / GlobalVarsService.NANOS_PER_UNIT} CLOUT.`);
+          this.globalVars._alertSuccess(`Success! Transaction Hash: ${res.BitCloutTxnHash}`);
         },
         (error) => {
           console.error(error);
