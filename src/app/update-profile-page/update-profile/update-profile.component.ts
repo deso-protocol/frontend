@@ -5,7 +5,8 @@ import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
-import {ThemeService} from "../../theme/theme.service";
+import { ThemeService } from "../../theme/theme.service";
+import * as introJs from "intro.js/intro.js";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -29,6 +30,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   @Input() loggedInUser: any;
   @Input() inTutorial: boolean = false;
 
+  introJS = introJs();
+  skipTutorialExitPrompt = false;
   updateProfileBeingCalled: boolean = false;
   usernameInput: string;
   descriptionInput: string;
@@ -63,6 +66,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   ngOnInit() {
     this._updateFormBasedOnLoggedInUser();
     this.titleService.setTitle("Update Profile - BitClout");
+    if (this.inTutorial) {
+      this.globalVars.preventBackButton();
+    }
   }
 
   // This is used to handle any changes to the loggedInUser elegantly.
@@ -253,6 +259,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         this.globalVars.logEvent("profile : update");
         // This updates things like the username that shows up in the dropdown.
         this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);
+        if (this.inTutorial) {
+          this.exitTutorial();
+        }
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);
@@ -347,5 +356,53 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   selectChangeHandler(event: any) {
     const newTheme = event.target.value;
     this.themeService.setTheme(newTheme);
+  }
+
+  ngAfterViewInit() {
+    if (this.inTutorial) {
+      this.initiateIntro();
+    }
+  }
+
+  initiateIntro() {
+    this.updateProfileIntro();
+  }
+
+  updateProfileIntro() {
+    this.introJS = introJs();
+    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
+    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    this.introJS.setOptions({
+      tooltipClass,
+      hideNext: true,
+      exitOnEsc: false,
+      exitOnOverlayClick: userCanExit,
+      overlayOpacity: 0.8,
+      steps: [
+        {
+          intro: `Everyone needs a profile! Let's update yours.`,
+        },
+        {
+          intro: `Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click "Update Profile"</b> to continue.`,
+          element: document.querySelector(".update-profile__holder"),
+        },
+      ],
+    });
+    this.introJS.onexit(() => {
+      if (!this.skipTutorialExitPrompt) {
+        this.globalVars.skipTutorial(this);
+      }
+    });
+    this.introJS.start();
+  }
+
+  tutorialCleanUp() {}
+
+  exitTutorial() {
+    if (this.inTutorial) {
+      this.skipTutorialExitPrompt = true;
+      this.introJS.exit(true);
+      this.skipTutorialExitPrompt = false;
+    }
   }
 }

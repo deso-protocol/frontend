@@ -1,4 +1,4 @@
-<div class="flex-grow-1 br-10px border">
+<div class="flex-grow-1 br-10px border" id="creator-coins-holder">
   <div class="tutorial-header">
     <div *ngIf="!investInYourself" class="d-flex justify-content-between">
       <div class="tutorial-title">Invest in a Creator</div>
@@ -14,87 +14,63 @@
 
   <div>
     <div *ngIf="!investInYourself">
-      <div class="fs-15px p-16px background-color-white">
-        Every creator on BitClout has a coin that you can buy and sell.
-        <br />
-        <br />
-        Prices go up when people buy, or when cashflows go to the coin.
-        Prices go down when people sell.
-        <br />
-        <br />
-        <b>Choose a creator to invest in below!</b>
-      </div>
-      <div>
-        <div class="background-color-secondary p-16px">
-          <span class="fs-17px fc-secondary font-weight-bold">Well-Known Creators</span>
-        </div>
-        <div *ngFor="let profile of topCreatorsToHighlight" class="background-color-white">
-          <div class="p-2" style="border-bottom: 1px solid #e5e5e5;">
-            <simple-profile-card
-              [profile]="profile"
-              [showTutorialBuy]="true"
-              [inTutorial]="true"
-              [hideFollowLink]="true"
-              [singleColumn]="true"
-            ></simple-profile-card>
+      <div class="tutorial-creators-to-invest-in">
+        <div>
+          <div class="background-color-secondary p-16px">
+            <span class="fs-17px fc-secondary font-weight-bold">Well-Known Creators</span>
+          </div>
+          <div *ngFor="let profile of topCreatorsToHighlight" class="background-color-white">
+            <div class="p-2" style="border-bottom: 1px solid #e5e5e5;">
+              <simple-profile-card
+                (exitTutorial)="exitTutorial()"
+                [profile]="profile"
+                [showTutorialBuy]="true"
+                [inTutorial]="true"
+                [hideFollowLink]="true"
+                [singleColumn]="true"
+              ></simple-profile-card>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div>
-        <div class="background-color-secondary p-16px">
-          <span class="fs-17px fc-secondary font-weight-bold">Hot New Creators</span>
-        </div>
-        <div *ngFor="let profile of upAndComingCreatorsToHighlight" class="background-color-white">
-          <div class="p-2 border-bottom">
-            <simple-profile-card
-              [profile]="profile"
-              [showTutorialBuy]="true"
-              [inTutorial]="true"
-              [hideFollowLink]="true"
-              [singleColumn]="true"
-            ></simple-profile-card>
+        <div>
+          <div class="background-color-secondary p-16px">
+            <span class="fs-17px fc-secondary font-weight-bold">Hot New Creators</span>
           </div>
-        </div>
-        <div class="background-color-white p-16px" style="border-radius: 0px 0px 16px 16px">
-          <a class="fs-15px fc-secondary" (click)="globalVars.skipTutorial()">Cancel</a>
+          <div
+            *ngFor="let profile of upAndComingCreatorsToHighlight; let idx = index"
+            class="background-color-white"
+            [ngClass]="{ 'tutorial-bottom-card': idx === upAndComingCreatorsToHighlight.length - 1 }"
+          >
+            <div
+              class="p-2 border-bottom"
+              [ngClass]="{ 'tutorial-bottom-card': idx === upAndComingCreatorsToHighlight.length - 1 }"
+            >
+              <simple-profile-card
+                (exitTutorial)="exitTutorial()"
+                [profile]="profile"
+                [showTutorialBuy]="true"
+                [inTutorial]="true"
+                [hideFollowLink]="true"
+                [singleColumn]="true"
+              ></simple-profile-card>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div *ngIf="investInYourself">
-      <div class="p-16px background-color-white">
-        <div class="mb-3">
-          <h2 class="mb-3 fs-15px">
-            You can have a coin too!
-          </h2>
-          <h5 class="fs-15px">
-            Now that you have a profile, we can set up your coin.
-          </h5>
-          <h5 class="mt-3 fs-15px font-weight-bold">
-            The first step is always to invest in yourself!
-          </h5>
-        </div>
-      </div>
       <div class="border-bottom"></div>
-      <div class="p-16px border-bottom">
+      <div class="p-16px border-bottom" id="tutorial-invest-in-self-holder">
         <simple-profile-card
+          (exitTutorial)="exitTutorial()"
           [profile]="loggedInUserProfile"
           [showTutorialBuy]="true"
           [inTutorial]="true"
           [hideFollowLink]="true"
           [singleColumn]="true"
         ></simple-profile-card>
-      </div>
-      <div class="background-color-white p-16px" style="border-radius: 0px 0px 16px 16px">
-        <a
-          *ngIf="!globalVars.loggedInUser?.MustCompleteTutorial || globalVars.loggedInUser?.IsAdmin"
-          (click)="globalVars.skipTutorial()"
-          class="fs-15px fc-secondary"
-          (click)="globalVars.skipTutorial()"
-        >
-          Cancel
-        </a>
       </div>
     </div>
   </div>

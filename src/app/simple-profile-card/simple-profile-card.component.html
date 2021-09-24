@@ -57,7 +57,7 @@
         <i class="icon-repost fs-32px d-block fc-green"></i>
       </div>
       <div *ngIf="showTutorialBuy" (click)="openBuyCreatorCoinModal($event)">
-        <button class="primary-button fs-18px" style="width: 78px; height: 48px">
+        <button class="primary-button fs-18px" style="width: 78px; height: 48px" [ngClass]="{ wiggle: inTutorial }">
           Buy
         </button>
       </div>

@@ -12,6 +12,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
 import { TransferBitcloutComponent } from "../transfer-bitclout/transfer-bitclout.component";
 import { CreatorsLeaderboardComponent } from "../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
+import * as introJs from "intro.js/intro";
 
 @Component({
   selector: "wallet",
@@ -24,6 +25,9 @@ export class WalletComponent implements OnInit, OnDestroy {
   static PADDING = 0.5;
 
   @Input() inTutorial: boolean;
+
+  introJS = introJs();
+  skipTutorialExitPrompt = false;
 
   globalVars: GlobalVarsService;
   AppRoutingModule = AppRoutingModule;
@@ -71,6 +75,7 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.inTutorial) {
+      this.globalVars.preventBackButton();
       this.tabs = [WalletComponent.coinsPurchasedTab];
       this.tutorialStatus = this.globalVars.loggedInUser?.TutorialStatus;
       this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
@@ -308,8 +313,10 @@ export class WalletComponent implements OnInit, OnDestroy {
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, this.tutorialUsername]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
       this.globalVars.logEvent("invest : others : sell : next");
+      this.exitTutorial();
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
+      this.exitTutorial();
       this.globalVars.logEvent("invest : self : buy : next");
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
@@ -392,5 +399,127 @@ export class WalletComponent implements OnInit, OnDestroy {
           : this.usersYouPurchased.slice(startIdx, Math.min(endIdx, this.usersYouPurchased.length))
       );
     });
+  }
+
+  ngAfterViewInit() {
+    this.initiateIntro();
+  }
+
+  initiateIntro() {
+    setTimeout(() => {
+      if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
+        this.sellCreatorIntro();
+      } else if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
+        this.afterSellCreatorIntro();
+      } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
+        this.afterBuyCreatorIntro();
+      }
+    }, 500);
+  }
+
+  afterBuyCreatorIntro() {
+    this.introJS = introJs();
+    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
+    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    this.introJS.setOptions({
+      tooltipClass,
+      hideNext: true,
+      exitOnEsc: false,
+      exitOnOverlayClick: userCanExit,
+      overlayOpacity: 0.8,
+      steps: [
+        {
+          intro: `Woohoo! You now hold ${this.globalVars.usdYouWouldGetIfYouSoldDisplay(
+            this.balanceEntryToHighlight.BalanceNanos,
+            this.balanceEntryToHighlight.ProfileEntryResponse.CoinEntry
+          )} of your very own $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins.`,
+          element: document.querySelector(".wallet-highlighted-creator"),
+        },
+        {
+          intro: `<b>Click "Next"</b> to enable other people to buy $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin.`,
+          element: document.querySelector("#tutorial-wallet-next-btn"),
+        },
+      ],
+    });
+    this.introJS.onexit(() => {
+      if (!this.skipTutorialExitPrompt) {
+        this.globalVars.skipTutorial(this);
+      }
+    });
+    this.introJS.start();
+  }
+
+  sellCreatorIntro() {
+    this.introJS = introJs();
+    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
+    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    this.introJS.setOptions({
+      tooltipClass,
+      hideNext: true,
+      exitOnEsc: false,
+      exitOnOverlayClick: userCanExit,
+      overlayOpacity: 0.8,
+      steps: [
+        {
+          intro: `Great! You now have ${this.globalVars.nanosToBitClout(
+            this.balanceEntryToHighlight.BalanceNanos,
+            4
+          )} $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins.`,
+        },
+        {
+          intro: 'Here in your wallet you can see which coins you own, and how much they are currently worth.',
+          element: document.querySelector(".wallet-highlighted-creator"),
+        },
+        {
+          intro: `Let's sell a small amount of the $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin you just purchased. <br /><br /> <b>Click the elipsis and then "Sell".</b>`,
+          element: document.querySelector(".wallet__dropdown-parent > div"),
+        },
+      ],
+    });
+    this.introJS.onexit(() => {
+      if (!this.skipTutorialExitPrompt) {
+        this.globalVars.skipTutorial(this);
+      }
+    });
+    this.introJS.start();
+  }
+
+  afterSellCreatorIntro() {
+    this.introJS = introJs();
+    const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
+    const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    this.introJS.setOptions({
+      tooltipClass,
+      hideNext: true,
+      exitOnEsc: false,
+      exitOnOverlayClick: userCanExit,
+      overlayOpacity: 0.8,
+      steps: [
+        {
+          intro: `You can now see the update amount of $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin in your wallet.`,
+          element: document.querySelector(".wallet-highlighted-creator"),
+        },
+        {
+          intro: '<b>Click "Next" to set up your profile.</b>',
+          element: document.querySelector("#tutorial-wallet-next-btn"),
+        },
+      ],
+    });
+    this.introJS.onexit(() => {
+      if (!this.skipTutorialExitPrompt) {
+        this.globalVars.skipTutorial(this);
+      }
+    });
+    this.introJS.start();
+  }
+
+  tutorialCleanUp() {}
+
+  exitTutorial() {
+    if (this.inTutorial) {
+      this.skipTutorialExitPrompt = true;
+      this.introJS.exit(true);
+      this.skipTutorialExitPrompt = false;
+    }
   }
 }

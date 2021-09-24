@@ -16,12 +16,14 @@ $feed-border-radius: 12px;
   font-family: 'Gilroy';
   src: url('./assets/fonts/Gilroy-Regular.ttf')  format('truetype');
   font-weight: normal;
+  ascent-override: 100%;
 }
 
 @font-face {
   font-family: 'Gilroy';
   src: url('./assets/fonts/Gilroy-SemiBold.ttf')  format('truetype');
   font-weight: 600;
+  ascent-override: 100%;
 }
 
 // New themeing class
@@ -1124,7 +1126,6 @@ tab-selector {
     span {
       padding: 0px 9px;
       position: relative;
-      top: 1px;
     }
   }
   .new-tab-indicator {
@@ -1135,10 +1136,11 @@ tab-selector {
     top: -1px;
     height: 32px;
     border-radius: 12px;
+    display: flex;
+    align-items: center;
     span {
       padding: 0px 12px;
       position: relative;
-      top: 4px;
       font-size: 13px;
       font-weight: normal;
     }
@@ -1205,7 +1207,7 @@ tab-selector {
 
 .left-bar-mobile__clout-price {
   background: var(--tilesecbg);
-  padding: 7px 8px 5px;
+  padding: 7px 8px 7px;
   border-radius: 10px;
   border: 1px solid var(--border);
 }
@@ -1222,7 +1224,7 @@ left-bar-mobile {
   jumio-status {
     .jumio-status {
       background: var(--tilebg);
-      padding: 7px 8px 5px;
+      padding: 7px 8px 7px;
       border-radius: 10px;
       border: 1px solid var(--border);
     }
@@ -1468,6 +1470,10 @@ feed-create-post {
   line-height: 28px;
   letter-spacing: -0.01em;
   font-weight: 600;
+}
+
+.tutorial-bottom-card {
+  border-radius: 0px 0px 10px 10px;
 }
 
 .search-bar {
@@ -2486,6 +2492,15 @@ wallet-page {
   margin-top: 20px;
 }
 
+buy-creator-coins-tutorial-page, wallet-tutorial-page {
+  .global__center__inner {
+    min-height: auto;
+  }
+  .global__container {
+    min-height: auto;
+  }
+}
+
 wallet-tutorial-page {
   .global__mobile-scrollable-section {
     padding-left: 0px;
@@ -2507,32 +2522,31 @@ wallet-tutorial-page {
         border: none;
       }
     }
-    .wiggle {
-      .wallet-actions-icon {
-        animation: shake 5s cubic-bezier(.36,.07,.19,.97) both infinite;
-        animation-delay: 5s;
-        transform: translate3d(0, 0, 0);
-        perspective: 1000px;
-      }
-    }
   }
+}
+
+.wiggle {
+  animation: shake 5s cubic-bezier(.36,.07,.19,.97) both infinite;
+  animation-delay: 5s;
+  transform: rotate(0deg);
+  perspective: 1000px;
 }
 
 @keyframes shake {
   2.5%, 27.5% {
-    transform: translate3d(-1px, 0, 0);
+    transform: rotate(0deg);
   }
 
   5%, 20% {
-    transform: translate3d(2px, 0, 0);
+    transform: rotate(5deg);
   }
 
   7.5%, 12.5%, 17.5% {
-    transform: translate3d(-4px, 0, 0);
+    transform: rotate(-5deg);
   }
 
   10%, 15% {
-    transform: translate3d(4px, 0, 0);
+    transform: rotate(0deg);
   }
 }
 
@@ -4436,9 +4450,71 @@ sell-nft-modal {
   background-color: var(--hover);
 }
 
+.tutorial-header-hide {
+  .introjs-tooltip-header {
+    display: none;
+  }
+}
+
+.tutorial-tooltip {
+  min-width: 300px;
+  max-width: 550px;
+  font-family: Gilroy Arial sans-serif;
+  border-radius: 12px;
+  background: var(--tilebg);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  .introjs-button {
+    border-radius: 12px !important;
+    background: none;
+    border: 1px solid var(--postsectext) !important;
+    color: var(--postsectext) !important;
+    &:hover {
+      color: var(--postsectext) !important;
+    }
+    &.introjs-disabled {
+      background: var(--tilebg) !important;
+      color: var(--postfadedtext) !important;
+      border-color: var(--postfadedtext) !important;
+    }
+  }
+}
+
 .swal2-popup {
-  background-color: var(--background) !important;
+  z-index: 100000000;
+  background-color: var(--tilebg) !important;
   color: var(--text);
+  border-radius: 10px !important;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  button {
+    height: 48px;
+    min-width: 70px;
+    border-radius: 16px !important;
+    font-size: 20px !important;
+    padding: 6px 16px !important;
+  }
+  .btn-light {
+    background: var(--highlight) !important;
+    color: var(--tilebg) !important;
+    border: none;
+    &:hover {
+      color: var(--tilebg) !important;
+    }
+    &.disabled-button {
+      background: var(--highlightsec) !important;
+    }
+  }
+  .no, .swal2-cancel {
+    background: var(--tilebg) !important;
+    border: 1px solid var(--postsectext) !important;
+    color: var(--postsectext) !important;
+    &:hover {
+      color: var(--postsectext) !important;
+    }
+    &.disabled-button {
+      background: var(--tilebg) !important;
+    }
+  }
+
 }
 
 //

@@ -1,12 +1,12 @@
 <tab-selector [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_tabClicked($event)"></tab-selector>
 <div *ngIf="activeTab === 'Single User'" class="fs-15px">
-  <div class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom 
+  <div class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom
               border-color-grey light-grey-divider">
     Enter a user in order to modify its referral links.
   </div>
-  
+
   <div class="fs-15px mt-15px px-15px">
-    <div style="margin-bottom: -8px" class="font-weight-semibold">
+    <div class="font-weight-semibold mb-10px">
     Public key or username:
     </div>
     <!-- Search Bar -->
@@ -16,7 +16,7 @@
       (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
     ></search-bar>
   </div>
-  
+
   <div class="px-5px">
     <simple-profile-card
       [profile]="selectedCreator"
@@ -51,7 +51,7 @@
           </div>
         </div>
       </div>
-  
+
       <!-- Referee Amount -->
       <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
         <div class="font-weight-normal">
@@ -71,7 +71,7 @@
           </div>
         </div>
       </div>
-  
+
       <!-- Max Referrals -->
       <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
         <div class="font-weight-normal">
@@ -85,7 +85,7 @@
              placeholder="0"/>
         </div>
       </div>
-  
+
       <!-- Requires Jumio -->
       <div class="d-flex justify-content-between align-items-center fs-15px">
         <div class="font-weight-normal">Requires Jumio</div>
@@ -94,9 +94,9 @@
           <label class="custom-control-label" for="customSwitch1"></label>
         </div>
       </div>
-      
+
       <button (click)="_createNewLink()"
-              *ngIf="!creatingNewLink" 
+              *ngIf="!creatingNewLink"
               class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px">
         Create New Link
       </button>
@@ -123,7 +123,7 @@
         <div class="mt-5px px-10px pb-10px br-5px border border-color-grey">
           <div class="w-100 pt-10px d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
-              <div (click)="_copyLink(ii)" 
+              <div (click)="_copyLink(ii)"
                    class="btn btn-outline-secondary d-flex fs-15px p-5px"
                    style="width: fit-content">
                 <i class="far fa-copy fa-xs"></i>
@@ -161,7 +161,7 @@
               </div>
             </div>
           </div>
-      
+
           <!-- Referee Amount -->
           <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
             <div class="font-weight-normal">
@@ -181,7 +181,7 @@
               </div>
             </div>
           </div>
-      
+
           <!-- Max Referrals -->
           <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px">
             <div class="font-weight-normal">
@@ -205,7 +205,7 @@
               <label class="custom-control-label" [for]="'requiresJumio'+ii"></label>
             </div>
           </div>
-      
+
           <!-- Is Active -->
           <div class="d-flex justify-content-between align-items-center fs-15px">
             <div class="font-weight-normal">Is Active</div>
@@ -215,21 +215,21 @@
               <label class="custom-control-label" [for]="'isActive'+ii"></label>
             </div>
           </div>
-          
+
           <div class="d-flex justify-content-between align-items-center mt-10px">
             <button (click)="_updateExistingLink(ii)"
-                    *ngIf="!updatingLink[ii]" 
+                    *ngIf="!updatingLink[ii]"
                     class="btn btn-warning btn-sm fs-15px">
               Update Link
             </button>
-            <button *ngIf="updatingLink[ii]" 
+            <button *ngIf="updatingLink[ii]"
                     class="btn btn-warning btn-sm fs-15px" disabled>
               Updating...
             </button>
             <div class="pl-15px">
               <span class="font-weight-bold">Stats:</span>
-              {{linkInfo.Info.TotalReferrals}} referral{{linkInfo.Info.TotalReferrals == 1 ? '' : 's'}}, 
-              {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerBitCloutNanos, 2)}} paid to referrals, 
+              {{linkInfo.Info.TotalReferrals}} referral{{linkInfo.Info.TotalReferrals == 1 ? '' : 's'}},
+              {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerBitCloutNanos, 2)}} paid to referrals,
               {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerBitCloutNanos, 2)}} paid to referee
             </div>
           </div>
@@ -240,7 +240,7 @@
 
 </div>
 <div *ngIf="activeTab === 'Bulk CSV Upload'" class="fs-15px">
-  <div class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom 
+  <div class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom
               border-color-grey light-grey-divider">
     Here you can download detailed CSV reports for the referral program and modify referral links en masse.
   </div>
@@ -249,11 +249,11 @@
   <div class="p-15px font-weight-semibold">
     <div>Download a CSV with all referral links:</div>
     <button (click)="_downloadReferralCSV()"
-            *ngIf="!downloadingReferralCSV" 
+            *ngIf="!downloadingReferralCSV"
             class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px">
       <i class="fas fa-download"></i>&nbsp;Download CSV
     </button>
-    <button *ngIf="downloadingReferralCSV" 
+    <button *ngIf="downloadingReferralCSV"
             class="btn btn-primary btn-sm font-weight-bold fs-15px mt-5px" disabled>
       Downloading...
     </button>

@@ -5,6 +5,7 @@ import { GlobalVarsService } from "./global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
+import * as introJs from "intro.js/intro.js";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
 import { Subscription } from "rxjs";
@@ -299,6 +300,8 @@ export class AppComponent implements OnInit {
     });
 
     this.installDD();
+
+    introJs().start();
   }
 
   loadApp() {

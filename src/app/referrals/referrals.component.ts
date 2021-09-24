@@ -25,7 +25,7 @@ export class ReferralsComponent implements OnInit {
     this.linkCopied[linkNum] = true;
     setTimeout(() => {
       this.linkCopied[linkNum] = false;
-    }, 500);
+    }, 2000);
   }
 
 }

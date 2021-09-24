@@ -118,7 +118,8 @@
     class="btn"
     [ngClass]="{
       disabled: (postInput.length <= 0 && !postImageSrc) || characterCountExceedsMaxLength(),
-      'btn-loading': submittingPost
+      'btn-loading': submittingPost,
+      wiggle: inTutorial
     }"
     (click)="_createPost()"
   >

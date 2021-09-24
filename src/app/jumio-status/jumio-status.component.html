@@ -11,9 +11,9 @@
   <div *ngIf="!globalVars.loggedInUser.JumioFinishedTime" (click)="globalVars.launchGetFreeCLOUTFlow()"
        class="d-flex align-items-center font-weight-normal justify-content-between">
     <div class="cursor-pointer">
-      <i-feather name="gift"></i-feather>
+      <i-feather name="gift" class="position-relative" style="top: -2px"></i-feather>
       <span>{{ message }} your free {{ globalVars.getFreeCloutMessage() }}</span>
-      <i-feather name="chevron-right" class="right-20px"></i-feather>
+      <i-feather name="chevron-right" class="right-20px" style="margin-top: -2px"></i-feather>
     </div>
   </div>
   <!-- User tried Jumio but verification failed-->

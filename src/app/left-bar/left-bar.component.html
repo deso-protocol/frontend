@@ -58,6 +58,7 @@
             *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
             [link]="'/' + globalVars.RouteNames.REFERRALS"
             [buttonLabel]="'Referrals'"
+            [iconName]="'share-2'"
           ></left-bar-button>
           <left-bar-button
             *ngIf="globalVars.showAdminTools()"

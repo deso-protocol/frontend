@@ -1,5 +1,5 @@
 <div class="btn-group" dropdown #dropdown="bs-dropdown" (mouseenter)="stopIconHide()" (mouseleave)="hideIcons()">
-  <div class="wallet-actions-container d-flex align-content-between" *ngIf="showIcons && (!inTutorial || (isHighlightedCreator && showSellOnly))">
+  <div class="wallet-actions-container d-flex align-content-between" *ngIf="showIcons && (!inTutorial || (isHighlightedCreator && showSellOnly))" [ngClass]="{ 'selected-wallet-actions-container': inTutorial && isHighlightedCreator }">
     <a
       class="dropdown-menu-item fs-15px d-block link--unstyled p-10px feed-post__dropdown-menu-item fc-blue"
       (click)="openBuyCreatorCoinModal($event, buyTradeType)"

@@ -17,6 +17,7 @@
       <a class="fc-default fs-15px" (click)="backButtonClicked.emit()">Back</a>
     </div>
     <button
+      id="tutorial-confirm-buy"
       class="primary-button"
       [ngClass]="{ 'btn-loading': creatorCoinTradeBeingCalled }"
       (click)="_tradeCreatorCoin()"
@@ -25,13 +26,6 @@
       {{ creatorCoinTrade.tradeVerbString() }}
     </button>
   </div>
-
-  <div *ngIf="inTutorial && !appData.loggedInUser?.MustCompleteTutorial" (click)="globalVars.skipTutorial()" class="p-15px pl-0px">
-    <a class="btn btn-outline-primary btn-lg fs-18px text-left">
-      Exit
-    </a>
-  </div>
-
 
   <!--Spacer (for mobile)-->
   <div class="pb-25px"></div>

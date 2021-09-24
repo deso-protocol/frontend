@@ -39,6 +39,7 @@
     "google-libphonenumber": "^3.2.16",
     "hash-base": "^3.0.4",
     "intl-tel-input": "^17.0.3",
+    "intro.js": "^4.2.2",
     "is-buffer": "^2.0.4",
     "lodash": "^4.17.15",
     "lottie-web": "^5.7.13",

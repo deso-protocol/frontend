@@ -30,6 +30,9 @@ class Messages {
 export class BuyBitcloutEthComponent implements OnInit {
   @Input() parentComponent: BuyBitcloutComponent;
 
+  buyWithEthStep = 1;
+  keyIsCopied = false;
+
   // Current balance in ETH
   ethBalance = 0;
   loadingBalance = false;
@@ -51,6 +54,14 @@ export class BuyBitcloutEthComponent implements OnInit {
     private backendApi: BackendApiService,
     private identityService: IdentityService,
   ) {
+  }
+
+  _copyPublicKey() {
+    this.globalVars._copyText(this.ethDepositAddress());
+    this.keyIsCopied = true;
+    setInterval(() => {
+      this.keyIsCopied = false;
+    }, 1000);
   }
 
   ethDepositAddress(): string {

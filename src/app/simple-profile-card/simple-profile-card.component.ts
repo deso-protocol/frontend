@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
 import { ProfileEntryResponse } from "../backend-api.service";
@@ -20,6 +20,7 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() isBold = true;
   @Input() inTutorial: boolean = false;
   @Input() showTutorialBuy: boolean = false;
+  @Output() exitTutorial = new EventEmitter<any>();
 
   constructor(public globalVars: GlobalVarsService, private router: Router, private modalService: BsModalService) {}
 
@@ -58,6 +59,7 @@ export class SimpleProfileCardComponent implements OnInit {
   }
 
   openBuyCreatorCoinModal(event) {
+    this.exitTutorial.emit();
     this.globalVars.logEvent("buy : creator : select");
     event.stopPropagation();
     const initialState = {

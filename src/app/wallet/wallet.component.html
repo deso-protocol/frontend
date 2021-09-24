@@ -12,14 +12,6 @@
 
   <div *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY" class="pl-3 pr-3 pt-3 d-flex flex-column justify-flex-start background-color-white">
     <div class="fs-15px py-15px pr-15px">
-      <div>
-        <p>
-          You now have {{ globalVars.nanosToBitClout(balanceEntryToHighlight.BalanceNanos, 4) }} ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
-        </p>
-        <p class="mt-3">
-          <b>Click the elipses in the highlighted row and select "Sell" to sell some ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins.</b>
-        </p>
-      </div>
       <p *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL">
         You just sold {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins. Click "Next: Setup Your Profile" to set up your own coin!
       </p>
@@ -136,7 +128,7 @@
     <div class="global__mobile-scrollable-section disable-scrollbars">
       <tab-selector [buttonSelector]="false" [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
 
-      <div class="fs-15px">
+      <div class="fs-15px" id="#wallet-rows">
         <div
           class="row no-gutters d-flex align-items-center p-16px fs-15px"
         >
@@ -267,13 +259,16 @@
               <div
                 class="wallet__dropdown-parent wallet-column col-lg-4 d-flex align-items-center justify-content-end fc-secondary m-0"
               >
-                <wallet-actions-dropdown
-                  [hodlingUsername]="creator.ProfileEntryResponse.Username"
-                  [inTutorial]="inTutorial"
-                  [isHighlightedCreator]="isHighlightedCreator(creator)"
-                  *ngIf="!inTutorial || isHighlightedCreator(creator)"
-                  [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY }"
-                ></wallet-actions-dropdown>
+                <div style="min-width: 50px" class="d-flex align-items-center justify-content-end">
+                  <wallet-actions-dropdown
+                    [hodlingUsername]="creator.ProfileEntryResponse.Username"
+                    [inTutorial]="inTutorial"
+                    [isHighlightedCreator]="isHighlightedCreator(creator)"
+                    *ngIf="!inTutorial || isHighlightedCreator(creator)"
+                    [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY }"
+                    (isSelling)="exitTutorial()"
+                  ></wallet-actions-dropdown>
+                </div>
               </div>
             </div>
           </div>
@@ -282,13 +277,13 @@
       </div>
 
       <div
-        *ngIf="inTutorial"
-        class="background-color-white p-16px d-flex justify-content-between align-items-center"
+        *ngIf="inTutorial && tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY"
+        class="background-color-white p-16px d-flex justify-content-end align-items-center"
         style="border-radius: 0px 0px 16px 16px"
       >
-        <a class="fs-15px fc-secondary" (click)="globalVars.skipTutorial()">Cancel</a>
         <button
           class="plain-button fs-18px font-weight-bold"
+          id="tutorial-wallet-next-btn"
           *ngIf="tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY"
           (click)="tutorialNext()"
           style="height: 48px; width: 85px"
@@ -299,37 +294,7 @@
     </div>
   </div>
 
-  <div *ngIf="inTutorial" class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px">
-    <div class="col"></div>
-    <div class="col-lg-1 col-2 d-flex flex-column align-items-center justify-content-center">
-      <i class="fas fa-hand-point-up fc-red fa-lg mb-5px"></i>
-      <div class="fc-red fs-12px">Click</div>
-      <div class="fc-red fs-12px">here!</div>
-    </div>
-  </div>
-
-  <div *ngIf="inTutorial" class="d-flex">
-    <div
-      *ngIf="inTutorial && tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY"
-      (click)="tutorialNext()"
-      class="p-15px"
-    >
-      <a class="btn btn-primary btn-lg fs-18px text-left">
-        Next: {{ nextButtonText }}
-      </a>
-    </div>
-  </div>
-  <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-  <div class="global__bottom-bar-mobile-height"></div>
-  <div class="global__bottom-bar-mobile-height"></div>
 </div>
 <div *ngIf="!globalVars.loggedInUser">
   <simple-center-loader></simple-center-loader>
 </div>
-<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-<div class="global__bottom-bar-mobile-height"></div>
-<div class="global__bottom-bar-mobile-height"></div>
-
-<!--Spacer (for mobile)-->
-<!--Need this so the blue circle doesn't cover the content-->
-<div style="padding-bottom: 65px"></div>

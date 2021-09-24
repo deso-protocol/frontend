@@ -9,9 +9,6 @@
       <div class="fc-secondary fs-15px">Step 3/6</div>
     </div>
   </div>
-  <div class="fs-15px p-16px background-color-white">
-    Everyone needs a profile. Let's update yours!
-  </div>
 </div>
 
 <div *ngIf="this.loggedInUser.CanCreateProfile; else elseBlock">
@@ -188,23 +185,13 @@
               [ngClass]="{ 'btn-loading': updateProfileBeingCalled }"
               class="btn update-profile__update-btn"
             >
-              {{ inTutorial ? "Next" : "Update Profile" }}
+              Update Profile
             </a>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<div class="border background-color-white p-16px" style="border-radius: 0px 0px 16px 16px">
-  <a
-    *ngIf="inTutorial && (!globalVars.loggedInUser?.MustCompleteTutorial || globalVars.loggedInUser?.IsAdmin)"
-    (click)="globalVars.skipTutorial()"
-    class="fs-15px fc-secondary"
-    (click)="globalVars.skipTutorial()"
-  >
-    Cancel
-  </a>
 </div>
 <ng-template #elseBlock>
   <div class="px-15px mt-30px">

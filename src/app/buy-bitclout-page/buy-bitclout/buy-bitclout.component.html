@@ -12,7 +12,7 @@
       <div style="flex-grow: 1">
         <div class="global__mobile-scrollable-section disable-scrollbars" *ngIf="!waitingOnTxnConfirmation">
           <div
-            *ngIf="globalVars.showBuyWithUSD"
+            *ngIf="globalVars.showBuyWithUSD || globalVars.showBuyWithETH"
             [ngClass]="{ 'mb-10px': activeTab === BuyBitcloutComponent.BUY_WITH_BTC }"
           >
             <tab-selector [buttonSelector]="false" [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
@@ -20,15 +20,31 @@
           <div *ngIf="activeTab === BuyBitcloutComponent.BUY_WITH_USD && globalVars.showBuyWithUSD">
             <buy-bitclout-usd></buy-bitclout-usd>
           </div>
-          <div *ngIf="activeTab === BuyBitcloutComponent.BUY_WITH_BTC || !globalVars.showBuyWithUSD">
+          <div *ngIf="activeTab === BuyBitcloutComponent.BUY_WITH_BTC || (!globalVars.showBuyWithUSD && !globalVars.showBuyWithETH)">
             <div *ngIf="buyWithBTCStep === 1">
               <!-- Step One Box -->
               <div class="mx-16px">
                 <div class="fs-17px font-weight-bold mt-20px mb-5px">
                   Step 1/2
+                  <i
+                    (click)="tooltip1.toggle()"
+                    class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                    [matTooltip]="stepOneTooltip()"
+                    #tooltip1="matTooltip"
+                  ></i>
                 </div>
                 <div class="d-flex justify-content-between fs-17px fc-secondary" [ngClass]="{ 'align-items-start flex-column': globalVars.isMobile() }">
-                  <div>Send Bitcoin to this address</div>
+                  <div>
+                    Send Bitcoin to this address
+                    <i
+                      (click)="tooltip2.toggle()"
+                      class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                      [matTooltip]="depositBitcoinTooltip()"
+                      #tooltip2="matTooltip"
+                    ></i>
+                  </div>
                   <div class="d-flex justify-content-end" [ngClass]="{ 'mt-16px justify-content-between w-100': globalVars.isMobile() }">
                     <div class="d-flex">
                       <i-feather name="key" class="feather-large mr-5px"></i-feather>
@@ -98,6 +114,13 @@
                   <span class="mint-nft__sub-text">
                     Minimum deposit is currently
                     {{ ((buyBitCloutFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) / 1e8).toFixed(4) }} Bitcoin
+                    <i
+                      (click)="tooltip3.toggle()"
+                      class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon ml-2"
+                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                      [matTooltip]="minDepositTooltip()"
+                      #tooltip3="matTooltip"
+                    ></i>
                   </span>
                 </div>
               </div>
@@ -196,6 +219,13 @@
                   <span class="mint-nft__sub-text">
                     Bitcoin network fee
                   </span>
+                  <i
+                    (click)="tooltip4.toggle()"
+                    class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                    [matTooltip]="bitcoinNetworkFeeTooltip()"
+                    #tooltip4="matTooltip"
+                  ></i>
                   <span class="mt-1 w-100 fs-15px">
                     <span *ngIf="buyBitCloutFields.error == null || buyBitCloutFields.error === ''">
                       {{ (buyBitCloutFields.bitcoinTotalTransactionFeeSatoshis / 1e8).toFixed(8) }} Bitcoin ≈

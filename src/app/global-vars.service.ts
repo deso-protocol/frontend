@@ -25,6 +25,7 @@ import { FeedComponent } from "./feed/feed.component";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Swal from "sweetalert2";
 import Timer = NodeJS.Timer;
+import {LocationStrategy} from "@angular/common";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -58,7 +59,8 @@ export class GlobalVarsService {
     private sanitizer: DomSanitizer,
     private identityService: IdentityService,
     private router: Router,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private locationStrategy: LocationStrategy
   ) {}
 
   static MAX_POST_LENGTH = 560;
@@ -357,6 +359,13 @@ export class GlobalVarsService {
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
     this.navigateToCurrentStepInTutorial(user);
+  }
+
+  preventBackButton() {
+    history.pushState(null, null, location.href);
+    this.locationStrategy.onPopState(() => {
+      history.pushState(null, null, location.href);
+    });
   }
 
   navigateToCurrentStepInTutorial(user: User): Promise<boolean> {
@@ -1071,7 +1080,7 @@ export class GlobalVarsService {
     });
   }
 
-  skipTutorial(): void {
+  skipTutorial(tutorialComponent): void {
     Swal.fire({
       target: this.getTargetComponentSelector(),
       icon: "warning",
@@ -1098,6 +1107,9 @@ export class GlobalVarsService {
             this._alertError(err.error.error);
           }
         );
+        tutorialComponent.tutorialCleanUp();
+      } else {
+        tutorialComponent.initiateIntro();
       }
     });
   }
