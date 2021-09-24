@@ -80,6 +80,7 @@ export class BackendRoutes {
   static RoutePathCreateETHTx = "/api/v0/create-eth-tx";
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
   static RoutePathGetETHBalance = "/api/v0/get-eth-balance";
+  static RoutePathAdminProcessETHTx = "/api/v0/admin/process-eth-tx";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -1808,6 +1809,17 @@ export class BackendApiService {
     });
 
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  AdminProcessETHTx(
+    endpoint: string,
+    AdminPublicKey: string,
+    ETHTxHash: string,
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminProcessETHTx, AdminPublicKey, {
+      AdminPublicKey,
+      ETHTxHash,
+    });
   }
 
   SetUSDCentsToBitCloutReserveExchangeRate(

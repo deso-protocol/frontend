@@ -115,6 +115,10 @@ export class AdminComponent implements OnInit {
   swapIdentityFromUsernameOrPublicKey = "";
   swapIdentityToUsernameOrPublicKey = "";
 
+  // Fields for processing ETH transactions
+  processingETH = false;
+  ethTxnHash = "";
+
   // Fields for UpdateUsername
   submittingUpdateUsername = false;
   changeUsernamePublicKey = "";
@@ -1119,6 +1123,38 @@ export class AdminComponent implements OnInit {
       )
       .add(() => {
         this.submittingSwapIdentity = false;
+      });
+  }
+
+  processETH() {
+    if (this.ethTxnHash === "") {
+      this.globalVars._alertError("Please enter the ETH transaction hash");
+      return;
+    }
+
+    this.processingETH = true;
+    this.backendApi
+      .AdminProcessETHTx(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.ethTxnHash,
+      )
+      .subscribe(
+        (res: any) => {
+          if (res == null) {
+            this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
+            return null;
+          }
+          console.log(res)
+          this.globalVars._alertSuccess(`Please pay the user ${res.ToPay / GlobalVarsService.NANOS_PER_UNIT} CLOUT.`);
+        },
+        (error) => {
+          console.error(error);
+          this.globalVars._alertError(this.extractError(error));
+        }
+      )
+      .add(() => {
+        this.processingETH = false;
       });
   }
 
