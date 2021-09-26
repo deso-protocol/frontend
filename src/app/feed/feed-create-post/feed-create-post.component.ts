@@ -41,6 +41,12 @@ export class FeedCreatePostComponent implements OnInit {
     "If you build it, they will come.",
     "Roads? Where we're going we don't need roads",
     "To infinity and beyond!",
+    "May the Force be with you",
+    "I've got a feeling we're not in Kansas anymore",
+    "E.T. phone home",
+    "Elementary, my dear Watson",
+    "I'm going to make him an offer he can't refuse.",
+    "Big things have small beginnings."
   ];
 
   submittingPost = false;
