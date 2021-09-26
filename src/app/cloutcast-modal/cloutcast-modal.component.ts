@@ -182,8 +182,7 @@ export class CloutCastModalComponent implements OnInit {
     }
   }
   bitcloutToUSD(clout:number): number {
-    let t = Math.round(100 * ((this.globalVars.ExchangeUSDCentsPerBitClout / 100) * clout)) / 100;
-    // console.log({t, clout, ex: this.globalVars.ExchangeUSDCentsPerBitClout / 100});
+    let t = Math.round(100 * ((this.globalVars.ExchangeUSDCentsPerDeSo / 100) * clout)) / 100;
     return t;
   }
 
