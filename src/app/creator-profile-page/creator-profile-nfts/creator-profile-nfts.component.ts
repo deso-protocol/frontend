@@ -122,12 +122,14 @@ export class CreatorProfileNftsComponent implements OnInit {
   }
 
   getNFTs(isForSale: boolean | null = null): Subscription {
+    const isPending = isForSale === null;
     return this.backendApi
       .GetNFTsForUser(
         this.globalVars.localNode,
         this.profile.PublicKeyBase58Check,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        isForSale
+        isForSale,
+        isPending
       )
       .subscribe(
         (res: {
