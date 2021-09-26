@@ -28,8 +28,8 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Network Fee</span>
 
     <div class="d-inline-block" style="text-align: end">
-      {{ globalVars.nanosToBitClout(creatorCoinTrade.networkFeeNanos, 9) }}
-      BitClout
+      {{ globalVars.nanosToDeSo(creatorCoinTrade.networkFeeNanos, 9) }}
+      DeSo
 
       <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" class="d-none d-lg-inline">
         ≈ {{ globalVars.nanosToUSD(creatorCoinTrade.networkFeeNanos, 9) }}
@@ -81,15 +81,15 @@
 
   <!-- Price -->
   <div
-    *ngIf="creatorCoinTrade.bitCloutPriceOfCreatorCoin()"
+    *ngIf="creatorCoinTrade.desoPriceOfCreatorCoin()"
     class="py-3 border-bottom d-flex justify-content-between flex-wrap"
   >
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Price per coin</span>
 
     <div class="d-inline-block">
       <span *ngIf="!inTutorial">
-        ~{{ creatorCoinTrade.bitCloutPriceOfCreatorCoin().toFixed(4) }}
-        BitClout
+        ~{{ creatorCoinTrade.desoPriceOfCreatorCoin().toFixed(4) }}
+        DeSo
       </span>
 
 

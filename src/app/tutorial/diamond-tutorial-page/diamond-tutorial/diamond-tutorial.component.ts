@@ -25,7 +25,7 @@ export class DiamondTutorialComponent implements OnInit {
   loading: boolean = true;
 
   ngOnInit() {
-    this.titleService.setTitle("Diamond Tutorial - BitClout");
+    this.titleService.setTitle("Diamond Tutorial - DeSo");
     this.backendApi
       .GetSinglePost(
         this.globalVars.localNode,

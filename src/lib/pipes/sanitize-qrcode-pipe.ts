@@ -7,7 +7,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 export class SanitizeQRCodePipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) {}
   transform(url) {
-    const regExp = /[A-Za-z0-9.:]{0,30}\/send-bitclout\?public_key=[A-Za-z0-9]{54,55}/;
+    const regExp = /[A-Za-z0-9.:]{0,30}\/send-deso\?public_key=[A-Za-z0-9]{54,55}/;
     if (!url.match(regExp)) {
       return false;
     }

@@ -78,7 +78,7 @@
           </a>
         </div>
         <div
-          *ngIf="reclouterProfile"
+          *ngIf="reposterProfile"
           class="feed-post__container d-flex justify-content-left w-100 pb-5px"
           [ngClass]="{
             'feed-post__blue-border': showLeftSelectedBorder,
@@ -90,10 +90,10 @@
           <a
             class="fc-muted font-weight-semibold align-items-center"
             queryParamsHandling="merge"
-            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, reclouterProfile.Username])"
+            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, reposterProfile.Username])"
           >
             <i class="icon-repost fs-20px" style="vertical-align: middle"></i>
-            <span style="vertical-align: middle" class="fs-15px">@{{ reclouterProfile.Username }} reclouted</span>
+            <span style="vertical-align: middle" class="fs-15px">@{{ reposterProfile.Username }} reposted</span>
           </a>
 
           <feed-post-dropdown
@@ -114,7 +114,7 @@
           [ngClass]="{
             'px-15px': includePaddingOnPost,
             'pb-15px': includePaddingOnPost,
-            'pt-15px': includePaddingOnPost && !reclouterProfile,
+            'pt-15px': includePaddingOnPost && !reposterProfile,
             'feed-post__blue-border': showLeftSelectedBorder,
             'feed-post__parent-post-font-size': isParentPostInThread
           }"
@@ -138,7 +138,7 @@
             queryParamsHandling="merge"
           >
             <span class="text-grey5">
-              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
             </span>
 
             <!-- Buy link -->
@@ -151,7 +151,7 @@
           [ngClass]="{
             'px-15px': includePaddingOnPost,
             'pb-15px': includePaddingOnPost,
-            'pt-15px': includePaddingOnPost && !reclouterProfile,
+            'pt-15px': includePaddingOnPost && !reposterProfile,
             'feed-post__blue-border': showLeftSelectedBorder,
             'feed-post__parent-post-font-size': isParentPostInThread
           }"
@@ -200,7 +200,7 @@
                 [creatorCoinTemplate]="creatorCoinInfo"
               ></follow-button>
               <feed-post-dropdown
-                *ngIf="showDropdown && !reclouterProfile"
+                *ngIf="showDropdown && !reposterProfile"
                 class="ml-auto"
                 [post]="post"
                 [postContent]="postContent"
@@ -290,14 +290,14 @@
 
             <!-- Bottom Buttons -->
             <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">
-              <!-- Like, Comment, Reclout, Share Buttons -->
+              <!-- Like, Comment, Repost, Share Buttons -->
               <feed-post-icon-row
                 *ngIf="showIconRow"
                 [post]="post"
                 [postContent]="postContent"
                 [parentPost]="parentPost"
                 [afterCommentCreatedCallback]="afterCommentCreatedCallback"
-                [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+                [afterRepostCreatedCallback]="afterRepostCreatedCallback"
                 [inTutorial]="inTutorial"
                 (diamondSent)="diamondSent.emit()"
               ></feed-post-icon-row>
@@ -366,13 +366,13 @@
             class="row no-gutters d-none d-lg-block py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer"
           >
             <div class="d-flex justify-content-between">
-              <span (click)="openRecloutsModal($event)" class="interaction-detail">
-                <b>{{ globalVars.abbreviateNumber(post.RecloutCount) }}</b>
-                Reclouts&nbsp;
+              <span (click)="openRepostsModal($event)" class="interaction-detail">
+                <b>{{ globalVars.abbreviateNumber(post.RepostCount) }}</b>
+                Reposts&nbsp;
               </span>
-              <span (click)="openQuoteRecloutsModal($event)" class="interaction-detail">
-                <b>{{ globalVars.abbreviateNumber(post.QuoteRecloutCount) }}</b>
-                Quote Reclouts&nbsp;
+              <span (click)="openQuoteRepostsModal($event)" class="interaction-detail">
+                <b>{{ globalVars.abbreviateNumber(post.QuoteRepostCount) }}</b>
+                Quote Reposts&nbsp;
               </span>
               <span (click)="openLikesModal($event)" class="interaction-detail">
                 <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b>
@@ -388,13 +388,13 @@
           <div
             class="row no-gutters d-lg-none py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer"
           >
-            <div class="col-6 mb-0 interaction-detail" (click)="openRecloutsModal($event)">
-              <b>{{ globalVars.abbreviateNumber(postContent.RecloutCount) }}</b>
-              Reclouts&nbsp;
+            <div class="col-6 mb-0 interaction-detail" (click)="openRepostsModal($event)">
+              <b>{{ globalVars.abbreviateNumber(postContent.RepostCount) }}</b>
+              Reposts&nbsp;
             </div>
-            <div class="col-6 mb-0 interaction-detail" (click)="openQuoteRecloutsModal($event)">
-              <b>{{ globalVars.abbreviateNumber(postContent.QuoteRecloutCount) }}</b>
-              Quote Reclouts&nbsp;
+            <div class="col-6 mb-0 interaction-detail" (click)="openQuoteRepostsModal($event)">
+              <b>{{ globalVars.abbreviateNumber(postContent.QuoteRepostCount) }}</b>
+              Quote Reposts&nbsp;
             </div>
           </div>
           <div class="row no-gutters d-lg-none py-10px fs-15px border-bottom border-color-light-grey cursor-pointer">
@@ -429,7 +429,7 @@
             [parentPost]="parentPost"
             [hideNumbers]="true"
             [afterCommentCreatedCallback]="afterCommentCreatedCallback"
-            [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+            [afterRepostCreatedCallback]="afterRepostCreatedCallback"
             (diamondSent)="diamondSent.emit()"
           ></feed-post-icon-row>
         </div>
@@ -488,7 +488,7 @@
           }}
         </span>
         <div *ngIf="nftLastAcceptedBidAmountNanos">
-          <b>Last price: {{ globalVars.nanosToBitClout(nftLastAcceptedBidAmountNanos) }} $CLOUT</b>
+          <b>Last price: {{ globalVars.nanosToDeSo(nftLastAcceptedBidAmountNanos) }} $DESO</b>
         </div>
       </div>
       <button
@@ -509,11 +509,11 @@
     <div></div>
     <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)" [ngClass]="{ 'pt-15px': globalVars.isMobile() }">
       <div *ngIf="highBid != null">
-        Highest: {{ globalVars.nanosToBitClout(highBid, 5) }} CLOUT
+        Highest: {{ globalVars.nanosToDeSo(highBid, 5) }} DESO
         <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
       </div>
       <div *ngIf="lowBid != null">
-        From: {{ globalVars.nanosToBitClout(lowBid, 5) }} CLOUT
+        From: {{ globalVars.nanosToDeSo(lowBid, 5) }} DESO
         <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
       </div>
     </div>

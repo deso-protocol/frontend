@@ -1,4 +1,4 @@
-// TODO: creator coin buys: no-balance case is kinda dumb, we should have a module telling you to buy bitclout or
+// TODO: creator coin buys: no-balance case is kinda dumb, we should have a module telling you to buy deso or
 // creator coin
 
 // TODO: creator coin buys: need warning about potential slippage
@@ -38,12 +38,12 @@ export class TradeCreatorComponent implements OnInit {
   creatorCoinTrade: CreatorCoinTrade;
 
   // buy creator coin data
-  bitCloutToSell: number;
+  desoToSell: number;
   expectedCreatorCoinReturnedNanos: number;
 
   // sell creator coin data
   creatorCoinToSell: number;
-  expectedBitCloutReturnedNanos: number;
+  expectedDeSoReturnedNanos: number;
 
   // show different header text if we're at the "Invest In Yourself" stage of the tutorial
   investInYourself: boolean = false;
@@ -204,11 +204,11 @@ export class TradeCreatorComponent implements OnInit {
 
   setUpBuyTutorial(): void {
     let balance = this.appData.loggedInUser?.BalanceNanos;
-    const jumioBitCloutNanos = this.appData.jumioBitCloutNanos > 0 ? this.appData.jumioBitCloutNanos : 1e8;
-    balance = balance > jumioBitCloutNanos ? jumioBitCloutNanos : balance;
+    const jumioDeSoNanos = this.appData.jumioDeSoNanos > 0 ? this.appData.jumioDeSoNanos : 1e8;
+    balance = balance > jumioDeSoNanos ? jumioDeSoNanos : balance;
     const percentToBuy =
       this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check ? 0.1 : 0.5;
-    this.creatorCoinTrade.bitCloutToSell = (balance * percentToBuy) / 1e9;
+    this.creatorCoinTrade.desoToSell = (balance * percentToBuy) / 1e9;
     this.getBuyOrSellObservable().subscribe(
       (response) => {
         this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = response.ExpectedCreatorCoinReturnedNanos || 0;
@@ -232,7 +232,7 @@ export class TradeCreatorComponent implements OnInit {
     this.creatorCoinTrade.creatorCoinToSell = (creatorCoinsPurchasedInTutorial * 0.05) / 1e9;
     this.getBuyOrSellObservable().subscribe(
       (response) => {
-        this.creatorCoinTrade.expectedBitCloutReturnedNanos = response.ExpectedBitCloutReturnedNanos || 0;
+        this.creatorCoinTrade.expectedDeSoReturnedNanos = response.ExpectedDeSoReturnedNanos || 0;
       },
       (err) => {
         console.error(err);
@@ -247,12 +247,12 @@ export class TradeCreatorComponent implements OnInit {
       this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
       this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
       this.creatorCoinTrade.operationType() /*OperationType*/,
-      this.creatorCoinTrade.bitCloutToSell * 1e9 /*BitCloutToSellNanos*/,
+      this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
       this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
-      0 /*BitCloutToAddNanos*/,
-      0 /*MinBitCloutExpectedNanos*/,
+      0 /*DeSoToAddNanos*/,
+      0 /*MinDeSoExpectedNanos*/,
       0 /*MinCreatorCoinExpectedNanos*/,
-      this.appData.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/,
+      this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
       false
     );
   }

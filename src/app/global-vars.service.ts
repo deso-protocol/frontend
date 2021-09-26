@@ -50,6 +50,8 @@ export class GlobalVarsService {
   // loading spinner until we get a correct value. That said, I'm not going to fix that
   // right now, I'm just moving this magic number into a constant.
   static DEFAULT_NANOS_PER_USD_EXCHANGE_RATE = 1e9;
+  static NANOS_PER_UNIT = 1e9;
+  static WEI_PER_ETH = 1e18;
 
   constructor(
     private backendApi: BackendApiService,
@@ -80,7 +82,7 @@ export class GlobalVarsService {
   pausePolling = false; // TODO: Monkey patch for when polling conflicts with other calls.
   pauseMessageUpdates = false; // TODO: Monkey patch for when message polling conflicts with other calls.
 
-  bitcloutToUSDExchangeRateToDisplay = "Fetching...";
+  desoToUSDExchangeRateToDisplay = "Fetching...";
 
   // We keep information regarding the messages tab in global vars for smooth
   // transitions to and from messages.
@@ -116,7 +118,7 @@ export class GlobalVarsService {
 
   // map[pubkey]->bool of globomods
   globoMods: any;
-  feeRateBitCloutPerKB = 1000 / 1e9;
+  feeRateDeSoPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
   messageResponse = null;
@@ -132,7 +134,7 @@ export class GlobalVarsService {
   // hodls and the users who hodl him.
   youHodlMap: { [k: string]: BalanceEntryResponse } = {};
 
-  // Map of diamond level to bitclout nanos.
+  // Map of diamond level to deso nanos.
   diamondLevelMap = {};
 
   // TODO(performance): We used to call the functions called by this function every
@@ -162,8 +164,11 @@ export class GlobalVarsService {
   // Whether or not to show the Verify phone number flow.
   showPhoneNumberVerification = false;
 
-  // Whether or not to show the Buy BitClout with USD flow.
+  // Whether or not to show the Buy DeSo with USD flow.
   showBuyWithUSD = false;
+
+  // Buy DESO with ETH
+  showBuyWithETH = false;
 
   // Whether or not to show the Jumio verification flow.
   showJumio = false;
@@ -177,17 +182,23 @@ export class GlobalVarsService {
   // Support email for this node (renders Help in the left bar nav)
   supportEmail: string = null;
 
-  satoshisPerBitCloutExchangeRate: number;
-  nanosPerUSDExchangeRate: number;
-  // This is the USD to Bitcoin exchange rate according to external
-  // sources.
+  // ETH exchange rates
+  usdPerETHExchangeRate: number;
+  nanosPerETHExchangeRate: number;
+
+  // BTC exchange rates
+  satoshisPerDeSoExchangeRate: number;
   usdPerBitcoinExchangeRate: number;
+
+  // USD exchange rates
+  nanosPerUSDExchangeRate: number;
+
   defaultFeeRateNanosPerKB: number;
 
   NanosSold: number;
   ProtocolUSDCentsPerBitcoinExchangeRate: number;
 
-  nanosToBitCloutMemo = {};
+  nanosToDeSoMemo = {};
   formatUSDMemo = {};
 
   confetti: any;
@@ -196,16 +207,16 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  // Price of BitClout values
-  ExchangeUSDCentsPerBitClout: number;
-  USDCentsPerBitCloutReservePrice: number;
-  BuyBitCloutFeeBasisPoints: number = 0;
+  // Price of DeSo values
+  ExchangeUSDCentsPerDeSo: number;
+  USDCentsPerDeSoReservePrice: number;
+  BuyDeSoFeeBasisPoints: number = 0;
 
   // Timestamp of last profile update
   profileUpdateTimestamp: number;
 
-  jumioBitCloutNanos = 0;
-  
+  jumioDeSoNanos = 0;
+
   referralUSDCents: number = 0;
 
   async SetupCloutCastNotifications() {
@@ -403,7 +414,7 @@ export class GlobalVarsService {
   }
 
   getLinkForReferralHash(referralHash: string) {
-    return "https://bitclout.com?r=" + referralHash;
+    return `${window.location.origin}?r=${referralHash}`;
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {
@@ -423,20 +434,20 @@ export class GlobalVarsService {
   }
 
   getUSDForDiamond(index: number): string {
-    const bitcloutNanos = this.diamondLevelMap[index];
-    const val = this.nanosToUSDNumber(bitcloutNanos);
+    const desoNanos = this.diamondLevelMap[index];
+    const val = this.nanosToUSDNumber(desoNanos);
     if (val < 1) {
       return this.formatUSD(Math.max(val, 0.01), 2);
     }
     return this.abbreviateNumber(val, 0, true);
   }
 
-  nanosToBitClout(nanos: number, maximumFractionDigits?: number): string {
-    if (this.nanosToBitCloutMemo[nanos] && this.nanosToBitCloutMemo[nanos][maximumFractionDigits]) {
-      return this.nanosToBitCloutMemo[nanos][maximumFractionDigits];
+  nanosToDeSo(nanos: number, maximumFractionDigits?: number): string {
+    if (this.nanosToDeSoMemo[nanos] && this.nanosToDeSoMemo[nanos][maximumFractionDigits]) {
+      return this.nanosToDeSoMemo[nanos][maximumFractionDigits];
     }
 
-    this.nanosToBitCloutMemo[nanos] = this.nanosToBitCloutMemo[nanos] || {};
+    this.nanosToDeSoMemo[nanos] = this.nanosToDeSoMemo[nanos] || {};
 
     if (!maximumFractionDigits && nanos > 0) {
       // maximumFractionDigits defaults to 3.
@@ -457,13 +468,13 @@ export class GlobalVarsService {
     // Always show at least 2 digits
     const minimumFractionDigits = 2;
     const num = nanos / 1e9;
-    this.nanosToBitCloutMemo[nanos][maximumFractionDigits] = Number(num).toLocaleString("en-US", {
+    this.nanosToDeSoMemo[nanos][maximumFractionDigits] = Number(num).toLocaleString("en-US", {
       style: "decimal",
       currency: "USD",
       minimumFractionDigits,
       maximumFractionDigits,
     });
-    return this.nanosToBitCloutMemo[nanos][maximumFractionDigits];
+    return this.nanosToDeSoMemo[nanos][maximumFractionDigits];
   }
 
   formatUSD(num: number, decimal: number): string {
@@ -525,9 +536,9 @@ export class GlobalVarsService {
     return viewportWidth <= 992;
   }
 
-  // Calculates the amount of bitclout one would receive if they sold an amount equal to creatorCoinAmountNano
+  // Calculates the amount of deso one would receive if they sold an amount equal to creatorCoinAmountNano
   // given the current state of a creator's coin as defined by the coinEntry
-  bitcloutNanosYouWouldGetIfYouSold(creatorCoinAmountNano: number, coinEntry: any): number {
+  desoNanosYouWouldGetIfYouSold(creatorCoinAmountNano: number, coinEntry: any): number {
     // These calculations are derived from the Bancor pricing formula, which
     // is proportional to a polynomial price curve (and equivalent to Uniswap
     // under certain assumptions). For more information, see the comment on
@@ -538,39 +549,37 @@ export class GlobalVarsService {
     // - B0 * (1 - (1 - dS / S0)^(1/RR))
     // - where:
     //     dS = bigDeltaCreatorCoin,
-    //     B0 = bigCurrentBitCloutLocked
+    //     B0 = bigCurrentDeSoLocked
     //     S0 = bigCurrentCreatorCoinSupply
     //     RR = params.CreatorCoinReserveRatio
-    const bitCloutLockedNanos = coinEntry.BitCloutLockedNanos;
+    const desoLockedNanos = coinEntry.DeSoLockedNanos;
     const currentCreatorCoinSupply = coinEntry.CoinsInCirculationNanos;
-    // const deltaBitClout = creatorCoinAmountNano;
-    const bitcloutBeforeFeesNanos =
-      bitCloutLockedNanos *
+    // const deltaDeSo = creatorCoinAmountNano;
+    const desoBeforeFeesNanos =
+      desoLockedNanos *
       (1 -
         Math.pow(
           1 - creatorCoinAmountNano / currentCreatorCoinSupply,
           1 / GlobalVarsService.CREATOR_COIN_RESERVE_RATIO
         ));
 
-    return (
-      (bitcloutBeforeFeesNanos * (100 * 100 - GlobalVarsService.CREATOR_COIN_TRADE_FEED_BASIS_POINTS)) / (100 * 100)
-    );
+    return (desoBeforeFeesNanos * (100 * 100 - GlobalVarsService.CREATOR_COIN_TRADE_FEED_BASIS_POINTS)) / (100 * 100);
   }
 
   // Return a formatted version of the amount one would receive in USD if they sold creatorCoinAmountNano number of Creator Coins
   // given the current state of a creator's coin as defined by the coinEntry
   usdYouWouldGetIfYouSoldDisplay(creatorCoinAmountNano: number, coinEntry: any, abbreviate: boolean = true): string {
     if (creatorCoinAmountNano == 0) return "$0";
-    const usdValue = this.nanosToUSDNumber(this.bitcloutNanosYouWouldGetIfYouSold(creatorCoinAmountNano, coinEntry));
+    const usdValue = this.nanosToUSDNumber(this.desoNanosYouWouldGetIfYouSold(creatorCoinAmountNano, coinEntry));
     return abbreviate ? this.abbreviateNumber(usdValue, 2, true) : this.formatUSD(usdValue, 2);
   }
 
-  creatorCoinNanosToUSDNaive(creatorCoinNanos, coinPriceBitCloutNanos, abbreviate: boolean = false): string {
-    const usdValue = this.nanosToUSDNumber((creatorCoinNanos / 1e9) * coinPriceBitCloutNanos);
+  creatorCoinNanosToUSDNaive(creatorCoinNanos, coinPriceDeSoNanos, abbreviate: boolean = false): string {
+    const usdValue = this.nanosToUSDNumber((creatorCoinNanos / 1e9) * coinPriceDeSoNanos);
     return abbreviate ? this.abbreviateNumber(usdValue, 2, true) : this.formatUSD(usdValue, 2);
   }
 
-  createProfileFeeInBitClout(): number {
+  createProfileFeeInDeSo(): number {
     return this.createProfileFeeNanos / 1e9;
   }
 
@@ -718,24 +727,24 @@ export class GlobalVarsService {
     });
   }
 
-  _alertError(err: any, showBuyBitClout: boolean = false, showBuyCreatorCoin: boolean = false) {
+  _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
-      showCancelButton: showBuyBitClout || showBuyCreatorCoin,
+      showCancelButton: showBuyDeSo || showBuyCreatorCoin,
       focusConfirm: true,
       customClass: {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: showBuyBitClout ? "Buy BitClout" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
+      confirmButtonText: showBuyDeSo ? "Buy DeSo" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
       reverseButtons: true,
     }).then((res) => {
-      if (showBuyBitClout && res.isConfirmed) {
-        this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+      if (showBuyDeSo && res.isConfirmed) {
+        this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
       }
       if (showBuyCreatorCoin && res.isConfirmed) {
         this.router.navigate([RouteNames.CREATORS]);
@@ -789,17 +798,17 @@ export class GlobalVarsService {
     return (pk.startsWith("tBC") && pk.length == 54) || (pk.startsWith("BC") && pk.length == 55);
   }
 
-  isVanillaReclout(post: PostEntryResponse): boolean {
-    return !post.Body && !post.ImageURLs?.length && !!post.RecloutedPostEntryResponse;
+  isVanillaRepost(post: PostEntryResponse): boolean {
+    return !post.Body && !post.ImageURLs?.length && !!post.RepostedPostEntryResponse;
   }
 
   getPostContentHashHex(post: PostEntryResponse): string {
-    return this.isVanillaReclout(post) ? post.RecloutedPostEntryResponse.PostHashHex : post.PostHashHex;
+    return this.isVanillaRepost(post) ? post.RepostedPostEntryResponse.PostHashHex : post.PostHashHex;
   }
 
   incrementCommentCount(post: PostEntryResponse): PostEntryResponse {
-    if (this.isVanillaReclout(post)) {
-      post.RecloutedPostEntryResponse.CommentCount += 1;
+    if (this.isVanillaRepost(post)) {
+      post.RepostedPostEntryResponse.CommentCount += 1;
     } else {
       post.CommentCount += 1;
     }
@@ -831,11 +840,11 @@ export class GlobalVarsService {
     this.amplitude.logEvent(event, data);
   }
 
-  // Helper to launch the get free clout flow in identity.
-  launchGetFreeCLOUTFlow() {
+  // Helper to launch the get free deso flow in identity.
+  launchGetFreeDESOFlow() {
     this.logEvent("identity : jumio : launch");
     this.identityService
-      .launch("/get-free-clout", {
+      .launch("/get-free-deso", {
         public_key: this.loggedInUser?.PublicKeyBase58Check,
         referralCode: localStorage.getItem("referralCode"),
       })
@@ -890,7 +899,7 @@ export class GlobalVarsService {
 
     this.getReferralUSDCents();
     this.userList = userList;
-    this.satoshisPerBitCloutExchangeRate = 0;
+    this.satoshisPerDeSoExchangeRate = 0;
     this.nanosPerUSDExchangeRate = GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE;
     this.usdPerBitcoinExchangeRate = 10000;
     this.defaultFeeRateNanosPerKB = 1000.0;
@@ -910,7 +919,7 @@ export class GlobalVarsService {
 
     let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
     if (!identityServiceURL) {
-      identityServiceURL = "https://identity.bitclout.com";
+      identityServiceURL = "https://identity.deso.org";
       this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
     }
     this.identityService.identityServiceURL = identityServiceURL;
@@ -922,7 +931,7 @@ export class GlobalVarsService {
       if (!this.defaultFeeRateNanosPerKB) {
         return false;
       }
-      this.feeRateBitCloutPerKB = this.defaultFeeRateNanosPerKB / 1e9;
+      this.feeRateDeSoPerKB = this.defaultFeeRateNanosPerKB / 1e9;
       return true;
     });
   }
@@ -931,7 +940,7 @@ export class GlobalVarsService {
     const pulseService = new PulseService(this.httpClient, this.backendApi, this);
 
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getBitCloutLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
       pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
@@ -997,23 +1006,28 @@ export class GlobalVarsService {
     return "app-page";
   }
 
-  _updateBitCloutExchangeRate() {
+  _updateDeSoExchangeRate() {
     this.backendApi.GetExchangeRate(this.localNode).subscribe(
       (res: any) => {
-        this.satoshisPerBitCloutExchangeRate = res.SatoshisPerBitCloutExchangeRate;
-
-        this.NanosSold = res.NanosSold;
+        // BTC
+        this.satoshisPerDeSoExchangeRate = res.SatoshisPerDeSoExchangeRate;
         this.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
-
-        this.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
-        this.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
-        this.BuyBitCloutFeeBasisPoints = res.BuyBitCloutFeeBasisPoints;
-
-        const nanosPerUnit = 1e9;
-        this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerBitClout / 100);
         this.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
-        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, null);
-        this.bitcloutToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, 2);
+
+        // ETH
+        this.usdPerETHExchangeRate = res.USDCentsPerETHExchangeRate / 100;
+        this.nanosPerETHExchangeRate = res.NanosPerETHExchangeRate;
+
+        // DESO
+        this.NanosSold = res.NanosSold;
+        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoExchangeRate;
+        this.USDCentsPerDeSoReservePrice = res.USDCentsPerDeSoReserveExchangeRate;
+        this.BuyDeSoFeeBasisPoints = res.BuyDeSoFeeBasisPoints;
+
+        const nanosPerUnit = GlobalVarsService.NANOS_PER_UNIT;
+        this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerDeSo / 100);
+        this.desoToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, null);
+        this.desoToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, 2);
       },
       (error) => {
         console.error(error);
@@ -1158,10 +1172,10 @@ export class GlobalVarsService {
     }, timeoutMillis);
   }
 
-  getFreeCloutMessage(): string {
+  getFreeDESOMessage(): string {
     return this.referralUSDCents
       ? this.formatUSD(this.referralUSDCents / 100, 0)
-      : this.nanosToUSD(this.jumioBitCloutNanos, 0);
+      : this.nanosToUSD(this.jumioDeSoNanos, 0);
   }
 
   getReferralUSDCents(): void {

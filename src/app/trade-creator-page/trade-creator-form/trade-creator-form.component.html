@@ -1,4 +1,4 @@
-<!-- Available Bitclout Box -->
+<!-- Available DeSo Box -->
 <div class="w-100 bg-light text-grey5">
   <div class="p-3 fs-14px d-flex justify-content-between flex-wrap">
     <div class="d-flex flex-wrap">
@@ -11,11 +11,11 @@
 
     <a
       *ngIf="creatorCoinTrade.isBuyingCreatorCoin"
-      [routerLink]="['/' + this.globalVars.RouteNames.BUY_BITCLOUT]"
+      [routerLink]="['/' + this.globalVars.RouteNames.BUY_DESO]"
       queryParamsHandling="merge"
       class="text-grey5"
     >
-      <u>Buy BitClout</u>
+      <u>Buy DeSo</u>
     </a>
   </div>
 </div>
@@ -36,7 +36,7 @@
   <div *ngIf="creatorCoinTrade.amount">
     <div class="mt-15px">
       <search-bar
-        [isSearchForUsersToSendClout]="true"
+        [isSearchForUsersToSendDESO]="true"
         (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
       ></search-bar>
     </div>

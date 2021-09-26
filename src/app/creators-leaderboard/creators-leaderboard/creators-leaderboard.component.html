@@ -86,7 +86,7 @@
         [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.Username]"
         queryParamsHandling="merge"
       >
-        <div class="pl-15px">~{{ globalVars.nanosToUSD(item.CoinPriceBitCloutNanos, 2) }}</div>
+        <div class="pl-15px">~{{ globalVars.nanosToUSD(item.CoinPriceDeSoNanos, 2) }}</div>
       </a>
 
       <!--Hide on mobile-->

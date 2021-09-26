@@ -24,11 +24,11 @@
     <div class="w-100 border-bottom border-color-grey light-grey-divider" style="min-height: 10px"></div>
   </div>
 
-  <!-- Mobile BitClout Price -->
+  <!-- Mobile DeSo Price -->
   <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">
-    <div>$CLOUT Price&nbsp;&nbsp;&nbsp;</div>
+    <div>$DESO Price&nbsp;&nbsp;&nbsp;</div>
     <div>
-      <span>~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
+      <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
       <span class="text-muted">&nbsp;USD per coin</span>
     </div>
   </div>
@@ -50,7 +50,7 @@
 
   <!-- Referral links alert -->
   <div
-    *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
+    *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0"
     class="d-flex border-bottom border-color-grey background-color-lemon-chiffon py-5px px-15px fs-12px"
   >
     <div style="color: #333333">You have a referral link!&nbsp;&nbsp;&nbsp;</div>
@@ -88,7 +88,7 @@
           [post]="post"
           [includePaddingOnPost]="true"
           [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
-          [afterRecloutCreatedCallback]="prependPostToFeed.bind(this)"
+          [afterRepostCreatedCallback]="prependPostToFeed.bind(this)"
           [showReplyingToContent]="!!post.parentPost"
           [parentPost]="post.parentPost"
           [contentShouldLinkToThread]="true"

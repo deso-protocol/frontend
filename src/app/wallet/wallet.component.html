@@ -34,7 +34,7 @@
     <div class="fs-15px py-15px pr-15px" *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY">
       <div>
         <p>
-          You now have {{ globalVars.nanosToBitClout(balanceEntryToHighlight.BalanceNanos, 4) }} ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
+          You now have {{ globalVars.nanosToDeSo(balanceEntryToHighlight.BalanceNanos, 4) }} ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
         </p>
         <p class="mt-3">
           <b>Click the arrows in the highlighted row and select "Sell" to sell some ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins.</b>
@@ -44,8 +44,8 @@
         You just sold {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins. Click "Next: Setup Your Profile" to set up your own coin!
       </p>
       <p *ngIf="tutorialStatus === TutorialStatus.INVEST_SELF">
-        You now have {{ globalVars.nanosToBitClout(balanceEntryToHighlight.BalanceNanos, 4) }} {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
-        Each of your coins is currently worth {{ globalVars.nanosToUSD(balanceEntryToHighlight.ProfileEntryResponse.CoinPriceBitCloutNanos, 2)}}!
+        You now have {{ globalVars.nanosToDeSo(balanceEntryToHighlight.BalanceNanos, 4) }} {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
+        Each of your coins is currently worth {{ globalVars.nanosToUSD(balanceEntryToHighlight.ProfileEntryResponse.CoinPriceDeSoNanos, 2)}}!
         Click "Next: Give a Diamond" to learn about Diamonds.
       </p>
     </div>
@@ -55,40 +55,40 @@
 
 
 <div class="d-flex flex-column flex-grow-1" *ngIf="globalVars.loggedInUser">
-  <!-- $CLOUT Divider Bar -->
+  <!-- $DESO Divider Bar -->
   <div
     class="d-flex align-items-center justify-content-between fs-18px font-weight-bold p-15px holdings__divider border-bottom border-color-grey"
     *ngIf="!inTutorial"
   >
-    <div>$CLOUT</div>
+    <div>$DESO</div>
     <div class="fs-15px" style="margin-top: 2px" *ngIf="!inTutorial">
       <a
         *ngIf="globalVars.loggedInUser"
-        href="{{ 'https://explorer.bitclout.com/?public-key=' + globalVars.loggedInUser.PublicKeyBase58Check }}"
+        href="{{ 'https://explorer.deso.org/?public-key=' + globalVars.loggedInUser.PublicKeyBase58Check }}"
         class="fc-blue"
       >
         Transactions
       </a>
       <span class="px-5px">·</span>
-      <a [routerLink]="'/' + globalVars.RouteNames.SEND_BITCLOUT" queryParamsHandling="merge" class="fc-blue">
+      <a [routerLink]="'/' + globalVars.RouteNames.SEND_DESO" queryParamsHandling="merge" class="fc-blue">
         Send
       </a>
     </div>
   </div>
 
-  <!-- $CLOUT Holdings -->
+  <!-- $DESO Holdings -->
   <!-- Override .container's max-width property with max-width: inherit-->
   <div class="container fs-15px p-15px border-bottom border-color-grey" style="max-width: inherit" *ngIf="!inTutorial">
     <div class="row pt-5px">
       <div class="col-3 font-weight-bold">Balance</div>
       <div class="col-9">
         <div>
-          {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos, 9) }} $CLOUT
+          {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos, 9) }} $DESO
           <i
             *ngIf="globalVars.loggedInUser.UnminedBalanceNanos != 0 && globalVars.showProcessingSpinners"
             class="fa fa-spinner fc-muted"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="unminedBitCloutToolTip()"
+            [matTooltip]="unminedDeSoToolTip()"
             #tooltip="matTooltip"
             (click)="tooltip.toggle()"
           ></i>
@@ -120,8 +120,8 @@
     <div class="fs-14px">
       <span class="font-weight-bold">≈ {{ globalVars.nanosToUSD(totalValue(), 2) }}</span>
       USD<br>
-      <span class="font-weight-bold" style="font-size:13px;">≈ {{ globalVars.nanosToBitClout(totalValue(), 4) }}</span>
-      $CLOUT
+      <span class="font-weight-bold" style="font-size:13px;">≈ {{ globalVars.nanosToDeSo(totalValue(), 4) }}</span>
+      $DESO
     </div>
   </div>
 
@@ -202,7 +202,7 @@
             </span>
 
           <div class="text-grey9 fs-12px d-lg-none">
-            {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+            {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
           </div>
         </div>
       </a>
@@ -210,7 +210,7 @@
       <!-- Price-->
       <div class="col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
         <div class="d-flex align-items-center justify-content-end">
-          {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+          {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
         </div>
       </div>
 
@@ -234,7 +234,7 @@
             }}
           </div>
           <div class="text-grey8A fs-12px text-right">
-            {{ globalVars.nanosToBitClout(creator.BalanceNanos, 4) }}
+            {{ globalVars.nanosToDeSo(creator.BalanceNanos, 4) }}
           </div>
         </div>
       </div>

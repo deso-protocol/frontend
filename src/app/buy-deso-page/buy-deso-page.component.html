@@ -1,0 +1,8 @@
+<app-page>
+  <div *ngIf="globalVars.loggedInUser; else elseBlock">
+    <buy-deso></buy-deso>
+  </div>
+  <ng-template #elseBlock>
+    <buy-deso-logged-out></buy-deso-logged-out>
+  </ng-template>
+</app-page>
