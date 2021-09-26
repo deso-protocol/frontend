@@ -79,7 +79,7 @@ export class CloutcastApiService {
           0 /* NumToFetch */
         )
         .toPromise();
-        CoinPriceBitCloutNanos = this.globalVars.loggedInUser.ProfileEntryResponse.CoinPriceBitCloutNanos;
+        CoinPriceBitCloutNanos = this.globalVars.loggedInUser.ProfileEntryResponse.CoinPriceDeSoNanos;
         followerCount = getFollowers.NumFollowers;
 
       }

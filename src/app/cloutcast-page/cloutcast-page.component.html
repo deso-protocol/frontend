@@ -25,7 +25,7 @@
             <div class="row m-3">
               <div class="col">
                 Available<br />
-                {{nanosToBitClout(walletData.available, 4)}} $CLOUT<br />
+                {{nanosToDeSo(walletData.available, 4)}} $DESO<br />
                 (~{{nanosToUSD(walletData.available)}} USD)<br />
                 <button (click)="doDeposit()" class="btn btn-block btn-primary">
                   Deposit
@@ -33,7 +33,7 @@
               </div>
               <div class="col">
                 Escrow<br />
-                {{nanosToBitClout(walletData.escrow, 4)}} $CLOUT<br />
+                {{nanosToDeSo(walletData.escrow, 4)}} $DESO<br />
                 (~{{nanosToUSD(walletData.escrow)}} USD)<br />
                 <button 
                   (click) = "_toggleWithdraw()"
@@ -65,7 +65,7 @@
                 [disabled]="sendingWithdrawRequest"/>
               </div>
               <div class="text-grey7 col-12">
-                Specify the amount of $CLOUT to withdraw from your CloutCast wallet. 
+                Specify the amount of $DESO to withdraw from your CloutCast wallet. 
               </div>
             </div>
             
@@ -133,15 +133,15 @@
 
               </feed-post>
               <div class="cc-info p-3">
-                <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'ReClout or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+                <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'ReClout or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToDeSo(selectedCastObject.RateNanos)}} $DESO (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
                 <button
                   class="btn-block my-2 btn-primary"
                   (click)="proveWork()"
                 >
-                  Earn {{ nanosToBitClout(selectedCastObject.RateNanos) }} $CLOUT
+                  Earn {{ nanosToDeSo(selectedCastObject.RateNanos) }} $DESO
                 </button>
                 <span class="text-muted">
-                  $CLOUT earned from engaging with Casts is put into an escrow account. For more details, click the wallet icon above.
+                  $DESO earned from engaging with Casts is put into an escrow account. For more details, click the wallet icon above.
                 </span>
               </div>
               <div class="mb-70px"></div>
@@ -200,7 +200,7 @@
             <div class="row m-3">
               <div class="col">
                 Available<br />
-                {{nanosToBitClout(walletData.available, 4)}} $CLOUT<br />
+                {{nanosToDeSo(walletData.available, 4)}} $DESO<br />
                 (~{{nanosToUSD(walletData.available)}} USD)<br />
                 <button (click)="doDeposit()" class="btn btn-block btn-primary">
                   Deposit
@@ -208,7 +208,7 @@
               </div>
               <div class="col">
                 Escrow<br />
-                {{nanosToBitClout(walletData.escrow, 4)}} $CLOUT<br />
+                {{nanosToDeSo(walletData.escrow, 4)}} $DESO<br />
                 (~{{nanosToUSD(walletData.escrow)}} USD)<br />
                 <button 
                   (click) = "_toggleWithdraw()"
@@ -240,7 +240,7 @@
                 [disabled]="sendingWithdrawRequest"/>
               </div>
               <div class="text-grey7 col-12">
-                Specify the amount of $CLOUT to withdraw from your CloutCast wallet. 
+                Specify the amount of $DESO to withdraw from your CloutCast wallet. 
               </div>
             </div>
             
@@ -296,15 +296,15 @@
 
         </feed-post>
         <div class="cc-info p-3">
-          <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'ReClout or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToBitClout(selectedCastObject.RateNanos)}} $CLOUT (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+          <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'ReClout or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToDeSo(selectedCastObject.RateNanos)}} $DESO (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
           <button
             class="btn-block my-2 btn-primary"
             (click)="proveWork()"
           >
-            Earn {{ nanosToBitClout(selectedCastObject.RateNanos) }} $CLOUT
+            Earn {{ nanosToDeSo(selectedCastObject.RateNanos) }} $DESO
           </button>
           <span class="text-muted mb-30px">
-            $CLOUT earned from engaging with Casts is put into an escrow account. For more details, click the settings icon above.
+            $DESO earned from engaging with Casts is put into an escrow account. For more details, click the settings icon above.
           </span>
         </div>
       </div>

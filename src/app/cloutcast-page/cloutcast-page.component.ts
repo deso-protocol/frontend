@@ -7,7 +7,6 @@ import { BackendApiService, PostEntryResponse } from '../backend-api.service';
 import { CloutcastApiService } from '../cloutcast-api.service';
 import { GlobalVarsService } from '../global-vars.service';
 import { IdentityService } from '../identity.service';
-import { sprintf } from "sprintf-js";
 
 @Component({
   selector: 'app-cloutcast-page',
@@ -206,7 +205,7 @@ export class CloutCastPageComponent implements OnInit {
             let followerCount = 0;
 
             if (this.globalVars.loggedInUser.ProfileEntryResponse !== null) {
-              coinPrice = this.globalVars.loggedInUser.ProfileEntryResponse.CoinPriceBitCloutNanos;
+              coinPrice = this.globalVars.loggedInUser.ProfileEntryResponse.CoinPriceDeSoNanos;
               if (this.globalVars.loggedInUser.ProfileEntryResponse.Username == this.userFollowerCount.username) {
                 followerCount = this.userFollowerCount.count;
               } else {
@@ -267,15 +266,15 @@ export class CloutCastPageComponent implements OnInit {
   }
 
   bitcloutToUSD(clout:number): number {
-    let t = Math.round(100 * ((this.globalVars.ExchangeUSDCentsPerBitClout / 100) * clout)) / 100;
+    let t = Math.round(100 * ((this.globalVars.ExchangeUSDCentsPerDeSo / 100) * clout)) / 100;
     // console.log({t, clout, ex: this.globalVars.ExchangeUSDCentsPerBitClout / 100});
     return t;
   }
   nanosToUSD(nanos: number): string {
     return this.globalVars.nanosToUSD(nanos, 2);
   }
-  nanosToBitClout(nanos: number, toPlace = 2): string {
-    return this.globalVars.nanosToBitClout(nanos,toPlace);
+  nanosToDeSo(nanos: number, toPlace = 2): string {
+    return this.globalVars.nanosToDeSo(nanos,toPlace);
   }
 
   rounded(num: number, roundTo: number = 1): number {
@@ -317,7 +316,7 @@ export class CloutCastPageComponent implements OnInit {
       // console.log(this.selectedCastObject.Id);
       let didWork = await this.cloutcastApi.proveWork(this.selectedCastObject.Id);
       if (didWork == true) {
-        this.globalVars._alertSuccess(`${this.nanosToBitClout(this.selectedCastObject.RateNanos)} $CLOUT (~ ${this.nanosToUSD(this.selectedCastObject.RateNanos)} USD) was added to your CloutCast escrow wallet!`)
+        this.globalVars._alertSuccess(`${this.nanosToDeSo(this.selectedCastObject.RateNanos)} $CLOUT (~ ${this.nanosToUSD(this.selectedCastObject.RateNanos)} USD) was added to your CloutCast escrow wallet!`)
       }
     } catch (ex) {
       console.error(ex);
@@ -405,7 +404,7 @@ export class CloutCastPageComponent implements OnInit {
     let res = await SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Heads Up!",
-      html: `Deposits are handled by sending $CLOUT to our broker wallet. Deposits take 15-20 minutes to confirm. Click 'OK' to be sent to the send $CLOUT page.`,
+      html: `Deposits are handled by sending $DESO to our broker wallet. Deposits take 15-20 minutes to confirm. Click 'OK' to be sent to the 'Send $DESO' page.`,
       showCancelButton: true,
       showConfirmButton: true,
       customClass: {
@@ -438,7 +437,7 @@ export class CloutCastPageComponent implements OnInit {
         });
         // console.log(res);
         if (res.isConfirmed == true) {
-          // sending withdraw request... 
+          // sending withdraw request...
           this.sendingWithdrawRequest = true;
           let withdrawSuccess = await this.cloutcastApi.createWithdrawlRequest(Math.floor(this.withdrawCloutAmount * 1e9));
           if (withdrawSuccess == true) {
