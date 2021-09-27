@@ -1145,7 +1145,6 @@ export class AdminComponent implements OnInit {
             this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
             return null;
           }
-          console.log(res)
           this.globalVars._alertSuccess(`Success! Transaction Hash: ${res.BitCloutTxnHash}`);
         },
         (error) => {
