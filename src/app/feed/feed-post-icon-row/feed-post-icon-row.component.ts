@@ -429,6 +429,10 @@ export class FeedPostIconRowComponent {
 
   sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
     this.sendingDiamonds = true;
+    console.log('Here is the post content');
+    console.log(this.postContent.PostHashHex);
+    console.log('Poster public key');
+    console.log(this.postContent.PosterPublicKeyBase58Check);
     return this.backendApi
       .SendDiamonds(
         this.globalVars.localNode,

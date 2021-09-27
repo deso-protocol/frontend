@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import {Component, Input, OnInit} from "@angular/core";
 import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { sprintf } from "sprintf-js";
@@ -26,6 +26,7 @@ class Messages {
   styleUrls: ["./transfer-bitclout.component.scss"],
 })
 export class TransferBitcloutComponent implements OnInit {
+  @Input() creatorToPayInput: ProfileEntryResponse;
   globalVars: GlobalVarsService;
   transferBitCloutError = "";
   startingSearchText = "";
@@ -62,6 +63,9 @@ export class TransferBitcloutComponent implements OnInit {
       location.host,
       "/" + RouteNames.SEND_BITCLOUT
     )}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`;
+    if (this.creatorToPayInput) {
+      this._handleCreatorSelectedInSearch(this.creatorToPayInput);
+    }
   }
 
   _clickMaxBitClout() {

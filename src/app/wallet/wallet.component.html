@@ -261,7 +261,7 @@
               >
                 <div style="min-width: 50px" class="d-flex align-items-center justify-content-end">
                   <wallet-actions-dropdown
-                    [hodlingUsername]="creator.ProfileEntryResponse.Username"
+                    [hodlingUser]="creator.ProfileEntryResponse"
                     [inTutorial]="inTutorial"
                     [isHighlightedCreator]="isHighlightedCreator(creator)"
                     *ngIf="!inTutorial || isHighlightedCreator(creator)"
