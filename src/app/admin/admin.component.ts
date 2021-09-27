@@ -1141,7 +1141,7 @@ export class AdminComponent implements OnInit {
       )
       .subscribe(
         (res: any) => {
-          if (res == null) {
+          if (!res) {
             this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
             return null;
           }
