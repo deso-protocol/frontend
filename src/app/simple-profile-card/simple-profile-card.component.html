@@ -1,5 +1,5 @@
 <a
-  class="d-flex align-items-center fs-15px p-10px border-color-grey link--unstyled"
+  class="d-flex align-items-center fs-15px p-10px border-color-grey link--unstyled simple-profile-card__container"
   [ngClass]="{ 'border-bottom': !singleColumn }"
   [ngStyle]="{ 'cursor': !profile.Username ? 'default' : '' }"
   (click)="onClick()"
@@ -61,6 +61,13 @@
           Buy
         </button>
       </div>
+      <follow-button
+        *ngIf="followButtonOppositeSide"
+        class="ml-10px fs-12px text-grey5"
+        [displayAsLink]="true"
+        [followLinkClass]="'link--unstyled'"
+        [followedPubKeyBase58Check]="profile.PublicKeyBase58Check"
+      ></follow-button>
     </div>
   </div>
 </a>

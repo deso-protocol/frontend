@@ -33,6 +33,7 @@
         <i-feather name="arrow-left" class="feather-medium cursor-pointer" (click)="backButtonFn()"></i-feather>
         <div class="d-flex align-items-center">
           <div
+            *ngIf="publicKeyBase58Check"
             class="messages-thread__avatar mr-15px"
             [avatar]="publicKeyBase58Check"
             [ngClass]="{ 'cursor-pointer': profileEntryResponse }"

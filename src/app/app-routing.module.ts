@@ -39,6 +39,10 @@ import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial
 import { MintNftPageComponent } from "./mint-nft/mint-nft-page/mint-nft-page.component";
 import { SellNftPageComponent } from "./sell-nft/sell-nft-page/sell-nft-page.component";
 import { PlaceBidPageComponent } from "./place-bid/place-bid-page/place-bid-page.component";
+import { RecloutsPageComponent } from "./reclouts-modal/reclouts-page/reclouts-page.component";
+import { QuoteRepostsPageComponent } from "./quote-reclouts-modal/quote-reposts-page/quote-reposts-page.component";
+import { LikesPageComponent } from "./likes-modal/likes-page/likes-page.component";
+import {DiamondsPageComponent} from "./diamonds-modal/diamonds-page/diamonds-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -111,6 +115,22 @@ const routes: Routes = [
   // if CREATOR_POST is second, then it's route (/posts/new/) will get matched to POSTS instead
   { path: RouteNames.CREATE_POST, component: CreatePostPageComponent, pathMatch: "full" },
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
+  { path: RouteNames.POSTS + "/:postHashHex" + "/reposts", component: RecloutsPageComponent, pathMatch: "full" },
+  {
+    path: RouteNames.POSTS + "/:postHashHex" + "/quote-reposts",
+    component: QuoteRepostsPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.POSTS + "/:postHashHex" + "/likes",
+    component: LikesPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.POSTS + "/:postHashHex" + "/diamonds",
+    component: DiamondsPageComponent,
+    pathMatch: "full",
+  },
   { path: RouteNames.NFT + "/:postHashHex", component: NftPostPageComponent, pathMatch: "full" },
   { path: RouteNames.SEND_BITCLOUT, component: TransferBitcloutPageComponent, pathMatch: "full" },
   { path: RouteNames.TOS, component: TosPageComponent, pathMatch: "full" },

@@ -1,16 +1,16 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
-import { BsModalRef } from "ngx-bootstrap/modal";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: "quote-reclouts-modal",
   templateUrl: "./quote-reclouts-modal.component.html",
 })
 export class QuoteRecloutsModalComponent implements OnInit {
-  @Input() postHashHex: string;
+  postHashHex: string;
   diamonds = [];
   loading = false;
   errorLoading = false;
@@ -18,11 +18,13 @@ export class QuoteRecloutsModalComponent implements OnInit {
   constructor(
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
-    public bsModalRef: BsModalRef
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loading = true;
+    this.postHashHex = this.route.snapshot.params.postHashHex;
   }
 
   // Infinite scroll metadata.
@@ -67,6 +69,12 @@ export class QuoteRecloutsModalComponent implements OnInit {
         }
       );
   };
+
+  navigateToPost() {
+    this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postHashHex], {
+      queryParamsHandling: "merge",
+    });
+  }
 
   infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, false);
   datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();

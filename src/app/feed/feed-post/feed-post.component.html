@@ -399,6 +399,24 @@
           ></feed-post-icon-row>
         </div>
       </div>
+      <div *ngIf="showInteractionDetails" class="d-flex justify-content-between align-items-center border-top p-16px fc-muted">
+        <span (click)="openRepostsPage($event)" class="interaction-detail">
+          {{ globalVars.abbreviateNumber(post.RecloutCount, 0) }}
+          Repost{{ post.RecloutCount > 1 ? "s" : "" }}
+        </span>
+        <span (click)="openQuoteRepostsModal($event)" class="interaction-detail">
+          {{ globalVars.abbreviateNumber(post.QuoteRecloutCount, 0) }}
+          Quote Repost{{ post.QuoteRecloutCount > 1 ? "s" : "" }}
+        </span>
+        <span (click)="openLikesPage($event)" class="interaction-detail">
+          {{ globalVars.abbreviateNumber(post.LikeCount, 0) }}
+          Like{{ post.LikeCount > 1 ? "s" : "" }}
+        </span>
+        <span (click)="openDiamondsPage($event)" class="interaction-detail">
+          {{ globalVars.abbreviateNumber(post.DiamondCount, 0) }}
+          Diamond{{ post.DiamondCount > 1 ? "s" : "" }}
+        </span>
+      </div>
     </div>
   </div>
 

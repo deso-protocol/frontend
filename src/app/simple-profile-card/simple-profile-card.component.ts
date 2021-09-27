@@ -19,6 +19,7 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() hideFollowLink = false;
   @Input() isBold = true;
   @Input() inTutorial: boolean = false;
+  @Input() followButtonOppositeSide: boolean = false;
   @Input() showTutorialBuy: boolean = false;
   @Output() exitTutorial = new EventEmitter<any>();
 

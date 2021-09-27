@@ -291,35 +291,34 @@ export class FeedPostComponent implements OnInit {
     });
   }
 
-  openInteractionModal(event, component): void {
+  openInteractionPage(event, pageName: string): void {
     event.stopPropagation();
-    this.modalService.show(component, {
-      class: "modal-dialog-centered",
-      initialState: { postHashHex: this.post.PostHashHex },
+    this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex, pageName], {
+      queryParamsHandling: "merge",
     });
   }
 
-  openDiamondsModal(event): void {
+  openDiamondsPage(event): void {
     if (this.postContent.DiamondCount) {
-      this.openInteractionModal(event, DiamondsModalComponent);
+      this.openInteractionPage(event, "diamonds");
     }
   }
 
-  openLikesModal(event): void {
+  openLikesPage(event): void {
     if (this.postContent.LikeCount) {
-      this.openInteractionModal(event, LikesModalComponent);
+      this.openInteractionPage(event, "likes");
     }
   }
 
-  openRecloutsModal(event): void {
+  openRepostsPage(event): void {
     if (this.postContent.RecloutCount) {
-      this.openInteractionModal(event, RecloutsModalComponent);
+      this.openInteractionPage(event, "reposts");
     }
   }
 
-  openQuoteRecloutsModal(event): void {
+  openQuoteRepostsModal(event): void {
     if (this.postContent.QuoteRecloutCount) {
-      this.openInteractionModal(event, QuoteRecloutsModalComponent);
+      this.openInteractionPage(event, "quote-reposts");
     }
   }
 

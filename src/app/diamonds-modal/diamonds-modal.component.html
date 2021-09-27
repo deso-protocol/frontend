@@ -1,6 +1,9 @@
 <div class="diamonds-modal-container">
-  <div class="w-100 d-flex justify-content-end border-bottom border-color-grey cursor-pointer text-grey5">
-    <div class="p-15px fs-25px font-weight-bold" (click)="bsModalRef.hide()">&times;</div>
+  <div *ngIf="!globalVars.isMobile()" class="w-100 d-flex align-items-center border-bottom fc-secondary">
+    <div class="p-15px fs-25px font-weight-bold d-flex align-items-center">
+      <i-feather class="cursor-pointer feather-medium d-flex align-items-center mr-10px" name="arrow-left" (click)="navigateToPost()"></i-feather>
+      <div class="fs-17px font-weight-bold">Diamonds Given By</div>
+    </div>
   </div>
 
   <div class="flex-grow-1">
@@ -8,7 +11,6 @@
       <simple-profile-card
         [profile]="diamond.DiamondSenderProfile"
         [diamondLevel]="diamond.DiamondLevel"
-        [containerModalRef]="bsModalRef"
       ></simple-profile-card>
     </div>
   </div>

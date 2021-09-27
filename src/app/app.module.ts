@@ -108,9 +108,13 @@ import { SignUpComponent } from "./sign-up/sign-up.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
 import { DiamondsModalComponent } from "./diamonds-modal/diamonds-modal.component";
+import { DiamondsPageComponent } from "./diamonds-modal/diamonds-page/diamonds-page.component";
 import { RecloutsModalComponent } from "./reclouts-modal/reclouts-modal.component";
+import { RecloutsPageComponent } from "./reclouts-modal/reclouts-page/reclouts-page.component";
 import { QuoteRecloutsModalComponent } from "./quote-reclouts-modal/quote-reclouts-modal.component";
+import { QuoteRepostsPageComponent } from "./quote-reclouts-modal/quote-reposts-page/quote-reposts-page.component";
 import { LikesModalComponent } from "./likes-modal/likes-modal.component";
+import { LikesPageComponent } from "./likes-modal/likes-page/likes-page.component";
 import { SimpleProfileCardComponent } from "./simple-profile-card/simple-profile-card.component";
 import { CreatorDiamondsComponent } from "./creator-profile-page/creator-diamonds/creator-diamonds.component";
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
@@ -271,9 +275,13 @@ export function playerFactory() {
     PickACoinPageComponent,
     CreatorDiamondsComponent,
     DiamondsModalComponent,
+    DiamondsPageComponent,
     RecloutsModalComponent,
+    RecloutsPageComponent,
     QuoteRecloutsModalComponent,
+    QuoteRepostsPageComponent,
     LikesModalComponent,
+    LikesPageComponent,
     SimpleProfileCardComponent,
     MessagesFilterMenuComponent,
     DiamondPostsPageComponent,

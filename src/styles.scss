@@ -755,6 +755,14 @@ $green-font-color: #19B028;
       max-width: calc(50vw - 50px);
     }
   }
+  reclouts-page, quote-reposts-page, reclouts-page, diamonds-page {
+    #header-content-spacer {
+      margin-top: 84px !important;
+    }
+    .likes-modal-container, .quote-reclouts-modal-container, .reclouts-modal-container, .diamonds-modal-container {
+      border-radius: 0px;
+    }
+  }
 }
 
 .floating-bottom-bar {
@@ -4190,13 +4198,15 @@ creator-profile-hodlers {
 }
 
 .likes-modal-container, .quote-reclouts-modal-container, .reclouts-modal-container, .diamonds-modal-container {
-  background-color: var(--background);
+  background-color: var(--tile-bg);
   color: var(--text);
-  border: var(--mborder);
-  border-top-left-radius: 0.3rem;
-  border-top-right-radius: 0.3rem;
-  border-bottom-right-radius: 0.3rem;
-  border-bottom-left-radius: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  simple-profile-card {
+    .simple-profile-card__container {
+      padding: 16px;
+    }
+  }
 }
 
 .mint-nft__section {
@@ -4415,8 +4425,9 @@ sell-nft-modal {
 .interaction-detail {
   &:hover, &:active, &:focus {
     text-decoration: inherit; // I prefer no underline when you hover over links
-    color: var(--grey);
+    color: var(--text-secondary);
   }
+  cursor: pointer;
 }
 
 [class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {
