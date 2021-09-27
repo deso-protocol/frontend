@@ -191,19 +191,33 @@
               <div class="simple-profile-card__avatar-container">
                 <div
                   class="simple-profile-card__avatar br-12px"
-                  [avatar]="owner.OwnerPublicKeyBase58Check"
+                  [avatar]="owner.IsPending ? '' : owner.OwnerPublicKeyBase58Check"
                 ></div>
               </div>
               <div class="text-truncate holdings__name fs-14px">
                 <div class="d-flex">
-                  <div
-                    class="fc-default font-weight-bold text-truncate holdings__name fs-14px"
-                    [ngClass]="{ 'cursor-pointer': !!owner.ProfileEntryResponse?.Username }"
-                    [style.pointer-events]="!!owner.ProfileEntryResponse?.Username ? 'auto' : 'none'"
-                    [routerLink]="owner.ProfileEntryResponse?.Username ? ['/' + globalVars.RouteNames.USER_PREFIX, owner.ProfileEntryResponse.Username] : []"
-                  >
-                    {{ owner.ProfileEntryResponse?.Username || owner.OwnerPublicKeyBase58Check }}
-                  </div>
+                  <ng-template #ownerTemplate>
+                    <div
+                      class="fc-default font-weight-bold text-truncate holdings__name fs-14px"
+                      [ngClass]="{ 'cursor-pointer': !!owner.ProfileEntryResponse?.Username }"
+                      [style.pointer-events]="!!owner.ProfileEntryResponse?.Username ? 'auto' : 'none'"
+                      [routerLink]="owner.ProfileEntryResponse?.Username ? ['/' + globalVars.RouteNames.USER_PREFIX, owner.ProfileEntryResponse.Username] : []"
+                    >
+                      {{ owner.ProfileEntryResponse?.Username || owner.OwnerPublicKeyBase58Check }}
+                    </div>
+                  </ng-template>
+                  <ng-template #pendingOwnerTemplate>
+                    <div
+                      (click)="tooltip.toggle()"
+                      class="fc-default font-weight-bold text-truncate holdings__name fs-14px cursor-pointer"
+                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                      [matTooltip]="'This NFT has been transferred and is awaiting acceptance'"
+                      #tooltip="matTooltip"
+                    >
+                      (pending)
+                    </div>
+                  </ng-template>
+                  <ng-container *ngIf="owner.IsPending; then pendingOwnerTemplate else ownerTemplate"></ng-container>
                   <span
                     *ngIf="owner.ProfileEntryResponse?.IsVerified"
                     (click)="tooltip.toggle()"
@@ -212,10 +226,10 @@
                     [matTooltip]="'This account is verified'"
                     #tooltip="matTooltip"
                   >
-              <i class="fas fa-check-circle fa-md align-middle"></i>
-            </span>
+                    <i class="fas fa-check-circle fa-md align-middle"></i>
+                  </span>
                 </div>
-                <div class="text-grey9" *ngIf="owner.ProfileEntryResponse">
+                <div class="text-grey9" *ngIf="owner.ProfileEntryResponse && !owner.IsPending">
                   {{ globalVars.nanosToUSD(owner.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
                 </div>
               </div>

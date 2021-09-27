@@ -303,14 +303,17 @@ export class NFTEntryResponse {
   PostEntryResponse: PostEntryResponse | undefined;
   SerialNumber: number;
   IsForSale: boolean;
+  IsPending: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
 
   HighestBidAmountNanos: number;
   LowestBidAmountNanos: number;
 
-  // only populated when the reader is the owner of the nft and there is an unlockable.
+  // only populated when the reader is the owner of the nft and there is an unlockable or the NFT transfer is pending.
   LastOwnerPublicKeyBase58Check: string | undefined;
+
+  // only populated when the reader is the owner of the nft and there is an unlockable.
   EncryptedUnlockableText: string | undefined;
   DecryptedUnlockableText: string | undefined;
 }
