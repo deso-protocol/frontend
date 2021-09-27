@@ -6,10 +6,9 @@ import { IdentityService } from "../identity.service";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
-import {CommentModalComponent} from "../comment-modal/comment-modal.component";
-import {BsModalService} from "ngx-bootstrap/modal";
-import {FeedCreatePostModalComponent} from "../feed/feed-create-post-modal/feed-create-post-modal.component";
-import {filter, get} from "lodash";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
+import { filter, get } from "lodash";
 
 @Component({
   selector: "left-bar",

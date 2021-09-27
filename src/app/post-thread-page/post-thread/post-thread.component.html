@@ -41,7 +41,7 @@
         [contentShouldLinkToThread]="true"
         [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
         [isParentPostInThread]="true"
-        [showLeftSelectedBorder]="true"
+        [showLeftSelectedBorder]="false"
         [showInteractionDetails]="true"
         [blocked]="isPostBlocked(currentPost)"
         (postDeleted)="onPostHidden(currentPost, null, null)"

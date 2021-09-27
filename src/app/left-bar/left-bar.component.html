@@ -70,6 +70,14 @@
         </div>
       </div>
       <div *ngIf="isMobile">
+        <!-- Referral links alert -->
+        <div
+          *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0"
+          class="d-flex border border-color-grey background-color-white p-10px mx-16px br-10px fs-13px"
+        >
+          <div class="fc-secondary">You have a referral link!&nbsp;&nbsp;&nbsp;</div>
+          <a [routerLink]="'/' + globalVars.RouteNames.REFERRALS" class="font-weight-bold" (click)="closeMobile.emit()">Find out more</a>
+        </div>
         <div
           *ngIf="globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"
           class="p-16px"

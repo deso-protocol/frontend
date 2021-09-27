@@ -31,7 +31,7 @@ export class BottomBarMobileTabComponent {
           ) {
             this.iconDiv.nativeElement.style.color = "var(--highlight)";
           } else {
-            this.iconDiv.nativeElement.style.color = "var(--postsectext)";
+            this.iconDiv.nativeElement.style.color = "var(--text-secondary)";
           }
         });
       }

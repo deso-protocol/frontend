@@ -229,9 +229,9 @@ $green-font-color: #19B028;
 .max-width-420px { max-width: 420px }
 
 // Custom font classes.
-.fc-default { color: var(--posttext); }
-.fc-secondary { color: var(--postsectext); }
-.fc-muted { color: var(--postfadedtext); }
+.fc-default { color: var(--text); }
+.fc-secondary { color: var(--text-secondary); }
+.fc-muted { color: var(--text-muted); }
 .fc-blue { color: var(--highlight); }
 .fc-red { color: var(--cred); }
 .fc-green { color: var(--cgreen); }
@@ -278,12 +278,12 @@ $green-font-color: #19B028;
 .tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
 
 .background-color-grey { background-color: var(--border); } // mocks call this G4
-.background-color-light-grey { background-color: var(--tilesecbg); }
-.background-color-light-grey-important { background-color: var(--secondary) !important }
+.background-color-light-grey { background-color: var(--tile-secondary-bg); }
+.background-color-light-grey-important { background-color: var(--background-secondary) !important }
 .background-color-light-pink { background-color: lightpink; }
-.background-color-white { background-color: var(--tilebg); }
-.background-color-main { background-color: var(--tilebg); }
-.background-color-secondary { background-color: var(--tilesecbg); }
+.background-color-white { background-color: var(--tile-bg); }
+.background-color-main { background-color: var(--tile-bg); }
+.background-color-secondary { background-color: var(--tile-secondary-bg); }
 .background-color-background { background-color: var(--background); }
 .background-color-lemon-chiffon { background-color: lemonchiffon; }
 
@@ -570,7 +570,7 @@ $green-font-color: #19B028;
     tab-selector {
       .tab-selector__container {
         position: fixed;
-        background: var(--tilebg);
+        background: var(--tile-bg);
         z-index: 1;
       }
     }
@@ -608,11 +608,18 @@ $green-font-color: #19B028;
       border-radius: 0px;
     }
     .global__content__inner {
-      background: var(--tilebg);
+      background: var(--tile-bg);
     }
     .mint-nft__create-btn {
       width: calc(100vw - 32px);
       margin: 16px 16px 80px 16px;
+    }
+  }
+  left-bar {
+    jumio-status {
+      .jumio-status {
+        margin-top: 0px;
+      }
     }
   }
   nft-post-page {
@@ -640,7 +647,7 @@ $green-font-color: #19B028;
       margin-bottom: 45px
     }
     .global__content__inner {
-      background: var(--tilebg);
+      background: var(--tile-bg);
     }
     .mint-nft__create-btn {
       width: calc(100vw - 32px);
@@ -666,7 +673,7 @@ $green-font-color: #19B028;
     .floating-bottom-bar {
       justify-content: flex-start;
     }
-    background: var(--tilebg);
+    background: var(--tile-bg);
   }
   app-messages-page {
     .global__mobile-scrollable-section {
@@ -705,7 +712,7 @@ $green-font-color: #19B028;
     #header-content-spacer {
       margin-top: 90px !important;
     }
-    background: var(--tilebg);
+    background: var(--tile-bg);
   }
   wallet {
     .creator-profile__ellipsis-restriction {
@@ -724,13 +731,13 @@ $green-font-color: #19B028;
       padding-left:15px;
     }
     .wallet-actions-container {
-      background: var(--tilebg);
+      background: var(--tile-bg);
       border-radius: 8px;
       box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
       width: 225px;
     }
     .dropdown-menu-item {
-      color: var(--postsectext);
+      color: var(--text-secondary);
     }
   }
   creator-profile-details {
@@ -753,7 +760,7 @@ $green-font-color: #19B028;
 .floating-bottom-bar {
   position: fixed;
   bottom: 0px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   height: 80px;
   width: 100%;
   display: flex;
@@ -786,7 +793,7 @@ $green-font-color: #19B028;
   justify-content: center;
   align-items: center;
   i-feather {
-    color: var(--postfadedtext);
+    color: var(--text-muted);
   }
 }
 
@@ -884,7 +891,7 @@ input.bs-timepicker-field {
 }
 
 .light-grey-divider {
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .top-bar-mobile__avatar {
@@ -921,7 +928,7 @@ input.bs-timepicker-field {
   font-size: 12px;
   border-radius: 100%;
   background: var(--error);
-  color: var(--nfttext)
+  color: var(--text-inverted)
 }
 
 // flex -> width -> fixed -> inner
@@ -1006,7 +1013,7 @@ input.bs-timepicker-field {
 .global__sidebar__inner {
   margin-top: 20px;
   width: $global__sidebar__width;
-  height: 100%;
+  height: calc(100% - 20px);
   padding-left: 20px;
 }
 
@@ -1047,7 +1054,13 @@ input.bs-timepicker-field {
 }
 
 feed-create-post {
-  background: var(--tilebg);
+  background: var(--tile-bg);
+  textarea {
+    &.background-color-white {
+      background: var(--tile-bg) !important;
+    }
+  }
+
 }
 
 feed-create-post-modal {
@@ -1055,7 +1068,7 @@ feed-create-post-modal {
     border-radius: 10px 10px 0px 0px;
   }
   .create-post-icon-bar {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     border-radius: 0px 0px 10px 10px;
     margin: 0px;
     padding: 16px 16px 32px 16px;
@@ -1075,12 +1088,12 @@ feed-create-post-modal {
 
 .create-post {
   border-radius: 10px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   font-style: normal;
   font-weight: normal;
   font-size: 17px;
   line-height: 24px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
   textarea {
     margin-top: 12px;
   }
@@ -1088,7 +1101,7 @@ feed-create-post-modal {
 
 nft-post {
   .nft-post-details {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     margin-top: 20px;
     border-radius: 10px;
     border: 1px solid var(--border);
@@ -1116,7 +1129,7 @@ tab-selector {
     }
   }
   button {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     height: 40px;
     border-radius: 10px;
     border: 1px solid var(--border);
@@ -1130,7 +1143,7 @@ tab-selector {
   }
   .new-tab-indicator {
     margin-left: 8px;
-    background: var(--highlightsec);
+    background: var(--tile-bg);
     color: var(--highlight);
     position: relative;
     top: -1px;
@@ -1156,7 +1169,7 @@ tab-selector {
     cursor: pointer;
     height: 24px;
     width: 24px;
-    color: var(--postfadedtext);
+    color: var(--text-muted);
     margin-right: 25px;
   }
   button {
@@ -1167,9 +1180,9 @@ tab-selector {
     height: 48px;
     border-radius: 16px;
     border: none;
-    color: var(--tilebg);
+    color: var(--tile-bg);
     &:hover {
-      color: var(--tilebg);
+      color: var(--tile-bg);
     }
   }
 }
@@ -1202,11 +1215,11 @@ tab-selector {
   max-width: 280px;
   min-width: 245px;
   height: 100vh;
-  background-color: var(--tilebg);
+  background-color: var(--tile-bg);
 }
 
 .left-bar-mobile__clout-price {
-  background: var(--tilesecbg);
+  background: var(--tile-secondary-bg);
   padding: 7px 8px 7px;
   border-radius: 10px;
   border: 1px solid var(--border);
@@ -1223,7 +1236,7 @@ left-bar-mobile {
   }
   jumio-status {
     .jumio-status {
-      background: var(--tilebg);
+      background: var(--tile-bg);
       padding: 7px 8px 7px;
       border-radius: 10px;
       border: 1px solid var(--border);
@@ -1266,7 +1279,7 @@ left-bar-mobile {
   font-size: 1.25rem;
   vertical-align: middle;
   padding-bottom: .15rem;
-  background-color: var(--tilebg);
+  background-color: var(--tile-bg);
   i-feather {
     margin-top: -5px;
     height: 20px;
@@ -1301,7 +1314,7 @@ feed-create-post {
 
 .holdings__divider {
   height: 66px;
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .holdings__avatar {
@@ -1394,7 +1407,7 @@ feed-create-post {
 .change-account-selector {
 	position: relative;
 	z-index: 30;
-	background-color: var(--tilebg);
+	background-color: var(--tile-bg);
 	width: 100%;
 	padding-top: 8px;
 	padding-bottom: 8px;
@@ -1418,7 +1431,7 @@ feed-create-post {
 }
 
 .change-account-selector_list {
-	background-color: var(--tilebg);
+	background-color: var(--tile-bg);
 	padding: 0px 0px 10px;
 	margin-top: 3px;
 	width: 100%;
@@ -1459,14 +1472,14 @@ feed-create-post {
 
 .tutorial-header {
   padding: 16px;
-  background: var(--backgroundsecondary);
+  background: var(--background-secondary);
   width: 100%;
   border-radius: 10px 10px 0px 0px;
 }
 
 .tutorial-title {
   font-size: 20px;
-  color: var(--posttext);
+  color: var(--text);
   line-height: 28px;
   letter-spacing: -0.01em;
   font-weight: 600;
@@ -1478,18 +1491,18 @@ feed-create-post {
 
 .search-bar {
   border-radius: 16px;
-  color: var(--searchbartext);
+  color: var(--text-muted);
   i-feather {
     height: 16px;
     width: 16px;
-    color: var(--posttext);
+    color: var(--text);
     svg {
       position: relative;
       top: -7px;
     }
   }
   input {
-    background: var(--searchbarbackground) !important;
+    background: var(--tile-secondary-bg) !important;
     border: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -1505,7 +1518,7 @@ feed-create-post {
   font-size: 19px;
   border-top-left-radius: 16px;
   border-bottom-left-radius: 16px;
-  background: var(--searchbarbackground);
+  background: var(--tile-secondary-bg);
   border: none;
 }
 
@@ -1538,12 +1551,12 @@ feed-create-post {
 }
 
 .search-bar__fix-active {
-  border-color: var(--secondary);
+  border-color: var(--background-secondary);
   border-left: 0px;
 }
 
 .search-bar__fix-active:active, .search-bar__fix-active:focus {
-  border-color: var(--secondary);
+  border-color: var(--background-secondary);
   border-left: 0px;
 }
 
@@ -1553,7 +1566,7 @@ feed-create-post {
     border-bottom: 1px solid var(--border);
   }
   .feed-post-container {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     margin-bottom: 0px;
     border-radius: 0px;
     border-right: 1px solid var(--border);
@@ -1579,12 +1592,19 @@ feed-create-post {
   margin-top: 20px;
 }
 
+.pinned-post {
+  border-left: 3px solid var(--highlight) !important;
+  &.border {
+    border-left: 3px solid var(--highlight) !important;
+  }
+}
+
 .post-thread__subcomment-container {
   margin-left: 65px;
 }
 
 .post-thread__container {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border: 1px solid var(--border);
   border-radius: 10px;
   .feed-post-container {
@@ -1592,7 +1612,7 @@ feed-create-post {
   }
   .post-thread__header {
     border-bottom: 1px solid var(--border);
-    color: var(--posttext);
+    color: var(--text);
     font-weight: 600;
     font-size: 17px;
     line-height: 24px;
@@ -1657,7 +1677,7 @@ feed-create-post {
   padding: 16px 20px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   color: var(--highlight);
   font-size: 15px;
   line-height: 24px;
@@ -1667,7 +1687,7 @@ feed-create-post {
 }
 
 .trend-box {
-  background: var(--tilesecbg);
+  background: var(--tile-secondary-bg);
   border: 1px solid var(--border);
   border-radius: 10px;
 }
@@ -1677,7 +1697,7 @@ feed-create-post {
   font-weight: 600;
   font-size: 15px;
   line-height: 24px;
-  color: var(--posttext);
+  color: var(--text);
 }
 
 .trend-selector {
@@ -1699,7 +1719,7 @@ feed-create-post {
   follow-button {
     font-size: 13px;
     line-height: 20px;
-    color: var(--postsectext);
+    color: var(--text-secondary);
     a {
       border: none;
     }
@@ -1707,7 +1727,7 @@ feed-create-post {
 }
 
 .trend-name {
-  color: var(--posttext);
+  color: var(--text);
   font-weight: 600;
   font-size: 15px;
   line-height: 24px;
@@ -1744,7 +1764,7 @@ feed-create-post {
 }
 
 .js-feed-post-hover:hover {
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .feed-post__quoted-content:hover {
@@ -1752,7 +1772,7 @@ feed-create-post {
 }
 
 .feed-post__nft-list-view-unlockable {
-  color: var(--postfadedtext);
+  color: var(--text-muted);
   font-size: 15px;
   i-feather {
     margin: 0px 8px;
@@ -1775,9 +1795,9 @@ bs-dropdown-container {
 }
 
 .feed-post__dropdown-menu-item {
-  color: var(--postfadedtext);
+  color: var(--text-muted);
   &:hover {
-    color: var(--posttext);
+    color: var(--text);
   }
   i-feather {
     height: 14px;
@@ -1786,7 +1806,7 @@ bs-dropdown-container {
 }
 
 .feed-post__dropdown-menu-item-reclout {
-  background-color: var(--tilebg);
+  background-color: var(--tile-bg);
   border: none;
   border-radius: 8px;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
@@ -1854,7 +1874,7 @@ bs-dropdown-container {
 
   }
   &:hover {
-    background-color: var(--secondary);
+    background-color: var(--background-secondary);
   }
   &.fa-spinner {
     svg {
@@ -1871,9 +1891,9 @@ bs-dropdown-container {
 }
 
 .feed-post-icon-row__icon-reclout-option-text {
-  color: var(--postfadedtext);
+  color: var(--text-muted);
   &:hover {
-    color: var(--posttext);
+    color: var(--text);
   }
   font-weight: normal;
   font-size: 15px;
@@ -1937,7 +1957,7 @@ bs-dropdown-container {
   z-index: 1000;
   position: fixed;
   height: 64px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -1952,7 +1972,7 @@ bs-dropdown-container {
     span {
       top: 5px;
       position: relative;
-      color: var(--postsectext);
+      color: var(--text-secondary);
       font-style: normal;
       font-weight: 600;
       font-size: 24px;
@@ -1981,13 +2001,13 @@ bs-dropdown-container {
 }
 
 .desktop-create-post{
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border-radius: 10px;
   border: 1px solid var(--border);
 }
 
 .feed-post__container {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border-radius: 10px;
 }
 
@@ -2005,13 +2025,13 @@ bs-dropdown-container {
   height: 24px;
   padding: 2px 8px;
   border-radius: 10px;
-  background-color: var(--tilesecbg);
+  background-color: var(--tile-secondary-bg);
   font-family: Gilroy, Arial, sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
   line-height: 20px;
-  color: var(--posttext);
+  color: var(--text);
 }
 
 .feed-post__coin-price {
@@ -2019,7 +2039,7 @@ bs-dropdown-container {
   font-weight: 600;
   font-size: 13px;
   line-height: 20px;
-  color: var(--posttext);
+  color: var(--text);
 }
 
 .feed-post__avatar {
@@ -2039,7 +2059,7 @@ bs-dropdown-container {
   line-height: 24px;
   letter-spacing: 0em;
   text-align: left;
-  color: var(--posttext);
+  color: var(--text);
   font-feature-settings: 'ss10' on, 'ss08' on;
 }
 
@@ -2058,8 +2078,8 @@ bs-dropdown-container {
 
 .feed-post__parent-thread-connector {
   height: 100%;
-  border-right: 2px solid var(--secondary);
-  border-color: var(--secondary);
+  border-right: 2px solid var(--background-secondary);
+  border-color: var(--background-secondary);
   width: 55%;
 }
 
@@ -2075,7 +2095,7 @@ bs-dropdown-container {
 }
 
 .js-feed-post-icon-row__container{
-  color: var(--postfadedtext);
+  color: var(--text-muted);
   span {
     font-size: 13px;
     line-height: 20px;
@@ -2084,12 +2104,12 @@ bs-dropdown-container {
 
 .feed-post__nft-footer {
   padding: 16px;
-  background: var(--nftbarbg);
+  background: var(--nft-section-bg);
   font-style: normal;
   font-weight: normal;
   font-size: 15px;
   line-height: 24px;
-  color: var(--nfttext);
+  color: var(--text-inverted);
   border-radius: 0px 0px 10px 10px;
 }
 
@@ -2098,14 +2118,14 @@ bs-dropdown-container {
   font-weight: 600;
   font-size: 20px;
   line-height: 28px;
-  color: var(--nftbuttontext);
+  color: var(--text);
 }
 
 .nft-modal__subtitle {
   font-weight: 400;
   line-height: 24px;
   font-size: 15px;
-  color: var(--postfadedtext);
+  color: var(--text-muted);
 }
 
 .nft-content {
@@ -2122,7 +2142,7 @@ bs-dropdown-container {
 .nft-unlockable-content {
   display: inline;
   margin-left: 16px;
-  color: var(--nftfadedtext);
+  color: var(--text-inverted-muted);
   svg {
     height: 20px;
     width: 20px;
@@ -2131,11 +2151,12 @@ bs-dropdown-container {
 
 .nft-bid-btn {
   button {
+    color: var(--text);
     width: 118px;
     border-radius: 12px;
-    background: var(--tilebg);
+    background: var(--tile-bg);
     margin: 0px 0px;
-    padding: 8px 12px;
+    padding: 6px 12px;
     font-style: normal;
     font-width: normal;
     font-size: 13px;
@@ -2176,9 +2197,9 @@ feed-post-dropdown {
   margin-left: 12px;
   font-weight: 600;
   font-size: 17px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
   a {
-    color: var(--postsectext);
+    color: var(--text-secondary);
   }
   i-feather {
     margin-right: 20px;
@@ -2199,7 +2220,7 @@ feed-post-dropdown {
   font-size: 17px;
   line-height: 24px;
   border: none;
-  color: var(--tilebg);
+  color: var(--tile-bg);
 }
 
 .left-bar-active {
@@ -2229,7 +2250,7 @@ feed-post-dropdown {
 }
 
 .left-desktop-selector {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border-radius: 10px;
   padding: 16px;
   border: 1px solid var(--border);
@@ -2243,10 +2264,10 @@ right-bar-creators {
 
 .right-bar-creators__wallet-container {
   border: 1px solid var(--border);
-  background: var(--backgroundsecondary);
+  background: var(--background-secondary);
   padding: 16px;
   font-size: 15px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
   border-radius: 10px;
   margin-bottom: 20px;
 }
@@ -2263,8 +2284,8 @@ right-bar-creators {
 }
 
 .right-bar-creators__balance-box {
-  background-color: var(--tilesecbg);
-  color: var(--postsectext);
+  background-color: var(--tile-secondary-bg);
+  color: var(--text-secondary);
   font-size: 15px;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -2286,7 +2307,7 @@ right-bar-creators {
 }
 
 .creator-leaderboard__load-more:hover {
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .feed__light-grey-divider {
@@ -2311,9 +2332,9 @@ right-bar-creators {
 
 .creator-profile__bid-details {
   font-size: 15px;
-  color: var(--postfadedtext);
+  color: var(--text-muted);
   padding: 0px 16px 8px 16px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border: 1px solid var(--border);
   border-top: none;
   i-feather {
@@ -2336,12 +2357,12 @@ right-bar-creators {
   width: 78px;
   height: 48px;
   background: var(--highlight);
-  color: var(--tilebg);
+  color: var(--tile-bg);
   margin-left: 24px;
   border-radius: 16px;
   padding-top: 12px;
   &:hover {
-    color: var(--tilebg);
+    color: var(--tile-bg);
   }
 }
 
@@ -2372,7 +2393,7 @@ right-bar-creators {
 }
 
 .creator-profile-details__no-results {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   padding: 70px 0px 104px 0px;
   border-radius: 0px 0px 10px 10px;
 }
@@ -2406,7 +2427,7 @@ right-bar-creators {
 
 .creator-profile__divider-border {
   width: 100%;
-  border-top: 1px solid var(--nfttext);
+  border-top: 1px solid var(--text-inverted);
   margin-bottom: 20px;
   margin-top: 5px;
 }
@@ -2431,20 +2452,20 @@ right-bar-creators {
 .update-profile__avatar{
   display: flex;
   justify-content: center;
-  background: var(--nftbarbg);
+  background: var(--nft-section-bg);
   padding: 24px;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
 }
 
 .update-profile__text {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
 
 .update-profile__title {
-  color: var(--postfadedtext);
+  color: var(--text-muted);
   font-size: 12px;
   line-height: 20px;
   letter-spacing: 0.08em;
@@ -2454,7 +2475,7 @@ right-bar-creators {
   i-feather {
     height: 16px !important;
     width: 16px !important;
-    color: var(--postfadedtext);
+    color: var(--text-muted);
     cursor: pointer;
   }
 }
@@ -2464,12 +2485,12 @@ right-bar-creators {
   height: 48px;
   width: 100%;
   border-radius: 16px;
-  color: var(--tilebg);
+  color: var(--tile-bg);
   background: var(--highlight);
   font-size: 17px;
   font-weight: 600;
   &:hover {
-    color: var(--tilebg);
+    color: var(--tile-bg);
   }
 }
 
@@ -2480,13 +2501,13 @@ wallet-page {
 }
 
 .wallet__container {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border-radius: 10px;
   border: 1px solid var(--border);
 }
 
 .wallet__table {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border: 1px solid var(--border);
   border-radius: 10px;
   margin-top: 20px;
@@ -2514,10 +2535,10 @@ wallet-tutorial-page {
     border-radius: 0px 0px 10px 10px;
     tab-selector {
       .tab-selector__container {
-        background: var(--backgroundsecondary);
+        background: var(--background-secondary);
       }
       .active-tab {
-        color: var(--postsectext);
+        color: var(--text-secondary);
         font-weight: 600;
         border: none;
       }
@@ -2619,11 +2640,11 @@ update-profile {
       width: 16px !important;
       margin-right: 10px;
     }
-    border: 1px solid var(--tilebg);
+    border: 1px solid var(--tile-bg);
     background: none;
     border-radius: 12px;
     padding-top: 2px;
-    color: var(--tilebg);
+    color: var(--tile-bg);
     height: 32px;
     width: 136px;
     font-size: 13px;
@@ -2632,7 +2653,7 @@ update-profile {
   .form-control,textarea {
     border: none;
     border-radius: 16px;
-    background: var(--tilesecbg) !important;
+    background: var(--tile-secondary-bg) !important;
     resize: none;
   }
   .update-profile__cc-percent-symbol {
@@ -2659,32 +2680,32 @@ create-profile-tutorial-page {
 
 create-post-tutorial-page {
   feed-create-post {
-    background: var(--tilebg);
+    background: var(--tile-bg);
   }
 }
 
 creator-diamonds {
   .creator-diamonds__no-diamonds {
     padding-bottom: 70px;
-    background: var(--tilebg);
+    background: var(--tile-bg);
   }
 
   .creator-diamonds__tab-container {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
   }
   .creator-diamonds__header {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     padding: 0px 16px;
-    color: var(--postfadedtext);
+    color: var(--text-muted);
   }
   .diamond-row {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     padding: 0px 16px;
   }
   .diamond-total-row {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     padding: 0px 16px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -2692,7 +2713,7 @@ creator-diamonds {
 }
 
 .creator-profile-nfts__header {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   height: 80px;
   border-radius: 10px 10px 0px 0px;
   border: 1px solid var(--border);
@@ -2704,7 +2725,7 @@ creator-diamonds {
 
 .creator-profile-nfts__no-nfts {
   padding: 70px 0px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
 }
 
 creator-profile-nfts {
@@ -2720,8 +2741,8 @@ creator-profile-nfts {
       }
     }
     .creator-profile__bid-details {
-      background: var(--nftbarbg);
-      color: var(--nftfadedtext);
+      background: var(--nft-section-bg);
+      color: var(--text-inverted-muted);
       border-radius: 0px 0px 12px 12px;
       margin-bottom: 12px;
       border: 1px solid var(--border);
@@ -2733,13 +2754,13 @@ creator-profile-nfts {
 }
 
 .creator-profile-nfts__dropdown {
-  color: var(--tilesecbg);
+  color: var(--tile-secondary-bg);
   border-radius: 16px;
   border: 1px solid var(--border);
   height: 48px;
   width: 193px;
   margin-left: 16px;
-  color: var(--posttext);
+  color: var(--text);
   font-size: 15px;
   text-align: left;
   padding: 12px;
@@ -2756,7 +2777,7 @@ creator-profile-nfts {
 
 creator-profile-nfts {
   .creator-profile-nfts__list-container {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     padding: 16px;
     text-align: left;
     border-bottom: 1px solid var(--border);
@@ -2783,7 +2804,7 @@ creator-profile-nfts {
 }
 
 .buy-bitclout__container {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border-radius: 10px;
   padding-top: 16px;
 }
@@ -2796,11 +2817,11 @@ creator-profile-nfts {
 .buy-bitclout__country-selector {
   border: 1px solid var(--border);
   border-radius: 16px;
-  background: var(--tilesecbg);
+  background: var(--tile-secondary-bg);
   width: 105px;
   height: 48px;
   padding: 12px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
   font-size: 15px;
 }
 
@@ -2846,14 +2867,14 @@ creator-profile-nfts {
   border-radius: 25%;
   margin-right: 2px;
   &:hover {
-    background-color: var(--secondary);
+    background-color: var(--background-secondary);
   }
 }
 
 .messages-page__header {
   border: 1px solid var(--border);
   padding: 0px 16px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   height: 80px;
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
@@ -2867,7 +2888,7 @@ creator-profile-nfts {
     width: 156px;
     height: 48px;
     background: var(--highlight);
-    color: var(--tilebg);
+    color: var(--tile-bg);
     border-radius: 16px;
     font-size: 17px;
     line-height: 24px;
@@ -2902,7 +2923,7 @@ creator-profile-nfts {
 
 .messages-filter-menu__container {
   position: absolute;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   top: 10px;
   left: 10px;
   right: 10px;
@@ -2914,14 +2935,14 @@ creator-profile-nfts {
   font-size: 15px;
   font-weight: 600;
   margin: 12px 16px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
 }
 
 .messages-filter-menu__dropdown {
   border-radius: 16px !important;
   text-align: left;
   padding: 8px 12px;
-  background: var(--tilesecbg);
+  background: var(--tile-secondary-bg);
   position: relative;
   left: 16px;
   width: 80%
@@ -2947,16 +2968,16 @@ creator-profile-nfts {
   margin-top: 20px;
   margin-left: 16px;
   font-size: 17px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
   button {
     border-radius: 16px;
     margin-right: 24px;
     width: 94px;
     height: 48px;
     background: var(--highlight);
-    color: var(--tilebg);
+    color: var(--tile-bg);
     &:hover {
-      color: var(--tilebg);
+      color: var(--tile-bg);
     }
   }
 }
@@ -2981,7 +3002,7 @@ creator-profile-nfts {
     background: var(--highlight);
     i-feather {
       display: inline;
-      color: var(--tilebg);
+      color: var(--tile-bg);
     }
     &.radio {
       transition: background-color .5s;
@@ -2998,19 +3019,19 @@ creator-profile-nfts {
   width: 58px;
   text-align: center;
   border: none;
-  color: var(--nfttext);
+  color: var(--text-inverted);
   line-height: 0.65;
   background: var(--highlight);
   border-radius: 100%;
   &:hover {
-    color: var(--nfttext);
+    color: var(--text-inverted);
   }
 }
 
 .messages-thread__container {
   background: var(--background);
   &.messages-inbox__selected-thread {
-    background: var(--nfttext);
+    background: var(--text-inverted);
   }
 }
 
@@ -3028,7 +3049,7 @@ creator-profile-nfts {
 .messages-thread__desktop-column {
   width: 100%;
   max-width: 600px;
-  border-right: solid 1px var(--secondary);
+  border-right: solid 1px var(--background-secondary);
 }
 
 .messages-thread__border-radius {
@@ -3044,7 +3065,7 @@ creator-profile-nfts {
 
 .messages-thread-view__container {
   position: relative;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border-right: 1px solid var(--border);
 }
 
@@ -3052,7 +3073,7 @@ creator-profile-nfts {
   position: relative;
   top: 0px;
   height: 120px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border-top: 1px solid var(--border);
   textarea {
     padding: 16px;
@@ -3076,7 +3097,7 @@ creator-profile-nfts {
 
 .message-recipient-modal__header {
   height: 80px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   padding: 16px;
   search-bar {
     .border-bottom {
@@ -3130,13 +3151,13 @@ creator-profile-nfts {
 }
 
 .message__sender-bubble-color {
-  background-color: var(--nftbarbg);
-  color: var(--nfttext);
+  background-color: var(--nft-section-bg);
+  color: var(--text-inverted);
 }
 
 .message__non-sender-bubble-color {
   background-color: var(--background);
-  color: var(--postsectext);
+  color: var(--text-secondary);
 }
 
 .message-thread__unread-light-blue {
@@ -3288,7 +3309,7 @@ trade-creator-form {
   height: 20px;
   width: 20px;
   border-radius: 100%;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   i-feather {
     position: absolute;
     right: 3px;
@@ -3312,14 +3333,14 @@ app-notifications-list {
   .global__top-bar {
     position: relative;
     height: 72px;
-    background: var(--tilebg);
+    background: var(--tile-bg);
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
     border: 1px solid var(--border);
   }
   .notifications__list-item{
     border: 1px solid var(--border);
-    background: var(--tilebg);
+    background: var(--tile-bg);
     &.last-item {
       border-bottom-right-radius: 10px;
       border-bottom-left-radius: 10px;
@@ -3371,15 +3392,15 @@ app-notifications-list {
   border-radius: 10px;
   padding-left: 15px;
   padding-right: 15px;
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
   color: var(--text);
   border-color: var(--border);
 }
 
 .landing__hero {
   padding: 100px 0;
-  border-left: 1px solid var(--secondary) !important;
-  border-right: 1px solid var(--secondary) !important;
+  border-left: 1px solid var(--background-secondary) !important;
+  border-right: 1px solid var(--background-secondary) !important;
   color: var(--text);
 }
 
@@ -3438,7 +3459,7 @@ app-notifications-list {
   bottom: 0;
   left: 0;
   pointer-events: none;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0), var(--secondary) 90%);
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0), var(--background-secondary) 90%);
   width: 100%;
   height: 4em;
 }
@@ -3451,9 +3472,9 @@ app-notifications-list {
 
 .landing__platform {
   padding: 100px 0;
-  border-top: 1px solid var(--secondary) !important;
-  border-right: 1px solid var(--secondary) !important;
-  border-left: 1px solid var(--secondary) !important;
+  border-top: 1px solid var(--background-secondary) !important;
+  border-right: 1px solid var(--background-secondary) !important;
+  border-left: 1px solid var(--background-secondary) !important;
 }
 
 .landing__platform-header {
@@ -3471,7 +3492,7 @@ app-notifications-list {
 
 .landing__echo {
   background-color: var(--background);
-  border-top: 1px solid var(--secondary);
+  border-top: 1px solid var(--background-secondary);
   padding: 50px 0;
 }
 
@@ -3929,7 +3950,7 @@ input {
 }
 
 .selector {
-  background: var(--secondary);
+  background: var(--background-secondary);
   outline: none;
   border-radius: 5px;
   padding: 5px;
@@ -3947,7 +3968,7 @@ input {
 }
 
 .bg-light {
-  background-color: var(--secondary) !important;
+  background-color: var(--background-secondary) !important;
 }
 
 // Animations by Carsen Klock @carsenk
@@ -4052,12 +4073,12 @@ input {
       margin-bottom: 0px;
     }
     .feed-create-comment-form__reply-container {
-      background: var(--tilebg);
+      background: var(--tile-bg);
       margin-left: 0px;
       padding: 16px;
       border-top: 1px solid var(--border);
       font-size: 15px !important;
-      color: var(--postfadedtext);
+      color: var(--text-muted);
       span {
         font-weight: 600;
       }
@@ -4070,8 +4091,8 @@ input {
       textarea {
         margin-top: 0px;
         border: none;
-        background: var(--tilesecbg) !important;
-        color: var(--posttext) !important;
+        background: var(--tile-secondary-bg) !important;
+        color: var(--text) !important;
       }
       .feed-create-post__avatar {
         width: 55px;
@@ -4096,7 +4117,7 @@ input {
   padding: 0px;
   border: none;
   .modal-header-x {
-    background: var(--tilebg);
+    background: var(--tile-bg);
     height: 56px;
     width: 56px;
     border-radius: 32px;
@@ -4106,7 +4127,7 @@ input {
     right: 0px;
   }
   i-feather {
-    color: var(--posttext);
+    color: var(--text);
     height: 24px;
     width: 24px;
     position: relative;
@@ -4116,7 +4137,7 @@ input {
 }
 
 .creator-profile__container {
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border-radius: 10px;
   border: 1px solid var(--border);
   padding: 16px;
@@ -4133,8 +4154,8 @@ creator-profile-details {
     }
   }
   .creator-profile-details__coin-info {
-    background: var(--nftbarbg);
-    color: var(--nfttext);
+    background: var(--nft-section-bg);
+    color: var(--text-inverted);
     font-size: 13px;
     height: 56px;
     display: flex;
@@ -4148,12 +4169,12 @@ creator-profile-details {
 creator-profile-hodlers {
   .creator-profile-hodlers__header {
     padding-top: 16px;
-    background: var(--tilebg);
+    background: var(--tile-bg);
   }
 
   .creator-profile-hodlers__row {
     padding: 0px 16px;
-    background: var(--tilebg);
+    background: var(--tile-bg);
   }
   .total-row {
     border-radius: 0px 0px 10px 10px;
@@ -4183,17 +4204,17 @@ creator-profile-hodlers {
   border-bottom: 1px solid var(--border);
 }
 .mint-nft__text {
-  color: var(--postfadedtext);
+  color: var(--text-muted);
   size: 15px;
 }
 .mint-nft__title {
-  color: var(--posttext);
+  color: var(--text);
   font-weight: 600;
   font-size: 20px;
   margin-bottom: 8px;
 }
 .mint-nft__sub-title {
-  color: var(--postfadedtext);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 12px;
@@ -4215,7 +4236,7 @@ creator-profile-hodlers {
 .mint-nft__type-selector-title {
   font-weight: 600;
   font-size: 15px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
   margin-top: 12px;
   text-align: center;
   transition: color .5s;
@@ -4223,21 +4244,21 @@ creator-profile-hodlers {
 .mint-nft__dropdown-btn {
   border: 1px solid var(--border);
   border-radius: 16px 0px 0px 16px;
-  background: var(--tilesecbg);
+  background: var(--tile-secondary-bg);
   width: 96px;
   height: 48px;
   padding: 12px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
   font-size: 15px;
 }
 .mint-nft__input {
   padding: 12px;
   height: 48px;
-  background: var(--tilesecbg);
+  background: var(--tile-secondary-bg);
   border: 1px solid var(--border);
   border-radius: 16px;
   font-size: 15px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
 }
 .mint-nft__price-half {
   width: 50%;
@@ -4254,14 +4275,14 @@ creator-profile-hodlers {
 }
 .mint-nft__sub-text {
   font-size: 15px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
 }
 .mint-nft__create-btn {
   width: 137px;
   height: 48px;
   border-radius: 16px;
   background: var(--highlight);
-  color: var(--tilebg);
+  color: var(--tile-bg);
   font-size: 17px;
   margin: 24px 0px 105px 0px;
   border: none;
@@ -4270,7 +4291,7 @@ creator-profile-hodlers {
 .nft-modal-container {
   color: var(--text);
   border: 1px solid var(--mborder);
-  background: var(--tilebg);
+  background: var(--tile-bg);
   background-clip: padding-box;
   flex-direction: column;
   width: 100%;
@@ -4286,7 +4307,7 @@ creator-profile-hodlers {
 }
 
 .nft-modal-bid-details {
-  background: var(--tilesecbg);
+  background: var(--tile-secondary-bg);
   border-radius: 10px;
   font-size: 15px;
   margin: 16px 0px;
@@ -4306,7 +4327,7 @@ sell-nft-modal {
 }
 
 .sell-nft__row {
-  background: var(--tilesecbg);
+  background: var(--tile-secondary-bg);
   border-radius: 10px;
   padding: 16px 0px;
   margin-bottom: 16px;
@@ -4323,10 +4344,10 @@ sell-nft-modal {
   height: 48px;
   background: var(--error);
   border-radius: 16px;
-  color: var(--tilebg);
+  color: var(--tile-bg);
   border: none;
   &:hover {
-    color: var(--tilebg);
+    color: var(--tile-bg);
   }
   &.disabled-button {
     background: var(--error-light)
@@ -4338,44 +4359,44 @@ sell-nft-modal {
   height: 48px;
   background: var(--highlight);
   border-radius: 16px;
-  color: var(--tilebg);
+  color: var(--tile-bg);
   border: none;
   &:hover {
-    color: var(--tilebg);
+    color: var(--tile-bg);
   }
   &.disabled-button {
-    background: var(--highlightsec)
+    background: var(--highlight-secondary)
   }
 }
 
 .plain-button {
   width: 137px;
   height: 48px;
-  background: var(--tilebg);
-  border: 1px solid var(--postsectext);
+  background: var(--tile-bg);
+  border: 1px solid var(--text-secondary);
   border-radius: 16px;
-  color: var(--postsectext);
+  color: var(--text-secondary);
   &:hover {
-    color: var(--postsectext);
+    color: var(--text-secondary);
   }
   &.disabled-button {
-    background: var(--tilebg)
+    background: var(--tile-bg)
   }
 }
 
 .light-button {
   width: 137px;
   height: 48px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   border: 1px solid var(--border);
   border-radius: 16px;
-  color: var(--posttext);
+  color: var(--text);
   font-weight: 600;
   &:hover {
-    color: var(--posttext);
+    color: var(--text);
   }
   &.disabled-button {
-    background: var(--tilebg)
+    background: var(--tile-bg)
   }
 }
 
@@ -4413,7 +4434,7 @@ sell-nft-modal {
 .info-toast {
   background: var(--highlight);
   padding: 8px 16px;
-  color: var(--tilebg);
+  color: var(--tile-bg);
   font-size: 17px;
   border-radius: 4px;
   font-family: Gilroy, Arial, sans-serif;
@@ -4431,7 +4452,7 @@ sell-nft-modal {
 }
 
 .mat-option:hover:not(.mat-option-disabled), .mat-option:focus:not(.mat-option-disabled) {
-  background-color: var(--secondary);
+  background-color: var(--background-secondary);
 }
 
 .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
@@ -4461,27 +4482,27 @@ sell-nft-modal {
   max-width: 550px;
   font-family: Gilroy Arial sans-serif;
   border-radius: 12px;
-  background: var(--tilebg);
+  background: var(--tile-bg);
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   .introjs-button {
     border-radius: 12px !important;
     background: none;
-    border: 1px solid var(--postsectext) !important;
-    color: var(--postsectext) !important;
+    border: 1px solid var(--text-secondary) !important;
+    color: var(--text-secondary) !important;
     &:hover {
-      color: var(--postsectext) !important;
+      color: var(--text-secondary) !important;
     }
     &.introjs-disabled {
-      background: var(--tilebg) !important;
-      color: var(--postfadedtext) !important;
-      border-color: var(--postfadedtext) !important;
+      background: var(--tile-bg) !important;
+      color: var(--text-muted) !important;
+      border-color: var(--text-muted) !important;
     }
   }
 }
 
 .swal2-popup {
   z-index: 100000000;
-  background-color: var(--tilebg) !important;
+  background-color: var(--tile-bg) !important;
   color: var(--text);
   border-radius: 10px !important;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
@@ -4494,24 +4515,24 @@ sell-nft-modal {
   }
   .btn-light {
     background: var(--highlight) !important;
-    color: var(--tilebg) !important;
+    color: var(--tile-bg) !important;
     border: none;
     &:hover {
-      color: var(--tilebg) !important;
+      color: var(--tile-bg) !important;
     }
     &.disabled-button {
-      background: var(--highlightsec) !important;
+      background: var(--highlight-secondary) !important;
     }
   }
   .no, .swal2-cancel {
-    background: var(--tilebg) !important;
-    border: 1px solid var(--postsectext) !important;
-    color: var(--postsectext) !important;
+    background: var(--tile-bg) !important;
+    border: 1px solid var(--text-secondary) !important;
+    color: var(--text-secondary) !important;
     &:hover {
-      color: var(--postsectext) !important;
+      color: var(--text-secondary) !important;
     }
     &.disabled-button {
-      background: var(--tilebg) !important;
+      background: var(--tile-bg) !important;
     }
   }
 
@@ -4650,7 +4671,7 @@ sell-nft-modal {
       z-index: 30;
       position: absolute;
       width: 340px; height: 55px;
-      background: var(--tilebg);
+      background: var(--tile-bg);
       border-radius: 20px;
       // On mobile, need to position this box further left so it doesn't leave the screen
       @media (max-width: 991.98px) {
@@ -4667,7 +4688,7 @@ sell-nft-modal {
         transform: translate(0, 50px) scale(0);
         width: 47px; height: 20px;
         display: inline-block;
-        background: var(--secondary);
+        background: var(--background-secondary);
         background-color: transparent;
         content: '\f219';
         border-radius: 15px;

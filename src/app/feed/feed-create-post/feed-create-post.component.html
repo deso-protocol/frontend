@@ -1,6 +1,6 @@
 <!-- Be careful when modifying this.
      It's used by both the feed and that "create post page."-->
-<div [ngClass]="{'formbg': !parentPost }" class="create-post">
+<div class="create-post">
   <!-- Avatar + Input -->
   <div class="d-flex flex-column align-items-top pt-15px pr-15px pl-15px avatar-input-row">
      <div class="d-flex">
@@ -27,7 +27,8 @@
             'p-0': !parentPost,
             'br-12px': parentPost,
             'feed-create-comment__textarea': parentPost,
-            'lh-18px': parentPost
+            'lh-18px': parentPost,
+            'background-color-white': !parentPost
           }"
          class="form-control fs-18px m-5px p-0 border-0 feed-create-post__textarea"
          [placeholder]="getPlaceholderText()"

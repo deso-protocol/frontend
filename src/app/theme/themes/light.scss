@@ -1,33 +1,29 @@
 // Light Theme
 // By:
 .light[app-theme] {
-  --background: #F7F9F9;
-  --backgroundsecondary: #F0F3F3;
-  --tilebg: #FFFFFF;
-  --tilesecbg: #F4F6F6;
-  --nftbarbg: #1B1E1E;
+  //
+  --background-secondary: #F0F3F3;
+  --tile-bg: #FFFFFF;
+  --tile-secondary-bg: #F4F6F6;
+  --nft-section-bg: #1B1E1E;
+  --text-secondary: #545656;
+  --text-muted: #8D8F8F;
+  --text-inverted: #F0F3F3;
+  --text-inverted-muted: #9B9E9F;
   --highlight: #005BFF;
-  --highlightsec: #E5F2FF;
-  --posttext: #1B1E1E;
-  --postsectext: #545656;
-  --postfadedtext: #8D8F8F;
-  --nfttext: #F0F3F3;
-  --nftfadedtext: #9B9E9F;
-  --nftbuttontext: #1B1E1E;
-  --border: #E4EBEB;
-  --borderheavy: #CAD6D7;
-  --searchbartext: #6F8283;
-  --searchbarbackground: rgba(228, 235, 235, 0.5);
+  --highlight-secondary: #E5F2FF;
   --error: #FF6939;
   --error-light: #FFECE7;
   --success: #2CC99A;
 
+  --background: #F7F9F9;
+  --text: #1B1E1E;
+  --border: #E4EBEB;
+  --borderheavy: #CAD6D7;
 
-  --text: #333333;
+
   --grey: #555555;
-  --secondary: #f8f8f8;
   --secalt: #eee;
-  --textalt: #777;
   --norm: #222;
   --formbg: #FFFFFF;
   --link: #007BFF;

@@ -52,10 +52,10 @@
   class="d-flex flex-column"
   [ngClass]="{
     'br-12px': setBorder || cardStyle,
-    'js-feed-post-hover': hoverable,
     border: setBorder || cardStyle,
     'feed-post__quoted-content': hoverable && isQuotedContent,
-    'feed-post-container': !isQuotedContent
+    'feed-post-container': !isQuotedContent,
+    'pinned-post': showLeftSelectedBorder
   }"
 >
   <div class="w-100">
@@ -95,7 +95,7 @@
     >
       <a
         (click)="onPostClicked($event)"
-        Class="link--unstyled"
+        Class="link--unstyled position-relative"
         [ngClass]="{
           'cursor-inherit': !contentShouldLinkToThread
         }"
@@ -133,6 +133,7 @@
           <feed-post-dropdown
             *ngIf="showDropdown"
             class="ml-auto"
+            style="right: 15px"
             [post]="post"
             [postContent]="postContent"
             [nftEntryResponses]="nftEntryResponses"

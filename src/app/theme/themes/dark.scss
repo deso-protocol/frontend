@@ -1,17 +1,31 @@
 // Dark Theme
-// By: 
+// By:
 .dark[app-theme] {
+    --background-secondary: #151515;
+    --tile-bg: #212121;
+    --tile-secondary-bg: #151515;
+    --nft-section-bg: #BDBDBD;
+    --text-secondary: #bbbbbb;
+    --text-muted: #999;
+    --text-inverted: #202020;
+    --text-inverted-muted: #363636;
+    --highlight: #669DFF;
+    --highlight-secondary: #E5F2FF;
+    --error: #FF6939;
+    --error-light: #FFECE7;
+    --success: #2CC99A;
+
     --background: #121212;
     --text: #EFF3F8;
     --grey: #999;
-    --secondary: #202020;
     --secalt: #111;
     --textalt: #eee;
     --norm: #eee;
     --formbg: #111;
-    --link: #4DA3FF;
+    --link: #669DFF;
     --hover: #72b6ff;
-    --border: #484848;
+    --border: #4f4f4f;
+    --borderheavy: #4f4f4f;
     --mborder: #484848;
     --filter: invert(98%) sepia(1%) saturate(264%) hue-rotate(181deg) brightness(116%) contrast(100%);
     --unread: #1a293f;
