@@ -2136,13 +2136,6 @@ export class BackendApiService {
     });
   }
 
-  UploadVideo(endpoint: string, PublicKeyBase58Check: string, FileSize: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathUploadVideo, PublicKeyBase58Check, {
-      PublicKeyBase58Check,
-      FileSize,
-    });
-  }
-
   GetVideoStatus(endpoint: string, videoId: string): Observable<any> {
     return this.get(endpoint, `${BackendRoutes.RoutePathGetVideoStatus}/${videoId}`);
   }

@@ -50,7 +50,6 @@ export class FeedCreatePostComponent implements OnInit {
   postInput = "";
   postImageSrc = null;
 
-  // postVideoSrc = "82eee472d4e0b5d64e0c713839e337ea";
   postVideoSrc = null;
   videoUploadPercentage = null;
 
@@ -58,6 +57,9 @@ export class FeedCreatePostComponent implements OnInit {
   showImageLink = false;
   embedURL = "";
   constructedEmbedURL: any;
+  videoStreamInterval: Timer = null;
+  readyToStream: boolean = false;
+
   // Emits a PostEntryResponse. It would be better if this were typed.
   @Output() postCreated = new EventEmitter();
 
@@ -145,7 +147,7 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     // post can't be blank
-    if (this.postInput.length === 0 && !this.postImageSrc) {
+    if (this.postInput.length === 0 && !this.postImageSrc && !this.postVideoSrc) {
       return;
     }
 
@@ -237,78 +239,32 @@ export class FeedCreatePostComponent implements OnInit {
     this.submitPost();
   }
 
-  _handleFilesInput(files: FileList) {
+  _handleFilesInput(files: FileList): void {
     this.showImageLink = false;
     const fileToUpload = files.item(0);
     this._handleFileInput(fileToUpload);
   }
 
-  _handleFileInput(file: File) {
+  _handleFileInput(file: File): void {
     if (!file) {
       return;
     }
 
     if (!file.type || (!file.type.startsWith("image/") && !file.type.startsWith("video/"))) {
       this.globalVars._alertError("File selected does not have an image or video file type.");
-      return;
+    } else if (file.type.startsWith("video/")) {
+      this.uploadVideo(file);
+    } else if (file.type.startsWith("image/")) {
+      this.uploadImage(file);
     }
-    if (file.type.startsWith("video/")) {
-      // if (file.size > 200 * (1024 * 1024)) {
-      //   this.globalVars._alertError("File is too large. Please choose a file less than 200MB");
-      //   return;
-      // }
-      let upload: tus.Upload;
-      let mediaId = "";
-      const comp: FeedCreatePostComponent = this;
-      const options = {
-        endpoint: this.backendApi._makeRequestURL(environment.uploadVideoHostname, BackendRoutes.RoutePathUploadVideo),
-        chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
-        // resume: true,
-        // metadata: {
-        //   filename: "test.mp4",
-        //   filetype: "video/mp4",
-        //   defaulttimestamppct: 0.5,
-        //   watermark: "$WATERMARKUID"
-        // },
-        uploadSize: file.size,
-        onError: function (error) {
-          comp.globalVars._alertError(error);
-          upload.abort(true);
-          throw error;
-        },
-        onProgress: function (bytesUploaded, bytesTotal) {
-          comp.videoUploadPercentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-        },
-        onSuccess: function () {
-          comp.postVideoSrc = `https://iframe.videodelivery.net/${mediaId}`;
-          comp.postImageSrc = null;
-          comp.videoUploadPercentage = null;
-          comp.pollForReadyToStream();
-        },
-        onAfterResponse: function (req, res) {
-          return new Promise((resolve) => {
-            let mediaIdHeader = res.getHeader("stream-media-id");
-            if (mediaIdHeader) {
-              mediaId = mediaIdHeader;
-            }
-            resolve(res);
-          });
-        },
-      };
-      if (this.videoStreamInterval != null) {
-        clearInterval(this.videoStreamInterval);
-      }
-      this.postVideoSrc = null;
-      this.readyToStream = false;
-      upload = new tus.Upload(file, options);
-      upload.start();
-      return;
-    }
+  }
+
+  uploadImage(file: File) {
     if (file.size > 15 * (1024 * 1024)) {
       this.globalVars._alertError("File is too large. Please choose a file less than 15MB");
       return;
     }
-    this.backendApi
+    return this.backendApi
       .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
       .subscribe(
         (res) => {
@@ -321,8 +277,58 @@ export class FeedCreatePostComponent implements OnInit {
       );
   }
 
-  videoStreamInterval: Timer = null;
-  readyToStream: boolean = false;
+  uploadVideo(file: File): void {
+    if (file.size > 4 * (1024 * 1024 * 1024)) {
+      this.globalVars._alertError("File is too large. Please choose a file less than 4GB");
+      return;
+    }
+    let upload: tus.Upload;
+    let mediaId = "";
+    const comp: FeedCreatePostComponent = this;
+    const options = {
+      endpoint: this.backendApi._makeRequestURL(environment.uploadVideoHostname, BackendRoutes.RoutePathUploadVideo),
+      chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
+      uploadSize: file.size,
+      onError: function (error) {
+        comp.globalVars._alertError(error.message);
+        upload.abort(true).then(() => {
+          throw error;
+        });
+      },
+      onProgress: function (bytesUploaded, bytesTotal) {
+        comp.videoUploadPercentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
+      },
+      onSuccess: function () {
+        // Construct the url for the video based on the videoId and use the iframe url.
+        comp.postVideoSrc = `https://iframe.videodelivery.net/${mediaId}`;
+        comp.postImageSrc = null;
+        comp.videoUploadPercentage = null;
+        comp.pollForReadyToStream();
+      },
+      onAfterResponse: function (req, res) {
+        return new Promise((resolve) => {
+          // The stream-media-id header is the video Id in Cloudflare's system that we'll need to locate the video for streaming.
+          let mediaIdHeader = res.getHeader("stream-media-id");
+          if (mediaIdHeader) {
+            mediaId = mediaIdHeader;
+          }
+          resolve(res);
+        });
+      },
+    };
+    // Clear the interval used for polling cloudflare to check if a video is ready to stream.
+    if (this.videoStreamInterval != null) {
+      clearInterval(this.videoStreamInterval);
+    }
+    // Reset the postVideoSrc and readyToStream values.
+    this.postVideoSrc = null;
+    this.readyToStream = false;
+    // Create and start the upload.
+    upload = new tus.Upload(file, options);
+    upload.start();
+    return;
+  }
+
   pollForReadyToStream(): void {
     let attempts = 0;
     let numTries = 1200;
