@@ -31,14 +31,16 @@
     <div *ngIf="simpleTopBar" class="d-flex flex-column justify-content-end w-100 px-15px">
       <div class="d-flex justify-content-between w-100">
         <i-feather name="arrow-left" class="feather-medium cursor-pointer" (click)="backButtonFn()"></i-feather>
-        <div class="d-flex align-items-center">
+        <div
+          class="d-flex align-items-center"
+          [ngClass]="{ 'cursor-pointer': profileEntryResponse }"
+          [routerLink]="profileEntryResponse ? AppRoutingModule.profilePath(profileEntryResponse.Username) : []"
+          queryParamsHandling="merge"
+        >
           <div
             *ngIf="publicKeyBase58Check"
             class="messages-thread__avatar mr-15px"
             [avatar]="publicKeyBase58Check"
-            [ngClass]="{ 'cursor-pointer': profileEntryResponse }"
-            [routerLink]="profileEntryResponse ? AppRoutingModule.profilePath(profileEntryResponse.Username) : []"
-            queryParamsHandling="merge"
           ></div>
           {{ title }}
         </div>
