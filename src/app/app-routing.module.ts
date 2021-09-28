@@ -83,6 +83,9 @@ class RouteNames {
   public static GET_STARTER_BITCLOUT = "get-starter-bitclout";
   public static LANDING = "/";
   public static DIAMONDS = "diamonds";
+  public static REPOSTS = "reposts";
+  public static QUOTE_REPOSTS = "quote-reposts";
+  public static LIKES = "likes";
   public static TRENDS = "trends";
   public static REFERRALS = "referrals";
   public static NFT = "nft";
@@ -115,19 +118,19 @@ const routes: Routes = [
   // if CREATOR_POST is second, then it's route (/posts/new/) will get matched to POSTS instead
   { path: RouteNames.CREATE_POST, component: CreatePostPageComponent, pathMatch: "full" },
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
-  { path: RouteNames.POSTS + "/:postHashHex" + "/reposts", component: RecloutsPageComponent, pathMatch: "full" },
+  { path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.REPOSTS, component: RecloutsPageComponent, pathMatch: "full" },
   {
-    path: RouteNames.POSTS + "/:postHashHex" + "/quote-reposts",
+    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.QUOTE_REPOSTS,
     component: QuoteRepostsPageComponent,
     pathMatch: "full",
   },
   {
-    path: RouteNames.POSTS + "/:postHashHex" + "/likes",
+    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.LIKES,
     component: LikesPageComponent,
     pathMatch: "full",
   },
   {
-    path: RouteNames.POSTS + "/:postHashHex" + "/diamonds",
+    path: RouteNames.POSTS + "/:postHashHex" + "/" + RouteNames.DIAMONDS,
     component: DiamondsPageComponent,
     pathMatch: "full",
   },

@@ -1,12 +1,14 @@
 import { Component, OnInit, Input, OnChanges } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService, TutorialStatus } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import { ThemeService } from "../../theme/theme.service";
 import * as introJs from "intro.js/intro.js";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -60,7 +62,8 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     private backendApi: BackendApiService,
     private router: Router,
     private titleService: Title,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private modalService: BsModalService
   ) {}
 
   ngOnInit() {
@@ -314,12 +317,21 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
         confirmButtonText: "Buy Your Coin",
       }).then((res) => {
         if (res.isConfirmed) {
-          comp.router.navigate([
-            AppRoutingModule.buyCreatorPath(comp.globalVars.loggedInUser.ProfileEntryResponse.Username),
-          ]);
+          comp.openBuyCreatorCoinModal();
         }
       });
     }
+  }
+
+  openBuyCreatorCoinModal() {
+    const initialState = {
+      username: this.globalVars.loggedInUser.ProfileEntryResponse.Username,
+      tradeType: this.globalVars.RouteNames.BUY_CREATOR,
+    };
+    this.modalService.show(TradeCreatorComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+      initialState,
+    });
   }
 
   _updateProfileFailure(comp: UpdateProfileComponent) {

@@ -89,9 +89,8 @@
     <div class="d-inline-block">
       <span *ngIf="!inTutorial">
         ~{{ creatorCoinTrade.bitCloutPriceOfCreatorCoin().toFixed(4) }}
-        BitClout
+        DESO
       </span>
-
 
       <span [ngClass]="{ 'text-muted': !inTutorial }">
         {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.usdPriceOfCreatorCoin() | currency }}

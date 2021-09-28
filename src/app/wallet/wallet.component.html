@@ -256,20 +256,19 @@
                   </div>
                 </div>
 
-                <!-- Buy / Sell / Transfer Dropdown -->
-                <div
-                  class="wallet__dropdown-parent wallet-column col-lg-4 d-flex align-items-center justify-content-end fc-secondary m-0"
-                >
-                  <div style="min-width: 50px" class="d-flex align-items-center justify-content-end">
-                    <wallet-actions-dropdown
-                      [hodlingUsername]="creator.ProfileEntryResponse.Username"
-                      [inTutorial]="inTutorial"
-                      [isHighlightedCreator]="isHighlightedCreator(creator)"
-                      *ngIf="!inTutorial || isHighlightedCreator(creator)"
-                      [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY }"
-                      (isSelling)="exitTutorial()"
-                    ></wallet-actions-dropdown>
-                  </div>
+              <!-- Buy / Sell / Transfer Dropdown -->
+              <div
+                class="wallet__dropdown-parent wallet-column col-lg-4 d-flex align-items-center justify-content-end fc-secondary m-0"
+              >
+                <div style="min-width: 50px" class="d-flex align-items-center justify-content-end">
+                  <wallet-actions-dropdown
+                    [hodlingUser]="creator.ProfileEntryResponse"
+                    [inTutorial]="inTutorial"
+                    [isHighlightedCreator]="isHighlightedCreator(creator)"
+                    *ngIf="!inTutorial || isHighlightedCreator(creator)"
+                    [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY }"
+                    (isSelling)="exitTutorial()"
+                  ></wallet-actions-dropdown>
                 </div>
               </div>
             </div>

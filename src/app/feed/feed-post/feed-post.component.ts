@@ -1,22 +1,17 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import {AppRoutingModule, RouteNames} from "../../app-routing.module";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
-import { DiamondsModalComponent } from "../../diamonds-modal/diamonds-modal.component";
-import { LikesModalComponent } from "../../likes-modal/likes-modal.component";
-import { RecloutsModalComponent } from "../../reclouts-modal/reclouts-modal.component";
-import { QuoteRecloutsModalComponent } from "../../quote-reclouts-modal/quote-reclouts-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
 import * as _ from "lodash";
-import { PlaceBidComponent } from "../../place-bid/place-bid.component";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
-import {TradeCreatorComponent} from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 
 @Component({
   selector: "feed-post",
@@ -300,25 +295,25 @@ export class FeedPostComponent implements OnInit {
 
   openDiamondsPage(event): void {
     if (this.postContent.DiamondCount) {
-      this.openInteractionPage(event, "diamonds");
+      this.openInteractionPage(event, this.globalVars.RouteNames.DIAMONDS);
     }
   }
 
   openLikesPage(event): void {
     if (this.postContent.LikeCount) {
-      this.openInteractionPage(event, "likes");
+      this.openInteractionPage(event, this.globalVars.RouteNames.LIKES);
     }
   }
 
   openRepostsPage(event): void {
     if (this.postContent.RecloutCount) {
-      this.openInteractionPage(event, "reposts");
+      this.openInteractionPage(event, this.globalVars.RouteNames.REPOSTS);
     }
   }
 
   openQuoteRepostsModal(event): void {
     if (this.postContent.QuoteRecloutCount) {
-      this.openInteractionPage(event, "quote-reposts");
+      this.openInteractionPage(event, this.globalVars.RouteNames.QUOTE_REPOSTS);
     }
   }
 

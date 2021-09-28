@@ -1,16 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { GlobalVarsService } from "../../global-vars.service";
-import { TutorialStatus } from "../../backend-api.service";
+import { ProfileEntryResponse, TutorialStatus } from "../../backend-api.service";
 import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 import { BsModalService } from "ngx-bootstrap/modal";
+import { TransferBitcloutComponent } from "../../transfer-bitclout/transfer-bitclout.component";
 
 @Component({
   selector: "wallet-actions-dropdown",
   templateUrl: "./wallet-actions-dropdown.component.html",
 })
 export class WalletActionsDropdownComponent implements OnInit {
-  @Input() hodlingUsername: string;
+  @Input() hodlingUser: ProfileEntryResponse;
   @Input() inTutorial: boolean = false;
   @Input() isHighlightedCreator: boolean = false;
   @Output() isSelling = new EventEmitter<any>();
@@ -26,9 +27,7 @@ export class WalletActionsDropdownComponent implements OnInit {
   constructor(public globalVars: GlobalVarsService, private modalService: BsModalService) {}
 
   hideIcons(): void {
-    this.iconHideTimeout = setTimeout(() => {
-      // this.showIcons = false;
-    }, 1000);
+    this.showIcons = false;
   }
 
   stopIconHide() {
@@ -38,12 +37,21 @@ export class WalletActionsDropdownComponent implements OnInit {
   openBuyCreatorCoinModal(event, tradeType: string) {
     event.stopPropagation();
     this.isSelling.emit();
-    const initialState = { username: this.hodlingUsername, tradeType, inTutorial: this.inTutorial };
+    const initialState = { username: this.hodlingUser.Username, tradeType, inTutorial: this.inTutorial };
     this.modalService.show(TradeCreatorComponent, {
       class: "modal-dialog-centered buy-clout-modal",
       initialState,
     });
     this.showIcons = false;
+  }
+
+  openSendCloutModal(event) {
+    event.stopPropagation();
+    const initialState = { creatorToPayInput: this.hodlingUser };
+    this.modalService.show(TransferBitcloutComponent, {
+      class: "modal-dialog-centered buy-clout-modal",
+      initialState,
+    });
   }
 
   ngOnInit(): void {

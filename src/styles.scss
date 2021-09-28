@@ -1450,6 +1450,11 @@ feed-create-post {
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
 }
 
+.change-account-selector_list_accounts {
+  max-height: 35vh;
+  overflow-y: scroll;
+}
+
 .change-account-selector_list-item{
   overflow: hidden;
 }
@@ -2600,6 +2605,11 @@ transfer-bitclout {
     }
   }
   simple-profile-card {
+    .simple-profile-card__container {
+      padding-top: 0px;
+      padding-bottom: 0px;
+      margin-top: 18px;
+    }
     .container {
       margin-top: 28px;
       margin-bottom: 6px;
