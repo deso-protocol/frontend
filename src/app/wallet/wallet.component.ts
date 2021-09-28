@@ -296,7 +296,6 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   scrollerReset() {
     this.infiniteScroller.reset();
-    // this.datasource = this.infiniteScroller.getDatasource();
     this.datasource.adapter.reset().then(() => this.datasource.adapter.check());
   }
 
