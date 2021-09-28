@@ -598,6 +598,26 @@
         <button *ngIf="submittingSwapIdentity" class="btn btn-primary fs-15px" disabled>Working...</button>
       </div>
     </div>
+
+    <!-- ETH -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Manually Process ETH Transaction:
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="ethTxnHash"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter an ETH transaction hash"
+        />
+      </div>
+      <div class="d-flex mt-5px">
+        <button *ngIf="!processingETH" (click)="processETH()" class="btn btn-outline-primary fs-15px">
+          Manually Process
+        </button>
+        <button *ngIf="processingETH" class="btn btn-primary fs-15px" disabled>Working...</button>
+      </div>
+    </div>
+
+
     <!-- Change Username -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Change Username (BE CAREFUL):
