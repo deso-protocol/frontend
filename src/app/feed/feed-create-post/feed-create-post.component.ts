@@ -1,11 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService, BackendRoutes, PostEntryResponse } from "../../backend-api.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { environment } from "../../../environments/environment";
+import * as tus from "tus-js-client";
+import Timer = NodeJS.Timer;
+import { CloudflareStreamService } from "../../../lib/services/stream/cloudflare-stream-service";
 
 @Component({
   selector: "feed-create-post",
@@ -53,10 +56,16 @@ export class FeedCreatePostComponent implements OnInit {
   postInput = "";
   postImageSrc = null;
 
+  postVideoSrc = null;
+  videoUploadPercentage = null;
+
   showEmbedURL = false;
   showImageLink = false;
   embedURL = "";
   constructedEmbedURL: any;
+  videoStreamInterval: Timer = null;
+  readyToStream: boolean = false;
+
   // Emits a PostEntryResponse. It would be better if this were typed.
   @Output() postCreated = new EventEmitter();
 
@@ -68,7 +77,8 @@ export class FeedCreatePostComponent implements OnInit {
     private route: ActivatedRoute,
     private backendApi: BackendApiService,
     private changeRef: ChangeDetectorRef,
-    private appData: GlobalVarsService
+    private appData: GlobalVarsService,
+    private streamService: CloudflareStreamService
   ) {
     this.globalVars = appData;
   }
@@ -143,7 +153,7 @@ export class FeedCreatePostComponent implements OnInit {
     }
 
     // post can't be blank
-    if (this.postInput.length === 0 && !this.postImageSrc) {
+    if (this.postInput.length === 0 && !this.postImageSrc && !this.postVideoSrc) {
       return;
     }
 
@@ -162,6 +172,7 @@ export class FeedCreatePostComponent implements OnInit {
       Body: this.postInput,
       // Only submit images if the post is a quoted repost or a vanilla post.
       ImageURLs: !this.isComment ? [this.postImageSrc].filter((n) => n) : [],
+      VideoURLs: !this.isComment ? [this.postVideoSrc].filter((n) => n) : [],
     };
     const repostedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;
@@ -182,7 +193,7 @@ export class FeedCreatePostComponent implements OnInit {
         // TODO: Also, it may not be reasonable to allow stake multiple to be set in the FE.
         false /*IsHidden*/,
         this.globalVars.defaultFeeRateNanosPerKB /*MinFeeRateNanosPerKB*/,
-        this.inTutorial,
+        this.inTutorial
       )
       .subscribe(
         (response) => {
@@ -192,6 +203,7 @@ export class FeedCreatePostComponent implements OnInit {
 
           this.postInput = "";
           this.postImageSrc = null;
+          this.postVideoSrc = null;
           this.embedURL = "";
           this.constructedEmbedURL = "";
           this.changeRef.detectChanges();
@@ -233,30 +245,119 @@ export class FeedCreatePostComponent implements OnInit {
     this.submitPost();
   }
 
-  _handleFilesInput(files: FileList) {
+  _handleFilesInput(files: FileList): void {
     this.showImageLink = false;
     const fileToUpload = files.item(0);
     this._handleFileInput(fileToUpload);
   }
 
-  _handleFileInput(file: File) {
-    if (!file.type || !file.type.startsWith("image/")) {
-      this.globalVars._alertError("File selected does not have an image file type.");
+  _handleFileInput(file: File): void {
+    if (!file) {
       return;
     }
+
+    if (!file.type || (!file.type.startsWith("image/") && !file.type.startsWith("video/"))) {
+      this.globalVars._alertError("File selected does not have an image or video file type.");
+    } else if (file.type.startsWith("video/")) {
+      this.uploadVideo(file);
+    } else if (file.type.startsWith("image/")) {
+      this.uploadImage(file);
+    }
+  }
+
+  uploadImage(file: File) {
     if (file.size > 15 * (1024 * 1024)) {
       this.globalVars._alertError("File is too large. Please choose a file less than 15MB");
       return;
     }
-    this.backendApi
+    return this.backendApi
       .UploadImage(environment.uploadImageHostname, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
       .subscribe(
         (res) => {
           this.postImageSrc = res.ImageURL;
+          this.postVideoSrc = null;
         },
         (err) => {
           this.globalVars._alertError(JSON.stringify(err.error.error));
         }
       );
+  }
+
+  uploadVideo(file: File): void {
+    if (file.size > 4 * (1024 * 1024 * 1024)) {
+      this.globalVars._alertError("File is too large. Please choose a file less than 4GB");
+      return;
+    }
+    let upload: tus.Upload;
+    let mediaId = "";
+    const comp: FeedCreatePostComponent = this;
+    const options = {
+      endpoint: this.backendApi._makeRequestURL(environment.uploadVideoHostname, BackendRoutes.RoutePathUploadVideo),
+      chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
+      uploadSize: file.size,
+      onError: function (error) {
+        comp.globalVars._alertError(error.message);
+        upload.abort(true).then(() => {
+          throw error;
+        });
+      },
+      onProgress: function (bytesUploaded, bytesTotal) {
+        comp.videoUploadPercentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
+      },
+      onSuccess: function () {
+        // Construct the url for the video based on the videoId and use the iframe url.
+        comp.postVideoSrc = `https://iframe.videodelivery.net/${mediaId}`;
+        comp.postImageSrc = null;
+        comp.videoUploadPercentage = null;
+        comp.pollForReadyToStream();
+      },
+      onAfterResponse: function (req, res) {
+        return new Promise((resolve) => {
+          // The stream-media-id header is the video Id in Cloudflare's system that we'll need to locate the video for streaming.
+          let mediaIdHeader = res.getHeader("stream-media-id");
+          if (mediaIdHeader) {
+            mediaId = mediaIdHeader;
+          }
+          resolve(res);
+        });
+      },
+    };
+    // Clear the interval used for polling cloudflare to check if a video is ready to stream.
+    if (this.videoStreamInterval != null) {
+      clearInterval(this.videoStreamInterval);
+    }
+    // Reset the postVideoSrc and readyToStream values.
+    this.postVideoSrc = null;
+    this.readyToStream = false;
+    // Create and start the upload.
+    upload = new tus.Upload(file, options);
+    upload.start();
+    return;
+  }
+
+  pollForReadyToStream(): void {
+    let attempts = 0;
+    let numTries = 1200;
+    let timeoutMillis = 500;
+    this.videoStreamInterval = setInterval(() => {
+      if (attempts >= numTries) {
+        clearInterval(this.videoStreamInterval);
+        return;
+      }
+      this.streamService
+        .checkVideoStatusByURL(this.postVideoSrc)
+        .subscribe(([readyToStream, exitPolling]) => {
+          if (readyToStream) {
+            this.readyToStream = true;
+            clearInterval(this.videoStreamInterval);
+            return;
+          }
+          if (exitPolling) {
+            clearInterval(this.videoStreamInterval);
+            return;
+          }
+        })
+        .add(() => attempts++);
+    }, timeoutMillis);
   }
 }

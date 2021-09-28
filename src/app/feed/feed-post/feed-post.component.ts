@@ -343,7 +343,7 @@ export class FeedPostComponent implements OnInit {
             this._post.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
             "" /*Title*/,
-            { Body: this._post.Body, ImageURLs: this._post.ImageURLs } /*BodyObj*/,
+            { Body: this._post.Body, ImageURLs: this._post.ImageURLs, VideoURLs: this._post.VideoURLs } /*BodyObj*/,
             this._post.RepostedPostEntryResponse?.PostHashHex || "",
             {},
             "" /*Sub*/,
