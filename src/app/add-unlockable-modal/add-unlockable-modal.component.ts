@@ -6,6 +6,7 @@ import { of } from "rxjs";
 import { concatMap, filter, last, map, take } from "rxjs/operators";
 import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
 import { GlobalVarsService } from "../global-vars.service";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: "add-unlockable-modal",
@@ -25,7 +26,8 @@ export class AddUnlockableModalComponent implements OnInit {
     private modalService: BsModalService,
     public bsModalRef: BsModalRef,
     private globalVars: GlobalVarsService,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {}
@@ -63,8 +65,9 @@ export class AddUnlockableModalComponent implements OnInit {
         (res) => {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
-          this.modalService.show(NftSoldModalComponent, {
-            class: "modal-dialog-centered modal-sm",
+          this.toastr.show("Your nft was sold", null, {
+            toastClass: "info-toast",
+            positionClass: "toast-bottom-center",
           });
           this.modalService.setDismissReason("nft sold");
         },

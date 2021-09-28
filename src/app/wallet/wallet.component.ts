@@ -118,16 +118,18 @@ export class WalletComponent implements OnInit, OnDestroy {
     });
     this.sortWallet("value");
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
-    if (this.inTutorial) {
-      this.subscriptions.add(
-        this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
-          // Last Item of myItems is Visible => data-padding-forward should be zero.
-          if (lastVisible.$index === 0) {
-            this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
-          }
-        })
-      );
-    }
+    this.subscriptions.add(
+      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
+        // Last Item of myItems is Visible => data-padding-forward should be zero.
+        const activeHoldings = this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased;
+        if (activeHoldings.length === 0) {
+          this.correctDataPaddingForwardElementHeight(document.getElementById("wallet-scroller"));
+        }
+        if (lastVisible.$index === activeHoldings.length - 1 || (this.inTutorial && lastVisible.$index === 0)) {
+          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+        }
+      })
+    );
     this.titleService.setTitle("Wallet - BitClout");
   }
 
@@ -294,10 +296,6 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   scrollerReset() {
     this.infiniteScroller.reset();
-    const newDatasource = this.infiniteScroller.getDatasource();
-    console.log('here is the ds');
-    console.log(newDatasource);
-    // this.datasource = this.infiniteScroller.getDatasource();
     this.datasource.adapter.reset().then(() => this.datasource.adapter.check());
   }
 
@@ -306,7 +304,8 @@ export class WalletComponent implements OnInit, OnDestroy {
       return false;
     }
     return (
-      balanceEntryResponse.ProfileEntryResponse.Username.toLowerCase() === this.balanceEntryToHighlight.ProfileEntryResponse.Username.toLowerCase()
+      balanceEntryResponse.ProfileEntryResponse.Username.toLowerCase() ===
+      this.balanceEntryToHighlight.ProfileEntryResponse.Username.toLowerCase()
     );
   }
 
@@ -470,7 +469,7 @@ export class WalletComponent implements OnInit, OnDestroy {
           )} $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins.`,
         },
         {
-          intro: 'Here in your wallet you can see which coins you own, and how much they are currently worth.',
+          intro: "Here in your wallet you can see which coins you own, and how much they are currently worth.",
           element: document.querySelector(".wallet-highlighted-creator"),
         },
         {

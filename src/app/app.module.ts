@@ -102,7 +102,6 @@ import { GetStarterBitcloutPageComponent } from "./get-starter-bitclout-page/get
 import { GetStarterBitcloutComponent } from "./get-starter-bitclout-page/get-starter-bitclout/get-starter-bitclout.component";
 import { CommentModalComponent } from "./comment-modal/comment-modal.component";
 import { WalletComponent } from "./wallet/wallet.component";
-import { WalletTableComponent } from "./wallet/wallet-table/wallet-table.component";
 import { WalletWidgetComponent } from "./wallet/wallet-widget/wallet-widget.component";
 import { Toast, ToastrModule } from "ngx-toastr";
 import { SignUpComponent } from "./sign-up/sign-up.component";
@@ -321,7 +320,6 @@ export function playerFactory() {
     BuyCreatorCoinsConfirmTutorialComponent,
     BuyCreatorCoinsTutorialPageComponent,
     WalletPageComponent,
-    WalletTableComponent,
     WalletTutorialPageComponent,
     SellCreatorCoinsTutorialComponent,
     DiamondTutorialPageComponent,

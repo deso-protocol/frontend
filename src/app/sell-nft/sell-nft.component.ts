@@ -8,6 +8,7 @@ import { concatMap, last, map } from "rxjs/operators";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { Location } from "@angular/common";
+import {AddUnlockableModalComponent} from "../add-unlockable-modal/add-unlockable-modal.component";
 
 @Component({
   selector: "sell-nft-modal",
@@ -82,7 +83,20 @@ export class SellNftComponent implements OnInit {
 
   sellNFT(): void {
     if (this.post.HasUnlockable) {
-      this.modalService.setDismissReason("unlockable content opened");
+      const unlockableModalDetails = this.modalService.show(AddUnlockableModalComponent, {
+        class: "modal-dialog-centered",
+        initialState: {
+          post: this.post,
+          selectedBidEntries: this.selectedBidEntries,
+        },
+      });
+      const onHiddenEvent = unlockableModalDetails.onHidden;
+      onHiddenEvent.subscribe((response) => {
+        if (response === "nft sold") {
+          this.modalService.setDismissReason("nft sold");
+          this.location.back();
+        }
+      });
       return;
     }
     this.sellNFTTotal = this.selectedBidEntries.length;

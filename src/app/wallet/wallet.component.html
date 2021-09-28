@@ -61,13 +61,13 @@
             *ngIf="publicKeyIsCopied"
             class="feather-small check-indicator position-relative"
             name="check-circle"
-            style="top: '-5px'"
+            style="top: -5px"
           ></i-feather>
           <i-feather
             *ngIf="!publicKeyIsCopied"
             (click)="_copyPublicKey()"
             class="feather-small copy-button cursor-pointer position-relative"
-            style="top:'-5px'"
+            style="top: -5px"
             name="copy"
           ></i-feather>
         </div>
@@ -108,13 +108,13 @@
   <div class="d-flex justify-content-between feed-post__nft-footer align-items-center">
     <!--Creator coin balance-->
     <div class="d-flex flex-column">
-      <div class="fs-17px">{{ this.globalVars.loggedInUser.UsersYouHODL.length }} Creator Coin{{ this.globalVars.loggedInUser.UsersYouHODL.length > 1 ? "s" : "" }}</div>
-      <div class="fs-15px">{{ globalVars.nanosToBitClout(totalValue(), 0) }}$DESO / {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
+      <div class="fs-17px mb-5px">{{ this.globalVars.loggedInUser.UsersYouHODL.length }} Creator Coin{{ this.globalVars.loggedInUser.UsersYouHODL.length > 1 ? "s" : "" }}</div>
+      <div class="fs-15px">{{ globalVars.nanosToBitClout(totalValue(), 0) }}$DESO ~ {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
     </div>
     <!--Purchase creator coins-->
     <div class="nft-bid-btn d-flex align-items-center">
       <a (click)="openBuyCreatorCoinsModal()">
-        <button style="width: '159px'">
+        <button style="width: 159px">
           <i-feather name="user-plus" class="feather-small mr-10px"></i-feather>
           <span class="fs-13px">Buy Creator Coins</span>
         </button>
@@ -175,85 +175,86 @@
         >
           {{ emptyHodlerListMessage() }}
         </div>
-        <div *ngIf="(showTransferredCoins ? usersYouReceived : usersYouPurchased).length > 0">
+        <div id="wallet-scroller">
           <div
             #uiScroll
             *uiScroll="let creator of datasource"
           >
-            <!-- Screen out zero balances -->
-            <!-- How do we want to "highlight" the balance entry in the tutorial -->
-            <div
-              *ngIf="
-                creator &&
-                (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
-              "
-              class="row no-gutters fc-default py-10px px-16px border-top"
-              [ngClass]="{ 'wallet-highlighted-creator': isHighlightedCreator(creator) }"
-            >
-              <!-- Name-->
-              <a
-                class="wallet-column col-lg-3 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
-                [routerLink]="inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
-                queryParamsHandling="merge"
-                [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
+            <div *ngIf="(showTransferredCoins ? usersYouReceived : usersYouPurchased).length > 0">
+              <!-- Screen out zero balances -->
+              <!-- How do we want to "highlight" the balance entry in the tutorial -->
+              <div
+                *ngIf="
+                  creator &&
+                  (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
+                "
+                class="row no-gutters fc-default py-10px px-16px border-top"
+                [ngClass]="{ 'wallet-highlighted-creator': isHighlightedCreator(creator) }"
               >
-                <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"></div>
-                <div class="text-truncate holdings__name">
-                  <span>{{ creator.ProfileEntryResponse.Username }}</span>
+                <!-- Name-->
+                <a
+                  class="wallet-column col-lg-3 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
+                  [routerLink]="inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
+                  queryParamsHandling="merge"
+                  [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
+                >
+                  <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"></div>
+                  <div class="text-truncate holdings__name">
+                    <span>{{ creator.ProfileEntryResponse.Username }}</span>
 
-                  <span
-                    *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
-                    class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
-                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                    [matTooltip]="'This profile is reserved. The owner has not yet claimed it.'"
-                  >
-                    <i class="far fa-clock fa-md align-middle"></i>
-                  </span>
-                  <span
-                    *ngIf="creator.ProfileEntryResponse.IsVerified"
-                    (click)="tooltip.toggle()"
-                    class="ml-1 cursor-pointer text-primary"
-                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                    [matTooltip]="'This account is verified'"
-                    #tooltip="matTooltip"
-                  >
-                    <i class="fas fa-check-circle fa-md align-middle"></i>
-                  </span>
+                    <span
+                      *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
+                      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                      [matTooltip]="'This profile is reserved. The owner has not yet claimed it.'"
+                    >
+                      <i class="far fa-clock fa-md align-middle"></i>
+                    </span>
+                    <span
+                      *ngIf="creator.ProfileEntryResponse.IsVerified"
+                      (click)="tooltip.toggle()"
+                      class="ml-1 cursor-pointer text-primary"
+                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                      [matTooltip]="'This account is verified'"
+                      #tooltip="matTooltip"
+                    >
+                      <i class="fas fa-check-circle fa-md align-middle"></i>
+                    </span>
 
-                  <div class="text-grey9 fs-12px d-lg-none">
+                    <div class="text-grey9 fs-12px d-lg-none">
+                      {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+                    </div>
+                  </div>
+                </a>
+
+                <!-- Price-->
+                <div class="wallet-column col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
+                  <div class="d-flex align-items-center justify-content-end">
                     {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
                   </div>
                 </div>
-              </a>
 
-              <!-- Price-->
-              <div class="wallet-column col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
-                <div class="d-flex align-items-center justify-content-end">
-                  {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
-                </div>
-              </div>
-
-              <!-- Balance -->
-              <div class="wallet-column col-3 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
-                <div>
+                <!-- Balance -->
+                <div class="wallet-column col-3 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
                   <div>
-                    <i
-                      *ngIf="creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners"
-                      class="fa fa-spinner fc-muted"
-                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                      [matTooltip]="unminedCreatorCoinToolTip(creator)"
-                      #tooltip="matTooltip"
-                      (click)="tooltip.toggle()"
-                    ></i>
-                    {{
-                      globalVars.usdYouWouldGetIfYouSoldDisplay(
-                        creator.BalanceNanos,
-                        creator.ProfileEntryResponse.CoinEntry
-                      )
-                    }}
+                    <div>
+                      <i
+                        *ngIf="creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners"
+                        class="fa fa-spinner fc-muted"
+                        matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                        [matTooltip]="unminedCreatorCoinToolTip(creator)"
+                        #tooltip="matTooltip"
+                        (click)="tooltip.toggle()"
+                      ></i>
+                      {{
+                        globalVars.usdYouWouldGetIfYouSoldDisplay(
+                          creator.BalanceNanos,
+                          creator.ProfileEntryResponse.CoinEntry
+                        )
+                      }}
+                    </div>
                   </div>
                 </div>
-              </div>
 
               <!-- Buy / Sell / Transfer Dropdown -->
               <div
