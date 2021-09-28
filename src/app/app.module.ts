@@ -107,18 +107,22 @@ import { Toast, ToastrModule } from "ngx-toastr";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { WalletActionsDropdownComponent } from "./wallet/wallet-actions-dropdown/wallet-actions-dropdown.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
-import { DiamondsModalComponent } from "./diamonds-modal/diamonds-modal.component";
-import { DiamondsPageComponent } from "./diamonds-modal/diamonds-page/diamonds-page.component";
-import { RecloutsModalComponent } from "./reclouts-modal/reclouts-modal.component";
-import { RecloutsPageComponent } from "./reclouts-modal/reclouts-page/reclouts-page.component";
-import { QuoteRecloutsModalComponent } from "./quote-reclouts-modal/quote-reclouts-modal.component";
-import { QuoteRepostsPageComponent } from "./quote-reclouts-modal/quote-reposts-page/quote-reposts-page.component";
-import { LikesModalComponent } from "./likes-modal/likes-modal.component";
-import { LikesPageComponent } from "./likes-modal/likes-page/likes-page.component";
+import { DiamondsDetailsComponent } from "./diamonds-details/diamonds-details.component";
+import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
+import { RepostsDetailsComponent } from "./reposts-details/reposts-details.component";
+import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-page.component";
+import { RepostsModalComponent } from "./reposts-details/reposts-modal/reposts-modal.component";
+import { QuoteRepostsDetailsComponent } from "./quote-reclouts-details/quote-reposts-details.component";
+import { QuoteRepostsModalComponent } from "./quote-reclouts-details/quote-reposts-modal/quote-reposts-modal.component";
+import { QuoteRepostsPageComponent } from "./quote-reclouts-details/quote-reposts-page/quote-reposts-page.component"
+import { LikesDetailsComponent } from "./likes-details/likes-details.component";
+import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
+import { LikesModalComponent } from "./likes-details/likes-modal/likes-modal.component";
 import { SimpleProfileCardComponent } from "./simple-profile-card/simple-profile-card.component";
 import { CreatorDiamondsComponent } from "./creator-profile-page/creator-diamonds/creator-diamonds.component";
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
 import { DiamondPostsComponent } from "./diamond-posts-page/diamond-posts/diamond-posts.component";
+import { DiamondsModalComponent } from "./diamonds-details/diamonds-modal/diamonds-modal.component";
 import { MessagesFilterMenuComponent } from "./messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component";
 import { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
 import { AvatarDirective } from "./avatar/avatar.directive";
@@ -274,14 +278,18 @@ export function playerFactory() {
     WalletActionsDropdownComponent,
     PickACoinPageComponent,
     CreatorDiamondsComponent,
-    DiamondsModalComponent,
+    DiamondsDetailsComponent,
     DiamondsPageComponent,
-    RecloutsModalComponent,
-    RecloutsPageComponent,
-    QuoteRecloutsModalComponent,
+    DiamondsModalComponent,
+    RepostsDetailsComponent,
+    RepostsPageComponent,
+    RepostsModalComponent,
+    QuoteRepostsDetailsComponent,
+    QuoteRepostsModalComponent,
     QuoteRepostsPageComponent,
-    LikesModalComponent,
+    LikesDetailsComponent,
     LikesPageComponent,
+    LikesModalComponent,
     SimpleProfileCardComponent,
     MessagesFilterMenuComponent,
     DiamondPostsPageComponent,

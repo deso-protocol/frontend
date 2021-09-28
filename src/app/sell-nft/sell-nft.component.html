@@ -49,15 +49,15 @@
             <div class="d-flex flex-column col-4 border-right px-16px">
               <div class="font-weight-bold">Selling Price</div>
               <div>
-                <span>{{ globalVars.nanosToBitClout(bidEntry.BidAmountNanos, 5) }} $DESO</span>
-                <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 0) }}</span>
+                <span>{{ globalVars.nanosToBitClout(bidEntry.BidAmountNanos, 3) }} $DESO </span>
+                <span>(~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 0) }})</span>
               </div>
             </div>
             <div class="d-flex flex-column col-4 border-right px-16px">
               <div class="font-weight-bold">Earnings</div>
               <div>
-                <span>{{ globalVars.nanosToBitClout(bidEntry.EarningsAmountNanos, 5) }} $DESO</span>
-                <span>~{{ globalVars.nanosToUSD(bidEntry.EarningsAmountNanos, 0) }}</span>
+                <span>{{ globalVars.nanosToBitClout(bidEntry.EarningsAmountNanos, 3) }} $DESO </span>
+                <span>(~{{ globalVars.nanosToUSD(bidEntry.EarningsAmountNanos, 0) }})</span>
               </div>
             </div>
             <div class="d-flex justify-content-center align-items-center col-2 px-16px">

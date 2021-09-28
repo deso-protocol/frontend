@@ -6,11 +6,11 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
-  selector: "diamonds-modal",
-  templateUrl: "./diamonds-modal.component.html",
+  selector: "reposts-details",
+  templateUrl: "./reposts-details.component.html",
 })
-export class DiamondsModalComponent implements OnInit {
-  postHashHex: string;
+export class RepostsDetailsComponent implements OnInit {
+  @Input() postHashHex: string;
   diamonds = [];
   loading = false;
   errorLoading = false;
@@ -24,13 +24,15 @@ export class DiamondsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.postHashHex = this.route.snapshot.params.postHashHex;
+    if (!this.postHashHex) {
+      this.postHashHex = this.route.snapshot.params.postHashHex;
+    }
   }
 
   // Infinite scroll metadata.
   pageOffset = 0;
   lastPage = null;
-  pageSize = 25;
+  pageSize = 50;
 
   getPage = (page: number) => {
     // After we have filled the lastPage, do not honor any more requests.
@@ -39,7 +41,7 @@ export class DiamondsModalComponent implements OnInit {
     }
     this.loading = true;
     return this.backendApi
-      .GetDiamondsForPost(
+      .GetRecloutsForPost(
         this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
@@ -49,20 +51,20 @@ export class DiamondsModalComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          let diamondSendersPage = res.DiamondSenders;
+          let recloutersPage = res.Reclouters;
 
           // Update the pageOffset now that we have successfully fetched a page.
-          this.pageOffset += diamondSendersPage.length;
+          this.pageOffset += recloutersPage.length;
 
           // If we've hit the end of the followers with profiles, set last page and anonymous follower count.
-          if (diamondSendersPage.length < this.pageSize) {
+          if (recloutersPage.length < this.pageSize) {
             this.lastPage = page;
           }
 
           this.loading = false;
 
           // Return the page.
-          return diamondSendersPage;
+          return recloutersPage;
         },
         (err) => {
           this.errorLoading = true;

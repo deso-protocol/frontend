@@ -3,14 +3,14 @@ import { BackendApiService } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import {ActivatedRoute, Router} from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
-  selector: "quote-reclouts-modal",
-  templateUrl: "./quote-reclouts-modal.component.html",
+  selector: "diamonds-details",
+  templateUrl: "./diamonds-details.component.html",
 })
-export class QuoteRecloutsModalComponent implements OnInit {
-  postHashHex: string;
+export class DiamondsDetailsComponent implements OnInit {
+  @Input() postHashHex: string;
   diamonds = [];
   loading = false;
   errorLoading = false;
@@ -24,13 +24,15 @@ export class QuoteRecloutsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.postHashHex = this.route.snapshot.params.postHashHex;
+    if (!this.postHashHex) {
+      this.postHashHex = this.route.snapshot.params.postHashHex;
+    }
   }
 
   // Infinite scroll metadata.
   pageOffset = 0;
   lastPage = null;
-  pageSize = 50;
+  pageSize = 25;
 
   getPage = (page: number) => {
     // After we have filled the lastPage, do not honor any more requests.
@@ -39,7 +41,7 @@ export class QuoteRecloutsModalComponent implements OnInit {
     }
     this.loading = true;
     return this.backendApi
-      .GetQuoteRecloutsForPost(
+      .GetDiamondsForPost(
         this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
@@ -49,20 +51,20 @@ export class QuoteRecloutsModalComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          let quoteRecloutsPage = res.QuoteReclouts;
+          let diamondSendersPage = res.DiamondSenders;
 
           // Update the pageOffset now that we have successfully fetched a page.
-          this.pageOffset += quoteRecloutsPage.length;
+          this.pageOffset += diamondSendersPage.length;
 
           // If we've hit the end of the followers with profiles, set last page and anonymous follower count.
-          if (quoteRecloutsPage.length < this.pageSize) {
+          if (diamondSendersPage.length < this.pageSize) {
             this.lastPage = page;
           }
 
           this.loading = false;
 
           // Return the page.
-          return quoteRecloutsPage;
+          return diamondSendersPage;
         },
         (err) => {
           this.errorLoading = true;

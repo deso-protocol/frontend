@@ -6,11 +6,11 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
-  selector: "likes-modal",
-  templateUrl: "./likes-modal.component.html",
+  selector: "quote-reposts-details",
+  templateUrl: "./quote-reposts-details.component.html",
 })
-export class LikesModalComponent implements OnInit {
-  postHashHex: string;
+export class QuoteRepostsDetailsComponent implements OnInit {
+  @Input() postHashHex: string;
   diamonds = [];
   loading = false;
   errorLoading = false;
@@ -24,7 +24,9 @@ export class LikesModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.postHashHex = this.route.snapshot.params.postHashHex;
+    if (!this.postHashHex) {
+      this.postHashHex = this.route.snapshot.params.postHashHex;
+    }
   }
 
   // Infinite scroll metadata.
@@ -39,7 +41,7 @@ export class LikesModalComponent implements OnInit {
     }
     this.loading = true;
     return this.backendApi
-      .GetLikesForPost(
+      .GetQuoteRecloutsForPost(
         this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
@@ -49,20 +51,20 @@ export class LikesModalComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          let likersPage = res.Likers;
+          let quoteRecloutsPage = res.QuoteReclouts;
 
           // Update the pageOffset now that we have successfully fetched a page.
-          this.pageOffset += likersPage.length;
+          this.pageOffset += quoteRecloutsPage.length;
 
           // If we've hit the end of the followers with profiles, set last page and anonymous follower count.
-          if (likersPage.length < this.pageSize) {
+          if (quoteRecloutsPage.length < this.pageSize) {
             this.lastPage = page;
           }
 
           this.loading = false;
 
           // Return the page.
-          return likersPage;
+          return quoteRecloutsPage;
         },
         (err) => {
           this.errorLoading = true;

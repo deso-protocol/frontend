@@ -6,11 +6,11 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
-  selector: "reclouts-modal",
-  templateUrl: "./reclouts-modal.component.html",
+  selector: "likes-details",
+  templateUrl: "./likes-details.component.html",
 })
-export class RecloutsModalComponent implements OnInit {
-  postHashHex: string;
+export class LikesDetailsComponent implements OnInit {
+  @Input() postHashHex: string;
   diamonds = [];
   loading = false;
   errorLoading = false;
@@ -24,7 +24,9 @@ export class RecloutsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.postHashHex = this.route.snapshot.params.postHashHex;
+    if (!this.postHashHex) {
+      this.postHashHex = this.route.snapshot.params.postHashHex;
+    }
   }
 
   // Infinite scroll metadata.
@@ -39,7 +41,7 @@ export class RecloutsModalComponent implements OnInit {
     }
     this.loading = true;
     return this.backendApi
-      .GetRecloutsForPost(
+      .GetLikesForPost(
         this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
@@ -49,20 +51,20 @@ export class RecloutsModalComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          let recloutersPage = res.Reclouters;
+          let likersPage = res.Likers;
 
           // Update the pageOffset now that we have successfully fetched a page.
-          this.pageOffset += recloutersPage.length;
+          this.pageOffset += likersPage.length;
 
           // If we've hit the end of the followers with profiles, set last page and anonymous follower count.
-          if (recloutersPage.length < this.pageSize) {
+          if (likersPage.length < this.pageSize) {
             this.lastPage = page;
           }
 
           this.loading = false;
 
           // Return the page.
-          return recloutersPage;
+          return likersPage;
         },
         (err) => {
           this.errorLoading = true;

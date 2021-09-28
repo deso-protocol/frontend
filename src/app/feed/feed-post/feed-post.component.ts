@@ -12,6 +12,10 @@ import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-se
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
 import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal.component";
+import {DiamondsModalComponent} from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
+import {QuoteRepostsModalComponent} from "../../quote-reclouts-details/quote-reposts-modal/quote-reposts-modal.component";
+import {RepostsModalComponent} from "../../reposts-details/reposts-modal/reposts-modal.component";
 
 @Component({
   selector: "feed-post",
@@ -286,34 +290,41 @@ export class FeedPostComponent implements OnInit {
     });
   }
 
-  openInteractionPage(event, pageName: string): void {
+  openInteractionPage(event, pageName: string, component): void {
     event.stopPropagation();
-    this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex, pageName], {
-      queryParamsHandling: "merge",
-    });
+    if (this.globalVars.isMobile()) {
+      this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex, pageName], {
+        queryParamsHandling: "merge",
+      });
+    } else {
+      this.modalService.show(component, {
+        class: "modal-dialog-centered",
+        initialState: { postHashHex: this.post.PostHashHex },
+      });
+    }
   }
 
   openDiamondsPage(event): void {
     if (this.postContent.DiamondCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.DIAMONDS);
+      this.openInteractionPage(event, this.globalVars.RouteNames.DIAMONDS, DiamondsModalComponent);
     }
   }
 
   openLikesPage(event): void {
     if (this.postContent.LikeCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.LIKES);
+      this.openInteractionPage(event, this.globalVars.RouteNames.LIKES, LikesModalComponent);
     }
   }
 
   openRepostsPage(event): void {
     if (this.postContent.RecloutCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.REPOSTS);
+      this.openInteractionPage(event, this.globalVars.RouteNames.REPOSTS, RepostsModalComponent);
     }
   }
 
   openQuoteRepostsModal(event): void {
     if (this.postContent.QuoteRecloutCount) {
-      this.openInteractionPage(event, this.globalVars.RouteNames.QUOTE_REPOSTS);
+      this.openInteractionPage(event, this.globalVars.RouteNames.QUOTE_REPOSTS, QuoteRepostsModalComponent);
     }
   }
 
