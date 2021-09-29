@@ -40,12 +40,12 @@
       <tab-selector [tabs]="tabs" [activeTab]="activeTab" [buttonSelector]="false" (tabClick)="_handleTabClick($event)"></tab-selector>
     </div>
     <div *ngIf="showBidsView">
-      <div *ngIf="!loading && !bids?.length" class="fs-15px p-15px d-flex justify-content-between">
+      <div *ngIf="!loading && !bids?.length" class="fs-15px p-15px d-flex justify-content-between align-items-center">
         There are no bids yet.
-        <div class="mr-25px cursor-pointer" (click)="closeAuction()">
+        <button class="plain-button" style="width: 165px" (click)="closeAuction()">
           <i-feather name="alert-octagon" class="feather-small mr-5px"></i-feather>
           <span>Close my auction</span>
-        </div>
+        </button>
       </div>
       <div *ngIf="!loading && bids?.length">
         <div class="px-16px d-flex align-items-center fs-14px py-15px border-bottom border-color-grey link--unstyled">
@@ -167,10 +167,10 @@
             [ngClass]="{ 'justify-content-center': globalVars.isMobile() }"
             *ngIf="activeTab === NftPostComponent.MY_AUCTIONS && myAvailableSerialNumbers?.length"
           >
-            <div class="d-flex justify-content-center mr-25px cursor-pointer nft-post-auction-action" (click)="closeAuction()">
-              <i-feather name="alert-octagon" class="feather-small mr-5px"></i-feather>
+            <button class="plain-button d-flex justify-content-center align-items-center mr-25px nft-post-auction-action" style="width: 165px" (click)="closeAuction()">
+              <i-feather name="alert-octagon" class="feather-small mr-5px d-flex align-items-center"></i-feather>
               <span>Close my auction</span>
-            </div>
+            </button>
             <button
               class="primary-button nft-post-auction-action"
               style="width: 110px"
