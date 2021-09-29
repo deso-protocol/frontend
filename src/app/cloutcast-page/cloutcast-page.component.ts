@@ -272,7 +272,7 @@ export class CloutCastPageComponent implements OnInit {
   nanosToUSD(nanos: number): string {
     return this.globalVars.nanosToUSD(nanos, 2);
   }
-  nanosToDeSo(nanos: number, toPlace = 2): string {
+  nanosToDeSo(nanos: number, toPlace = 4): string {
     return this.globalVars.nanosToDeSo(nanos,toPlace);
   }
 
@@ -315,7 +315,7 @@ export class CloutCastPageComponent implements OnInit {
       // console.log(this.selectedCastObject.Id);
       let didWork = await this.cloutcastApi.proveWork(this.selectedCastObject.Id);
       if (didWork == true) {
-        this.globalVars._alertSuccess(`${this.nanosToDeSo(this.selectedCastObject.RateNanos)} $CLOUT (~ ${this.nanosToUSD(this.selectedCastObject.RateNanos)} USD) was added to your CloutCast escrow wallet!`)
+        this.globalVars._alertSuccess(`${this.nanosToDeSo(this.selectedCastObject.RateNanos)} $DESO (~ ${this.nanosToUSD(this.selectedCastObject.RateNanos)} USD) was added to your CloutCast escrow wallet!`)
       }
     } catch (ex) {
       console.error(ex);
@@ -425,7 +425,7 @@ export class CloutCastPageComponent implements OnInit {
         let res = await SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),
           title: "Are you ready?",
-          html: `Are you sure you want to withdraw ${this.withdrawCloutAmount} $CLOUT (~${this.bitcloutToUSD(this.withdrawCloutAmount)} USD) from your CloutCast Wallet? Deposits take 24-48 hours to verify, and fulfill.`,
+          html: `Are you sure you want to withdraw ${this.withdrawCloutAmount} $DESO (~${this.bitcloutToUSD(this.withdrawCloutAmount)} USD) from your CloutCast Wallet? Deposits take 24-48 hours to verify, and fulfill.`,
           showCancelButton: true,
           showConfirmButton: true,
           customClass: {
@@ -448,6 +448,8 @@ export class CloutCastPageComponent implements OnInit {
       }
     } catch (ex) {
       this.globalVars._alertError(ex.message || "Unspecified Error trying to withdraw.");
+    } finally {
+      this.sendingWithdrawRequest = false;
     }
   }
 
