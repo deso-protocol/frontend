@@ -192,6 +192,7 @@ export class FeedCreatePostComponent implements OnInit {
 
           // Refresh the post page.
           if (this.postRefreshFunc) {
+            console.log('Refreshing');
             this.postRefreshFunc(response.PostEntryResponse);
           }
 

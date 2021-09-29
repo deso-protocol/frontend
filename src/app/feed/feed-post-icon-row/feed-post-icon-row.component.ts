@@ -9,7 +9,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
 import { ThemeService } from "../../theme/theme.service";
-import { includes, round } from "lodash";
+import { includes, round, set } from "lodash";
 
 @Component({
   selector: "feed-post-icon-row",
@@ -429,10 +429,6 @@ export class FeedPostIconRowComponent {
 
   sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
     this.sendingDiamonds = true;
-    console.log('Here is the post content');
-    console.log(this.postContent.PostHashHex);
-    console.log('Poster public key');
-    console.log(this.postContent.PosterPublicKeyBase58Check);
     return this.backendApi
       .SendDiamonds(
         this.globalVars.localNode,
@@ -455,7 +451,7 @@ export class FeedPostIconRowComponent {
           });
           this.diamondSelected = diamonds;
           this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
-          this.postContent.PostEntryReaderState.DiamondLevelBestowed = diamonds;
+          set(this.postContent, "PostEntryReaderState.DiamondLevelBestowed", diamonds);
           if (!skipCelebration) {
             // Celebrate when the SendDiamonds call completes
             this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
@@ -482,6 +478,23 @@ export class FeedPostIconRowComponent {
   sendDiamondsFailure(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
     comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
+  }
+
+  getPost(postHashHex) {
+    // Hit the Get Single Post endpoint with specific parameters
+    let readerPubKey = "";
+    if (this.globalVars.loggedInUser) {
+      readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+    }
+    return this.backendApi.GetSinglePost(
+      this.globalVars.localNode,
+      postHashHex /*PostHashHex*/,
+      readerPubKey /*ReaderPublicKeyBase58Check*/,
+      false,
+      0,
+      0,
+      this.globalVars.showAdminTools() /*AddGlobalFeedBool*/
+    );
   }
 
   popoverOpenClickHandler = (e: Event) => {
@@ -554,7 +567,10 @@ export class FeedPostIconRowComponent {
       return;
     }
 
-    if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
+    if (
+      this.postContent.PostEntryReaderState?.DiamondLevelBestowed &&
+      index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed
+    ) {
       this.globalVars._alertError("You cannot downgrade a diamond");
       return;
     }
