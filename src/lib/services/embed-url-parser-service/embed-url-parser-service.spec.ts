@@ -264,7 +264,7 @@ describe("EmbedUrlParserService", () => {
       expect(EmbedUrlParserService.isValidEmbedURL(link)).toBeFalsy();
 
       EmbedUrlParserService.getEmbedURL(backendApiService, globalVarsService, link).subscribe((res) => {
-        expect(res).toEqual(embedLink + `&parent=${location.hostname}`);
+        expect(res).toEqual(embedLink + `&autoplay=false&parent=${location.hostname}`);
         expect(EmbedUrlParserService.isValidEmbedURL(res)).toBeTruthy();
         expect(EmbedUrlParserService.isValidTwitchEmbedURLWithParent(res)).toBeTruthy();
         expect(EmbedUrlParserService.isValidTwitchEmbedURL(res)).toBeFalsy();
@@ -277,7 +277,7 @@ describe("EmbedUrlParserService", () => {
       expect(EmbedUrlParserService.isValidTwitchEmbedURLWithParent(constructedEmbedUrl)).toBeFalsy();
 
       EmbedUrlParserService.getEmbedURL(backendApiService, globalVarsService, embedLink).subscribe((res) => {
-        expect(res).toEqual(embedLink + `&parent=${location.hostname}`);
+        expect(res).toEqual(embedLink + `&autoplay=false&parent=${location.hostname}`);
         expect(EmbedUrlParserService.isValidEmbedURL(res)).toBeTruthy();
         expect(EmbedUrlParserService.isValidTwitchEmbedURLWithParent(res)).toBeTruthy();
         expect(EmbedUrlParserService.isValidTwitchEmbedURL(res)).toBeFalsy();

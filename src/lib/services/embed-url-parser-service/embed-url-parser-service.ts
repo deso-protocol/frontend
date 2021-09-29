@@ -204,7 +204,7 @@ export class EmbedUrlParserService {
     }
     if (this.isTwitchFromURL(url)) {
       return of(this.constructTwitchEmbedURL(url)).pipe(
-        map((embedURL) => (embedURL ? embedURL + `&parent=${location.hostname}` : ""))
+        map((embedURL) => (embedURL ? embedURL + `&autoplay=false&parent=${location.hostname}` : ""))
       );
     }
     return of("");
@@ -345,7 +345,7 @@ export class EmbedUrlParserService {
 
   static isValidTwitchEmbedURLWithParent(link: string): boolean {
     const regExp = new RegExp(
-      `https:\/\/(player|clips)\.twitch\.tv\/(\\?channel\=[A-Za-z0-9_]{1,30}|\\?video=\\d{8,12}|embed\\?clip=[A-Za-z0-9_-]{1,80}|\\?collection=[A-Za-z0-9]{10,20}(\&video=\\d{8,12})\?)\&parent=${location.hostname}$`
+      `https:\/\/(player|clips)\.twitch\.tv\/(\\?channel\=[A-Za-z0-9_]{1,30}|\\?video=\\d{8,12}|embed\\?clip=[A-Za-z0-9_-]{1,80}|\\?collection=[A-Za-z0-9]{10,20}(\&video=\\d{8,12})\?)\&autoplay=false\&parent=${location.hostname}$`
     );
     return !!link.match(regExp);
   }
