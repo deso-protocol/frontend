@@ -14,7 +14,7 @@
 
   <div>
     <div *ngIf="!investInYourself">
-      <div class="tutorial-creators-to-invest-in">
+      <div id="tutorial-creators-to-invest-in">
         <div>
           <div class="background-color-secondary p-16px">
             <span class="fs-17px fc-secondary font-weight-bold">Well-Known Creators</span>
@@ -28,6 +28,7 @@
                 [inTutorial]="true"
                 [hideFollowLink]="true"
                 [singleColumn]="true"
+                [tutorialWiggle]="tutorialWiggle"
               ></simple-profile-card>
             </div>
           </div>
@@ -53,6 +54,7 @@
                 [inTutorial]="true"
                 [hideFollowLink]="true"
                 [singleColumn]="true"
+                [tutorialWiggle]="tutorialWiggle"
               ></simple-profile-card>
             </div>
           </div>

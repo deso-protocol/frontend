@@ -66,7 +66,7 @@ export class DiamondTutorialComponent implements OnInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-
+    const title = 'Give a Diamond <span class="ml-5px tutorial-header-step">Step 5/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -75,10 +75,12 @@ export class DiamondTutorialComponent implements OnInit {
       overlayOpacity: 0.8,
       steps: [
         {
+          title,
           intro: `Diamonds are tips that send money directly to the poster.`,
           element: document.querySelector(".feed-post-container"),
         },
         {
+          title,
           intro: `<b>Click the diamond</b> to send $${this.globalVars.nanosToUSDNumber(this.globalVars.diamondLevelMap[1]).toFixed(2)}.`,
           element: document.querySelector("#diamond-button"),
         },

@@ -1496,6 +1496,12 @@ feed-create-post {
   border-radius: 10px 10px 0px 0px;
 }
 
+.tutorial-header-step {
+  font-weight: normal;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
 .tutorial-title {
   font-size: 20px;
   color: var(--text);
@@ -2566,7 +2572,7 @@ wallet-tutorial-page {
 }
 
 .wiggle {
-  animation: shake 5s cubic-bezier(.36,.07,.19,.97) both infinite;
+  animation: shake 3s cubic-bezier(.36,.07,.19,.97) both infinite;
   animation-delay: 5s;
   transform: rotate(0deg);
   perspective: 1000px;
@@ -3229,7 +3235,6 @@ creator-profile-nfts {
   top: -70px;
   right: 22px;
   font-size: 44px;
-  padding-top: 10px;
   height: 55px;
   width: 58px;
   text-align: center;
@@ -3237,6 +3242,9 @@ creator-profile-nfts {
   color: white;
   line-height: 0.65;
   background: var(--highlight);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .bottom-bar-mobile__text{
@@ -4505,7 +4513,7 @@ sell-nft-modal {
 }
 
 .tutorial-header-hide {
-  .introjs-tooltip-header {
+  .introjs-skipbutton {
     display: none;
   }
 }

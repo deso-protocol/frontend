@@ -358,6 +358,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     reader.onload = (event: any) => {
       const base64Image = btoa(event.target.result);
       this.profilePicInput = `data:${file.type};base64,${base64Image}`;
+      if (this.inTutorial) {
+        setTimeout(() => {
+          this.introJS.refresh();
+        }, 5);
+      }
     };
   }
 
@@ -384,6 +389,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    const title = 'Update Your Profile <span class="ml-5px tutorial-header-step">Step 3/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -392,9 +398,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       overlayOpacity: 0.8,
       steps: [
         {
+          title,
           intro: `Everyone needs a profile! Let's update yours.`,
         },
         {
+          title,
           intro: `Select a profile picture, choose a username, and write your profile description if you're feeling poetic.<br /><br />When you're done, <b>click "Update Profile"</b> to continue.`,
           element: document.querySelector(".update-profile__holder"),
         },

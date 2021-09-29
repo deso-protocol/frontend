@@ -260,13 +260,13 @@
               <div
                 class="wallet__dropdown-parent wallet-column col-lg-4 d-flex align-items-center justify-content-end fc-secondary m-0"
               >
-                <div style="min-width: 50px" class="d-flex align-items-center justify-content-end">
+                <div style="min-width: 50px" class="d-flex align-items-center justify-content-end" id="wallet-actions-container">
                   <wallet-actions-dropdown
                     [hodlingUser]="creator.ProfileEntryResponse"
                     [inTutorial]="inTutorial"
                     [isHighlightedCreator]="isHighlightedCreator(creator)"
                     *ngIf="!inTutorial || isHighlightedCreator(creator)"
-                    [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY }"
+                    [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY && tutorialWiggle }"
                     (isSelling)="exitTutorial()"
                   ></wallet-actions-dropdown>
                 </div>
@@ -275,22 +275,6 @@
           </div>
 
         </div>
-      </div>
-
-      <div
-        *ngIf="inTutorial && tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY"
-        class="background-color-white p-16px d-flex justify-content-end align-items-center"
-        style="border-radius: 0px 0px 16px 16px"
-      >
-        <button
-          class="plain-button fs-18px font-weight-bold"
-          id="tutorial-wallet-next-btn"
-          *ngIf="tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY"
-          (click)="tutorialNext()"
-          style="height: 48px; width: 85px"
-        >
-          Next
-        </button>
       </div>
     </div>
   </div>

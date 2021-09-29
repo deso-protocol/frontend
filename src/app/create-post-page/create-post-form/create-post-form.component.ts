@@ -49,7 +49,7 @@ export class CreatePostFormComponent {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
-
+    const title = 'Create a Post <span class="ml-5px tutorial-header-step">Step 6/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -58,6 +58,7 @@ export class CreatePostFormComponent {
       overlayOpacity: 0.8,
       steps: [
         {
+          title,
           intro: `Last step! Create your first post so that other users can find you and invest in you. When you're done, <b>click the post button</b>`,
           element: document.querySelector("#tutorial-post-container"),
         },

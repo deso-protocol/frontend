@@ -21,6 +21,8 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() inTutorial: boolean = false;
   @Input() followButtonOppositeSide: boolean = false;
   @Input() showTutorialBuy: boolean = false;
+  // Whether the "buy" button should wiggle to prompt the user to click it
+  @Input() tutorialWiggle = false;
   @Output() exitTutorial = new EventEmitter<any>();
 
   constructor(public globalVars: GlobalVarsService, private router: Router, private modalService: BsModalService) {}

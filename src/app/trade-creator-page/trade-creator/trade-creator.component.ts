@@ -301,6 +301,7 @@ export class TradeCreatorComponent implements OnInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    const title = 'Invest in a Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -309,16 +310,19 @@ export class TradeCreatorComponent implements OnInit {
       overlayOpacity: 0.8,
       steps: [
         {
+          title,
           intro: "Even you have a creator coin!",
           element: document.querySelector(".buy-bitclout__container"),
         },
         {
+          title,
           intro: `Let's invest in yourself by purchasing $${this.creatorCoinTrade
             .assetToSellAmountInUsd()
             .toFixed(2)} ${this.creatorCoinTrade.creatorProfile.Username} coins`,
           element: document.querySelector("#tutorial-amount-purchasing"),
         },
         {
+          title,
           intro: '<b>Click "Confirm Buy" to make the investment.</b>',
           element: document.querySelector("#tutorial-confirm-buy")
         },
@@ -354,6 +358,7 @@ export class TradeCreatorComponent implements OnInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    const title = 'Invest in a Creator <span class="ml-5px tutorial-header-step">Step 1/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -362,10 +367,12 @@ export class TradeCreatorComponent implements OnInit {
       overlayOpacity: 0.8,
       steps: [
         {
+          title,
           intro: "You can invest directly in your favorite creators by buying their coin.",
           element: document.querySelector(".buy-bitclout__container"),
         },
         {
+          title,
           intro: `Let's invest $${this.creatorCoinTrade
             .assetToSellAmountInUsd()
             .toFixed(2)} in ${this.globalVars.addOwnershipApostrophe(
@@ -374,6 +381,7 @@ export class TradeCreatorComponent implements OnInit {
           element: document.querySelector("#tutorial-amount-purchasing"),
         },
         {
+          title,
           intro: '<b>Click "Confirm Buy" to make the investment.</b>',
           element: document.querySelector("#tutorial-confirm-buy")
         },
@@ -408,6 +416,7 @@ export class TradeCreatorComponent implements OnInit {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 2/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -416,14 +425,17 @@ export class TradeCreatorComponent implements OnInit {
       overlayOpacity: 0.8,
       steps: [
         {
+          title,
           intro: "When a creator's coin goes up in value you can sell.",
           element: document.querySelector(".buy-bitclout__container"),
         },
         {
+          title,
           intro: `Let's sell a small amount of the $${this.creatorCoinTrade.creatorProfile.Username} coin you just bought.`,
           element: document.querySelector("#tutorial-amount-selling"),
         },
         {
+          title,
           intro: `<b>Click "Confirm Sell" to sell some of your $${this.creatorCoinTrade.creatorProfile.Username} coin .</b>`,
           element: document.querySelector("#tutorial-confirm-buy"),
         },

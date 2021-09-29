@@ -25,7 +25,8 @@ export class WalletComponent implements OnInit, OnDestroy {
   static PADDING = 0.5;
 
   @Input() inTutorial: boolean;
-
+  // Whether the "buy" button should wiggle to prompt the user to click it
+  tutorialWiggle = false;
   introJS = introJs();
   skipTutorialExitPrompt = false;
 
@@ -318,7 +319,6 @@ export class WalletComponent implements OnInit, OnDestroy {
       this.exitTutorial();
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
-      this.exitTutorial();
       this.globalVars.logEvent("invest : self : buy : next");
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
@@ -423,25 +423,27 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    const title = 'Invest in Yourself <span class="ml-5px tutorial-header-step">Step 4/6</span>';
     this.introJS.setOptions({
       tooltipClass,
-      hideNext: true,
+      hideNext: false,
       exitOnEsc: false,
       exitOnOverlayClick: userCanExit,
       overlayOpacity: 0.8,
       steps: [
         {
+          title,
           intro: `Woohoo! You now hold ${this.globalVars.usdYouWouldGetIfYouSoldDisplay(
             this.balanceEntryToHighlight.BalanceNanos,
             this.balanceEntryToHighlight.ProfileEntryResponse.CoinEntry
           )} of your very own $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins.`,
           element: document.querySelector(".wallet-highlighted-creator"),
         },
-        {
-          intro: `<b>Click "Next"</b> to enable other people to buy $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin.`,
-          element: document.querySelector("#tutorial-wallet-next-btn"),
-        },
       ],
+    });
+    this.introJS.oncomplete(() => {
+      this.skipTutorialExitPrompt = true;
+      this.tutorialNext();
     });
     this.introJS.onexit(() => {
       if (!this.skipTutorialExitPrompt) {
@@ -455,6 +457,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 2/6</span>';
     this.introJS.setOptions({
       tooltipClass,
       hideNext: true,
@@ -463,20 +466,28 @@ export class WalletComponent implements OnInit, OnDestroy {
       overlayOpacity: 0.8,
       steps: [
         {
+          title,
           intro: `Great! You now have ${this.globalVars.nanosToBitClout(
             this.balanceEntryToHighlight.BalanceNanos,
             4
           )} $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins.`,
         },
         {
+          title,
           intro: "Here in your wallet you can see which coins you own, and how much they are currently worth.",
           element: document.querySelector(".wallet-highlighted-creator"),
         },
         {
+          title,
           intro: `Let's sell a small amount of the $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin you just purchased. <br /><br /> <b>Click the elipsis and then "Sell".</b>`,
           element: document.querySelector(".wallet__dropdown-parent > div"),
         },
       ],
+    });
+    this.introJS.onchange((targetElement) => {
+      if (targetElement?.id === "wallet-actions-container") {
+        this.tutorialWiggle = true;
+      }
     });
     this.introJS.onexit(() => {
       if (!this.skipTutorialExitPrompt) {
@@ -490,22 +501,24 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.introJS = introJs();
     const userCanExit = !this.globalVars.loggedInUser?.MustCompleteTutorial || this.globalVars.loggedInUser?.IsAdmin;
     const tooltipClass = userCanExit ? "tutorial-tooltip" : "tutorial-tooltip tutorial-header-hide";
+    const title = 'Sell a Creator <span class="ml-5px tutorial-header-step">Step 2/6</span>';
     this.introJS.setOptions({
       tooltipClass,
-      hideNext: true,
+      hideNext: false,
       exitOnEsc: false,
       exitOnOverlayClick: userCanExit,
       overlayOpacity: 0.8,
       steps: [
         {
-          intro: `You can now see the update amount of $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin in your wallet.`,
+          title,
+          intro: `You can now see the updated amount of $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coin in your wallet.`,
           element: document.querySelector(".wallet-highlighted-creator"),
         },
-        {
-          intro: '<b>Click "Next" to set up your profile.</b>',
-          element: document.querySelector("#tutorial-wallet-next-btn"),
-        },
       ],
+    });
+    this.introJS.oncomplete(() => {
+      this.skipTutorialExitPrompt = true;
+      this.tutorialNext();
     });
     this.introJS.onexit(() => {
       if (!this.skipTutorialExitPrompt) {
