@@ -17,21 +17,6 @@
       <span class="text-muted">&nbsp;USD per coin</span>
     </div>
   </div>
-
-  <!-- Mobile email confirmation alert -->
-  <div
-    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified"
-    class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
-  >
-    <div>Your email is not verified.&nbsp;&nbsp;&nbsp;</div>
-    <div>
-      <div *ngIf="globalVars.loggedInUser.HasEmail">
-        <a class="font-weight-bold" (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">Resend Verification Email</a>
-        <span *ngIf="globalVars.resentVerifyEmail">Sent!</span>
-      </div>
-      <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
-    </div>
-  </div>
   <!-- Referral links alert -->
   <div
     *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0 && !globalVars.isMobile()"

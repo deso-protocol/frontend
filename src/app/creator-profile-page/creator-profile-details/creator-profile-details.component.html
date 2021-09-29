@@ -3,7 +3,7 @@
 <!--Profile not found-->
 <not-found *ngIf="!profile && !loading"></not-found>
 
-<div *ngIf="profile && !loading" class="flex-grow-1" [ngClass]="{ 'px-8px': globalVars.isMobile() }">
+<div *ngIf="profile && !loading" class="flex-grow-1">
   <!-- Top Card With Creator Info -->
   <creator-profile-top-card
     *ngIf="profile && !loading"

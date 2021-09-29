@@ -14,15 +14,10 @@
       <!-- Headers -->
       <div class="fs-15px">
         <div class="row px-15px no-gutters border-bottom py-15px fc-muted" style="margin-left: 0; margin-right: 0">
-          <div class="col mb-0">Name</div>
+          <div class="col-6 mb-0">Name</div>
 
-          <div class="col-2 mb-0 text-right" style="min-width: 100px">
-            <div class="pl-15px">Price</div>
-          </div>
-
-          <!--Hide on mobile-->
-          <div class="col mb-0 d-lg-block creators-leaderboard__controls-column">
-            <!-- Controls-->
+          <div class="col-6 mb-0 text-left" style="min-width: 100px">
+            <div class="pl-30px">Price</div>
           </div>
         </div>
       </div>
@@ -33,7 +28,7 @@
         <!-- Creator rows -->
         <div #uiScroll *uiScroll="let item of datasource" class="row no-gutters px-15px border-bottom fs-15px">
           <a
-            class="col mb-0 py-15px link--unstyled"
+            class="col-6 mb-0 py-15px link--unstyled"
             [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.Username]"
             queryParamsHandling="merge"
           >
@@ -63,38 +58,40 @@
               <i class="fas fa-check-circle fa-md align-middle"></i>
             </span>
           </a>
+          <div class="col-5 d-flex">
+            <a
+              class="col-1 mb-0 mt-2 py-15px link--unstyled text-left"
+              style="min-width: 100px"
+              [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.Username]"
+              queryParamsHandling="merge"
+            >
+              <div class="pl-15px">~{{ globalVars.nanosToUSD(item.CoinPriceBitCloutNanos, 2) }}</div>
+            </a>
 
-          <a
-            class="col-2 mb-0 mt-2 py-15px link--unstyled text-right"
-            style="min-width: 100px"
-            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.Username]"
-            queryParamsHandling="merge"
-          >
-            <div class="pl-15px">~{{ globalVars.nanosToUSD(item.CoinPriceBitCloutNanos, 2) }}</div>
-          </a>
-
-          <!--Hide on mobile-->
-          <div class="col py-15px d-lg-block mb-0 creators-leaderboard__controls-column">
-            <div class="pl-15px">
-              <button
-                class="primary-button"
-                (click)="openBuyCreatorCoinModal($event, item.Username)"
-                style="width: 78px"
-              >
-                Buy
-              </button>
-              <div *ngIf="appData.loggedInUser" class="d-inline-block text-right">
-                <div class="ml-3 mt-1 align-top">
-                  <div *ngIf="canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)">
-                    <follow-button
-                      [displayAsLink]="true"
-                      [followedPubKeyBase58Check]="item.PublicKeyBase58Check"
-                    ></follow-button>
+            <!--Hide on mobile-->
+            <div class="py-15px d-lg-block mb-0 d-flex">
+              <div class="pl-15px d-flex align-items-center">
+                <button
+                  class="primary-button"
+                  (click)="openBuyCreatorCoinModal($event, item.Username)"
+                  style="width: 78px"
+                >
+                  Buy
+                </button>
+                <div *ngIf="appData.loggedInUser && !globalVars.isMobile()" class="d-inline-block text-right">
+                  <div class="ml-3 align-top">
+                    <div *ngIf="canLoggedInUserFollowTargetPublicKey(item.PublicKeyBase58Check)">
+                      <follow-button
+                        [displayAsLink]="true"
+                        [followedPubKeyBase58Check]="item.PublicKeyBase58Check"
+                      ></follow-button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
 
       </div>

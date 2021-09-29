@@ -17,7 +17,7 @@
     [simpleTopBar]="simpleTopBar"
     [title]="title"
   ></top-bar-mobile-header>
-  <div class="d-flex" id="header-content-spacer" [ngStyle]="{ 'margin-top': mobile ? '94px' : '64px' }">
+  <div class="d-flex" id="header-content-spacer" style="margin-top: 60px">
     <left-bar *ngIf="!mobile && !onlyContent" [inTutorial]="inTutorial"></left-bar>
     <div *ngIf="onlyContent" class="global__nav__flex">
       <div class="global__nav__fixed">

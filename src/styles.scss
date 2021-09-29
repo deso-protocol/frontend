@@ -594,7 +594,7 @@ $green-font-color: #19B028;
   }
   post-thread-page {
     #header-content-spacer {
-      margin-top: 84px !important;
+      margin-top: 54px !important;
     }
     .feed-post__container {
       border-radius: 0px 0px 10px 10px;
@@ -602,7 +602,7 @@ $green-font-color: #19B028;
   }
   mint-nft-page {
     #header-content-spacer {
-      margin-top: 84px !important;
+      margin-top: 54px !important;
     }
     .nft-modal-container {
       border-radius: 0px;
@@ -624,7 +624,7 @@ $green-font-color: #19B028;
   }
   nft-post-page {
     #header-content-spacer {
-      margin-top: 84px !important;
+      margin-top: 54px !important;
     }
     .feed-post__container {
       border-top-left-radius: 0px;
@@ -640,7 +640,7 @@ $green-font-color: #19B028;
   }
   sell-nft-page {
     #header-content-spacer {
-      margin-top: 84px !important;
+      margin-top: 54px !important;
     }
     .nft-modal-container {
       border-radius: 0px;
@@ -665,7 +665,7 @@ $green-font-color: #19B028;
   }
   place-bid-modal {
     #header-content-spacer {
-      margin-top: 84px !important;
+      margin-top: 54px !important;
     }
     .nft-modal-container {
       border-radius: 0px;
@@ -710,7 +710,7 @@ $green-font-color: #19B028;
   }
   app-notifications-page {
     #header-content-spacer {
-      margin-top: 90px !important;
+      margin-top: 60px !important;
     }
     background: var(--tile-bg);
   }
@@ -757,11 +757,18 @@ $green-font-color: #19B028;
   }
   quote-reposts-page, likes-page, reposts-page, diamonds-page {
     #header-content-spacer {
-      margin-top: 84px !important;
+      margin-top: 54px !important;
     }
     .likes-modal-container, .quote-reclouts-modal-container, .reclouts-modal-container, .diamonds-modal-container {
       border-radius: 0px;
     }
+  }
+  wallet-page, creator-profile-page, referrals {
+    .global__content__inner {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+
   }
 }
 
@@ -1202,7 +1209,6 @@ tab-selector {
 
   @media (max-width: 991.98px) {
     height: $global__top-bar__height;
-    margin-top: 30px;
   }
 }
 
@@ -3331,7 +3337,9 @@ trade-creator-form {
   i-feather {
     position: absolute;
     right: 3px;
-    bottom: 9px;
+    bottom: 3px;
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -3341,7 +3349,7 @@ trade-creator-form {
       margin-top: 0px;
     }
     #header-content-spacer {
-      margin-top: 90px;
+      margin-top: 60px;
     }
   }
 }
@@ -4143,6 +4151,10 @@ input {
     cursor: pointer;
     position: absolute;
     right: 0px;
+    i-feather {
+      display: flex;
+      align-items: center;
+    }
   }
   i-feather {
     color: var(--text);
