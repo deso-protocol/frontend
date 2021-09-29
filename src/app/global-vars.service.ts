@@ -1,7 +1,12 @@
 import { Injectable } from "@angular/core";
-import { BalanceEntryResponse, PostEntryResponse, User } from "./backend-api.service";
-import { Router, ActivatedRoute } from "@angular/router";
-import { BackendApiService } from "./backend-api.service";
+import {
+  BackendApiService,
+  BalanceEntryResponse,
+  PostEntryResponse,
+  TutorialStatus,
+  User,
+} from "./backend-api.service";
+import { ActivatedRoute, Router } from "@angular/router";
 import { RouteNames } from "./app-routing.module";
 import ConfettiGenerator from "confetti-js";
 import { Observable, Observer } from "rxjs";
@@ -16,6 +21,10 @@ import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithun
 import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
+import { FeedComponent } from "./feed/feed.component";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import Swal from "sweetalert2";
+import Timer = NodeJS.Timer;
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -41,6 +50,8 @@ export class GlobalVarsService {
   // loading spinner until we get a correct value. That said, I'm not going to fix that
   // right now, I'm just moving this magic number into a constant.
   static DEFAULT_NANOS_PER_USD_EXCHANGE_RATE = 1e9;
+  static NANOS_PER_UNIT = 1e9;
+  static WEI_PER_ETH = 1e18;
 
   constructor(
     private backendApi: BackendApiService,
@@ -50,7 +61,7 @@ export class GlobalVarsService {
     private httpClient: HttpClient
   ) {}
 
-  static MAX_POST_LENGTH = 280;
+  static MAX_POST_LENGTH = 560;
 
   static FOUNDER_REWARD_BASIS_POINTS_WARNING_THRESHOLD = 50 * 100;
 
@@ -63,12 +74,15 @@ export class GlobalVarsService {
   // We're waiting for the user to grant storage access (full-screen takeover)
   requestingStorageAccess = false;
 
+  // Track if the user is dragging the diamond selector. If so, need to disable text selection in the app.
+  userIsDragging = false;
+
   RouteNames = RouteNames;
 
   pausePolling = false; // TODO: Monkey patch for when polling conflicts with other calls.
   pauseMessageUpdates = false; // TODO: Monkey patch for when message polling conflicts with other calls.
 
-  bitcloutToUSDExchangeRateToDisplay = "Fetching...";
+  desoToUSDExchangeRateToDisplay = "Fetching...";
 
   // We keep information regarding the messages tab in global vars for smooth
   // transitions to and from messages.
@@ -96,9 +110,12 @@ export class GlobalVarsService {
   loggedInUser: User;
   userList: User[] = [];
 
+  // Temporarily track tutorial status here until backend it flowing
+  TutorialStatus: TutorialStatus;
+
   // map[pubkey]->bool of globomods
   globoMods: any;
-  feeRateBitCloutPerKB = 0.0;
+  feeRateDeSoPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
   messageResponse = null;
@@ -114,7 +131,7 @@ export class GlobalVarsService {
   // hodls and the users who hodl him.
   youHodlMap: { [k: string]: BalanceEntryResponse } = {};
 
-  // Map of diamond level to bitclout nanos.
+  // Map of diamond level to deso nanos.
   diamondLevelMap = {};
 
   // TODO(performance): We used to call the functions called by this function every
@@ -144,8 +161,14 @@ export class GlobalVarsService {
   // Whether or not to show the Verify phone number flow.
   showPhoneNumberVerification = false;
 
-  // Whether or not to show the Buy BitClout with USD flow.
+  // Whether or not to show the Buy DeSo with USD flow.
   showBuyWithUSD = false;
+
+  // Buy DESO with ETH
+  showBuyWithETH = false;
+
+  // Whether or not to show the Jumio verification flow.
+  showJumio = false;
 
   // Whether or not this node comps profile creation.
   isCompProfileCreation = false;
@@ -156,17 +179,23 @@ export class GlobalVarsService {
   // Support email for this node (renders Help in the left bar nav)
   supportEmail: string = null;
 
-  satoshisPerBitCloutExchangeRate: number;
-  nanosPerUSDExchangeRate: number;
-  // This is the USD to Bitcoin exchange rate according to external
-  // sources.
+  // ETH exchange rates
+  usdPerETHExchangeRate: number;
+  nanosPerETHExchangeRate: number;
+
+  // BTC exchange rates
+  satoshisPerDeSoExchangeRate: number;
   usdPerBitcoinExchangeRate: number;
+
+  // USD exchange rates
+  nanosPerUSDExchangeRate: number;
+
   defaultFeeRateNanosPerKB: number;
 
   NanosSold: number;
   ProtocolUSDCentsPerBitcoinExchangeRate: number;
 
-  nanosToBitCloutMemo = {};
+  nanosToDeSoMemo = {};
   formatUSDMemo = {};
 
   confetti: any;
@@ -175,13 +204,17 @@ export class GlobalVarsService {
 
   amplitude: AmplitudeClient;
 
-  // Price of BitClout values
-  ExchangeUSDCentsPerBitClout: number;
-  USDCentsPerBitCloutReservePrice: number;
-  BuyBitCloutFeeBasisPoints: number = 0;
+  // Price of DeSo values
+  ExchangeUSDCentsPerDeSo: number;
+  USDCentsPerDeSoReservePrice: number;
+  BuyDeSoFeeBasisPoints: number = 0;
 
   // Timestamp of last profile update
   profileUpdateTimestamp: number;
+
+  jumioDeSoNanos = 0;
+
+  referralUSDCents: number = 0;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -269,12 +302,33 @@ export class GlobalVarsService {
     });
   }
 
+  userInTutorial(user: User): boolean {
+    return (
+      user && [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user?.TutorialStatus) < 0
+    );
+  }
+
   // NEVER change loggedInUser property directly. Use this method instead.
   setLoggedInUser(user: User) {
     const isSameUserAsBefore =
       this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
     this.loggedInUser = user;
+
+    // Fetch referralLinks for the userList before completing the load.
+    this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe(
+      (res: any) => {
+        this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
+      },
+      (err: any) => {
+        console.log(err);
+      }
+    );
+
+    // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
+    if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
+      this.pollLoggedInUserForJumio(user.PublicKeyBase58Check);
+    }
 
     if (!isSameUserAsBefore) {
       // Store the user in localStorage
@@ -291,9 +345,53 @@ export class GlobalVarsService {
       for (const entry of this.loggedInUser?.UsersYouHODL || []) {
         this.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
       }
+      this.followFeedPosts = [];
+    }
+
+    if (this.loggedInUser?.MustCompleteTutorial && this.loggedInUser?.TutorialStatus === TutorialStatus.EMPTY) {
+      this.startTutorialAlert();
     }
 
     this._notifyLoggedInUserObservers(user, isSameUserAsBefore);
+    this.navigateToCurrentStepInTutorial(user);
+  }
+
+  navigateToCurrentStepInTutorial(user: User): Promise<boolean> {
+    if (this.userInTutorial(user)) {
+      // drop user at correct point in tutorial.
+      let route = [];
+      switch (user.TutorialStatus) {
+        case TutorialStatus.STARTED: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          break;
+        }
+        case TutorialStatus.INVEST_OTHERS_BUY: {
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
+          break;
+        }
+        case TutorialStatus.INVEST_OTHERS_SELL: {
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
+          break;
+        }
+        case TutorialStatus.CREATE_PROFILE: {
+          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          break;
+        }
+        case TutorialStatus.INVEST_SELF: {
+          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          break;
+        }
+        case TutorialStatus.DIAMOND: {
+          route = [RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST];
+          break;
+        }
+      }
+      return this.router.navigate(route);
+    }
+  }
+
+  getLinkForReferralHash(referralHash: string) {
+    return `${window.location.origin}?r=${referralHash}`;
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {
@@ -313,20 +411,20 @@ export class GlobalVarsService {
   }
 
   getUSDForDiamond(index: number): string {
-    const bitcloutNanos = this.diamondLevelMap[index];
-    const val = this.nanosToUSDNumber(bitcloutNanos);
+    const desoNanos = this.diamondLevelMap[index];
+    const val = this.nanosToUSDNumber(desoNanos);
     if (val < 1) {
-      return this.formatUSD(val, 2);
+      return this.formatUSD(Math.max(val, 0.01), 2);
     }
     return this.abbreviateNumber(val, 0, true);
   }
 
-  nanosToBitClout(nanos: number, maximumFractionDigits?: number): string {
-    if (this.nanosToBitCloutMemo[nanos] && this.nanosToBitCloutMemo[nanos][maximumFractionDigits]) {
-      return this.nanosToBitCloutMemo[nanos][maximumFractionDigits];
+  nanosToDeSo(nanos: number, maximumFractionDigits?: number): string {
+    if (this.nanosToDeSoMemo[nanos] && this.nanosToDeSoMemo[nanos][maximumFractionDigits]) {
+      return this.nanosToDeSoMemo[nanos][maximumFractionDigits];
     }
 
-    this.nanosToBitCloutMemo[nanos] = this.nanosToBitCloutMemo[nanos] || {};
+    this.nanosToDeSoMemo[nanos] = this.nanosToDeSoMemo[nanos] || {};
 
     if (!maximumFractionDigits && nanos > 0) {
       // maximumFractionDigits defaults to 3.
@@ -347,13 +445,13 @@ export class GlobalVarsService {
     // Always show at least 2 digits
     const minimumFractionDigits = 2;
     const num = nanos / 1e9;
-    this.nanosToBitCloutMemo[nanos][maximumFractionDigits] = Number(num).toLocaleString("en-US", {
+    this.nanosToDeSoMemo[nanos][maximumFractionDigits] = Number(num).toLocaleString("en-US", {
       style: "decimal",
       currency: "USD",
       minimumFractionDigits,
       maximumFractionDigits,
     });
-    return this.nanosToBitCloutMemo[nanos][maximumFractionDigits];
+    return this.nanosToDeSoMemo[nanos][maximumFractionDigits];
   }
 
   formatUSD(num: number, decimal: number): string {
@@ -367,6 +465,7 @@ export class GlobalVarsService {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: decimal,
+      maximumFractionDigits: decimal,
     });
     return this.formatUSDMemo[num][decimal];
   }
@@ -396,6 +495,10 @@ export class GlobalVarsService {
     return nanos / this.nanosPerUSDExchangeRate;
   }
 
+  usdToNanosNumber(usdAmount: number): number {
+    return usdAmount * this.nanosPerUSDExchangeRate;
+  }
+
   nanosToUSD(nanos: number, decimal?: number): string {
     if (decimal == null) {
       decimal = 4;
@@ -410,9 +513,9 @@ export class GlobalVarsService {
     return viewportWidth <= 992;
   }
 
-  // Calculates the amount of bitclout one would receive if they sold an amount equal to creatorCoinAmountNano
+  // Calculates the amount of deso one would receive if they sold an amount equal to creatorCoinAmountNano
   // given the current state of a creator's coin as defined by the coinEntry
-  bitcloutNanosYouWouldGetIfYouSold(creatorCoinAmountNano: number, coinEntry: any): number {
+  desoNanosYouWouldGetIfYouSold(creatorCoinAmountNano: number, coinEntry: any): number {
     // These calculations are derived from the Bancor pricing formula, which
     // is proportional to a polynomial price curve (and equivalent to Uniswap
     // under certain assumptions). For more information, see the comment on
@@ -423,39 +526,37 @@ export class GlobalVarsService {
     // - B0 * (1 - (1 - dS / S0)^(1/RR))
     // - where:
     //     dS = bigDeltaCreatorCoin,
-    //     B0 = bigCurrentBitCloutLocked
+    //     B0 = bigCurrentDeSoLocked
     //     S0 = bigCurrentCreatorCoinSupply
     //     RR = params.CreatorCoinReserveRatio
-    const bitCloutLockedNanos = coinEntry.BitCloutLockedNanos;
+    const desoLockedNanos = coinEntry.DeSoLockedNanos;
     const currentCreatorCoinSupply = coinEntry.CoinsInCirculationNanos;
-    // const deltaBitClout = creatorCoinAmountNano;
-    const bitcloutBeforeFeesNanos =
-      bitCloutLockedNanos *
+    // const deltaDeSo = creatorCoinAmountNano;
+    const desoBeforeFeesNanos =
+      desoLockedNanos *
       (1 -
         Math.pow(
           1 - creatorCoinAmountNano / currentCreatorCoinSupply,
           1 / GlobalVarsService.CREATOR_COIN_RESERVE_RATIO
         ));
 
-    return (
-      (bitcloutBeforeFeesNanos * (100 * 100 - GlobalVarsService.CREATOR_COIN_TRADE_FEED_BASIS_POINTS)) / (100 * 100)
-    );
+    return (desoBeforeFeesNanos * (100 * 100 - GlobalVarsService.CREATOR_COIN_TRADE_FEED_BASIS_POINTS)) / (100 * 100);
   }
 
   // Return a formatted version of the amount one would receive in USD if they sold creatorCoinAmountNano number of Creator Coins
   // given the current state of a creator's coin as defined by the coinEntry
   usdYouWouldGetIfYouSoldDisplay(creatorCoinAmountNano: number, coinEntry: any, abbreviate: boolean = true): string {
     if (creatorCoinAmountNano == 0) return "$0";
-    const usdValue = this.nanosToUSDNumber(this.bitcloutNanosYouWouldGetIfYouSold(creatorCoinAmountNano, coinEntry));
+    const usdValue = this.nanosToUSDNumber(this.desoNanosYouWouldGetIfYouSold(creatorCoinAmountNano, coinEntry));
     return abbreviate ? this.abbreviateNumber(usdValue, 2, true) : this.formatUSD(usdValue, 2);
   }
 
-  creatorCoinNanosToUSDNaive(creatorCoinNanos, coinPriceBitCloutNanos, abbreviate: boolean = false): string {
-    const usdValue = this.nanosToUSDNumber((creatorCoinNanos / 1e9) * coinPriceBitCloutNanos);
+  creatorCoinNanosToUSDNaive(creatorCoinNanos, coinPriceDeSoNanos, abbreviate: boolean = false): string {
+    const usdValue = this.nanosToUSDNumber((creatorCoinNanos / 1e9) * coinPriceDeSoNanos);
     return abbreviate ? this.abbreviateNumber(usdValue, 2, true) : this.formatUSD(usdValue, 2);
   }
 
-  createProfileFeeInBitClout(): number {
+  createProfileFeeInDeSo(): number {
     return this.createProfileFeeNanos / 1e9;
   }
 
@@ -492,6 +593,28 @@ export class GlobalVarsService {
       date.getFullYear() != currentDate.getFullYear()
     ) {
       return date.toLocaleString("default", { month: "short", day: "numeric" });
+    }
+
+    return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
+  }
+
+  convertTstampToDateTime(tstampNanos: number) {
+    const date = new Date(tstampNanos / 1e6);
+    const currentDate = new Date();
+    if (
+      date.getDate() != currentDate.getDate() ||
+      date.getMonth() != currentDate.getMonth() ||
+      date.getFullYear() != currentDate.getFullYear()
+    ) {
+      return date.toLocaleString("default", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: true,
+      });
     }
 
     return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
@@ -581,24 +704,27 @@ export class GlobalVarsService {
     });
   }
 
-  _alertError(err: any, showBuyBitClout: boolean = false) {
+  _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
-      showCancelButton: showBuyBitClout,
+      showCancelButton: showBuyDeSo || showBuyCreatorCoin,
       focusConfirm: true,
       customClass: {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: showBuyBitClout ? "Buy BitClout" : "Ok",
+      confirmButtonText: showBuyDeSo ? "Buy DeSo" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
       reverseButtons: true,
     }).then((res) => {
-      if (showBuyBitClout && res.isConfirmed) {
-        this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+      if (showBuyDeSo && res.isConfirmed) {
+        this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
+      }
+      if (showBuyCreatorCoin && res.isConfirmed) {
+        this.router.navigate([RouteNames.CREATORS]);
       }
     });
   }
@@ -646,20 +772,20 @@ export class GlobalVarsService {
   // Does some basic checks on a public key.
   isMaybePublicKey(pk: string) {
     // Test net public keys start with 'tBC', regular public keys start with 'BC'.
-    return pk.startsWith("tBC") || pk.startsWith("BC");
+    return (pk.startsWith("tBC") && pk.length == 54) || (pk.startsWith("BC") && pk.length == 55);
   }
 
-  isVanillaReclout(post: PostEntryResponse): boolean {
-    return !post.Body && !post.ImageURLs?.length && !!post.RecloutedPostEntryResponse;
+  isVanillaRepost(post: PostEntryResponse): boolean {
+    return !post.Body && !post.ImageURLs?.length && !!post.RepostedPostEntryResponse;
   }
 
   getPostContentHashHex(post: PostEntryResponse): string {
-    return this.isVanillaReclout(post) ? post.RecloutedPostEntryResponse.PostHashHex : post.PostHashHex;
+    return this.isVanillaRepost(post) ? post.RepostedPostEntryResponse.PostHashHex : post.PostHashHex;
   }
 
   incrementCommentCount(post: PostEntryResponse): PostEntryResponse {
-    if (this.isVanillaReclout(post)) {
-      post.RecloutedPostEntryResponse.CommentCount += 1;
+    if (this.isVanillaRepost(post)) {
+      post.RepostedPostEntryResponse.CommentCount += 1;
     } else {
       post.CommentCount += 1;
     }
@@ -684,30 +810,44 @@ export class GlobalVarsService {
     if (!this.amplitude) {
       return;
     }
-
+    // If the user is in the tutorial, add the "tutorial : " prefix.
+    if (this.userInTutorial(this.loggedInUser)) {
+      event = "tutorial : " + event;
+    }
     this.amplitude.logEvent(event, data);
   }
 
-  launchLoginFlow() {
-    this.logEvent("account : login : launch");
-    this.identityService.launch("/log-in").subscribe((res) => {
-      this.logEvent("account : login : success");
+  // Helper to launch the get free deso flow in identity.
+  launchGetFreeDESOFlow() {
+    this.logEvent("identity : jumio : launch");
+    this.identityService
+      .launch("/get-free-deso", {
+        public_key: this.loggedInUser?.PublicKeyBase58Check,
+        referralCode: localStorage.getItem("referralCode"),
+      })
+      .subscribe(() => {
+        this.logEvent("identity : jumio : success");
+        this.updateEverything();
+      });
+  }
+
+  launchIdentityFlow(event: string): void {
+    this.logEvent(`account : ${event} : launch`);
+    this.identityService.launch("/log-in", { referralCode: localStorage.getItem("referralCode") }).subscribe((res) => {
+      this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything().subscribe(() => {
+      this.updateEverything().add(() => {
         this.flowRedirect(res.signedUp);
       });
     });
   }
 
+  launchLoginFlow() {
+    this.launchIdentityFlow("login");
+  }
+
   launchSignupFlow() {
-    this.logEvent("account : create : launch");
-    this.identityService.launch("/log-in").subscribe((res) => {
-      this.logEvent("account : create : success");
-      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything().subscribe(() => {
-        this.flowRedirect(res.signedUp);
-      });
-    });
+    this.launchIdentityFlow("create");
   }
 
   flowRedirect(signedUp: boolean): void {
@@ -726,11 +866,20 @@ export class GlobalVarsService {
     this._setUpLoggedInUserObservable();
     this._setUpFollowChangeObservable();
 
+    route.queryParams.subscribe((queryParams) => {
+      if (queryParams.r) {
+        localStorage.setItem("referralCode", queryParams.r);
+        this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
+        this.getReferralUSDCents();
+      }
+    });
+
+    this.getReferralUSDCents();
     this.userList = userList;
-    this.satoshisPerBitCloutExchangeRate = 0;
+    this.satoshisPerDeSoExchangeRate = 0;
     this.nanosPerUSDExchangeRate = GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE;
     this.usdPerBitcoinExchangeRate = 10000;
-    this.defaultFeeRateNanosPerKB = 0.0;
+    this.defaultFeeRateNanosPerKB = 1000.0;
 
     this.localNode = this.backendApi.GetStorage(this.backendApi.LastLocalNodeKey);
 
@@ -747,7 +896,7 @@ export class GlobalVarsService {
 
     let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
     if (!identityServiceURL) {
-      identityServiceURL = "https://identity.bitclout.com";
+      identityServiceURL = "https://identity.deso.org";
       this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
     }
     this.identityService.identityServiceURL = identityServiceURL;
@@ -759,7 +908,7 @@ export class GlobalVarsService {
       if (!this.defaultFeeRateNanosPerKB) {
         return false;
       }
-      this.feeRateBitCloutPerKB = this.defaultFeeRateNanosPerKB / 1e9;
+      this.feeRateDeSoPerKB = this.defaultFeeRateNanosPerKB / 1e9;
       return true;
     });
   }
@@ -768,7 +917,7 @@ export class GlobalVarsService {
     const pulseService = new PulseService(this.httpClient, this.backendApi, this);
 
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getBitCloutLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
       pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
@@ -832,5 +981,194 @@ export class GlobalVarsService {
       return "messages-page";
     }
     return "app-page";
+  }
+
+  _updateDeSoExchangeRate() {
+    this.backendApi.GetExchangeRate(this.localNode).subscribe(
+      (res: any) => {
+        // BTC
+        this.satoshisPerDeSoExchangeRate = res.SatoshisPerDeSoExchangeRate;
+        this.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
+        this.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
+
+        // ETH
+        this.usdPerETHExchangeRate = res.USDCentsPerETHExchangeRate / 100;
+        this.nanosPerETHExchangeRate = res.NanosPerETHExchangeRate;
+
+        // DESO
+        this.NanosSold = res.NanosSold;
+        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoExchangeRate;
+        this.USDCentsPerDeSoReservePrice = res.USDCentsPerDeSoReserveExchangeRate;
+        this.BuyDeSoFeeBasisPoints = res.BuyDeSoFeeBasisPoints;
+
+        const nanosPerUnit = GlobalVarsService.NANOS_PER_UNIT;
+        this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerDeSo / 100);
+        this.desoToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, null);
+        this.desoToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, 2);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  exploreShowcase(bsModalRef: BsModalRef, modalService: BsModalService): void {
+    if (modalService) {
+      modalService.setDismissReason("explore");
+    }
+    if (bsModalRef) {
+      bsModalRef.hide();
+    }
+    this.router.navigate(["/" + this.RouteNames.BROWSE], {
+      queryParams: { feedTab: FeedComponent.SHOWCASE_TAB },
+    });
+  }
+
+  resentVerifyEmail = false;
+  resendVerifyEmail() {
+    this.backendApi.ResendVerifyEmail(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe();
+    this.resentVerifyEmail = true;
+  }
+
+  startTutorialAlert(): void {
+    Swal.fire({
+      target: this.getTargetComponentSelector(),
+      title: "Congrats!",
+      html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
+      showConfirmButton: true,
+      // Only show skip option to admins
+      showCancelButton: !!this.loggedInUser?.IsAdmin,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Start Tutorial",
+      cancelButtonText: "Skip",
+      // User must skip or start tutorial
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then((res) => {
+      this.backendApi
+        .StartOrSkipTutorial(
+          this.localNode,
+          this.loggedInUser?.PublicKeyBase58Check,
+          !res.isConfirmed /* if it's not confirmed, skip tutorial*/
+        )
+        .subscribe((response) => {
+          this.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+          this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
+          if (res.isConfirmed) {
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+          }
+        });
+    });
+  }
+
+  skipTutorial(): void {
+    Swal.fire({
+      target: this.getTargetComponentSelector(),
+      icon: "warning",
+      title: "Exit Tutorial?",
+      html: "Are you sure?",
+      showConfirmButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
+          (response) => {
+            this.logEvent(`tutorial : skip`);
+            // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+            this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
+            this.router.navigate([RouteNames.BROWSE]);
+          },
+          (err) => {
+            this._alertError(err.error.error);
+          }
+        );
+      }
+    });
+  }
+
+  jumioInterval: Timer = null;
+  // If we return from the Jumio flow, poll for up to 10 minutes to see if we need to update the user's balance.
+  pollLoggedInUserForJumio(publicKey: string): void {
+    if (this.jumioInterval) {
+      clearInterval(this.jumioInterval);
+    }
+    let attempts = 0;
+    let numTries = 120;
+    let timeoutMillis = 5000;
+    this.jumioInterval = setInterval(() => {
+      if (attempts >= numTries) {
+        clearInterval(this.jumioInterval);
+        return;
+      }
+      this.backendApi
+        .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
+        .subscribe(
+          (res: any) => {
+            if (res.JumioVerified) {
+              let user: User;
+              this.userList.forEach((userInList, idx) => {
+                if (userInList.PublicKeyBase58Check === publicKey) {
+                  this.userList[idx].JumioVerified = res.JumioVerified;
+                  this.userList[idx].JumioReturned = res.JumioReturned;
+                  this.userList[idx].JumioFinishedTime = res.JumioFinishedTime;
+                  this.userList[idx].BalanceNanos = res.BalanceNanos;
+                  this.userList[idx].MustCompleteTutorial = true;
+                  user = this.userList[idx];
+                }
+              });
+              if (user) {
+                this.setLoggedInUser(user);
+              }
+              localStorage.setItem("referralCode", undefined);
+              this.celebrate();
+              if (user.TutorialStatus === TutorialStatus.EMPTY) {
+                this.startTutorialAlert();
+              }
+              clearInterval(this.jumioInterval);
+              return;
+            }
+            // If the user wasn't verified by jumio, but Jumio did return a callback, stop polling.
+            if (res.JumioReturned) {
+              clearInterval(this.jumioInterval);
+            }
+          },
+          (error) => {
+            clearInterval(this.jumioInterval);
+          }
+        )
+        .add(() => attempts++);
+    }, timeoutMillis);
+  }
+
+  getFreeDESOMessage(): string {
+    return this.referralUSDCents
+      ? this.formatUSD(this.referralUSDCents / 100, 0)
+      : this.nanosToUSD(this.jumioDeSoNanos, 0);
+  }
+
+  getReferralUSDCents(): void {
+    const referralHash = localStorage.getItem("referralCode");
+    if (referralHash) {
+      this.backendApi
+        .GetReferralInfoForReferralHash(environment.jumioEndpointHostname, referralHash)
+        .subscribe((res) => {
+          const referralInfo = res.ReferralInfoResponse.Info;
+          if (
+            res.ReferralInfoResponse.IsActive &&
+            (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
+          ) {
+            this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
+          }
+        });
+    }
   }
 }

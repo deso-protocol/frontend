@@ -1,17 +1,20 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
+import { AppRoutingModule } from "../../app-routing.module";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
 import { DiamondsModalComponent } from "../../diamonds-modal/diamonds-modal.component";
 import { LikesModalComponent } from "../../likes-modal/likes-modal.component";
-import { RecloutsModalComponent } from "../../reclouts-modal/reclouts-modal.component";
-import { QuoteRecloutsModalComponent } from "../../quote-reclouts-modal/quote-reclouts-modal.component";
+import { RepostsModalComponent } from "../../reposts-modal/reposts-modal.component";
+import { QuoteRepostsModalComponent } from "../../quote-reposts-modal/quote-reposts-modal.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { DomSanitizer } from "@angular/platform-browser";
+import * as _ from "lodash";
+import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
+import { SharedDialogs } from "../../../lib/shared-dialogs";
 
 @Component({
   selector: "feed-post",
@@ -24,23 +27,24 @@ export class FeedPostComponent implements OnInit {
     return this._post;
   }
   set post(post: PostEntryResponse) {
-    // When setting the post, we need to consider reclout behavior.
-    // If a post is a reclouting another post (without a quote), then use the reclouted post as the post content.
+    // When setting the post, we need to consider repost behavior.
+    // If a post is a reposting another post (without a quote), then use the reposted post as the post content.
     // If a post is quoting another post, then we use the quoted post as the quoted content.
     this._post = post;
-    if (this.isReclout(post)) {
-      this.postContent = post.RecloutedPostEntryResponse;
-      this.reclouterProfile = post.ProfileEntryResponse;
-      if (this.isQuotedClout(post.RecloutedPostEntryResponse)) {
-        this.quotedContent = this.postContent.RecloutedPostEntryResponse;
+    if (this.isRepost(post)) {
+      this.postContent = post.RepostedPostEntryResponse;
+      this.reposterProfile = post.ProfileEntryResponse;
+      if (this.isQuotedRepost(post.RepostedPostEntryResponse)) {
+        this.quotedContent = this.postContent.RepostedPostEntryResponse;
       }
-    } else if (this.isQuotedClout(post)) {
+    } else if (this.isQuotedRepost(post)) {
       this.postContent = post;
-      this.quotedContent = post.RecloutedPostEntryResponse;
+      this.quotedContent = post.RepostedPostEntryResponse;
     } else {
       this.postContent = post;
     }
   }
+
   @Input() set blocked(value: boolean) {
     this._blocked = value;
     this.ref.detectChanges();
@@ -69,13 +73,14 @@ export class FeedPostComponent implements OnInit {
   @Input() contentShouldLinkToThread: boolean;
 
   @Input() afterCommentCreatedCallback: any = null;
-  @Input() afterRecloutCreatedCallback: any = null;
+  @Input() afterRepostCreatedCallback: any = null;
   @Input() showReplyingToContent: any = null;
   @Input() parentPost;
   @Input() isParentPostInThread = false;
   @Input() showThreadConnectionLine = false;
   @Input() showLeftSelectedBorder = false;
   @Input() showInteractionDetails = false;
+  @Input() isQuotedContent: boolean = false;
 
   @Input() showDropdown = true;
   @Input() hideFollowLink = false;
@@ -84,11 +89,26 @@ export class FeedPostComponent implements OnInit {
 
   @Input() showQuotedContent = true;
   @Input() hoverable = true;
+  @Input() cardStyle: boolean = false;
 
   @Input() showReplyingTo = false;
+  @Input() nftCollectionHighBid = 0;
+  @Input() nftCollectionLowBid = 0;
+  @Input() isForSaleOnly: boolean = false;
+  nftLastAcceptedBidAmountNanos: number;
+  nftMinBidAmountNanos: number;
+
+  @Input() showNFTDetails = false;
+  @Input() showExpandedNFTDetails = false;
+  @Input() setBorder = false;
+  @Input() showAvailableSerialNumbers = false;
+
+  @Input() profilePublicKeyBase58Check: string = "";
 
   // If the post is shown in a modal, this is used to hide the modal on post click.
   @Input() containerModalRef: any = null;
+
+  @Input() inTutorial: boolean = false;
 
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
@@ -96,14 +116,17 @@ export class FeedPostComponent implements OnInit {
   // emits the UserBlocked event
   @Output() userBlocked = new EventEmitter();
 
+  // emits the nftBidPLaced event
+  @Output() nftBidPlaced = new EventEmitter();
+
+  // emits diamondSent event
+  @Output() diamondSent = new EventEmitter();
+
   AppRoutingModule = AppRoutingModule;
-  stakeAmount = 1;
-  loggedInUserStakeAmount = 0;
-  loggedInUserNextStakePayout = -1;
   addingPostToGlobalFeed = false;
-  reclout: any;
+  repost: any;
   postContent: any;
-  reclouterProfile: any;
+  reposterProfile: any;
   _post: any;
   pinningPost = false;
   hidingPost = false;
@@ -111,18 +134,91 @@ export class FeedPostComponent implements OnInit {
   _blocked: boolean;
   constructedEmbedURL: any;
 
+  showPlaceABid: boolean;
+  highBid: number = null;
+  lowBid: number = null;
+  availableSerialNumbers: NFTEntryResponse[];
+  myAvailableSerialNumbers: NFTEntryResponse[];
+  mySerialNumbersNotForSale: NFTEntryResponse[];
+  serialNumbersDisplay: string;
+  nftEntryResponses: NFTEntryResponse[];
+  decryptableNFTEntryResponses: NFTEntryResponse[];
+
+  unlockableTooltip =
+    "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
+  mOfNNFTTooltip =
+    "Each NFT can have multiple editions, each of which has its own unique serial number. This shows how many editions are currently on sale and how many there are in total. Generally, editions with lower serial numbers are more valuable.";
+
+  getNFTEntries() {
+    this.backendApi
+      .GetNFTEntriesForNFTPost(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.postContent.PostHashHex
+      )
+      .subscribe((res) => {
+        this.nftEntryResponses = res.NFTEntryResponses;
+        this.nftEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
+        this.decryptableNFTEntryResponses = this.nftEntryResponses.filter(
+          (sn) =>
+            sn.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+            sn.EncryptedUnlockableText &&
+            sn.LastOwnerPublicKeyBase58Check
+        );
+        if (this.decryptableNFTEntryResponses.length) {
+          this.backendApi
+            .DecryptUnlockableTexts(
+              this.globalVars.loggedInUser?.PublicKeyBase58Check,
+              this.decryptableNFTEntryResponses
+            )
+            .subscribe((res) => (this.decryptableNFTEntryResponses = res));
+        }
+        this.availableSerialNumbers = this.nftEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
+        const profileSerialNumbers = this.nftEntryResponses.filter(
+          (serialNumber) =>
+            serialNumber.OwnerPublicKeyBase58Check === this.profilePublicKeyBase58Check &&
+            (!this.isForSaleOnly || serialNumber.IsForSale)
+        );
+        this.serialNumbersDisplay =
+          profileSerialNumbers
+            .map((serialNumber) => `#${serialNumber.SerialNumber}`)
+            .slice(0, 5)
+            .join(", ") + (profileSerialNumbers.length > 5 ? "..." : "");
+        this.mySerialNumbersNotForSale = this.nftEntryResponses.filter(
+          (nftEntryResponse) =>
+            !nftEntryResponse.IsForSale &&
+            nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+        );
+        this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
+          (nftEntryResponse) =>
+            nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+        );
+        this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
+        this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
+        this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
+        if (this.nftEntryResponses.length === 1) {
+          this.nftLastAcceptedBidAmountNanos = this.nftEntryResponses[0].LastAcceptedBidAmountNanos;
+          if (this.nftEntryResponses[0].MinBidAmountNanos > 0) {
+            this.nftMinBidAmountNanos = this.nftEntryResponses[0].MinBidAmountNanos;
+          }
+        }
+      });
+  }
+
   ngOnInit() {
-    if (this.globalVars.loggedInUser) {
-      this.loggedInUserStakeAmount = this._getLoggedInUserStakeAmount();
-      this.loggedInUserNextStakePayout = this._getLoggedInUserNextStakePayout();
-    }
-    if (!this.post.RecloutCount) {
-      this.post.RecloutCount = 0;
+    if (!this.post.RepostCount) {
+      this.post.RepostCount = 0;
     }
     this.setEmbedURLForPostContent();
+    if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
+      this.getNFTEntries();
+    }
   }
 
   onPostClicked(event) {
+    if (this.inTutorial) {
+      return;
+    }
     if (this.containerModalRef !== null) {
       this.containerModalRef.hide();
     }
@@ -144,21 +240,35 @@ export class FeedPostComponent implements OnInit {
       return true;
     }
 
-    this.router.navigate(["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex], {
+    const route = this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS;
+
+    // identify ctrl+click (or) cmd+clik and opens feed in new tab
+    if (event.ctrlKey) {
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree(["/" + route, this.postContent.PostHashHex], {
+          queryParamsHandling: "merge",
+        })
+      );
+      window.open(url, "_blank");
+      // don't navigate after new tab is opened
+      return true;
+    }
+
+    this.router.navigate(["/" + route, this.postContent.PostHashHex], {
       queryParamsHandling: "merge",
     });
   }
 
-  isReclout(post: any): boolean {
-    return post.Body === "" && (!post.ImageURLs || post.ImageURLs?.length === 0) && post.RecloutedPostEntryResponse;
+  isRepost(post: any): boolean {
+    return post.Body === "" && (!post.ImageURLs || post.ImageURLs?.length === 0) && post.RepostedPostEntryResponse;
   }
 
-  isQuotedClout(post: any): boolean {
-    return (post.Body !== "" || post.ImageURLs?.length > 0) && post.RecloutedPostEntryResponse;
+  isQuotedRepost(post: any): boolean {
+    return (post.Body !== "" || post.ImageURLs?.length > 0) && post.RepostedPostEntryResponse;
   }
 
   isRegularPost(post: any): boolean {
-    return !this.isReclout(post) && !this.isQuotedClout(post);
+    return !this.isRepost(post) && !this.isQuotedRepost(post);
   }
 
   openImgModal(event, imageURL) {
@@ -191,15 +301,15 @@ export class FeedPostComponent implements OnInit {
     }
   }
 
-  openRecloutsModal(event): void {
-    if (this.postContent.RecloutCount) {
-      this.openInteractionModal(event, RecloutsModalComponent);
+  openRepostsModal(event): void {
+    if (this.postContent.RepostCount) {
+      this.openInteractionModal(event, RepostsModalComponent);
     }
   }
 
-  openQuoteRecloutsModal(event): void {
-    if (this.postContent.QuoteRecloutCount) {
-      this.openInteractionModal(event, QuoteRecloutsModalComponent);
+  openQuoteRepostsModal(event): void {
+    if (this.postContent.QuoteRepostCount) {
+      this.openInteractionModal(event, QuoteRepostsModalComponent);
     }
   }
 
@@ -233,12 +343,12 @@ export class FeedPostComponent implements OnInit {
             this._post.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
             "" /*Title*/,
-            { Body: this._post.Body, ImageURLs: this._post.ImageURLs } /*BodyObj*/,
-            this._post.RecloutedPostEntryResponse?.PostHashHex || "",
+            { Body: this._post.Body, ImageURLs: this._post.ImageURLs, VideoURLs: this._post.VideoURLs } /*BodyObj*/,
+            this._post.RepostedPostEntryResponse?.PostHashHex || "",
             {},
             "" /*Sub*/,
             true /*IsHidden*/,
-            this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
+            this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
           )
           .subscribe(
             (response) => {
@@ -330,48 +440,6 @@ export class FeedPostComponent implements OnInit {
     }
   }
 
-  _getLoggedInUserStakeAmount() {
-    if (this.post.StakeEntry.StakeList.length === 0) {
-      return 0;
-    }
-    let totalStake = 0;
-    for (let ii = 0; ii < this.post.StakeEntry.StakeList.length; ii++) {
-      if (
-        this.post.StakeEntry.StakeList[ii].StakerPublicKeyBase58Check ==
-        this.globalVars.loggedInUser.PublicKeyBase58Check
-      ) {
-        totalStake += this.post.StakeEntry.StakeList[ii].InitialStakeNanos;
-      }
-    }
-    return totalStake / 1e9;
-  }
-
-  // Returns -1 if the user is not expecting another payout.
-  _getLoggedInUserNextStakePayout() {
-    if (this.post.StakeEntry.StakeList.length == 0) {
-      return -1;
-    }
-    // Start with the current amount staked.
-    let payoutStakeAmount = this.post.StakeEntryStats.TotalStakeNanos;
-
-    const loggedInUserPK = this.globalVars.loggedInUser.PublicKeyBase58Check;
-    for (let ii = 0; ii < this.post.StakeEntry.StakeList.length; ii++) {
-      const stakerPK = this.post.StakeEntry.StakeList[ii].StakerPublicKeyBase58Check;
-
-      // If we find a stake that isn't the current user, add the remaining stake owed.
-      if (stakerPK != loggedInUserPK && this.post.StakeEntry.StakeList[ii].RemainingStakeOwedNanos > 0) {
-        payoutStakeAmount += this.post.StakeEntry.StakeList[ii].RemainingStakeOwedNanos;
-      }
-
-      // If we find a stake that *is* the current user and is unpaid, we are at the payoutStakeAmount and can return.
-      else if (stakerPK == loggedInUserPK && this.post.StakeEntry.StakeList[ii].RemainingStakeOwedNanos > 0) {
-        return payoutStakeAmount / 1e9;
-      }
-    }
-
-    return -1;
-  }
-
   _addPostToGlobalFeed(event: any) {
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -452,6 +520,10 @@ export class FeedPostComponent implements OnInit {
     return EmbedUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
   }
 
+  getEmbedWidth(): string {
+    return EmbedUrlParserService.getEmbedWidth(this.postContent.PostExtraData["EmbedVideoURL"]);
+  }
+
   // Vimeo iframes have a lot of spacing on top and bottom on mobile.
   setNegativeMargins(link: string, globalVars: GlobalVarsService) {
     return globalVars.isMobile() && EmbedUrlParserService.isVimeoLink(link);
@@ -462,5 +534,40 @@ export class FeedPostComponent implements OnInit {
       return imgURL.replace("https://i.imgur.com", "https://images.bitclout.com/i.imgur.com");
     }
     return imgURL;
+  }
+
+  openPlaceBidModal(event: any) {
+    if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
+      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "place a bid");
+      return;
+    }
+    event.stopPropagation();
+    const modalDetails = this.modalService.show(PlaceBidModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { post: this.postContent },
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "bid placed") {
+        this.getNFTEntries();
+        this.nftBidPlaced.emit();
+      }
+    });
+  }
+
+  showUnlockableContent = false;
+  toggleShowUnlockableContent(): void {
+    if (!this.decryptableNFTEntryResponses?.length) {
+      return;
+    }
+    this.showUnlockableContent = !this.showUnlockableContent;
+  }
+  showmOfNNFTTooltip = false;
+  toggleShowMOfNNFTTooltip(): void {
+    this.showmOfNNFTTooltip = !this.showmOfNNFTTooltip;
+  }
+
+  getRouterLink(val: any): any {
+    return this.inTutorial ? [] : val;
   }
 }

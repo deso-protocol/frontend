@@ -1,16 +1,18 @@
-// TODO: creator coin buys: no-balance case is kinda dumb, we should have a module telling you to buy bitclout or
+// TODO: creator coin buys: no-balance case is kinda dumb, we should have a module telling you to buy deso or
 // creator coin
 
 // TODO: creator coin buys: need warning about potential slippage
 
 // TODO: creator coin buys: may need tiptips explaining why total != amount * currentPriceElsewhereOnSite
 
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
-import { AppRoutingModule } from "../../app-routing.module";
+import { AppRoutingModule, RouteNames } from "../../app-routing.module";
+import { Observable, Subscription } from "rxjs";
+import {SwalHelper} from "../../../lib/helpers/swal-helper";
 
 @Component({
   selector: "trade-creator",
@@ -18,6 +20,8 @@ import { AppRoutingModule } from "../../app-routing.module";
   styleUrls: ["./trade-creator.component.scss"],
 })
 export class TradeCreatorComponent implements OnInit {
+  @Input() inTutorial: boolean = false;
+  @Input() tutorialBuy: boolean;
   TRADE_CREATOR_FORM_SCREEN = "trade_creator_form_screen";
   TRADE_CREATOR_PREVIEW_SCREEN = "trade_creator_preview_screen";
   TRADE_CREATOR_COMPLETE_SCREEN = "trade_creator_complete_screen";
@@ -34,12 +38,15 @@ export class TradeCreatorComponent implements OnInit {
   creatorCoinTrade: CreatorCoinTrade;
 
   // buy creator coin data
-  bitCloutToSell: number;
+  desoToSell: number;
   expectedCreatorCoinReturnedNanos: number;
 
   // sell creator coin data
   creatorCoinToSell: number;
-  expectedBitCloutReturnedNanos: number;
+  expectedDeSoReturnedNanos: number;
+
+  // show different header text if we're at the "Invest In Yourself" stage of the tutorial
+  investInYourself: boolean = false;
 
   _onSlippageError() {
     this.screenToShow = this.TRADE_CREATOR_FORM_SCREEN;
@@ -56,7 +63,25 @@ export class TradeCreatorComponent implements OnInit {
   }
 
   _onTradeExecuted() {
-    this.screenToShow = this.TRADE_CREATOR_COMPLETE_SCREEN;
+    if (!this.inTutorial) {
+      this.screenToShow = this.TRADE_CREATOR_COMPLETE_SCREEN;
+    } else {
+      if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
+        this.router.navigate([
+          RouteNames.TUTORIAL,
+          RouteNames.WALLET,
+          this.globalVars.loggedInUser?.CreatorPurchasedInTutorialUsername,
+        ]);
+      } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
+        this.router.navigate([
+          RouteNames.TUTORIAL,
+          RouteNames.WALLET,
+          this.globalVars.loggedInUser?.CreatorPurchasedInTutorialUsername,
+        ]);
+      } else if (this.globalVars.loggedInUser.TutorialStatus === TutorialStatus.INVEST_SELF) {
+        this.router.navigate([RouteNames.TUTORIAL, RouteNames.WALLET, this.creatorProfile.Username]);
+      }
+    }
   }
 
   readyForDisplay() {
@@ -120,12 +145,12 @@ export class TradeCreatorComponent implements OnInit {
     }
   }
 
-  _getCreatorProfile(creatorUsername) {
+  _getCreatorProfile(creatorUsername): Subscription {
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
-    this.backendApi.GetSingleProfile(this.globalVars.localNode, "", creatorUsername).subscribe(
+    return this.backendApi.GetSingleProfile(this.globalVars.localNode, "", creatorUsername).subscribe(
       (response) => {
         if (!response || !response.Profile) {
           this.router.navigateByUrl("/" + this.appData.RouteNames.NOT_FOUND, { skipLocationChange: true });
@@ -155,9 +180,80 @@ export class TradeCreatorComponent implements OnInit {
 
   ngOnInit() {
     this.creatorCoinTrade = new CreatorCoinTrade(this.appData);
-    this._setStateFromActivatedRoute(this.route);
-    this.route.params.subscribe((params) => {
+    if (!this.inTutorial) {
       this._setStateFromActivatedRoute(this.route);
-    });
+      this.route.params.subscribe((params) => {
+        this._setStateFromActivatedRoute(this.route);
+      });
+    } else {
+      this.screenToShow = this.TRADE_CREATOR_PREVIEW_SCREEN;
+      this.creatorCoinTrade.isBuyingCreatorCoin = !!this.tutorialBuy;
+      this.creatorCoinTrade.tradeType = !!this.tutorialBuy ? CreatorCoinTrade.BUY_VERB : CreatorCoinTrade.SELL_VERB;
+      this._getCreatorProfile(this.route.snapshot.params.username).add(() => {
+        this.investInYourself =
+          this.globalVars.loggedInUser?.ProfileEntryResponse?.Username ===
+          this.creatorCoinTrade.creatorProfile.Username;
+        if (this.creatorCoinTrade.isBuyingCreatorCoin) {
+          this.setUpBuyTutorial();
+        } else {
+          this.setUpSellTutorial();
+        }
+      });
+    }
+  }
+
+  setUpBuyTutorial(): void {
+    let balance = this.appData.loggedInUser?.BalanceNanos;
+    const jumioDeSoNanos = this.appData.jumioDeSoNanos > 0 ? this.appData.jumioDeSoNanos : 1e8;
+    balance = balance > jumioDeSoNanos ? jumioDeSoNanos : balance;
+    const percentToBuy =
+      this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check ? 0.1 : 0.5;
+    this.creatorCoinTrade.desoToSell = (balance * percentToBuy) / 1e9;
+    this.getBuyOrSellObservable().subscribe(
+      (response) => {
+        this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = response.ExpectedCreatorCoinReturnedNanos || 0;
+        this.creatorCoinTrade.expectedFounderRewardNanos = response.FounderRewardGeneratedNanos || 0;
+      },
+      (err) => {
+        console.error(err);
+        this.appData._alertError(this.backendApi.parseProfileError(err));
+      }
+    );
+  }
+
+  setUpSellTutorial(): void {
+    const hodlings = this.globalVars.loggedInUser?.UsersYouHODL;
+    if (!hodlings) {
+      // some error and return?
+      return;
+    }
+    const creatorCoinsPurchasedInTutorial = this.globalVars.loggedInUser?.CreatorCoinsPurchasedInTutorial;
+    // Sell 5% of coins purchased in buy step.
+    this.creatorCoinTrade.creatorCoinToSell = (creatorCoinsPurchasedInTutorial * 0.05) / 1e9;
+    this.getBuyOrSellObservable().subscribe(
+      (response) => {
+        this.creatorCoinTrade.expectedDeSoReturnedNanos = response.ExpectedDeSoReturnedNanos || 0;
+      },
+      (err) => {
+        console.error(err);
+        this.appData._alertError(this.backendApi.parseProfileError(err));
+      }
+    );
+  }
+
+  getBuyOrSellObservable(): Observable<any> {
+    return this.backendApi.BuyOrSellCreatorCoin(
+      this.appData.localNode,
+      this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+      this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
+      this.creatorCoinTrade.operationType() /*OperationType*/,
+      this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
+      this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
+      0 /*DeSoToAddNanos*/,
+      0 /*MinDeSoExpectedNanos*/,
+      0 /*MinCreatorCoinExpectedNanos*/,
+      this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
+      false
+    );
   }
 }

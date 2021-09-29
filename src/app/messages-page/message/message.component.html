@@ -7,18 +7,28 @@
   <!-- The messages are received from the backend encrypted. If we have the unencrypted
        text stored we use that instead. -->
   <div
+    *ngIf="message.V2 && message.TstampNanos"
+    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
+    style="white-space: pre-wrap; overflow-wrap: anywhere"
+  >{{ message.DecryptedText }}</div>
+  <div
+    *ngIf="!message.V2 && message.TstampNanos"
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
     style="white-space: pre-wrap; overflow-wrap: anywhere"
   >{{
       globalVars.messageMeta.decryptedMessgesMap[
-        globalVars.loggedInUser.PublicKeyBase58Check + "" + message.TstampNanos
+      globalVars.loggedInUser.PublicKeyBase58Check + "" + message.TstampNanos
       ]
-        ? globalVars.messageMeta.decryptedMessgesMap[
-            globalVars.loggedInUser.PublicKeyBase58Check + "" + message.TstampNanos
-          ].DecryptedText
-        : "&#60;Message is not decryptable on this device&#62;"
-    }}
-  </div>
+      ? globalVars.messageMeta.decryptedMessgesMap[
+      globalVars.loggedInUser.PublicKeyBase58Check + "" + message.TstampNanos
+      ].DecryptedText
+      : "&#60;Message is not decryptable on this device&#62;"
+    }}</div>
+  <div
+    *ngIf="!message.TstampNanos"
+    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
+    style="white-space: pre-wrap; overflow-wrap: anywhere"
+  ></div>
   <div
     *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
     class="message__avatar ml-15px"
@@ -57,7 +67,7 @@
   <!--"Pre-wrap" allows us to render new lines properly-->
   <!-- Messages that the user receives can be returned from the backend unencrypted. -->
   <div
-    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height background-color-light-grey"
+    class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height background-color-light-grey disable-scrollbars"
     style="white-space: pre-wrap; overflow-wrap: anywhere"
   >{{ message.DecryptedText }}
   </div>

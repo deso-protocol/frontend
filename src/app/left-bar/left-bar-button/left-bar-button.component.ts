@@ -11,15 +11,18 @@ export class LeftBarButtonComponent {
   @Input() buttonLabel: string;
   @Input() hasNotifications = false;
   @Input() isUnread = false;
+  @Input() queryParams = null;
   notificationCount = 1;
 
   constructor(public globalVars: GlobalVarsService) {}
 
   _queryParamsForLink(link: string) {
+    if (this.queryParams) {
+      return this.queryParams;
+    }
     if (link.includes(this.globalVars.RouteNames.BROWSE)) {
       return { stepNum: null, adminTab: null };
-    } else {
-      return { stepNum: null, adminTab: null, feedTab: null };
     }
+    return { stepNum: null, adminTab: null, feedTab: null };
   }
 }

@@ -7,20 +7,20 @@ export class CreatorCoinTrade {
   static SELL_VERB = "Sell";
   static TRANSFER_VERB = "Transfer";
 
-  static BITCLOUT_CURRENCY_STRING = "BitClout";
+  static DESO_CURRENCY_STRING = "DeSo";
   static USD_CURRENCY_STRING = "USD";
   static CREATOR_COIN_CURRENCY_STRING = "Creator coin";
 
   isBuyingCreatorCoin: boolean;
 
   // buy creator coin data
-  bitCloutToSell: number;
+  desoToSell: number;
   expectedCreatorCoinReturnedNanos: number = 0;
   expectedFounderRewardNanos: number = 0;
 
   // sell creator coin data
   creatorCoinToSell: number;
-  expectedBitCloutReturnedNanos: number = 0;
+  expectedDeSoReturnedNanos: number = 0;
 
   // ProfileEntry response from server
   creatorProfile: ProfileEntryResponse;
@@ -42,6 +42,9 @@ export class CreatorCoinTrade {
   showUsernameError: boolean = false;
   showPubKeyError: boolean = false;
   showCannotSendToSelfError: boolean = false;
+
+  // If the user wishes to follow the creator after purchasing their coin
+  followCreator: boolean = false;
 
   constructor(public globalVars: GlobalVarsService) {
     this.clearAllFields();
@@ -81,24 +84,24 @@ export class CreatorCoinTrade {
     this.isBuyingCreatorCoin = this.tradeType === CreatorCoinTrade.BUY_VERB;
   }
 
-  // returns a map like {BitClout: 'BitClout', USD: 'USD', Creator Coin: 'balajis coin'}
+  // returns a map like {DeSo: 'DeSo', USD: 'USD', Creator Coin: 'balajis coin'}
   currencyConstantsToHumanLabel() {
     let map = {};
     if (this.isBuyingCreatorCoin) {
-      // If buying creator coins, you can specify BitClout and USD
+      // If buying creator coins, you can specify DeSo and USD
       //
       // You can't specify an amount in creator coin right now. The API endpoint to buy/sell
-      // creator coin takes an amount of BitClout to sell. We don't have a BitClout <=> creator
+      // creator coin takes an amount of DeSo to sell. We don't have a DeSo <=> creator
       // coin exchange rate, so we have no way to convert a user-specified amount of creator coin
-      // into an amount of BitClout
+      // into an amount of DeSo
       //
       // We don't have an exchange rate because the price depends on the amount of
       // creator coin you specify
-      map[CreatorCoinTrade.BITCLOUT_CURRENCY_STRING] = CreatorCoinTrade.BITCLOUT_CURRENCY_STRING;
+      map[CreatorCoinTrade.DESO_CURRENCY_STRING] = CreatorCoinTrade.DESO_CURRENCY_STRING;
       map[CreatorCoinTrade.USD_CURRENCY_STRING] = CreatorCoinTrade.USD_CURRENCY_STRING;
     } else {
       // If selling creator coins, you can only specify an amount in creator coin, because
-      // we don't have a BitClout <=> creator coin exchange rate
+      // we don't have a DeSo <=> creator coin exchange rate
       //
       // USD is the same: we don't have a USD <=> creator coin exchange rate, so we can't convert
       // a USD amount into a creator coin amount
@@ -108,7 +111,7 @@ export class CreatorCoinTrade {
   }
 
   assetToSellString() {
-    return this.isBuyingCreatorCoin ? CreatorCoinTrade.BITCLOUT_CURRENCY_STRING : this.creatorCoinCurrencyString();
+    return this.isBuyingCreatorCoin ? CreatorCoinTrade.DESO_CURRENCY_STRING : this.creatorCoinCurrencyString();
   }
 
   assetToSellBalance() {
@@ -125,7 +128,7 @@ export class CreatorCoinTrade {
 
   assetToSellAmount() {
     if (this.isBuyingCreatorCoin) {
-      return this.bitCloutToSell;
+      return this.desoToSell;
     } else {
       return this.creatorCoinToSell;
     }
@@ -133,7 +136,7 @@ export class CreatorCoinTrade {
 
   assetToSellCurrency() {
     if (this.isBuyingCreatorCoin) {
-      return CreatorCoinTrade.BITCLOUT_CURRENCY_STRING;
+      return CreatorCoinTrade.DESO_CURRENCY_STRING;
     } else {
       return CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING;
     }
@@ -180,7 +183,7 @@ export class CreatorCoinTrade {
   }
 
   assetReturnedString() {
-    return this.isBuyingCreatorCoin ? this.creatorCoinCurrencyString() : CreatorCoinTrade.BITCLOUT_CURRENCY_STRING;
+    return this.isBuyingCreatorCoin ? this.creatorCoinCurrencyString() : CreatorCoinTrade.DESO_CURRENCY_STRING;
   }
 
   assetReturnedAmount() {
@@ -190,15 +193,15 @@ export class CreatorCoinTrade {
     if (this.isBuyingCreatorCoin) {
       return (this.expectedCreatorCoinReturnedNanos || 0) / 1e9;
     } else {
-      return (this.expectedBitCloutReturnedNanos || 0) / 1e9;
+      return (this.expectedDeSoReturnedNanos || 0) / 1e9;
     }
   }
 
   assetReturnedAmountInUsd() {
     if (this.isBuyingCreatorCoin) {
-      return (this.bitCloutToSell || 0) * this.usdPriceOfBitClout();
+      return (this.desoToSell || 0) * this.usdPriceOfDeSo();
     } else {
-      return (this.expectedBitCloutReturnedNanos / 1e9) * this.usdPriceOfBitClout();
+      return (this.expectedDeSoReturnedNanos / 1e9) * this.usdPriceOfDeSo();
     }
   }
 
@@ -206,11 +209,11 @@ export class CreatorCoinTrade {
     // buy creator coin fields
     this.expectedCreatorCoinReturnedNanos = 0;
     this.expectedFounderRewardNanos = 0;
-    this.bitCloutToSell = 0;
+    this.desoToSell = 0;
 
     // sell creator coin fields
     this.creatorCoinToSell = 0;
-    this.expectedBitCloutReturnedNanos = 0;
+    this.expectedDeSoReturnedNanos = 0;
 
     this.networkFeeNanos = 0;
   }
@@ -258,18 +261,18 @@ export class CreatorCoinTrade {
   // Note: we haven't QA'd all the cases below. Some cases are not hit in the current
   // product. Use this function with caution.
   convertAmount(inputAmountNanos: number, inputCurrency: string, targetCurrency: string) {
-    if (inputCurrency == CreatorCoinTrade.BITCLOUT_CURRENCY_STRING) {
-      if (targetCurrency == CreatorCoinTrade.BITCLOUT_CURRENCY_STRING) {
+    if (inputCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
+      if (targetCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
         return inputAmountNanos;
       } else if (targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING) {
-        // return inputAmountNanos / this.bitCloutPriceOfCreatorCoin()
+        // return inputAmountNanos / this.desoPriceOfCreatorCoin()
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
       } else if (targetCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
-        return inputAmountNanos * this.usdPriceOfBitClout();
+        return inputAmountNanos * this.usdPriceOfDeSo();
       }
     } else if (inputCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING) {
-      if (targetCurrency == CreatorCoinTrade.BITCLOUT_CURRENCY_STRING) {
-        // return inputAmountNanos * this.bitCloutPriceOfCreatorCoin()
+      if (targetCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
+        // return inputAmountNanos * this.desoPriceOfCreatorCoin()
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
       } else if (targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING) {
         return inputAmountNanos;
@@ -277,8 +280,8 @@ export class CreatorCoinTrade {
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
       }
     } else if (inputCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
-      if (targetCurrency == CreatorCoinTrade.BITCLOUT_CURRENCY_STRING) {
-        return inputAmountNanos / this.usdPriceOfBitClout();
+      if (targetCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
+        return inputAmountNanos / this.usdPriceOfDeSo();
       } else if (targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING) {
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
       } else if (targetCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
@@ -293,35 +296,35 @@ export class CreatorCoinTrade {
   // USD per creator coin
   // 1 creator coin == how much USD?
   usdPriceOfCreatorCoin() {
-    let bitCloutPerCoin;
+    let desoPerCoin;
     if (this.isBuyingOwnCoin()) {
-      bitCloutPerCoin = this.bitCloutToSell / this.assetReturnedAmount();
+      desoPerCoin = this.desoToSell / this.assetReturnedAmount();
     } else if (this.isBuyingCreatorCoin) {
-      bitCloutPerCoin = (this.bitCloutToSell * 1e9) / this.expectedCreatorCoinReturnedNanos;
+      desoPerCoin = (this.desoToSell * 1e9) / this.expectedCreatorCoinReturnedNanos;
     } else {
-      bitCloutPerCoin = this.expectedBitCloutReturnedNanos / (this.creatorCoinToSell * 1e9);
+      desoPerCoin = this.expectedDeSoReturnedNanos / (this.creatorCoinToSell * 1e9);
     }
 
-    return bitCloutPerCoin * this.usdPriceOfBitClout();
+    return desoPerCoin * this.usdPriceOfDeSo();
   }
 
-  // USD per BitClout
-  // 1 BitClout == how much USD?
-  usdPriceOfBitClout() {
+  // USD per DeSo
+  // 1 DeSo == how much USD?
+  usdPriceOfDeSo() {
     return 1e9 / this.globalVars.nanosPerUSDExchangeRate;
   }
 
-  // BitClout per creator coin
-  bitCloutPriceOfCreatorCoin() {
+  // DeSo per creator coin
+  desoPriceOfCreatorCoin() {
     if (this.isBuyingOwnCoin()) {
       return (
-        this.bitCloutToSell / ((this.expectedCreatorCoinReturnedNanos + (this.expectedFounderRewardNanos || 0)) / 1e9)
+        this.desoToSell / ((this.expectedCreatorCoinReturnedNanos + (this.expectedFounderRewardNanos || 0)) / 1e9)
       );
     }
     if (this.isBuyingCreatorCoin) {
-      return this.bitCloutToSell / (this.expectedCreatorCoinReturnedNanos / 1e9);
+      return this.desoToSell / (this.expectedCreatorCoinReturnedNanos / 1e9);
     } else {
-      return this.expectedBitCloutReturnedNanos / 1e9 / this.creatorCoinToSell;
+      return this.expectedDeSoReturnedNanos / 1e9 / this.creatorCoinToSell;
     }
   }
 
@@ -329,7 +332,7 @@ export class CreatorCoinTrade {
   // 1 asset-to-sell == how much USD?
   usdPriceOfAssetToSell() {
     if (this.isBuyingCreatorCoin) {
-      return this.usdPriceOfBitClout();
+      return this.usdPriceOfDeSo();
     } else {
       return this.usdPriceOfCreatorCoin();
     }

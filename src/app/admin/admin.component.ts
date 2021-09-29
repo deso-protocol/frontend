@@ -10,8 +10,8 @@ import { Title } from "@angular/platform-browser";
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
-  static INSUFFICIENT_BALANCE = `You don't have enough BitClout to process the transaction. Try reducing the fee rate.`;
-  static SEND_BITCLOUT_MIN = `You must send a non-zero amount of BitClout`;
+  static INSUFFICIENT_BALANCE = `You don't have enough DeSo to process the transaction. Try reducing the fee rate.`;
+  static SEND_DESO_MIN = `You must send a non-zero amount of DeSo`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
 }
 
@@ -24,7 +24,7 @@ class Messages {
 export class AdminComponent implements OnInit {
   globalVars: GlobalVarsService;
   adminPosts = [];
-  adminPostsByClout = [];
+  adminPostsByDESO = [];
   activePosts = [];
   activeTab: string;
   activePostTab: string;
@@ -32,8 +32,8 @@ export class AdminComponent implements OnInit {
   loadingMorePosts = false;
   loadingMempoolStats = true;
   loadingGlobalParams = true;
-  loadingPostsByClout = false;
-  searchingForPostsByClout = false;
+  loadingPostsByDESO = false;
+  searchingForPostsByDESO = false;
   @Input() isMobile = false;
 
   blacklistPubKeyOrUsername = "";
@@ -58,8 +58,8 @@ export class AdminComponent implements OnInit {
   submittingWhitelistUpdate = false;
   submittingUnwhitelistUpdate = false;
   submittingEvictUnminedBitcoinTxns = false;
-  submittingUSDToBitCloutReserveExchangeRateUpdate = false;
-  submittingBuyBitCloutFeeRate = false;
+  submittingUSDToDeSoReserveExchangeRateUpdate = false;
+  submittingBuyDeSoFeeRate = false;
 
   submittingRemovePhone = false;
   dbDetailsOpen = false;
@@ -70,14 +70,16 @@ export class AdminComponent implements OnInit {
   mempoolSummaryStats: any = {};
   mempoolTxnCount = 0;
   bitcoinExchangeRate: number;
-  usdToBitCloutReserveExchangeRate: number;
-  buyBitCloutFeeRate: number;
+  usdToDeSoReserveExchangeRate: number;
+  buyDeSoFeeRate: number;
   updatingBitcoinExchangeRate = false;
   updatingGlobalParams = false;
   updatingUSDToBitcoin = false;
   updatingCreateProfileFee = false;
   updatingMinimumNetworkFee = false;
-  feeRateBitCloutPerKB = (1000 / 1e9).toFixed(9); // Default fee rate.
+  updatingMaxCopiesPerNFT = false;
+  updatingCreateNFTFeeNanos = false;
+  feeRateDeSoPerKB = (1000 / 1e9).toFixed(9); // Default fee rate.
   bitcoinBlockHashOrHeight = "";
   evictBitcoinTxnHashes = "";
   usernameToVerify = "";
@@ -95,15 +97,18 @@ export class AdminComponent implements OnInit {
     USDPerBitcoin: 0,
     CreateProfileFeeNanos: 0,
     MinimumNetworkFeeNanosPerKB: 0,
+    MaxCopiesPerNFT: 0,
+    CreateNFTFeeNanos: 0,
   };
   verifiedUsers: any = [];
   usernameVerificationAuditLogs: any = [];
   loadingVerifiedUsers = false;
   loadingVerifiedUsersAuditLog = false;
-  adminTabs = ["Posts", "Profiles", "Network", "Mempool", "Wyre", "Super"];
+  adminTabs = ["Posts", "Profiles", "NFTs", "Tutorial", "Network", "Mempool", "Wyre", "Jumio", "Referral Program"];
+
   POSTS_TAB = "Posts";
-  POSTS_BY_CLOUT_TAB = "Posts By Clout";
-  adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_CLOUT_TAB];
+  POSTS_BY_DESO_TAB = "Posts By DESO";
+  adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_DESO_TAB];
 
   // Fields for SwapIdentity
   submittingSwapIdentity = false;
@@ -119,7 +124,7 @@ export class AdminComponent implements OnInit {
   searchedForPubKey = false;
 
   // These are the options used to populate the dropdown for selecting a time window over which we want to fetch
-  // posts ordered by clout.
+  // posts ordered by deso.
   timeWindowOptions = {
     "15m": 15,
     "30m": 30,
@@ -144,6 +149,10 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.globalVars.showSuperAdminTools()) {
+      this.adminTabs.push("Super");
+    }
+
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.adminTab) {
         this.activeTab = queryParams.adminTab;
@@ -158,18 +167,18 @@ export class AdminComponent implements OnInit {
     this.loadingPosts = true;
     this.activePostTab = this.POSTS_TAB;
     this._loadPosts();
-    this._loadPostsByClout();
+    this._loadPostsByDESO();
 
     // Get the latest mempool stats.
     this._loadMempoolStats();
     this._loadNextBlockStats();
     this._loadGlobalParams();
 
-    // Get current fee percentage and reserve USD to BitClout exchange price.
-    this._loadBuyBitCloutFeeRate();
-    this._loadUSDToBitCloutReserveExchangeRate();
+    // Get current fee percentage and reserve USD to DeSo exchange price.
+    this._loadBuyDeSoFeeRate();
+    this._loadUSDToDeSoReserveExchangeRate();
 
-    this.titleService.setTitle("Admin - BitClout");
+    this.titleService.setTitle("Admin - DeSo");
   }
 
   _updateNodeInfo() {
@@ -180,7 +189,7 @@ export class AdminComponent implements OnInit {
       .NodeControl(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, "", "get_info")
       .subscribe(
         (res: any) => {
-          if (res == null || res.BitCloutStatus == null) {
+          if (res == null || res.DeSoStatus == null) {
             return;
           }
 
@@ -194,30 +203,29 @@ export class AdminComponent implements OnInit {
   }
 
   _tabClicked(tabName: any) {
-    this.activeTab = tabName;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { adminTab: tabName },
+      queryParams: { adminTab: this.activeTab },
       queryParamsHandling: "merge",
     });
   }
 
   _postTabClicked(postTabName: string) {
     this.activePostTab = postTabName;
-    if (postTabName === this.POSTS_BY_CLOUT_TAB) {
-      this.activePosts = this.adminPostsByClout;
+    if (postTabName === this.POSTS_BY_DESO_TAB) {
+      this.activePosts = this.adminPostsByDESO;
     } else {
       this.activePosts = this.adminPosts;
     }
   }
 
-  _searchPostsByClout() {
-    this.searchingForPostsByClout = true;
-    this._loadPostsByClout();
+  _searchPostsByDESO() {
+    this.searchingForPostsByDESO = true;
+    this._loadPostsByDESO();
   }
 
-  _loadPostsByClout() {
-    this.loadingPostsByClout = true;
+  _loadPostsByDESO() {
+    this.loadingPostsByDESO = true;
     // Get the reader's public key for the request.
     let readerPubKey = "";
     if (this.globalVars.loggedInUser) {
@@ -246,9 +254,9 @@ export class AdminComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.adminPostsByClout = res.PostsFound;
-          if (this.activePostTab === this.POSTS_BY_CLOUT_TAB) {
-            this.activePosts = this.adminPostsByClout;
+          this.adminPostsByDESO = res.PostsFound;
+          if (this.activePostTab === this.POSTS_BY_DESO_TAB) {
+            this.activePosts = this.adminPostsByDESO;
           }
         },
         (err) => {
@@ -257,8 +265,8 @@ export class AdminComponent implements OnInit {
         }
       )
       .add(() => {
-        this.loadingPostsByClout = false;
-        this.searchingForPostsByClout = false;
+        this.loadingPostsByDESO = false;
+        this.searchingForPostsByDESO = false;
       });
   }
 
@@ -416,6 +424,8 @@ export class AdminComponent implements OnInit {
             USDPerBitcoin: res.USDCentsPerBitcoin / 100,
             CreateProfileFeeNanos: res.CreateProfileFeeNanos / 1e9,
             MinimumNetworkFeeNanosPerKB: res.MinimumNetworkFeeNanosPerKB,
+            MaxCopiesPerNFT: res.MaxCopiesPerNFT,
+            CreateNFTFeeNanos: res.CreateNFTFeeNanos / 1e9,
           };
           this.updateGlobalParamsValues = this.globalParams;
         },
@@ -428,16 +438,16 @@ export class AdminComponent implements OnInit {
       });
   }
 
-  _loadBuyBitCloutFeeRate(): void {
-    this.backendApi.GetBuyBitCloutFeeBasisPoints(this.globalVars.localNode).subscribe(
-      (res) => (this.buyBitCloutFeeRate = res.BuyBitCloutFeeBasisPoints / 100),
+  _loadBuyDeSoFeeRate(): void {
+    this.backendApi.GetBuyDeSoFeeBasisPoints(this.globalVars.localNode).subscribe(
+      (res) => (this.buyDeSoFeeRate = res.BuyDeSoFeeBasisPoints / 100),
       (err) => console.log(err)
     );
   }
 
-  _loadUSDToBitCloutReserveExchangeRate(): void {
-    this.backendApi.GetUSDCentsToBitCloutReserveExchangeRate(this.globalVars.localNode).subscribe(
-      (res) => (this.usdToBitCloutReserveExchangeRate = res.USDCentsPerBitClout / 100),
+  _loadUSDToDeSoReserveExchangeRate(): void {
+    this.backendApi.GetUSDCentsToDeSoReserveExchangeRate(this.globalVars.localNode).subscribe(
+      (res) => (this.usdToDeSoReserveExchangeRate = res.USDCentsPerDeSo / 100),
       (err) => console.log(err)
     );
   }
@@ -711,9 +721,9 @@ export class AdminComponent implements OnInit {
       } else if (rawError.includes("not sufficient")) {
         return Messages.INSUFFICIENT_BALANCE;
       } else if (rawError.includes("RuleErrorTxnMustHaveAtLeastOneInput")) {
-        return Messages.SEND_BITCLOUT_MIN;
+        return Messages.SEND_DESO_MIN;
       } else if (
-        (rawError.includes("SendBitClout: Problem") && rawError.includes("Invalid input format")) ||
+        (rawError.includes("SendDeSo: Problem") && rawError.includes("Invalid input format")) ||
         rawError.includes("Checksum does not match")
       ) {
         return Messages.INVALID_PUBLIC_KEY;
@@ -731,24 +741,34 @@ export class AdminComponent implements OnInit {
 
   updateGlobalParamUSDPerBitcoin() {
     this.updatingUSDToBitcoin = true;
-    this.updateGlobalParams(this.updateGlobalParamsValues.USDPerBitcoin, -1, -1);
+    this.updateGlobalParams(this.updateGlobalParamsValues.USDPerBitcoin, -1, -1, -1, -1);
   }
 
   updateGlobalParamCreateProfileFee() {
     this.updatingCreateProfileFee = true;
-    this.updateGlobalParams(-1, this.updateGlobalParamsValues.CreateProfileFeeNanos, -1);
+    this.updateGlobalParams(-1, this.updateGlobalParamsValues.CreateProfileFeeNanos, -1, -1, -1);
   }
 
   updateGlobalParamMinimumNetworkFee() {
     this.updatingMinimumNetworkFee = true;
-    this.updateGlobalParams(-1, -1, this.updateGlobalParamsValues.MinimumNetworkFeeNanosPerKB);
+    this.updateGlobalParams(-1, -1, this.updateGlobalParamsValues.MinimumNetworkFeeNanosPerKB, -1, -1);
   }
 
-  updateUSDToBitCloutReserveExchangeRate(): void {
+  updateGlobalParamMaxCopiesPerNFT() {
+    this.updatingMaxCopiesPerNFT = true;
+    this.updateGlobalParams(-1, -1, -1, this.updateGlobalParamsValues.MaxCopiesPerNFT, -1);
+  }
+
+  updateGlobalParamCreateNFTFeeNanos() {
+    this.updatingCreateNFTFeeNanos = true;
+    this.updateGlobalParams(-1, -1, -1, -1, this.updateGlobalParamsValues.CreateNFTFeeNanos);
+  }
+
+  updateUSDToDeSoReserveExchangeRate(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the reserve exchange rate of USD to BitClout to be $${this.usdToBitCloutReserveExchangeRate}`,
+      html: `You are about to update the reserve exchange rate of USD to DeSo to be $${this.usdToDeSoReserveExchangeRate}`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
@@ -758,34 +778,34 @@ export class AdminComponent implements OnInit {
       reverseButtons: true,
     }).then((res) => {
       if (res.isConfirmed) {
-        this.submittingUSDToBitCloutReserveExchangeRateUpdate = true;
+        this.submittingUSDToDeSoReserveExchangeRateUpdate = true;
         this.backendApi
-          .SetUSDCentsToBitCloutReserveExchangeRate(
+          .SetUSDCentsToDeSoReserveExchangeRate(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.usdToBitCloutReserveExchangeRate * 100
+            this.usdToDeSoReserveExchangeRate * 100
           )
           .subscribe(
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the reserve exchange to $%d/BitClout", res.USDCentsPerBitClout / 100)
+                sprintf("Successfully updated the reserve exchange to $%d/DeSo", res.USDCentsPerDeSo / 100)
               );
             },
             (err: any) => {
               this.globalVars._alertError(this.extractError(err));
             }
           )
-          .add(() => (this.submittingUSDToBitCloutReserveExchangeRateUpdate = false));
+          .add(() => (this.submittingUSDToDeSoReserveExchangeRateUpdate = false));
       }
     });
   }
 
-  updateBuyBitCloutFeeRate(): void {
+  updateBuyDeSoFeeRate(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the Buy BitClout Fee to be ${this.buyBitCloutFeeRate}%`,
+      html: `You are about to update the Buy DeSo Fee to be ${this.buyDeSoFeeRate}%`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
@@ -795,39 +815,47 @@ export class AdminComponent implements OnInit {
       reverseButtons: true,
     }).then((res) => {
       if (res.isConfirmed) {
-        this.submittingBuyBitCloutFeeRate = true;
+        this.submittingBuyDeSoFeeRate = true;
         this.backendApi
-          .SetBuyBitCloutFeeBasisPoints(
+          .SetBuyDeSoFeeBasisPoints(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.buyBitCloutFeeRate * 100
+            this.buyDeSoFeeRate * 100
           )
           .subscribe(
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the Buy BitClout Fee to %d%", res.USDCentsPerBitClout / 100)
+                sprintf("Successfully updated the Buy DeSo Fee to %d%", res.USDCentsPerDeSo / 100)
               );
             },
             (err: any) => {
               this.globalVars._alertError(this.extractError(err));
             }
           )
-          .add(() => (this.submittingBuyBitCloutFeeRate = false));
+          .add(() => (this.submittingBuyDeSoFeeRate = false));
       }
     });
   }
 
-  updateGlobalParams(usdPerBitcoin: number, createProfileFeeNanos: number, minimumNetworkFeeNanosPerKB: number) {
+  updateGlobalParams(
+    usdPerBitcoin: number,
+    createProfileFeeNanos: number,
+    minimumNetworkFeeNanosPerKB: number,
+    maxCopiesPerNFT: number,
+    createNFTFeeNanos: number
+  ) {
     const updateBitcoinMessage = usdPerBitcoin >= 0 ? `Update Bitcoin to USD exchange rate: ${usdPerBitcoin}\n` : "";
     const createProfileFeeNanosMessage =
-      createProfileFeeNanos >= 0 ? `Create Profile Fee Nanos: ${createProfileFeeNanos}\n` : "";
+      createProfileFeeNanos >= 0 ? `Create Profile Fee (in $DESO): ${createProfileFeeNanos}\n` : "";
     const minimumNetworkFeeNanosPerKBMessage =
-      minimumNetworkFeeNanosPerKB >= 0 ? `Minimum Network Fee Nanos Per KB: ${minimumNetworkFeeNanosPerKB}` : "";
+      minimumNetworkFeeNanosPerKB >= 0 ? `Minimum Network Fee Nanos Per KB: ${minimumNetworkFeeNanosPerKB}\n` : "";
+    const maxCopiesMessage = maxCopiesPerNFT >= 0 ? `Max Copies Per NFT: ${maxCopiesPerNFT}\n` : "";
+    const createNFTFeeNanosMessage = createNFTFeeNanos >= 0 ? `Create NFT Fee (in $DESO): ${createNFTFeeNanos}\n` : "";
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `${updateBitcoinMessage}${createProfileFeeNanosMessage}${minimumNetworkFeeNanosPerKBMessage}`,
+      html: `${updateBitcoinMessage}${createProfileFeeNanosMessage}${minimumNetworkFeeNanosPerKBMessage}${maxCopiesMessage}${createNFTFeeNanosMessage}`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
@@ -839,6 +867,7 @@ export class AdminComponent implements OnInit {
       .then((res: any) => {
         if (res.isConfirmed) {
           this.updatingGlobalParams = true;
+          console.log(maxCopiesPerNFT);
           this.backendApi
             .UpdateGlobalParams(
               this.globalVars.localNode,
@@ -846,11 +875,13 @@ export class AdminComponent implements OnInit {
               usdPerBitcoin >= 0 ? usdPerBitcoin * 100 : -1,
               createProfileFeeNanos >= 0 ? createProfileFeeNanos * 1e9 : -1,
               minimumNetworkFeeNanosPerKB >= 0 ? minimumNetworkFeeNanosPerKB : -1,
+              maxCopiesPerNFT >= 0 ? maxCopiesPerNFT : -1,
+              createNFTFeeNanos >= 0 ? createNFTFeeNanos * 1e9 : -1,
               minimumNetworkFeeNanosPerKB >= 0
                 ? minimumNetworkFeeNanosPerKB
                 : this.globalParams.MinimumNetworkFeeNanosPerKB >= 0
                 ? this.globalParams.MinimumNetworkFeeNanosPerKB
-                : Math.floor(parseFloat(this.feeRateBitCloutPerKB) * 1e9)
+                : Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
             )
             .subscribe(
               (res: any) => {
@@ -863,13 +894,13 @@ export class AdminComponent implements OnInit {
                 if (minimumNetworkFeeNanosPerKB >= 0) {
                   this.globalParams.MinimumNetworkFeeNanosPerKB = minimumNetworkFeeNanosPerKB;
                 }
-                const totalFeeBitClout = res.FeeNanos / 1e9;
+                const totalFeeDeSo = res.FeeNanos / 1e9;
 
                 this.globalVars._alertSuccess(
                   sprintf(
-                    "Successfully updated global params rate. TxID: %s for a fee of %d BitClout",
+                    "Successfully updated global params rate. TxID: %s for a fee of %d DeSo",
                     res.TransactionIDBase58Check,
-                    totalFeeBitClout
+                    totalFeeDeSo
                   )
                 );
               },
@@ -887,6 +918,8 @@ export class AdminComponent implements OnInit {
         this.updatingUSDToBitcoin = false;
         this.updatingCreateProfileFee = false;
         this.updatingMinimumNetworkFee = false;
+        this.updatingMaxCopiesPerNFT = false;
+        this.updatingCreateNFTFeeNanos = false;
       });
   }
 
@@ -1069,7 +1102,7 @@ export class AdminComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.swapIdentityFromUsernameOrPublicKey,
         this.swapIdentityToUsernameOrPublicKey,
-        Math.floor(parseFloat(this.feeRateBitCloutPerKB) * 1e9) /*MinFeeRateNanosPerKB*/
+        Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9) /*MinFeeRateNanosPerKB*/
       )
       .subscribe(
         (res: any) => {
@@ -1152,7 +1185,7 @@ export class AdminComponent implements OnInit {
             stakeMultipleBasisPoints /*NewStakeMultipleBasisPoints*/,
             false /*IsHidden*/,
             // End params
-            this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+            this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
           )
           .subscribe(
             () => {

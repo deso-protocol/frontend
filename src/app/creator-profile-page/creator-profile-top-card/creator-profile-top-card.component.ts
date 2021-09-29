@@ -6,6 +6,7 @@ import { map } from "rxjs/operators";
 import { FollowChangeObservableResult } from "../../../lib/observable-results/follow-change-observable-result";
 import { AppRoutingModule } from "../../app-routing.module";
 import { FollowButtonComponent } from "../../follow-button/follow-button.component";
+import { Router } from "@angular/router";
 @Component({
   selector: "creator-profile-top-card",
   templateUrl: "./creator-profile-top-card.component.html",
@@ -30,7 +31,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   refreshFollowingBeingCalled = false;
   publicKeyIsCopied = false;
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {
     this.globalVars = _globalVars;
 
     // If the user follows/unfollows this user, update the follower count
@@ -62,13 +63,58 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     this.userBlocked.emit(this.profile.PublicKeyBase58Check);
   }
 
+  reportUser(): void {
+    this.globalVars.logEvent("post : report-user");
+    window.open(
+      `https://report.bitclout.com/account?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&ReportedAccountPublicKey=${this.profile.PublicKeyBase58Check}`
+    );
+  }
+
+  updateWellKnownCreatorsList(): void {
+    this.updateCreatorFeaturedTutorialList(true, this.profile.IsFeaturedTutorialWellKnownCreator);
+  }
+
+  updateUpAndComingCreatorsList(): void {
+    this.updateCreatorFeaturedTutorialList(false, this.profile.IsFeaturedTutorialUpAndComingCreator);
+  }
+
+  updateCreatorFeaturedTutorialList(isWellKnown: boolean, isRemoval: boolean) {
+    this.backendApi
+      .AdminUpdateTutorialCreators(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.profile.PublicKeyBase58Check,
+        isRemoval,
+        isWellKnown
+      )
+      .subscribe(
+        (res) => {
+          if (isWellKnown) {
+            this.profile.IsFeaturedTutorialWellKnownCreator = !isRemoval;
+          } else {
+            this.profile.IsFeaturedTutorialUpAndComingCreator = !isRemoval;
+          }
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+  }
+
+  messageUser(): void {
+    this.router.navigate(["/" + this.globalVars.RouteNames.INBOX_PREFIX], {
+      queryParams: { username: this.profile.Username },
+      queryParamsHandling: "merge",
+    });
+  }
+
   coinsInCirculation() {
     return this.profile.CoinEntry.CoinsInCirculationNanos / 1e9;
   }
 
   usdMarketCap() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceBitCloutNanos),
+      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceDeSoNanos),
       3,
       true
     );
@@ -76,7 +122,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   totalUSDLocked() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.BitCloutLockedNanos),
+      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.DeSoLockedNanos),
       3,
       true
     );

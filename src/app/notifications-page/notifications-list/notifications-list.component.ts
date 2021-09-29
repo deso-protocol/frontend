@@ -1,115 +1,53 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { Datasource, IDatasource } from "ngx-ui-scroll";
+import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
+import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
   selector: "app-notifications-list",
   templateUrl: "./notifications-list.component.html",
   styleUrls: ["./notifications-list.component.scss"],
 })
-export class NotificationsListComponent implements OnInit {
-  // stores a mapping of page number to promises
-  pagedRequests = {
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
-  };
+export class NotificationsListComponent {
+  static BUFFER_SIZE = 10;
+  static PAGE_SIZE = 50;
+  static WINDOW_VIEWPORT = true;
+
+  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   // stores a mapping of page number to notification index
   pagedIndexes = {
     0: -1,
   };
 
+  lastPage = null;
+  loadingFirstPage = true;
+  loadingNextPage = false;
+
   // stores a cache of all profiles and posts we've seen
   profileMap = {};
   postMap = {};
 
-  // tracks if we've reached the end of all notifications
-  lastPage = null;
-
-  // constants
-  pageSize = 50;
-
   // Track the total number of items for our empty state
   // null means we're loading items
   totalItems = null;
-
-  // Track if we're loading notifications for the first time
-  isLoading = true;
-
-  // Track if we're loading the next page of notifications
-  loadingMoreNotifications = false;
-  // NOTE: I'm not super thrilled with how pagination turned out.
-  // we juggle promises and indexes around in a bit of a weird fashion
-  // and i'm sure there's a cleaner way to do this. for now, it works,
-  // but it's begging to be refactored in the future.
-
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
-  datasource: IDatasource = new Datasource({
-    get: (index, count, success) => {
-      const startIndex = Math.max(index, 0);
-      const endIndex = index + count - 1;
-      if (startIndex > endIndex) {
-        this.isLoading = false;
-        success([]); // empty result
-        return;
-      }
-
-      const startPage = Math.floor(startIndex / this.pageSize);
-      const endPage = Math.floor(endIndex / this.pageSize);
-
-      const pageRequests: any[] = [];
-      for (let i = startPage; i <= endPage; i++) {
-        const existingRequest = this.pagedRequests[i];
-        if (existingRequest) {
-          pageRequests.push(existingRequest);
-        } else {
-          // we need to wait for the previous page before we can fetch the next one
-          const newRequest = this.pagedRequests[i - 1].then((_) => {
-            return this.getPage(i);
-          });
-          this.pagedRequests[i] = newRequest;
-          pageRequests.push(newRequest);
-        }
-      }
-
-      return Promise.all(pageRequests).then((pageResults) => {
-        pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
-        const start = startIndex - startPage * this.pageSize;
-        const end = start + endIndex - startIndex + 1;
-        this.isLoading = false;
-        return pageResults.slice(start, end);
-      });
-    },
-    settings: {
-      startIndex: 0,
-      minIndex: 0,
-      bufferSize: 10,
-      windowViewport: true,
-      infinite: true,
-    },
-  });
-
-  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
-
-  ngOnInit() {}
 
   getPage(page: number) {
     if (this.lastPage && page > this.lastPage) {
       return [];
     }
 
+    this.loadingNextPage = true;
     const fetchStartIndex = this.pagedIndexes[page];
-    this.loadingMoreNotifications = true;
     return this.backendApi
       .GetNotifications(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         fetchStartIndex /*FetchStartIndex*/,
-        this.pageSize /*NumToFetch*/
+        NotificationsListComponent.PAGE_SIZE /*NumToFetch*/
       )
       .toPromise()
       .then(
@@ -129,7 +67,7 @@ export class NotificationsListComponent implements OnInit {
           this.pagedIndexes[page + 1] = res.Notifications[res.Notifications.length - 1]?.Index - 1 || 0;
 
           // if the chunk was incomplete or the Index was zero we're done
-          if (chunk.length < this.pageSize || this.pagedIndexes[page + 1] === 0) {
+          if (chunk.length < NotificationsListComponent.PAGE_SIZE || this.pagedIndexes[page + 1] === 0) {
             this.lastPage = page;
           }
 
@@ -142,7 +80,10 @@ export class NotificationsListComponent implements OnInit {
           console.error(this.backendApi.stringifyError(err));
         }
       )
-      .finally(() => (this.loadingMoreNotifications = false));
+      .finally(() => {
+        this.loadingFirstPage = false;
+        this.loadingNextPage = false;
+      });
   }
 
   // NOTE: the outputs of this function are inserted directly into the DOM
@@ -167,7 +108,9 @@ export class NotificationsListComponent implements OnInit {
       ProfilePic: "/assets/img/default_profile_pic.png",
     };
     const userProfile = this.profileMap[userPublicKeyBase58Check];
-    const actorName = `<b>${actor.Username}</b>`;
+    const actorName = actor.IsVerified
+      ? `<b>${actor.Username}</b><span class="ml-1 d-inline-block align-center text-primary fs-12px"><i class="fas fa-check-circle fa-md align-middle"></i></span>`
+      : `<b>${actor.Username}</b>`;
 
     // We map everything to an easy-to-use object so the template
     // doesn't have to do any hard work
@@ -178,18 +121,37 @@ export class NotificationsListComponent implements OnInit {
       post: null, // the post involved
       parentPost: null, // the parent post involved
       link: AppRoutingModule.profilePath(actor.Username),
+      bidInfo: null,
     };
 
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
-      let txnAmountNanos = 0;
-      for (let ii = 0; ii < notification.TxnOutputResponses.length; ii++) {
-        if (notification.TxnOutputResponses[ii].PublicKeyBase58Check === userPublicKeyBase58Check) {
-          txnAmountNanos += notification.TxnOutputResponses[ii].AmountNanos;
-        }
+      const basicTransferMeta = txnMeta.BasicTransferTxindexMetadata;
+      if (!basicTransferMeta) {
+        return null;
       }
-      result.icon = "fas fa-money-bill-wave-alt fc-green";
-      result.action = `${actorName} sent you ${this.globalVars.nanosToBitClout(txnAmountNanos)} ` +
-        `BitClout!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
+      if (basicTransferMeta.DiamondLevel) {
+        result.icon = "icon-diamond fc-blue";
+        let postText = "";
+        if (basicTransferMeta.PostHashHex) {
+          const truncatedPost = this.truncatePost(basicTransferMeta.PostHashHex);
+          postText = `<i class="text-grey7">${truncatedPost}</i>`;
+          result.link = AppRoutingModule.postPath(basicTransferMeta.PostHashHex);
+        }
+        result.action = `${actorName} gave <b>${basicTransferMeta.DiamondLevel.toString()} diamond${
+          basicTransferMeta.DiamondLevel > 1 ? "s" : ""
+        }</b> (~${this.globalVars.getUSDForDiamond(basicTransferMeta.DiamondLevel)}) ${postText}`;
+      } else {
+        let txnAmountNanos = 0;
+        for (let ii = 0; ii < notification.TxnOutputResponses.length; ii++) {
+          if (notification.TxnOutputResponses[ii].PublicKeyBase58Check === userPublicKeyBase58Check) {
+            txnAmountNanos += notification.TxnOutputResponses[ii].AmountNanos;
+          }
+        }
+        result.icon = "fas fa-money-bill-wave-alt fc-green";
+        result.action =
+          `${actorName} sent you ${this.globalVars.nanosToDeSo(txnAmountNanos)} ` +
+          `$DESO!</b> (~${this.globalVars.nanosToUSD(txnAmountNanos, 2)})`;
+      }
       return result;
     } else if (txnMeta.TxnType === "CREATOR_COIN") {
       // If we don't have the corresponding metadata then return null.
@@ -202,15 +164,15 @@ export class NotificationsListComponent implements OnInit {
 
       if (ccMeta.OperationType === "buy") {
         result.action = `${actorName} bought <b>~${this.globalVars.nanosToUSD(
-          ccMeta.BitCloutToSellNanos,
+          ccMeta.DeSoToSellNanos,
           2
         )}</b> worth of <b>$${userProfile.Username}</b>!`;
         return result;
       } else if (ccMeta.OperationType === "sell") {
-        // TODO: We cannot compute the USD value of the sale without saving the amount of BitClout
+        // TODO: We cannot compute the USD value of the sale without saving the amount of DeSo
         // that was used to complete the transaction in the backend, which we are too lazy to do.
         // So for now we just tell the user the amount of their coin that was sold.
-        result.action = `${actorName} sold <b>${this.globalVars.nanosToBitClout(ccMeta.CreatorCoinToSellNanos)} $${
+        result.action = `${actorName} sold <b>${this.globalVars.nanosToDeSo(ccMeta.CreatorCoinToSellNanos)} $${
           userProfile.Username
         }.</b>`;
         return result;
@@ -234,7 +196,7 @@ export class NotificationsListComponent implements OnInit {
         }</b> (~${this.globalVars.getUSDForDiamond(cctMeta.DiamondLevel)}) ${postText}`;
       } else {
         result.icon = "fas fa-paper-plane fc-blue";
-        result.action = `${actorName} sent you <b>${this.globalVars.nanosToBitClout(
+        result.action = `${actorName} sent you <b>${this.globalVars.nanosToDeSo(
           cctMeta.CreatorCoinToTransferNanos,
           6
         )} ${cctMeta.CreatorUsername} coins`;
@@ -273,7 +235,7 @@ export class NotificationsListComponent implements OnInit {
           }
 
           return result;
-        } else if (currentPkObj.Metadata === "RecloutedPublicKeyBase58Check") {
+        } else if (currentPkObj.Metadata === "RepostedPublicKeyBase58Check") {
           result.post = this.postMap[postHash];
           if (result.post === null) {
             return;
@@ -315,6 +277,43 @@ export class NotificationsListComponent implements OnInit {
       result.link = AppRoutingModule.postPath(postHash);
 
       return result;
+    } else if (txnMeta.TxnType == "NFT_BID") {
+      const nftBidMeta = txnMeta.NFTBidTxindexMetadata;
+      if (!nftBidMeta) {
+        return null;
+      }
+
+      const postHash = nftBidMeta.NFTPostHashHex;
+
+      const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
+      result.post = this.postMap[postHash];
+      result.action = nftBidMeta.BidAmountNanos
+        ? `${actorName} bid ${this.globalVars.nanosToDeSo(
+            nftBidMeta.BidAmountNanos,
+            2
+          )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
+            nftBidMeta.SerialNumber
+          }`
+        : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber}`;
+      result.icon = nftBidMeta.BidAmountNanos ? "fas fa-dollar-sign fc-blue" : "fas fa-dollar-sign fc-red";
+      result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
+      return result;
+    } else if (txnMeta.TxnType == "ACCEPT_NFT_BID") {
+      const acceptNFTBidMeta = txnMeta.AcceptNFTBidTxindexMetadata;
+      if (!acceptNFTBidMeta) {
+        return null;
+      }
+
+      const postHash = acceptNFTBidMeta.NFTPostHashHex;
+
+      result.post = this.postMap[postHash];
+      result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToDeSo(
+        acceptNFTBidMeta.BidAmountNanos,
+        2
+      )} for serial number ${acceptNFTBidMeta.SerialNumber}`;
+      result.icon = "fas fa-trophy";
+      result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
+      return result;
     }
 
     // If we don't recognize the transaction type we return null
@@ -354,4 +353,12 @@ export class NotificationsListComponent implements OnInit {
       },
     });
   }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    NotificationsListComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    NotificationsListComponent.WINDOW_VIEWPORT,
+    NotificationsListComponent.BUFFER_SIZE
+  );
+  datasource: IDatasource<IAdapter<PostEntryResponse>> = this.infiniteScroller.getDatasource();
 }

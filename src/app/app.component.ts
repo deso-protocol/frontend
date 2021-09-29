@@ -1,11 +1,12 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { BackendApiService } from "./backend-api.service";
+import { BackendApiService, TutorialStatus, User } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
 import { environment } from "../environments/environment";
+import { ThemeService } from "./theme/theme.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -15,7 +16,7 @@ import { environment } from "../environments/environment";
 export class AppComponent implements OnInit {
   constructor(
     private ref: ChangeDetectorRef,
-    private httpClient: HttpClient,
+    private themeService: ThemeService,
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
     private route: ActivatedRoute,
@@ -50,7 +51,7 @@ export class AppComponent implements OnInit {
 
   showUsernameTooltip = false;
 
-  bitcloutToUSDExchangeRateToDisplay = "fetching...";
+  desoToUSDExchangeRateToDisplay = "fetching...";
 
   // Throttle the calls to update the top-level data so they only happen after a
   // previous call has finished.
@@ -90,12 +91,13 @@ export class AppComponent implements OnInit {
     const userCopy = JSON.parse(JSON.stringify(user));
   }
 
-  _updateTopLevelData() {
+  _updateTopLevelData(): Subscription {
     if (this.callingUpdateTopLevelData) {
-      return;
+      return new Subscription();
     }
 
     const publicKeys = Object.keys(this.identityService.identityServiceUsers);
+
     let loggedInUserPublicKey =
       this.globalVars.loggedInUser?.PublicKeyBase58Check ||
       this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey) ||
@@ -108,23 +110,29 @@ export class AppComponent implements OnInit {
     }
 
     this.callingUpdateTopLevelData = true;
-    const observable = this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, false);
 
-    observable.subscribe(
+    return this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false).subscribe(
       (res: any) => {
         this.problemWithNodeConnection = false;
         this.callingUpdateTopLevelData = false;
 
-        // Only update if things have changed to avoid unnecessary DOM manipulation
-        if (!_.isEqual(this.globalVars.userList, res.UserList)) {
-          this.globalVars.userList = res.UserList || [];
+        const loggedInUser: User = res.UserList[0];
+        let loggedInUserFound: boolean = false;
+        // Find the logged in user in the user list and replace it with the logged in user from this GetUsersStateless call.
+        this.globalVars.userList.forEach((user, index) => {
+          if (user.PublicKeyBase58Check === loggedInUser.PublicKeyBase58Check) {
+            loggedInUserFound = true;
+            this.globalVars.userList[index] = loggedInUser;
+            // This breaks out of the lodash foreach.
+            return false;
+          }
+        });
+        // If the logged-in user wasn't in the list, add it to the list.
+        if (!loggedInUserFound && loggedInUserPublicKey) {
+          this.globalVars.userList.push(loggedInUser);
         }
-
-        // Find the loggedInUser in our results
-        const loggedInUser = _.find(res.UserList, { PublicKeyBase58Check: loggedInUserPublicKey });
-
-        // Only update if things have changed to avoid unnecessary DOM manipulation
-        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser)) {
+        // Only call setLoggedInUser if logged in user has changed.
+        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser) && loggedInUserPublicKey) {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
@@ -139,8 +147,11 @@ export class AppComponent implements OnInit {
           this.globalVars.youHodlMap[entry.CreatorPublicKeyBase58Check] = entry;
         }
 
-        this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
+        if (res.DefaultFeeRateNanosPerKB > 0) {
+          this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
+        }
         this.globalVars.globoMods = res.GloboMods;
+
         this.ref.detectChanges();
         this.globalVars.loadingInitialAppState = false;
       },
@@ -151,32 +162,10 @@ export class AppComponent implements OnInit {
         console.error(error);
       }
     );
-
-    return observable;
   }
 
-  _updateBitCloutExchangeRate() {
-    this.backendApi.GetExchangeRate(this.globalVars.localNode).subscribe(
-      (res: any) => {
-        this.globalVars.satoshisPerBitCloutExchangeRate = res.SatoshisPerBitCloutExchangeRate;
-
-        this.globalVars.NanosSold = res.NanosSold;
-        this.globalVars.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
-
-        this.globalVars.ExchangeUSDCentsPerBitClout = res.USDCentsPerBitCloutExchangeRate;
-        this.globalVars.USDCentsPerBitCloutReservePrice = res.USDCentsPerBitCloutReserveExchangeRate;
-        this.globalVars.BuyBitCloutFeeBasisPoints = res.BuyBitCloutFeeBasisPoints;
-
-        const nanosPerUnit = 1e9;
-        this.globalVars.nanosPerUSDExchangeRate = nanosPerUnit / (this.globalVars.ExchangeUSDCentsPerBitClout / 100);
-        this.globalVars.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
-        this.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, null);
-        this.globalVars.bitcloutToUSDExchangeRateToDisplay = this.globalVars.nanosToUSD(1e9, 2);
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+  _updateDeSoExchangeRate() {
+    this.globalVars._updateDeSoExchangeRate();
   }
 
   _updateAppState() {
@@ -187,6 +176,9 @@ export class AppComponent implements OnInit {
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
+        this.globalVars.showBuyWithETH = res.BuyWithETH;
+        this.globalVars.showJumio = res.HasJumioIntegration;
+        this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
         // Setup amplitude on first run
         if (!this.globalVars.amplitude && res.AmplitudeKey) {
           this.globalVars.amplitude = require("amplitude-js");
@@ -203,31 +195,10 @@ export class AppComponent implements OnInit {
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
         this.globalVars.supportEmail = res.SupportEmail;
-        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterBitCloutSeed;
+        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
       });
-  }
-
-  repeatForXInterval: number;
-  _repeatForX(
-    funcToRepeat: () => void,
-    timeoutMillis,
-    numTries = 10,
-    triesExceededCallback: (comp: any) => void,
-    comp: any = ""
-  ) {
-    let attempts = 0;
-
-    // Set an interval to repeat
-    this.repeatForXInterval = setInterval(() => {
-      if (attempts >= numTries) {
-        triesExceededCallback(comp);
-        clearInterval(this.repeatForXInterval);
-      }
-      funcToRepeat();
-      attempts++;
-    }, timeoutMillis) as any;
   }
 
   _updateEverything = (
@@ -248,53 +219,63 @@ export class AppComponent implements OnInit {
     // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
     // There is a success and error callback so that the caller gets feedback on the polling.
     if (waitTxn !== "") {
-      this._repeatForX(
-        () => {
-          return this.backendApi.GetTxn(this.globalVars.localNode, waitTxn).subscribe(
+      let attempts = 0;
+      let numTries = 160;
+      let timeoutMillis = 750;
+      // Set an interval to repeat
+      let interval = setInterval(() => {
+        if (attempts >= numTries) {
+          errorCallback(comp);
+          clearInterval(interval);
+        }
+        this.backendApi
+          .GetTxn(this.globalVars.localNode, waitTxn)
+          .subscribe(
             (res: any) => {
               if (!res.TxnFound) {
                 return;
               }
 
-              this._updateTopLevelData();
-              this._updateBitCloutExchangeRate();
+              this._updateDeSoExchangeRate();
               this._updateAppState();
 
-              clearInterval(this.repeatForXInterval);
-              successCallback(comp);
+              this._updateTopLevelData().add(() => {
+                // We make sure the logged in user is updated before the success callback triggers
+                successCallback(comp);
+                clearInterval(interval);
+              });
             },
             (error) => {
-              clearInterval(this.repeatForXInterval);
+              clearInterval(interval);
               errorCallback(comp);
             }
-          );
-        },
-        750,
-        160,
-        errorCallback,
-        comp
-      );
+          )
+          .add(() => attempts++);
+      }, timeoutMillis) as any;
     } else {
       if (this.globalVars.pausePolling) {
         return;
       }
-      this._updateBitCloutExchangeRate();
+      this._updateDeSoExchangeRate();
       this._updateAppState();
       return this._updateTopLevelData();
     }
   };
 
   ngOnInit() {
-    // Update the BitClout <-> Bitcoin exchange rate every five minutes. This prevents
+    // Load the theme
+    this.themeService.init();
+
+    // Update the DeSo <-> Bitcoin exchange rate every five minutes. This prevents
     // a stale price from showing in a tab that's been open for a while
     setInterval(() => {
-      this._updateBitCloutExchangeRate();
+      this._updateDeSoExchangeRate();
     }, 5 * 60 * 1000);
 
     this.globalVars.updateEverything = this._updateEverything;
 
     // We need to fetch this data before we start an import. Can remove once import code is gone.
-    this._updateBitCloutExchangeRate();
+    this._updateDeSoExchangeRate();
     this._updateAppState();
 
     this.identityService.info().subscribe((res) => {
@@ -330,7 +311,12 @@ export class AppComponent implements OnInit {
     }
     this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
 
-    this.globalVars.updateEverything();
+    this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, true).subscribe((res) => {
+      if (!_.isEqual(this.globalVars.userList, res.UserList)) {
+        this.globalVars.userList = res.UserList || [];
+      }
+      this.globalVars.updateEverything();
+    });
 
     // Clean up legacy seedinfo storage. only called when a user visits the site again after a successful import
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();

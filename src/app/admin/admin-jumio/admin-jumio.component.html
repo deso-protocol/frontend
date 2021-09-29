@@ -1,0 +1,54 @@
+<div>
+  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+    Set Jumio Starter $DESO amount (in nanos):
+    <div class="d-flex mt-5px">
+      <input
+        [(ngModel)]="jumioDeSoNanos"
+        (keydown.enter)="updateJumioDeSoNanos()"
+        class="form-control w-100 fs-15px lh-15px"
+        placeholder="Enter an amount"
+        type="number"
+      />
+      <button *ngIf="!updatingJumioDeSoNanos" (click)="updateJumioDeSoNanos()" class="btn btn-outline-primary fs-15px ml-5px">
+        Update
+      </button>
+      <button *ngIf="updatingJumioDeSoNanos" class="btn btn-primary fs-15px ml-5px" disabled>
+        Working...
+      </button>
+    </div>
+  </div>
+  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+    Reset Jumio for Public Key or Username:
+    <div class="d-flex mt-5px">
+      <input
+        [(ngModel)]="usernameToResetJumio"
+        (keydown.enter)="_resetJumio()"
+        class="form-control w-100 fs-15px lh-15px"
+        placeholder="Enter a username or public key."
+      />
+      <button *ngIf="!resettingJumio" (click)="_resetJumio()" class="btn btn-outline-primary fs-15px ml-5px">
+        Reset
+      </button>
+      <button *ngIf="resettingJumio" class="btn btn-primary fs-15px ml-5px" disabled>
+        Working...
+      </button>
+    </div>
+  </div>
+  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+    Execute Jumio Callback for Public Key or Username:
+    <div class="d-flex mt-5px">
+      <input
+        [(ngModel)]="usernameToExecuteJumioCallback"
+        (keydown.enter)="_executeJumioCallback()"
+        class="form-control w-100 fs-15px lh-15px"
+        placeholder="Enter a username or public key."
+      />
+      <button *ngIf="!executingJumioCallback" (click)="_executeJumioCallback()" class="btn btn-outline-primary fs-15px ml-5px">
+        Execute
+      </button>
+      <button *ngIf="executingJumioCallback" class="btn btn-primary fs-15px ml-5px" disabled>
+        Working...
+      </button>
+    </div>
+  </div>
+</div>

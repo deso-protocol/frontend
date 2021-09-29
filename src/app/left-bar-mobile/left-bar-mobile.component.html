@@ -1,6 +1,6 @@
 <div>
   <div *ngIf="globalVars.isLeftBarMobileOpen" [@leftBarAnimation] class="left-bar-mobile__flyout-div">
-    <left-bar [isMobile]="true" (closeMobile)="_closeMenu()"></left-bar>
+    <left-bar [isMobile]="true" [inTutorial]="inTutorial" (closeMobile)="_closeMenu()"></left-bar>
   </div>
   <div
     *ngIf="globalVars.isLeftBarMobileOpen"

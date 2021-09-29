@@ -1,9 +1,11 @@
 <a
-  class="container d-flex align-items-center fs-15px p-10px border-bottom border-color-grey link--unstyled"
+  class="container d-flex align-items-center fs-15px p-10px border-color-grey link--unstyled"
+  [ngClass]="{ 'border-bottom': !singleColumn }"
+  [ngStyle]="{ 'cursor': !profile.Username ? 'default' : '' }"
   (click)="onClick()"
 >
   <div class="row no-gutters w-100">
-    <div class="col-6 d-flex align-items-center" style="margin-bottom: 0px">
+    <div class="d-flex flex-grow-1 align-items-center mb-0">
       <!-- Avatar -->
       <div class="simple-profile-card__avatar-container">
         <div
@@ -11,35 +13,53 @@
           [avatar]="profile.PublicKeyBase58Check"
         ></div>
       </div>
-      <div class="text-truncate holdings__name fs-15px">
-        <div>
-          <a class="fc-default font-weight-bold">{{ profile.Username }}</a>
-          <span
-            *ngIf="profile.IsVerified"
-            (click)="tooltip.toggle()"
-            class="ml-1 mb-1 cursor-pointer text-primary"
-            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="'This account is verified'"
-            #tooltip="matTooltip"
-          >
+      <div class="d-flex">
+        <div class="text-truncate holdings__name fs-15px">
+          <div class="d-flex">
+            <div class="fc-default text-truncate holdings__name link--unstyled"i
+                 [ngClass]="{'font-weight-bold': isBold }">
+              {{ profile.Username || profile.PublicKeyBase58Check }}</div>
+            <span
+              *ngIf="profile.IsVerified"
+              (click)="tooltip.toggle()"
+              class="ml-1 mb-1 cursor-pointer text-primary"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This account is verified'"
+              #tooltip="matTooltip"
+            >
             <i class="fas fa-check-circle fa-md align-middle"></i>
           </span>
+          </div>
+          <div class="text-grey9" *ngIf="profile.CoinPriceDeSoNanos">
+            {{ globalVars.nanosToUSD(profile.CoinPriceDeSoNanos, 2) }}
+          </div>
         </div>
-        <div class="text-grey9">
-          {{ globalVars.nanosToUSD(profile.CoinPriceBitCloutNanos, 2) }}
+        <div class="d-flex">
+          <follow-button
+            *ngIf="!hideFollowLink"
+            class="ml-10px fs-12px text-grey5"
+            [displayAsLink]="true"
+            [followLinkClass]="'link--unstyled'"
+            [followedPubKeyBase58Check]="profile.PublicKeyBase58Check"
+          ></follow-button>
         </div>
       </div>
     </div>
 
-    <div class="col-6 d-flex align-items-center justify-content-center" style="margin-bottom: 0px">
+    <div class="d-flex align-items-center justify-content-center mb-0">
       <div *ngIf="diamondLevel > 0" class="d-flex">
         <i *ngFor="let diamond of counter(diamondLevel)" class="icon-diamond fs-20px d-block"></i>
       </div>
       <div *ngIf="showHeartIcon">
         <i class="icon-heart-fill fs-32px d-block fc-red"></i>
       </div>
-      <div *ngIf="showRecloutIcon">
+      <div *ngIf="showRepostIcon">
         <i class="icon-repost fs-32px d-block fc-green"></i>
+      </div>
+      <div *ngIf="showTutorialBuy" (click)="onBuyClicked()">
+        <a class="btn btn-primary fs-18px text-left">
+          Buy
+        </a>
       </div>
     </div>
   </div>

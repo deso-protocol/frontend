@@ -14,6 +14,7 @@ export class CountdownTimerComponent implements OnInit {
   @Input() fontWeight: number = 400;
   @Input() timerText: string = "";
   @Input() justifyLeft: boolean = false;
+  @Input() justifyAround: boolean = false;
 
   static milliPerSecond: number = 1000;
   static secondsPerMinute: number = 60;
@@ -25,15 +26,14 @@ export class CountdownTimerComponent implements OnInit {
   hours: string;
   days: string;
 
-  constructor(public globalVars: GlobalVarsService, private router: Router) {
+  constructor(public globalVars: GlobalVarsService, private router: Router) {}
+
+  ngOnInit() {
     const now = new Date().getTime();
     this.setDaysDiff(now);
     this.setHoursDiff(now);
     this.setMinutesDiff(now);
     this.setSecondsDiff(now);
-  }
-
-  ngOnInit() {
     setInterval(() => {
       const now = new Date().getTime();
       this.setDaysDiff(now);
@@ -45,9 +45,7 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   navigateToURL(): void {
-    this.router.navigate([
-      "/" + this.globalVars.RouteNames.POSTS + "/" + "3a13a7e4342148e76e1de957f22775a4f6916ed809a90e77a035bb7cefaaaf44",
-    ]);
+    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], { queryParams: { feedTab: "Showcase" } });
   }
 
   setDaysDiff(start: number): void {
@@ -102,7 +100,7 @@ export class CountdownTimerComponent implements OnInit {
   celebrateIfTimeEnd(now: number): void {
     const diff = (now - this.timerEnd) / 1000;
     if (diff > 0 && diff < 3) {
-      this.globalVars.celebrate([ConfettiSvg.ROCKET, ConfettiSvg.LAMBO]);
+      this.globalVars.celebrate();
     }
   }
 

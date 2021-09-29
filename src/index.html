@@ -3,15 +3,30 @@
   <head>
     <meta charset="utf-8" />
     <meta name="referrer" content="no-referrer" />
-    <title>Welcome to BitClout</title>
+    <title>Welcome to DeSo</title>
+    <meta name="description" content="DeSo is a platform owned by its users. Bitcoin is decentralizing money, DeSo is decentralizing social media." />
+    <meta name="theme-color" content="#eeeeee" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://bitclout.com/assets/img/camelcase_logo_og.jpg" />
+    <meta property="og:title" content="Welcome to DeSo" />
+    <meta property="og:description" content="DeSo is a platform owned by its users. Bitcoin is decentralizing money, DeSo is decentralizing social media." />
+    <meta property="og:site_name" content="DeSo" />
+    <meta property='og:image' content="https://bitclout.com/assets/img/camelcase_logo_og.jpg" />
+    <meta property="og:image:secure_url" content="https://bitclout.com/assets/img/camelcase_logo_og.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:alt" content="bitclout.com Logo on White Background" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bitclout.com" />
     <base href="/" />
 
     <meta name="viewport" content="width=device-width, initial-scale=0.9" />
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
     <link href="/vendor/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto%20Mono:400,500,700" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet" />
+    <link href="/vendor/roboto-mono.css" rel="stylesheet" />
+    <link href="/vendor/roboto.css" rel="stylesheet" />
     <link href="/vendor/fontello.css" rel="stylesheet" />
+    <link href="/vendor/bs-datepicker.css" rel="stylesheet" />
 
     <script src="https://kit.fontawesome.com/070ca4195b.js" crossorigin="anonymous"></script>
     <!-- Add to iOS home screen -->
@@ -22,7 +37,7 @@
     <link rel="apple-touch-icon" sizes="192x192" href="/assets/img/logo-192.png" type="image/png" />
     <link rel="apple-touch-icon" sizes="512x512" href="/assets/img/logo-512.png" type="image/png" />
   </head>
-  <body>
+  <body app-theme>
     <app-root></app-root>
   </body>
 </html>

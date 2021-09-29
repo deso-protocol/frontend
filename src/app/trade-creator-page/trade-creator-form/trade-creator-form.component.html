@@ -1,4 +1,4 @@
-<!-- Available Bitclout Box -->
+<!-- Available DeSo Box -->
 <div class="w-100 bg-light text-grey5">
   <div class="p-3 fs-14px d-flex justify-content-between flex-wrap">
     <div class="d-flex flex-wrap">
@@ -11,11 +11,11 @@
 
     <a
       *ngIf="creatorCoinTrade.isBuyingCreatorCoin"
-      [routerLink]="['/' + this.globalVars.RouteNames.BUY_BITCLOUT]"
+      [routerLink]="['/' + this.globalVars.RouteNames.BUY_DESO]"
       queryParamsHandling="merge"
       class="text-grey5"
     >
-      <u>Buy BitClout</u>
+      <u>Buy DeSo</u>
     </a>
   </div>
 </div>
@@ -35,17 +35,24 @@
 
   <div *ngIf="creatorCoinTrade.amount">
     <div class="mt-15px">
-      <input
-        class="form-control w-100 fs-15px text-left d-inline-block"
-        [formControl]="creatorCoinTrade.transferRecipient"
-        placeholder="Enter a bitclout public key or recipient"
-      />
+      <search-bar
+        [isSearchForUsersToSendDESO]="true"
+        (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+      ></search-bar>
     </div>
+  </div>
+
+  <div class="px-5px">
+    <simple-profile-card
+      [profile]="creatorCoinTrade.transferRecipient.value"
+      [singleColumn]="true"
+      [hideFollowLink]="true"
+      *ngIf="creatorCoinTrade.transferRecipient.value"></simple-profile-card>
   </div>
 
   <div class="text-danger text-left fs-14px mt-2">
     <div *ngIf="creatorCoinTrade.showUsernameError" class="mt-10px">
-      Username "{{ creatorCoinTrade.transferRecipient.value }}" could not be found.
+      Username "{{ creatorCoinTrade.transferRecipient.value.Username }}" could not be found.
     </div>
     <div *ngIf="creatorCoinTrade.showPubKeyError" class="mt-10px">Please enter a valid username or public key.</div>
     <div *ngIf="creatorCoinTrade.showCannotSendToSelfError" class="mt-10px">
@@ -141,7 +148,11 @@
   </div>
   <ng-template #isUpdatingAmountsElseBlock>
     <div class="fs-14px mt-10px text-grey5">
-      <trade-creator-table [displayForCreatorForm]="true" [creatorCoinTrade]="creatorCoinTrade"></trade-creator-table>
+      <trade-creator-table
+        [displayForCreatorForm]="true"
+        [creatorCoinTrade]="creatorCoinTrade"
+        [tradeType]="tradeType"
+      ></trade-creator-table>
     </div>
   </ng-template>
 

@@ -32,10 +32,6 @@ export class SanitizeAndAutoLinkPipe implements PipeTransform {
 
     // Only link usernames and cashtags for now (not hashtags etc)
     entities = _.filter(entities, (entity) => entity.screenName || entity.cashtag);
-    entities = _.each(entities, (entity) => {
-      entity.screenName = entity.screenName?.toLowerCase();
-      entity.cashtag = entity.cashtag?.toLowerCase();
-    });
 
     const textWithMentionLinks = twitter.autoLinkEntities(text, entities, {
       usernameUrlBase: `/${RouteNames.USER_PREFIX}/`,

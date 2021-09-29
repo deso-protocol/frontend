@@ -22,6 +22,9 @@ export class PostThreadComponent {
   commentLimit = 20;
   datasource: IDatasource<IAdapter<any>>;
 
+  @Input() hideHeader: boolean = false;
+  @Input() hideCurrentPost: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -41,10 +44,6 @@ export class PostThreadComponent {
     });
   }
 
-  ngOnInit() {
-    this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
-  }
-
   _rerenderThread() {
     // Force angular to re-render the whole thread tree by cloning currentPost
     // If we don't do this, the parent's commentCount won't always update (angular won't
@@ -55,7 +54,7 @@ export class PostThreadComponent {
     this.currentPost = _.cloneDeep(this.currentPost);
   }
 
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
+  // TODO: Cleanup - Update InfiniteScroller class to de-duplicate this logic
   getDataSource() {
     return new Datasource<IAdapter<any>>({
       get: (index, count, success) => {
@@ -305,8 +304,18 @@ export class PostThreadComponent {
           this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
           return;
         }
+        if (
+          res.PostFound.IsNFT &&
+          (!this.route.snapshot.url.length || this.route.snapshot.url[0].path != this.globalVars.RouteNames.NFT)
+        ) {
+          this.router.navigate(["/" + this.globalVars.RouteNames.NFT, this.currentPostHashHex], {
+            queryParamsHandling: "merge",
+          });
+          return;
+        }
         // Set current post
         this.currentPost = res.PostFound;
+        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on DeSo");
       },
       (err) => {
         // TODO: post threads: rollbar

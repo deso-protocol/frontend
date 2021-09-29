@@ -13,7 +13,7 @@
   <div class="global__top-bar__height"></div>
   <div *ngIf="!isMobile">
     <!-- Create Post -->
-    <div class="border-bottom border-color-grey" style="background-color: var(--formbg)">
+    <div class="border-bottom border-color-grey formbg">
       <feed-create-post
         [numberOfRowsInTextArea]="2"
         [postRefreshFunc]="prependPostToFeed.bind(this)"
@@ -24,24 +24,60 @@
     <div class="w-100 border-bottom border-color-grey light-grey-divider" style="min-height: 10px"></div>
   </div>
 
-  <!-- Mobile BitClout Price -->
-  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-grey py-5px px-15px fs-12px">
-    <div>$CLOUT Price&nbsp;&nbsp;&nbsp;</div>
+  <!-- Mobile DeSo Price -->
+  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">
+    <div>$DESO Price&nbsp;&nbsp;&nbsp;</div>
     <div>
-      <span>~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
+      <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
       <span class="text-muted">&nbsp;USD per coin</span>
     </div>
   </div>
 
+  <!-- Mobile email confirmation alert -->
+  <div
+    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified"
+    class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
+  >
+    <div>Your email is not verified.&nbsp;&nbsp;&nbsp;</div>
+    <div>
+      <div *ngIf="globalVars.loggedInUser.HasEmail">
+        <a class="font-weight-bold" (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">Resend Verification Email</a>
+        <span *ngIf="globalVars.resentVerifyEmail">Sent!</span>
+      </div>
+      <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
+    </div>
+  </div>
+
+  <!-- Referral links alert -->
+  <div
+    *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0"
+    class="d-flex border-bottom border-color-grey background-color-lemon-chiffon py-5px px-15px fs-12px"
+  >
+    <div style="color: #333333">You have a referral link!&nbsp;&nbsp;&nbsp;</div>
+    <a [routerLink]="'/' + globalVars.RouteNames.REFERRALS" class="font-weight-bold">Find out more</a>
+  </div>
+
+  <div
+    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"
+    class="border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
+  >
+    <jumio-status></jumio-status>
+  </div>
+
   <!-- Tab Selector -->
   <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+
+  <countdown-timer *ngIf="nextNFTShowcaseTime"
+    [timerText]="'The next NFT showcase drops in...'"
+    [fontWeight]="500"
+    [timerEnd]="nextNFTShowcaseTime"></countdown-timer>
 
   <div [id]="getPullToRefreshMarkerId()"></div>
 
   <!-- Posts -->
   <div *ngIf="showGlobalOrFollowingPosts()">
     <div *ngFor="let post of postsToShow()">
-      <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
+      <div *ngIf="post.ProfileEntryResponse">
         <!--
             The post.parentPost stuff is a hack to make it so that a new comment shows up
             in the feed with the "replying to @[parentPost.Username]" content diplayed.
@@ -52,12 +88,14 @@
           [post]="post"
           [includePaddingOnPost]="true"
           [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
-          [afterRecloutCreatedCallback]="prependPostToFeed.bind(this)"
+          [afterRepostCreatedCallback]="prependPostToFeed.bind(this)"
           [showReplyingToContent]="!!post.parentPost"
           [parentPost]="post.parentPost"
           [contentShouldLinkToThread]="true"
           [showLeftSelectedBorder]="post.IsPinned"
           [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+          [cardStyle]="true"
+          [showNFTDetails]="true"
           (postDeleted)="onPostHidden($event)"
           (userBlocked)="userBlocked()"
         ></feed-post>
@@ -72,6 +110,10 @@
       <div *ngIf="!activeTabReadyForDisplay()" class="fs-15px">Load More</div>
       <div *ngIf="activeTabReadyForDisplay()" class="fs-15px">Loading...</div>
     </div>
+  </div>
+
+  <div *ngIf="activeTab === FeedComponent.SHOWCASE_TAB">
+    <nft-showcase></nft-showcase>
   </div>
 
   <div

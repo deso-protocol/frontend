@@ -13,7 +13,7 @@
     <simple-center-loader *ngIf="!globalVars.loggedInUser || loading"></simple-center-loader>
 
     <!-- Form Inputs -->
-    <div *ngIf="globalVars.loggedInUser && !loading" class="fs-18px px-15px global__mobile-scrollable-section">
+    <div *ngIf="globalVars.loggedInUser && !loading" class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars">
       <div class="fs-15px pt-30px">E-mail</div>
       <div class="form-group pt-10px">
         <input
@@ -52,17 +52,17 @@
         <div *ngIf="showSuccessMessage" style="color: green" class="fs-15px ml-10px">Success!</div>
       </div>
 
-      <div class="fs-15px pt-30px">BitClout Theme</div>
+      <div class="fs-15px pt-30px">DeSo Theme</div>
       <br />
       <select
-        [(ngModel)]="themeService.theme"
         name="theme"
         id="theme"
         (change)="selectChangeHandler($event)"
         class="form-control selector">
         <option
           *ngFor="let theme of themeService.themes"
-          [value]="theme.key">{{ theme.name }}</option>
+          [value]="theme.key"
+          [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
       </select>
       <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
       <div class="global__bottom-bar-mobile-height"></div>

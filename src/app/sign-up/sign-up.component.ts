@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { Location } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { GlobalVarsService } from "../global-vars.service";
@@ -26,7 +25,6 @@ export class SignUpComponent {
 
   constructor(
     private globalVars: GlobalVarsService,
-    private location: Location,
     private router: Router,
     private route: ActivatedRoute,
     private backendApi: BackendApiService
@@ -41,18 +39,25 @@ export class SignUpComponent {
 
   ////// NOTIFICATIONS STEP BUTTONS ///////
 
-  _notificationsStepNext() {
-    this.globalVars.logEvent("account : create : notifications-step");
-    this._storeEmail();
-  }
-  _notificationsStepSkip() {
+  notificationsStepSkipped(): void {
     this.globalVars.logEvent("account : create : notifications-step : skip");
-    this._nextPage();
+    this.nextPage();
+  }
+
+  notificationsStepNext() {
+    this.validateEmail();
+
+    if (this.invalidEmailEntered || this.emailAddress.length <= 0) {
+      return;
+    }
+
+    this.globalVars.logEvent("account : create : notifications-step");
+    this.storeEmail();
   }
 
   ////// OTHER ///////
 
-  _nextPage() {
+  nextPage() {
     this.stepNum += 1;
     this.router.navigate([], {
       relativeTo: this.route,
@@ -61,7 +66,7 @@ export class SignUpComponent {
     });
   }
 
-  _prevPage() {
+  prevPage() {
     this.stepNum -= 1;
     this.router.navigate([], {
       relativeTo: this.route,
@@ -70,30 +75,30 @@ export class SignUpComponent {
     });
   }
 
-  _validateEmail(email) {
-    if (email === "" || this.globalVars.emailRegExp.test(email)) {
+  validateEmail() {
+    if (this.emailAddress.length > 0 && this.globalVars.emailRegExp.test(this.emailAddress)) {
       this.invalidEmailEntered = false;
     } else {
       this.invalidEmailEntered = true;
     }
   }
 
-  _backToPreviousSignupStepClicked() {
+  backToPreviousSignupStepClicked() {
     this.globalVars.logEvent("account : create : create-phone-number-verification : back");
-    this._prevPage();
+    this.prevPage();
   }
 
-  _phoneNumberVerified() {
+  phoneNumberVerified() {
     this.showPhoneNumberVerifiedContent = true;
-    this._nextPage();
+    this.nextPage();
   }
 
-  _skipButtonClickedOnStarterBitCloutStep() {
+  skipButtonClickedOnStarterDeSoStep() {
     this.globalVars.logEvent("account : create : create-phone-number-verification : skip");
-    this._nextPage();
+    this.nextPage();
   }
 
-  _storeEmail() {
+  storeEmail() {
     this.storingEmailAndPhone = true;
     this.backendApi
       .UpdateUserGlobalMetadata(
@@ -112,20 +117,20 @@ export class SignUpComponent {
       )
       .add(() => {
         this.storingEmailAndPhone = false;
-        this._nextPage();
+        this.nextPage();
       });
   }
 
-  buyBitCloutClicked(): void {
-    this.globalVars.logEvent("account : create : buy-bitclout");
-    this.router.navigate(["/" + this.globalVars.RouteNames.BUY_BITCLOUT], {
+  buyDeSoClicked(): void {
+    this.globalVars.logEvent("account : create : buy-deso");
+    this.router.navigate(["/" + this.globalVars.RouteNames.BUY_DESO], {
       queryParams: { stepNum: null },
       queryParamsHandling: "merge",
     });
   }
 
-  buyBitCloutSkipped(): void {
-    this.globalVars.logEvent("account : create : buy-bitclout");
+  buyDeSoSkipped(): void {
+    this.globalVars.logEvent("account : create : buy-deso : skip");
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
       queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
       queryParamsHandling: "merge",

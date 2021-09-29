@@ -1,13 +1,15 @@
 <div *ngIf="creatorCoinTrade.isCreatorCoinTransfer(); else elseBlock">
   <!-- Amount you're transferring -->
-  <div *ngIf="!displayForCreatorForm" class="py-3 border-bottom d-flex justify-content-between flex-wrap">
+  <div *ngIf="!displayForCreatorForm" class="py-3 border-bottom d-flex justify-content-between flex-wrap align-items-center">
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Recipient</span>
 
     <div class="d-inline-block" style="max-width: 70%; overflow-wrap: anywhere">
-      <span *ngIf="creatorCoinTrade.transferRecipient.value.length > 25; else usernameRecipient">
-        {{ creatorCoinTrade.transferRecipient.value }}
-      </span>
-      <ng-template #usernameRecipient>@{{ creatorCoinTrade.transferRecipient.value }}</ng-template>
+      <simple-profile-card
+        [profile]="creatorCoinTrade.transferRecipient.value"
+        [singleColumn]="true"
+        [hideFollowLink]="true"
+        *ngIf="creatorCoinTrade.transferRecipient.value"
+      ></simple-profile-card>
     </div>
   </div>
 
@@ -26,8 +28,8 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Network Fee</span>
 
     <div class="d-inline-block" style="text-align: end">
-      {{ globalVars.nanosToBitClout(creatorCoinTrade.networkFeeNanos, 9) }}
-      BitClout
+      {{ globalVars.nanosToDeSo(creatorCoinTrade.networkFeeNanos, 9) }}
+      DeSo
 
       <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" class="d-none d-lg-inline">
         ≈ {{ globalVars.nanosToUSD(creatorCoinTrade.networkFeeNanos, 9) }}
@@ -48,11 +50,13 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">You're exchanging</span>
 
     <div class="d-inline-block">
-      {{ creatorCoinTrade.assetToSellAmount() | number: "0.0-9" }}
-      {{ creatorCoinTrade.assetToSellString() }}
+      <span *ngIf="!inTutorial || !creatorCoinTrade.isBuyingCreatorCoin">
+        {{ creatorCoinTrade.assetToSellAmount() | number: "0.0-9" }}
+        {{ creatorCoinTrade.assetToSellString() }}
+      </span>
 
-      <span *ngIf="creatorCoinTrade.isBuyingCreatorCoin" class="text-muted">
-        ≈ {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
+      <span *ngIf="creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
+        {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
         USD
       </span>
     </div>
@@ -63,11 +67,13 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">You receive</span>
 
     <div class="d-inline-block">
-      {{ creatorCoinTrade.assetReturnedAmount() | number: "0.0-9" }}
-      {{ creatorCoinTrade.assetReturnedString() }}
+      <span *ngIf="!inTutorial || creatorCoinTrade.isBuyingCreatorCoin">
+        {{ creatorCoinTrade.assetReturnedAmount() | number: "0.0-9" }}
+        {{ creatorCoinTrade.assetReturnedString() }}
+      </span>
 
-      <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin">
-        ≈ {{ creatorCoinTrade.assetReturnedAmountInUsd() | currency }}
+      <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
+        {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.assetReturnedAmountInUsd() | currency }}
         USD
       </span>
     </div>
@@ -75,17 +81,20 @@
 
   <!-- Price -->
   <div
-    *ngIf="creatorCoinTrade.bitCloutPriceOfCreatorCoin()"
+    *ngIf="creatorCoinTrade.desoPriceOfCreatorCoin()"
     class="py-3 border-bottom d-flex justify-content-between flex-wrap"
   >
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Price per coin</span>
 
     <div class="d-inline-block">
-      ~{{ creatorCoinTrade.bitCloutPriceOfCreatorCoin().toFixed(4) }}
-      BitClout
+      <span *ngIf="!inTutorial">
+        ~{{ creatorCoinTrade.desoPriceOfCreatorCoin().toFixed(4) }}
+        DeSo
+      </span>
 
-      <span class="text-muted">
-        ≈ {{ creatorCoinTrade.usdPriceOfCreatorCoin() | currency }}
+
+      <span [ngClass]="{ 'text-muted': !inTutorial }">
+        {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.usdPriceOfCreatorCoin() | currency }}
         USD
       </span>
     </div>
@@ -94,12 +103,12 @@
   <!-- Founder's Reward Warning -->
   <div
     *ngIf="creatorCoinTrade.getFoundersRewardPercent() > 0 && !creatorCoinTrade.isBuyingOwnCoin()"
-    class="py-3 border-bottom text-muted d-flex"
+    class="py-3 text-muted d-flex"
   >
     <div class="mr-10px">
-      <i class="fas fa-heart fa-md text-grey9"></i>
+      <i class="fas fa-heart fa-md text-grey5"></i>
     </div>
-    <div [ngClass]="{ 'text-danger': creatorCoinTrade.showFounderRewardWarning() }">
+    <div [ngClass]="{ 'text-danger': creatorCoinTrade.showFounderRewardWarning() }" class="text-grey5">
       @{{ creatorCoinTrade.creatorProfile.Username }} will receive
       <span class="font-weight-semibold">{{ creatorCoinTrade.getFoundersRewardPercent() | number: "0.0-9" }}%</span>
       of your purchase as a
@@ -107,12 +116,33 @@
         founder reward
         <i
           (click)="tooltip.toggle()"
-          class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+          class="fas fa-info-circle text-grey5 fs-15px global__tooltip-icon"
           matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
           [matTooltip]="TradeCreatorTableComponent.FOUNDER_REWARD_EXPLANATION"
           #tooltip="matTooltip"
         ></i>
       </span>
     </div>
+  </div>
+  <div
+    *ngIf="
+      !inTutorial &&
+      !(
+        followService._isLoggedInUserFollowing(creatorCoinTrade.creatorProfile.PublicKeyBase58Check) ||
+        appData.loggedInUser.PublicKeyBase58Check === creatorCoinTrade.creatorProfile.PublicKeyBase58Check ||
+        creatorCoinTrade.tradeType !== buyVerb
+      )
+    "
+    class="py-1 border-bottom text-muted d-flex text-grey9 follow-on-buy"
+  >
+    <input type="checkbox" id="check" [(ngModel)]="creatorCoinTrade.followCreator" />
+    <label for="check" style="--d: 15px" class="follow-check text-grey9">
+      <svg viewBox="0,0,50,50">
+        <path d="M5 30 L 20 45 L 45 5"></path>
+      </svg>
+    </label>
+    <label class="form-check-label follow-check-label text-grey5" for="check">
+      Follow {{ creatorCoinTrade.creatorProfile.Username }}
+    </label>
   </div>
 </ng-template>

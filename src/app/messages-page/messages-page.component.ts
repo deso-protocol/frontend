@@ -29,7 +29,7 @@ export class MessagesPageComponent {
   ) {}
 
   ngOnInit() {
-    this.titleService.setTitle("Messages - BitClout");
+    this.titleService.setTitle("Messages - DeSo");
   }
 
   _handleMessageThreadSelectedMobile(thread: any) {
@@ -86,5 +86,6 @@ export class MessagesPageComponent {
     this.selectedThread = null;
     this.selectedThreadPublicKey = "";
     this.showThreadView = false;
+    this.router.navigate([], { queryParams: { username: null }, queryParamsHandling: "merge" });
   }
 }

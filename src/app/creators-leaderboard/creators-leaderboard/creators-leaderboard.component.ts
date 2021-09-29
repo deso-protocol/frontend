@@ -1,10 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { AppRoutingModule } from "../../app-routing.module";
 import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { Datasource, IDatasource } from "ngx-ui-scroll";
+import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Title } from "@angular/platform-browser";
+import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
   selector: "creators-leaderboard",
@@ -13,6 +14,8 @@ import { Title } from "@angular/platform-browser";
 })
 export class CreatorsLeaderboardComponent implements OnInit {
   static PAGE_SIZE = 100;
+  static WINDOW_VIEWPORT = true;
+  static BUFFER_SIZE = 5;
 
   AppRoutingModule = AppRoutingModule;
   appData: GlobalVarsService;
@@ -24,13 +27,6 @@ export class CreatorsLeaderboardComponent implements OnInit {
   // FIME: Replace with real value
   fakeNumHodlers = Math.ceil(Math.random() * 1000) + 1000;
 
-  // stores a mapping of page number to promises
-  pagedRequests = {
-    "-1": new Promise((resolve) => {
-      resolve([]);
-    }),
-  };
-
   // stores a mapping of page number to public key to fetch
   pagedKeys = {
     0: "",
@@ -38,50 +34,6 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
   // tracks if we've reached the end of all notifications
   lastPage = null;
-
-  // TODO: Cleanup - Create InfiniteScroller class to de-duplicate this logic
-  datasource: IDatasource = new Datasource({
-    get: (index, count, success) => {
-      const startIndex = Math.max(index, 0);
-      const endIndex = index + count - 1;
-      if (startIndex > endIndex) {
-        success([]); // empty result
-        return;
-      }
-
-      const startPage = Math.floor(startIndex / CreatorsLeaderboardComponent.PAGE_SIZE);
-      const endPage = Math.floor(endIndex / CreatorsLeaderboardComponent.PAGE_SIZE);
-
-      const pageRequests: any[] = [];
-      for (let i = startPage; i <= endPage; i++) {
-        const existingRequest = this.pagedRequests[i];
-        if (existingRequest) {
-          pageRequests.push(existingRequest);
-        } else {
-          // we need to wait for the previous page before we can fetch the next one
-          const newRequest = this.pagedRequests[i - 1].then((_) => {
-            return this.getPage(i);
-          });
-          this.pagedRequests[i] = newRequest;
-          pageRequests.push(newRequest);
-        }
-      }
-
-      return Promise.all(pageRequests).then((pageResults) => {
-        pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
-        const start = startIndex - startPage * CreatorsLeaderboardComponent.PAGE_SIZE;
-        const end = start + endIndex - startIndex + 1;
-        return pageResults.slice(start, end);
-      });
-    },
-    settings: {
-      startIndex: 0,
-      minIndex: 0,
-      bufferSize: 5,
-      windowViewport: true,
-      infinite: true,
-    },
-  });
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -143,7 +95,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
   ngOnInit() {
     this.isLoadingProfilesForFirstTime = true;
-    this.titleService.setTitle("Buy Creator Coins - BitClout");
+    this.titleService.setTitle("Buy Creator Coins - DeSo");
   }
 
   canLoggedInUserFollowTargetPublicKey(targetPubKeyBase58Check) {
@@ -152,4 +104,12 @@ export class CreatorsLeaderboardComponent implements OnInit {
       targetPubKeyBase58Check
     );
   }
+
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    CreatorsLeaderboardComponent.PAGE_SIZE,
+    this.getPage.bind(this),
+    CreatorsLeaderboardComponent.WINDOW_VIEWPORT,
+    CreatorsLeaderboardComponent.BUFFER_SIZE
+  );
+  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
 }

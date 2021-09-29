@@ -1,8 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostBinding } from "@angular/core";
+import { Component, EventEmitter, HostBinding, Input, Output } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule } from "../app-routing.module";
+import { AppRoutingModule, RouteNames } from "../app-routing.module";
 import { MessagesInboxComponent } from "../messages-page/messages-inbox/messages-inbox.component";
 import { IdentityService } from "../identity.service";
+import { BackendApiService, TutorialStatus } from "../backend-api.service";
+import { Router } from "@angular/router";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
 
 @Component({
   selector: "left-bar",
@@ -17,21 +20,29 @@ export class LeftBarComponent {
   }
 
   @Input() isMobile = false;
+  @Input() inTutorial: boolean = false;
   @Output() closeMobile = new EventEmitter<boolean>();
   currentRoute: string;
 
   AppRoutingModule = AppRoutingModule;
 
-  constructor(public globalVars: GlobalVarsService, private identityService: IdentityService) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private identityService: IdentityService,
+    private backendApi: BackendApiService,
+    private router: Router
+  ) {}
 
   // send logged out users to the landing page
   // send logged in users to browse
-  homeLink(): string {
+  homeLink(): string | string[] {
+    if (this.inTutorial) {
+      return [];
+    }
     if (this.globalVars.showLandingPage()) {
       return "/" + this.globalVars.RouteNames.LANDING;
-    } else {
-      return "/" + this.globalVars.RouteNames.BROWSE;
     }
+    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
   getHelpMailToAttr(): string {
@@ -47,5 +58,67 @@ export class LeftBarComponent {
 
   logHelp(): void {
     this.globalVars.logEvent("help : click");
+  }
+
+  startTutorial(): void {
+    if (this.inTutorial) {
+      return;
+    }
+    // If the user hes less than 1/100th of a deso they need more deso for the tutorial.
+    if (this.globalVars.loggedInUser?.BalanceNanos < 1e7) {
+      SwalHelper.fire({
+        target: this.globalVars.getTargetComponentSelector(),
+        icon: "info",
+        title: `You need 0.01 $DESO to complete the tutorial`,
+        showConfirmButton: true,
+        focusConfirm: true,
+        customClass: {
+          confirmButton: "btn btn-light",
+        },
+        confirmButtonText: "Buy $DESO",
+      }).then((res) => {
+        if (res.isConfirmed) {
+          this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
+        }
+      });
+      return;
+    }
+
+    if (this.globalVars.userInTutorial(this.globalVars.loggedInUser)) {
+      this.globalVars.navigateToCurrentStepInTutorial(this.globalVars.loggedInUser);
+      return;
+    }
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Tutorial",
+      html: "Learn how DeSo works!",
+      showConfirmButton: true,
+      // Only show skip option to admins and users who do not need to complete tutorial
+      showCancelButton: !!this.globalVars.loggedInUser?.IsAdmin || !this.globalVars.loggedInUser?.MustCompleteTutorial,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+      confirmButtonText: "Start Tutorial",
+      cancelButtonText: "Cancel",
+    }).then((res) => {
+      this.backendApi
+        .StartOrSkipTutorial(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          !res.isConfirmed /* if it's not confirmed, skip tutorial*/
+        )
+        .subscribe((response) => {
+          this.globalVars.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+          this.globalVars.loggedInUser.TutorialStatus = res.isConfirmed
+            ? TutorialStatus.STARTED
+            : TutorialStatus.SKIPPED;
+          if (res.isConfirmed) {
+            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+          }
+        });
+    });
   }
 }

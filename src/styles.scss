@@ -6,6 +6,7 @@ $info: #689eff;
 $feed-border-radius: 12px;
 
 @import 'variables.scss';
+@import 'app/theme/themes/index';
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
 
 // regular style toast
@@ -13,8 +14,8 @@ $feed-border-radius: 12px;
 
 // New themeing class
 .main {
-  background: var(--background) !important;
-  color: var(--text) !important;
+  background: var(--background) !important; // TODO: remove all !important, this is a platform to extend
+  color: var(--text) !important; // TODO: remove all !important, this is a platform to extend
 }
 
 html {
@@ -139,7 +140,7 @@ $border-grey: #E5E5E5;
 $staking-grey: #F0F0F0;
 $light-grey-for-divider: #F8F8F8;
 $light-grey-for-divider-2: #FAFAFA;
-$buy-button-blue: #0058F7;
+$buy-button-blue: var(--button);
 // Font colors.
 $light-font-color: #777777;
 $normal-font-color: #222222;
@@ -194,6 +195,7 @@ $green-font-color: #19B028;
 // font-weight-light: 300
 // font-weight-normal: 400
 .font-weight-semibold { font-weight: 500 }
+.font-weight-normal { font-weight: 400 }
 // font-weight-bold: 700
 
 
@@ -218,6 +220,8 @@ $green-font-color: #19B028;
 .fc-red { color: var(--cred); }
 .fc-green { color: var(--cgreen); }
 
+.font-weight-500 { font-weight: 500 }
+
 .fs-1 { font-size: 2.5rem }
 .fs-2 { font-size: 2rem }
 .fs-3 { font-size: 1.75rem }
@@ -238,6 +242,7 @@ $green-font-color: #19B028;
 .fs-10px { font-size: 10px !important; }
 // line heights
 .lh-24px { line-height: 24px; }
+.lh-20px { line-height: 20px; }
 .lh-18px { line-height: 18px; }
 .lh-16px { line-height: 16px; }
 .lh-15px { line-height: 15px; }
@@ -257,6 +262,8 @@ $green-font-color: #19B028;
 .background-color-light-grey { background-color: var(--secondary); }
 .background-color-light-grey-important { background-color: var(--secondary) !important }
 .background-color-light-pink { background-color: lightpink; }
+.background-color-lemon-chiffon { background-color: lemonchiffon; }
+.background-color-white { background-color: var(--background); }
 
 // Custom padding classes.
 .p-35px { padding: 35px; }
@@ -341,6 +348,12 @@ $green-font-color: #19B028;
 .px-0px { padding-left: 0px; padding-right: 0px;}
 
 // Custom margin classes.
+.m-0px { margin: 0px !important; }
+.mt-0px { margin-top: 0px; }
+.mr-0px { margin-right: 0px; }
+.mb-0px { margin-bottom: 0px !important; }
+.ml-0px { margin-left: 0px; }
+
 .mt-2px { margin-top: 2px; }
 
 .m-5px { margin: 5px; }
@@ -360,6 +373,8 @@ $green-font-color: #19B028;
 .mr-15px { margin-right: 15px; }
 .mb-15px { margin-bottom: 15px; }
 .ml-15px { margin-left: 15px; }
+.mx-15px { margin-left: 15px; margin-right: 15px; }
+.my-15px { margin-top: 15px; margin-bottom: 15px; }
 
 .m-20px { margin: 20px; }
 .mt-20px { margin-top: 20px; }
@@ -386,12 +401,14 @@ $green-font-color: #19B028;
 .my-30px { margin-top: 30px; margin-bottom: 30px; }
 
 .br-3px { border-radius: 3px; }
+.br-4px { border-radius: 4px; }
+.br-5px { border-radius: 5px; }
+.br-8px { border-radius: 8px; }
 .br-12px { border-radius: $feed-border-radius; }
 
 .vh-100 { height: 100vh !important; }
 
 .position-fixed { position: fixed; }
-.background-color-white { background-color: var(--background); }
 
 .global__container {
   min-height: 100vh;
@@ -488,6 +505,7 @@ $green-font-color: #19B028;
 }
 
 .global__bottom-bar-mobile {
+  z-index: 2;
   position: fixed;
   left: 0;
   bottom: 0;
@@ -510,13 +528,29 @@ $green-font-color: #19B028;
   font-size: 15px !important;
 }
 
+input.bs-timepicker-field {
+  font-size: 15px;
+}
+
+.btn-default {
+  font-size: 15px;
+  border-color: var(--border) !important;
+}
+
+
 //
 // Top-level css for the feed.
 //
 
 // This removes the scrollbar on the feed.
-::-webkit-scrollbar {
-  width: 0px;
+.disable-scrollbars::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* Chrome/Safari/Webkit */
+}
+
+.disable-scrollbars {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
 }
 
 .light-grey-divider {
@@ -599,7 +633,7 @@ $green-font-color: #19B028;
 
 // Set a relative width on mobile
 .global__mobile .global__content__width {
-  width: 100%;
+  width: 100vw;
 }
 
 // Set a width, height, and border on desktop
@@ -836,14 +870,26 @@ $green-font-color: #19B028;
   font-size: 15px !important;
 }
 
+.feed-create-post__avatar.change-account-selector__account-image {
+	width: 24px;
+	height: 24px;
+	min-width: 24px;
+	margin-right: 10px;
+	border-radius: 3px;
+}
+
 .change-account-selector {
-  margin-left: -10px;
-  position: relative;
-  z-index: 30;
-  background-color: var(--secondary);
-  width: 185px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+	position: relative;
+	z-index: 30;
+	background-color: var(--secondary);
+	width: 100%;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	border: 1px solid var(--border);
+}
+
+.change-account-selector_list__inner {
+	border-bottom: 1px solid var(--border);
 }
 
 .change-account-selector__down-arrow {
@@ -852,11 +898,28 @@ $green-font-color: #19B028;
 }
 
 .change-account-selector__hover:hover {
-  background-color: var(--secondary);
+	box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.10);
+}
+
+.change-account-selector_list {
+	background-color: var(--secondary);
+	padding: 0px 0px 10px;
+	margin-top: 10px;
+	width: 100%;
+	z-index: 99;
+	border: 1px solid var(--border);
+}
+
+.change-account-selector_list-item{
+  overflow: hidden;
+}
+
+.change-account-selector_list__inner:hover{
+  background-color:var(--formbg);
 }
 
 .change-account-selector__shadow {
-  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+  box-shadow: rgba(101, 119, 134, 0) 0px 0px 15px, rgba(101, 119, 134, 0) 0px 0px 3px 1px;
 }
 
 .change-account-selector__ellipsis-restriction {
@@ -869,6 +932,10 @@ $green-font-color: #19B028;
 
 .change-account-selector__trash {
   opacity: 0;
+}
+
+.text-link_hover:hover{
+  color:var(--hover);
 }
 
 .search-bar__icon {
@@ -983,6 +1050,10 @@ $green-font-color: #19B028;
   background-image: url('/assets/img/default_profile_pic.png');
 }
 
+.feed-create-comment__textarea {
+  min-height: 55px;
+}
+
 .feed-create-post__textarea:focus {
   border: none;
   box-shadow: none;
@@ -1034,6 +1105,27 @@ $green-font-color: #19B028;
   width: 100%;
 }
 
+.feed-post__video-container {
+  position: relative;
+  padding-top: 56.25%;
+  width: 100%;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+}
+
+.feed-post__video {
+  border: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
 .feed-post__blue-border {
   border-left: 5px solid $buy-button-blue;
 }
@@ -1060,6 +1152,42 @@ $green-font-color: #19B028;
 
 .feed-post-icon-row__icon.icon-reply {
   margin-left: -6px;
+  &:hover {
+    background-color: $comment-hover;
+    color: $comment-color;
+  }
+}
+
+/* repost hover animation */
+.feed-post-icon-row__icon.icon-repost {
+  &:hover {
+    background-color: $repost-hover;
+    color: $repost-color;
+  }
+}
+/* like button hover animation */
+.feed-post-icon-row__icon.icon-heart, .feed-post-icon-row__icon.icon-heart-fill{
+  &:hover{
+    background-color: $like-hover;
+    color: $like-color;
+  }
+}
+
+/* diamond button hover animation */
+.feed-post-icon-row__icon.icon-diamond{
+  &:hover{
+    background-color: $diamond-hover;
+    color: $diamond-color;
+  }
+}
+
+/* copy link button hover animation */
+.feed-post-icon-row__icon.icon-link{
+  &:hover{
+    background-color: $link-btn-hover;
+    color: $link-btn-color;
+
+  }
 }
 
 .feed-post__icon-row-holder {
@@ -1206,7 +1334,7 @@ $green-font-color: #19B028;
   text-overflow: ellipsis;
 }
 
-.buy-bitclout__copy-button {
+.buy-deso__copy-button {
   display: flex;
   align-items: center;
   justify-content: middle;
@@ -1217,21 +1345,21 @@ $green-font-color: #19B028;
   padding: 5px;
 }
 
-.buy-bitclout__copy-button:hover {
+.buy-deso__copy-button:hover {
   background-color: $buy-button-blue;
   color: white;
 }
 
-.buy-bitclout__title-holder {
+.buy-deso__title-holder {
   position: relative;
   top: 20px;
 }
 
-.buy-bitclout__amount-background {
+.buy-deso__amount-background {
   background-color: var(--background);
 }
 
-.buy-bitclout__box-label-adjustment {
+.buy-deso__box-label-adjustment {
   position: relative;
   width: fit-content;
   background-color: var(--background) !important;
@@ -1368,6 +1496,7 @@ $green-font-color: #19B028;
 // Bottom bar (mobile)
 //
 .bottom-bar-mobile__create-post-circle {
+  z-index: 3;
   position: absolute;
   top: -70px;
   right: 22px;
@@ -1679,7 +1808,7 @@ $green-font-color: #19B028;
 
 
 //
-// Simple profile card (for likes, reclouts, diamonds modal)
+// Simple profile card (for likes, reposts, diamonds modal)
 //
 
 .simple-profile-card__avatar {
@@ -1693,10 +1822,9 @@ $green-font-color: #19B028;
 }
 
 .simple-profile-card__avatar-container {
-  width: 56px; // TODO: figure out why chrome doesn't render this as 50px
+  width: 50px;
   margin-right: 15px;
 }
-
 
 //
 // (end) v0 styles
@@ -1817,11 +1945,9 @@ $green-font-color: #19B028;
   color: var(--text) !important;
   background: var(--formbg) !important;
   border-color: var(--border) !important;
-  outline: none;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  box-shadow: none !important;
-  background-clip: padding-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 .normal-text {
   color: $text-color;
@@ -1948,7 +2074,7 @@ em {
   }
 }
 
-/*Begin BitClout config*/
+/*Begin DeSo config*/
 .flex-center {
   display: flex;
   align-items: center;
@@ -1967,10 +2093,23 @@ input {
   background-color: $profile-button;
 }
 .btn-primary {
-  background-color: #005BFF;
-  border-color: #005BFF;
+  background-color: $buy-button-blue;
+  border-color: $buy-button-blue;
   color: #fff;
 }
+
+.btn-primary:hover {
+	color: #fff;
+	background-color: var(--hover);
+	border-color: var(--hover);
+}
+
+.btn-primary.disabled, .btn-primary:disabled {
+	color: #fff;
+	background-color: $buy-button-blue;
+	border-color: $buy-button-blue;
+}
+
 .btn-secondary {
   background-color: #FFFFFF;
   border-color: var(--border);
@@ -2045,7 +2184,7 @@ input {
   color: var(--text) !important;
 }
 
-.clout {
+.deso {
   filter: var(--filter);
 }
 
@@ -2147,6 +2286,14 @@ input {
   border-bottom: 1px solid var(--border);
 }
 
+.secalt-bg {
+  background-color: var(--secalt);
+}
+
+.formbg {
+  background-color: var(--formbg) !important;
+}
+
 .modal-content {
   position: relative;
   background-color: var(--secalt);
@@ -2174,10 +2321,47 @@ input {
   border-top-right-radius: calc(.3rem - 1px);
 }
 
-.likes-modal-container, .quote-reclouts-modal-container, .reclouts-modal-container, .diamonds-modal-container {
+.likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
   background-color: var(--background);
   color: var(--text);
   border: var(--mborder);
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+}
+
+.nft-modal-container {
+  color: var(--text);
+  border: 1px solid var(--mborder);
+  background-color: var(--secondary);
+  background-clip: padding-box;
+  flex-direction: column;
+  width: 100%;
+  display: flex;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  border-bottom-left-radius: 0.3rem;
+  outline: 0;
+  position: relative;
+}
+
+.nft-modal-radio-size {
+  height: 15px;
+  width: 15px;
+}
+
+.nft-modal-separator {
+  border-bottom: #AAAAAA solid 1px;
+}
+
+.nft-modal-separator-2 {
+  border-bottom: #DDDDDD solid 1px;
+}
+
+.create-nft-auction-row-border {
+  border-bottom: #EEEEEE solid 1px;
 }
 
 .interaction-detail {
@@ -2219,4 +2403,430 @@ input {
 .swal2-popup {
   background-color: var(--background) !important;
   color: var(--text);
+}
+
+//
+// Bootstrap switch custom styling
+//
+
+// Add class `.custom-switch-lg` to a `custom-switch`
+.custom-switch.custom-switch-lg {
+  padding-bottom: 1rem;
+	padding-left: 2.25rem;
+
+  & .custom-control-label {
+    padding-left: .75rem;
+    padding-top: 0.15rem;
+
+    &::before {
+      border-radius: 1rem;
+      height: 1.5rem;
+      width: 2.5rem;
+    }
+
+    &::after {
+			border-radius: .65rem;
+      height: calc(1.5rem - 4px);
+      width: calc(1.5rem - 4px);
+    }
+  }
+
+	.custom-control-input:checked ~ .custom-control-label::after{
+  	transform: translateX(1rem);
+	}
+}
+
+// Add class `.custom-switch-xl` to a `custom-switch`
+.custom-switch.custom-switch-xl {
+  padding-bottom: 1rem;
+	padding-left: 2.25rem;
+
+  & .custom-control-label {
+    padding-left: 2rem;
+  	padding-top: 0.5rem;
+
+    &::before {
+      border-radius: 1rem;
+      height: 2rem;
+      width: 3.5rem;
+    }
+
+    &::after {
+      border-radius: 2rem;
+      height: calc(2rem - 4px);
+      width: calc(2rem - 4px);
+    }
+  }
+
+	.custom-control-input:checked ~ .custom-control-label::after {
+  	transform: translateX(1.5rem);
+	}
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.borderbg {
+  background-color: var(--border);
+}
+
+
+.border {
+  border: 1px solid var(--border) !important;
+}
+
+.cloutavista-button {
+  position: sticky;
+  bottom: 0px;
+  a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    div {
+      height: 1px;
+      position: absolute;
+      top: 0px;
+      width: 100%;
+    }
+    p {
+      color: var(--text) !important;
+      margin: 15px 0 15px 0;
+      font-size: 15px;
+    }
+  }
+}
+
+.feed-reaction {
+  position: relative;
+
+  i {
+    position: relative;
+    font-size: 22px;
+  }
+
+  // Contains the button which triggers diamond pop ups
+  .diamond-btn {
+    width: 44px; height: 30px;
+    position: absolute;
+    left: -4px;
+    cursor: pointer;
+    &::before {
+      display: none
+    }
+    // Contains box which contains all of the selectable diamond levels
+    .reaction-box {
+      // This creates an invisible, hoverable space for our pointer to use without losing hover focus
+      // Basically, a bridge between the diamond button and the diamond row
+      &::after {
+        content: "."; opacity: 0;
+        display: block;
+        width: 340px;
+        // On desktop, move the diamond bar higher to prevent accidental clicking
+        @media (max-width: 991.98px) {
+          height: 10px;
+          top: 50px; left: 0px;
+        }
+        height: 30px;
+        position: absolute;
+        top: 50px; left: 0px;
+      }
+
+      // Need to position box above top bar when explainer is triggered
+      z-index: 30;
+      position: absolute;
+      width: 340px; height: 55px;
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      // On mobile, need to position this box further left so it doesn't leave the screen
+      @media (max-width: 991.98px) {
+        left: -300px; bottom: 35px;
+      }
+      left: -125px; bottom: 50px;
+      display: none;
+
+      // Each selectable diamond level in the diamond pop-up
+      .reaction-icon {
+        // Enables "pop-up" animation
+        transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
+        opacity: 0;
+        transform: translate(0, 50px) scale(0);
+        width: 47px; height: 20px;
+        display: inline-block;
+        background: var(--secondary);
+        background-color: transparent;
+        content: '\f219';
+        border-radius: 15px;
+        margin: 8px 0 0 0;
+        text-align: center;
+
+        .diamond-reaction {
+          font-size: 25px;
+          top: -30px;
+          left: -2px;
+          position: relative;
+          transition: color .3s;
+        }
+
+        .diamond-help {
+          color: var(--grey);
+        }
+
+          label {
+          padding: 3px 5px 3px 5px;
+          position: relative;
+          top: -24px;
+          border-radius: 10px;
+          font-size: 11px;
+          color: #FFF;
+          background: #333;
+          visibility: visible;
+        }
+
+        // Make selectable area smaller, to prevent accidental selections
+        .reaction-icon-display {
+          height: 14px;
+        }
+      }
+    }
+
+    // Don't show the diamond selector when it's the user's own post
+    &.hide-diamonds {
+      .reaction-box{
+        display: none !important;
+      }
+    }
+
+    // We want to disable phone-sized devices from showing the selector on hover.
+    @media(max-width: 600px) {
+      &.dragged-like {
+        .reaction-box {
+          display: block;
+        }
+      }
+    }
+    // Show the selector on hover for tablets and desktop machines
+    @media(min-width: 601px) {
+      &:hover {
+        .reaction-box {
+          display: block;
+        }
+      }
+    }
+
+    // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
+    &.dragged-like,&:hover {
+
+      .reaction-box {
+
+        .reaction-icon {
+
+          // Skip the "show" trigger on tablets, the on-hover property can be touchy
+          @media (min-width: 601px) and (pointer: coarse) {
+            opacity: 1;
+            transform: translate(0, 0) scale(1);
+          }
+          // Show the reaction icon once it gets the "show" class (this is triggered by a timer in JS to achieve the animation)
+          &.show {
+            opacity: 1;
+            transform: translate(0, 0) scale(1);
+          }
+
+          // For those elements we want to grow, scale them up when they're hovered
+          &.transformable{
+            // Prevent hover effects on mobile, we use the drag interface for that
+            @media (pointer: fine) {
+              &.dragged-icon,&:hover {
+                transform: scale(1.3);
+                transform-origin: bottom;
+              }
+            }
+            // Scale up icons on mobile when they're dragged across
+            @media (pointer: coarse) {
+              &.dragged-icon {
+                transform: scale(1.3);
+                transform-origin: bottom;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.diamond-mobile-drag-container {
+  display: none
+}
+
+.diamond-mobile-drag-instructions {
+  display: none;
+
+  p {
+    display: none;
+  }
+}
+
+.diamond-mobile-drag-grab {
+  display: none;
+}
+
+// Only enable drag controls for smaller screens i.e. phones not tablets
+@media (max-width: 600px) {
+  .diamond-mobile-drag-container {
+    height: 120px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: block;
+    pointer-events: none;
+  }
+
+  .diamond-mobile-drag-instructions {
+    display: block;
+    height: 48px;
+    position: absolute;
+    top: 45px;
+    left: 0;
+    right: 0;
+    background: var(--norm);
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s linear 300ms, opacity 300ms, background-color 300ms ease;
+
+    &.show {
+      visibility: visible;
+      opacity: 1;
+      transition: visibility 0s linear 0s, opacity 300ms, background-color 300ms ease;
+    }
+
+    p {
+      display: block;
+      top: 15px;
+      text-align: center;
+      position: relative;;
+      display: table-cell;
+      color: var(--secalt)
+    }
+  }
+
+  .diamond-mobile-drag-grab {
+    display: block;
+    height: 45px;
+    width: 45px;
+    position: absolute;
+    z-index: 1;
+    background: transparent;
+    pointer-events: all;
+  }
+}
+
+.hide-diamonds {
+  &.diamond-mobile-drag-grab {
+    display: none;
+  }
+  &.diamond-mobile-drag-container {
+    display: none;
+    .diamond-mobile-drag-instructions {
+      display: none;
+      .p {
+        display: none;
+      }
+    }
+  }
+}
+
+.follow-on-buy {
+  *, *:after, *:before {box-sizing: border-box;}
+
+  body {
+    background: whitesmoke;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  input#check {
+    position: absolute;
+    opacity: 0;
+
+    &:checked + label svg path {
+      stroke-dashoffset: 0;
+    }
+
+    &:focus + label {
+      transform: scale(1.03);
+    }
+  }
+
+  #check + label {
+    display: block;
+    border: 2px solid var(--grey);
+    width: var(--d); height: var(--d);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .2s ease;
+
+    svg {
+      pointer-events: none;
+      vertical-align: top;
+      path {
+        fill: none;
+        stroke: var(--grey);
+        stroke-width: 11px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 100;
+        stroke-dashoffset: 101;
+        transition: all 350ms cubic-bezier(1,0,.37,.91);
+      }
+    }
+  }
+
+  .follow-check {
+    margin-top: 4px;
+    margin-right: 10px;
+  }
+}
+
+// Prevent text highlighting on mobile long press
+.unselectable {
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
+.desktop-creator-coin-info {
+  @media (max-width: 992px) {
+    display: none;
+  }
+  display: inline;
+}
+
+.mobile-creator-coin-info {
+  @media (max-width: 992px) {
+    display: inline;
+    margin-left: 0px;
+    padding-left: 0px;
+  }
+  display: none;
+}
+
+.creator-coin-info {
+  @media (max-width: 992px) {
+    padding-left: 0rem !important;
+    padding-right: 0rem !important;
+    margin-left: 0rem !important;
+  }
+  padding-left: .5rem !important;
+  padding-right: .5rem !important;
+  margin-left: .5rem !important;
+}
+
+.referral-link-info__blue-border {
+  border-left: 5px solid $buy-button-blue !important;
 }

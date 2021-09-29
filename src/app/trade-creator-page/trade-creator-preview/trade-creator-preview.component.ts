@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
+import { FollowService } from "../../../lib/services/follow/follow.service";
+import { of } from "rxjs";
 
 @Component({
   selector: "trade-creator-preview",
@@ -13,10 +15,11 @@ export class TradeCreatorPreviewComponent implements OnInit {
   // orders will execute as long as the value doesn't slip by more than 25%
   ALLOWED_SLIPPAGE_PERCENT = 75;
 
-  BITCLOUT_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorBitCloutReceivedIsLessThanMinimumSetBySeller";
+  DESO_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorDeSoReceivedIsLessThanMinimumSetBySeller";
   CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorCreatorCoinLessThanMinimumSetByUser";
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
+  @Input() inTutorial: boolean = false;
 
   @Output() slippageError = new EventEmitter();
   @Output() tradeExecuted = new EventEmitter();
@@ -32,13 +35,13 @@ export class TradeCreatorPreviewComponent implements OnInit {
   }
 
   _sanityCheckBuyOrSell() {
-    // Sanity check that only one of bitcloutToSell and creatorCoinToSell is nonzero
+    // Sanity check that only one of desoToSell and creatorCoinToSell is nonzero
     // I've never seen this happen, but just trying to be careful since user money is involved,
     // and if it happens, I'd like to know about it so we can fix root cause
-    let bitCloutToSell = this.creatorCoinTrade.bitCloutToSell || 0;
+    let desoToSell = this.creatorCoinTrade.desoToSell || 0;
     let creatorCoinToSell = this.creatorCoinTrade.creatorCoinToSell || 0;
-    if (bitCloutToSell > 0 && creatorCoinToSell > 0) {
-      console.error(`bitCloutToSell ${bitCloutToSell} and creatorCoinToSell ${creatorCoinToSell} are both > 0`);
+    if (desoToSell > 0 && creatorCoinToSell > 0) {
+      console.error(`desoToSell ${desoToSell} and creatorCoinToSell ${creatorCoinToSell} are both > 0`);
       // TODO: creator coin buys: rollbar
 
       // in case that happened, as a hack, reset one of them to 0 ... just so the user doesn't
@@ -46,7 +49,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
       if (this.creatorCoinTrade.isBuyingCreatorCoin) {
         this.creatorCoinTrade.creatorCoinToSell = 0;
       } else {
-        this.creatorCoinTrade.bitCloutToSell = 0;
+        this.creatorCoinTrade.desoToSell = 0;
       }
     }
   }
@@ -69,8 +72,8 @@ export class TradeCreatorPreviewComponent implements OnInit {
 
     this.creatorCoinTradeBeingCalled = true;
 
-    const minBitCloutExpectedNanos =
-      this.creatorCoinTrade.expectedBitCloutReturnedNanos * (this.ALLOWED_SLIPPAGE_PERCENT / 100);
+    const minDeSoExpectedNanos =
+      this.creatorCoinTrade.expectedDeSoReturnedNanos * (this.ALLOWED_SLIPPAGE_PERCENT / 100);
 
     const minCreatorCoinExpectedNanos =
       this.creatorCoinTrade.expectedCreatorCoinReturnedNanos * (this.ALLOWED_SLIPPAGE_PERCENT / 100);
@@ -88,19 +91,20 @@ export class TradeCreatorPreviewComponent implements OnInit {
         this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
         this.creatorCoinTrade.operationType() /*OperationType*/,
-        this.creatorCoinTrade.bitCloutToSell * 1e9 /*BitCloutToSellNanos*/,
+        this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
         this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
-        0 /*BitCloutToAddNanos*/,
-        minBitCloutExpectedNanos /*MinBitCloutExpectedNanos*/,
+        0 /*DeSoToAddNanos*/,
+        minDeSoExpectedNanos /*MinDeSoExpectedNanos*/,
         minCreatorCoinExpectedNanos /*MinCreatorCoinExpectedNanos*/,
 
-        this.appData.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/,
-        true
+        this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
+        true,
+        this.inTutorial
       )
       .subscribe(
         (response) => {
           const {
-            ExpectedBitCloutReturnedNanos,
+            ExpectedDeSoReturnedNanos,
             ExpectedCreatorCoinReturnedNanos,
             SpendAmountNanos,
             TotalInputNanos,
@@ -110,7 +114,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
           this.globalVars.logEvent("coins : trade", {
             Creator: this.creatorCoinTrade.creatorProfile.Username,
             Operation: this.creatorCoinTrade.operationType(),
-            ExpectedBitCloutReturnedNanos,
+            ExpectedDeSoReturnedNanos,
             ExpectedCreatorCoinReturnedNanos,
             SpendAmountNanos,
             TotalInputNanos,
@@ -119,10 +123,24 @@ export class TradeCreatorPreviewComponent implements OnInit {
           });
 
           this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = ExpectedCreatorCoinReturnedNanos || 0;
-          this.creatorCoinTrade.expectedBitCloutReturnedNanos = ExpectedBitCloutReturnedNanos || 0;
+          this.creatorCoinTrade.expectedDeSoReturnedNanos = ExpectedDeSoReturnedNanos || 0;
 
-          // This will update the user's balance.
-          this.appData.updateEverything(response.TxnHashHex, this._creatorCoinSuccess, this._creatorCoinFailure, this);
+          const observable =
+            this.creatorCoinTrade.followCreator &&
+            !this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check) &&
+            this.appData.loggedInUser.PublicKeyBase58Check !==
+              this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
+            this.creatorCoinTrade.tradeType === CreatorCoinTrade.BUY_VERB
+              ? this.followService._toggleFollow(true, this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check)
+              : of(null).subscribe();
+          observable.add(() => {
+            this.appData.updateEverything(
+              response.TxnHashHex,
+              this._creatorCoinSuccess,
+              this._creatorCoinFailure,
+              this
+            );
+          });
         },
         (response) => {
           this._handleRequestErrors(response);
@@ -150,9 +168,9 @@ export class TradeCreatorPreviewComponent implements OnInit {
         this.appData.localNode,
         this.appData.loggedInUser.PublicKeyBase58Check /*SenderPublicKeyBase58Check*/,
         this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
-        this.creatorCoinTrade.transferRecipient.value /*ReceiverPublicKeyBase58Check*/,
+        this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
         this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
-        this.appData.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/,
+        this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
         true
       )
       .subscribe(
@@ -161,7 +179,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
           this.globalVars.logEvent("coins : transfer", {
             Creator: this.creatorCoinTrade.creatorProfile.Username,
             SenderPublicKeyBase58Check: this.appData.loggedInUser.PublicKeyBase58Check,
-            ReceiverUsernameOrPublicKeyBase58Check: this.creatorCoinTrade.transferRecipient,
+            ReceiverUsernameOrPublicKeyBase58Check: this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check,
             CreatorCoinToTransferNanos: this.creatorCoinTrade.amount.value * 1e9,
             SpendAmountNanos,
             TotalInputNanos,
@@ -183,14 +201,14 @@ export class TradeCreatorPreviewComponent implements OnInit {
     // CloudFlare rate limiting doesn't return an Access-Allow-Control-Origin header so the browser
     // barfs and returns an unknown error code which has a status of 0
     if (response.status === 0) {
-      return this.appData._alertError("BitClout is under heavy load. Please try again in one minute.");
+      return this.appData._alertError("DeSo is under heavy load. Please try again in one minute.");
     }
 
     const errorMessage = response.error.error;
     const parsedError = this.backendApi.parseProfileError(response);
 
     const hasSlippageError =
-      errorMessage.includes(this.BITCLOUT_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR) ||
+      errorMessage.includes(this.DESO_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR) ||
       errorMessage.includes(this.CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR);
 
     this.globalVars.logEvent("coins : trade : error", { parsedError, hasSlippageError });
@@ -219,7 +237,8 @@ export class TradeCreatorPreviewComponent implements OnInit {
     private globalVars: GlobalVarsService,
     private route: ActivatedRoute,
     private _router: Router,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private followService: FollowService
   ) {
     this.appData = globalVars;
     this.router = _router;
