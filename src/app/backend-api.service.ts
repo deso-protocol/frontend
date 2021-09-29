@@ -63,6 +63,10 @@ export class BackendRoutes {
   static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
   static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
 
+  // Media
+  static RoutePathUploadVideo = "/api/v0/upload-video";
+  static RoutePathGetVideoStatus = "/api/v0/get-video-status";
+
   // NFT routes.
   static RoutePathCreateNft = "/api/v0/create-nft";
   static RoutePathUpdateNFT = "/api/v0/update-nft";
@@ -226,6 +230,7 @@ export class PostEntryResponse {
   Body: string;
   RepostedPostHashHex: string;
   ImageURLs: string[];
+  VideoURLs: string[];
   RepostPost: PostEntryResponse;
   CreatorBasisPoints: number;
   StakeMultipleBasisPoints: number;
@@ -278,6 +283,12 @@ export class PostEntryReaderState {
 
   // Level of diamond the user gave this post.
   DiamondLevelBestowed?: number;
+}
+
+export class PostTxnBody {
+  Body?: string;
+  ImageURLs?: string[];
+  VideoURLs?: string[];
 }
 
 export class BalanceEntryResponse {
@@ -983,7 +994,7 @@ export class BackendApiService {
     PostHashHexToModify: string,
     ParentStakeID: string,
     Title: string,
-    BodyObj: any,
+    BodyObj: PostTxnBody,
     RepostedPostHashHex: string,
     PostExtraData: any,
     Sub: string,
@@ -2123,6 +2134,10 @@ export class BackendApiService {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathCompleteTutorial, PublicKeyBase58Check, {
       PublicKeyBase58Check,
     });
+  }
+
+  GetVideoStatus(endpoint: string, videoId: string): Observable<any> {
+    return this.get(endpoint, `${BackendRoutes.RoutePathGetVideoStatus}/${videoId}`);
   }
 
   // Error parsing

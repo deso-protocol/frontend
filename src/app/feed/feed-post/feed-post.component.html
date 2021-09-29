@@ -237,7 +237,7 @@
             <!-- Content -->
             <div
               class="roboto-regular mt-1"
-              [ngClass]="{ 'pb-10px': quotedContent && showQuotedContent }"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
               style="overflow-wrap: anywhere; word-break: break-word; outline: none"
               [innerHTML]="postContent.Body | sanitizeAndAutoLink"
               queryParamsHandling="merge"
@@ -247,6 +247,7 @@
             <div
               *ngIf="postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID"
               class="feed-post__image-container"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
             >
               <img
                 (click)="openImgModal($event, postContent.ImageURLs[0])"
@@ -256,8 +257,27 @@
               />
             </div>
 
+            <!-- Video -->
+            <div
+              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && !post.ParentStakeID"
+              class="feed-post__video-container"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+            >
+              <iframe
+                [src]="postContent.VideoURLs[0] | sanitizeVideoUrl"
+                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                allowfullscreen
+                class="feed-post__video"
+              >
+              </iframe>
+            </div>
+
             <!-- Embedded Content -->
-            <div *ngIf="constructedEmbedURL" class="feed-post__embed-container">
+            <div
+              *ngIf="constructedEmbedURL"
+              class="feed-post__embed-container"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+            >
               <iframe
                 id="embed-iframe"
                 [height]="getEmbedHeight()"
@@ -489,6 +509,9 @@
         </span>
         <div *ngIf="nftLastAcceptedBidAmountNanos">
           <b>Last price: {{ globalVars.nanosToDeSo(nftLastAcceptedBidAmountNanos) }} $DESO</b>
+        </div>
+        <div *ngIf="nftMinBidAmountNanos">
+          <b>Min bid: {{ globalVars.nanosToDeSo(nftMinBidAmountNanos) }} $DESO</b>
         </div>
       </div>
       <button

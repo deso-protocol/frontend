@@ -3,6 +3,7 @@ import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { TextFieldModule } from "@angular/cdk/text-field";
@@ -155,6 +156,7 @@ import { CloutCastBarButtonComponent } from "./left-bar/cloutcast-bar-button/clo
 import { CloutCastPageComponent } from './cloutcast-page/cloutcast-page.component';
 import { CloutCastModalComponent } from './cloutcast-modal/cloutcast-modal.component';
 import { BuyDeSoEthComponent } from "./buy-deso-page/buy-deso-eth/buy-deso-eth.component";
+import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
@@ -301,6 +303,9 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     CloutCastModalComponent,
     CloutCastBarButtonComponent,
     BuyDeSoEthComponent
+    BuyDeSoEthComponent,
+    SanitizeVideoUrlPipe
+    
   ],
   imports: [
     BrowserModule,
@@ -309,6 +314,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     FormsModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatProgressBarModule,
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
