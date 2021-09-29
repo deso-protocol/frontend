@@ -22,7 +22,7 @@
           "options": {
             "aot": true,
             "outputPath": "dist",
-            "index": "src/index.html",
+            "index": "src/index.bitclout.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
