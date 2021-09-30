@@ -8,7 +8,7 @@
   ></tab-selector>
   <div class="p-15px fs-15px" *ngIf="!loading && activeTab === AdminNodeFeesComponent.FEES">
     <button (click)="addNewFee('ALL')" class="btn btn-outline-primary fs-15px" [disabled]="removingFee">
-      Add Fee To All Transactions
+      Add Fee Recipient To All Transactions
     </button>
     <div *ngFor="let transactionFee of transactionFeeMap | keyvalue; let ii = index" class="py-15px">
       <div class="d-flex justify-content-between">
@@ -26,7 +26,7 @@
             [hideFollowLink]="true"
             [singleColumn]="true"
           ></simple-profile-card>
-          <span> {{ globalVars.nanosToDeSo(item.AmountNanos) }} DESO </span>
+          <span> {{ globalVars.nanosToDeSo(item.AmountNanos) }} $DESO </span>
         </div>
       </div>
     </div>
@@ -43,7 +43,8 @@
     </button>
     <div class="py-15px">
       <div class="py-15px">Users exempt from fees:</div>
-      <div *ngFor="let exemptKey of exemptPublicKeyMap | keyvalue">
+      <div *ngFor="let exemptKey of exemptPublicKeyMap | keyvalue" class="d-flex flex-start pr-5px align-items-center fs-18px">
+        <i class="fas fa-trash text-danger" (click)="removeExemptKey(exemptKey.key)"></i>
         <simple-profile-card
           [profile]="exemptKey.value || { PublicKeyBase58Check: exemptKey.key }"
           [hideFollowLink]="true"

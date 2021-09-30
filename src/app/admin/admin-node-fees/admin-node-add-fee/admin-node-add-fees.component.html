@@ -1,21 +1,20 @@
 <div class="p-15px">
   <div>
-    Add a new fee recipient for {{ txnType }}
+    Add a new fee recipient for {{ txnType }} transactions
   </div>
   <div>
     <search-bar
       [showCloutavista]="false"
       [isSearchForUsersToSendDESO]="true"
-      (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+      (creatorToMessage)="selectedCreator = $event"
     ></search-bar>
   </div>
-  <div class="px-5px">
+  <div class="px-5px" *ngIf="selectedCreator">
     Fee Recipient:
     <simple-profile-card
       [profile]="selectedCreator"
       [singleColumn]="true"
       [hideFollowLink]="true"
-      *ngIf="selectedCreator"
     ></simple-profile-card>
   </div>
   <div class="input-group py-15px">

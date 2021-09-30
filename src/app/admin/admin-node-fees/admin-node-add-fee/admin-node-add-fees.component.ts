@@ -36,10 +36,18 @@ export class AdminNodeAddFeesComponent implements OnInit {
       return;
     }
     let newTransactionFees: TransactionFee[] = [];
+    let swalText: string;
     // If we're only updating one transaction type, we use the existing list of transaction fees for this type.
     // If we're updating the fee for all transactions, we overwrite.
     if (!this.updatingAllTxns) {
       newTransactionFees = this.transactionFeeMap[this.txnType] || [];
+      swalText = `Click "Confirm" to add a fee on each ${this.txnType} transaction that will send ${
+        this.feeAmount
+      } $DESO to ${this.selectedCreator?.Username || this.selectedCreator?.PublicKeyBase58Check}.`;
+    } else {
+      swalText = `WARNING: This will overwrite all existing transaction fees you have set.\n Click "Confirm" to add a fee on all transactions that will send ${
+        this.feeAmount
+      } $DESO to ${this.selectedCreator?.Username || this.selectedCreator?.PublicKeyBase58Check}.`;
     }
 
     newTransactionFees = newTransactionFees.concat({
@@ -49,12 +57,7 @@ export class AdminNodeAddFeesComponent implements OnInit {
 
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      html: `${
-        (this.updatingAllTxns && " WARNING: this will overwrite all existing transaction fees you have set.\n") || ""
-      } Add fee of ${this.feeAmount} DESO for ${
-        this.selectedCreator?.Username || this.selectedCreator.PublicKeyBase58Check
-      }
-        for all${(!this.updatingAllTxns && " " + this.txnType) || ""} transactions.`,
+      html: swalText,
       showCancelButton: true,
       showConfirmButton: true,
       focusConfirm: true,
@@ -96,9 +99,5 @@ export class AdminNodeAddFeesComponent implements OnInit {
           .add(() => (this.updatingAllTxns = false));
       }
     });
-  }
-
-  _handleCreatorSelectedInSearch(creator: ProfileEntryResponse): void {
-    this.selectedCreator = creator;
   }
 }

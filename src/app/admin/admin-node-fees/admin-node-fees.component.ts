@@ -141,4 +141,27 @@ export class AdminNodeFeesComponent implements OnInit {
       )
       .add(() => (this.addingExemptKey = false));
   }
+
+  removeExemptKey(publicKeyBase58Check: string): void {
+    if (this.addingExemptKey) {
+      return;
+    }
+    this.addingExemptKey = true;
+    this.backendApi
+      .AdminAddExemptPublicKey(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        publicKeyBase58Check,
+        true
+      )
+      .subscribe(
+        (res) => {
+          delete this.exemptPublicKeyMap[publicKeyBase58Check];
+        },
+        (err) => {
+          console.error(err);
+        }
+      )
+      .add(() => (this.addingExemptKey = false));
+  }
 }
