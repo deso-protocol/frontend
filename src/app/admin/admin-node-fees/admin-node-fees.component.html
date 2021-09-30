@@ -1,0 +1,31 @@
+<div>
+
+  <div class="p-15px fs-15px" *ngIf="!loading">
+    <button (click)="addNewFee('ALL')" class="btn btn-outline-primary fs-15px" [disabled]="removingFee">
+      Add Fee To All Transactions
+    </button>
+    <div *ngFor="let transactionFee of transactionFeeMap | keyvalue; let ii = index" class="py-15px">
+      <div class="d-flex justify-content-between">
+        <span>{{ transactionFee.key }}</span>
+        <i class="fas fa-plus text-success" (click)="addNewFee(transactionFee.key)"></i>
+      </div>
+      <div *ngFor="let item of transactionFee.value" class="d-flex flex-column">
+        <div class="d-flex flex-start align-items-center">
+          <i
+            class="fas fa-trash text-danger pr-5px fs-18px"
+            (click)="removeFee(transactionFee.key, item.PublicKeyBase58Check)"
+          ></i>
+          <simple-profile-card
+            [profile]="item.ProfileEntryResponse || { PublicKeyBase58Check: item.PublicKeyBase58Check }"
+            [hideFollowLink]="true"
+            [singleColumn]="true"
+          ></simple-profile-card>
+          <span> {{ globalVars.nanosToDeSo(item.AmountNanos) }} DESO </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <simple-center-loader *ngIf="loading"></simple-center-loader>
+  </div>
+</div>
