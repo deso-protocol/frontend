@@ -143,7 +143,7 @@ export class MintNftComponent {
             enableHtml: true,
             positionClass: "toast-bottom-center",
           });
-          this.location.back();
+          this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.postHashHex], { queryParamsHandling: "merge" });
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
