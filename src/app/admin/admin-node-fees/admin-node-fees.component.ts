@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, TransactionFee } from "../../backend-api.service";
+import { BackendApiService, ProfileEntryResponse, TransactionFee } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { BsModalService, BsModalRef } from "ngx-bootstrap/modal";
 import { AdminNodeAddFeesComponent } from "./admin-node-add-fee/admin-node-add-fees.component";
@@ -12,9 +12,18 @@ import { AdminNodeAddFeesComponent } from "./admin-node-add-fee/admin-node-add-f
   styleUrls: ["./admin-node-fees.component.scss"],
 })
 export class AdminNodeFeesComponent implements OnInit {
+  static FEES = "Fees";
+  static EXEMPT_KEYS = "Exempt Keys";
+  tabs = [AdminNodeFeesComponent.FEES, AdminNodeFeesComponent.EXEMPT_KEYS];
   loading = true;
   removingFee = false;
   transactionFeeMap: { [k: string]: TransactionFee[] };
+  exemptPublicKeyMap: { [k: string]: ProfileEntryResponse | null };
+  activeTab: string = AdminNodeFeesComponent.FEES;
+  selectedCreator: any;
+  addingExemptKey = false;
+
+  AdminNodeFeesComponent = AdminNodeFeesComponent;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -36,6 +45,17 @@ export class AdminNodeFeesComponent implements OnInit {
         }
       )
       .add(() => (this.loading = false));
+
+    this.backendApi
+      .AdminGetExemptPublicKeys(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .subscribe(
+        (res) => {
+          this.exemptPublicKeyMap = res.ExemptPublicKeyMap;
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
   }
 
   addNewFee(txnType: string) {
@@ -95,5 +115,30 @@ export class AdminNodeFeesComponent implements OnInit {
           .add(() => (this.removingFee = false));
       }
     });
+  }
+
+  _handleTabClick(tab: string): void {
+    this.activeTab = tab;
+  }
+
+  addExemptKey(): void {
+    this.addingExemptKey = true;
+    this.backendApi
+      .AdminAddExemptPublicKey(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.selectedCreator?.PublicKeyBase58Check,
+        false
+      )
+      .subscribe(
+        (res) => {
+          this.exemptPublicKeyMap[this.selectedCreator?.PublicKeyBase58Check] = this.selectedCreator;
+          this.selectedCreator = null;
+        },
+        (err) => {
+          console.error(err);
+        }
+      )
+      .add(() => (this.addingExemptKey = false));
   }
 }

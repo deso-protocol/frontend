@@ -1,6 +1,6 @@
 <div class="p-15px">
   <div>
-    Add a new fee for {{ txnType }}
+    Add a new fee recipient for {{ txnType }}
   </div>
   <div>
     <search-bar
@@ -10,6 +10,7 @@
     ></search-bar>
   </div>
   <div class="px-5px">
+    Fee Recipient:
     <simple-profile-card
       [profile]="selectedCreator"
       [singleColumn]="true"
@@ -19,7 +20,7 @@
   </div>
   <div class="input-group py-15px">
     <div class="input-group-prepend">
-      <span class="input-group-text">Fee Amount (in $DESO)</span>
+      <span class="input-group-text">Fee Amount Received (in $DESO)</span>
     </div>
     <input class="form-control" type="number" matInput [(ngModel)]="feeAmount" />
   </div>
@@ -28,7 +29,7 @@
   </button>
   <div *ngIf="transactionFeeMap[txnType]?.length" class="py-15px">
     <div>
-      Existing Fees for {{ txnType }} Transactions
+      Existing Fee Recipients for {{ txnType }} Transactions
     </div>
     <div *ngFor="let transactionFee of transactionFeeMap[txnType]" class="d-flex flex-start align-items-center">
       <simple-profile-card
