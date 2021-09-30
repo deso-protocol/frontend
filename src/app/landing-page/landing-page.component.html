@@ -30,7 +30,7 @@
 <div class="w-100 border-bottom px-10px">
   <div class="container-lg landing__header">
     <div class="row">
-      <div class="col landing__logo deso">DeSo</div>
+      <div class="col landing__logo deso" [ngStyle]="{'background': getLogoBackground()}"></div>
       <div class="col d-lg-flex d-none align-items-center">
         <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">
           Sign Up and Get <b>{{ globalVars.getFreeDESOMessage() }} Free</b>
@@ -171,10 +171,11 @@
     <div class="col-lg-8 col-md-9 col-sm-12 text-center landing__prop">
       <h3 class="landing__prop-header">Decentralized like Bitcoin</h3>
       <p class="landing__prop-desc">
+        This app is built on DeSo.
         <b>DeSo is not a company.</b>
         It's an open-source blockchain like Bitcoin.
         <br class="d-none d-md-block" />
-        You can own a piece by buying the DeSo coin $DESO.
+        You can own a piece by buying the $DESO coin.
         <br />
         <br />
         <a href="https://docs.deso.org/https://docs.deso.org/#the-ultimate-vision" target="_blank">Learn More</a>
@@ -235,7 +236,7 @@
         <b>money,</b>
         <br />
         <br />
-        DeSo is decentralizing
+        {{ environment.node.name }} is decentralizing
         <b>social media.</b>
       </h4>
       <a class="btn btn-sm btn-outline-primary landing__btn-cta" href="https://docs.deso.org/" target="_blank">

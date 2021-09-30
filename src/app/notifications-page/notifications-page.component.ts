@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-notifications-page",
@@ -10,6 +11,6 @@ export class NotificationsPageComponent {
   constructor(private titleService: Title) {}
 
   ngOnInit() {
-    this.titleService.setTitle("Notifications - DeSo");
+    this.titleService.setTitle(`Notifications - ${environment.node.name}`);
   }
 }

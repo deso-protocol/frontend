@@ -3,6 +3,7 @@ import { GlobalVarsService } from "../../../global-vars.service";
 import { BackendApiService, ProfileEntryResponse } from "../../../backend-api.service";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "buy-creator-coins-confirm-tutorial",
@@ -35,6 +36,6 @@ export class BuyCreatorCoinsConfirmTutorialComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle("Buy Creator Coins Tutorial - DeSo");
+    this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
   }
 }
