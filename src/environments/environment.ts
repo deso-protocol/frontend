@@ -14,8 +14,8 @@ export const environment = {
     endpoint: "https://bitclout.com/js/",
   },
   node: {
-    name: 'BitClout',
-    url: 'https://bitclout.com',
-    logoAssetDir: '/assets/bitclout/'
+    name: 'DeSo',
+    url: 'https://deso.org',
+    logoAssetDir: '/assets/deso/'
   }
 };
