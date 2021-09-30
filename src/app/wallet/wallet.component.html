@@ -252,7 +252,7 @@
     </div>
   </div>
 
-  <div *ngIf="inTutorial" class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px">
+  <div *ngIf="inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY" class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px">
     <div class="col"></div>
     <div class="col-lg-1 col-2 d-flex flex-column align-items-center justify-content-center">
       <i class="fas fa-hand-point-up fc-red fa-lg mb-5px"></i>
