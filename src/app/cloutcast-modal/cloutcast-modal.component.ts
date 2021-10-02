@@ -57,8 +57,8 @@ export class CloutCastModalComponent implements OnInit {
       if (data.settled <= 0) {
         let res = await SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),
-          title: "Not Enough $CLOUT in CloutCast wallet!",
-          html: `Before creating casts, please send $CLOUT to the CloutCast wallet public key, and wait 15-20 minutes. Click 'OK' to be sent to the 'Send $CLOUT' page.`,
+          title: "Not Enough $DESO in CloutCast wallet!",
+          html: `Before creating casts, please send $DESO to the CloutCast wallet public key, and wait 15-20 minutes. Click 'OK' to be sent to the 'Send $DESO' page.`,
           showCancelButton: true,
           showConfirmButton: true,
           customClass: {
@@ -68,7 +68,7 @@ export class CloutCastModalComponent implements OnInit {
           reverseButtons: true,
         });
         if (res.isConfirmed == true) {
-          await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
+          await this.router.navigateByUrl("/send-deso?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
           this.bsModalRef.hide();
         }
       }
@@ -218,8 +218,8 @@ export class CloutCastModalComponent implements OnInit {
       if (this.nanosAvailableInCloutCastWallet < (this.criteriaAmountEngagements * this.castAmountCLOUT) * 1.12) {
         let res = await SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),
-          title: "Not Enough CLOUT in CloutCast wallet!",
-          html: `There isn't enough $CLOUT available in your CloutCast wallet. Before creating casts, please send $CLOUT to the CloutCast wallet public key, and wait 15-20 minutes. Click 'OK' to be sent to the 'Send $CLOUT' page.`,
+          title: "Not Enough DESO in CloutCast wallet!",
+          html: `There isn't enough $DESO available in your CloutCast wallet. Before creating casts, please send $DESO to the CloutCast wallet public key, and wait 15-20 minutes. Click 'OK' to be sent to the 'Send $DESO' page.`,
           showCancelButton: true,
           showConfirmButton: true,
           customClass: {
@@ -229,7 +229,7 @@ export class CloutCastModalComponent implements OnInit {
           reverseButtons: true,
         });
         if (res.isConfirmed == true) {
-          await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
+          await this.router.navigateByUrl("/send-deso?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
           this.bsModalRef.hide();
         }
       } else {
@@ -262,7 +262,7 @@ export class CloutCastModalComponent implements OnInit {
     let res = await SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Heads Up!",
-      html: `Deposits are handled by sending $CLOUT to our broker wallet. Deposits take 15-20 minutes to confirm. Click 'OK' to be sent to the send $CLOUT page.`,
+      html: `Deposits are handled by sending $DESO to our broker wallet. Deposits take 15-20 minutes to confirm. Click 'OK' to be sent to the send $DESO page.`,
       showCancelButton: true,
       showConfirmButton: true,
       customClass: {
@@ -272,7 +272,7 @@ export class CloutCastModalComponent implements OnInit {
       reverseButtons: true,
     });
     if (res.isConfirmed == true) {
-      await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
+      await this.router.navigateByUrl("/send-deso?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE");
       this.bsModalRef.hide();
     }
     // console.log(res);
