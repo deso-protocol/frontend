@@ -413,7 +413,7 @@ export class CloutCastPageComponent implements OnInit {
       reverseButtons: true,
     });
     if (res.isConfirmed == true) {
-      await this.router.navigateByUrl("/send-bitclout?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE")
+      await this.router.navigateByUrl("/send-deso?public_key=BC1YLiVetFBCYjuHZY5MPwBSY7oTrzpy18kCdUnTjuMrdx9A22xf5DE")
     }
     // console.log(res);
   }
