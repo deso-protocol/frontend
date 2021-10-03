@@ -237,6 +237,8 @@ $green-font-color: #19B028;
 .fc-green { color: var(--cgreen); }
 .fc-success { color: var(--success); }
 .fc-error { color: var(--error); }
+.fc-landing-page { color: $landing-page-fc; }
+.fc-none { color: rgba(0, 0, 0, 0); }
 
 .font-weight-500 { font-weight: 500 }
 
@@ -893,6 +895,193 @@ input.bs-timepicker-field {
 app-landing-page {
   background: white;
 }
+@keyframes slideInFromTopRight {
+  0% {
+    transform: translate(10px, -30px) rotate(10deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(10deg);
+  }
+}
+
+@keyframes slideInFromTopLeft {
+  0% {
+    transform: translate(-5px, -30px) rotate(-10deg);
+  }
+  100% {
+    transform: translate(0px, 0px) rotate(-10deg);
+  }
+}
+
+.landing-page-top-bar {
+  margin: 8px auto 0px auto;
+  z-index: 1;
+  max-width: 1200px;
+  padding: 24px;
+}
+
+.landing-page-content-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 24px;
+}
+
+.landing-page-svg {
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.landing-page-container-1 {
+  height: 1000px;
+}
+
+.landing-page-nft-card-holder {
+  padding: 35px;
+  width: 461.15px;
+  height: 623.09px;
+  position: absolute;
+  border-radius: 30px;
+}
+
+.landing-page-robot-1 {
+  animation: .5s cubic-bezier(.43,1.54,.59,1) 0s 1 slideInFromTopLeft;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.6);
+  right: 79px;
+  top: 145.75px;
+  @media (max-width: 1150px) and (min-width: 992px) {
+    right: -70px;
+  }
+  transform: rotate(-10deg);
+}
+
+.landing-page-robot-2 {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: -20px 39px 74px rgba(0, 0, 0, 0.13);
+  transform: rotate(10deg);
+  animation: .5s cubic-bezier(.43,1.54,.59,1) 0s 1 slideInFromTopRight;
+  z-index: 2;
+  right: -125px;
+  top: 185px;
+  @media (max-width: 1150px) and (min-width: 992px) {
+    right: -274px;
+  }
+  backdrop-filter: blur(20px);
+}
+
+.landing-page-header-main {
+  font-size: 90px;
+  line-height: 94px;
+  font-weight: normal;
+  color: $landing-page-fc;
+}
+
+.landing-page-title {
+  z-index: 1;
+  font-weight: 500;
+  font-size: 54px;
+  line-height: 62px;
+  color: $landing-page-fc;
+}
+
+.landing-page-subtext {
+  font-size: 24px;
+  line-height: 38px;
+  font-weight: 500;
+  color: $landing-page-fc
+}
+
+.landing-page-content-text {
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 30px;
+  color: $landing-page-fc;
+}
+
+.landing-page-btn {
+  padding: 33px 66px;
+  width: 262px;
+  height: 88px;
+  box-shadow: 0px 6px 14px rgba(27, 28, 30, 0.1);
+  border-radius: 16px;
+  border: none;
+  font-size: 20px;
+  line-height: 22px;
+}
+
+.landing-page-primary-btn {
+  background: $landing-page-dark;
+  backdrop-filter: blur(14px);
+  color: white;
+}
+
+.landing-page-secondary-btn {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+  color: $landing-page-dark;
+}
+
+.landing-page-blob-1 {
+  background: #4ACFFF;
+  filter: blur(100px);
+  width: 316.57px;
+  height: 497.15px;
+  top: 324.57px;
+  right: 400px;
+  background-image: url('/assets/img/blob-1.svg');
+}
+
+.landing-page-blob-2 {
+  width: 305.03px;
+  height: 305.03px;
+  background: #FF3333;
+  filter: blur(200px);
+  top: 479.29px;
+  right: -174px;
+}
+
+.landing-page-blob-3 {
+  width: 769.39px;
+  height: 769.39px;
+  top: 155.71px;
+  right: -20px;
+  background: linear-gradient(180deg, #FFD8FC 0%, #FF41F2 100%);
+  filter: blur(303.509px);
+}
+
+.landing-page-blob-4 {
+  width: 270.9px;
+  height: 400px;
+  left: 20px;
+  top: 202.5px;
+  background: #4ACFFF;
+  filter: blur(125px);
+  position: absolute;
+}
+
+.landing-page-blob-5 {
+  width: 400px;
+  height: 400px;
+  left: 49.57px;
+  top: 150px;
+  background: linear-gradient(180deg, #FFD8FC 0%, #FF41F2 100%);
+  filter: blur(197.375px);
+}
+
+.landing-page-blob-6 {
+  width: 198.36px;
+  height: 198.36px;
+  left: 350px;
+  top: 390px;
+  background: #FF3333;
+  filter: blur(150px);
+}
+
 //
 // Top-level css for the feed.
 //

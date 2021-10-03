@@ -1,291 +1,103 @@
 <script src="../../environments/environment.prod.ts"></script>
 <div class="position-relative">
-  // TODO: Put all of this styling into sensible classes.
-  <div style="position: absolute; top: 347.32px; left: 134px; width: 596px; z-index: 1">
-    <h1 style="font-size: 90px; line-height: 94px; font-weight: normal; color: #424447">Lorum Ipsum</h1>
-    <h3 style="margin-top: 18px; font-size: 24px; line-height: 38px; font-weight: 500; color: #424447">Lorum Ipsum</h3>
-    <div class="d-flex justify-content-between" style="margin-right: 30px; margin-top: 43px">
-      <button style="padding: 33px 66px; width: 262px; height: 88px; background: #1B1C1E; box-shadow: 0px 6px 14px rgba(27, 28, 30, 0.1); backdrop-filter: blur(14px); border-radius: 16px; color: #FFFFFF; border: none; font-size: 20px; line-height: 22px">Sign up today</button>
-      <button style="padding: 33px 66px; width: 262px; height: 88px; background: rgba(255, 255, 255, 0.4); box-shadow: 0px 6px 14px rgba(27, 28, 30, 0.1); backdrop-filter: blur(5px); border-radius: 16px; color: #1B1C1E; border: none; font-size: 20px; line-height: 22px">Explore artists</button>
+  <div class="position-relative landing-page-container-1">
+    <div class="position-relative d-flex justify-content-between mt-30px landing-page-top-bar">
+      <div class="fc-landing-page d-flex align-items-center">
+        <i-feather name="deso" class="feather-large fc-none"></i-feather>
+        <span class="fs-25px ml-10px mr-25px">DeSo</span>
+        <span class="ml-25px fs-16px">About</span>
+        <span class="ml-20px fs-16px">Vision</span>
+      </div>
+      <div class="fc-landing-page">
+        <span class="mr-15px">
+          <i-feather name="lock" class="feather-medium mr-5px position-relative" style="top: -2px"></i-feather>
+          Login
+        </span>
+        <button style="font-size: 16px; padding: 5px; width: 152px; height: 50px" class="landing-page-primary-btn landing-page-btn fs-16px">Sign up today</button>
+      </div>
+    </div>
+  <!--  TODO: Put all of this styling into sensible classes.-->
+    <!--Title text-->
+    <div class="landing-page-content-container">
+      <div style="position: absolute; top: 300px; width: 596px; z-index: 1">
+        <h1 class="landing-page-header-main">Lorum Ipsum</h1>
+        <h3 class="landing-page-subtext" style="margin-top: 18px">
+          Lorum Ipsum
+        </h3>
+        <div class="d-flex justify-content-between" style="margin-right: 30px; margin-top: 43px">
+          <button class="landing-page-btn landing-page-primary-btn">Sign up today</button>
+          <button class="landing-page-btn landing-page-secondary-btn">Explore artists</button>
+        </div>
+      </div>
+      <div class="landing-page-nft-card-holder landing-page-robot-2">
+        <div class="landing-page-svg position-relative" style="background-image: url('/assets/img/example-nft-2.jpg'); width: 389.55px; height: 447.11px; border-radius: 26.14px"></div>
+        <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px">
+          <div class="d-flex flex-column">
+            <div style="font-size: 26px; line-height: 28px; font-weight: 600">Mekaverse #147</div>
+            <div style="font-size: 20px; font-weight: 600; line-height: 22px; margin-top: 10px">For Sale</div>
+          </div>
+          <div class="d-flex flex-column align-items-end">
+            <div style="font-size: 20px; font-weight: 600; line-height: 22px; margin-top: 2px">Min Bid</div>
+            <div class="d-flex justify-content-end" style="font-size: 26px; line-height: 28px; font-weight: 600; margin-top: 5px">
+              <i-feather name="deso" class="feather-medium fc-none d-flex align-items-center mt-5px mr-16px"></i-feather>
+              0.9
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="landing-page-nft-card-holder landing-page-robot-1">
+        <div class="landing-page-svg position-relative" style="background-image: url('/assets/img/example-nft-1.jpg'); width: 389.55px; height: 447.11px; border-radius: 26.14px"></div>
+        <div class="position-relative d-flex justify-content-between fc-landing-page" style="top: 35px">
+          <div class="d-flex flex-column">
+            <div style="font-size: 26px; line-height: 28px; font-weight: 600">Mekaverse #149</div>
+            <div style="font-size: 20px; font-weight: 600; line-height: 22px; margin-top: 10px">For Sale</div>
+          </div>
+          <div class="d-flex flex-column align-items-end">
+            <div style="font-size: 20px; font-weight: 600; line-height: 22px; margin-top: 2px">Min Bid</div>
+            <div class="d-flex justify-content-end" style="font-size: 26px; line-height: 28px; font-weight: 600; margin-top: 5px">
+              <i-feather name="deso" class="feather-medium fc-none d-flex align-items-center mt-5px mr-16px"></i-feather>
+              0.9
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Background blobs-->
+      <div class="landing-page-blob-2 landing-page-svg"></div>
+      <div class="landing-page-svg landing-page-blob-1"></div>
+      <div class="landing-page-svg landing-page-blob-3"></div>
     </div>
   </div>
-  <div style="z-index: 1; width: 485px; height: 600px; position: absolute; top: 192.75px; left: 735px; background-size: cover; background-repeat: no-repeat; background-image: url('/assets/img/example-nft-1.svg')"></div>
-  <div style="z-index: 2; width: 550px; height: 720px; position: absolute; top: 192.75px; left: 937.52px; background-size: cover; background-repeat: no-repeat; background-image: url('/assets/img/example-nft-2.svg')"></div>
-  <div style="width: 305.03px; height: 305.03px; position: absolute; top: 525.29px; left: 1098.97px; background-size: cover; background-repeat: no-repeat; background-image: url('/assets/img/blob-2.svg')"></div>
-  <div style="background: #4ACFFF; filter: blur(303.509px); width: 416.57px; height: 597.15px; position: absolute; top: 354.57px; left: 366px; background-size: cover; background-repeat: no-repeat; background-image: url('/assets/img/blob-1.svg')"></div>
-  <div style="width: 869.39px; height: 869.39px; position: absolute; top: 155.71px; left: 487.84px; background-size: cover; background-repeat: no-repeat; background-image: url('/assets/img/blob-3.svg')"></div>
-  <div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 1125px; background-image: url('/assets/img/static.png')"></div>
+  <!--Second section-->
+  <div class="landing-page-content-container">
+    <div class="position-relative d-flex align-items-center justify-content-between" style="margin-bottom: 75px">
+      <div>
+        <div class="landing-page-svg position-relative" style="top: 67px; left: 90px; z-index: 1; width: 426.09px; height: 745.5px; background-image: url('/assets/img/landing-page-device.png')"></div>
+        <div class="landing-page-svg landing-page-blob-5"></div>
+        <div class="landing-page-svg landing-page-blob-4"></div>
+        <div class="landing-page-svg landing-page-blob-6"></div>
+      </div>
+      <div style="width: 585px; z-index: 1; margin-left: 40px">
+        <div class="landing-page-title">Lorum Ispum</div>
+        <div class="d-flex mt-30px mr-20px">
+          <i-feather name="landing-bullet-1" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
+          <span class="landing-page-content-text">
+            Lorum Ipsum
+          </span>
+        </div>
+        <div class="d-flex mt-15px mr-20px">
+          <i-feather name="landing-bullet-2" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
+          <span class="landing-page-content-text">
+            Lorum Ipsum
+          </span>
+        </div>
+        <div class="d-flex mt-15px mr-20px">
+          <i-feather name="landing-bullet-3" class="feather-medium position-relative mx-15px fc-none" style="top: 3px"></i-feather>
+          <span class="landing-page-content-text">
+            Lorum Ipsum
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; background-image: url('/assets/img/static.png')"></div>
 </div>
-
-<!--<div class="w-100">-->
-<!--  <div class="container d-sm-none">-->
-<!--    <div class="row d-flex justify-content-center landing__ticker">-->
-<!--      <div class="input-group w-auto">-->
-<!--        <div class="input-group-prepend">-->
-<!--          <label class="landing__nav-buy input-group-text">-->
-<!--            {{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD-->
-<!--          </label>-->
-<!--        </div>-->
-<!--        <div class="input-group-append">-->
-<!--          <a-->
-<!--            class="landing__nav-buy btn btn-sm btn-primary"-->
-<!--            [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT"-->
-<!--            queryParamsHandling="merge"-->
-<!--          >-->
-<!--            Buy $DESO-->
-<!--          </a>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-<!--<div class="w-100 d-lg-none d-flex align-items-center justify-content-center">-->
-<!--  <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">-->
-<!--    Sign Up and Get <b>{{ globalVars.getFreeCloutMessage() }} Free</b>-->
-<!--  </a>-->
-<!--</div>-->
-
-<!--<div class="w-100 border-bottom px-10px">-->
-<!--  <div class="container-lg landing__header">-->
-<!--    <div class="row">-->
-<!--      <div class="col landing__logo clout">BitClout</div>-->
-<!--      <div class="col d-lg-flex d-none align-items-center">-->
-<!--        <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">-->
-<!--          Sign Up and Get <b>{{ globalVars.getFreeCloutMessage() }} Free</b>-->
-<!--        </a>-->
-<!--      </div>-->
-<!--      <div class="d-flex align-items-center">-->
-<!--        <div class="input-group w-auto d-none d-sm-flex" style="margin-left: 25px">-->
-<!--          <div class="input-group-prepend">-->
-<!--            <label class="landing__nav-buy input-group-text">-->
-<!--              {{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD-->
-<!--            </label>-->
-<!--          </div>-->
-<!--          <div class="input-group-append">-->
-<!--            <a-->
-<!--              class="landing__nav-buy btn btn-sm btn-primary"-->
-<!--              [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT"-->
-<!--              queryParamsHandling="merge"-->
-<!--            >-->
-<!--              Buy $DESO-->
-<!--            </a>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <a class="landing__nav-link" href="https://docs.deso.org/" target="_blank">About</a>-->
-<!--        <a class="landing__nav-link" href="https://docs.deso.org/#the-ultimate-vision" target="_blank">Vision</a>-->
-<!--        <a class="landing__nav-link" href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>-->
-<!--        <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">Sign Up</a>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--<div class="container-lg border-left border-right landing__hero">-->
-<!--  <div class="row">-->
-<!--    <div class="col text-center">-->
-<!--      <h1 class="font-weight-bold text-black slide-up-1">-->
-<!--        The Crypto-->
-<!--        <br class="d-sm-none" />-->
-<!--        Social Network-->
-<!--      </h1>-->
-<!--      <div class="slide-up-2">-->
-<!--        <a class="btn btn-primary landing__sign-up" (click)="globalVars.launchSignupFlow()">-->
-<!--          <div style="font-weight: bold; font-size: 20px;">-->
-<!--            Sign Up-->
-<!--          </div>-->
-<!--          <div class="mt-1 fs-15px">-->
-<!--            Get {{ globalVars.getFreeCloutMessage() }} Free-->
-<!--          </div>-->
-<!--        </a>-->
-<!--        <a class="landing__log-in d-none d-sm-block" (click)="globalVars.launchLoginFlow()" style="font-size: 15px;">Log in</a>-->
-<!--        <a class="landing__log-in d-block d-sm-none mt-3" (click)="globalVars.launchLoginFlow()" style="font-size: 15px;">Log in</a>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-
-<!--  <div class="row d-flex justify-content-center slide-up-3">-->
-<!--    <div class="col-lg-8 col-md-9 col-sm-12 text-center landing__prop">-->
-<!--      <h3 class="landing__prop-header">Everyone gets their own coin</h3>-->
-<!--      <p class="landing__prop-desc">-->
-<!--        Your favorite creator has a coin you can buy or sell. The price-->
-<!--        <br class="d-none d-sm-block" />-->
-<!--        goes up as more people buy.-->
-<!--        <b>You can have your own coin too.</b>-->
-<!--        <br />-->
-<!--        <br />-->
-<!--        <a href="https://docs.deso.org/" target="_blank">Learn More</a>-->
-<!--        &nbsp;-->
-<!--        &nbsp;-->
-<!--        <a href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>-->
-<!--      </p>-->
-<!--      <div class="row d-flex justify-content-center">-->
-<!--        <div class="col-sm-10 col-xs-12 mb-0 landing__example">-->
-<!--          <table class="table table-borderless text-left landing__board">-->
-<!--            <thead>-->
-<!--              <tr>-->
-<!--                <th>Name</th>-->
-<!--                <th width="12%"></th>-->
-<!--                <th class="text-center">Price</th>-->
-<!--                <th></th>-->
-<!--              </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--              <tr *ngFor="let user of featuredCreators">-->
-<!--                <td>-->
-<!--                  <img src="{{ user.pic }}" />-->
-<!--                  {{ user.name }}-->
-<!--                </td>-->
-<!--                <td>-->
-<!--                  <span-->
-<!--                    *ngIf="user.reserved"-->
-<!--                    class="cursor-pointer fs-18px lh-12px fc-muted"-->
-<!--                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"-->
-<!--                    [matTooltip]="'Waiting to join'"-->
-<!--                  >-->
-<!--                    <i class="far fa-clock fa-md align-middle"></i>-->
-<!--                  </span>-->
-<!--                  <span-->
-<!--                    *ngIf="!user.reserved"-->
-<!--                    class="cursor-pointer fs-18px lh-12px fc-muted"-->
-<!--                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"-->
-<!--                    [matTooltip]="'Verified'"-->
-<!--                  >-->
-<!--                    <i class="fas fa-check-circle fc-blue"></i>-->
-<!--                  </span>-->
-<!--                </td>-->
-<!--                <td class="text-center">-->
-<!--                  {{ user.price }}-->
-<!--                </td>-->
-<!--                <td class="text-right">-->
-<!--                  <a-->
-<!--                    class="btn-primary btn btn-sm landing__buy"-->
-<!--                    [routerLink]="AppRoutingModule.buyCreatorPath(user.name)"-->
-<!--                    queryParamsHandling="merge"-->
-<!--                  >-->
-<!--                    Buy-->
-<!--                  </a>-->
-<!--                </td>-->
-<!--              </tr>-->
-<!--            </tbody>-->
-<!--          </table>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-
-<!--  <div class="row d-flex justify-content-center invisible" animateOnScroll animationName="slide-up-3">-->
-<!--    <div class="row d-flex justify-content-center">-->
-<!--      <a-->
-<!--        class="btn btn-sm btn-outline-primary landing__btn-cta"-->
-<!--        [routerLink]="'/' + globalVars.RouteNames.CREATORS"-->
-<!--        queryParamsHandling="merge"-->
-<!--      >-->
-<!--        Find creators to follow-->
-<!--      </a>-->
-<!--    </div>-->
-<!--  </div>-->
-
-<!--  <div class="row d-flex justify-content-center invisible" animateOnScroll animationName="slide-up">-->
-<!--    <div class="col-lg-8 col-md-9 col-sm-12 text-center landing__prop">-->
-<!--      <h3 class="landing__prop-header">Decentralized like Bitcoin</h3>-->
-<!--      <p class="landing__prop-desc">-->
-<!--        <b>BitClout is not a company.</b>-->
-<!--        It's an open-source blockchain like Bitcoin.-->
-<!--        <br class="d-none d-md-block" />-->
-<!--        You can own a piece by buying the DeSo coin $DESO.-->
-<!--        <br />-->
-<!--        <br />-->
-<!--        <a href="https://docs.deso.org/#the-ultimate-vision" target="_blank">Learn More</a>-->
-<!--        &nbsp;-->
-<!--        &nbsp;-->
-<!--        <a href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>-->
-<!--      </p>-->
-<!--      <div class="row d-flex justify-content-center">-->
-<!--        <div class="col-sm-10 col-xs-12 mb-0 landing__example">-->
-<!--          <div *ngFor="let post of featuredPosts">-->
-<!--            <div class="d-flex border-bottom pb-3 pt-3">-->
-<!--              <img class="landing__post-img" src="{{ post.pic }}" />-->
-<!--              <div class="d-flex flex-column justify-content-start text-left ml-3">-->
-<!--                <div>-->
-<!--                  <span class="font-weight-bold">{{ post.name }}</span>-->
-<!--                  <span class="text-greyA fs-12px ml-2">{{ post.when }}</span>-->
-<!--                </div>-->
-<!--                <div class="roboto-regular mt-1 fs-14px">-->
-<!--                  {{ post.text }}-->
-<!--                </div>-->
-<!--                <div class="d-flex mt-2">-->
-<!--                  <div class="mr-5 d-flex align-items-center text-grey6">-->
-<!--                    <i class="icon-reply mr-1 fs-20px"></i>-->
-<!--                    <span class="fs-12px">{{ post.comments }}</span>-->
-<!--                  </div>-->
-<!--                  <div class="mr-5 d-flex align-items-center text-grey6">-->
-<!--                    <i [ngClass]="post.reposted ? 'fc-green' : ''" class="icon-repost mr-2 fs-20px"></i>-->
-<!--                    <span class="fs-12px">{{ post.reposts }}</span>-->
-<!--                  </div>-->
-<!--                  <div class="mr-5 d-flex align-items-center text-grey6">-->
-<!--                    <i [ngClass]="post.liked ? 'icon-heart-fill fc-red' : 'icon-heart'" class="mr-1 fs-20px"></i>-->
-<!--                    <span class="fs-12px">{{ post.likes }}</span>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-
-<!--  <div class="row d-flex justify-content-center invisible" animateOnScroll animationName="slide-up">-->
-<!--    <div class="row d-flex justify-content-center">-->
-<!--      <a class="btn btn-sm btn-outline-primary landing__btn-cta" (click)="globalVars.launchSignupFlow()">-->
-<!--        Create your feed-->
-<!--      </a>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--<div class="container-lg border-top border-left border-right landing__platform">-->
-<!--  <div class="row d-flex justify-content-center invisible" animateOnScroll animationName="slide-up">-->
-<!--    <div class="col-sm-11 col-md-12 text-center">-->
-<!--      <h2 class="landing__platform-header">A platform owned by its users.</h2>-->
-<!--      <h4 class="landing__platform-desc">-->
-<!--        Bitcoin is decentralizing-->
-<!--        <b>money,</b>-->
-<!--        <br />-->
-<!--        <br />-->
-<!--        BitClout is decentralizing-->
-<!--        <b>social media.</b>-->
-<!--      </h4>-->
-<!--      <a class="btn btn-sm btn-outline-primary landing__btn-cta" href="https://docs.deso.org/" target="_blank">-->
-<!--        Learn More-->
-<!--      </a>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--<div class="w-100 border-top">-->
-<!--  <div class="container-lg border-left border-right landing__footer">-->
-<!--    <div-->
-<!--      class="row d-flex justify-content-around align-items-center invisible"-->
-<!--      animateOnScroll-->
-<!--      animationName="slide-up"-->
-<!--    >-->
-<!--      <div class="col text-center">-->
-<!--        <a class="btn btn-primary landing__sign-up" (click)="globalVars.launchSignupFlow()">Sign Up</a>-->
-<!--        <a class="landing__log-in d-none d-md-block" (click)="globalVars.launchLoginFlow()">Log in</a>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--<div class="w-100 landing__echo">-->
-<!--  <div class="container">-->
-<!--    <div class="row d-flex justify-content-center">-->
-<!--      <div class="col mb-0 text-center">-->
-<!--        <p class="text-grey9 fs-20px">The future is decentralized.</p>-->
-<!--        <br>-->
-<!--        <a href="mailto:node.admin+contact@protonmail.com" class="fs-12px">Contact</a>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
