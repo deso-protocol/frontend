@@ -13,4 +13,9 @@ export const environment = {
     ajaxListenerPath: "bitclout.com/api",
     endpoint: "https://bitclout.com/js/",
   },
+  node: {
+    name: 'DeSo',
+    url: 'https://deso.org',
+    logoAssetDir: '/assets/deso/'
+  }
 };

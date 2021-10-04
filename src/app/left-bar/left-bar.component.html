@@ -12,7 +12,7 @@
               queryParamsHandling="merge"
             >
               <img
-                src="assets/img/camelcase_logo.svg"
+                [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
                 class="deso"
                 style="height: 27px"
               />
@@ -94,7 +94,7 @@
         <div class="d-flex justify-content-between left-bar-mobile__deso-price mb-16px mx-16px">
           <div>
             <i-feather name="bitclout" class="feather-xsmall position-relative mr-5px" style="top: -2px"></i-feather>
-            <span>1≈{{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD</span>
+            <span>1≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
           </div>
           <a href="/buy-bitclout" class="fc-blue fs-15px font-weight-bold">Buy</a>
         </div>

@@ -8,6 +8,7 @@ import * as _ from "lodash";
 import PullToRefresh from "pulltorefreshjs";
 import { Title } from "@angular/platform-browser";
 import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "feed",
@@ -113,7 +114,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit() {
     this._initializeFeeds();
-    this.titleService.setTitle("Feed - DeSo");
+    this.titleService.setTitle(`Feed - ${environment.node.name}`);
   }
 
   ngAfterViewChecked() {

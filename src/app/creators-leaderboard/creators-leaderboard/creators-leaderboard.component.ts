@@ -8,6 +8,7 @@ import { Title } from "@angular/platform-browser";
 import { InfiniteScroller } from "src/app/infinite-scroller";
 import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 import {TradeCreatorComponent} from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "creators-leaderboard",
@@ -109,7 +110,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
   ngOnInit() {
     this.isLoadingProfilesForFirstTime = true;
-    this.titleService.setTitle("Buy Creator Coins - DeSo");
+    this.titleService.setTitle(`Buy Creator Coins - ${environment.node.name}`);
   }
 
   canLoggedInUserFollowTargetPublicKey(targetPubKeyBase58Check) {

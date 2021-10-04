@@ -9,6 +9,7 @@ import { ThemeService } from "../../theme/theme.service";
 import * as introJs from "intro.js/intro.js";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
+import { environment } from "src/environments/environment";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -68,7 +69,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this._updateFormBasedOnLoggedInUser();
-    this.titleService.setTitle("Update Profile - DeSo");
+    this.titleService.setTitle(`Update Profile - ${environment.node.name}`);
     if (this.inTutorial) {
       this.globalVars.preventBackButton();
     }

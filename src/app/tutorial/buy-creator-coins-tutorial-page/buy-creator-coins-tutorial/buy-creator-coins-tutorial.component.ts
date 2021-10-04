@@ -5,6 +5,7 @@ import { AppRoutingModule } from "../../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import * as introJs from "intro.js/intro.js";
 import { LocationStrategy } from "@angular/common";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "buy-creator-coins-tutorial",
@@ -39,7 +40,7 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
   ngOnInit() {
     // this.isLoadingProfilesForFirstTime = true;
     this.globalVars.preventBackButton();
-    this.titleService.setTitle("Buy Creator Coins Tutorial - DeSo");
+    this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
     // If the user just completed their profile, we instruct them to buy their own coin.
     if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
       this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;

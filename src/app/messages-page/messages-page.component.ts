@@ -7,6 +7,7 @@ import { Title } from "@angular/platform-browser";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { MessageRecipientModalComponent } from "./message-recipient-modal/message-recipient-modal.component";
 import { MessagesInboxComponent } from "./messages-inbox/messages-inbox.component";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-messages-page",
@@ -37,7 +38,7 @@ export class MessagesPageComponent {
   ) {}
 
   ngOnInit() {
-    this.titleService.setTitle("Messages - DeSo");
+    this.titleService.setTitle(`Messages - ${environment.node.name}`);
   }
 
   openNewMessageModal() {

@@ -18,6 +18,7 @@ import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/clo
 import { Subscription } from "rxjs";
 import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
 import { ToastrService } from "ngx-toastr";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "nft-post",
@@ -138,7 +139,7 @@ export class NftPostComponent {
         this.postLoaded.emit(
           `${this.globalVars.addOwnershipApostrophe(this.nftPost.ProfileEntryResponse.Username)} NFT`
         );
-        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on DeSo");
+        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
         this.refreshBidData();
       },
       (err) => {

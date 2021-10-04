@@ -10,8 +10,8 @@ export const environment = {
     endpoint: "https://bitclout.com/js/",
   },
   node: {
-    name: 'DeSo',
-    url: 'https://deso.org',
-    logoAssetDir: '/assets/deso/'
+    name: 'BitClout',
+    url: 'https://bitclout.com',
+    logoAssetDir: '/assets/bitclout/'
   }
 };

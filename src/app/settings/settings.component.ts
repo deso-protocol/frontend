@@ -4,6 +4,7 @@ import { BackendApiService } from "../backend-api.service";
 import { CountryISO } from "ngx-intl-tel-input";
 import { Title } from "@angular/platform-browser";
 import { ThemeService } from "../theme/theme.service";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "settings",
@@ -33,7 +34,7 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this._getUserMetadata();
-    this.titleService.setTitle("Settings - DeSo");
+    this.titleService.setTitle(`Settings - ${environment.node.name}`);
   }
 
   _getUserMetadata() {

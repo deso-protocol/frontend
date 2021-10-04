@@ -3613,10 +3613,9 @@ app-notifications-list {
 .landing__logo {
   height: 28px;
   flex: 0 0 130px;
-  background: url("/assets/img/camelcase_logo.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center center;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
   text-indent: -9999px;
 
   @media (max-width: 992px) {

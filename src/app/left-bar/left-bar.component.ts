@@ -9,6 +9,7 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { FeedCreatePostModalComponent } from "../feed/feed-create-post-modal/feed-create-post-modal.component";
 import { filter, get } from "lodash";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "left-bar",
@@ -17,6 +18,7 @@ import { filter, get } from "lodash";
 })
 export class LeftBarComponent {
   MessagesInboxComponent = MessagesInboxComponent;
+  environment = environment;
 
   @HostBinding("class") get classes() {
     return !this.isMobile ? "global__nav__flex" : "";

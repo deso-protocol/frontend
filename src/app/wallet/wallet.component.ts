@@ -13,6 +13,7 @@ import { BuyDeSoComponent } from "../buy-deso-page/buy-deso/buy-deso.component";
 import { TransferDeSoComponent } from "../transfer-deso/transfer-deso.component";
 import { CreatorsLeaderboardComponent } from "../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
 import * as introJs from "intro.js/intro";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "wallet",
@@ -119,7 +120,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     });
     this.sortWallet("value");
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
-    this.titleService.setTitle("Wallet - DeSo");
+    this.titleService.setTitle(`Wallet - ${environment.node.name}`);
   }
 
   ngOnDestroy(): void {
