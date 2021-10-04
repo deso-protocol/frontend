@@ -35,7 +35,7 @@
           <span>Unlockable content</span>
         </span>
       </div>
-      <div>From: {{ globalVars.nanosToBitClout(lowBid, 2) }} $DESO ~{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
+      <div>From: {{ globalVars.nanosToDeSo(lowBid, 2) }} $DESO ~{{ globalVars.nanosToUSD(lowBid, 2) }}</div>
     </div>
 
     <div *ngIf="postContent?.ImageURLs[0]">
@@ -114,7 +114,7 @@
           </a>
         </div>
         <div
-          *ngIf="reclouterProfile"
+          *ngIf="reposterProfile"
           class="feed-post__container d-flex justify-content-left w-100 pb-5px"
           [ngClass]="{
             'px-15px': includePaddingOnPost,
@@ -124,10 +124,10 @@
           <a
             class="fc-muted font-weight-semibold align-items-center"
             queryParamsHandling="merge"
-            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, reclouterProfile.Username])"
+            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, reposterProfile.Username])"
           >
             <i class="icon-repost fs-20px" style="vertical-align: middle"></i>
-            <span style="vertical-align: middle" class="fs-15px">@{{ reclouterProfile.Username }} reclouted</span>
+            <span style="vertical-align: middle" class="fs-15px">@{{ reposterProfile.Username }} reposted</span>
           </a>
 
           <feed-post-dropdown
@@ -149,7 +149,7 @@
           [ngClass]="{
             'px-15px': includePaddingOnPost,
             'pb-15px': includePaddingOnPost,
-            'pt-15px': includePaddingOnPost && !reclouterProfile
+            'pt-15px': includePaddingOnPost && !reposterProfile
           }"
         >
           <a
@@ -168,8 +168,8 @@
             class="feed-post__coin-price-holder"
             (click)="openBuyCreatorCoinModal($event, postContent.ProfileEntryResponse.Username)"
           >
-            <span class="feed-post__coin-price">
-              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+            <span class="text-grey5">
+              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
             </span>
 
             <!-- Buy link -->
@@ -182,7 +182,7 @@
           [ngClass]="{
             'px-15px': includePaddingOnPost,
             'pb-15px': includePaddingOnPost,
-            'pt-15px': includePaddingOnPost && !reclouterProfile
+            'pt-15px': includePaddingOnPost && !reposterProfile
           }"
           [ngStyle]="{
             'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT && showNFTDetails ? '12px 0' : '12px') : ''
@@ -220,7 +220,7 @@
                 </div>
 
                 <feed-post-dropdown
-                  *ngIf="showDropdown && !reclouterProfile"
+                  *ngIf="showDropdown && !reposterProfile"
                   class="ml-auto"
                   [post]="post"
                   [postContent]="postContent"
@@ -271,6 +271,7 @@
             <div
               *ngIf="postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID"
               class="feed-post__image-container"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
             >
               <img
                 (click)="openImgModal($event, postContent.ImageURLs[0])"
@@ -280,8 +281,27 @@
               />
             </div>
 
+            <!-- Video -->
+            <div
+              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && !post.ParentStakeID"
+              class="feed-post__video-container"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+            >
+              <iframe
+                [src]="postContent.VideoURLs[0] | sanitizeVideoUrl"
+                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                allowfullscreen
+                class="feed-post__video"
+              >
+              </iframe>
+            </div>
+
             <!-- Embedded Content -->
-            <div *ngIf="constructedEmbedURL" class="feed-post__embed-container">
+            <div
+              *ngIf="constructedEmbedURL"
+              class="feed-post__embed-container"
+              [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
+            >
               <iframe
                 id="embed-iframe"
                 [height]="getEmbedHeight()"
@@ -314,14 +334,14 @@
 
             <!-- Bottom Buttons -->
             <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">
-              <!-- Like, Comment, Reclout, Share Buttons -->
+              <!-- Like, Comment, Repost, Share Buttons -->
               <feed-post-icon-row
                 *ngIf="showIconRow"
                 [post]="post"
                 [postContent]="postContent"
                 [parentPost]="parentPost"
                 [afterCommentCreatedCallback]="afterCommentCreatedCallback"
-                [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+                [afterRepostCreatedCallback]="afterRepostCreatedCallback"
                 [inTutorial]="inTutorial"
                 (diamondSent)="diamondSent.emit()"
               ></feed-post-icon-row>
@@ -394,7 +414,7 @@
             [parentPost]="parentPost"
             [hideNumbers]="true"
             [afterCommentCreatedCallback]="afterCommentCreatedCallback"
-            [afterRecloutCreatedCallback]="afterRecloutCreatedCallback"
+            [afterRepostCreatedCallback]="afterRepostCreatedCallback"
             (diamondSent)="diamondSent.emit()"
           ></feed-post-icon-row>
         </div>
@@ -402,12 +422,12 @@
       <div *ngIf="showInteractionDetails" class="d-flex justify-content-between align-items-center border-top p-16px fc-muted">
         <div [ngClass]="{ 'flex-column': globalVars.isMobile() }" class="d-flex justify-content-around w-100">
           <span [ngClass]="{ 'mb-5px': globalVars.isMobile() }" (click)="openRepostsPage($event)" class="interaction-detail">
-            {{ globalVars.abbreviateNumber(post.RecloutCount, 0) }}
-            Repost{{ post.RecloutCount === 1 ? "" : "s" }}
+            {{ globalVars.abbreviateNumber(post.RepostCount, 0) }}
+            Repost{{ post.RepostCount === 1 ? "" : "s" }}
           </span>
           <span (click)="openQuoteRepostsModal($event)" class="interaction-detail">
-            {{ globalVars.abbreviateNumber(post.QuoteRecloutCount, 0) }}
-            Quote Repost{{ post.QuoteRecloutCount === 1 ? "" : "s" }}
+            {{ globalVars.abbreviateNumber(post.QuoteRepostCount, 0) }}
+            Quote Repost{{ post.QuoteRepostCount === 1 ? "" : "s" }}
           </span>
         </div>
         <div [ngClass]="{ 'flex-column': globalVars.isMobile() }" class="d-flex justify-content-around w-100">
@@ -462,7 +482,7 @@
           </span>
         </div>
         <div *ngIf="lowBid !== undefined">
-          From: {{ globalVars.nanosToBitClout(lowBid, 2) }} $DESO ~{{ globalVars.nanosToUSD(lowBid, 2) }}
+          From: {{ globalVars.nanosToDeSo(lowBid, 2) }} $DESO ~{{ globalVars.nanosToUSD(lowBid, 2) }}
         </div>
       </div>
       <div

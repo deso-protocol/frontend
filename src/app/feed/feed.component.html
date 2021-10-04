@@ -9,11 +9,11 @@
     </div>
   </div>
 
-  <!-- Mobile BitClout Price -->
+  <!-- Mobile DeSo Price -->
   <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">
     <div>$DESO Price&nbsp;&nbsp;&nbsp;</div>
     <div>
-      <span>~{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
+      <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
       <span class="text-muted">&nbsp;USD per coin</span>
     </div>
   </div>
@@ -57,7 +57,7 @@
           [post]="post"
           [includePaddingOnPost]="true"
           [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
-          [afterRecloutCreatedCallback]="prependPostToFeed.bind(this)"
+          [afterRepostCreatedCallback]="prependPostToFeed.bind(this)"
           [showReplyingToContent]="!!post.parentPost"
           [parentPost]="post.parentPost"
           [contentShouldLinkToThread]="true"

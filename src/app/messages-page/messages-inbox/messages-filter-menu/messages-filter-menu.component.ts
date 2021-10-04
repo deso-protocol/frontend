@@ -73,7 +73,7 @@ export class MessagesFilterMenuComponent implements OnInit {
     } else if (this.messageSortAlgorithm === "holders") {
       return "Largest Holders";
     } else {
-      return "Most DESO";
+      return "Most deso";
     }
   }
 }

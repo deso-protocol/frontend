@@ -8,7 +8,7 @@ class NetworkConstants {
   static MISSING_REQUIRED_FIELD = `You are missing required field with label: %s`;
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
   static INSUFFICIENT_BALANCE = `Your balance is insufficient to process the transaction.`;
-  static TOTAL_bitclout_INVALID = `The total DESO is currently an invalid value. Is your balance insufficient?`;
+  static TOTAL_deso_INVALID = `The total DeSo is currently an invalid value. Is your balance insufficient?`;
   static CONNECTION_PROBLEM = `There is currently a connection problem. Is your connection to your node healthy?`;
 }
 
@@ -23,15 +23,15 @@ export class NetworkInfoComponent implements OnInit {
   isOpen = {
     detailedSyncInfo: true,
     minerInfo: true,
-    bitcloutNode: true,
+    desoNode: true,
     bitcoinNode: true,
   };
   isCopied: any;
   updatedMinerPubKeys = "";
   updatingMiners = false;
   stoppingMiners = false;
-  manualBitcloutPeer = "";
-  updatingBitCloutPeer = false;
+  manualDeSoPeer = "";
+  updatingDeSoPeer = false;
   manualBitcoinPeer = "";
   updatingBitcoinPeer = false;
 
@@ -51,10 +51,10 @@ export class NetworkInfoComponent implements OnInit {
 
   _copyNetworkInfo(infoToCopy: string, minerPublicKeyIdx: number) {
     if (infoToCopy === "lastBlockHeight") {
-      this.globalVars._copyText(this.globalVars.nodeInfo.BitCloutStatus.LatestHeaderHeight);
+      this.globalVars._copyText(this.globalVars.nodeInfo.DeSoStatus.LatestHeaderHeight);
       this.isCopied.lastBlockHeight = true;
     } else if (infoToCopy === "lastBlockHash") {
-      this.globalVars._copyText(this.globalVars.nodeInfo.BitCloutStatus.LatestHeaderHash);
+      this.globalVars._copyText(this.globalVars.nodeInfo.DeSoStatus.LatestHeaderHash);
       this.isCopied.lastBlockHash = true;
     } else if (infoToCopy === "minerPublicKey") {
       this.globalVars._copyText(this.globalVars.nodeInfo.MinerPublicKeys[minerPublicKeyIdx]);
@@ -78,7 +78,7 @@ export class NetworkInfoComponent implements OnInit {
       lastBlockHeight: false,
       lastBlockHash: false,
       minerPublicKeys: minerPublicKeys,
-      bitcloutUnconnectedPeers: false,
+      desoUnconnectedPeers: false,
       bitcoinUnconnectedPeers: false,
     };
   }
@@ -129,64 +129,64 @@ export class NetworkInfoComponent implements OnInit {
     return sprintf(JSON.stringify(err));
   }
 
-  disconnectBitCloutPeer(peerAddr: string) {
-    if (this.updatingBitCloutPeer) {
+  disconnectDeSoPeer(peerAddr: string) {
+    if (this.updatingDeSoPeer) {
       this.globalVars._alertError("Please wait for your previous request to finish.");
       return;
     }
-    this.updatingBitCloutPeer = true;
+    this.updatingDeSoPeer = true;
     this.backendApi
       .NodeControl(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         peerAddr,
-        "disconnect_bitclout_node"
+        "disconnect_deso_node"
       )
       .subscribe(
         (res: any) => {
-          this.globalVars._alertSuccess("Successfully disconnected BitClout peer: " + peerAddr);
+          this.globalVars._alertSuccess("Successfully disconnected DeSo peer: " + peerAddr);
           return;
         },
         (error) => {
           this.globalVars._alertError(
-            "Problem disconnecting BitClout Peer. Debug output: " + this._extractError(error)
+            "Problem disconnecting DeSo Peer. Debug output: " + this._extractError(error)
           );
           console.error(error);
         }
       )
       .add(() => {
-        this.updatingBitCloutPeer = false;
+        this.updatingDeSoPeer = false;
       });
   }
 
-  connectBitCloutPeer(peerAddr: string) {
-    if (this.updatingBitCloutPeer) {
+  connectDeSoPeer(peerAddr: string) {
+    if (this.updatingDeSoPeer) {
       this.globalVars._alertError("Please wait for your previous request to finish.");
       return;
     }
-    this.updatingBitCloutPeer = true;
+    this.updatingDeSoPeer = true;
     this.backendApi
       .NodeControl(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         peerAddr,
-        "connect_bitclout_node"
+        "connect_deso_node"
       )
       .subscribe(
         (res: any) => {
-          this.manualBitcloutPeer = "";
-          this.globalVars._alertSuccess("Successfully connected to BitClout peer: " + peerAddr);
+          this.manualDeSoPeer = "";
+          this.globalVars._alertSuccess("Successfully connected to DeSo peer: " + peerAddr);
           return;
         },
         (error) => {
           this.globalVars._alertError(
-            "Problem connecting to BitClout Peer. Debug output: " + this._extractError(error)
+            "Problem connecting to DeSo Peer. Debug output: " + this._extractError(error)
           );
           console.error(error);
         }
       )
       .add(() => {
-        this.updatingBitCloutPeer = false;
+        this.updatingDeSoPeer = false;
       });
   }
 

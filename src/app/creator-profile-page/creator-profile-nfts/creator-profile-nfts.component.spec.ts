@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { CreatorProfileNftsComponent } from "./creator-profile-posts.component";
+import { CreatorProfileNftsComponent } from "./creator-profile-nfts.component";
 
 describe("CreatorProfilePostsComponent", () => {
   let component: CreatorProfileNftsComponent;

@@ -138,7 +138,7 @@ export class NftPostComponent {
         this.postLoaded.emit(
           `${this.globalVars.addOwnershipApostrophe(this.nftPost.ProfileEntryResponse.Username)} NFT`
         );
-        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on BitClout");
+        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + " on DeSo");
         this.refreshBidData();
       },
       (err) => {

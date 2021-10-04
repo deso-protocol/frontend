@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import { Router } from "@angular/router";
 import { isNumber } from "lodash";
 import { ToastrService } from "ngx-toastr";
-import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
+import { BuyDeSoComponent } from "../buy-deso-page/buy-deso/buy-deso.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Location } from "@angular/common";
 
@@ -24,7 +24,7 @@ export class PlaceBidComponent implements OnInit {
   @Output() closeModal = new EventEmitter<any>();
   @Output() changeTitle = new EventEmitter<string>();
 
-  bidAmountCLOUT: number;
+  bidAmountDeSo: number;
   bidAmountUSD: number;
   selectedSerialNumber: NFTEntryResponse = null;
   availableCount: number;
@@ -77,26 +77,26 @@ export class PlaceBidComponent implements OnInit {
       .add(() => (this.loading = false));
   }
 
-  updateBidAmountUSD(cloutAmount) {
-    this.bidAmountUSD = parseFloat(this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2));
+  updateBidAmountUSD(deSoAmount) {
+    this.bidAmountUSD = parseFloat(this.globalVars.nanosToUSDNumber(deSoAmount * 1e9).toFixed(2));
     this.setErrors();
   }
 
-  updateBidAmountCLOUT(usdAmount) {
-    this.bidAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  updateBidAmountDeSo(usdAmount) {
+    this.bidAmountDeSo = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
     this.setErrors();
   }
 
   setErrors(): void {
     this.errors = [];
-    if (this.bidAmountCLOUT * 1e9 > this.globalVars.loggedInUser.BalanceNanos) {
-      this.errors.push(`You do not have ${this.bidAmountCLOUT} DESO to fulfill this bid.`);
+    if (this.bidAmountDeSo * 1e9 > this.globalVars.loggedInUser.BalanceNanos) {
+      this.errors.push(`You do not have ${this.bidAmountDeSo} DESO to fulfill this bid.`);
     }
-    if (this.bidAmountCLOUT * 1e9 === 0) {
+    if (this.bidAmountDeSo * 1e9 === 0) {
       this.errors.push(`You must bid more than 0 DESO`);
-    } else if (this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountCLOUT * 1e9) {
+    } else if (this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountDeSo * 1e9) {
       this.errors.push(
-        `Your bid does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
+        `Your bid does not meet the minimum bid requirement of ${this.globalVars.nanosToDeSo(
           this.selectedSerialNumber.MinBidAmountNanos
         )} DESO (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})`
       );
@@ -116,7 +116,7 @@ export class PlaceBidComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.post.PostHashHex,
         this.selectedSerialNumber.SerialNumber,
-        Math.trunc(this.bidAmountCLOUT * 1e9),
+        Math.trunc(this.bidAmountDeSo * 1e9),
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(
@@ -140,15 +140,15 @@ export class PlaceBidComponent implements OnInit {
       });
   }
 
-  openBuyCloutModal() {
-    this.modalService.show(BuyBitcloutComponent, {
-      class: "modal-dialog-centered buy-clout-modal",
+  openBuyDeSoModal() {
+    this.modalService.show(BuyDeSoComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
     });
   }
 
-  navigateToBuyCLOUT(): void {
+  navigateToBuyDeSo(): void {
     this.closeModal.emit();
-    this.openBuyCloutModal();
+    this.openBuyDeSoModal();
   }
 
   showToast(): void {
@@ -223,25 +223,25 @@ export class PlaceBidComponent implements OnInit {
     return isNumber(this.bidAmountUSD) ? `~${this.globalVars.formatUSD(this.bidAmountUSD, 0)}` : "";
   }
 
-  bidAmountCloutFormatted() {
-    return isNumber(this.bidAmountCLOUT) ? `~${this.bidAmountCLOUT.toFixed(2)} $DESO` : "";
+  bidAmountDeSoFormatted() {
+    return isNumber(this.bidAmountDeSo) ? `~${this.bidAmountDeSo.toFixed(2)} $DESO` : "";
   }
 
   bidAmountOtherCurrencyFormatted() {
     if (this.minBidCurrency === "DESO") {
       return this.bidAmountUSDFormatted();
     } else {
-      return this.bidAmountCloutFormatted();
+      return this.bidAmountDeSoFormatted();
     }
   }
 
   updateBidAmount(amount: number) {
     if (this.minBidCurrency === "DESO") {
-      this.bidAmountCLOUT = amount;
+      this.bidAmountDeSo = amount;
       this.updateBidAmountUSD(amount);
     } else {
       this.bidAmountUSD = amount;
-      this.updateBidAmountCLOUT(amount);
+      this.updateBidAmountDeSo(amount);
     }
   }
 }

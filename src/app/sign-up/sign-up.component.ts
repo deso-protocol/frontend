@@ -5,7 +5,7 @@ import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, User } from "../backend-api.service";
 import { CountryISO, PhoneNumberFormat } from "ngx-intl-tel-input";
 import { FeedComponent } from "../feed/feed.component";
-import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
+import { BuyDeSoComponent } from "../buy-deso-page/buy-deso/buy-deso.component";
 import { BsModalService } from "ngx-bootstrap/modal";
 
 @Component({
@@ -96,7 +96,7 @@ export class SignUpComponent {
     this.nextPage();
   }
 
-  skipButtonClickedOnStarterBitCloutStep() {
+  skipButtonClickedOnStarterDeSoStep() {
     this.globalVars.logEvent("account : create : create-phone-number-verification : skip");
     this.nextPage();
   }
@@ -124,22 +124,22 @@ export class SignUpComponent {
       });
   }
 
-  buyBitCloutClicked(): void {
+  buyDeSoClicked(): void {
     this.globalVars.logEvent("account : create : buy-bitclout");
-    this.openBuyCloutModal();
+    this.openBuyDeSoModal();
   }
 
-  buyBitCloutSkipped(): void {
-    this.globalVars.logEvent("account : create : buy-bitclout : skip");
+  buyDeSoSkipped(): void {
+    this.globalVars.logEvent("account : create : buy-deso : skip");
     this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
       queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
       queryParamsHandling: "merge",
     });
   }
 
-  openBuyCloutModal() {
-    const modal = this.modalService.show(BuyBitcloutComponent, {
-      class: "modal-dialog-centered buy-clout-modal",
+  openBuyDeSoModal() {
+    const modal = this.modalService.show(BuyDeSoComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
     });
     const onHideEvent = modal.onHide;
     onHideEvent.subscribe((response) => {

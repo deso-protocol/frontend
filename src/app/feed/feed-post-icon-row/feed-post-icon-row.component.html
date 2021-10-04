@@ -21,14 +21,14 @@
     dropdown
     #dropdown="bs-dropdown"
     [ngClass]="{
-      'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RecloutedByReader : false
+      'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RepostedByReader : false
     }"
   >
     <div>
       <a
         class="link--unstyled"
         dropdownToggle
-        id="recloutActionsButton"
+        id="repostActionsButton"
         data-toggle="dropdown"
         aria-haspopup="true"
         aria-expanded="false"
@@ -37,24 +37,24 @@
       </a>
     </div>
     <div
-      class="dropdown-menu feed-post__dropdown-menu-item-reclout"
+      class="dropdown-menu feed-post__dropdown-menu-item-repost"
       style="min-width: 7rem"
       *dropdownMenu
-      aria-labelledby="recloutActionsButton"
+      aria-labelledby="repostActionsButton"
     >
       <div>
         <a
-          *ngIf="sendingRecloutRequest; else recloutOptions"
+          *ngIf="sendingRepostRequest; else repostOptions"
           class="dropdown-menu-item d-block p-5px"
         >
           <div class="fc-muted">Loading...</div>
         </a>
       </div>
-      <ng-template #recloutOptions>
+      <ng-template #repostOptions>
         <a
-          *ngIf="userHasReclouted(); else recloutElseBlock"
-          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-reclout-option-text"
-          (click)="_undoReclout($event)"
+          *ngIf="userHasReposted(); else repostElseBlock"
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
+          (click)="_undoRepost($event)"
         >
           <i-feather
             name="repeat"
@@ -63,25 +63,25 @@
           ></i-feather>
           Hide
         </a>
-        <ng-template #recloutElseBlock>
+        <ng-template #repostElseBlock>
           <a
-            class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-reclout-option-text"
-            (click)="_reclout($event)"
+            class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
+            (click)="_repost($event)"
           >
-            <i-feather name="repeat" class="feed-post-icon-row__icon-reclout-option"></i-feather>
-            Reclout
+            <i-feather name="repeat" class="feed-post-icon-row__icon-repost-option"></i-feather>
+            Repost
           </a>
         </ng-template>
         <a
-          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-reclout-option-text"
+          class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
           (click)="openModal($event, true)"
         >
-          <i-feather name="quote" class="feed-post-icon-row__icon-reclout-option"></i-feather>
+          <i-feather name="quote" class="feed-post-icon-row__icon-repost-option"></i-feather>
           Quote
         </a>
       </ng-template>
     </div>
-    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount + postContent.QuoteRecloutCount }}</span>
+    <span *ngIf="!hideNumbers">{{ postContent.RepostCount + postContent.QuoteRepostCount }}</span>
   </div>
 
   <div

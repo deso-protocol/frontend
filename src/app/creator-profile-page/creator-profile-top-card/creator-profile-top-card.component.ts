@@ -136,7 +136,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   usdMarketCap() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceBitCloutNanos),
+      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceDeSoNanos),
       3,
       true
     );
@@ -144,7 +144,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   totalUSDLocked() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.BitCloutLockedNanos),
+      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.DeSoLockedNanos),
       3,
       true
     );
@@ -164,7 +164,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     event.stopPropagation();
     const initialState = { username: this.profile.Username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
     this.modalService.show(TradeCreatorComponent, {
-      class: "modal-dialog-centered buy-clout-modal",
+      class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
   }

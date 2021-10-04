@@ -42,7 +42,7 @@ export class FollowService {
         followerPublicKeyBase58Check,
         followedPubKeyBase58Check,
         !isFollow /*isUnfollow*/,
-        this.appData.feeRateBitCloutPerKB * 1e9
+        this.appData.feeRateDeSoPerKB * 1e9
       )
       .subscribe(
         (response) => {

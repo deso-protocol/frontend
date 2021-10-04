@@ -31,7 +31,7 @@
           class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
           style="width: fit-content"
         >
-          {{ globalVars.nanosToUSD(globalVars._parseFloat(thread.ProfileEntryResponse.CoinPriceBitCloutNanos), 2) }}
+          {{ globalVars.nanosToUSD(globalVars._parseFloat(thread.ProfileEntryResponse.CoinPriceDeSoNanos), 2) }}
         </div>
       </div>
       <div *ngIf="thread.Messages.length > 0" class="fc-muted">

@@ -4,7 +4,7 @@
   </div>
 </div>
 <div class="flex-grow-1">
-  <div class="buy-bitclout__container">
+  <div class="buy-deso__container">
     <div class="p-16px">
       <div class="mint-nft__title">Buy Creator Coin</div>
       <div class="mint-nft__sub-text">All creators have a coin. Buy your favorites and get on their team!</div>
@@ -65,7 +65,7 @@
               [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, item.Username]"
               queryParamsHandling="merge"
             >
-              <div class="pl-15px">~{{ globalVars.nanosToUSD(item.CoinPriceBitCloutNanos, 2) }}</div>
+              <div class="pl-15px">~{{ globalVars.nanosToUSD(item.CoinPriceDeSoNanos, 2) }}</div>
             </a>
 
             <!--Hide on mobile-->

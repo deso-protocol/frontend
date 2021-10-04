@@ -23,13 +23,13 @@ export class MintNftComponent {
   putOnSale: boolean = true;
   minBidInput: number = 0;
   minBidAmountUSD: number = 0;
-  minBidAmountCLOUT: number = 0;
+  minBidAmountDESO: number = 0;
   creatorRoyaltyPercent: number = 5;
   coinRoyaltyPercent: number = 10;
   includeUnlockable: boolean = false;
   createNFTFeeNanos: number;
   maxCopiesPerNFT: number;
-  // Whether the user is using USD or CLOUT to define the minimum bid
+  // Whether the user is using USD or DESO to define the minimum bid
   minBidCurrency: string = "USD";
 
   // Errors.
@@ -71,28 +71,28 @@ export class MintNftComponent {
   }
 
   hasUnreasonableMinBidAmount() {
-    return this.minBidAmountUSD < 0 || this.minBidAmountCLOUT < 0;
+    return this.minBidAmountUSD < 0 || this.minBidAmountDESO < 0;
   }
 
-  updateMinBidAmountUSD(cloutAmount) {
-    this.minBidAmountUSD = parseFloat(this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2));
+  updateMinBidAmountUSD(desoAmount) {
+    this.minBidAmountUSD = parseFloat(this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2));
   }
 
   minBidAmountUSDFormatted() {
     return isNumber(this.minBidAmountUSD) ? `~${this.globalVars.formatUSD(this.minBidAmountUSD, 0)}` : "";
   }
 
-  updateMinBidAmountCLOUT(usdAmount) {
-    this.minBidAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  updateMinBidAmountDESO(usdAmount) {
+    this.minBidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
   updateMinBidAmount(amount: number) {
     if (this.minBidCurrency === "DESO") {
-      this.minBidAmountCLOUT = amount;
+      this.minBidAmountDESO = amount;
       this.updateMinBidAmountUSD(amount);
     } else {
       this.minBidAmountUSD = amount;
-      this.updateMinBidAmountCLOUT(amount);
+      this.updateMinBidAmountDESO(amount);
     }
   }
 
@@ -131,7 +131,7 @@ export class MintNftComponent {
         coinRoyaltyBasisPoints,
         this.includeUnlockable,
         this.putOnSale,
-        Math.trunc(this.minBidAmountCLOUT * 1e9),
+        Math.trunc(this.minBidAmountDESO * 1e9),
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(

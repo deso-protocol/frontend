@@ -15,7 +15,7 @@
             </div>
             <input
               [(ngModel)]="minBidAmountUSD"
-              (ngModelChange)="updateMinBidAmountCLOUT($event)"
+              (ngModelChange)="updateMinBidAmountDESO($event)"
               [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}"
               aria-describedby="usd-label"
               class="form-control fs-15px text-right d-inline-block"
@@ -25,13 +25,13 @@
           </div>
           <div class="input-group py-5px"
                [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
-            <div class="input-group-prepend" id="clout-label">
+            <div class="input-group-prepend" id="deso-label">
               <span class="input-group-text fs-15px">DESO</span>
             </div>
             <input
-              [(ngModel)]="minBidAmountCLOUT"
+              [(ngModel)]="minBidAmountDESO"
               (ngModelChange)="updateMinBidAmountUSD($event)"
-              aria-describedby="clout-label"
+              aria-describedby="deso-label"
               class="form-control fs-15px text-right d-inline-block"
               type="number" min="0"
               placeholder="0"
@@ -60,7 +60,7 @@
         </div>
         <div class="col-7 mb-0px d-flex justify-content-between align-items-center">
           <div>
-            {{globalVars.nanosToBitClout(nft.LastAcceptedBidAmountNanos)}} DESO
+            {{globalVars.nanosToDeSo(nft.LastAcceptedBidAmountNanos)}} DESO
             <span class="text-grey7">(~{{globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)}})</span>
           </div>
         </div>

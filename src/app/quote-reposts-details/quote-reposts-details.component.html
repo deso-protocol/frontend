@@ -1,0 +1,22 @@
+<div class="quote-reposts-modal-container">
+  <div *ngIf="!globalVars.isMobile()" class="w-100 d-flex align-items-center border-bottom fc-secondary">
+    <div class="p-15px fs-25px font-weight-bold d-flex align-items-center">
+      <div class="fs-17px font-weight-bold">Quote Reposts</div>
+    </div>
+  </div>
+
+  <div class="flex-grow-1">
+    <div #uiScroll *uiScroll="let post of datasource" class="border-bottom border-color-grey">
+      <feed-post
+        *ngIf="!post.IsHidden"
+        [post]="post"
+        [includePaddingOnPost]="true"
+        [parentPost]="post.parentPost"
+        [contentShouldLinkToThread]="true"
+        [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+      ></feed-post>
+    </div>
+  </div>
+
+  <simple-center-loader *ngIf="loading"></simple-center-loader>
+</div>

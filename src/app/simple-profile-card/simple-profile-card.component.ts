@@ -13,7 +13,7 @@ export class SimpleProfileCardComponent implements OnInit {
   @Input() profile: ProfileEntryResponse;
   @Input() diamondLevel = -1;
   @Input() showHeartIcon = false;
-  @Input() showRecloutIcon = false;
+  @Input() showRepostIcon = false;
   @Input() containerModalRef: any = null;
   @Input() singleColumn = false;
   @Input() hideFollowLink = false;
@@ -72,7 +72,7 @@ export class SimpleProfileCardComponent implements OnInit {
       tutorialBuy: this.showTutorialBuy,
     };
     this.modalService.show(TradeCreatorComponent, {
-      class: "modal-dialog-centered buy-clout-modal",
+      class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
   }

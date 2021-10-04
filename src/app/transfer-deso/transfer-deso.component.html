@@ -1,0 +1,103 @@
+<div class="modal-header">
+  <div class="modal-header-x" (click)="bsModalRef.hide()">
+    <i-feather name="x"></i-feather>
+  </div>
+</div>
+
+<div class="buy-deso__container">
+  <div class="p-16px">
+    <div class="mint-nft__title">
+      Send $DESO
+    </div>
+    <div class="mint-nft__sub-text">
+      Just enter a public key below and the protocol will handle the rest
+    </div>
+    <div class="mint-nft__sub-title">
+      Public key or username to pay
+    </div>
+    <!-- Search Bar -->
+    <search-bar
+      [showCloutavista]="false"
+      [startingSearchText]="startingSearchText"
+      [isSearchForUsersToSendClout]="true"
+      [resultsUnderBar]="true"
+      (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+    ></search-bar>
+
+    <simple-profile-card
+      [profile]="payToCreator"
+      [singleColumn]="true"
+      [hideFollowLink]="true"
+      *ngIf="payToCreator"
+    ></simple-profile-card>
+  </div>
+  <div class="w-100 border-bottom" *ngIf="payToCreator"></div>
+  <div class="p-16px">
+    <div class="mint-nft__sub-title" [ngStyle]="{ 'margin-top': payToCreator ? '16px' : '30px' }">Amount to Send</div>
+    <div class="d-flex">
+      <div class="d-flex" container="body" style="align-items: center">
+        <div class="mint-nft__dropdown-btn">
+          $DESO
+        </div>
+      </div>
+      <div class="position-relative w-100">
+        <input
+          [(ngModel)]="transferAmount"
+          style="border-radius: 0px 16px 16px 0px"
+          aria-describedby="usd-label"
+          class="mint-nft__input"
+          type="number"
+          min="0"
+          placeholder="0"
+        />
+        <span class="mint-nft__floating-span">
+          <a class="fc-blue" (click)="_clickMaxDeSo()">Max</a>
+        </span>
+      </div>
+    </div>
+    <div class="mt-16px">
+      <i-feather name="info" class="feather-small position-relative mr-10px" style="top: -2px"></i-feather>
+      <span class="mint-nft__sub-text">DESO network fee</span>
+      <span class="mt-1 w-100 fs-15px ml-10px">
+        <span>
+          {{ globalVars.nanosToDeSo(networkFee * 1e9) }}
+          (≈ {{ globalVars.nanosToUSD(networkFee * 1e9) }} USD)
+        </span>
+      </span>
+    </div>
+    <div class="mt-16px">
+      <i-feather name="info" class="feather-small position-relative mr-10px" style="top: -2px"></i-feather>
+      <span class="mint-nft__sub-text">Total</span>
+      <span class="mt-1 w-100 fs-15px ml-10px">
+        <span>
+          {{ globalVars.nanosToDeSo((transferAmount + networkFee) * 1e9) }}
+          (≈ {{ globalVars.nanosToUSD((transferAmount + networkFee) * 1e9) }} USD)
+        </span>
+      </span>
+    </div>
+    <div *ngIf="transferDeSoError != ''" class="error-container" style="white-space: pre-line;">
+      <i-feather name="alert-circle" class="feather-large"></i-feather>
+      {{ transferDeSoError }}
+    </div>
+  </div>
+  <div class="w-100 border-bottom"></div>
+  <div class="p-16px">
+    <button
+      class="primary-button"
+      (click)="_clickSendDeSo()"
+      [disabled]="sendingDeSo"
+      [ngClass]="{ 'disabled-button': sendingDeSo }"
+    >
+      {{ !sendingDeSo ? "Send $DESO" : "Working..." }}
+    </button>
+    <a class="fc-muted ml-25px" (click)="bsModalRef.hide()">Cancel</a>
+  </div>
+  <div class="w-100 border-bottom"></div>
+  <div class="p-15px d-flex flex-column align-items-center">
+    <p>Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO</p>
+    <img [src]="sendDeSoQRCode | sanitizeQRCode"/>
+  </div>
+</div>
+
+<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+<div class="global__bottom-bar-mobile-height"></div>

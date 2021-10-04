@@ -12,7 +12,7 @@
     <!-- Search Bar -->
     <search-bar
       [showCloutavista]="false"
-      [isSearchForUsersToSendClout]="true"
+      [isSearchForUsersToSendDESO]="true"
       (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
     ></search-bar>
   </div>
@@ -229,8 +229,13 @@
             <div class="pl-15px">
               <span class="font-weight-bold">Stats:</span>
               {{linkInfo.Info.TotalReferrals}} referral{{linkInfo.Info.TotalReferrals == 1 ? '' : 's'}},
+<<<<<<< HEAD
               {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerBitCloutNanos, 2)}} paid to referrals,
               {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerBitCloutNanos, 2)}} paid to referee
+=======
+              {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerDeSoNanos, 2)}} paid to referrals,
+              {{globalVars.nanosToUSD(linkInfo.Info.TotalReferrerDeSoNanos, 2)}} paid to referee
+>>>>>>> main
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { ManageFollowsPageComponent } from "./manage-follows-page/manage-follows
 import { NotFoundPageComponent } from "./not-found-page/not-found-page.component";
 import { BrowsePageComponent } from "./browse-page/browse-page.component";
 import { CreatorsLeaderboardPageComponent } from "./creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component";
-import { BuyBitcloutPageComponent } from "./buy-bitclout-page/buy-bitclout-page.component";
+import { BuyDeSoPageComponent } from "./buy-deso-page/buy-deso-page.component";
 import { MessagesPageComponent } from "./messages-page/messages-page.component";
 import { SettingsPageComponent } from "./settings-page/settings-page.component";
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
@@ -13,14 +13,14 @@ import { TradeCreatorPageComponent } from "./trade-creator-page/trade-creator-pa
 import { UpdateProfilePageComponent } from "./update-profile-page/update-profile-page.component";
 import { NotificationsPageComponent } from "./notifications-page/notifications-page.component";
 import { PostThreadPageComponent } from "./post-thread-page/post-thread-page.component";
-import { TransferBitcloutPageComponent } from "./transfer-bitclout-page/transfer-bitclout-page.component";
+import { TransferDeSoPageComponent } from "./transfer-deso-page/transfer-deso-page.component";
 import { CreatePostPageComponent } from "./create-post-page/create-post-page.component";
 import { TosPageComponent } from "./tos-page/tos-page.component";
 import { AdminPageComponent } from "./admin-page/admin-page.component";
 import { ViewportScroller } from "@angular/common";
 import { filter } from "rxjs/operators";
 import { LandingPageComponent } from "./landing-page/landing-page.component";
-import { GetStarterBitcloutPageComponent } from "./get-starter-bitclout-page/get-starter-bitclout-page.component";
+import { GetStarterDeSoPageComponent } from "./get-starter-deso-page/get-starter-deso-page.component";
 import { SignUpComponent } from "./sign-up/sign-up.component";
 import { PickACoinPageComponent } from "./pick-a-coin-page/pick-a-coin-page.component";
 import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-page.component";
@@ -42,7 +42,7 @@ import { PlaceBidPageComponent } from "./place-bid/place-bid-page/place-bid-page
 import { RepostsPageComponent } from "./reposts-details/reposts-page/reposts-page.component";
 import { LikesPageComponent } from "./likes-details/likes-page/likes-page.component";
 import { DiamondsPageComponent } from "./diamonds-details/diamonds-page/diamonds-page.component";
-import { QuoteRepostsPageComponent } from "./quote-reclouts-details/quote-reposts-page/quote-reposts-page.component";
+import { QuoteRepostsPageComponent } from "./quote-reposts-details/quote-reposts-page/quote-reposts-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -58,7 +58,7 @@ class RouteNames {
 
   public static BROWSE = "browse";
   public static CREATORS = "creators";
-  public static BUY_BITCLOUT = "buy-bitclout";
+  public static BUY_DESO = "buy-deso";
   public static WALLET = "wallet";
   public static SETTINGS = "settings";
   public static USER_PREFIX = "u";
@@ -75,12 +75,12 @@ class RouteNames {
   public static SIGN_UP = "sign-up";
   public static NOT_FOUND = "404";
   public static POSTS = "posts";
-  public static SEND_BITCLOUT = "send-bitclout";
+  public static SEND_DESO = "send-deso";
   // TODO: how do I make this /posts/new?
   public static CREATE_POST = "posts/new";
   public static TOS = "terms-of-service";
   public static ADMIN = "admin";
-  public static GET_STARTER_BITCLOUT = "get-starter-bitclout";
+  public static GET_STARTER_DESO = "get-starter-deso";
   public static LANDING = "/";
   public static DIAMONDS = "diamonds";
   public static REPOSTS = "reposts";
@@ -102,7 +102,7 @@ const routes: Routes = [
   { path: RouteNames.CREATORS, component: CreatorsLeaderboardPageComponent, pathMatch: "full" },
   { path: RouteNames.USER_PREFIX + "/:username", component: CreatorProfilePageComponent, pathMatch: "full" },
   { path: RouteNames.SETTINGS, component: SettingsPageComponent, pathMatch: "full" },
-  { path: RouteNames.BUY_BITCLOUT, component: BuyBitcloutPageComponent, pathMatch: "full" },
+  { path: RouteNames.BUY_DESO, component: BuyDeSoPageComponent, pathMatch: "full" },
   { path: RouteNames.PICK_A_COIN, component: PickACoinPageComponent, pathMatch: "full" },
   { path: RouteNames.INBOX_PREFIX, component: MessagesPageComponent, pathMatch: "full" },
   { path: RouteNames.REFERRALS, component: ReferralsComponent, pathMatch: "full" },
@@ -135,7 +135,7 @@ const routes: Routes = [
     pathMatch: "full",
   },
   { path: RouteNames.NFT + "/:postHashHex", component: NftPostPageComponent, pathMatch: "full" },
-  { path: RouteNames.SEND_BITCLOUT, component: TransferBitcloutPageComponent, pathMatch: "full" },
+  { path: RouteNames.SEND_DESO, component: TransferDeSoPageComponent, pathMatch: "full" },
   { path: RouteNames.TOS, component: TosPageComponent, pathMatch: "full" },
   { path: "tos", component: TosPageComponent, pathMatch: "full" },
   { path: RouteNames.ADMIN, component: AdminPageComponent, pathMatch: "full" },
@@ -155,7 +155,7 @@ const routes: Routes = [
     pathMatch: "full",
   },
   { path: RouteNames.USER_PREFIX + "/:username/:tradeType", component: TradeCreatorPageComponent, pathMatch: "full" },
-  { path: RouteNames.GET_STARTER_BITCLOUT, component: GetStarterBitcloutPageComponent, pathMatch: "full" },
+  { path: RouteNames.GET_STARTER_DESO, component: GetStarterDeSoPageComponent, pathMatch: "full" },
   { path: RouteNames.TRENDS, component: TrendsPageComponent, pathMatch: "full" },
   { path: RouteNames.VERIFY_EMAIL + "/:publicKey/:emailHash", component: VerifyEmailComponent, pathMatch: "full" },
   // TUTORIAL ROUTES

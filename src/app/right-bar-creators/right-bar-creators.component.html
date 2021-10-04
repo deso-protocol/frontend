@@ -7,11 +7,11 @@
   <div class="right-bar-creators__balance-box" *ngIf="!inTutorial">
     <div>
       <div class="d-flex">
-        <div class="w-100 clout-metrics">
+        <div class="w-100 deso-metrics">
           <div class="d-flex justify-content-between">
             <div>$DESO Price</div>
             <div>
-              <span>1≈{{ globalVars.bitcloutToUSDExchangeRateToDisplay }}</span>
+              <span>1≈{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
               <span>&nbsp;USD</span>
             </div>
           </div>
@@ -20,11 +20,11 @@
             <div class="d-flex flex-column justify-content-end flex-wrap" style="align-items: flex-end">
               <div>
                 <!-- Amount in BitClout-->
-                {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }}
-                <span *ngIf="globalVars.satoshisPerBitCloutExchangeRate">≈{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
+                {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos) }}
+                <span *ngIf="globalVars.satoshisPerDeSoExchangeRate">≈{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
               </div>
               <!-- Amount in USD-->
-              <div *ngIf="!globalVars.satoshisPerBitCloutExchangeRate">Fetching... USD</div>
+              <div *ngIf="!globalVars.satoshisPerDeSoExchangeRate">Fetching... USD</div>
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@
       <div class="divider"></div>
       <a (click)="openBuyCloutModal()">
         <div class="d-flex justify-content-center cursor-pointer">
-          <div class="buy-clout">
+          <div class="buy-deso">
             <span>Buy $DESO</span>
           </div>
         </div>
@@ -95,14 +95,14 @@
             </a>
           </div>
           <div
-            class="dropdown-menu feed-post__dropdown-menu-item-reclout"
+            class="dropdown-menu feed-post__dropdown-menu-item-repost"
             style="min-width: 6rem"
             *dropdownMenu
           >
             <div>
               <a
                 *ngFor="let option of RightBarCreatorsComponent.chartMap | keyvalue"
-                class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-reclout-option-text"
+                class="dropdown-menu-item d-block link--unstyled p-5px feed-post-icon-row__icon-repost-option-text"
                 (click)="this.switchCreatorTab(option.key, $event)"
                 data-toggle="dropdown"
               >

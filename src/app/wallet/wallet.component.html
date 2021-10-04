@@ -16,8 +16,8 @@
         You just sold {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins. Click "Next: Setup Your Profile" to set up your own coin!
       </p>
       <p *ngIf="tutorialStatus === TutorialStatus.INVEST_SELF">
-        You now have {{ globalVars.nanosToBitClout(balanceEntryToHighlight.BalanceNanos, 4) }} {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
-        Each of your coins is currently worth {{ globalVars.nanosToUSD(balanceEntryToHighlight.ProfileEntryResponse.CoinPriceBitCloutNanos, 2)}}!
+        You now have {{ globalVars.nanosToDeSo(balanceEntryToHighlight.BalanceNanos, 4) }} {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
+        Each of your coins is currently worth {{ globalVars.nanosToUSD(balanceEntryToHighlight.ProfileEntryResponse.CoinPriceDeSoNanos, 2)}}!
         Click "Next: Give a Diamond" to learn about Diamonds.
       </p>
     </div>
@@ -80,26 +80,26 @@
     <div class="d-flex flex-column">
       <!--Total DESO-->
       <div class="mb-5px fs-17px">
-        {{ globalVars.nanosToBitClout(globalVars.loggedInUser.BalanceNanos) }} $DESO
+        {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos) }} $DESO
       </div>
       <!--Clout in USD-->
       <div class="fc-secondary fs-15px">
         <span class="mr-5px">{{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }}</span>
         <a
           *ngIf="!globalVars.loggedInUser.JumioFinishedTime"
-          (click)="globalVars.launchGetFreeCLOUTFlow()"
+          (click)="globalVars.launchGetFreeDESOFlow()"
           class="fc-blue"
         >
-          Claim your free {{ globalVars.nanosToUSD(globalVars.jumioBitCloutNanos, 0) }} 💰
+          Claim your free {{ globalVars.nanosToUSD(globalVars.jumioDeSoNanos, 0) }} 💰
         </a>
       </div>
     </div>
     <!--Buy/send DESO-->
     <div class="d-flex" [ngClass]="{ 'mt-20px justify-content-center': globalVars.isMobile() }">
-      <a (click)="openSendCloutModal()">
+      <a (click)="openSendDeSoModal()">
         <button class="plain-button mr-20px font-weight-bold wallet__buy-button">Send $DESO</button>
       </a>
-      <a (click)="openBuyCloutModal()">
+      <a (click)="openBuyDeSoModal()">
         <button class="primary-button font-weight-bold wallet__buy-button">Buy $DESO</button>
       </a>
     </div>
@@ -109,7 +109,7 @@
     <!--Creator coin balance-->
     <div class="d-flex flex-column">
       <div class="fs-17px mb-5px">{{ this.globalVars.loggedInUser.UsersYouHODL.length }} Creator Coin{{ this.globalVars.loggedInUser.UsersYouHODL.length > 1 ? "s" : "" }}</div>
-      <div class="fs-15px">{{ globalVars.nanosToBitClout(totalValue(), 0) }}$DESO ~ {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
+      <div class="fs-15px">{{ globalVars.nanosToDeSo(totalValue(), 0) }}$DESO ~ {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
     </div>
     <!--Purchase creator coins-->
     <div class="nft-bid-btn d-flex align-items-center">
@@ -201,7 +201,6 @@
                   <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"></div>
                   <div class="text-truncate holdings__name">
                     <span>{{ creator.ProfileEntryResponse.Username }}</span>
-
                     <span
                       *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
                       class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
@@ -220,20 +219,17 @@
                     >
                       <i class="fas fa-check-circle fa-md align-middle"></i>
                     </span>
-
                     <div class="text-grey9 fs-12px d-lg-none">
-                      {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+                      {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
                     </div>
                   </div>
                 </a>
-
                 <!-- Price-->
                 <div class="wallet-column col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
                   <div class="d-flex align-items-center justify-content-end">
-                    {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+                    {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
                   </div>
                 </div>
-
                 <!-- Balance -->
                 <div class="wallet-column col-3 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
                   <div>
@@ -256,30 +252,32 @@
                   </div>
                 </div>
 
-              <!-- Buy / Sell / Transfer Dropdown -->
-              <div
-                class="wallet__dropdown-parent wallet-column col-lg-4 d-flex align-items-center justify-content-end fc-secondary m-0"
-              >
-                <div style="min-width: 50px" class="d-flex align-items-center justify-content-end" id="wallet-actions-container">
-                  <wallet-actions-dropdown
-                    [hodlingUser]="creator.ProfileEntryResponse"
-                    [inTutorial]="inTutorial"
-                    [isHighlightedCreator]="isHighlightedCreator(creator)"
-                    *ngIf="!inTutorial || isHighlightedCreator(creator)"
-                    [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY && tutorialWiggle }"
-                    (isSelling)="exitTutorial()"
-                  ></wallet-actions-dropdown>
+                <!-- Buy / Sell / Transfer Dropdown -->
+                <div
+                  class="wallet__dropdown-parent wallet-column col-lg-4 d-flex align-items-center justify-content-end fc-secondary m-0"
+                >
+                  <div
+                    style="min-width: 50px"
+                    class="d-flex align-items-center justify-content-end"
+                    id="wallet-actions-container"
+                  >
+                    <wallet-actions-dropdown
+                      [hodlingUser]="creator.ProfileEntryResponse"
+                      [inTutorial]="inTutorial"
+                      [isHighlightedCreator]="isHighlightedCreator(creator)"
+                      *ngIf="!inTutorial || isHighlightedCreator(creator)"
+                      [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY && tutorialWiggle }"
+                      (isSelling)="exitTutorial()"
+                    ></wallet-actions-dropdown>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
-
-</div>
-<div *ngIf="!globalVars.loggedInUser">
-  <simple-center-loader></simple-center-loader>
-</div>
+  <div *ngIf="!globalVars.loggedInUser">
+    <simple-center-loader></simple-center-loader>
+  </div>

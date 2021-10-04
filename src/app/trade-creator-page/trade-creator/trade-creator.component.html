@@ -5,7 +5,7 @@
 </div>
 <div *ngIf="readyForDisplay(); else loadingElseBlock">
   <div *ngIf="this.appData.loggedInUser; else elseBlock">
-    <div class="buy-bitclout__container">
+    <div class="buy-deso__container">
       <div class="px-16px" *ngIf="screenToShow !== this.TRADE_CREATOR_PREVIEW_SCREEN">
         <div class="d-flex">
           <a
@@ -53,7 +53,7 @@
           [creatorCoinTrade]="creatorCoinTrade"
           [hideWarning]="hideWarning"
           (previewClicked)="_onPreviewClicked()"
-          (buyCloutClicked)="openBuyCloutModal()"
+          (buyDesoClicked)="openBuyCloutModal()"
           (closeModal)="bsModalRef.hide()"
         ></trade-creator-form>
       </div>

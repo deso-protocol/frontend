@@ -1,0 +1,309 @@
+<div class="modal-header">
+  <div class="modal-header-x" (click)="bsModalRef.hide()">
+    <i-feather name="x"></i-feather>
+  </div>
+</div>
+<div class="buy-deso__container">
+  <div *ngIf="!showBuyComplete; else showBuyCompleteElseBlock">
+    <div class="mint-nft__title mx-16px">
+      Buy $DESO
+    </div>
+    <div class="d-flex flex-column">
+      <div style="flex-grow: 1">
+        <div class="global__mobile-scrollable-section disable-scrollbars" *ngIf="!waitingOnTxnConfirmation">
+          <div
+            *ngIf="globalVars.showBuyWithUSD || globalVars.showBuyWithETH"
+            [ngClass]="{ 'mb-10px': activeTab === BuyDeSoComponent.BUY_WITH_BTC }"
+          >
+            <tab-selector [buttonSelector]="false" [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+          </div>
+          <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_USD && globalVars.showBuyWithUSD">
+            <buy-deso-usd></buy-deso-usd>
+          </div>
+          <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_BTC || (!globalVars.showBuyWithUSD && !globalVars.showBuyWithETH)">
+            <div *ngIf="buyWithBTCStep === 1">
+              <!-- Step One Box -->
+              <div class="mx-16px">
+                <div class="fs-17px font-weight-bold mt-20px mb-5px">
+                  Step 1/2
+                  <i
+                    (click)="tooltip1.toggle()"
+                    class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                    [matTooltip]="stepOneTooltip()"
+                    #tooltip1="matTooltip"
+                  ></i>
+                </div>
+                <div class="d-flex justify-content-between fs-17px fc-secondary" [ngClass]="{ 'align-items-start flex-column': globalVars.isMobile() }">
+                  <div>
+                    Send Bitcoin to this address
+                    <i
+                      (click)="tooltip2.toggle()"
+                      class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                      [matTooltip]="depositBitcoinTooltip()"
+                      #tooltip2="matTooltip"
+                    ></i>
+                  </div>
+                  <div class="d-flex justify-content-end" [ngClass]="{ 'mt-16px justify-content-between w-100': globalVars.isMobile() }">
+                    <div class="d-flex">
+                      <i-feather name="key" class="feather-large mr-5px"></i-feather>
+                      <span class="mr-8px creator-profile__ellipsis-restriction">{{ btcDepositAddress() }}</span>
+                    </div>
+                    <div>
+                      <i-feather
+                        *ngIf="keyIsCopied"
+                        class="feather-small check-indicator position-relative"
+                        name="check-circle"
+                        style="top: -2px"
+                      ></i-feather>
+                      <i-feather
+                        *ngIf="!keyIsCopied"
+                        (click)="_copyPublicKey()"
+                        name="copy"
+                        class="feather-large position-relative cursor-pointer"
+                        style="top: -2px"
+                      ></i-feather>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="w-100 border-bottom mt-25px"></div>
+              <div class="p-16px">
+                <div class="mint-nft__sub-title">Amount Deposited</div>
+                <div class="d-flex" [ngClass]="{ 'flex-column': globalVars.isMobile() }">
+                  <div class="d-flex w-100">
+                    <div
+                      class="d-flex"
+                      container="body"
+                      style="align-items: center"
+                    >
+                      <div class="mint-nft__dropdown-btn">
+                        BTC
+                      </div>
+                    </div>
+                    <div class="position-relative w-100">
+                      <div class="mint-nft__input" style="border-radius: 0px 16px 16px 0px">
+                        {{ (appData.latestBitcoinAPIResponse?.final_balance / 1e8).toFixed(8) }}
+                      </div>
+                      <span class="mint-nft__floating-span fc-muted">
+                        {{
+                          appData.formatUSD(
+                            (appData.latestBitcoinAPIResponse?.final_balance * appData.usdPerBitcoinExchangeRate) / 1e8,
+                            2
+                          )
+                        }} USD</span>
+                    </div>
+                  </div>
+                  <a
+                    [ngClass]="{ 'mt-10px': globalVars.isMobile() }"
+                    [ngStyle]="{ 'margin-left': globalVars.isMobile() ? '0px' : '16px' }"
+                    class="fc-blue fs-15px cursor-pointer d-flex align-items-center mx-16px"
+                    (click)="_queryBitcoinAPI()"
+                  >
+                    <i-feather
+                      name="rotate-cw"
+                      class="feather-small position-relative mr-5px"
+                      style="top: -5px"
+                    ></i-feather>
+                    <span>Refresh</span>
+                  </a>
+                </div>
+                <div class="mt-16px fc-muted">
+                  <i-feather name="info" class="feather-small position-relative" style="margin-top: -2px"></i-feather>
+                  <span class="mint-nft__sub-text">
+                    Minimum deposit is currently
+                    {{ ((buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) / 1e8).toFixed(4) }} Bitcoin
+                    <i
+                      (click)="tooltip3.toggle()"
+                      class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon ml-2"
+                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                      [matTooltip]="minDepositTooltip()"
+                      #tooltip3="matTooltip"
+                    ></i>
+                  </span>
+                </div>
+              </div>
+              <div class="w-100 border-bottom"></div>
+              <div class="p-16px">
+                <button
+                  (click)="buyWithBTCStep = 2"
+                  class="light-button fc-default font-weight-bold fs-17px"
+                  style="width: 200px"
+                >
+                  Go to the next step
+                </button>
+                <a class="fc-muted ml-25px" (click)="bsModalRef.hide()">Cancel</a>
+              </div>
+            </div>
+            <div *ngIf="buyWithBTCStep === 2">
+              <div class="mx-16px">
+                <div class="fs-17px font-weight-bold mt-20px mb-5px">
+                  Step 2/2
+                </div>
+              </div>
+              <div class="w-100 border-bottom"></div>
+              <div class="p-16px">
+                <div class="mint-nft__sub-title">Bitcoin Balance</div>
+                <div class="d-flex">
+                  <div
+                    class="d-flex"
+                    container="body"
+                    style="align-items: center"
+                  >
+                    <div class="mint-nft__dropdown-btn">
+                      BTC
+                    </div>
+                  </div>
+                  <div class="position-relative w-100">
+                    <div class="mint-nft__input" style="border-radius: 0px 16px 16px 0px">
+                      {{ (appData.latestBitcoinAPIResponse.final_balance / 1e8).toFixed(8) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="mint-nft__sub-title">$DESO to Buy</div>
+                <div class="d-flex">
+                  <div
+                    class="d-flex"
+                    container="body"
+                    style="align-items: center"
+                  >
+                    <div class="mint-nft__dropdown-btn">
+                      $DESO
+                    </div>
+                  </div>
+                  <div class="position-relative w-100">
+                    <input
+                      [(ngModel)]="buyDeSoFields.desoToBuy"
+                      (ngModelChange)="_updateDeSoToBuy($event)"
+                      style="border-radius: 0px 16px 16px 0px"
+                      aria-describedby="usd-label"
+                      class="mint-nft__input"
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                    />
+                    <span class="mint-nft__floating-span">
+                      <a class="fc-blue" (click)="_clickMaxDeSo()">
+                        Max
+                      </a>
+                    </span>
+                  </div>
+                </div>
+                <div class="mint-nft__sub-title">Bitcoin to Swap</div>
+                <div class="d-flex">
+                  <div
+                    class="d-flex"
+                    container="body"
+                    style="align-items: center"
+                  >
+                    <div class="mint-nft__dropdown-btn">
+                      BTC
+                    </div>
+                  </div>
+                  <div class="position-relative w-100">
+                    <input
+                      [(ngModel)]="buyDeSoFields.bitcoinToExchange"
+                      (ngModelChange)="_updateBitcoinToExchange($event)"
+                      style="border-radius: 0px 16px 16px 0px"
+                      aria-describedby="usd-label"
+                      class="mint-nft__input"
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+                <div class="mt-16px fc-muted">
+                  <i-feather name="info" class="feather-small position-relative" style="margin-top: -2px"></i-feather>
+                  <span class="mint-nft__sub-text">
+                    Bitcoin network fee
+                  </span>
+                  <i
+                    (click)="tooltip4.toggle()"
+                    class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                    [matTooltip]="bitcoinNetworkFeeTooltip()"
+                    #tooltip4="matTooltip"
+                  ></i>
+                  <span class="mt-1 w-100 fs-15px">
+                    <span *ngIf="buyDeSoFields.error == null || buyDeSoFields.error === ''">
+                      {{ (buyDeSoFields.bitcoinTotalTransactionFeeSatoshis / 1e8).toFixed(8) }} Bitcoin ≈
+                      {{
+                      appData.formatUSD(
+                        (buyDeSoFields.bitcoinTotalTransactionFeeSatoshis * appData.usdPerBitcoinExchangeRate) /
+                        1e8,
+                        2
+                      )
+                      }}
+                      USD
+                    </span>
+                    <span *ngIf="buyDeSoFields.error != null && buyDeSoFields.error !== ''" style="margin-top: 0">
+                      0.00000000 Bitcoin ≈ {{ appData.formatUSD(0, 2) }} USD
+                    </span>
+                  </span>
+                </div>
+                <div class="mt-16px fc-muted">
+                  <i-feather name="info" class="feather-small position-relative" style="margin-top: -2px"></i-feather>
+                  <span class="mint-nft__sub-text">
+                    Total Bitcoin to swap
+                  </span>
+                    <span class="mt-1 w-100 fs-15px">
+                      <span *ngIf="!buyDeSoFields.error">
+                        {{
+                        (
+                          (buyDeSoFields.bitcoinToExchange * 1e8 +
+                            buyDeSoFields.bitcoinTotalTransactionFeeSatoshis) /
+                          1e8
+                        ).toFixed(8)
+                        }}
+                        Bitcoin ≈
+                        {{
+                        appData.formatUSD(
+                          ((buyDeSoFields.bitcoinToExchange * 1e8 +
+                              buyDeSoFields.bitcoinTotalTransactionFeeSatoshis) *
+                            appData.usdPerBitcoinExchangeRate) /
+                          1e8,
+                          2
+                        )
+                        }}
+                        USD
+                      </span>
+                    <span *ngIf="buyDeSoFields.error" style="margin-top: 0">
+                      0.00000000 Bitcoin ≈ {{ appData.formatUSD(0, 2) }} USD
+                    </span>
+                  </span>
+                </div>
+                <div *ngIf="buyDeSoFields.error != null && buyDeSoFields.error !== ''" class="error-container" style="white-space: pre-line;">
+                  <i-feather name="alert-circle" class="feather-large"></i-feather>
+                  {{ buyDeSoFields.error }}
+                </div>
+              </div>
+              <div class="border-bottom w-100"></div>
+              <div class="m-16px">
+                <button class="primary-button" (click)="_clickBuyDeSo()">Buy $DESO</button>
+                <a class="fc-muted ml-25px" (click)="bsModalRef.hide()">Cancel</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_ETH">
+          <buy-deso-eth [parentComponent]="this"></buy-deso-eth>
+        </div>
+      </div>
+      <div *ngIf="waitingOnTxnConfirmation" class="px-5">
+        <simple-center-loader
+          titleLoadingText="Waiting for confirmation"
+          subtitleLoadingText="We are broadcasting your transaction to the blockchain. This can take up to a minute."
+        ></simple-center-loader>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #showBuyCompleteElseBlock>
+    <buy-deso-complete (buyMoreDeSoClicked)="onBuyMoreDeSoClicked()"></buy-deso-complete>
+  </ng-template>
+</div>
+<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+<div class="global__bottom-bar-mobile-height"></div>
+<div class="global__bottom-bar-mobile-height"></div>

@@ -67,7 +67,7 @@
             </span>
 
             <div class="text-grey9 fs-12px d-lg-none">
-              {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+              {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
             </div>
           </div>
         </a>
@@ -75,7 +75,7 @@
         <!-- Price-->
         <div class="col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
           <div class="d-flex align-items-center justify-content-end">
-            {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+            {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
           </div>
         </div>
 
@@ -88,7 +88,7 @@
               }}
             </div>
             <div class="text-grey8A fs-12px text-right">
-              {{ globalVars.nanosToBitClout(creator.BalanceNanos, 4) }}
+              {{ globalVars.nanosToDeSo(creator.BalanceNanos, 4) }}
             </div>
           </div>
         </div>

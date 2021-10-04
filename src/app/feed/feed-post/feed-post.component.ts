@@ -13,9 +13,9 @@ import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { PlaceBidModalComponent } from "../../place-bid/place-bid-modal/place-bid-modal.component";
 import { TradeCreatorComponent } from "../../trade-creator-page/trade-creator/trade-creator.component";
 import { LikesModalComponent } from "../../likes-details/likes-modal/likes-modal.component";
-import {DiamondsModalComponent} from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
-import {QuoteRepostsModalComponent} from "../../quote-reclouts-details/quote-reposts-modal/quote-reposts-modal.component";
-import {RepostsModalComponent} from "../../reposts-details/reposts-modal/reposts-modal.component";
+import { DiamondsModalComponent } from "../../diamonds-details/diamonds-modal/diamonds-modal.component";
+import { QuoteRepostsModalComponent } from "../../quote-reposts-details/quote-reposts-modal/quote-reposts-modal.component";
+import { RepostsModalComponent } from "../../reposts-details/reposts-modal/reposts-modal.component";
 
 @Component({
   selector: "feed-post",
@@ -28,19 +28,19 @@ export class FeedPostComponent implements OnInit {
     return this._post;
   }
   set post(post: PostEntryResponse) {
-    // When setting the post, we need to consider reclout behavior.
-    // If a post is a reclouting another post (without a quote), then use the reclouted post as the post content.
+    // When setting the post, we need to consider repost behavior.
+    // If a post is a reposting another post (without a quote), then use the reposted post as the post content.
     // If a post is quoting another post, then we use the quoted post as the quoted content.
     this._post = post;
-    if (this.isReclout(post)) {
-      this.postContent = post.RecloutedPostEntryResponse;
-      this.reclouterProfile = post.ProfileEntryResponse;
-      if (this.isQuotedClout(post.RecloutedPostEntryResponse)) {
-        this.quotedContent = this.postContent.RecloutedPostEntryResponse;
+    if (this.isRepost(post)) {
+      this.postContent = post.RepostedPostEntryResponse;
+      this.reposterProfile = post.ProfileEntryResponse;
+      if (this.isQuotedRepost(post.RepostedPostEntryResponse)) {
+        this.quotedContent = this.postContent.RepostedPostEntryResponse;
       }
-    } else if (this.isQuotedClout(post)) {
+    } else if (this.isQuotedRepost(post)) {
       this.postContent = post;
-      this.quotedContent = post.RecloutedPostEntryResponse;
+      this.quotedContent = post.RepostedPostEntryResponse;
     } else {
       this.postContent = post;
     }
@@ -76,7 +76,7 @@ export class FeedPostComponent implements OnInit {
   @Input() contentShouldLinkToThread: boolean;
 
   @Input() afterCommentCreatedCallback: any = null;
-  @Input() afterRecloutCreatedCallback: any = null;
+  @Input() afterRepostCreatedCallback: any = null;
   @Input() showReplyingToContent: any = null;
   @Input() parentPost;
   @Input() isParentPostInThread = false;
@@ -99,6 +99,7 @@ export class FeedPostComponent implements OnInit {
   @Input() nftCollectionLowBid = 0;
   @Input() isForSaleOnly: boolean = false;
   nftLastAcceptedBidAmountNanos: number;
+  nftMinBidAmountNanos: number;
 
   @Input() showNFTDetails = false;
   @Input() showExpandedNFTDetails = false;
@@ -126,9 +127,9 @@ export class FeedPostComponent implements OnInit {
 
   AppRoutingModule = AppRoutingModule;
   addingPostToGlobalFeed = false;
-  reclout: any;
+  repost: any;
   postContent: any;
-  reclouterProfile: any;
+  reposterProfile: any;
   _post: any;
   pinningPost = false;
   hidingPost = false;
@@ -201,13 +202,16 @@ export class FeedPostComponent implements OnInit {
         this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
         if (this.nftEntryResponses.length === 1) {
           this.nftLastAcceptedBidAmountNanos = this.nftEntryResponses[0].LastAcceptedBidAmountNanos;
+          if (this.nftEntryResponses[0].MinBidAmountNanos > 0) {
+            this.nftMinBidAmountNanos = this.nftEntryResponses[0].MinBidAmountNanos;
+          }
         }
       });
   }
 
   ngOnInit() {
-    if (!this.post.RecloutCount) {
-      this.post.RecloutCount = 0;
+    if (!this.post.RepostCount) {
+      this.post.RepostCount = 0;
     }
     this.setEmbedURLForPostContent();
     if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
@@ -219,7 +223,7 @@ export class FeedPostComponent implements OnInit {
     event.stopPropagation();
     const initialState = { username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
     this.modalService.show(TradeCreatorComponent, {
-      class: "modal-dialog-centered buy-clout-modal",
+      class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
   }
@@ -268,16 +272,16 @@ export class FeedPostComponent implements OnInit {
     });
   }
 
-  isReclout(post: any): boolean {
-    return post.Body === "" && (!post.ImageURLs || post.ImageURLs?.length === 0) && post.RecloutedPostEntryResponse;
+  isRepost(post: any): boolean {
+    return post.Body === "" && (!post.ImageURLs || post.ImageURLs?.length === 0) && post.RepostedPostEntryResponse;
   }
 
-  isQuotedClout(post: any): boolean {
-    return (post.Body !== "" || post.ImageURLs?.length > 0) && post.RecloutedPostEntryResponse;
+  isQuotedRepost(post: any): boolean {
+    return (post.Body !== "" || post.ImageURLs?.length > 0) && post.RepostedPostEntryResponse;
   }
 
   isRegularPost(post: any): boolean {
-    return !this.isReclout(post) && !this.isQuotedClout(post);
+    return !this.isRepost(post) && !this.isQuotedRepost(post);
   }
 
   openImgModal(event, imageURL) {
@@ -323,7 +327,7 @@ export class FeedPostComponent implements OnInit {
   }
 
   openQuoteRepostsModal(event): void {
-    if (this.postContent.QuoteRecloutCount) {
+    if (this.postContent.QuoteRepostCount) {
       this.openInteractionPage(event, this.globalVars.RouteNames.QUOTE_REPOSTS, QuoteRepostsModalComponent);
     }
   }
@@ -358,12 +362,12 @@ export class FeedPostComponent implements OnInit {
             this._post.PostHashHex /*PostHashHexToModify*/,
             "" /*ParentPostHashHex*/,
             "" /*Title*/,
-            { Body: this._post.Body, ImageURLs: this._post.ImageURLs } /*BodyObj*/,
-            this._post.RecloutedPostEntryResponse?.PostHashHex || "",
+            { Body: this._post.Body, ImageURLs: this._post.ImageURLs, VideoURLs: this._post.VideoURLs } /*BodyObj*/,
+            this._post.RepostedPostEntryResponse?.PostHashHex || "",
             {},
             "" /*Sub*/,
             true /*IsHidden*/,
-            this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
+            this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
           )
           .subscribe(
             (response) => {

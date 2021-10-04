@@ -8,7 +8,7 @@ import { concatMap, last, map } from "rxjs/operators";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { Location } from "@angular/common";
-import {AddUnlockableModalComponent} from "../add-unlockable-modal/add-unlockable-modal.component";
+import { AddUnlockableModalComponent } from "../add-unlockable-modal/add-unlockable-modal.component";
 
 @Component({
   selector: "sell-nft-modal",

@@ -5,10 +5,22 @@
       <div>
         <div *ngIf="isMobile" class="w-100 align-items-center fs-24px font-weight-bold pl-16px pr-25px">
           <div class="d-flex justify-content-between fc-secondary">
-            <div class="bitclout-logo">
-              <i-feather name="bitclout" class="mr-5px"></i-feather>
-              <span>bitclout</span>
-            </div>
+<!--            <div class="bitclout-logo">-->
+<!--              <i-feather name="bitclout" class="mr-5px"></i-feather>-->
+<!--              <span>bitclout</span>-->
+<!--            </div>-->
+            <a
+              class="link--unstyled d-flex align-items-center"
+              (click)="globalVars.isLeftBarMobileOpen = false"
+              [routerLink]="homeLink()"
+              queryParamsHandling="merge"
+            >
+              <img
+                src="assets/img/camelcase_logo.svg"
+                class="deso"
+                style="height: 27px; margin-left: 17px; margin-bottom: 3px"
+              />
+            </a>
             <i-feather name="x" class="feather-large cursor-pointer" (click)="closeMobile.emit()"></i-feather>
           </div>
           <div class="pt-20px"></div>
@@ -16,7 +28,6 @@
         </div>
 
         <!-- Left Bar Buttons -->
-
         <div class="pt-20px"></div>
         <div class="left-desktop-selector" *ngIf="!inTutorial">
           <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
@@ -84,7 +95,7 @@
         >
           <jumio-status [message]="'Get'"></jumio-status>
         </div>
-        <div class="d-flex justify-content-between left-bar-mobile__clout-price mb-16px mx-16px">
+        <div class="d-flex justify-content-between left-bar-mobile__deso-price mb-16px mx-16px">
           <div>
             <i-feather name="bitclout" class="feather-xsmall position-relative mr-5px" style="top: -2px"></i-feather>
             <span>1≈{{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD</span>
@@ -118,7 +129,7 @@
       ></left-bar-button>
 
       <left-bar-button
-        [link]="'/' + globalVars.RouteNames.BUY_BITCLOUT"
+        [link]="'/' + globalVars.RouteNames.BUY_DESO"
         [buttonLabel]="'Buy $DESO'"
       ></left-bar-button>
     </div>

@@ -15,7 +15,7 @@ export class SearchBarComponent implements OnInit {
   @ViewChild("searchBarRoot", { static: true }) searchBarRoot: ElementRef;
   @Input() isSearchForUsersToMessage: boolean;
   @Input() showCloutavista: boolean = true;
-  @Input() isSearchForUsersToSendClout: boolean;
+  @Input() isSearchForUsersToSendDESO: boolean;
   @Input() startingSearchText: string;
   // If the results appear right under the bar.
   // If true, make the bottom border radii for the search bar 0 to connect with the results
@@ -163,7 +163,7 @@ export class SearchBarComponent implements OnInit {
   _handleCreatorSelect(creator: any) {
     this.globalVars.logEvent("search : creators : select");
     if (creator && creator != "") {
-      if (this.isSearchForUsersToMessage || this.isSearchForUsersToSendClout) {
+      if (this.isSearchForUsersToMessage || this.isSearchForUsersToSendDESO) {
         this.creatorToMessage.emit(creator);
       } else {
         this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, creator.Username], {
@@ -176,7 +176,7 @@ export class SearchBarComponent implements OnInit {
       // this user should be redirected to the profile page of the user with the username
       // equal to that of the current searchText.
       if (this.searchText !== "" && !this.isSearchForUsersToMessage) {
-        if (this.isSearchForUsersToSendClout) {
+        if (this.isSearchForUsersToSendDESO) {
           this.creatorToMessage.emit(this.creators[0]);
         } else {
           this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, this.searchText], {

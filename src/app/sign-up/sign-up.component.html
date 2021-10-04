@@ -2,20 +2,20 @@
   <div class="nft-modal-container w-100 pl-15px pr-15px">
     <!-- Step 3 -->
     <div *ngIf="stepNum == 3">
-      <!-- Get starter Bitclout -->
-      <sign-up-get-starter-bitclout
+      <!-- Get starter DeSo -->
+      <sign-up-get-starter-deso
         [displayForSignupFlow]="true"
         (backToPreviousSignupStepClicked)="backToPreviousSignupStepClicked()"
-        (skipButtonClicked)="skipButtonClickedOnStarterBitCloutStep()"
+        (skipButtonClicked)="skipButtonClickedOnStarterDeSoStep()"
         (phoneNumberVerified)="phoneNumberVerified()"
-      ></sign-up-get-starter-bitclout>
+      ></sign-up-get-starter-deso>
     </div>
 
     <!-- Step 4 -->
     <div *ngIf="stepNum == 4">
       <div *ngIf="showPhoneNumberVerifiedContent" class="border-color-grey border-bottom py-15px">
         <div class="p-15px br-12px background-color-grey fs-15px">
-          Your phone number was verified. We sent you a small amount of BitClout, which is enough to post and follow
+          Your phone number was verified. We sent you a small amount of DeSo, which is enough to post and follow
           people.
         </div>
       </div>
@@ -52,7 +52,12 @@
 
     <!-- Finished -->
     <div *ngIf="stepNum == 5">
+<<<<<<< HEAD
       <div class="mint-nft__title mt-20px">
+=======
+      <div class="fs-24px font-weight-bold pt-15px">
+        <i class=""></i>
+>>>>>>> main
         Buy $DESO
       </div>
       <div class="fs-18px pt-15px">
@@ -68,9 +73,15 @@
         You can use $DESO to trade creator coins, give Diamonds, buy NFTs, and much more.
       </div>
 
+<<<<<<< HEAD
       <div class="d-flex justify-content-end mt-15px pt-10px mb-20px">
         <button (click)="buyBitCloutSkipped()" class="plain-button" style="width: 80px">Skip</button>
         <button (click)="buyBitCloutClicked()" class="primary-button ml-10px" style="width: 120px">
+=======
+      <div class="d-flex justify-content-end mt-15px pt-10px">
+        <button (click)="buyDeSoSkipped()" class="btn btn-outline-primary font-weight-bold fs-15px">Skip</button>
+        <button (click)="buyDeSoClicked()" class="btn btn-primary font-weight-bold fs-15px ml-10px">
+>>>>>>> main
           Buy $DESO
         </button>
       </div>

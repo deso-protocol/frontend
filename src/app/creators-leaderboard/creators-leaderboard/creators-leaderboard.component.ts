@@ -102,14 +102,14 @@ export class CreatorsLeaderboardComponent implements OnInit {
     this.bsModalRef.hide();
     const initialState = { username: username, tradeType: this.globalVars.RouteNames.BUY_CREATOR };
     this.modalService.show(TradeCreatorComponent, {
-      class: "modal-dialog-centered buy-clout-modal",
+      class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
   }
 
   ngOnInit() {
     this.isLoadingProfilesForFirstTime = true;
-    this.titleService.setTitle("Buy Creator Coins - BitClout");
+    this.titleService.setTitle("Buy Creator Coins - DeSo");
   }
 
   canLoggedInUserFollowTargetPublicKey(targetPubKeyBase58Check) {

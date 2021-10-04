@@ -157,10 +157,10 @@
           [ngStyle]="{ 'padding-right': globalVars.isMobile() ? '16px': 'auto' }"
         >
           <span>{{ (row.BalanceNanos / 1e9).toFixed(4) }}</span>
-          <div class="fc-muted fs-13px" *ngIf="globalVars.isMobile()">~{{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceBitCloutNanos, true) }}</div>
+          <div class="fc-muted fs-13px" *ngIf="globalVars.isMobile()">~{{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceDeSoNanos, true) }}</div>
         </div>
         <div class="col-3 d-flex align-items-center mb-0" *ngIf="!globalVars.isMobile()">
-          ≈ {{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceBitCloutNanos, true) }}
+          ≈ {{ globalVars.creatorCoinNanosToUSDNaive(row.BalanceNanos, profile.CoinPriceDeSoNanos, true) }}
         </div>
       </div>
 
@@ -176,7 +176,7 @@
             &nbsp;~{{
               globalVars.creatorCoinNanosToUSDNaive(
                 profile.CoinEntry.CoinsInCirculationNanos,
-                profile.CoinPriceBitCloutNanos,
+                profile.CoinPriceDeSoNanos,
                 true
               )
             }}
@@ -187,7 +187,7 @@
           {{
           globalVars.creatorCoinNanosToUSDNaive(
             profile.CoinEntry.CoinsInCirculationNanos,
-            profile.CoinPriceBitCloutNanos,
+            profile.CoinPriceDeSoNanos,
             true
           )
           }}

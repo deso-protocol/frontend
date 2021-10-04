@@ -41,7 +41,7 @@ export class RepostsDetailsComponent implements OnInit {
     }
     this.loading = true;
     return this.backendApi
-      .GetRecloutsForPost(
+      .GetRepostsForPost(
         this.globalVars.localNode,
         this.postHashHex,
         this.pageOffset,
@@ -51,20 +51,20 @@ export class RepostsDetailsComponent implements OnInit {
       .toPromise()
       .then(
         (res) => {
-          let recloutersPage = res.Reclouters;
+          let repostersPage = res.Reposters;
 
           // Update the pageOffset now that we have successfully fetched a page.
-          this.pageOffset += recloutersPage.length;
+          this.pageOffset += repostersPage.length;
 
           // If we've hit the end of the followers with profiles, set last page and anonymous follower count.
-          if (recloutersPage.length < this.pageSize) {
+          if (repostersPage.length < this.pageSize) {
             this.lastPage = page;
           }
 
           this.loading = false;
 
           // Return the page.
-          return recloutersPage;
+          return repostersPage;
         },
         (err) => {
           this.errorLoading = true;

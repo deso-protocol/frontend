@@ -39,7 +39,7 @@ export class WalletActionsDropdownComponent implements OnInit {
     this.isSelling.emit();
     const initialState = { username: this.hodlingUser.Username, tradeType, inTutorial: this.inTutorial };
     this.modalService.show(TradeCreatorComponent, {
-      class: "modal-dialog-centered buy-clout-modal",
+      class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
     this.showIcons = false;
@@ -49,7 +49,7 @@ export class WalletActionsDropdownComponent implements OnInit {
     event.stopPropagation();
     const initialState = { creatorToPayInput: this.hodlingUser };
     this.modalService.show(TransferBitcloutComponent, {
-      class: "modal-dialog-centered buy-clout-modal",
+      class: "modal-dialog-centered buy-deso-modal",
       initialState,
     });
   }

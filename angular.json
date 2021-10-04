@@ -1,9 +1,12 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "bitclout-frontend": {
+    "deso-frontend": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -73,18 +76,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "bitclout-frontend:build"
+            "browserTarget": "deso-frontend:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "bitclout-frontend:build:production"
+              "browserTarget": "deso-frontend:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "bitclout-frontend:build"
+            "browserTarget": "deso-frontend:build"
           }
         },
         "test": {
@@ -117,7 +120,7 @@
         }
       }
     },
-    "bitclout-frontend-e2e": {
+    "deso-frontend-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -126,11 +129,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "bitclout-frontend:serve"
+            "devServerTarget": "deso-frontend:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "bitclout-frontend:serve:production"
+              "devServerTarget": "deso-frontend:serve:production"
             }
           }
         },
@@ -146,5 +149,5 @@
       }
     }
   },
-  "defaultProject": "bitclout-frontend"
+  "defaultProject": "deso-frontend"
 }

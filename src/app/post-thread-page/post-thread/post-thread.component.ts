@@ -318,11 +318,11 @@ export class PostThreadComponent {
         }
         // Set current post
         this.currentPost = res.PostFound;
-        const postType = this.currentPost.RecloutedPostEntryResponse ? "Reclout" : "Post";
+        const postType = this.currentPost.RepostedPostEntryResponse ? "Repost" : "Post";
         this.postLoaded.emit(
           `${this.globalVars.addOwnershipApostrophe(this.currentPost.ProfileEntryResponse.Username)} ${postType}`
         );
-        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on BitClout");
+        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + " on DeSo");
       },
       (err) => {
         // TODO: post threads: rollbar

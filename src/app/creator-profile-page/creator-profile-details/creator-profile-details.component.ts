@@ -60,7 +60,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(this.userName + " on BitClout");
+    this.titleService.setTitle(this.userName + " on DeSo");
   }
 
   userBlocked() {
@@ -214,7 +214,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
 
   tweetToClaimLink() {
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      `Just setting up my bitclout 💎🙌\n\nhttps://bitclout.com/u/${this.userName}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`
+      `Just setting up my DeSo 💎🙌\n\nhttps://bitclout.com/u/${this.userName}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`
     )}`;
   }
 

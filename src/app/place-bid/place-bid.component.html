@@ -16,11 +16,11 @@
         </div>
         <div class="col-5 d-flex flex-column m-16px" style="border-right: 1px solid var(--border)">
           <span>Highest Bid</span>
-          <span class="mt-5px">{{ globalVars.nanosToBitClout(highBid) }} $DESO (~{{globalVars.nanosToUSD(highBid, 2)}})</span>
+          <span class="mt-5px">{{ globalVars.nanosToDeSo(highBid) }} DESO (~{{globalVars.nanosToUSD(highBid, 2)}})</span>
         </div>
         <div class="col-5 d-flex flex-column m-16px">
           <span>Min Bid Amount</span>
-          <span class="mt-5px">{{ globalVars.nanosToBitClout(selectedSerialNumber?.MinBidAmountNanos) }} $DESO (~{{globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)}})</span>
+          <span class="mt-5px">{{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} DESO (~{{globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)}})</span>
         </div>
       </div>
 
@@ -36,13 +36,13 @@
           <div class="border-bottom pb-10px d-flex justify-content-between">
             <span class="font-weight-bold">Highest Bid</span>
             <span>
-              {{ globalVars.nanosToBitClout(highBid) }} $DESO (~{{ globalVars.nanosToUSD(highBid, 2) }})
+              {{ globalVars.nanosToDeSo(highBid) }} DESO (~{{ globalVars.nanosToUSD(highBid, 2) }})
             </span>
           </div>
           <div class="pt-10px d-flex justify-content-between">
             <span class="font-weight-bold">Min Bid Amount</span>
             <span>
-              {{ globalVars.nanosToBitClout(selectedSerialNumber?.MinBidAmountNanos) }} $DESO (~{{
+              {{ globalVars.nanosToDeSo(selectedSerialNumber?.MinBidAmountNanos) }} DESO (~{{
                 globalVars.nanosToUSD(selectedSerialNumber?.MinBidAmountNanos, 2)
               }})
             </span>
@@ -127,12 +127,12 @@
           class="primary-button font-weight-bold fs-15px br-12px"
           style="height: 48px; width: 140px; line-height: 15px"
           (click)="placeBid()"
-          [disabled]="placingBids || errors.length > 0 || !bidAmountCLOUT"
-          [class]="{ 'disabled-button': placingBids || errors.length > 0 || !bidAmountCLOUT }"
+          [disabled]="placingBids || errors.length > 0 || !bidAmountDeSo"
+          [class]="{ 'disabled-button': placingBids || errors.length > 0 || !bidAmountDeSo }"
         >
           {{ placingBids ? "Placing Bid" : "Place a Bid" }}
         </button>
-        <div class="fs-15px ml-30px cursor-pointer" (click)="navigateToBuyCLOUT()">Buy DESO</div>
+        <div class="fs-15px ml-30px cursor-pointer" (click)="navigateToBuyDeSo()">Buy DESO</div>
       </div>
 
     </div>
@@ -184,13 +184,13 @@
             </div>
             <div class="col-4 mb-0px d-flex align-items-center">
               <div>
-                <div class="d-lg-inline-block d-block">{{globalVars.nanosToBitClout(nft.HighestBidAmountNanos)}} DESO </div>
+                <div class="d-lg-inline-block d-block">{{globalVars.nanosToDeSo(nft.HighestBidAmountNanos)}} DESO </div>
                 <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2)}})</div>
               </div>
             </div>
             <div class="col-5 mb-0px d-flex align-items-center">
               <div>
-                <div class="d-lg-inline-block d-block">{{ globalVars.nanosToBitClout(nft.MinBidAmountNanos) }} DESO </div>
+                <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO </div>
                 <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.MinBidAmountNanos, 2)}})</div>
               </div>
            </div>
@@ -206,7 +206,7 @@
         >
           Set your bid
         </button>
-        <a class="ml-25px fc-blue fs-15px" (click)="navigateToBuyCLOUT()">
+        <a class="ml-25px fc-blue fs-15px" (click)="navigateToBuyDeSo()">
           Buy DESO
         </a>
       </div>

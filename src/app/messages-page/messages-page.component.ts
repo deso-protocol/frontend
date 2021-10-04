@@ -37,7 +37,7 @@ export class MessagesPageComponent {
   ) {}
 
   ngOnInit() {
-    this.titleService.setTitle("Messages - BitClout");
+    this.titleService.setTitle("Messages - DeSo");
   }
 
   openNewMessageModal() {
