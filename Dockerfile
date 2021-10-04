@@ -34,6 +34,12 @@ ARG index=index.html
 # overwrite default index file with custom file
 COPY ./src/$index ./src/index.html
 
+# use --build-arg environment=custom to specify a custom environment
+ARG environment=prod
+
+# overwrite default environment file with custom file
+COPY ./src/environments/environment.$environment.ts ./src/environments/environment.prod.ts
+
 RUN npm run build_prod
 
 # build minified version of frontend, served using caddy
