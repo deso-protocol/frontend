@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
-import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
-import {BsModalService} from "ngx-bootstrap/modal";
+import { BuyDeSoComponent } from "../buy-deso-page/buy-deso/buy-deso.component";
+import { BsModalService } from "ngx-bootstrap/modal";
 
 export class RightBarTabOption {
   name: string;
@@ -86,7 +86,7 @@ export class RightBarCreatorsComponent implements OnInit {
     }
   }
   openBuyCloutModal() {
-    this.modalService.show(BuyBitcloutComponent, {
+    this.modalService.show(BuyDeSoComponent, {
       class: "modal-dialog-centered buy-deso-modal",
     });
   }

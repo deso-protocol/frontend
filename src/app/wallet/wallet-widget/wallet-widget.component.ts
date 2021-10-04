@@ -10,7 +10,7 @@ export class WalletWidgetComponent {
   totalUSDLocked() {
     return this.globalVars.abbreviateNumber(
       this.globalVars.nanosToUSDNumber(
-        this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry.BitCloutLockedNanos
+        this.globalVars?.loggedInUser?.ProfileEntryResponse?.CoinEntry.DeSoLockedNanos
       ),
       3,
       true
@@ -22,7 +22,7 @@ export class WalletWidgetComponent {
   usdMarketCap() {
     return this.globalVars.abbreviateNumber(
       this.globalVars.nanosToUSDNumber(
-        this.coinsInCirculation() * this.globalVars?.loggedInUser?.ProfileEntryResponse.CoinPriceBitCloutNanos
+        this.coinsInCirculation() * this.globalVars?.loggedInUser?.ProfileEntryResponse.CoinPriceDeSoNanos
       ),
       3,
       true

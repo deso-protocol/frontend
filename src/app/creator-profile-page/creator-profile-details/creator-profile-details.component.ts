@@ -76,7 +76,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
 
   usdMarketCap() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceBitCloutNanos),
+      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceDeSoNanos),
       2,
       true
     );
@@ -84,7 +84,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
 
   totalUSDLocked() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.BitCloutLockedNanos),
+      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.DeSoLockedNanos),
       2,
       true
     );

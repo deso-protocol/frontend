@@ -5,10 +5,6 @@
       <div>
         <div *ngIf="isMobile" class="w-100 align-items-center fs-24px font-weight-bold pl-16px pr-25px">
           <div class="d-flex justify-content-between fc-secondary">
-<!--            <div class="bitclout-logo">-->
-<!--              <i-feather name="bitclout" class="mr-5px"></i-feather>-->
-<!--              <span>bitclout</span>-->
-<!--            </div>-->
             <a
               class="link--unstyled d-flex align-items-center"
               (click)="globalVars.isLeftBarMobileOpen = false"
@@ -18,10 +14,10 @@
               <img
                 src="assets/img/camelcase_logo.svg"
                 class="deso"
-                style="height: 27px; margin-left: 17px; margin-bottom: 3px"
+                style="height: 27px"
               />
             </a>
-            <i-feather name="x" class="feather-large cursor-pointer" (click)="closeMobile.emit()"></i-feather>
+            <i-feather name="x" class="feather-large cursor-pointer d-flex align-items-center" (click)="closeMobile.emit()"></i-feather>
           </div>
           <div class="pt-20px"></div>
           <change-account-selector></change-account-selector>
@@ -56,21 +52,21 @@
             [buttonLabel]="'Update Profile'"
             [iconName]="'user'"
           ></left-bar-button>
-          <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
-            <a class="left-bar__dot-inactive">·</a>
-            <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
+          <div class="cursor-pointer w-100 d-flex ml-16px fc-secondary" (click)="startTutorial()">
+            <i-feather name="monitor" class="feather-medium"></i-feather>
+            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Tutorial</a>
           </div>
           <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
-          <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
-            <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
-            <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
-          </div>
           <left-bar-button
             *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
             [link]="'/' + globalVars.RouteNames.REFERRALS"
             [buttonLabel]="'Referrals'"
             [iconName]="'share-2'"
           ></left-bar-button>
+          <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
+            <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
+            <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
+          </div>
           <left-bar-button
             *ngIf="globalVars.showAdminTools()"
             [link]="'/' + globalVars.RouteNames.ADMIN"

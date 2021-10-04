@@ -9,8 +9,8 @@ import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { BsModalService } from "ngx-bootstrap/modal";
-import { BuyBitcloutComponent } from "../buy-bitclout-page/buy-bitclout/buy-bitclout.component";
-import { TransferBitcloutComponent } from "../transfer-bitclout/transfer-bitclout.component";
+import { BuyDeSoComponent } from "../buy-deso-page/buy-deso/buy-deso.component";
+import { TransferDeSoComponent } from "../transfer-deso/transfer-deso.component";
 import { CreatorsLeaderboardComponent } from "../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
 import * as introJs from "intro.js/intro";
 
@@ -119,18 +119,6 @@ export class WalletComponent implements OnInit, OnDestroy {
     });
     this.sortWallet("value");
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
-    this.subscriptions.add(
-      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
-        // Last Item of myItems is Visible => data-padding-forward should be zero.
-        const activeHoldings = this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased;
-        if (activeHoldings.length === 0) {
-          this.correctDataPaddingForwardElementHeight(document.getElementById("wallet-scroller"));
-        }
-        if (lastVisible.$index === activeHoldings.length - 1 || (this.inTutorial && lastVisible.$index === 0)) {
-          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
-        }
-      })
-    );
     this.titleService.setTitle("Wallet - DeSo");
   }
 
@@ -145,13 +133,13 @@ export class WalletComponent implements OnInit, OnDestroy {
   }
 
   openSendDeSoModal() {
-    this.modalService.show(TransferBitcloutComponent, {
+    this.modalService.show(TransferDeSoComponent, {
       class: "modal-dialog-centered buy-deso-modal",
     });
   }
 
   openBuyDeSoModal() {
-    this.modalService.show(BuyBitcloutComponent, {
+    this.modalService.show(BuyDeSoComponent, {
       class: "modal-dialog-centered buy-deso-modal",
     });
   }
@@ -405,6 +393,18 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     this.initiateIntro();
+    this.subscriptions.add(
+      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
+        // Last Item of myItems is Visible => data-padding-forward should be zero.
+        const activeHoldings = this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased;
+        if (activeHoldings.length === 0) {
+          this.correctDataPaddingForwardElementHeight(document.getElementById("wallet-scroller"));
+        }
+        if (lastVisible.$index === activeHoldings.length - 1 || (this.inTutorial && lastVisible.$index === 0)) {
+          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+        }
+      })
+    );
   }
 
   initiateIntro() {
