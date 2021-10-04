@@ -196,7 +196,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
 
   tweetToClaimLink() {
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      `Just setting up my ${environment.node.name} 💎🙌\n\nhttps://bitclout.com/u/${this.userName}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`
+      `Just setting up my ${environment.node.name} 💎🙌\n\n${environment.node.url}/u/${this.userName}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`
     )}`;
   }
 
