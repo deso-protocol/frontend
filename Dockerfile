@@ -28,6 +28,12 @@ COPY ./angular.json .
 COPY ./tsconfig.json .
 COPY ./src ./src
 
+# use --build-arg index=index.custom.html to specify a custom index.html file
+ARG index=index.html
+
+# overwrite default index file with custom file
+COPY ./src/$index ./src/index.html
+
 RUN npm run build_prod
 
 # build minified version of frontend, served using caddy

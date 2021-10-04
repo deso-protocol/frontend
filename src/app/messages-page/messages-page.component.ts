@@ -5,6 +5,7 @@ import { Datasource, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-messages-page",
@@ -29,7 +30,7 @@ export class MessagesPageComponent {
   ) {}
 
   ngOnInit() {
-    this.titleService.setTitle("Messages - DeSo");
+    this.titleService.setTitle(`Messages - ${environment.node.name}`);
   }
 
   _handleMessageThreadSelectedMobile(thread: any) {

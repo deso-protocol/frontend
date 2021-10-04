@@ -8,6 +8,7 @@ import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Subscription } from "rxjs";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "wallet",
@@ -117,7 +118,7 @@ export class WalletComponent implements OnInit, OnDestroy {
         })
       );
     }
-    this.titleService.setTitle("Wallet - DeSo");
+    this.titleService.setTitle(`Wallet - ${environment.node.name}`);
   }
 
   ngOnDestroy(): void {
