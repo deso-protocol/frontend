@@ -14,7 +14,7 @@ file_server
 @html {
   not path *.js *.css *.png *.jpg *.svg *.pdf *.eot *.ttf *.woff *.woff2 *.webmanifest
 
-  file index.bitclout.html
+  file index.html
 }
 
 handle_errors {

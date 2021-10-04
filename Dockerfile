@@ -1,5 +1,8 @@
 FROM node:14.15.5-alpine3.13 AS frontend
 
+# use --build-arg INDEXHTML=index.custom.html to specify a custom index.html file
+ARG INDEXHTML=index.html
+
 WORKDIR /frontend
 
 # install git
@@ -27,6 +30,9 @@ RUN npm run ngcc
 COPY ./angular.json .
 COPY ./tsconfig.json .
 COPY ./src ./src
+
+# overwrite default index file with custom file
+COPY ./src/$INDEXHTML ./src/index.html
 
 RUN npm run build_prod
 
