@@ -219,6 +219,8 @@ export class GlobalVarsService {
 
   transactionFeeMap: { [k: string]: TransactionFee[] };
 
+  buyETHAddress: string = "";
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {
@@ -457,6 +459,14 @@ export class GlobalVarsService {
       maximumFractionDigits,
     });
     return this.nanosToDeSoMemo[nanos][maximumFractionDigits];
+  }
+
+  weiToETH(wei: number): number {
+    return wei / GlobalVarsService.WEI_PER_ETH;
+  }
+
+  weiHexToETH(weiHex: string): number {
+    return this.weiToETH(parseInt(weiHex));
   }
 
   formatUSD(num: number, decimal: number): string {
