@@ -1,4 +1,4 @@
-![DeSo Logo](/src/assets/deso/camelcase_logo.svg)
+![DeSo Logo](src/assets/deso/camelcase_logo.svg)
 
 # About DeSo
 DeSo is a blockchain built from the ground up to support a fully-featured
