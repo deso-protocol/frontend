@@ -33,7 +33,9 @@
       (click)="initiateSearch()"
     ></i-feather>
     <div *ngIf="!simpleTopBar && isSearching" class="d-flex justify-content-center align-items-center w-100">
-      <search-bar class="w-100"></search-bar>
+      <div class="position-relative" style="width: calc(100vw - 59px); height: 36.5px">
+        <search-bar class="w-100"></search-bar>
+      </div>
       <i-feather name="x" class="feather-large cursor-pointer ml-5px" (click)="isSearching = false"></i-feather>
     </div>
     <div *ngIf="simpleTopBar" class="d-flex flex-column justify-content-end w-100 px-15px">
