@@ -10,11 +10,19 @@
         *ngIf="!inTutorial"
         class="mr-15px d-inline-block"
       ></top-bar-mobile-navigation-control>
-      <div class="bitclout-logo fs-24px font-weight-bold ml-5px">
-        <i-feather name="bitclout" class="mr-10px position-relative" style="top: -2px"></i-feather>
-        <span>bitclout</span>
-      </div>
-      <span class="fc-muted fs-15px font-weight-normal ml-10px position-relative" style="top: 3px">≈{{ globalVars.bitcloutToUSDExchangeRateToDisplay }} USD</span>
+      <a
+        class="link--unstyled d-flex align-items-center ml-5px"
+        (click)="globalVars.isLeftBarMobileOpen = false"
+        [routerLink]="homeLink()"
+        queryParamsHandling="merge"
+      >
+        <img
+          [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+          class="deso"
+          style="height: 30px"
+        />
+      </a>
+      <span class="fc-muted fs-15px font-weight-normal ml-10px position-relative">≈{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</span>
     </div>
 
     <i-feather

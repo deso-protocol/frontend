@@ -3,6 +3,7 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { Location } from "@angular/common";
 import { ProfileEntryResponse } from "../../backend-api.service";
 import { AppRoutingModule } from "../../app-routing.module";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "top-bar-mobile-header",
@@ -21,7 +22,20 @@ export class TopBarMobileHeaderComponent {
   };
   isSearching = false;
   AppRoutingModule = AppRoutingModule;
+  environment = environment;
   constructor(public globalVars: GlobalVarsService, private location: Location) {}
+
+  // send logged out users to the landing page
+  // send logged in users to browse
+  homeLink(): string | string[] {
+    if (this.inTutorial) {
+      return [];
+    }
+    if (this.globalVars.showLandingPage()) {
+      return "/" + this.globalVars.RouteNames.LANDING;
+    }
+    return "/" + this.globalVars.RouteNames.BROWSE;
+  }
 
   initiateSearch() {
     this.isSearching = true;

@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import {ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule, RouteNames } from "../app-routing.module";
 import { BackendApiService, BalanceEntryResponse, TutorialStatus } from "../backend-api.service";
@@ -121,6 +121,18 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.sortWallet("value");
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
     this.titleService.setTitle(`Wallet - ${environment.node.name}`);
+    this.subscriptions.add(
+      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
+        // Last Item of myItems is Visible => data-padding-forward should be zero.
+        const activeHoldings = this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased;
+        if (activeHoldings.length === 0) {
+          this.correctDataPaddingForwardElementHeight(document.getElementById("wallet-scroller"));
+        }
+        if (lastVisible.$index === activeHoldings.length - 1 || (this.inTutorial && lastVisible.$index === 0)) {
+          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
@@ -157,6 +169,8 @@ export class WalletComponent implements OnInit, OnDestroy {
   // https://github.com/dhilt/ngx-ui-scroll/issues/111#issuecomment-697269318
   correctDataPaddingForwardElementHeight(viewportElement: HTMLElement): void {
     const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-forward]`);
+    console.log('Here is the el');
+    console.log(dataPaddingForwardElement);
     if (dataPaddingForwardElement) {
       dataPaddingForwardElement.setAttribute("style", "height: 0px;");
     }
@@ -394,18 +408,6 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     this.initiateIntro();
-    this.subscriptions.add(
-      this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
-        // Last Item of myItems is Visible => data-padding-forward should be zero.
-        const activeHoldings = this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased;
-        if (activeHoldings.length === 0) {
-          this.correctDataPaddingForwardElementHeight(document.getElementById("wallet-scroller"));
-        }
-        if (lastVisible.$index === activeHoldings.length - 1 || (this.inTutorial && lastVisible.$index === 0)) {
-          this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
-        }
-      })
-    );
   }
 
   initiateIntro() {
