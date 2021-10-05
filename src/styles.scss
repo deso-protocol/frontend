@@ -1228,6 +1228,12 @@ app-landing-page {
   width: $global__center__width;
 }
 
+browse-page {
+  .global__center__inner {
+    margin-top: 0px;
+  }
+}
+
 .global__center__inner {
   min-height: 100vh;
   width: $global__center__width;
@@ -2194,6 +2200,12 @@ bs-dropdown-container {
 .feed-post__icon-row-holder {
 }
 
+.desktop-top-bar-width {
+  max-width: 1359px !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .desktop-top-bar {
   border-bottom: 1px solid var(--border);
   z-index: 1000;
@@ -2203,10 +2215,10 @@ bs-dropdown-container {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   .bitclout-logo{
-    margin-top: 10px;
     position: relative;
-    left: 80px;
+    left: -289px;
     svg {
       width: 16.93px;
       height: 24px;
@@ -2224,7 +2236,6 @@ bs-dropdown-container {
   }
   search-bar {
     position: relative;
-    top: 10px;
     width: 343px;
     .search-bar,input {
       height: 48px;
@@ -2235,7 +2246,7 @@ bs-dropdown-container {
   }
   change-account-selector {
     position: relative;
-    top: 10px;
+    top: 2px;
     right: 80px;
     width: 164px;
     height: 48px;
@@ -2746,6 +2757,9 @@ wallet-page {
   background: var(--tile-bg);
   border-radius: 10px;
   border: 1px solid var(--border);
+  @media (min-width: 992px) {
+    margin-top: 4px;
+  }
 }
 
 .wallet__table {

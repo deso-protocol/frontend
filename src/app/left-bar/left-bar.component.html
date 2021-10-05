@@ -52,8 +52,12 @@
             [buttonLabel]="'Update Profile'"
             [iconName]="'user'"
           ></left-bar-button>
-          <div class="cursor-pointer w-100 d-flex ml-16px fc-secondary" (click)="startTutorial()">
-            <i-feather name="monitor" class="feather-medium"></i-feather>
+          <div
+            class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
+            style="height: 56px"
+            (click)="startTutorial()"
+          >
+            <i-feather name="monitor" class="feather-medium d-flex align-items-center"></i-feather>
             <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Tutorial</a>
           </div>
           <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'My Wallet'" [iconName]="'diamond'"></left-bar-button>
