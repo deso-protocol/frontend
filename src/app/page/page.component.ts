@@ -1,5 +1,6 @@
 import { Component, HostListener, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-page",
@@ -15,15 +16,28 @@ export class PageComponent implements OnInit {
   @Input() inTutorial: boolean = false;
   @Input() onlyContent: boolean = false;
   mobile = false;
+  environment = environment;
 
   @HostListener("window:resize") onResize() {
     this.setMobileBasedOnViewport();
   }
 
-  constructor(private globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService) {}
 
   ngOnInit() {
     this.setMobileBasedOnViewport();
+  }
+
+  // send logged out users to the landing page
+  // send logged in users to browse
+  homeLink(): string | string[] {
+    if (this.inTutorial) {
+      return [];
+    }
+    if (this.globalVars.showLandingPage()) {
+      return "/" + this.globalVars.RouteNames.LANDING;
+    }
+    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
   setMobileBasedOnViewport() {

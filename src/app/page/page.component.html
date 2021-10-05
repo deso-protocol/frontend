@@ -4,12 +4,22 @@
 <div [class]="mobile ? 'global__mobile' : 'global__desktop'">
   <!-- Top Bar -->
   <div *ngIf="!mobile" class="desktop-top-bar">
-    <div class="bitclout-logo">
-      <i-feather name="bitclout"></i-feather>
-      <span>bitclout</span>
+    <div class="d-flex justify-content-between align-items-center w-100 h-100 desktop-top-bar-width">
+      <a
+        class="link--unstyled d-flex align-items-center ml-5px"
+        (click)="globalVars.isLeftBarMobileOpen = false"
+        [routerLink]="homeLink()"
+        queryParamsHandling="merge"
+      >
+        <img
+          [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
+          class="deso"
+          style="height: 30px"
+        />
+      </a>
+      <search-bar [resultsUnderBar]="true"></search-bar>
+      <change-account-selector></change-account-selector>
     </div>
-    <search-bar *ngIf="!inTutorial" [resultsUnderBar]="true"></search-bar>
-    <change-account-selector></change-account-selector>
   </div>
   <top-bar-mobile-header
     *ngIf="mobile"

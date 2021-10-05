@@ -2201,7 +2201,7 @@ bs-dropdown-container {
 }
 
 .desktop-top-bar-width {
-  max-width: 1359px !important;
+  max-width: 1212px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -2217,8 +2217,6 @@ bs-dropdown-container {
   justify-content: space-between;
   align-items: center;
   .bitclout-logo{
-    position: relative;
-    left: -289px;
     svg {
       width: 16.93px;
       height: 24px;
@@ -2247,7 +2245,6 @@ bs-dropdown-container {
   change-account-selector {
     position: relative;
     top: 2px;
-    right: 80px;
     width: 164px;
     height: 48px;
   }

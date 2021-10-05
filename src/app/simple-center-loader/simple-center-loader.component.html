@@ -1,8 +1,5 @@
 <div class="d-flex flex-column align-items-center justify-content-center loading-container" [ngStyle]="{ height: getHeight() }">
-  <ng-lottie
-    [height]="getLoaderHeight()"
-    [options]="options"
-  ></ng-lottie>
+  <object class="fc-secondary" type="image/svg+xml" data="../../assets/deso/spinner.svg" height="100px" width="100px"></object>
   <div
     [ngClass]="{
       'text-grey5': textColor === 'gray',
@@ -12,9 +9,9 @@
     }"
     class="mt-12px"
   >
-    <div class="text-grey-loading fs-24px">{{ titleLoadingText }}</div>
+    <div class="fc-secondary fs-24px">{{ titleLoadingText }}</div>
     <div *ngIf="subtitleLoadingText">
-      <div class="text-grey-loading fs-15px text-center">{{ subtitleLoadingText }}</div>
+      <div class="fc-secondary fs-15px text-center">{{ subtitleLoadingText }}</div>
     </div>
   </div>
 </div>

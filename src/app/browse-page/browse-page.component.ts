@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { FeedComponent } from "../feed/feed.component";
 import { Router } from "@angular/router";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "browse-page",
@@ -10,6 +11,7 @@ import { Router } from "@angular/router";
 })
 export class BrowsePageComponent implements OnInit {
   FeedComponent = FeedComponent;
+  environment = environment;
 
   activeTab: string = FeedComponent.GLOBAL_TAB;
   isLeftBarMobileOpen = false;
@@ -19,6 +21,13 @@ export class BrowsePageComponent implements OnInit {
 
   setMobileBasedOnViewport() {
     this.mobile = this.globalVars.isMobile();
+  }
+
+  homeLink(): string | string[] {
+    if (this.globalVars.showLandingPage()) {
+      return "/" + this.globalVars.RouteNames.LANDING;
+    }
+    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
   @HostListener("window:resize")

@@ -24,6 +24,7 @@ export class MessagesPageComponent {
   selectedThreadProfilePic = "";
   showThreadView = false;
   AppRoutingModule = AppRoutingModule;
+  environment = environment;
 
   backButtonFunction = () => {
     this.showThreadView = false;
@@ -39,6 +40,14 @@ export class MessagesPageComponent {
 
   ngOnInit() {
     this.titleService.setTitle(`Messages - ${environment.node.name}`);
+  }
+
+  // send logged in users to browse
+  homeLink(): string | string[] {
+    if (this.globalVars.showLandingPage()) {
+      return "/" + this.globalVars.RouteNames.LANDING;
+    }
+    return "/" + this.globalVars.RouteNames.BROWSE;
   }
 
   openNewMessageModal() {
