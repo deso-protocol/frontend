@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import { AfterViewInit, Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule, RouteNames } from "../app-routing.module";
 import { BackendApiService, BalanceEntryResponse, TutorialStatus } from "../backend-api.service";
@@ -14,12 +14,13 @@ import { TransferDeSoComponent } from "../transfer-deso/transfer-deso.component"
 import { CreatorsLeaderboardComponent } from "../creators-leaderboard/creators-leaderboard/creators-leaderboard.component";
 import * as introJs from "intro.js/intro";
 import { environment } from "src/environments/environment";
+import { document } from "ngx-bootstrap/utils";
 
 @Component({
   selector: "wallet",
   templateUrl: "./wallet.component.html",
 })
-export class WalletComponent implements OnInit, OnDestroy {
+export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   static PAGE_SIZE = 20;
   static BUFFER_SIZE = 10;
   static WINDOW_VIEWPORT = true;
@@ -121,12 +122,17 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.sortWallet("value");
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
     this.titleService.setTitle(`Wallet - ${environment.node.name}`);
+  }
+
+  ngAfterViewInit() {
+    this.initiateIntro();
     this.subscriptions.add(
       this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
         // Last Item of myItems is Visible => data-padding-forward should be zero.
         const activeHoldings = this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased;
         if (activeHoldings.length === 0) {
           this.correctDataPaddingForwardElementHeight(document.getElementById("wallet-scroller"));
+          return;
         }
         if (lastVisible.$index === activeHoldings.length - 1 || (this.inTutorial && lastVisible.$index === 0)) {
           this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
@@ -169,8 +175,6 @@ export class WalletComponent implements OnInit, OnDestroy {
   // https://github.com/dhilt/ngx-ui-scroll/issues/111#issuecomment-697269318
   correctDataPaddingForwardElementHeight(viewportElement: HTMLElement): void {
     const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-forward]`);
-    console.log('Here is the el');
-    console.log(dataPaddingForwardElement);
     if (dataPaddingForwardElement) {
       dataPaddingForwardElement.setAttribute("style", "height: 0px;");
     }
@@ -244,12 +248,10 @@ export class WalletComponent implements OnInit, OnDestroy {
   totalValue() {
     let result = 0;
 
-    for (const holding of this.globalVars.loggedInUser.UsersYouHODL) {
+    for (const holding of this.globalVars.loggedInUser?.UsersYouHODL || []) {
       result +=
-        this.globalVars.desoNanosYouWouldGetIfYouSold(
-          holding.BalanceNanos,
-          holding.ProfileEntryResponse.CoinEntry
-        ) || 0;
+        this.globalVars.desoNanosYouWouldGetIfYouSold(holding.BalanceNanos, holding.ProfileEntryResponse.CoinEntry) ||
+        0;
     }
 
     return result;
@@ -406,10 +408,6 @@ export class WalletComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
-    this.initiateIntro();
-  }
-
   initiateIntro() {
     setTimeout(() => {
       if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
@@ -470,10 +468,9 @@ export class WalletComponent implements OnInit, OnDestroy {
       steps: [
         {
           title,
-          intro: `Great! You now have ${this.globalVars.nanosToDeSo(
-            this.balanceEntryToHighlight.BalanceNanos,
-            4
-          )} $${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins.`,
+          intro: `Great! You now have ${this.globalVars.nanosToDeSo(this.balanceEntryToHighlight.BalanceNanos, 4)} $${
+            this.balanceEntryToHighlight.ProfileEntryResponse.Username
+          } coins.`,
         },
         {
           title,

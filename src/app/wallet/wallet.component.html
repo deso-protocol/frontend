@@ -1,6 +1,6 @@
 <div
   class="border"
-  style="border-radius: 10px 10px 0px 0px"
+  style="border-radius: 10px 10px 0 0"
   *ngIf="inTutorial"
 >
   <div class="tutorial-header">
@@ -108,7 +108,7 @@
   <div class="d-flex justify-content-between feed-post__nft-footer align-items-center">
     <!--Creator coin balance-->
     <div class="d-flex flex-column">
-      <div class="fs-17px mb-5px">{{ this.globalVars.loggedInUser.UsersYouHODL.length }} Creator Coin{{ this.globalVars.loggedInUser.UsersYouHODL.length > 1 ? "s" : "" }}</div>
+      <div class="fs-17px mb-5px">{{ globalVars.loggedInUser.UsersYouHODL?.length }} Creator Coin{{ globalVars.loggedInUser.UsersYouHODL?.length > 1 ? "s" : "" }}</div>
       <div class="fs-15px">{{ globalVars.nanosToDeSo(totalValue(), 0) }}$DESO ~ {{ globalVars.nanosToUSD(totalValue(), 0) }}</div>
     </div>
     <!--Purchase creator coins-->
@@ -175,101 +175,103 @@
         >
           {{ emptyHodlerListMessage() }}
         </div>
-        <div id="wallet-scroller" #walletScroller>
+        <div
+          id="wallet-scroller"
+          #walletScroller
+          [ngStyle]="{ 'max-height': (showTransferredCoins ? usersYouReceived : usersYouPurchased).length == 0 ? '0px' : 'unset' }"
+        >
           <div
             #uiScroll
             *uiScroll="let creator of datasource"
           >
-            <div *ngIf="(showTransferredCoins ? usersYouReceived : usersYouPurchased).length > 0">
-              <!-- Screen out zero balances -->
-              <!-- How do we want to "highlight" the balance entry in the tutorial -->
-              <div
-                *ngIf="
-                  creator &&
-                  (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
-                "
-                class="row no-gutters fc-default py-10px px-16px border-top"
-                [ngClass]="{ 'wallet-highlighted-creator': isHighlightedCreator(creator) }"
+            <!-- Screen out zero balances -->
+            <!-- How do we want to "highlight" the balance entry in the tutorial -->
+            <div
+              *ngIf="
+                creator &&
+                (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
+              "
+              class="row no-gutters fc-default py-10px px-16px border-top"
+              [ngClass]="{ 'wallet-highlighted-creator': isHighlightedCreator(creator) }"
+            >
+              <!-- Name-->
+              <a
+                class="wallet-column col-lg-3 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
+                [routerLink]="inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
+                queryParamsHandling="merge"
+                [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
               >
-                <!-- Name-->
-                <a
-                  class="wallet-column col-lg-3 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
-                  [routerLink]="inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
-                  queryParamsHandling="merge"
-                  [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
-                >
-                  <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"></div>
-                  <div class="text-truncate holdings__name">
-                    <span>{{ creator.ProfileEntryResponse.Username }}</span>
-                    <span
-                      *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
-                      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
-                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                      [matTooltip]="'This profile is reserved. The owner has not yet claimed it.'"
-                    >
-                      <i class="far fa-clock fa-md align-middle"></i>
-                    </span>
-                    <span
-                      *ngIf="creator.ProfileEntryResponse.IsVerified"
-                      (click)="tooltip.toggle()"
-                      class="ml-1 cursor-pointer text-primary"
-                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                      [matTooltip]="'This account is verified'"
-                      #tooltip="matTooltip"
-                    >
-                      <i class="fas fa-check-circle fa-md align-middle"></i>
-                    </span>
-                    <div class="text-grey9 fs-12px d-lg-none">
-                      {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
-                    </div>
-                  </div>
-                </a>
-                <!-- Price-->
-                <div class="wallet-column col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
-                  <div class="d-flex align-items-center justify-content-end">
+                <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"></div>
+                <div class="text-truncate holdings__name">
+                  <span>{{ creator.ProfileEntryResponse.Username }}</span>
+                  <span
+                    *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
+                    class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                    [matTooltip]="'This profile is reserved. The owner has not yet claimed it.'"
+                  >
+                    <i class="far fa-clock fa-md align-middle"></i>
+                  </span>
+                  <span
+                    *ngIf="creator.ProfileEntryResponse.IsVerified"
+                    (click)="tooltip.toggle()"
+                    class="ml-1 cursor-pointer text-primary"
+                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                    [matTooltip]="'This account is verified'"
+                    #tooltip="matTooltip"
+                  >
+                    <i class="fas fa-check-circle fa-md align-middle"></i>
+                  </span>
+                  <div class="text-grey9 fs-12px d-lg-none">
                     {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
                   </div>
                 </div>
-                <!-- Balance -->
-                <div class="wallet-column col-3 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
+              </a>
+              <!-- Price-->
+              <div class="wallet-column col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
+                <div class="d-flex align-items-center justify-content-end">
+                  {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
+                </div>
+              </div>
+              <!-- Balance -->
+              <div class="wallet-column col-3 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
+                <div>
                   <div>
-                    <div>
-                      <i
-                        *ngIf="creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners"
-                        class="fa fa-spinner fc-muted"
-                        matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-                        [matTooltip]="unminedCreatorCoinToolTip(creator)"
-                        #tooltip="matTooltip"
-                        (click)="tooltip.toggle()"
-                      ></i>
-                      {{
-                        globalVars.usdYouWouldGetIfYouSoldDisplay(
-                          creator.BalanceNanos,
-                          creator.ProfileEntryResponse.CoinEntry
-                        )
-                      }}
-                    </div>
+                    <i
+                      *ngIf="creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners"
+                      class="fa fa-spinner fc-muted"
+                      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                      [matTooltip]="unminedCreatorCoinToolTip(creator)"
+                      #tooltip="matTooltip"
+                      (click)="tooltip.toggle()"
+                    ></i>
+                    {{
+                      globalVars.usdYouWouldGetIfYouSoldDisplay(
+                        creator.BalanceNanos,
+                        creator.ProfileEntryResponse.CoinEntry
+                      )
+                    }}
                   </div>
                 </div>
+              </div>
 
-                <!-- Buy / Sell / Transfer Dropdown -->
+              <!-- Buy / Sell / Transfer Dropdown -->
+              <div
+                class="wallet__dropdown-parent wallet-column col-lg-4 d-flex align-items-center justify-content-end fc-secondary m-0"
+              >
                 <div
-                  class="wallet__dropdown-parent wallet-column col-lg-4 d-flex align-items-center justify-content-end fc-secondary m-0"
+                  style="min-width: 50px"
+                  class="d-flex align-items-center justify-content-end"
+                  id="wallet-actions-container"
                 >
-                  <div
-                    style="min-width: 50px"
-                    class="d-flex align-items-center justify-content-end"
-                    id="wallet-actions-container"
-                  >
-                    <wallet-actions-dropdown
-                      [hodlingUser]="creator.ProfileEntryResponse"
-                      [inTutorial]="inTutorial"
-                      [isHighlightedCreator]="isHighlightedCreator(creator)"
-                      *ngIf="!inTutorial || isHighlightedCreator(creator)"
-                      [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY && tutorialWiggle }"
-                      (isSelling)="exitTutorial()"
-                    ></wallet-actions-dropdown>
-                  </div>
+                  <wallet-actions-dropdown
+                    [hodlingUser]="creator.ProfileEntryResponse"
+                    [inTutorial]="inTutorial"
+                    [isHighlightedCreator]="isHighlightedCreator(creator)"
+                    *ngIf="!inTutorial || isHighlightedCreator(creator)"
+                    [ngClass]="{ 'wiggle': inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY && tutorialWiggle }"
+                    (isSelling)="exitTutorial()"
+                  ></wallet-actions-dropdown>
                 </div>
               </div>
             </div>
@@ -278,6 +280,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="!globalVars.loggedInUser">
-    <simple-center-loader></simple-center-loader>
-  </div>
+</div>
+<div *ngIf="!globalVars.loggedInUser">
+  <simple-center-loader></simple-center-loader>
+</div>
