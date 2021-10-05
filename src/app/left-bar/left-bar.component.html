@@ -67,9 +67,14 @@
             [buttonLabel]="'Referrals'"
             [iconName]="'share-2'"
           ></left-bar-button>
-          <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
-            <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
-            <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
+          <div
+            *ngIf="globalVars.supportEmail"
+            class="cursor-pointer w-100 d-flex align-items-center ml-16px fc-secondary"
+            style="height: 56px"
+            (click)="getHelpMailToAttr()"
+          >
+            <i-feather name="help-circle" class="feather-medium d-flex align-items-center"></i-feather>
+            <a class="fs-17px fc-secondary font-weight-bold" style="margin-left: 23px">Help</a>
           </div>
           <left-bar-button
             *ngIf="globalVars.showAdminTools()"
@@ -135,12 +140,6 @@
       <div class="left-desktop-selector">
         <!-- Left Bar Buttons -->
         <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'" [iconName]="'home'"></left-bar-button>
-
-        <left-bar-button
-          [link]="'/' + globalVars.RouteNames.CREATORS"
-          [buttonLabel]="'Creator Coins'"
-          [iconName]="'at-sign'"
-        ></left-bar-button>
 
         <left-bar-button
           [link]="'/' + globalVars.RouteNames.BUY_DESO"

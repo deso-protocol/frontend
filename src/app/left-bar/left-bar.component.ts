@@ -58,6 +58,7 @@ export class LeftBarComponent {
   }
 
   getHelpMailToAttr(): string {
+    this.logHelp();
     const loggedInUser = this.globalVars.loggedInUser;
     const pubKey = loggedInUser?.PublicKeyBase58Check;
     const btcAddress = this.identityService.identityServiceUsers[pubKey]?.btcDepositAddress;
