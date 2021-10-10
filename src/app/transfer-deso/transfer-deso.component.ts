@@ -6,6 +6,7 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { Title } from "@angular/platform-browser";
 import { RouteNames } from "../app-routing.module";
 import { ActivatedRoute } from "@angular/router";
+import { environment } from "src/environments/environment";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -55,10 +56,11 @@ export class TransferDeSoComponent implements OnInit {
 
   ngOnInit() {
     this.feeRateDeSoPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
-    this.titleService.setTitle("Send $DESO - DeSo");
-    this.sendDeSoQRCode = `${this.backendApi._makeRequestURL(location.host, "/" + RouteNames.SEND_DESO)}?public_key=${
-      this.globalVars.loggedInUser.PublicKeyBase58Check
-    }`;
+    this.titleService.setTitle(`Send $DESO - ${environment.node.name}`);
+    this.sendDeSoQRCode = `${this.backendApi._makeRequestURL(
+      location.host,
+      "/" + RouteNames.SEND_DESO
+    )}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`;
   }
 
   _clickMaxDeSo() {

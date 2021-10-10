@@ -3,7 +3,7 @@ export const environment = {
   uploadImageHostname: "bitclout.com",
   jumioEndpointHostname: "bitclout.com",
   uploadVideoHostname: "bitclout.com",
-  identityURL: "https://identity.deso.org",
+  identityURL: "https://identity.bitclout.com",
   dd: {
     apiKey: "DCEB26AC8BF47F1D7B4D87440EDCA6",
     jsPath: "https://bitclout.com/tags.js",
@@ -11,8 +11,8 @@ export const environment = {
     endpoint: "https://bitclout.com/js/",
   },
   node: {
-    name: 'DeSo',
-    url: 'https://deso.org',
-    logoAssetDir: '/assets/deso/'
+    name: 'BitClout',
+    url: 'https://bitclout.com',
+    logoAssetDir: '/assets/bitclout/'
   }
 };

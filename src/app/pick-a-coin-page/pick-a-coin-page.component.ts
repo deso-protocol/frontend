@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
 import { Title } from "@angular/platform-browser";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-pick-a-coin-page",
@@ -22,7 +23,7 @@ export class PickACoinPageComponent implements OnInit {
         this.hasUnminedCreatorCoins = true;
       }
     }
-    this.titleService.setTitle("Send Creator Coins - DeSo");
+    this.titleService.setTitle(`Send Creator Coins - ${environment.node.name}`);
   }
 
   usersYouHODL() {
