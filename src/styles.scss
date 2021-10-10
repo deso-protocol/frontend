@@ -1112,6 +1112,8 @@ input.bs-timepicker-field {
   overflow: hidden;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 
 .feed-post__video {
@@ -1600,10 +1602,9 @@ input.bs-timepicker-field {
 .landing__logo {
   height: 28px;
   flex: 0 0 130px;
-  background: url("/assets/img/camelcase_logo.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center center;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
   text-indent: -9999px;
 
   @media (max-width: 992px) {

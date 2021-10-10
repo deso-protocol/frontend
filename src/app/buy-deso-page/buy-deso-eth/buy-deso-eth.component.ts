@@ -173,7 +173,7 @@ export class BuyDeSoEthComponent implements OnInit {
 
               // This will update the balance and a bunch of other things.
               this.globalVars.updateEverything(
-                res.DeSoTxnHash,
+                res.DESOTxHash,
                 this.parentComponent._clickBuyDeSoSuccess,
                 this.parentComponent._clickBuyDeSoSuccessButTimeout,
                 this.parentComponent

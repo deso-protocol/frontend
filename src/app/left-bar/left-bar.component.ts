@@ -6,6 +6,7 @@ import { IdentityService } from "../identity.service";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "left-bar",
@@ -14,6 +15,7 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
 })
 export class LeftBarComponent {
   MessagesInboxComponent = MessagesInboxComponent;
+  environment = environment;
 
   @HostBinding("class") get classes() {
     return !this.isMobile ? "global__nav__flex" : "";

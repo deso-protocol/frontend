@@ -43,7 +43,9 @@ header @html Content-Security-Policy "
     amp.bitclout.com api.bitclout.green api.bitclout.blue
     api.bitclout.navy
     api.testwyre.com
-    api.sendwyre.com;
+    api.sendwyre.com
+    https://videodelivery.net
+    https://upload.videodelivery.net;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
     https://ka-f.fontawesome.com/;
@@ -75,5 +77,6 @@ header @html Content-Security-Policy "
     https://player.twitch.tv
     https://clips.twitch.tv
     pay.testwyre.com
-    pay.sendwyre.com;
+    pay.sendwyre.com
+    https://iframe.videodelivery.net;
   frame-ancestors 'self';"
