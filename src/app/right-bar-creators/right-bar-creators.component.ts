@@ -37,7 +37,7 @@ export class RightBarCreatorsComponent implements OnInit {
   static DIAMONDS: RightBarTabOption = {
     name: "Top Daily Diamonded Creators",
     width: 275,
-    poweredBy: { name: "Bitclout Pulse", link: "https://desopulse.com" },
+    poweredBy: { name: "Altumbase", link: "https://altumbase.com/tools" },
   };
   static COMMUNITY: RightBarTabOption = {
     name: "Top Community Projects",
