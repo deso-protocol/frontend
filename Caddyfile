@@ -74,6 +74,8 @@ header @html Content-Security-Policy "
     https://giphy.com
     https://open.spotify.com
     https://w.soundcloud.com
+    https://player.twitch.tv
+    https://clips.twitch.tv
     pay.testwyre.com
     pay.sendwyre.com
     https://iframe.videodelivery.net;

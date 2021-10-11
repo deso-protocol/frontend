@@ -76,6 +76,51 @@ export class EmbedUrlParserService {
       : "";
   }
 
+  static twitchParser(url: string): string | boolean {
+    const regExp = /^.*((player\.|clips\.)?twitch\.tv)\/(videos\/(\d{8,12})|\?video=(\d{8,12})|\?channel=([A-Za-z0-9_]{1,30})|collections\/([A-Za-z0-9]{10,20})|\?collection=([A-Za-z0-9]{10,20}(&video=\d{8,12})?)|embed\?clip=([A-Za-z0-9_-]{1,80})|([A-Za-z0-9_]{1,30}(\/clip\/([A-Za-z0-9_-]{1,80}))?)).*/;
+    const match = url.match(regExp);
+    if (match && match[3]) {
+      // https://www.twitch.tv/videos/1234567890
+      if (match[3].startsWith("videos") && match[4]) {
+        return `player.twitch.tv/?video=${match[4]}`;
+      }
+      // https://player.twitch.tv/?video=1234567890&parent=www.example.com
+      if (match[3].startsWith("?video=") && match[5]) {
+        return `player.twitch.tv/?video=${match[5]}`;
+      }
+      // https://player.twitch.tv/?channel=xxxyyy123&parent=www.example.com
+      if (match[3].startsWith("?channel=") && match[6]) {
+        return `player.twitch.tv/?channel=${match[6]}`;
+      }
+      // https://www.twitch.tv/xxxyyy123
+      if (match[3] && match[11] && match[3] === match[11] && !match[12] && !match[13]) {
+        return `player.twitch.tv/?channel=${match[11]}`;
+      }
+      // https://www.twitch.tv/xxyy_1234m/clip/AbCD123JMn-rrMMSj1239G7
+      if (match[12] && match[13]) {
+        return `clips.twitch.tv/embed?clip=${match[13]}`;
+      }
+      // https://clips.twitch.tv/embed?clip=AbCD123JMn-rrMMSj1239G7&parent=www.example.com
+      if (match[10]) {
+        return `clips.twitch.tv/embed?clip=${match[10]}`;
+      }
+      // https://www.twitch.tv/collections/11jaabbcc2yM989x?filter=collections
+      if (match[7]) {
+        return `player.twitch.tv/?collection=${match[7]}`;
+      }
+      // https://player.twitch.tv/?collection=11jaabbcc2yM989x&video=1234567890&parent=www.example.com
+      if (match[8]) {
+        return `player.twitch.tv/?collection=${match[8]}`;
+      }
+    }
+    return false;
+  }
+
+  static constructTwitchEmbedURL(url: URL): string {
+    const twitchParsed = this.twitchParser(url.toString());
+    return twitchParsed ? `https://${twitchParsed}` : "";
+  }
+
   static extractTikTokVideoID(fullTikTokURL: string): string | boolean {
     const regExp = /^.*((tiktok\.com\/)(v\/)|(@[A-Za-z0-9_-]{2,24}\/video\/)|(embed\/v2\/))(\d{0,30}).*/;
     const match = fullTikTokURL.match(regExp);
@@ -156,6 +201,11 @@ export class EmbedUrlParserService {
     }
     if (this.isSoundCloudFromURL(url)) {
       return of(this.constructSoundCloudEmbedURL(url));
+    }
+    if (this.isTwitchFromURL(url)) {
+      return of(this.constructTwitchEmbedURL(url)).pipe(
+        map((embedURL) => (embedURL ? embedURL + `&autoplay=false&parent=${location.hostname}` : ""))
+      );
     }
     return of("");
   }
@@ -244,6 +294,20 @@ export class EmbedUrlParserService {
     return pattern.test(url.hostname);
   }
 
+  static isTwitchLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isTwitchFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isTwitchFromURL(url: URL): boolean {
+    const pattern = /\btwitch\.tv$/;
+    return pattern.test(url.hostname);
+  }
+
   static isValidVimeoEmbedURL(link: string): boolean {
     const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))$/;
     return !!link.match(regExp);
@@ -274,6 +338,18 @@ export class EmbedUrlParserService {
     return !!link.match(regExp);
   }
 
+  static isValidTwitchEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/(player|clips)\.twitch\.tv\/(\?channel=[A-Za-z0-9_]{1,30}|\?video=\d{8,12}|embed\?clip=[A-Za-z0-9_-]{1,80}|\?collection=[A-Za-z0-9]{10,20}(&video=\d{8,12})?))$/;
+    return !!link.match(regExp);
+  }
+
+  static isValidTwitchEmbedURLWithParent(link: string): boolean {
+    const regExp = new RegExp(
+      `https:\/\/(player|clips)\.twitch\.tv\/(\\?channel\=[A-Za-z0-9_]{1,30}|\\?video=\\d{8,12}|embed\\?clip=[A-Za-z0-9_-]{1,80}|\\?collection=[A-Za-z0-9]{10,20}(\&video=\\d{8,12})\?)\&autoplay=false\&parent=${location.hostname}$`
+    );
+    return !!link.match(regExp);
+  }
+
   static isValidEmbedURL(link: string): boolean {
     if (link) {
       return (
@@ -282,7 +358,9 @@ export class EmbedUrlParserService {
         this.isValidTiktokEmbedURL(link) ||
         this.isValidGiphyEmbedURL(link) ||
         this.isValidSpotifyEmbedURL(link) ||
-        this.isValidSoundCloudEmbedURL(link)
+        this.isValidSoundCloudEmbedURL(link) ||
+        this.isValidTwitchEmbedURL(link) ||
+        this.isValidTwitchEmbedURLWithParent(link)
       );
     }
     return false;
