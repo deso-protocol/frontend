@@ -152,6 +152,7 @@ export class AdminComponent implements OnInit {
   ngOnInit() {
     if (this.globalVars.showSuperAdminTools()) {
       this.adminTabs.push("Super");
+      this.adminTabs.push("Node Fees");
     }
 
     this.route.queryParams.subscribe((queryParams) => {

@@ -136,6 +136,13 @@ export class BackendRoutes {
   // Wyre routes.
   static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
   static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
+
+  // Admin Node Fee routes
+  static RoutePathAdminSetTransactionFeeForTransactionType = "/api/v0/admin/set-txn-fee-for-txn-type";
+  static RoutePathAdminSetAllTransactionFees = "/api/v0/admin/set-all-txn-fees";
+  static RoutePathAdminGetTransactionFeeMap = "/api/v0/admin/get-transaction-fee-map";
+  static RoutePathAdminAddExemptPublicKey = "/api/v0/admin/add-exempt-public-key";
+  static RoutePathAdminGetExemptPublicKeys = "/api/v0/admin/get-exempt-public-keys";
 }
 
 export class Transaction {
@@ -356,6 +363,12 @@ export class NFTBidData {
   PostEntryResponse: PostEntryResponse;
   NFTEntryResponses: NFTEntryResponse[];
   BidEntryResponses: NFTBidEntryResponse[];
+}
+
+export class TransactionFee {
+  PublicKeyBase58Check: string;
+  AmountNanos: number;
+  ProfileEntryResponse?: ProfileEntryResponse;
 }
 
 @Injectable({
@@ -2120,6 +2133,56 @@ export class BackendApiService {
       SourceAmount,
       Country,
       SourceCurrency,
+    });
+  }
+
+  // Admin Node Fee Endpoints
+  AdminSetTxnFeeForTxnType(
+    endpoint: string,
+    AdminPublicKey: string,
+    TransactionType: string,
+    NewTransactionFees: TransactionFee[]
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminSetTransactionFeeForTransactionType, AdminPublicKey, {
+      AdminPublicKey,
+      TransactionType,
+      NewTransactionFees,
+    });
+  }
+
+  AdminSetAllTransactionFees(
+    endpoint: string,
+    AdminPublicKey: string,
+    NewTransactionFees: TransactionFee[]
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminSetAllTransactionFees, AdminPublicKey, {
+      AdminPublicKey,
+      NewTransactionFees,
+    });
+  }
+
+  AdminGetTransactionFeeMap(endpoint: string, AdminPublicKey: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetTransactionFeeMap, AdminPublicKey, {
+      AdminPublicKey,
+    });
+  }
+
+  AdminAddExemptPublicKey(
+    endpoint: string,
+    AdminPublicKey: string,
+    PublicKeyBase58Check: string,
+    IsRemoval: boolean
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminAddExemptPublicKey, AdminPublicKey, {
+      AdminPublicKey,
+      PublicKeyBase58Check,
+      IsRemoval,
+    });
+  }
+
+  AdminGetExemptPublicKeys(endpoint: string, AdminPublicKey: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetExemptPublicKeys, AdminPublicKey, {
+      AdminPublicKey,
     });
   }
 

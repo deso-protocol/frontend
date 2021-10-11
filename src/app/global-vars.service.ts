@@ -3,6 +3,7 @@ import {
   BackendApiService,
   BalanceEntryResponse,
   PostEntryResponse,
+  TransactionFee,
   TutorialStatus,
   User,
 } from "./backend-api.service";
@@ -215,6 +216,8 @@ export class GlobalVarsService {
   jumioDeSoNanos = 0;
 
   referralUSDCents: number = 0;
+
+  transactionFeeMap: { [k: string]: TransactionFee[] };
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero

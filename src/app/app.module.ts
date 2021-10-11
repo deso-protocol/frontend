@@ -154,6 +154,8 @@ import { ReferralProgramMgrComponent } from "./referral-program-mgr/referral-pro
 import { ReferralsComponent } from "./referrals/referrals.component";
 import { BuyDeSoEthComponent } from "./buy-deso-page/buy-deso-eth/buy-deso-eth.component";
 import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
+import { AdminNodeFeesComponent } from "./admin/admin-node-fees/admin-node-fees.component";
+import { AdminNodeAddFeesComponent } from "./admin/admin-node-fees/admin-node-add-fee/admin-node-add-fees.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -296,6 +298,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     CreatePostTutorialPageComponent,
     BuyDeSoEthComponent,
     SanitizeVideoUrlPipe,
+    AdminNodeFeesComponent,
+    AdminNodeAddFeesComponent,
   ],
   imports: [
     BrowserModule,

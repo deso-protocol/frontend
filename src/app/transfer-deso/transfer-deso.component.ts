@@ -15,10 +15,8 @@ class Messages {
   static INSUFFICIENT_BALANCE = `You don't have enough DeSo to process the transaction. Try reducing the fee rate.`;
   static SEND_DESO_MIN = `You must send a non-zero amount of DeSo`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
-  static CONFIRM_TRANSFER_TO_PUBKEY =
-    "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s";
-  static CONFIRM_TRANSFER_TO_USERNAME =
-    "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s";
+  static CONFIRM_TRANSFER_TO_PUBKEY = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s";
+  static CONFIRM_TRANSFER_TO_USERNAME = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s";
   static MUST_PURCHASE_CREATOR_COIN = `You must purchase a creator coin before you can send $DESO`;
 }
 
@@ -137,7 +135,11 @@ export class TransferDeSoComponent implements OnInit {
         // If res is null then an error should be set.
         if (res == null || res.FeeNanos == null || res.SpendAmountNanos == null) {
           this.sendingDeSo = false;
-          this.globalVars._alertError(this.transferDeSoError, false, this.transferDeSoError === Messages.MUST_PURCHASE_CREATOR_COIN);
+          this.globalVars._alertError(
+            this.transferDeSoError,
+            false,
+            this.transferDeSoError === Messages.MUST_PURCHASE_CREATOR_COIN
+          );
           return;
         }
 
@@ -196,12 +198,7 @@ export class TransferDeSoComponent implements OnInit {
                   this.transferAmount = 0.0;
 
                   // This will update the user's balance.
-                  this.globalVars.updateEverything(
-                    res.TxnHashHex,
-                    this._sendDeSoSuccess,
-                    this._sendDeSoFailure,
-                    this
-                  );
+                  this.globalVars.updateEverything(res.TxnHashHex, this._sendDeSoSuccess, this._sendDeSoFailure, this);
                 },
                 (error) => {
                   this.sendingDeSo = false;

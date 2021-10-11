@@ -198,6 +198,7 @@ export class AppComponent implements OnInit {
         this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
+        this.globalVars.transactionFeeMap = res.TransactionFeeMap;
       });
   }
 
