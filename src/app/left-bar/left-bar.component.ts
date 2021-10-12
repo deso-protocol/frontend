@@ -55,7 +55,7 @@ export class LeftBarComponent {
       `The below information helps support address your case.\nMy public key: ${pubKey} \nMy BTC Address: ${btcAddress}`
     );
     const body = loggedInUser ? `?body=${bodyContent}` : "";
-    return `mailto:${this.globalVars.supportEmail}${body}`;
+    return `mailto:${environment.supportEmail}${body}`;
   }
 
   logHelp(): void {
