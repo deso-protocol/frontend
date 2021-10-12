@@ -51,10 +51,16 @@
   <!-- Referral links alert -->
   <div
     *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0"
-    class="d-flex border-bottom border-color-grey background-color-lemon-chiffon py-5px px-15px fs-12px"
+    class="d-flex border-bottom justify-content-center border-color-grey background-color-lemon-chiffon py-5px px-15px fs-12px"
   >
-    <div style="color: #333333">You have a referral link!&nbsp;&nbsp;&nbsp;</div>
-    <a [routerLink]="'/' + globalVars.RouteNames.REFERRALS" class="font-weight-bold">Find out more</a>
+    <div style="color: #333333; text-align: center">You have a
+      <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.ReferrerAmountUSDCents / 100, 0)}}</b> referral link on Diamond...<br><a href="https://diamondapp.com" class="font-weight-bold">Check it out!</a></div>
+  </div>
+  <div
+    *ngIf="!globalVars.loggedInUser?.ReferralInfoResponses?.length"
+    class="d-flex border-bottom justify-content-center border-color-grey background-color-lemon-chiffon py-5px px-15px fs-12px"
+  >
+    <div style="color: #333333; text-align: center">Diamond is a cool new DeSo app...<br><a href="https://diamondapp.com" class="font-weight-bold">Check it out!</a></div>
   </div>
 
   <div
