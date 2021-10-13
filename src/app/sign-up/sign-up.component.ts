@@ -99,26 +99,30 @@ export class SignUpComponent {
   }
 
   storeEmail() {
-    this.storingEmailAndPhone = true;
-    this.backendApi
-      .UpdateUserGlobalMetadata(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-        this.emailAddress /*EmailAddress*/,
-        null /*MessageReadStateUpdatesByContact*/
-      )
-      .subscribe(
-        (res) => {},
-        (err) => {
-          // TODO: shouldn't we ask the user to try again?
-          // TODO: rollbar
-          console.log(err);
-        }
-      )
-      .add(() => {
-        this.storingEmailAndPhone = false;
-        this.nextPage();
-      });
+    // this.storingEmailAndPhone = true;
+    // this.backendApi
+    //   .UpdateUserGlobalMetadata(
+    //     this.globalVars.localNode,
+    //     this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+    //     this.emailAddress /*EmailAddress*/,
+    //     null /*MessageReadStateUpdatesByContact*/
+    //   )
+    //   .subscribe(
+    //     (res) => {},
+    //     (err) => {
+    //       // TODO: shouldn't we ask the user to try again?
+    //       // TODO: rollbar
+    //       console.log(err);
+    //     }
+    //   )
+    //   .add(() => {
+    //     this.storingEmailAndPhone = false;
+    //     this.nextPage();
+    //   });
+
+    // FIXME: Skip storing the email for now until we figure out
+    // some edge cases around Sendgrid integration
+    this.nextPage();
   }
 
   buyDeSoClicked(): void {
