@@ -394,7 +394,9 @@ export class GlobalVarsService {
   }
 
   getLinkForReferralHash(referralHash: string) {
-    return `${window.location.origin}?r=${referralHash}`;
+    // FIXME: Generalize this once there are referral programs running
+    // on other nodes.
+    return `https://diamondapp.com?r=${referralHash}`;
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {
