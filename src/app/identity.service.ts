@@ -98,13 +98,13 @@ export class IdentityService {
     return this.send("burn", payload);
   }
 
-  burnETH(payload: {
+  signETH(payload: {
     accessLevel: number;
     accessLevelHmac: string;
     encryptedSeedHex: string;
     unsignedHashes: string[];
   }): Observable<any> {
-    return this.send("burn_eth", payload);
+    return this.send("sign_eth", payload);
   }
 
   sign(payload: {

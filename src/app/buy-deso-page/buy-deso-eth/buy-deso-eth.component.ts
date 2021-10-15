@@ -5,7 +5,7 @@ import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { IdentityService } from "../../identity.service";
 import { BuyDeSoComponent } from "../buy-deso/buy-deso.component";
-import { toHex, hexToNumber, fromWei } from "web3-utils";
+import { toHex, hexToNumber, fromWei, toWei } from "web3-utils";
 import { Hex } from "web3-utils/types";
 import Common, { Chain, Hardfork } from "@ethereumjs/common";
 import { FeeMarketEIP1559Transaction } from "@ethereumjs/tx";
@@ -174,7 +174,7 @@ export class BuyDeSoEthComponent implements OnInit {
               gasLimit: toHex(21000),
               maxPriorityFeePerGas: fees.maxPriorityFeePerGasHex,
               maxFeePerGas: fees.maxFeePerGas,
-              value: toHex(Math.floor(this.ethToExchange * 1e18)),
+              value: toHex(toWei(this.ethToExchange.toString(), "ether")),
               chainId: toHex(this.getChain()),
               accessList: [],
             };
@@ -184,7 +184,7 @@ export class BuyDeSoEthComponent implements OnInit {
             const toSign = [tx.getMessageToSign(true).toString("hex")];
             // Have identity generate a signature for this transaction.
             this.identityService
-              .burnETH({
+              .signETH({
                 ...this.identityService.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
                 unsignedHashes: toSign,
               })
@@ -210,7 +210,7 @@ export class BuyDeSoEthComponent implements OnInit {
                   )
                   .subscribe(
                     (res) => {
-                      this.globalVars.logEvent("bitpop : buy-eth");
+                      this.globalVars.logEvent("deso : buy : eth");
                       // Reset all the form fields
                       this.error = "";
                       this.desoToBuy = 0;
