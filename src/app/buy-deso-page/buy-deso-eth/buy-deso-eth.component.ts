@@ -225,7 +225,7 @@ export class BuyDeSoEthComponent implements OnInit {
                       );
                     },
                     (err) => {
-                      this.globalVars.logEvent("bitpop : buy-eth : error");
+                      this.globalVars.logEvent("deso : buy : eth : error");
                       this.parentComponent._clickBuyDeSoFailure(this.parentComponent, this.extractError(err));
                     }
                   );
