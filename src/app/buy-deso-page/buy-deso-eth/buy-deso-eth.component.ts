@@ -5,7 +5,7 @@ import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { IdentityService } from "../../identity.service";
 import { BuyDeSoComponent } from "../buy-deso/buy-deso.component";
-import Web3 from "web3";
+import { toHex, hexToNumber, fromWei } from "web3-utils";
 import { Hex } from "web3-utils/types";
 import Common, { Chain, Hardfork } from "@ethereumjs/common";
 import { FeeMarketEIP1559Transaction } from "@ethereumjs/tx";
@@ -167,15 +167,15 @@ export class BuyDeSoEthComponent implements OnInit {
       if (res.isConfirmed) {
         return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
           ([transactionCount, fees]) => {
-            const nonce = this.toHex(transactionCount);
+            const nonce = toHex(transactionCount);
             let txData: FeeMarketEIP1559TxData = {
               nonce: nonce,
               to: this.globalVars.buyETHAddress,
-              gasLimit: this.toHex(21000),
+              gasLimit: toHex(21000),
               maxPriorityFeePerGas: fees.maxPriorityFeePerGasHex,
               maxFeePerGas: fees.maxFeePerGas,
-              value: this.toHex(Math.floor(this.ethToExchange * 1e18)),
-              chainId: this.toHex(this.getChain()),
+              value: toHex(Math.floor(this.ethToExchange * 1e18)),
+              chainId: toHex(this.getChain()),
               accessList: [],
             };
             const options = { common: this.common };
@@ -304,7 +304,7 @@ export class BuyDeSoEthComponent implements OnInit {
       this.loadingBalance = true;
       this.getBalance(this.ethDepositAddress(), "latest")
         .then((res) => {
-          this.ethBalance = parseFloat(Web3.utils.fromWei(res.toString(), "ether"));
+          this.ethBalance = parseFloat(fromWei(res.toString(), "ether"));
         })
         .finally(() => {
           this.loadingBalance = false;
@@ -344,7 +344,7 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   getTransactionCount(address: string, block: string = "pending"): Promise<number> {
-    return this.queryETHRPC("eth_getTransactionCount", [address, block]).then((result) => this.hexToNumber(result));
+    return this.queryETHRPC("eth_getTransactionCount", [address, block]).then((result) => hexToNumber(result));
   }
 
   // Gets balance for address.
@@ -364,8 +364,8 @@ export class BuyDeSoEthComponent implements OnInit {
     totalFees: number;
   }> {
     return Promise.all([this.getPendingBlock(), this.getGasPrice()]).then(([block, gasPrice]) => {
-      const baseFeePerGas = this.hexToNumber((block as any).baseFeePerGas);
-      const gasPriceHex = this.toHex(gasPrice);
+      const baseFeePerGas = hexToNumber((block as any).baseFeePerGas);
+      const gasPriceHex = toHex(gasPrice);
 
       // Gas math courtesy of https://medium.com/alchemy-api/the-developer-eip-1559-prep-kit-72dbe5c44545
       const maxPriorityFeePerGas = gasPrice - baseFeePerGas;
@@ -376,9 +376,9 @@ export class BuyDeSoEthComponent implements OnInit {
         gasPriceHex,
         gasPrice,
         maxPriorityFeePerGas,
-        maxPriorityFeePerGasHex: this.toHex(maxPriorityFeePerGas),
+        maxPriorityFeePerGasHex: toHex(maxPriorityFeePerGas),
         maxFeePerGas,
-        maxFeePerGasHex: this.toHex(maxFeePerGas),
+        maxFeePerGasHex: toHex(maxFeePerGas),
         totalFees,
       };
     });
@@ -398,15 +398,7 @@ export class BuyDeSoEthComponent implements OnInit {
     this.globalVars._updateDeSoExchangeRate();
   }
 
-  toHex(input: string | number | BN): string {
-    return Web3.utils.toHex(input);
-  }
-
-  hexToNumber(input: Hex): number {
-    return Web3.utils.hexToNumber(input);
-  }
-
   fromWeiToEther(wei: number): number {
-    return parseFloat(Web3.utils.fromWei(this.toHex(wei)));
+    return parseFloat(fromWei(toHex(wei)));
   }
 }
