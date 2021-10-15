@@ -195,7 +195,7 @@ export class AppComponent implements OnInit {
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
         this.globalVars.supportEmail = res.SupportEmail;
-        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDESOSeed;
+        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
         this.globalVars.transactionFeeMap = res.TransactionFeeMap;
