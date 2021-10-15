@@ -104,7 +104,7 @@ export class IdentityService {
     encryptedSeedHex: string;
     unsignedHashes: string[];
   }): Observable<any> {
-    return this.send("sign_eth", payload);
+    return this.send("signETH", payload);
   }
 
   sign(payload: {
