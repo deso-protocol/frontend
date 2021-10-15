@@ -88,6 +88,7 @@ export class IdentityService {
   }
 
   // Outgoing messages
+
   burn(payload: {
     accessLevel: number;
     accessLevelHmac: string;

@@ -461,14 +461,6 @@ export class GlobalVarsService {
     return this.nanosToDeSoMemo[nanos][maximumFractionDigits];
   }
 
-  weiToETH(wei: number): number {
-    return wei / GlobalVarsService.WEI_PER_ETH;
-  }
-
-  weiHexToETH(weiHex: string): number {
-    return this.weiToETH(parseInt(weiHex));
-  }
-
   formatUSD(num: number, decimal: number): string {
     if (this.formatUSDMemo[num] && this.formatUSDMemo[num][decimal]) {
       return this.formatUSDMemo[num][decimal];
