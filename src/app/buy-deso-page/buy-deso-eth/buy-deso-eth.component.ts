@@ -2,7 +2,6 @@ import { Component, OnInit, Input } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { sprintf } from "sprintf-js";
-import { HttpClient } from "@angular/common/http";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { IdentityService } from "../../identity.service";
 import { BuyDeSoComponent } from "../buy-deso/buy-deso.component";
@@ -60,8 +59,7 @@ export class BuyDeSoEthComponent implements OnInit {
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
-    private identityService: IdentityService,
-    private httpClient: HttpClient
+    private identityService: IdentityService
   ) {}
 
   ethDepositAddress(): string {
