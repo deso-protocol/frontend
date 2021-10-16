@@ -11,8 +11,8 @@ export const environment = {
     endpoint: "https://bitclout.com/js/",
   },
   node: {
-    name: 'DeSo',
-    url: 'https://deso.org',
+    name: 'MediaTech',
+    url: 'https://deso.mediatech.ventures',
     logoAssetDir: '/assets/deso/'
   }
 };
