@@ -33,6 +33,22 @@
         </div>
       </div>
     </div>
+    <div class="d-flex justify-content-between pt-10px">
+      <div>Node fee per tx:</div>
+      <div *ngIf="this.globalVars.transactionFeeMax==0">None!</div>
+      <div *ngIf="this.globalVars.transactionFeeMax>0">
+        {{ globalVars.nanosToUSD(this.globalVars.transactionFeeMax, 4) }} Max
+        <span
+              (click)="tooltip.toggle()"
+              class="ml-1 mb-1 cursor-pointer text-primary"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="this.globalVars.transactionFeeInfo"
+              #tooltip="matTooltip"
+            >
+            <i class="fas fa-info-circle fa-md align-middle"></i>
+          </span>
+      </div>
+    </div>
     <div class="mt-3">
       <jumio-status></jumio-status>
     </div>

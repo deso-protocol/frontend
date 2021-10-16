@@ -218,6 +218,8 @@ export class GlobalVarsService {
   referralUSDCents: number = 0;
 
   transactionFeeMap: { [k: string]: TransactionFee[] };
+  transactionFeeMax: number = 0;
+  transactionFeeInfo: string;
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
