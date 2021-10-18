@@ -181,7 +181,7 @@ export class BuyDeSoEthComponent implements OnInit {
           maxPriorityFeePerGas: fees.maxPriorityFeePerGasHex,
           maxFeePerGas: fees.maxFeePerGas,
           // need to truncate to 18 decimal places.
-          value: toHex(Math.floor(this.ethToExchange * 1e18)),
+          value: toHex(Math.floor((this.ethToExchange - this.ethFeeEstimate) * 1e18)),
           chainId: toHex(this.getChain()),
           accessList: [],
         };
