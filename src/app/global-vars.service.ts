@@ -810,7 +810,7 @@ export class GlobalVarsService {
   // Use the data object to store extra event metadata. Don't use
   // the metadata to differentiate two events with the same name.
   // Instead, just create two (or more) events with better names.
-  logEvent(event: string, data?: any) {
+  logEvent(event: string, data: any = {}) {
     if (!this.amplitude) {
       return;
     }
@@ -820,7 +820,7 @@ export class GlobalVarsService {
     }
 
     // Attach node name
-    data.node = environment.node.name
+    data.node = environment.node.name;
 
     // Attach referralCode
     const referralCode = this.referralCode();
