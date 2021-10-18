@@ -356,8 +356,8 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   // Gets the data about the pending block.
-  getPendingBlock(): Promise<any> {
-    return this.queryETHRPC("eth_getBlockByNumber", ["pending", false]);
+  getLatestBlock(): Promise<any> {
+    return this.queryETHRPC("eth_getBlockByNumber", ["latest", false]);
   }
 
   getTransactionCount(address: string, block: string = "pending"): Promise<number> {
@@ -380,9 +380,9 @@ export class BuyDeSoEthComponent implements OnInit {
     maxFeePerGasHex: Hex;
     totalFees: number;
   }> {
-    return Promise.all([this.getPendingBlock(), this.getGasPrice()]).then(([block, gasPrice]) => {
+    return Promise.all([this.getLatestBlock(), this.getGasPrice()]).then(([block, gasPriceHex]) => {
       const baseFeePerGas = hexToNumber((block as any).baseFeePerGas);
-      const gasPriceHex = toHex(gasPrice);
+      const gasPrice = hexToNumber(gasPriceHex);
 
       // Gas math courtesy of https://medium.com/alchemy-api/the-developer-eip-1559-prep-kit-72dbe5c44545
       const maxPriorityFeePerGas = gasPrice - baseFeePerGas;
