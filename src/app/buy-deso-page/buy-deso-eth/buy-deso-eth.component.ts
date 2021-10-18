@@ -270,8 +270,11 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   clickMaxDESO() {
-    this.ethToExchange = this.ethBalance;
-    this.updateETHToExchange(this.ethToExchange);
+    this.getFees().then((res) => {
+      this.ethFeeEstimate = this.fromWeiToEther(res.totalFees);
+      this.ethToExchange = this.ethBalance - this.ethFeeEstimate;
+      this.updateETHToExchange(this.ethToExchange);
+    });
   }
 
   computeETHToBurnGivenDESONanos(amountNanos: number) {
