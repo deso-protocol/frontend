@@ -54,7 +54,7 @@ export class BuyDeSoEthComponent implements OnInit {
 
   common: Common;
 
-  static instructionsPerBasicTransfer = 22000;
+  static instructionsPerBasicTransfer = 21000;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -177,7 +177,7 @@ export class BuyDeSoEthComponent implements OnInit {
         let txData: FeeMarketEIP1559TxData = {
           nonce: nonce,
           to: this.globalVars.buyETHAddress,
-          gasLimit: toHex(21000),
+          gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
           maxPriorityFeePerGas: fees.maxPriorityFeePerGasHex,
           maxFeePerGas: fees.maxFeePerGas,
           // need to truncate to 18 decimal places.
@@ -387,7 +387,7 @@ export class BuyDeSoEthComponent implements OnInit {
       // Gas math courtesy of https://medium.com/alchemy-api/the-developer-eip-1559-prep-kit-72dbe5c44545
       const maxPriorityFeePerGas = gasPrice - baseFeePerGas;
       const maxFeePerGas = baseFeePerGas * 2 + maxPriorityFeePerGas;
-      const totalFees = (maxPriorityFeePerGas + baseFeePerGas) * BuyDeSoEthComponent.instructionsPerBasicTransfer;
+      const totalFees = maxFeePerGas * BuyDeSoEthComponent.instructionsPerBasicTransfer;
       return {
         baseFeePerGas,
         gasPriceHex,
