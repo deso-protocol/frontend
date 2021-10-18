@@ -5,12 +5,11 @@ import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { IdentityService } from "../../identity.service";
 import { BuyDeSoComponent } from "../buy-deso/buy-deso.component";
-import { toHex, hexToNumber, fromWei, toWei } from "web3-utils";
+import { toHex, hexToNumber, fromWei } from "web3-utils";
 import { Hex } from "web3-utils/types";
 import Common, { Chain, Hardfork } from "@ethereumjs/common";
 import { FeeMarketEIP1559Transaction } from "@ethereumjs/tx";
 import { FeeMarketEIP1559TxData } from "@ethereumjs/tx/src/types";
-import { BN } from "ethereumjs-util";
 
 const feeMarketTransaction = FeeMarketEIP1559Transaction;
 
@@ -166,12 +165,12 @@ export class BuyDeSoEthComponent implements OnInit {
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
-        return this.signAndSubmitETH(1);
+        return this.signAndSubmitETH(true);
       }
     });
   }
 
-  signAndSubmitETH(retryAttemptsRemaining: number = 0): Promise<any> {
+  signAndSubmitETH(retry: boolean = false): Promise<any> {
     return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
       ([transactionCount, fees]) => {
         const nonce = toHex(transactionCount);
@@ -181,7 +180,8 @@ export class BuyDeSoEthComponent implements OnInit {
           gasLimit: toHex(21000),
           maxPriorityFeePerGas: fees.maxPriorityFeePerGasHex,
           maxFeePerGas: fees.maxFeePerGas,
-          value: toHex(toWei(this.ethToExchange.toString(), "ether")),
+          // need to truncate to 18 decimal places.
+          value: toHex(Math.floor(this.ethToExchange * 1e18)),
           chainId: toHex(this.getChain()),
           accessList: [],
         };
@@ -233,13 +233,13 @@ export class BuyDeSoEthComponent implements OnInit {
                 },
                 (err) => {
                   this.globalVars.logEvent("deso : buy : eth : error");
-                  if (err.error?.error.includes("RPC Error") && retryAttemptsRemaining > 0) {
+                  if (err.error?.error.includes("RPC Error") && retry) {
                     console.error(err);
                     this.globalVars.logEvent("deso : buy : eth : retry");
                     // Sometimes fees will change between the time they were fetched and the transaction was broadcasted.
                     // To combat this, we will retry by fetching fees again and constructing/signing/broadcasting the
                     // transaction again.
-                    return this.signAndSubmitETH(retryAttemptsRemaining--);
+                    return this.signAndSubmitETH(false);
                   } else {
                     this.parentComponent._clickBuyDeSoFailure(this.parentComponent, this.extractError(err));
                   }
