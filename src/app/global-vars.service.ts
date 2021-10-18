@@ -219,6 +219,8 @@ export class GlobalVarsService {
 
   transactionFeeMap: { [k: string]: TransactionFee[] };
 
+  buyETHAddress: string = "";
+
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
     if (!this.loggedInUser) {

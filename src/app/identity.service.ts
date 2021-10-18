@@ -88,7 +88,7 @@ export class IdentityService {
   }
 
   // Outgoing messages
-  
+
   burn(payload: {
     accessLevel: number;
     accessLevelHmac: string;
@@ -96,6 +96,15 @@ export class IdentityService {
     unsignedHashes: string[];
   }): Observable<any> {
     return this.send("burn", payload);
+  }
+
+  signETH(payload: {
+    accessLevel: number;
+    accessLevelHmac: string;
+    encryptedSeedHex: string;
+    unsignedHashes: string[];
+  }): Observable<any> {
+    return this.send("signETH", payload);
   }
 
   sign(payload: {

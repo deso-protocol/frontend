@@ -1,13 +1,18 @@
-import { ApplicationRef, ChangeDetectorRef, Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, BackendRoutes } from "../../backend-api.service";
+import { BackendApiService } from "../../backend-api.service";
 import { sprintf } from "sprintf-js";
-import { Router, ActivatedRoute, Params } from "@angular/router";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import Swal from "sweetalert2";
 import { IdentityService } from "../../identity.service";
 import { BuyDeSoComponent } from "../buy-deso/buy-deso.component";
+import { toHex, hexToNumber, fromWei, toWei } from "web3-utils";
+import { Hex } from "web3-utils/types";
+import Common, { Chain, Hardfork } from "@ethereumjs/common";
+import { FeeMarketEIP1559Transaction } from "@ethereumjs/tx";
+import { FeeMarketEIP1559TxData } from "@ethereumjs/tx/src/types";
+import { BN } from "ethereumjs-util";
+
+const feeMarketTransaction = FeeMarketEIP1559Transaction;
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -33,6 +38,7 @@ export class BuyDeSoEthComponent implements OnInit {
   // Current balance in ETH
   ethBalance = 0;
   loadingBalance = false;
+  loadingFee = false;
 
   // Network fees in ETH (with sane default)
   ethFeeEstimate = 0.002;
@@ -45,6 +51,10 @@ export class BuyDeSoEthComponent implements OnInit {
 
   // User errors
   error = "";
+
+  common: Common;
+
+  static instructionsPerBasicTransfer = 22000;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -155,35 +165,73 @@ export class BuyDeSoEthComponent implements OnInit {
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
-        // Execute the buy
-        this.parentComponent.waitingOnTxnConfirmation = true;
-        this.backendApi
-          .ExchangeETH(
-            this.globalVars.localNode,
-            this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.ethDepositAddress(),
-            Math.floor(this.ethToExchange * GlobalVarsService.WEI_PER_ETH)
-          )
-          .subscribe(
-            (res) => {
-              // Reset all the form fields
-              this.error = "";
-              this.desoToBuy = 0;
-              this.ethToExchange = 0;
+        return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
+          ([transactionCount, fees]) => {
+            const nonce = toHex(transactionCount);
+            let txData: FeeMarketEIP1559TxData = {
+              nonce: nonce,
+              to: this.globalVars.buyETHAddress,
+              gasLimit: toHex(21000),
+              maxPriorityFeePerGas: fees.maxPriorityFeePerGasHex,
+              maxFeePerGas: fees.maxFeePerGas,
+              value: toHex(toWei(this.ethToExchange.toString(), "ether")),
+              chainId: toHex(this.getChain()),
+              accessList: [],
+            };
+            const options = { common: this.common };
+            // Generate an Unsigned EIP 1559 Fee Market Transaction from the data and generated a hash message to sign.
+            let tx = feeMarketTransaction.fromTxData(txData, options);
+            const toSign = [tx.getMessageToSign(true).toString("hex")];
+            // Have identity generate a signature for this transaction.
+            this.identityService
+              .signETH({
+                ...this.identityService.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
+                unsignedHashes: toSign,
+              })
+              .subscribe((res) => {
+                // Get the signature and merge it into the TxData defined above.
+                const signature: { s: any; r: any; v: number | null } = res.signatures[0];
+                const signedTxData: FeeMarketEIP1559TxData = {
+                  ...txData,
+                  ...signature,
+                };
+                // Construct and serialize the transaction.
+                const signedTx = FeeMarketEIP1559Transaction.fromTxData(signedTxData, options);
+                const signedHash = signedTx.serialize().toString("hex");
+                // Submit the transaction.
+                this.parentComponent.waitingOnTxnConfirmation = true;
+                this.backendApi
+                  .SubmitETHTx(
+                    this.globalVars.localNode,
+                    this.globalVars.loggedInUser.PublicKeyBase58Check,
+                    signedTx,
+                    toSign,
+                    [signedHash]
+                  )
+                  .subscribe(
+                    (res) => {
+                      this.globalVars.logEvent("deso : buy : eth");
+                      // Reset all the form fields
+                      this.error = "";
+                      this.desoToBuy = 0;
+                      this.ethToExchange = 0;
 
-              // This will update the balance and a bunch of other things.
-              this.globalVars.updateEverything(
-                res.DESOTxHash,
-                this.parentComponent._clickBuyDeSoSuccess,
-                this.parentComponent._clickBuyDeSoSuccessButTimeout,
-                this.parentComponent
-              );
-            },
-            (err) => {
-              this.globalVars.logEvent("bitpop : buy : error");
-              this.parentComponent._clickBuyDeSoFailure(this.parentComponent, this.extractError(err));
-            }
-          );
+                      // This will update the balance and a bunch of other things.
+                      this.globalVars.updateEverything(
+                        res.DESOTxHash,
+                        this.parentComponent._clickBuyDeSoSuccess,
+                        this.parentComponent._clickBuyDeSoSuccessButTimeout,
+                        this.parentComponent
+                      );
+                    },
+                    (err) => {
+                      this.globalVars.logEvent("deso : buy : eth : error");
+                      this.parentComponent._clickBuyDeSoFailure(this.parentComponent, this.extractError(err));
+                    }
+                  );
+              });
+          }
+        );
       }
     });
   }
@@ -242,10 +290,8 @@ export class BuyDeSoEthComponent implements OnInit {
     } else {
       // Convert the string value to a number
       this.ethToExchange = Number(this.ethToExchange);
-
       // Update the other value
-      this.desoToBuy =
-        this.computeNanosToCreateGivenETHToBurn(this.ethToExchange) / GlobalVarsService.NANOS_PER_UNIT;
+      this.desoToBuy = this.computeNanosToCreateGivenETHToBurn(this.ethToExchange) / GlobalVarsService.NANOS_PER_UNIT;
     }
   }
 
@@ -254,32 +300,105 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   refreshBalance() {
-    if (this.loadingBalance) {
-      return;
+    if (!this.loadingBalance) {
+      this.loadingBalance = true;
+      this.getBalance(this.ethDepositAddress(), "latest")
+        .then((res) => {
+          this.ethBalance = parseFloat(fromWei(res.toString(), "ether"));
+        })
+        .finally(() => {
+          this.loadingBalance = false;
+        });
     }
-
-    this.loadingBalance = true;
-
-    this.backendApi.GetETHBalance(this.globalVars.localNode, this.ethDepositAddress()).subscribe(
-      (res: any) => {
-        this.loadingBalance = false;
-        this.ethBalance = res.Balance / GlobalVarsService.WEI_PER_ETH;
-        this.ethFeeEstimate = res.Fees / GlobalVarsService.WEI_PER_ETH;
+    if (!this.loadingFee) {
+      this.loadingFee = true;
+      this.getFees().then((res) => {
+        this.ethFeeEstimate = this.fromWeiToEther(res.totalFees);
         this.ethToExchange = this.ethFeeEstimate;
-      },
-      (error) => {
-        this.loadingBalance = false;
-        console.error("Error getting ETH Balance data: ", error);
-      }
-    );
+      });
+    }
+  }
+
+  queryETHRPC(method: string, params: any[]): Promise<any> {
+    return this.backendApi
+      .QueryETHRPC(this.globalVars.localNode, method, params, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .toPromise()
+      .then(
+        (res) => {
+          return res.result;
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+  }
+
+  // Get current gas price.
+  getGasPrice(): Promise<number> {
+    return this.queryETHRPC("eth_gasPrice", []);
+  }
+
+  // Gets the data about the pending block.
+  getPendingBlock(): Promise<any> {
+    return this.queryETHRPC("eth_getBlockByNumber", ["pending", false]);
+  }
+
+  getTransactionCount(address: string, block: string = "pending"): Promise<number> {
+    return this.queryETHRPC("eth_getTransactionCount", [address, block]).then((result) => hexToNumber(result));
+  }
+
+  // Gets balance for address.
+  getBalance(address: string, block: string = "latest"): Promise<Hex> {
+    return this.queryETHRPC("eth_getBalance", [address, block]);
+  }
+
+  // getFees returns all the numbers and hex-strings necessary for computing eth gas.
+  getFees(): Promise<{
+    baseFeePerGas: number;
+    gasPriceHex: Hex;
+    gasPrice: number;
+    maxPriorityFeePerGas: number;
+    maxPriorityFeePerGasHex: Hex;
+    maxFeePerGas: number;
+    maxFeePerGasHex: Hex;
+    totalFees: number;
+  }> {
+    return Promise.all([this.getPendingBlock(), this.getGasPrice()]).then(([block, gasPrice]) => {
+      const baseFeePerGas = hexToNumber((block as any).baseFeePerGas);
+      const gasPriceHex = toHex(gasPrice);
+
+      // Gas math courtesy of https://medium.com/alchemy-api/the-developer-eip-1559-prep-kit-72dbe5c44545
+      const maxPriorityFeePerGas = gasPrice - baseFeePerGas;
+      const maxFeePerGas = baseFeePerGas * 2 + maxPriorityFeePerGas;
+      const totalFees = (maxPriorityFeePerGas + baseFeePerGas) * BuyDeSoEthComponent.instructionsPerBasicTransfer;
+      return {
+        baseFeePerGas,
+        gasPriceHex,
+        gasPrice,
+        maxPriorityFeePerGas,
+        maxPriorityFeePerGasHex: toHex(maxPriorityFeePerGas),
+        maxFeePerGas,
+        maxFeePerGasHex: toHex(maxFeePerGas),
+        totalFees,
+      };
+    });
+  }
+
+  getChain(): Chain {
+    return this.globalVars.isTestnet ? Chain.Ropsten : Chain.Mainnet;
   }
 
   ngOnInit() {
     window.scroll(0, 0);
 
-    this.refreshBalance();
+    this.common = new Common({ chain: this.getChain(), hardfork: Hardfork.London });
 
+    this.refreshBalance();
     // Force an update of the exchange rate when loading the Buy DESO page to ensure our computations are using the latest rates.
     this.globalVars._updateDeSoExchangeRate();
+  }
+
+  fromWeiToEther(wei: number): number {
+    return parseFloat(fromWei(toHex(wei)));
   }
 }

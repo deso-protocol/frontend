@@ -82,9 +82,8 @@ export class BackendRoutes {
   static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
 
   // ETH
-  static RoutePathCreateETHTx = "/api/v0/create-eth-tx";
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
-  static RoutePathGetETHBalance = "/api/v0/get-eth-balance";
+  static RoutePathQueryETHRPC = "/api/v0/query-eth-rpc";
 
   // Admin routes.
   static NodeControlRoute = "/api/v0/admin/node-control";
@@ -1619,38 +1618,6 @@ export class BackendApiService {
     });
   }
 
-  ExchangeETH(endpoint: string, PublicKeyBase58Check: string, Address: string, Amount: number): Observable<any> {
-    let req = this.CreateETHTx(endpoint, Address, Amount);
-
-    req = req.pipe(
-      switchMap((res) =>
-        this.identityService
-          .burn({
-            ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
-            unsignedHashes: res.ToSign,
-          })
-          .pipe(map((signed) => ({ ...res, ...signed })))
-      )
-    );
-
-    req = req.pipe(
-      switchMap((res) =>
-        this.SubmitETHTx(endpoint, PublicKeyBase58Check, res.Tx, res.ToSign, res.signedHashes).pipe(
-          map((submitted) => ({ ...res, ...submitted }))
-        )
-      )
-    );
-
-    return req;
-  }
-
-  CreateETHTx(endpoint: string, Address: string, Amount: number): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathCreateETHTx, {
-      Address,
-      Amount,
-    });
-  }
-
   SubmitETHTx(
     endpoint: string,
     PublicKeyBase58Check: string,
@@ -1666,9 +1633,11 @@ export class BackendApiService {
     });
   }
 
-  GetETHBalance(endpoint: string, Address: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetETHBalance, {
-      Address,
+  QueryETHRPC(endpoint: string, Method: string, Params: string[], PublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathQueryETHRPC, PublicKeyBase58Check, {
+      Method,
+      Params,
+      PublicKeyBase58Check,
     });
   }
 
