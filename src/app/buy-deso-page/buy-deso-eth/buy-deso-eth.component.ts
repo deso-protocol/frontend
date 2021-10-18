@@ -233,7 +233,7 @@ export class BuyDeSoEthComponent implements OnInit {
                 },
                 (err) => {
                   this.globalVars.logEvent("deso : buy : eth : error");
-                  if (err.error?.error.includes("RPC Error") && retry) {
+                  if (err.error?.error && err.error?.error.includes("RPC Error") && retry) {
                     console.error(err);
                     this.globalVars.logEvent("deso : buy : eth : retry");
                     // Sometimes fees will change between the time they were fetched and the transaction was broadcasted.
