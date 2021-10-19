@@ -10,7 +10,6 @@ import { Hex } from "web3-utils/types";
 import Common, { Chain, Hardfork } from "@ethereumjs/common";
 import { FeeMarketEIP1559Transaction } from "@ethereumjs/tx";
 import { FeeMarketEIP1559TxData } from "@ethereumjs/tx/src/types";
-
 const feeMarketTransaction = FeeMarketEIP1559Transaction;
 
 class Messages {
@@ -171,9 +170,62 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   signAndSubmitETH(retry: boolean = false): Promise<any> {
+    return this.constructFeeMarketTransaction().then((res: { signedTx: any; toSign: any }) => {
+      const signedHash = res.signedTx.serialize().toString("hex");
+      // Submit the transaction.
+      this.parentComponent.waitingOnTxnConfirmation = true;
+      this.backendApi
+        .SubmitETHTx(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          res.signedTx,
+          res.toSign,
+          [signedHash]
+        )
+        .subscribe(
+          (res) => {
+            this.globalVars.logEvent("deso : buy : eth");
+            // Reset all the form fields
+            this.error = "";
+            this.desoToBuy = 0;
+            this.ethToExchange = 0;
+
+            // This will update the balance and a bunch of other things.
+            this.globalVars.updateEverything(
+              res.DESOTxHash,
+              this.parentComponent._clickBuyDeSoSuccess,
+              this.parentComponent._clickBuyDeSoSuccessButTimeout,
+              this.parentComponent
+            );
+          },
+          (err) => {
+            this.globalVars.logEvent("deso : buy : eth : error");
+            if (err.error?.error && err.error?.error.includes("RPC Error") && retry) {
+              console.error(err);
+              this.globalVars.logEvent("deso : buy : eth : retry");
+              // Sometimes fees will change between the time they were fetched and the transaction was broadcasted.
+              // To combat this, we will retry by fetching fees again and constructing/signing/broadcasting the
+              // transaction again.
+              return this.signAndSubmitETH(false);
+            } else {
+              this.parentComponent._clickBuyDeSoFailure(this.parentComponent, this.extractError(err));
+            }
+          }
+        );
+    });
+  }
+
+  constructFeeMarketTransaction(): Promise<{ signedTx: FeeMarketEIP1559TxData; toSign: string[] }> {
     return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
       ([transactionCount, fees]) => {
         const nonce = toHex(transactionCount);
+        // Make sure that value + actual fees does not exceed the current balance. If it does, subtract the remainder from value.
+        let value = Math.floor((this.ethToExchange - this.ethFeeEstimate) * 1e18);
+        let remainder =
+          this.ethBalance * 1e18 - (fees.maxFeePerGas * BuyDeSoEthComponent.instructionsPerBasicTransfer + value);
+        if (remainder > 0) {
+          value = value - remainder;
+        }
         let txData: FeeMarketEIP1559TxData = {
           nonce: nonce,
           to: this.globalVars.buyETHAddress,
@@ -181,7 +233,7 @@ export class BuyDeSoEthComponent implements OnInit {
           maxPriorityFeePerGas: fees.maxPriorityFeePerGasHex,
           maxFeePerGas: fees.maxFeePerGas,
           // need to truncate to 18 decimal places.
-          value: toHex(Math.floor((this.ethToExchange - this.ethFeeEstimate) * 1e18)),
+          value: toHex(value),
           chainId: toHex(this.getChain()),
           accessList: [],
         };
@@ -190,12 +242,13 @@ export class BuyDeSoEthComponent implements OnInit {
         let tx = feeMarketTransaction.fromTxData(txData, options);
         const toSign = [tx.getMessageToSign(true).toString("hex")];
         // Have identity generate a signature for this transaction.
-        this.identityService
+        return this.identityService
           .signETH({
             ...this.identityService.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
             unsignedHashes: toSign,
           })
-          .subscribe((res) => {
+          .toPromise()
+          .then((res) => {
             // Get the signature and merge it into the TxData defined above.
             const signature: { s: any; r: any; v: number | null } = res.signatures[0];
             const signedTxData: FeeMarketEIP1559TxData = {
@@ -203,48 +256,10 @@ export class BuyDeSoEthComponent implements OnInit {
               ...signature,
             };
             // Construct and serialize the transaction.
-            const signedTx = FeeMarketEIP1559Transaction.fromTxData(signedTxData, options);
-            const signedHash = signedTx.serialize().toString("hex");
-            // Submit the transaction.
-            this.parentComponent.waitingOnTxnConfirmation = true;
-            this.backendApi
-              .SubmitETHTx(
-                this.globalVars.localNode,
-                this.globalVars.loggedInUser.PublicKeyBase58Check,
-                signedTx,
-                toSign,
-                [signedHash]
-              )
-              .subscribe(
-                (res) => {
-                  this.globalVars.logEvent("deso : buy : eth");
-                  // Reset all the form fields
-                  this.error = "";
-                  this.desoToBuy = 0;
-                  this.ethToExchange = 0;
-
-                  // This will update the balance and a bunch of other things.
-                  this.globalVars.updateEverything(
-                    res.DESOTxHash,
-                    this.parentComponent._clickBuyDeSoSuccess,
-                    this.parentComponent._clickBuyDeSoSuccessButTimeout,
-                    this.parentComponent
-                  );
-                },
-                (err) => {
-                  this.globalVars.logEvent("deso : buy : eth : error");
-                  if (err.error?.error && err.error?.error.includes("RPC Error") && retry) {
-                    console.error(err);
-                    this.globalVars.logEvent("deso : buy : eth : retry");
-                    // Sometimes fees will change between the time they were fetched and the transaction was broadcasted.
-                    // To combat this, we will retry by fetching fees again and constructing/signing/broadcasting the
-                    // transaction again.
-                    return this.signAndSubmitETH(false);
-                  } else {
-                    this.parentComponent._clickBuyDeSoFailure(this.parentComponent, this.extractError(err));
-                  }
-                }
-              );
+            return {
+              signedTx: FeeMarketEIP1559Transaction.fromTxData(signedTxData, options),
+              toSign,
+            };
           });
       }
     );
@@ -307,8 +322,11 @@ export class BuyDeSoEthComponent implements OnInit {
     } else {
       // Convert the string value to a number
       this.ethToExchange = Number(this.ethToExchange);
+
       // Update the other value
-      this.desoToBuy = this.computeNanosToCreateGivenETHToBurn(this.ethToExchange - this.ethFeeEstimate) / GlobalVarsService.NANOS_PER_UNIT;
+      this.desoToBuy =
+        this.computeNanosToCreateGivenETHToBurn(this.ethToExchange - this.ethFeeEstimate) /
+        GlobalVarsService.NANOS_PER_UNIT;
     }
   }
 
@@ -356,8 +374,8 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   // Gets the data about the pending block.
-  getLatestBlock(): Promise<any> {
-    return this.queryETHRPC("eth_getBlockByNumber", ["latest", false]);
+  getBlock(block: string): Promise<any> {
+    return this.queryETHRPC("eth_getBlockByNumber", [block, false]);
   }
 
   getTransactionCount(address: string, block: string = "pending"): Promise<number> {
@@ -369,36 +387,36 @@ export class BuyDeSoEthComponent implements OnInit {
     return this.queryETHRPC("eth_getBalance", [address, block]);
   }
 
+  getMaxPriorityFeePerGas(): Promise<any> {
+    return this.queryETHRPC("eth_maxPriorityFeePerGas", []);
+  }
+
   // getFees returns all the numbers and hex-strings necessary for computing eth gas.
   getFees(): Promise<{
     baseFeePerGas: number;
-    gasPriceHex: Hex;
-    gasPrice: number;
     maxPriorityFeePerGas: number;
     maxPriorityFeePerGasHex: Hex;
     maxFeePerGas: number;
     maxFeePerGasHex: Hex;
     totalFees: number;
   }> {
-    return Promise.all([this.getLatestBlock(), this.getGasPrice()]).then(([block, gasPriceHex]) => {
-      const baseFeePerGas = hexToNumber((block as any).baseFeePerGas);
-      const gasPrice = hexToNumber(gasPriceHex);
+    return Promise.all([this.getBlock("pending"), this.getMaxPriorityFeePerGas()]).then(
+      ([block, maxPriorityFeePerGasHex]) => {
+        const baseFeePerGas = hexToNumber((block as any).baseFeePerGas);
 
-      // Gas math courtesy of https://medium.com/alchemy-api/the-developer-eip-1559-prep-kit-72dbe5c44545
-      const maxPriorityFeePerGas = gasPrice - baseFeePerGas;
-      const maxFeePerGas = baseFeePerGas * 2 + maxPriorityFeePerGas;
-      const totalFees = maxFeePerGas * BuyDeSoEthComponent.instructionsPerBasicTransfer;
-      return {
-        baseFeePerGas,
-        gasPriceHex,
-        gasPrice,
-        maxPriorityFeePerGas,
-        maxPriorityFeePerGasHex: toHex(maxPriorityFeePerGas),
-        maxFeePerGas,
-        maxFeePerGasHex: toHex(maxFeePerGas),
-        totalFees,
-      };
-    });
+        const maxPriorityFeePerGas = hexToNumber(maxPriorityFeePerGasHex);
+        const maxFeePerGas = baseFeePerGas + maxPriorityFeePerGas;
+        const totalFees = maxFeePerGas * BuyDeSoEthComponent.instructionsPerBasicTransfer;
+        return {
+          baseFeePerGas,
+          maxPriorityFeePerGas,
+          maxPriorityFeePerGasHex,
+          maxFeePerGas,
+          maxFeePerGasHex: toHex(maxFeePerGas),
+          totalFees,
+        };
+      }
+    );
   }
 
   getChain(): Chain {
@@ -411,6 +429,7 @@ export class BuyDeSoEthComponent implements OnInit {
     this.common = new Common({ chain: this.getChain(), hardfork: Hardfork.London });
 
     this.refreshBalance();
+
     // Force an update of the exchange rate when loading the Buy DESO page to ensure our computations are using the latest rates.
     this.globalVars._updateDeSoExchangeRate();
   }
