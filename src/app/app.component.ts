@@ -179,26 +179,13 @@ export class AppComponent implements OnInit {
         this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
-        // Setup amplitude on first run
-        if (!this.globalVars.amplitude && res.AmplitudeKey) {
-          this.globalVars.amplitude = require("amplitude-js");
-          this.globalVars.amplitude.init(res.AmplitudeKey, null, {
-            apiEndpoint: res.AmplitudeDomain,
-          });
-
-          // Track initial app load event so we are aware of every user
-          // who visits our site (and not just those who click a button)
-          this.globalVars.logEvent("app : load");
-        }
-
-        // Store other important app state stuff
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
-        this.globalVars.supportEmail = res.SupportEmail;
         this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
         this.globalVars.transactionFeeMap = res.TransactionFeeMap;
+        this.globalVars.buyETHAddress = res.BuyETHAddress;
       });
   }
 
@@ -299,6 +286,7 @@ export class AppComponent implements OnInit {
     });
 
     this.installDD();
+    this.installAmplitude();
   }
 
   loadApp() {
@@ -341,5 +329,21 @@ export class AppComponent implements OnInit {
     datadomeScript.async = true;
     datadomeScript.src = jsPath;
     firstScript.parentNode.insertBefore(datadomeScript, firstScript);
+  }
+
+  installAmplitude() {
+    const { key, domain } = environment.amplitude;
+    if (!key || !domain || this.globalVars.amplitude) {
+      return;
+    }
+
+    this.globalVars.amplitude = require("amplitude-js");
+    this.globalVars.amplitude.init(key, null, {
+      apiEndpoint: domain,
+    });
+
+    // Track initial app load event so we are aware of every user
+    // who visits our site (and not just those who click a button)
+    this.globalVars.logEvent("app : load");
   }
 }
