@@ -222,7 +222,7 @@ export class BuyDeSoEthComponent implements OnInit {
         // Make sure that value + actual fees does not exceed the current balance. If it does, subtract the remainder from value.
         let value = Math.floor((this.ethToExchange - this.ethFeeEstimate) * 1e18);
         let remainder =
-          this.ethBalance * 1e18 - (fees.maxFeePerGas * BuyDeSoEthComponent.instructionsPerBasicTransfer + value);
+          fees.maxFeePerGas * BuyDeSoEthComponent.instructionsPerBasicTransfer + value - this.ethBalance * 1e18;
         if (remainder > 0) {
           value = value - remainder;
         }
