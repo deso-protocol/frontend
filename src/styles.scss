@@ -27,7 +27,7 @@ html {
 }
 
 html, body {
-  font-family: 'Roboto Mono';
+  font-family: 'Montserrat';
   min-height: 100%; // allows for scrolling
 }
 
@@ -47,7 +47,7 @@ h1 {
 h2,h3,h4,h5,h6,p {
   margin: 0;
   color: var(--text);
-  font-family: 'Roboto Mono';
+  font-family: 'Montserrat';
   font-weight: normal;
 }
 
@@ -249,8 +249,8 @@ $green-font-color: #19B028;
 .lh-14px { line-height: 14px; }
 .lh-13px { line-height: 13px; }
 .lh-12px { line-height: 12px; }
-.roboto-regular { font-family: 'Roboto' }
-.roboto-mono { font-family: 'Roboto Mono' }
+.roboto-regular { font-family: 'Montserrat' }
+.-mono { font-family: 'Montserrat' }
 
 // Custom border classes.
 .border-color-grey { border-color: var(--border) !important; }
@@ -1680,7 +1680,7 @@ input.bs-timepicker-field {
   font-size: 14px;
   margin-bottom: 30px;
   padding: 0 20px;
-  font-family: Roboto;
+  font-family: Montserrat;
 }
 
 .landing__example {
