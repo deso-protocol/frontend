@@ -33,9 +33,9 @@
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-between pt-10px" *ngIf="globalVars.transactionFeeMax === 0">
+    <div class="d-flex justify-content-between pt-10px" *ngIf="globalVars.transactionFeeMax > 0">
       <div>Node fee per tx:</div>
-      <div *ngIf="globalVars.transactionFeeMax > 0">
+      <div>
         {{ globalVars.nanosToUSD(globalVars.transactionFeeMax, 4) }} Max
         <span
               (click)="tooltip.toggle()"
