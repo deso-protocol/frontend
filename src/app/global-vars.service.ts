@@ -215,6 +215,8 @@ export class GlobalVarsService {
   referralUSDCents: number = 0;
 
   transactionFeeMap: { [k: string]: TransactionFee[] };
+  transactionFeeMax: number = 0;
+  transactionFeeInfo: string;
 
   buyETHAddress: string = "";
 
