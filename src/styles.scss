@@ -1664,7 +1664,7 @@ input.bs-timepicker-field {
 
 .landing__prop {
   margin-top: 100px;
-  background: #C4C4C426;
+  background: #F2F2F2;
   border-radius: 25px;
   padding-top: 50px;
 }
@@ -1673,6 +1673,7 @@ input.bs-timepicker-field {
   font-weight: bold;
   font-size: 20px;
   margin-bottom: 20px;
+  color: #e21f28
 }
 
 .landing__prop-desc {
@@ -1686,7 +1687,7 @@ input.bs-timepicker-field {
 .landing__example {
   padding: 30px 50px;
   padding-bottom: 0px;
-  background-color: var(--background);
+  background-color: #ffffff;
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
 }
@@ -2181,8 +2182,8 @@ input {
   color: var(--text) !important;
 }
 
-.table {
-  color: var(--text) !important;
+.table, .text-black {
+    color: #000000!important;
 }
 
 .deso {
