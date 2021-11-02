@@ -10,7 +10,7 @@ import { Hex } from "web3-utils/types";
 import Common, { Chain, Hardfork } from "@ethereumjs/common";
 import { FeeMarketEIP1559Transaction, Transaction as LegacyTransaction, TxData, TxOptions } from "@ethereumjs/tx";
 import { FeeMarketEIP1559TxData } from "@ethereumjs/tx/src/types";
-import { Transaction } from "ethereumjs-tx";
+import { Transaction, TransactionOptions } from "ethereumjs-tx";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -583,7 +583,7 @@ export class BuyDeSoEthComponent implements OnInit {
     return { common: this.common };
   }
 
-  getOldOptions(): { chain: string; hardfork: string } {
+  getOldOptions(): TransactionOptions {
     return { chain: this.getChainString(), hardfork: this.getHardforkString() };
   }
 
