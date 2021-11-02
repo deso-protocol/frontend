@@ -236,6 +236,10 @@ export class BuyDeSoEthComponent implements OnInit {
     });
   }
 
+  // constructFeeMarketTransaction creates a Signed EIP-1559 transaction with maxPriorityFeePerGas and maxFeePerGas
+  // using the maintained ethereumjs/tx library. Sometimes EIP-1559 transactions are taking too long to mine or are not
+  // mining at all due to gas calculations so this function is not currently used. Upgrading to using this function in
+  // the future is preferred as we'll lower the amount of gas paid per transaction.
   constructFeeMarketTransaction(): Promise<SignedTransaction> {
     return this.getNonceValueAndFees().then(([nonce, value, fees]) => {
       let txData: FeeMarketEIP1559TxData = {
@@ -256,6 +260,10 @@ export class BuyDeSoEthComponent implements OnInit {
     });
   }
 
+  // constructLegacyTransaction creates a Signed Legacy transaction with gasPrice using the maintained ethereumjs/tx
+  // library. There is an issue generating a valid signature for legacy transactions using the new library so this
+  // is not actively used. However, upgrading to using this once that is resolved would be preferred as the old
+  // ethereumjs-tx library is no longer maintained.
   constructLegacyTransaction(): Promise<SignedTransaction> {
     return this.getNonceValueAndFees().then(([nonce, value, fees]) => {
       let txData: TxData = {
@@ -263,8 +271,7 @@ export class BuyDeSoEthComponent implements OnInit {
         to: this.globalVars.buyETHAddress,
         gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
         gasPrice: fees.gasPriceHex,
-        // need to truncate to 18 decimal places.
-        value: toHex(value),
+        value,
         data: "0x",
       };
 
@@ -276,6 +283,9 @@ export class BuyDeSoEthComponent implements OnInit {
     });
   }
 
+  // constructLegacyTransactionOld creates a LegacyTransaction using the deprecated ethereum-tx library. This deprecated
+  // library is being used as the updated version of this library causes issues generating a valid signature in identity
+  // for legacy transactions. In the future, we should move to using constructFeeMarketTransaction.
   constructLegacyTransactionOld(): Promise<SignedTransaction> {
     return this.getNonceValueAndFees().then(([nonce, value, fees]) => {
       let txData: TxData = {
@@ -287,7 +297,7 @@ export class BuyDeSoEthComponent implements OnInit {
         data: "0x",
       };
 
-      let tx = new Transaction(txData, { chain: this.getChainString(), hardfork: this.getHardforkString() });
+      let tx = new Transaction(txData, this.getOldOptions());
       // Poached from the sign method on Transaction in deprecated ethereumjs-tx library which demonstrates how to
       // get the equivalent of getMessageToSign in the new ethereumjs tx library.
       const buffer_1 = require("buffer");
@@ -311,6 +321,8 @@ export class BuyDeSoEthComponent implements OnInit {
     );
   }
 
+  // getSignedTransactionFromUnsignedHex takes an unsigned transaction, signs it, and returns the requested type of
+  // Transaction.
   getSignedTransactionFromUnsignedHex(
     txData: TxData | FeeMarketEIP1559TxData,
     toSign: string[],
@@ -336,10 +348,7 @@ export class BuyDeSoEthComponent implements OnInit {
 
         switch (signedTxType) {
           case Transaction: {
-            signedTx = new Transaction(signedTxData, {
-              chain: this.getChainString(),
-              hardfork: this.getHardforkString(),
-            });
+            signedTx = new Transaction(signedTxData, this.getOldOptions());
             break;
           }
           case LegacyTransaction: {
@@ -545,6 +554,10 @@ export class BuyDeSoEthComponent implements OnInit {
 
   getOptions(): TxOptions {
     return { common: this.common };
+  }
+
+  getOldOptions(): { chain: string; hardfork: string } {
+    return { chain: this.getChainString(), hardfork: this.getHardforkString() };
   }
 
   ngOnInit() {
