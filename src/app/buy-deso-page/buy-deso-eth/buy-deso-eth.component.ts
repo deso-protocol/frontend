@@ -272,7 +272,7 @@ export class BuyDeSoEthComponent implements OnInit {
   generateSignedTransaction<Type extends TransactionType>(
     type: TypeOfTransactionType
   ): Promise<SignedTransaction<Type>> {
-    return this.getNonceValueAndFees().then(([nonce, value, fees]) => {
+    return this.getNonceValueAndFees().then(({ nonce, value, fees }) => {
       let txData: TxData;
       let feeMarketTxData: FeeMarketEIP1559TxData;
       txData = {
@@ -325,12 +325,16 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   // getNonceValueAndFees is a helper to get the nonce, transaction value, and current fees when constructing a tx.
-  getNonceValueAndFees(): Promise<[Hex, Hex, FeeDetails]> {
+  getNonceValueAndFees(): Promise<{ nonce: Hex; value: Hex; fees: FeeDetails }> {
     return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
       ([transactionCount, fees]) => {
         const nonce = toHex(transactionCount);
         let value = this.getValue(fees.totalFees);
-        return [nonce, value, fees];
+        return {
+          nonce,
+          value,
+          fees,
+        };
       }
     );
   }
@@ -492,7 +496,7 @@ export class BuyDeSoEthComponent implements OnInit {
     }
   }
 
-  queryETHRPC(method: string, params: any[]): Promise<any> {
+  queryETHRPC<Type>(method: string, params: any[]): Promise<Type> {
     return this.backendApi
       .QueryETHRPC(this.globalVars.localNode, method, params, this.globalVars.loggedInUser?.PublicKeyBase58Check)
       .toPromise()
@@ -507,8 +511,8 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   // Get current gas price.
-  getGasPrice(): Promise<any> {
-    return this.queryETHRPC("eth_gasPrice", []);
+  getGasPrice(): Promise<Hex> {
+    return this.queryETHRPC<Hex>("eth_gasPrice", []);
   }
 
   // Gets the data about the pending block.
@@ -517,16 +521,16 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   getTransactionCount(address: string, block: string = "pending"): Promise<number> {
-    return this.queryETHRPC("eth_getTransactionCount", [address, block]).then((result) => hexToNumber(result));
+    return this.queryETHRPC<Hex>("eth_getTransactionCount", [address, block]).then((result) => hexToNumber(result));
   }
 
   // Gets balance for address.
-  getBalance(address: string, block: string = "latest"): Promise<any> {
-    return this.queryETHRPC("eth_getBalance", [address, block]);
+  getBalance(address: string, block: string = "latest"): Promise<Hex> {
+    return this.queryETHRPC<Hex>("eth_getBalance", [address, block]);
   }
 
-  getMaxPriorityFeePerGas(): Promise<any> {
-    return this.queryETHRPC("eth_maxPriorityFeePerGas", []);
+  getMaxPriorityFeePerGas(): Promise<Hex> {
+    return this.queryETHRPC<Hex>("eth_maxPriorityFeePerGas", []);
   }
 
   // getFees returns all the numbers and hex-strings necessary for computing eth gas.
@@ -542,7 +546,7 @@ export class BuyDeSoEthComponent implements OnInit {
     }
     return Promise.all([this.getBlock("pending"), this.getMaxPriorityFeePerGas()]).then(
       ([block, maxPriorityFeePerGasHex]) => {
-        const baseFeePerGas = hexToNumber((block as any).baseFeePerGas);
+        const baseFeePerGas = hexToNumber(block.baseFeePerGas);
 
         const maxPriorityFeePerGas = hexToNumber(maxPriorityFeePerGasHex);
         const maxFeePerGas = baseFeePerGas + maxPriorityFeePerGas;
