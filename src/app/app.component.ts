@@ -184,8 +184,28 @@ export class AppComponent implements OnInit {
         this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
-        this.globalVars.transactionFeeMap = res.TransactionFeeMap;
         this.globalVars.buyETHAddress = res.BuyETHAddress;
+      
+        this.globalVars.transactionFeeMap = res.TransactionFeeMap;
+
+        // Calculate max fee for display in frontend
+        // Sort so highest fee is at the top
+        var simpleFeeMap: {txnType:string,fees:number}[] = Object.keys(res.TransactionFeeMap).map(k=>{
+          if ( res.TransactionFeeMap[k] !== null )  {
+            // only return for non empty transactions
+            // sum in case there are multiple fee earners for the txn type
+            var sumOfFees = res.TransactionFeeMap[k].map(f=>f.AmountNanos).reduce((partial_sum, a) => partial_sum + a,0);
+            // Capitalize and use spaces in Txn type
+            var txnType = (" "+k).replace(/_/g,' ').toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => " "+chr.toUpperCase()).trim()
+            return { "txnType": txnType, "fees": sumOfFees }
+          }
+        }).sort( (a,b)=>b.fees-a.fees);
+        
+        //Get the max of all fees
+        this.globalVars.transactionFeeMax = Math.max( ...simpleFeeMap.map(k=>k.fees) );
+        
+        //Prepare text detailed info of fees and join with newlines
+        this.globalVars.transactionFeeInfo = simpleFeeMap.map(k=>`${k.txnType}: ${this.globalVars.nanosToUSD(k.fees,4)}`).join("\n");
       });
   }
 
