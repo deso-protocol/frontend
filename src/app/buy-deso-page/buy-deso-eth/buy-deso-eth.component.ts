@@ -26,10 +26,14 @@ class Messages {
   static RPC_ERROR = `RPC Error`;
 }
 
-type SignedTransaction = {
-  signedTx: Transaction | FeeMarketEIP1559Transaction | LegacyTransaction;
+type SignedTransaction<TransactionType> = {
+  signedTx: TransactionType;
   toSign: string[];
 };
+
+type TransactionType = Transaction | LegacyTransaction | FeeMarketEIP1559Transaction;
+
+type TypeOfTransactionType = typeof Transaction | typeof LegacyTransaction | typeof FeeMarketEIP1559Transaction;
 
 type FeeDetails = {
   baseFeePerGas?: number;
@@ -192,6 +196,10 @@ export class BuyDeSoEthComponent implements OnInit {
       ? this.constructLegacyTransactionOld()
       : this.constructFeeMarketTransaction()
     ).then((res) => {
+      if (!res?.signedTx) {
+        console.error("No signedTx found - aborting");
+        return;
+      }
       const signedHash = res.signedTx.serialize().toString("hex");
       // Submit the transaction.
       this.parentComponent.waitingOnTxnConfirmation = true;
@@ -240,77 +248,83 @@ export class BuyDeSoEthComponent implements OnInit {
   // using the maintained ethereumjs/tx library. Sometimes EIP-1559 transactions are taking too long to mine or are not
   // mining at all due to gas calculations so this function is not currently used. Upgrading to using this function in
   // the future is preferred as we'll lower the amount of gas paid per transaction.
-  constructFeeMarketTransaction(): Promise<SignedTransaction> {
-    return this.getNonceValueAndFees().then(([nonce, value, fees]) => {
-      let txData: FeeMarketEIP1559TxData = {
-        nonce: nonce,
-        to: this.globalVars.buyETHAddress,
-        gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
-        maxPriorityFeePerGas: fees.maxPriorityFeePerGasHex,
-        maxFeePerGas: fees.maxFeePerGas,
-        value,
-        chainId: toHex(this.getChain()),
-        accessList: [],
-      };
-      // Generate an Unsigned EIP 1559 Fee Market Transaction from the data and generated a hash message to sign.
-      let tx = FeeMarketEIP1559Transaction.fromTxData(txData, { common: this.common });
-      const toSign = [tx.getMessageToSign(true).toString("hex")];
-      // Have identity generate a signature for this transaction.
-      return this.getSignedTransactionFromUnsignedHex(txData, toSign, FeeMarketEIP1559Transaction);
-    });
+  constructFeeMarketTransaction(): Promise<SignedTransaction<TransactionType>> {
+    return this.generateSignedTransaction<FeeMarketEIP1559Transaction>(FeeMarketEIP1559Transaction);
   }
 
   // constructLegacyTransaction creates a Signed Legacy transaction with gasPrice using the maintained ethereumjs/tx
   // library. There is an issue generating a valid signature for legacy transactions using the new library so this
   // is not actively used. However, upgrading to using this once that is resolved would be preferred as the old
   // ethereumjs-tx library is no longer maintained.
-  constructLegacyTransaction(): Promise<SignedTransaction> {
-    return this.getNonceValueAndFees().then(([nonce, value, fees]) => {
-      let txData: TxData = {
-        nonce: nonce,
-        to: this.globalVars.buyETHAddress,
-        gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
-        gasPrice: fees.gasPriceHex,
-        value,
-        data: "0x",
-      };
-
-      // Generate an Unsigned Legacy Transaction from the data and generated a hash message to sign.
-      let tx = LegacyTransaction.fromTxData(txData, { common: this.common });
-      const toSign = [tx.getMessageToSign(true).toString("hex")];
-      // Have identity generate a signature for this transaction.
-      return this.getSignedTransactionFromUnsignedHex(txData, toSign, LegacyTransaction);
-    });
+  constructLegacyTransaction(): Promise<SignedTransaction<TransactionType>> {
+    return this.generateSignedTransaction<LegacyTransaction>(LegacyTransaction);
   }
 
   // constructLegacyTransactionOld creates a LegacyTransaction using the deprecated ethereum-tx library. This deprecated
   // library is being used as the updated version of this library causes issues generating a valid signature in identity
   // for legacy transactions. In the future, we should move to using constructFeeMarketTransaction.
-  constructLegacyTransactionOld(): Promise<SignedTransaction> {
+  constructLegacyTransactionOld(): Promise<SignedTransaction<TransactionType>> {
+    return this.generateSignedTransaction<Transaction>(Transaction);
+  }
+
+  // generateSignedTransaction is a generic function that given any type of Transaction will construct an unsigned
+  // transaction with the appropriate transaction data and sign it using identity.
+  generateSignedTransaction<Type extends TransactionType>(
+    type: TypeOfTransactionType
+  ): Promise<SignedTransaction<Type>> {
     return this.getNonceValueAndFees().then(([nonce, value, fees]) => {
-      let txData: TxData = {
-        nonce: nonce,
-        to: this.globalVars.buyETHAddress,
-        gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
-        gasPrice: fees.gasPriceHex,
+      let txData: TxData;
+      let feeMarketTxData: FeeMarketEIP1559TxData;
+      txData = {
+        nonce,
         value,
         data: "0x",
+        gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
+        to: this.globalVars.buyETHAddress,
       };
-
-      let tx = new Transaction(txData, this.getOldOptions());
-      // Poached from the sign method on Transaction in deprecated ethereumjs-tx library which demonstrates how to
-      // get the equivalent of getMessageToSign in the new ethereumjs tx library.
-      const buffer_1 = require("buffer");
-      tx.v = new buffer_1.Buffer([]);
-      tx.r = new buffer_1.Buffer([]);
-      tx.s = new buffer_1.Buffer([]);
-      const toSign = [tx.hash(false).toString("hex")];
-      // END getMessagetoSign code
-      // Have identity generate a signature for this transaction.
-      return this.getSignedTransactionFromUnsignedHex(txData, toSign, Transaction);
+      if (BuyDeSoEthComponent.useLegacyTransaction) {
+        txData.gasPrice = fees.gasPriceHex;
+      } else {
+        feeMarketTxData = txData as FeeMarketEIP1559TxData;
+        feeMarketTxData.maxPriorityFeePerGas = fees.maxPriorityFeePerGasHex;
+        feeMarketTxData.maxFeePerGas = fees.maxFeePerGasHex;
+        feeMarketTxData.chainId = toHex(this.getChain());
+      }
+      let toSign: string[];
+      switch (type) {
+        case Transaction: {
+          let tx = new Transaction(txData, this.getOldOptions());
+          // Poached from the sign method on Transaction in deprecated ethereumjs-tx library which demonstrates how to
+          // get the equivalent of getMessageToSign in the new ethereumjs tx library.
+          const buffer_1 = require("buffer");
+          tx.v = new buffer_1.Buffer([]);
+          tx.r = new buffer_1.Buffer([]);
+          tx.s = new buffer_1.Buffer([]);
+          toSign = [tx.hash(false).toString("hex")];
+          break;
+        }
+        case LegacyTransaction: {
+          // Generate an Unsigned Legacy Transaction from the data and generated a hash message to sign.
+          const tx = LegacyTransaction.fromTxData(txData, { common: this.common });
+          toSign = [tx.getMessageToSign(true).toString("hex")];
+          break;
+        }
+        case FeeMarketEIP1559Transaction: {
+          // Generate an Unsigned EIP 1559 Fee Market Transaction from the data and generated a hash message to sign.
+          let tx = FeeMarketEIP1559Transaction.fromTxData(feeMarketTxData, { common: this.common });
+          toSign = [tx.getMessageToSign(true).toString("hex")];
+          break;
+        }
+      }
+      return this.getSignedTransactionFromUnsignedHex<Type>(
+        type === FeeMarketEIP1559Transaction ? feeMarketTxData : txData,
+        toSign,
+        type
+      );
     });
   }
 
+  // getNonceValueAndFees is a helper to get the nonce, transaction value, and current fees when constructing a tx.
   getNonceValueAndFees(): Promise<[Hex, Hex, FeeDetails]> {
     return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
       ([transactionCount, fees]) => {
@@ -323,51 +337,60 @@ export class BuyDeSoEthComponent implements OnInit {
 
   // getSignedTransactionFromUnsignedHex takes an unsigned transaction, signs it, and returns the requested type of
   // Transaction.
-  getSignedTransactionFromUnsignedHex(
+  getSignedTransactionFromUnsignedHex<Type extends TransactionType>(
     txData: TxData | FeeMarketEIP1559TxData,
     toSign: string[],
-    signedTxType: typeof Transaction | typeof LegacyTransaction | typeof FeeMarketEIP1559Transaction
-  ): Promise<SignedTransaction> {
+    signedTxType: TypeOfTransactionType
+  ): Promise<SignedTransaction<Type>> {
     return this.identityService
       .signETH({
         ...this.identityService.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
         unsignedHashes: toSign,
       })
       .toPromise()
-      .then((res) => {
-        // Get the signature and merge it into the TxData defined above.
-        const signature: { s: any; r: any; v: number | null } = res.signatures[0];
-        if (signedTxType === Transaction && this.common.gteHardfork("spuriousDragon")) {
-          signature.v = signature.v === 0 ? this.getChain() * 2 + 35 : this.getChain() * 2 + 36;
-        }
-        const signedTxData = {
-          ...txData,
-          ...signature,
-        };
-        let signedTx: Transaction | LegacyTransaction | FeeMarketEIP1559Transaction;
+      .then(
+        (res) => {
+          // Get the signature and merge it into the TxData defined above.
+          const signature: { s: any; r: any; v: number | null } = res.signatures[0];
+          // For Legacy transaction using the old library, we need to modify V to satisfy EIP 155 constraints.
+          if (signedTxType === Transaction && this.common.gteHardfork("spuriousDragon")) {
+            signature.v = signature.v === 0 ? this.getChain() * 2 + 35 : this.getChain() * 2 + 36;
+          }
+          // Merge the signature into the transaction data.
+          const signedTxData = {
+            ...txData,
+            ...signature,
+          };
+          let signedTx: Transaction | LegacyTransaction | FeeMarketEIP1559Transaction;
 
-        switch (signedTxType) {
-          case Transaction: {
-            signedTx = new Transaction(signedTxData, this.getOldOptions());
-            break;
+          switch (signedTxType) {
+            case Transaction: {
+              // Create a signed Legacy transaction using the deprecated ethereumjs-tx library.
+              signedTx = new Transaction(signedTxData, this.getOldOptions());
+              break;
+            }
+            case LegacyTransaction: {
+              // Create a signed Legacy transaction using the maintained ethereumjs/tx library.
+              const legacyTxData = txData as TxData;
+              signedTx = LegacyTransaction.fromTxData(legacyTxData, this.getOptions());
+              break;
+            }
+            case FeeMarketEIP1559Transaction: {
+              // Create a Fee Market EIP-1559 transaction using the maintained ethereumjs/tx library.
+              const feeMarketTxdata = txData as FeeMarketEIP1559TxData;
+              signedTx = FeeMarketEIP1559Transaction.fromTxData(feeMarketTxdata, this.getOptions());
+              break;
+            }
           }
-          case LegacyTransaction: {
-            const legacyTxData = txData as TxData;
-            signedTx = LegacyTransaction.fromTxData(legacyTxData, this.getOptions());
-            break;
-          }
-          case FeeMarketEIP1559Transaction: {
-            const feeMarketTxdata = txData as FeeMarketEIP1559TxData;
-            signedTx = FeeMarketEIP1559Transaction.fromTxData(feeMarketTxdata, this.getOptions());
-            break;
-          }
+          // Construct and serialize the transaction.
+          return <SignedTransaction<Type>>{ signedTx, toSign };
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(err);
+          return null;
         }
-        // Construct and serialize the transaction.
-        return {
-          signedTx,
-          toSign,
-        };
-      });
+      );
   }
 
   getValue(totalFees: number): Hex {
