@@ -102,8 +102,8 @@ export class SettingsComponent implements OnInit {
     SwalHelper.fire({
       target: GlobalVarsService.getTargetComponentSelectorFromRouter(this.router),
       icon: "warning",
-      title: `Delete Your PII`,
-      html: `Clicking confirm will remove your phone number, email address, and any other PII associated with your public key.`,
+      title: `Delete Your Personal Information`,
+      html: `Clicking confirm will remove your phone number, email address, and any other personal information associated with your public key.`,
       showCancelButton: true,
       showConfirmButton: true,
       focusConfirm: true,

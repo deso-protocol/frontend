@@ -65,15 +65,15 @@
           [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
       </select>
 
-      <div class="fs-15px pt-30px">Delete PII</div>
+      <div class="fs-15px pt-30px">Personal Information</div>
       <br/>
       <div class="w-100 d-flex align-items-center">
         <button
-          class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
+          class="btn btn-danger btn-lg font-weight-bold fs-15px mt-5px"
           (click)="deletePII()"
           [disabled]="deletingPII"
         >
-          Delete
+          Delete Personal Information
         </button>
       </div>
       <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
