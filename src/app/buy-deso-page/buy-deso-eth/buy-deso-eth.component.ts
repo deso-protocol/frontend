@@ -296,10 +296,9 @@ export class BuyDeSoEthComponent implements OnInit {
           let tx = new Transaction(txData, this.getOldOptions());
           // Poached from the sign method on Transaction in deprecated ethereumjs-tx library which demonstrates how to
           // get the equivalent of getMessageToSign in the new ethereumjs tx library.
-          const buffer_1 = require("buffer");
-          tx.v = new buffer_1.Buffer([]);
-          tx.r = new buffer_1.Buffer([]);
-          tx.s = new buffer_1.Buffer([]);
+          tx.v = new Buffer([]);
+          tx.r = new Buffer([]);
+          tx.s = new Buffer([]);
           toSign = [tx.hash(false).toString("hex")];
           break;
         }
