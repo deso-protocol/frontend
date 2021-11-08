@@ -325,10 +325,10 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     TimepickerModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme, cakeTheme, greenishTheme],
+      themes: [lightTheme],
       active:
         localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
+        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light"),
     }),
   ],
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
