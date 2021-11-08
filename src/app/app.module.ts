@@ -161,7 +161,7 @@ import { AdminNodeAddFeesComponent } from "./admin/admin-node-fees/admin-node-ad
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
-const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
+const darkTheme: Theme = { key: "light", name: "Light Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
 const legendsTheme: Theme = { key: "legends", name: "Legends Theme" };
 const cakeTheme: Theme = { key: "cake", name: "Cake Theme" };
@@ -325,12 +325,12 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     TimepickerModule.forRoot(),
     CollapseModule.forRoot(),
     ThemeModule.forRoot({
-      themes: [lightTheme],
+      themes: [lightTheme, darkTheme, icydarkTheme, legendsTheme, cakeTheme, greenishTheme],
       active:
         localStorage.getItem("theme") ||
-        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "light"),
+        (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"),
     }),
-  ],
+  ],    
   providers: [BackendApiService, GlobalVarsService, BsModalService, IdentityService],
   bootstrap: [AppComponent],
 })
