@@ -179,26 +179,33 @@ export class AppComponent implements OnInit {
         this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
-        // Setup amplitude on first run
-        if (!this.globalVars.amplitude && res.AmplitudeKey) {
-          this.globalVars.amplitude = require("amplitude-js");
-          this.globalVars.amplitude.init(res.AmplitudeKey, null, {
-            apiEndpoint: res.AmplitudeDomain,
-          });
-
-          // Track initial app load event so we are aware of every user
-          // who visits our site (and not just those who click a button)
-          this.globalVars.logEvent("app : load");
-        }
-
-        // Store other important app state stuff
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
-        this.globalVars.supportEmail = res.SupportEmail;
         this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
+        this.globalVars.buyETHAddress = res.BuyETHAddress;
+      
         this.globalVars.transactionFeeMap = res.TransactionFeeMap;
+
+        // Calculate max fee for display in frontend
+        // Sort so highest fee is at the top
+        var simpleFeeMap: {txnType:string,fees:number}[] = Object.keys(res.TransactionFeeMap).map(k=>{
+          if ( res.TransactionFeeMap[k] !== null )  {
+            // only return for non empty transactions
+            // sum in case there are multiple fee earners for the txn type
+            var sumOfFees = res.TransactionFeeMap[k].map(f=>f.AmountNanos).reduce((partial_sum, a) => partial_sum + a,0);
+            // Capitalize and use spaces in Txn type
+            var txnType = (" "+k).replace(/_/g,' ').toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => " "+chr.toUpperCase()).trim()
+            return { "txnType": txnType, "fees": sumOfFees }
+          }
+        }).sort( (a,b)=>b.fees-a.fees);
+        
+        //Get the max of all fees
+        this.globalVars.transactionFeeMax = Math.max( ...simpleFeeMap.map(k=>k.fees) );
+        
+        //Prepare text detailed info of fees and join with newlines
+        this.globalVars.transactionFeeInfo = simpleFeeMap.map(k=>`${k.txnType}: ${this.globalVars.nanosToUSD(k.fees,4)}`).join("\n");
       });
   }
 
@@ -299,6 +306,7 @@ export class AppComponent implements OnInit {
     });
 
     this.installDD();
+    this.installAmplitude();
   }
 
   loadApp() {
@@ -341,5 +349,21 @@ export class AppComponent implements OnInit {
     datadomeScript.async = true;
     datadomeScript.src = jsPath;
     firstScript.parentNode.insertBefore(datadomeScript, firstScript);
+  }
+
+  installAmplitude() {
+    const { key, domain } = environment.amplitude;
+    if (!key || !domain || this.globalVars.amplitude) {
+      return;
+    }
+
+    this.globalVars.amplitude = require("amplitude-js");
+    this.globalVars.amplitude.init(key, null, {
+      apiEndpoint: domain,
+    });
+
+    // Track initial app load event so we are aware of every user
+    // who visits our site (and not just those who click a button)
+    this.globalVars.logEvent("app : load");
   }
 }
