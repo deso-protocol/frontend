@@ -5,6 +5,8 @@ import { CountryISO } from "ngx-intl-tel-input";
 import { Title } from "@angular/platform-browser";
 import { ThemeService } from "../theme/theme.service";
 import { environment } from "src/environments/environment";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "settings",
@@ -19,12 +21,14 @@ export class SettingsComponent implements OnInit {
   updatingSettings = false;
   showSuccessMessage = false;
   successMessageTimeout: any;
+  deletingPII = false;
 
   constructor(
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
     private titleService: Title,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private router: Router
   ) {}
 
   selectChangeHandler(event: any) {
@@ -92,5 +96,42 @@ export class SettingsComponent implements OnInit {
           this.showSuccessMessage = false;
         }, 500);
       });
+  }
+
+  deletePII() {
+    SwalHelper.fire({
+      target: GlobalVarsService.getTargetComponentSelectorFromRouter(this.router),
+      icon: "warning",
+      title: `Delete Your Personal Information`,
+      html: `Clicking confirm will remove your phone number, email address, and any other personal information associated with your public key.`,
+      showCancelButton: true,
+      showConfirmButton: true,
+      focusConfirm: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.deletingPII = true;
+        this.backendApi
+          .DeletePII(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+          .subscribe(
+            (res) => {
+              this.globalVars._alertSuccess("PII Deleted successfully");
+              this.emailAddress = "";
+              this.globalVars.updateEverything();
+            },
+            (err) => {
+              console.error(err);
+              this.globalVars._alertError(err.error.error);
+            }
+          )
+          .add(() => (this.deletingPII = false));
+      }
+    });
   }
 }

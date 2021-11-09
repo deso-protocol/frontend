@@ -59,6 +59,9 @@ export class BackendRoutes {
   static RoutePathVerifyEmail = "/api/v0/verify-email";
   static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
 
+  // Delete PII
+  static RoutePathDeletePII = "/api/v0/delete-pii";
+
   // Tutorial
   static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
   static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
@@ -1609,6 +1612,12 @@ export class BackendApiService {
     return this.post(endpoint, BackendRoutes.RoutePathVerifyEmail, {
       PublicKey,
       EmailHash,
+    });
+  }
+
+  DeletePII(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathDeletePII, PublicKeyBase58Check, {
+      PublicKeyBase58Check,
     });
   }
 
