@@ -29,6 +29,7 @@ header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
     node.deso.org
+    amp.deso.org
     bithunt.deso.org
     pulse.deso.org
     bitclout.com:*
