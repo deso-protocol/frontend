@@ -977,7 +977,7 @@
   // Licensed under the Apache License, Version 2.0
   // http://www.apache.org/licenses/LICENSE-2.0
   // make sure cash tags contain at least one non-numeric character
-  var cashtag = /(?=\w*[a-z_]\w*)[a-z0-9_]{1,24}/i;
+  var cashtag = /(?=\w*[a-z_]\w*)[a-z0-9_]{1,25}/i;
 
   // Copyright 2018 Twitter, Inc.
   // Licensed under the Apache License, Version 2.0
@@ -2460,8 +2460,8 @@
   // Copyright 2018 Twitter, Inc.
   var validMentionOrList = regexSupplant('(#{validMentionPrecedingChars})' + // $1: Preceding character
   '(#{atSigns})' + // $2: At mark
-  '([a-zA-Z0-9_]{1,24})' + // $3: Screen name
-  '(/[a-zA-Z][a-zA-Z0-9_-]{0,24})?', // $4: List (optional)
+  '([a-zA-Z0-9_]{1,25})' + // $3: Screen name
+  '(/[a-zA-Z][a-zA-Z0-9_-]{0,25})?', // $4: List (optional)
   {
     validMentionPrecedingChars: validMentionPrecedingChars,
     atSigns: atSigns
