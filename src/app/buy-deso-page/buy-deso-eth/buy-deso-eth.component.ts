@@ -494,7 +494,7 @@ export class BuyDeSoEthComponent implements OnInit {
     if (newVal == null || newVal === "") {
       this.desoToBuy = 0;
       this.ethToExchange = 0;
-      this.weiToExchange = 0;
+      this.weiToExchange = new BN(0);
     } else {
       // Convert the string value to a number
       this.weiToExchange = this.toWeiBN(newVal);
