@@ -405,7 +405,7 @@ export class BuyDeSoEthComponent implements OnInit {
 
   getValue(totalFees: BN): Hex {
     // Make sure that value + actual fees does not exceed the current balance. If it does, subtract the remainder from value.
-    let value = this.weiToExchange.sub(this.weiFeeEstimate);
+    let value = this.weiToExchange.sub(totalFees);
     let remainder = totalFees.add(value).sub(this.weiBalance);
     if (remainder.gt(0)) {
       value = value.sub(remainder);
