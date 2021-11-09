@@ -5,9 +5,16 @@ $success: #32ED4B;
 $info: #689eff;
 $feed-border-radius: 12px;
 
+$white-smoke: #EFEFEF;
+$primaryColor : #E21F28;
+$infoColor : #4F4F4F;
+$secondaryColor: #333333;
+$follow: #D9D9D9;
+
 @import 'variables.scss';
 @import 'app/theme/themes/index';
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap');
 
 // regular style toast
 @import '~ngx-toastr/toastr';
@@ -124,6 +131,68 @@ pre, code{
   }
 }
 
+/* Code Added */
+
+.primaryFontFamily {
+  font-family: 'Poppins';
+  font-weight: 800;
+}
+.primaryFontFamilyBold {
+  font-family: 'Poppins';
+  font-weight: 700;
+}
+.primaryFontFamilyMedium {
+  font-family: 'Poppins';
+  font-weight: 500;
+}
+.primaryFontFamilyRegular {
+  font-family: 'Poppins';
+  font-weight: 400;
+}
+.borderRight {
+  border-right: 1px solid #FFFFFF;
+}
+.fontExtraBold {
+  font-weight: 800;
+}
+
+.primaryBackground{
+  background-color: $primaryColor;
+  color: #FFFFFF;
+}
+.primaryColor {
+  color: $primaryColor;
+}
+.paddingSignUpBtn{
+  background: linear-gradient(180deg, #F82F39 0%, #E21F28 100%);
+  box-shadow: 0px 4px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  padding: 20px;
+  letter-spacing: -0.0304348px !important;
+}
+.learnMore {
+  background-color: $infoColor;
+  border: 1px solid $secondaryColor;
+  box-sizing: border-box;
+  border-radius: 4px;
+  padding: 10px 20px;
+}
+
+.landingProp {
+  padding: 20px 30px;
+  box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.05);
+  background-color: #FFFFFF;
+}
+
+.toFollow {
+  color: $infoColor !important;
+  border: 1px solid $follow;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+/* Code Added */
 
 //
 // v0 styles (start)
