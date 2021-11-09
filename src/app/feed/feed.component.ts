@@ -327,6 +327,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         tap(
           (res) => {
             if (lastPostHash !== "") {
+              res.PostsFound.shift();
               this.globalVars.postsToShow = this.globalVars.postsToShow.concat(res.PostsFound);
             } else {
               this.globalVars.postsToShow = res.PostsFound;

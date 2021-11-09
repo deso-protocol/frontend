@@ -177,6 +177,9 @@ export class GlobalVarsService {
   // Current fee to create a profile.
   createProfileFeeNanos: number;
 
+  // Support email for this node (renders Help in the left bar nav)
+  supportEmail: string = null;
+
   // ETH exchange rates
   usdPerETHExchangeRate: number;
   nanosPerETHExchangeRate: number;
@@ -215,10 +218,6 @@ export class GlobalVarsService {
   referralUSDCents: number = 0;
 
   transactionFeeMap: { [k: string]: TransactionFee[] };
-  transactionFeeMax: number = 0;
-  transactionFeeInfo: string;
-
-  buyETHAddress: string = "";
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -812,7 +811,7 @@ export class GlobalVarsService {
   // Use the data object to store extra event metadata. Don't use
   // the metadata to differentiate two events with the same name.
   // Instead, just create two (or more) events with better names.
-  logEvent(event: string, data: any = {}) {
+  logEvent(event: string, data?: any) {
     if (!this.amplitude) {
       return;
     }
@@ -820,16 +819,6 @@ export class GlobalVarsService {
     if (this.userInTutorial(this.loggedInUser)) {
       event = "tutorial : " + event;
     }
-
-    // Attach node name
-    data.node = environment.node.name;
-
-    // Attach referralCode
-    const referralCode = this.referralCode();
-    if (referralCode) {
-      data.referralCode = referralCode;
-    }
-
     this.amplitude.logEvent(event, data);
   }
 
@@ -839,7 +828,7 @@ export class GlobalVarsService {
     this.identityService
       .launch("/get-free-deso", {
         public_key: this.loggedInUser?.PublicKeyBase58Check,
-        referralCode: this.referralCode(),
+        referralCode: localStorage.getItem("referralCode"),
       })
       .subscribe(() => {
         this.logEvent("identity : jumio : success");
@@ -849,7 +838,7 @@ export class GlobalVarsService {
 
   launchIdentityFlow(event: string): void {
     this.logEvent(`account : ${event} : launch`);
-    this.identityService.launch("/log-in", { referralCode: this.referralCode(), hideJumio: true }).subscribe((res) => {
+    this.identityService.launch("/log-in", { referralCode: localStorage.getItem("referralCode") }).subscribe((res) => {
       this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().add(() => {
@@ -864,10 +853,6 @@ export class GlobalVarsService {
 
   launchSignupFlow() {
     this.launchIdentityFlow("create");
-  }
-
-  referralCode(): string {
-    return localStorage.getItem("referralCode");
   }
 
   flowRedirect(signedUp: boolean): void {
@@ -1148,6 +1133,7 @@ export class GlobalVarsService {
               if (user) {
                 this.setLoggedInUser(user);
               }
+              localStorage.setItem("referralCode", undefined);
               this.celebrate();
               if (user.TutorialStatus === TutorialStatus.EMPTY) {
                 this.startTutorialAlert();

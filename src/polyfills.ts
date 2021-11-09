@@ -60,7 +60,3 @@ import "zone.js/dist/zone"; // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
-// https://stackoverflow.com/questions/57646823/angular-8-referenceerror-global-is-not-defined-when-im-trying-to-connect-cl
-(window as any).global = window;
-global.Buffer = global.Buffer || require("buffer").Buffer;
-global.process = require("process");
