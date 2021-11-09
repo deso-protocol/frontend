@@ -1,0 +1,24 @@
+# Commands to start on workspace startup
+tasks:
+  - name: open terminial
+  - name: install & run dev server
+    openMode: split-right
+    init: npm install
+    command: npm start
+
+# Pre-install some extensions
+vscode:
+  extensions:
+    - angular.ng-template
+    - ecmel.vscode-html-css
+    - eamodio.gitlens
+    
+# Ports to expose on workspace startup
+ports:
+  - port: 4200
+    onOpen: open-browser
+
+# Github integration
+github:
+  prebuilds:
+    master: true
