@@ -164,13 +164,11 @@ export class BuyDeSoEthComponent implements OnInit {
       return;
     }
 
-    // if (Number(this.ethToExchange) > this.ethBalance) {
     if (this.weiToExchange.gt(this.weiBalance)) {
       this.globalVars._alertError(Messages.INSUFFICIENT_BALANCE);
       return;
     }
 
-    // if (Number(this.ethToExchange) < this.ethFeeEstimate) {
     if (this.weiToExchange.lt(this.weiFeeEstimate)) {
       this.globalVars._alertError(Messages.INSUFFICIENT_FEES);
       return;
@@ -226,7 +224,7 @@ export class BuyDeSoEthComponent implements OnInit {
             // Reset all the form fields
             this.error = "";
             this.desoToBuy = 0;
-            // this.ethToExchange = "0";
+            this.ethToExchange = 0;
             this.weiToExchange = new BN(0);
             // This will update the balance and a bunch of other things.
             this.globalVars.updateEverything(
@@ -410,7 +408,7 @@ export class BuyDeSoEthComponent implements OnInit {
     let value = this.weiToExchange.sub(this.weiFeeEstimate);
     let remainder = totalFees.add(value).sub(this.weiBalance);
     if (remainder.gt(0)) {
-      value = value - remainder;
+      value = value.sub(remainder);
     }
     return toHex(value);
   }
