@@ -34,7 +34,7 @@
       <span>
         Minimum deposit is currently
         <b>
-          {{ (ethFeeEstimate() * 2).toFixed(4) }} ETH
+          {{ (ethFeeEstimate * 2).toFixed(4) }} ETH
         </b>
         <i
           (click)="tooltip3.toggle()"
@@ -87,13 +87,13 @@
       >
         <div class="pl-10px">
           <div *ngIf="!loadingBalance">
-            {{ ethBalance().toFixed(8) }} ETH
+            {{ ethBalance.toFixed(8) }} ETH
 
             <span class="text-grey7">
               ≈
               {{
                 globalVars.formatUSD(
-                  (ethBalance() * globalVars.usdPerETHExchangeRate),
+                  (ethBalance * globalVars.usdPerETHExchangeRate),
                   2
                 )
               }}
@@ -197,10 +197,10 @@
 
       <div class="mt-1 w-100 fs-15px">
         <div *ngIf="error == null || error === ''">
-          {{ ethFeeEstimate().toFixed(8) }}
+          {{ ethFeeEstimate.toFixed(8) }}
           ETH ≈
           {{
-            globalVars.formatUSD(ethFeeEstimate() * globalVars.usdPerETHExchangeRate, 2)
+            globalVars.formatUSD(ethFeeEstimate * globalVars.usdPerETHExchangeRate, 2)
           }}
           USD
         </div>

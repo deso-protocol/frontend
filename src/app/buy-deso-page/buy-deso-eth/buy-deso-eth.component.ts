@@ -56,16 +56,19 @@ export class BuyDeSoEthComponent implements OnInit {
   @Input() parentComponent: BuyDeSoComponent;
 
   // Current balance in ETH
-  // ethBalance = 0;
+  // Eth balance is only for display purposes.
+  ethBalance = 0;
   weiBalance: BN = new BN(0);
   loadingBalance = false;
   loadingFee = false;
 
   // Network fees in ETH (with sane default)
-  // ethFeeEstimate = 0.002;
+  // ETH fee estimate is only for display purposes.
+  ethFeeEstimate = 0.002;
   weiFeeEstimate: BN = new BN(0);
 
   // ETH to exchange (not including fees)
+  // Eth To Exchange is only for display purposes.
   ethToExchange: number = 0;
   weiToExchange: BN = new BN(0);
 
@@ -404,7 +407,6 @@ export class BuyDeSoEthComponent implements OnInit {
 
   getValue(totalFees: BN): Hex {
     // Make sure that value + actual fees does not exceed the current balance. If it does, subtract the remainder from value.
-    // let value = Math.floor((this.ethToExchange - this.ethFeeEstimate) * 1e18);
     let value = this.weiToExchange.sub(this.weiFeeEstimate);
     let remainder = totalFees.add(value).sub(this.weiBalance);
     if (remainder.gt(0)) {
@@ -435,8 +437,7 @@ export class BuyDeSoEthComponent implements OnInit {
   clickMaxDESO() {
     this.getFees().then((res) => {
       this.weiFeeEstimate = res.totalFees;
-      // this.ethFeeEstimate = res.totalFees.toNumber();
-      // this.ethToExchange = this.ethBalance;
+      this.ethFeeEstimate = Number(fromWei(this.weiFeeEstimate));
       this.weiToExchange = this.weiBalance;
       this.updateETHToExchange(fromWei(this.weiToExchange));
     });
@@ -451,17 +452,12 @@ export class BuyDeSoEthComponent implements OnInit {
     return weiMinusFees.add(this.weiFeeEstimate);
   }
 
-  computeNanosToCreateGivenETHToBurn(ethToBurn: number): number {
-    return Number(this.computeNanosToCreateGivenWeiToBurn(this.toWeiBN(ethToBurn)));
-  }
-
-  computeNanosToCreateGivenWeiToBurn(weiToBurn: BN): BN {
+  computeNanosToCreateGivenWeiToBurn(weiToBurn: BN): number {
     let weiMinusFees = weiToBurn.sub(this.weiFeeEstimate);
-    debugger;
     if (weiMinusFees.ltn(0)) {
       return new BN(0);
     }
-    return Number(fromWei(weiMinusFees)) * this.getExchangeRateAfterFee();
+    return Number(fromWei(weiMinusFees)) * this.getExchangeRateAfterFee().toNumber();
   }
 
   getExchangeRateAfterFee(): BN {
@@ -501,21 +497,13 @@ export class BuyDeSoEthComponent implements OnInit {
     return 1 + this.globalVars.BuyDeSoFeeBasisPoints / (100 * 100);
   }
 
-  ethBalance(): number {
-    return Number(fromWei(this.weiBalance));
-  }
-
-  ethFeeEstimate(): number {
-    return Number(fromWei(this.weiFeeEstimate));
-  }
-
   refreshBalance() {
     if (!this.loadingBalance) {
       this.loadingBalance = true;
       this.getBalance(this.ethDepositAddress(), "latest")
         .then((res) => {
-          // this.ethBalance = parseFloat(fromWei(res.toString(), "ether"));
           this.weiBalance = toBN(res);
+          this.ethBalance = Number(fromWei(this.weiBalance));
         })
         .finally(() => {
           this.loadingBalance = false;
@@ -524,9 +512,8 @@ export class BuyDeSoEthComponent implements OnInit {
     if (!this.loadingFee) {
       this.loadingFee = true;
       this.getFees().then((res) => {
-        // this.ethFeeEstimate = this.fromWeiToEther(res.totalFees);
         this.weiFeeEstimate = res.totalFees;
-        // this.ethToExchange = this.ethFeeEstimate.toString();
+        this.ethFeeEstimate = Number(fromWei(this.weiFeeEstimate));
         this.weiToExchange = this.weiFeeEstimate;
         this.ethToExchange = Number(fromWei(this.weiFeeEstimate));
       });
