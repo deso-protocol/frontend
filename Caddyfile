@@ -28,20 +28,21 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
+    node.deso.org
+    bithunt.deso.org
+    pulse.deso.org
     bitclout.com:*
     api.bitclout.com
     bithunt.bitclout.com
     pulse.bitclout.com
-    api.bitpop.dev
     localhost:*
-    explorer.bitclout.com:*
+    explorer.bitclout.com
     https://api.blockchain.com/ticker
     https://api.blockchain.com/mempool/fees
     https://ka-f.fontawesome.com/
     bitcoinfees.earn.com
     api.blockcypher.com
-    amp.bitclout.com api.bitclout.green api.bitclout.blue
-    api.bitclout.navy
+    amp.bitclout.com
     api.testwyre.com
     api.sendwyre.com
     https://videodelivery.net
