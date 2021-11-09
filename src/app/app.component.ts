@@ -174,7 +174,6 @@ export class AppComponent implements OnInit {
       .subscribe((res: any) => {
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
-        this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
         this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
