@@ -5,12 +5,13 @@ import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { IdentityService } from "../../identity.service";
 import { BuyDeSoComponent } from "../buy-deso/buy-deso.component";
-import { fromWei, hexToNumber, toHex } from "web3-utils";
+import { fromWei, hexToNumber, toHex, toBN, toWei } from "web3-utils";
 import { Hex } from "web3-utils/types";
 import Common, { Chain, Hardfork } from "@ethereumjs/common";
 import { FeeMarketEIP1559Transaction, Transaction as LegacyTransaction, TxData, TxOptions } from "@ethereumjs/tx";
 import { FeeMarketEIP1559TxData } from "@ethereumjs/tx/src/types";
 import { Transaction, TransactionOptions } from "ethereumjs-tx";
+import { BN } from "ethereumjs-util";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -36,14 +37,18 @@ type TransactionType = Transaction | LegacyTransaction | FeeMarketEIP1559Transac
 type TypeOfTransactionType = typeof Transaction | typeof LegacyTransaction | typeof FeeMarketEIP1559Transaction;
 
 type FeeDetails = {
-  baseFeePerGas?: number;
-  maxPriorityFeePerGas?: number;
-  maxPriorityFeePerGasHex?: Hex;
-  maxFeePerGas?: number;
-  maxFeePerGasHex?: Hex;
-  totalFees: number;
-  gasPriceHex?: Hex;
-  gasPrice?: number;
+  baseFeePerGas: BN;
+  maxPriorityFeePerGas: BN;
+  maxPriorityFeePerGasHex: Hex;
+  maxFeePerGas: BN;
+  maxFeePerGasHex: Hex;
+  totalFeesEIP1559: BN;
+  gasPriceHex: Hex;
+  gasPrice: BN;
+  totalFeesLegacy: BN;
+  maxLegacyGasPrice: BN;
+  maxTotalFeesLegacy: BN;
+  maxLegacyGasPriceHex: BN;
 };
 
 @Component({
@@ -55,15 +60,21 @@ export class BuyDeSoEthComponent implements OnInit {
   @Input() parentComponent: BuyDeSoComponent;
 
   // Current balance in ETH
+  // Eth balance is only for display purposes.
   ethBalance = 0;
+  weiBalance: BN = new BN(0);
   loadingBalance = false;
   loadingFee = false;
 
   // Network fees in ETH (with sane default)
+  // ETH fee estimate is only for display purposes.
   ethFeeEstimate = 0.002;
+  weiFeeEstimate: BN = new BN(0);
 
   // ETH to exchange (not including fees)
-  ethToExchange = 0;
+  // Eth To Exchange is only for display purposes.
+  ethToExchange: number = 0;
+  weiToExchange: BN = new BN(0);
 
   // DESO to Buy
   desoToBuy = 0;
@@ -73,9 +84,14 @@ export class BuyDeSoEthComponent implements OnInit {
 
   common: Common;
 
-  static instructionsPerBasicTransfer = 21000;
+  static instructionsPerBasicTransfer = toBN(21000);
 
+  // Flip to false to use EIP 1559 transactions with MaxFeePerGas and MaxPriorityFeePerGas.
+  // Flip to true to use legacy transactions.
   static useLegacyTransaction: boolean = true;
+
+  // Flip to true to log fees when testing.
+  static logFees: boolean = false;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -157,12 +173,12 @@ export class BuyDeSoEthComponent implements OnInit {
       return;
     }
 
-    if (this.ethToExchange > this.ethBalance) {
+    if (this.weiToExchange.gt(this.weiBalance)) {
       this.globalVars._alertError(Messages.INSUFFICIENT_BALANCE);
       return;
     }
 
-    if (this.ethToExchange < this.ethFeeEstimate) {
+    if (this.weiToExchange.lt(this.weiFeeEstimate)) {
       this.globalVars._alertError(Messages.INSUFFICIENT_FEES);
       return;
     }
@@ -172,7 +188,7 @@ export class BuyDeSoEthComponent implements OnInit {
       return;
     }
 
-    let confirmBuyDESOString = sprintf(Messages.CONFIRM_BUY_DESO, this.ethToExchange, this.desoToBuy);
+    let confirmBuyDESOString = sprintf(Messages.CONFIRM_BUY_DESO, fromWei(this.weiToExchange), this.desoToBuy);
 
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
@@ -218,7 +234,7 @@ export class BuyDeSoEthComponent implements OnInit {
             this.error = "";
             this.desoToBuy = 0;
             this.ethToExchange = 0;
-
+            this.weiToExchange = new BN(0);
             // This will update the balance and a bunch of other things.
             this.globalVars.updateEverything(
               res.DESOTxHash,
@@ -278,12 +294,11 @@ export class BuyDeSoEthComponent implements OnInit {
       txData = {
         nonce,
         value,
-        data: "0x",
         gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
         to: this.globalVars.buyETHAddress,
       };
       if (BuyDeSoEthComponent.useLegacyTransaction) {
-        txData.gasPrice = fees.gasPriceHex;
+        txData.gasPrice = fees.maxLegacyGasPriceHex;
       } else {
         feeMarketTxData = txData as FeeMarketEIP1559TxData;
         feeMarketTxData.maxPriorityFeePerGas = fees.maxPriorityFeePerGasHex;
@@ -323,12 +338,16 @@ export class BuyDeSoEthComponent implements OnInit {
     });
   }
 
+  getTotalFee(fees: FeeDetails): BN {
+    return BuyDeSoEthComponent.useLegacyTransaction ? fees.maxTotalFeesLegacy : fees.totalFeesEIP1559;
+  }
+
   // getNonceValueAndFees is a helper to get the nonce, transaction value, and current fees when constructing a tx.
   getNonceValueAndFees(): Promise<{ nonce: Hex; value: Hex; fees: FeeDetails }> {
     return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
       ([transactionCount, fees]) => {
         const nonce = toHex(transactionCount);
-        let value = this.getValue(fees.totalFees);
+        let value = this.getValue(fees);
         return {
           nonce,
           value,
@@ -396,12 +415,13 @@ export class BuyDeSoEthComponent implements OnInit {
       );
   }
 
-  getValue(totalFees: number): Hex {
+  getValue(fees: FeeDetails): Hex {
+    const totalFees = this.getTotalFee(fees);
     // Make sure that value + actual fees does not exceed the current balance. If it does, subtract the remainder from value.
-    let value = Math.floor((this.ethToExchange - this.ethFeeEstimate) * 1e18);
-    let remainder = totalFees + value - this.ethBalance * 1e18;
-    if (remainder > 0) {
-      value = value - remainder;
+    let value = this.weiToExchange.sub(totalFees);
+    let remainder = totalFees.add(value).sub(this.weiBalance);
+    if (remainder.gt(0)) {
+      value = value.sub(remainder);
     }
     return toHex(value);
   }
@@ -427,32 +447,46 @@ export class BuyDeSoEthComponent implements OnInit {
 
   clickMaxDESO() {
     this.getFees().then((res) => {
-      this.ethFeeEstimate = this.fromWeiToEther(res.totalFees);
-      this.ethToExchange = this.ethBalance;
-      this.updateETHToExchange(this.ethToExchange);
+      this.weiFeeEstimate = this.getTotalFee(res);
+      this.ethFeeEstimate = Number(fromWei(this.weiFeeEstimate));
+      this.weiToExchange = this.weiBalance;
+      this.updateETHToExchange(fromWei(this.weiToExchange));
     });
   }
 
-  computeETHToBurnGivenDESONanos(amountNanos: number) {
-    const ethMinusFees = amountNanos / (this.globalVars.nanosPerETHExchangeRate * this.nodeFee());
-    return ethMinusFees + this.ethFeeEstimate;
+  computeETHToBurnGivenDESONanos(amountNanos: number): number {
+    return Number(fromWei(this.computeWeiToBurnGivenDESONanos(amountNanos)));
   }
 
-  computeNanosToCreateGivenETHToBurn(ethToBurn: number): number {
-    const ethMinusFees = Math.max(ethToBurn - this.ethFeeEstimate, 0);
-    return ethMinusFees * (this.globalVars.nanosPerETHExchangeRate * this.nodeFee());
+  computeWeiToBurnGivenDESONanos(amountNanos: number): BN {
+    const weiMinusFees = new BN(amountNanos).div(this.getExchangeRateAfterFee());
+    return weiMinusFees.add(this.weiFeeEstimate);
+  }
+
+  computeNanosToCreateGivenWeiToBurn(weiToBurn: BN): number {
+    let weiMinusFees = weiToBurn.sub(this.weiFeeEstimate);
+    if (weiMinusFees.ltn(0)) {
+      return new BN(0);
+    }
+    return Number(fromWei(weiMinusFees)) * this.getExchangeRateAfterFee().toNumber();
+  }
+
+  getExchangeRateAfterFee(): BN {
+    return new BN(this.globalVars.nanosPerETHExchangeRate).mul(new BN(this.nodeFee()));
   }
 
   updateDESOToBuy(newVal) {
     if (newVal == null || newVal === "") {
       this.desoToBuy = 0;
       this.ethToExchange = 0;
+      this.weiToExchange = new BN(0);
     } else {
       // Convert the string value to a number
-      this.desoToBuy = Number(this.desoToBuy);
+      this.desoToBuy = Number(newVal);
 
       // Update the other value
       this.ethToExchange = this.computeETHToBurnGivenDESONanos(newVal * GlobalVarsService.NANOS_PER_UNIT);
+      this.weiToExchange = this.computeWeiToBurnGivenDESONanos(newVal * GlobalVarsService.NANOS_PER_UNIT);
     }
   }
 
@@ -460,14 +494,13 @@ export class BuyDeSoEthComponent implements OnInit {
     if (newVal == null || newVal === "") {
       this.desoToBuy = 0;
       this.ethToExchange = 0;
+      this.weiToExchange = new BN(0);
     } else {
       // Convert the string value to a number
-      this.ethToExchange = Number(this.ethToExchange);
-
+      this.weiToExchange = this.toWeiBN(newVal);
+      this.ethToExchange = Number(newVal);
       // Update the other value
-      this.desoToBuy =
-        this.computeNanosToCreateGivenETHToBurn(this.ethToExchange - this.ethFeeEstimate) /
-        GlobalVarsService.NANOS_PER_UNIT;
+      this.desoToBuy = this.computeNanosToCreateGivenWeiToBurn(this.weiToExchange) / GlobalVarsService.NANOS_PER_UNIT;
     }
   }
 
@@ -480,7 +513,8 @@ export class BuyDeSoEthComponent implements OnInit {
       this.loadingBalance = true;
       this.getBalance(this.ethDepositAddress(), "latest")
         .then((res) => {
-          this.ethBalance = parseFloat(fromWei(res.toString(), "ether"));
+          this.weiBalance = toBN(res);
+          this.ethBalance = Number(fromWei(this.weiBalance));
         })
         .finally(() => {
           this.loadingBalance = false;
@@ -489,8 +523,10 @@ export class BuyDeSoEthComponent implements OnInit {
     if (!this.loadingFee) {
       this.loadingFee = true;
       this.getFees().then((res) => {
-        this.ethFeeEstimate = this.fromWeiToEther(res.totalFees);
-        this.ethToExchange = this.ethFeeEstimate;
+        this.weiFeeEstimate = this.getTotalFee(res);
+        this.ethFeeEstimate = Number(fromWei(this.weiFeeEstimate));
+        this.weiToExchange = this.weiFeeEstimate;
+        this.ethToExchange = Number(fromWei(this.weiFeeEstimate));
       });
     }
   }
@@ -534,29 +570,38 @@ export class BuyDeSoEthComponent implements OnInit {
 
   // getFees returns all the numbers and hex-strings necessary for computing eth gas.
   getFees(): Promise<FeeDetails> {
-    if (BuyDeSoEthComponent.useLegacyTransaction) {
-      return this.getGasPrice().then((gasPriceHex) => {
-        return {
-          totalFees: hexToNumber(gasPriceHex) * BuyDeSoEthComponent.instructionsPerBasicTransfer,
-          gasPriceHex,
-          gasPrice: hexToNumber(gasPriceHex),
-        };
-      });
-    }
-    return Promise.all([this.getBlock("pending"), this.getMaxPriorityFeePerGas()]).then(
-      ([block, maxPriorityFeePerGasHex]) => {
-        const baseFeePerGas = hexToNumber(block.baseFeePerGas);
+    return Promise.all([this.getBlock("pending"), this.getMaxPriorityFeePerGas(), this.getGasPrice()]).then(
+      ([block, maxPriorityFeePerGasHex, gasPriceHex]) => {
+        const baseFeePerGas = toBN(block.baseFeePerGas);
 
-        const maxPriorityFeePerGas = hexToNumber(maxPriorityFeePerGasHex);
-        const maxFeePerGas = baseFeePerGas + maxPriorityFeePerGas;
-        const totalFees = maxFeePerGas * BuyDeSoEthComponent.instructionsPerBasicTransfer;
+        // Add a gwei to make this transaction more attractive to miners.
+        const maxPriorityFeePerGas = toBN(maxPriorityFeePerGasHex).add(new BN(toWei("1", "gwei")));
+        const maxFeePerGas = baseFeePerGas.add(maxPriorityFeePerGas);
+        const totalFeesEIP1559 = maxFeePerGas.mul(BuyDeSoEthComponent.instructionsPerBasicTransfer);
+        const gasPrice = toBN(gasPriceHex);
+        const totalFeesLegacy = gasPrice.mul(BuyDeSoEthComponent.instructionsPerBasicTransfer);
+        if (BuyDeSoEthComponent.logFees) {
+          console.log("gasPrice: ", fromWei(gasPrice, "gwei"));
+          console.log("legacy total gas fees: ", fromWei(totalFeesLegacy, "gwei"));
+          console.log("maxFeePerGas: ", fromWei(maxFeePerGas, "gwei"));
+          console.log("baseFeePerGas: ", fromWei(baseFeePerGas, "gwei"));
+          console.log("maxPriorityFeePerGas: ", fromWei(maxPriorityFeePerGas, "gwei"));
+          console.log("EIP 1559 total gas fees: ", fromWei(totalFeesEIP1559, "gwei"));
+        }
+
         return {
           baseFeePerGas,
           maxPriorityFeePerGas,
           maxPriorityFeePerGasHex,
           maxFeePerGas,
           maxFeePerGasHex: toHex(maxFeePerGas),
-          totalFees,
+          totalFeesEIP1559,
+          gasPrice,
+          gasPriceHex,
+          totalFeesLegacy,
+          maxLegacyGasPrice: maxFeePerGas.gt(gasPrice) ? maxFeePerGas : gasPrice,
+          maxLegacyGasPriceHex: toHex(maxFeePerGas.gt(gasPrice) ? maxFeePerGas : gasPrice),
+          maxTotalFeesLegacy: totalFeesEIP1559.gt(totalFeesLegacy) ? totalFeesEIP1559 : totalFeesLegacy,
         };
       }
     );
@@ -597,7 +642,10 @@ export class BuyDeSoEthComponent implements OnInit {
     this.globalVars._updateDeSoExchangeRate();
   }
 
-  fromWeiToEther(wei: number): number {
-    return parseFloat(fromWei(toHex(wei)));
+  stringToWeiBN(wei: string): BN {
+    return new BN(toWei(wei));
+  }
+  toWeiBN(wei: number): BN {
+    return this.stringToWeiBN(wei.toString());
   }
 }
