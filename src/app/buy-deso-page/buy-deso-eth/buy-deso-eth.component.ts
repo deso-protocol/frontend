@@ -37,14 +37,18 @@ type TransactionType = Transaction | LegacyTransaction | FeeMarketEIP1559Transac
 type TypeOfTransactionType = typeof Transaction | typeof LegacyTransaction | typeof FeeMarketEIP1559Transaction;
 
 type FeeDetails = {
-  baseFeePerGas?: BN;
-  maxPriorityFeePerGas?: BN;
-  maxPriorityFeePerGasHex?: Hex;
-  maxFeePerGas?: BN;
-  maxFeePerGasHex?: Hex;
-  totalFees: BN;
-  gasPriceHex?: Hex;
-  gasPrice?: BN;
+  baseFeePerGas: BN;
+  maxPriorityFeePerGas: BN;
+  maxPriorityFeePerGasHex: Hex;
+  maxFeePerGas: BN;
+  maxFeePerGasHex: Hex;
+  totalFeesEIP1559: BN;
+  gasPriceHex: Hex;
+  gasPrice: BN;
+  totalFeesLegacy: BN;
+  maxLegacyGasPrice: BN;
+  maxTotalFeesLegacy: BN;
+  maxLegacyGasPriceHex: BN;
 };
 
 @Component({
@@ -82,7 +86,12 @@ export class BuyDeSoEthComponent implements OnInit {
 
   static instructionsPerBasicTransfer = toBN(21000);
 
+  // Flip to false to use EIP 1559 transactions with MaxFeePerGas and MaxPriorityFeePerGas.
+  // Flip to true to use legacy transactions.
   static useLegacyTransaction: boolean = true;
+
+  // Flip to true to log fees when testing.
+  static logFees: boolean = false;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -285,12 +294,11 @@ export class BuyDeSoEthComponent implements OnInit {
       txData = {
         nonce,
         value,
-        data: "0x",
         gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
         to: this.globalVars.buyETHAddress,
       };
       if (BuyDeSoEthComponent.useLegacyTransaction) {
-        txData.gasPrice = fees.gasPriceHex;
+        txData.gasPrice = fees.maxLegacyGasPriceHex;
       } else {
         feeMarketTxData = txData as FeeMarketEIP1559TxData;
         feeMarketTxData.maxPriorityFeePerGas = fees.maxPriorityFeePerGasHex;
@@ -330,12 +338,16 @@ export class BuyDeSoEthComponent implements OnInit {
     });
   }
 
+  getTotalFee(fees: FeeDetails): BN {
+    return BuyDeSoEthComponent.useLegacyTransaction ? fees.maxTotalFeesLegacy : fees.totalFeesEIP1559;
+  }
+
   // getNonceValueAndFees is a helper to get the nonce, transaction value, and current fees when constructing a tx.
   getNonceValueAndFees(): Promise<{ nonce: Hex; value: Hex; fees: FeeDetails }> {
     return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
       ([transactionCount, fees]) => {
         const nonce = toHex(transactionCount);
-        let value = this.getValue(fees.totalFees);
+        let value = this.getValue(fees);
         return {
           nonce,
           value,
@@ -403,7 +415,8 @@ export class BuyDeSoEthComponent implements OnInit {
       );
   }
 
-  getValue(totalFees: BN): Hex {
+  getValue(fees: FeeDetails): Hex {
+    const totalFees = this.getTotalFee(fees);
     // Make sure that value + actual fees does not exceed the current balance. If it does, subtract the remainder from value.
     let value = this.weiToExchange.sub(totalFees);
     let remainder = totalFees.add(value).sub(this.weiBalance);
@@ -434,7 +447,7 @@ export class BuyDeSoEthComponent implements OnInit {
 
   clickMaxDESO() {
     this.getFees().then((res) => {
-      this.weiFeeEstimate = res.totalFees;
+      this.weiFeeEstimate = this.getTotalFee(res);
       this.ethFeeEstimate = Number(fromWei(this.weiFeeEstimate));
       this.weiToExchange = this.weiBalance;
       this.updateETHToExchange(fromWei(this.weiToExchange));
@@ -510,7 +523,7 @@ export class BuyDeSoEthComponent implements OnInit {
     if (!this.loadingFee) {
       this.loadingFee = true;
       this.getFees().then((res) => {
-        this.weiFeeEstimate = res.totalFees;
+        this.weiFeeEstimate = this.getTotalFee(res);
         this.ethFeeEstimate = Number(fromWei(this.weiFeeEstimate));
         this.weiToExchange = this.weiFeeEstimate;
         this.ethToExchange = Number(fromWei(this.weiFeeEstimate));
@@ -557,29 +570,38 @@ export class BuyDeSoEthComponent implements OnInit {
 
   // getFees returns all the numbers and hex-strings necessary for computing eth gas.
   getFees(): Promise<FeeDetails> {
-    if (BuyDeSoEthComponent.useLegacyTransaction) {
-      return this.getGasPrice().then((gasPriceHex) => {
-        return {
-          totalFees: toBN(gasPriceHex).mul(BuyDeSoEthComponent.instructionsPerBasicTransfer),
-          gasPriceHex,
-          gasPrice: toBN(gasPriceHex),
-        };
-      });
-    }
-    return Promise.all([this.getBlock("pending"), this.getMaxPriorityFeePerGas()]).then(
-      ([block, maxPriorityFeePerGasHex]) => {
+    return Promise.all([this.getBlock("pending"), this.getMaxPriorityFeePerGas(), this.getGasPrice()]).then(
+      ([block, maxPriorityFeePerGasHex, gasPriceHex]) => {
         const baseFeePerGas = toBN(block.baseFeePerGas);
 
-        const maxPriorityFeePerGas = toBN(maxPriorityFeePerGasHex);
+        // Add a gwei to make this transaction more attractive to miners.
+        const maxPriorityFeePerGas = toBN(maxPriorityFeePerGasHex).add(new BN(toWei("1", "gwei")));
         const maxFeePerGas = baseFeePerGas.add(maxPriorityFeePerGas);
-        const totalFees = maxFeePerGas.mul(BuyDeSoEthComponent.instructionsPerBasicTransfer);
+        const totalFeesEIP1559 = maxFeePerGas.mul(BuyDeSoEthComponent.instructionsPerBasicTransfer);
+        const gasPrice = toBN(gasPriceHex);
+        const totalFeesLegacy = gasPrice.mul(BuyDeSoEthComponent.instructionsPerBasicTransfer);
+        if (BuyDeSoEthComponent.logFees) {
+          console.log("gasPrice: ", fromWei(gasPrice, "gwei"));
+          console.log("legacy total gas fees: ", fromWei(totalFeesLegacy, "gwei"));
+          console.log("maxFeePerGas: ", fromWei(maxFeePerGas, "gwei"));
+          console.log("baseFeePerGas: ", fromWei(baseFeePerGas, "gwei"));
+          console.log("maxPriorityFeePerGas: ", fromWei(maxPriorityFeePerGas, "gwei"));
+          console.log("EIP 1559 total gas fees: ", fromWei(totalFeesEIP1559, "gwei"));
+        }
+
         return {
           baseFeePerGas,
           maxPriorityFeePerGas,
           maxPriorityFeePerGasHex,
           maxFeePerGas,
           maxFeePerGasHex: toHex(maxFeePerGas),
-          totalFees,
+          totalFeesEIP1559,
+          gasPrice,
+          gasPriceHex,
+          totalFeesLegacy,
+          maxLegacyGasPrice: maxFeePerGas.gt(gasPrice) ? maxFeePerGas : gasPrice,
+          maxLegacyGasPriceHex: toHex(maxFeePerGas.gt(gasPrice) ? maxFeePerGas : gasPrice),
+          maxTotalFeesLegacy: totalFeesEIP1559.gt(totalFeesLegacy) ? totalFeesEIP1559 : totalFeesLegacy,
         };
       }
     );
