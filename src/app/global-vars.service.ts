@@ -116,7 +116,7 @@ export class GlobalVarsService {
   TutorialStatus: TutorialStatus;
 
   // map[pubkey]->bool of globomods
-  globoMods: any;
+  paramUpdaters: { [k: string]: boolean };
   feeRateDeSoPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
@@ -1131,7 +1131,7 @@ export class GlobalVarsService {
         return;
       }
       this.backendApi
-        .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
+        .GetJumioStatusForPublicKey(environment.verificationEndpointHostname, publicKey)
         .subscribe(
           (res: any) => {
             if (res.JumioVerified) {
@@ -1179,7 +1179,7 @@ export class GlobalVarsService {
     const referralHash = localStorage.getItem("referralCode");
     if (referralHash) {
       this.backendApi
-        .GetReferralInfoForReferralHash(environment.jumioEndpointHostname, referralHash)
+        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
         .subscribe((res) => {
           const referralInfo = res.ReferralInfoResponse.Info;
           if (
