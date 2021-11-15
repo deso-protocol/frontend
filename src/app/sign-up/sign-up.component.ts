@@ -1,8 +1,6 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, User } from "../backend-api.service";
 import { FeedComponent } from "../feed/feed.component";
 
 @Component({
@@ -15,18 +13,10 @@ export class SignUpComponent {
   loading: boolean = false;
   emailAddress = "";
   invalidEmailEntered = false;
-  phoneForm = new FormGroup({
-    phone: new FormControl(undefined, [Validators.required]),
-  });
   storingEmailAndPhone = false;
   showPhoneNumberVerifiedContent = false;
 
-  constructor(
-    private globalVars: GlobalVarsService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private backendApi: BackendApiService
-  ) {
+  constructor(private globalVars: GlobalVarsService, private router: Router, private route: ActivatedRoute) {
     this.route.queryParams.subscribe((queryParams) => {
       this.stepNum = 1;
       if (queryParams.stepNum) {
