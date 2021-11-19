@@ -168,6 +168,10 @@ export class FeedCreatePostComponent implements OnInit {
       }
     }
 
+    if (environment.node.id) {
+      postExtraData["Node"] = environment.node.id.toString();
+    }
+
     const bodyObj = {
       Body: this.postInput,
       // Only submit images if the post is a quoted repost or a vanilla post.
