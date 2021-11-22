@@ -168,7 +168,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   // This is a standalone function in case we decide we want to confirm fees before doing a real transaction.
   _callBackendUpdateProfile() {
     return this.backendApi.UpdateProfile(
-      environment.verificationEndpointHostname,
+      this.globalVars.localNode,
       this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
       "" /*ProfilePublicKeyBase58Check*/,
       // Start params

@@ -12,12 +12,15 @@
 
 <a
   class="mt-15px btn btn-primary br-12px"
-  (click)="launchPhoneNumberVerification()"
+  href=""
+  [routerLink]="'/' + RouteNames.GET_STARTER_DESO"
+  [queryParamsHandling]="'merge'"
+  *ngIf="globalVars.showPhoneNumberVerification || globalVars.showJumio"
 >
-  Get Starter DESO
+  Get Starter DeSo
 </a>
 
-<div class="fs-15px mt-15px">Or</div>
+<div class="fs-15px mt-15px" *ngIf="globalVars.showPhoneNumberVerification || globalVars.showJumio">Or</div>
 
 <div class="fs-15px mt-15px">
   <a href="" [routerLink]="'/' + globalVars.RouteNames.BUY_DESO" queryParamsHandling="merge">

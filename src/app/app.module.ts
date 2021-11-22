@@ -82,6 +82,7 @@ import { AdminWyreComponent } from "./admin/admin-wyre/admin-wyre.component";
 import { NetworkInfoComponent } from "./network-info/network-info.component";
 import { SanitizeAndAutoLinkPipe } from "../lib/pipes/sanitize-and-auto-link-pipe";
 import { SanitizeEmbedPipe } from "../lib/pipes/sanitize-embed-pipe";
+import { NgxIntlTelInputModule } from "ngx-intl-tel-input";
 import { SettingsComponent } from "./settings/settings.component";
 import { NotificationsListComponent } from "./notifications-page/notifications-list/notifications-list.component";
 import { UiScrollModule } from "ngx-ui-scroll";
@@ -313,6 +314,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     BrowserAnimationsModule,
     MatTooltipModule,
     TextFieldModule,
+    NgxIntlTelInputModule,
     UiScrollModule,
     AnimateOnScrollModule.forRoot(),
     ToastrModule.forRoot(),

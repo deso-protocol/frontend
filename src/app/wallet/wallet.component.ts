@@ -301,7 +301,7 @@ export class WalletComponent implements OnInit, OnDestroy {
           if (res.isConfirmed) {
             return this.backendApi
               .UpdateProfile(
-                environment.verificationEndpointHostname,
+                this.globalVars.localNode,
                 this.globalVars.loggedInUser.PublicKeyBase58Check,
                 "",
                 "",
