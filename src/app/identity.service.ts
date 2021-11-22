@@ -42,7 +42,14 @@ export class IdentityService {
 
   launch(
     path?: string,
-    params?: { publicKey?: string; tx?: string; referralCode?: string; public_key?: string, hideJumio?: boolean, accessLevelRequest?: number }
+    params?: {
+      publicKey?: string;
+      tx?: string;
+      referralCode?: string;
+      public_key?: string;
+      hideJumio?: boolean;
+      accessLevelRequest?: number;
+    }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
     if (path) {
@@ -149,6 +156,12 @@ export class IdentityService {
 
   info(): Observable<any> {
     return this.send("info", {});
+  }
+
+  launchPhoneNumberVerification(public_key: string): Observable<{ phoneNumberSuccess: boolean }> {
+    return this.launch("/verify-phone-number", {
+      public_key,
+    });
   }
 
   // Helpers
