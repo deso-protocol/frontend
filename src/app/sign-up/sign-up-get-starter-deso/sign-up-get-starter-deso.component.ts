@@ -8,7 +8,7 @@ import { IdentityService } from "../../identity.service";
   templateUrl: "./sign-up-get-starter-deso.component.html",
   styleUrls: ["./sign-up-get-starter-deso.component.scss"],
 })
-export class SignUpGetStarterDeSoComponent implements OnInit {
+export class SignUpGetStarterDeSoComponent {
   static CREATE_PHONE_NUMBER_VERIFICATION_SCREEN = "create_phone_number_verification_screen";
   static COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN = "completed_phone_number_verification_screen";
 
@@ -17,7 +17,7 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
   @Output() phoneNumberVerified = new EventEmitter();
   @Output() skipButtonClicked = new EventEmitter();
 
-  screenToShow = null;
+  screenToShow = SignUpGetStarterDeSoComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN;
   SignUpGetStarterDeSoComponent = SignUpGetStarterDeSoComponent;
 
   constructor(
@@ -25,28 +25,6 @@ export class SignUpGetStarterDeSoComponent implements OnInit {
     private backendApi: BackendApiService,
     private identityService: IdentityService
   ) {}
-
-  ngOnInit(): void {
-    this._setScreenToShow();
-  }
-
-  _setScreenToShow() {
-    // TODO: refactor silly setInterval
-    let interval = setInterval(() => {
-      if (this.globalVars.loggedInUser.HasPhoneNumber == null) {
-        // Wait until we've loaded the HasPhoneNumber boolean from the server
-        return;
-      }
-
-      if (this.globalVars.loggedInUser.HasPhoneNumber) {
-        this.screenToShow = SignUpGetStarterDeSoComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
-      } else {
-        this.screenToShow = SignUpGetStarterDeSoComponent.CREATE_PHONE_NUMBER_VERIFICATION_SCREEN;
-      }
-
-      clearInterval(interval);
-    }, 50);
-  }
 
   onSkipButtonClicked() {
     this.skipButtonClicked.emit();
