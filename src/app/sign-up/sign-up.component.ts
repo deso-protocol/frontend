@@ -1,6 +1,9 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { GlobalVarsService } from "../global-vars.service";
+import { BackendApiService, User } from "../backend-api.service";
+import { CountryISO, PhoneNumberFormat } from "ngx-intl-tel-input";
 import { FeedComponent } from "../feed/feed.component";
 
 @Component({
@@ -11,12 +14,21 @@ import { FeedComponent } from "../feed/feed.component";
 export class SignUpComponent {
   stepNum: number;
   loading: boolean = false;
+  countryISO = CountryISO;
   emailAddress = "";
   invalidEmailEntered = false;
+  phoneForm = new FormGroup({
+    phone: new FormControl(undefined, [Validators.required]),
+  });
   storingEmailAndPhone = false;
   showPhoneNumberVerifiedContent = false;
 
-  constructor(private globalVars: GlobalVarsService, private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private globalVars: GlobalVarsService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private backendApi: BackendApiService
+  ) {
     this.route.queryParams.subscribe((queryParams) => {
       this.stepNum = 1;
       if (queryParams.stepNum) {

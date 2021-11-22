@@ -116,7 +116,7 @@ export class GlobalVarsService {
   TutorialStatus: TutorialStatus;
 
   // map[pubkey]->bool of globomods
-  paramUpdaters: { [k: string]: boolean };
+  globoMods: any;
   feeRateDeSoPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
@@ -321,16 +321,14 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     // Fetch referralLinks for the userList before completing the load.
-    this.backendApi
-      .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
-      .subscribe(
-        (res: any) => {
-          this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
-        },
-        (err: any) => {
-          console.log(err);
-        }
-      );
+    this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe(
+      (res: any) => {
+        this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
+      },
+      (err: any) => {
+        console.log(err);
+      }
+    );
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
     if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
@@ -1133,7 +1131,7 @@ export class GlobalVarsService {
         return;
       }
       this.backendApi
-        .GetJumioStatusForPublicKey(environment.verificationEndpointHostname, publicKey)
+        .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
         .subscribe(
           (res: any) => {
             if (res.JumioVerified) {
@@ -1181,7 +1179,7 @@ export class GlobalVarsService {
     const referralHash = localStorage.getItem("referralCode");
     if (referralHash) {
       this.backendApi
-        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
+        .GetReferralInfoForReferralHash(environment.jumioEndpointHostname, referralHash)
         .subscribe((res) => {
           const referralInfo = res.ReferralInfoResponse.Info;
           if (

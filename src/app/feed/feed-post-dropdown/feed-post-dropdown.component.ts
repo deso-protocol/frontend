@@ -132,10 +132,10 @@ export class FeedPostDropdownComponent {
 
     const loggedInUserPostedThis =
       this.globalVars.loggedInUser.PublicKeyBase58Check === this.post.PosterPublicKeyBase58Check;
-    const loggedInUserIsParamUpdater =
-      this.globalVars.paramUpdaters && this.globalVars.paramUpdaters[this.globalVars.loggedInUser.PublicKeyBase58Check];
+    const loggedInUserIsGloboMod =
+      this.globalVars.globoMods && this.globalVars.globoMods[this.globalVars.loggedInUser.PublicKeyBase58Check];
 
-    return loggedInUserPostedThis || loggedInUserIsParamUpdater;
+    return loggedInUserPostedThis || loggedInUserIsGloboMod;
   }
 
   globalFeedEligible(): boolean {

@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   uploadImageHostname: "node.deso.org",
-  verificationEndpointHostname: "node.deso.org",
+  jumioEndpointHostname: "node.deso.org",
   uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
   supportEmail: "",
@@ -13,11 +13,11 @@ export const environment = {
   },
   amplitude: {
     key: "",
-    domain: "",
+    domain: ""
   },
   node: {
-    name: "DeSo",
-    url: "https://deso.org",
-    logoAssetDir: "/assets/deso/",
-  },
+    name: 'DeSo',
+    url: 'https://deso.org',
+    logoAssetDir: '/assets/deso/'
+  }
 };
