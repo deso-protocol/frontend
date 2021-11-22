@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { IdentityService } from "../../identity.service";
