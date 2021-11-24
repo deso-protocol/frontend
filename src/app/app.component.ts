@@ -202,6 +202,7 @@ export class AppComponent implements OnInit {
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
         this.globalVars.buyETHAddress = res.BuyETHAddress;
+        this.globalVars.nodes = res.Nodes;
 
         this.globalVars.transactionFeeMap = res.TransactionFeeMap;
 

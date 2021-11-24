@@ -17,7 +17,7 @@ export const environment = {
   },
   node: {
     name: "DeSo",
-    url: "https://deso.org",
+    url: "https://node.deso.org",
     logoAssetDir: "/assets/deso/",
   },
 };

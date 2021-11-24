@@ -199,17 +199,34 @@
                 [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
                 [creatorCoinTemplate]="creatorCoinInfo"
               ></follow-button>
-              <feed-post-dropdown
-                *ngIf="showDropdown && !reposterProfile"
-                class="ml-auto"
-                [post]="post"
-                [postContent]="postContent"
-                [nftEntryResponses]="nftEntryResponses"
-                (postHidden)="hidePost()"
-                (userBlocked)="blockUser()"
-                (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
-                (togglePostPin)="_pinPostToGlobalFeed($event)"
-              ></feed-post-dropdown>
+
+              <div class="ml-auto">
+                <div *ngIf="getNode()" class="d-inline-block mr-5px" [ngClass]="{ 'mr-5px': globalVars.isMobile(), 'mr-10px': !globalVars.isMobile() }">
+                  <a
+                    class="text-grey9"
+                    target="_blank"
+                    href="{{ getNode().URL }}"
+                    matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                    mat-raised-button
+                    #tooltip="matTooltip"
+                    [matTooltip]="'Posted on ' + getNode().Name"
+                  >
+                    <i class="fas fa-external-link-square-alt"></i>
+                  </a>
+                </div>
+
+                <feed-post-dropdown
+                  *ngIf="showDropdown && !reposterProfile"
+                  class="d-inline-block"
+                  [post]="post"
+                  [postContent]="postContent"
+                  [nftEntryResponses]="nftEntryResponses"
+                  (postHidden)="hidePost()"
+                  (userBlocked)="blockUser()"
+                  (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
+                  (togglePostPin)="_pinPostToGlobalFeed($event)"
+                ></feed-post-dropdown>
+              </div>
             </div>
 
             <!-- Mobile follow button-->
