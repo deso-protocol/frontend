@@ -201,7 +201,7 @@
               ></follow-button>
 
               <div class="ml-auto">
-                <div *ngIf="getNode()" class="d-inline-block mr-15px">
+                <div *ngIf="getNode()" class="d-inline-block mr-5px" [ngClass]="{ 'mr-5px': globalVars.isMobile(), 'mr-10px': !globalVars.isMobile() }">
                   <a
                     class="text-grey9"
                     target="_blank"
