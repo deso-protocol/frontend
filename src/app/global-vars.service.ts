@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import {
   BackendApiService,
   BalanceEntryResponse,
+  DeSoNode,
   PostEntryResponse,
   TransactionFee,
   TutorialStatus,
@@ -220,6 +221,8 @@ export class GlobalVarsService {
   transactionFeeInfo: string;
 
   buyETHAddress: string = "";
+
+  nodes: { [id: number]: DeSoNode }
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero

@@ -373,6 +373,12 @@ export class TransactionFee {
   ProfileEntryResponse?: ProfileEntryResponse;
 }
 
+export class DeSoNode {
+  Name: string;
+  URL: string;
+  Owner: string;
+}
+
 @Injectable({
   providedIn: "root",
 })
