@@ -20,6 +20,7 @@ export const environment = {
     domain: "",
   },
   node: {
+    id: 1,
     name: "DeSo",
     url: "https://node.deso.org",
     logoAssetDir: "/assets/deso/",

@@ -16,6 +16,7 @@ export const environment = {
     domain: "amp.bitclout.com",
   },
   node: {
+    id: 2,
     name: "BitClout",
     url: "https://bitclout.com",
     logoAssetDir: "/assets/bitclout/",
