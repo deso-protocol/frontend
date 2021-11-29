@@ -6,7 +6,7 @@ import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
-import { Subscription } from "rxjs";
+import { of, Subscription, zip } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -111,12 +111,17 @@ export class AppComponent implements OnInit {
 
     this.callingUpdateTopLevelData = true;
 
-    return this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false).subscribe(
-      (res: any) => {
+    return zip(
+      this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
+      environment.verificationEndpointHostname
+        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey)
+        : of(null)
+    ).subscribe(
+      ([res, userMetadata]) => {
         this.problemWithNodeConnection = false;
         this.callingUpdateTopLevelData = false;
 
-        const loggedInUser: User = res.UserList[0];
+        let loggedInUser: User = res.UserList[0];
         let loggedInUserFound: boolean = false;
         // Find the logged in user in the user list and replace it with the logged in user from this GetUsersStateless call.
         this.globalVars.userList.forEach((user, index) => {
@@ -127,6 +132,19 @@ export class AppComponent implements OnInit {
             return false;
           }
         });
+
+        // If we got user metadata from some external global state, let's overwrite certain attributes of the logged in user.
+        if (userMetadata) {
+          loggedInUser.HasPhoneNumber = userMetadata.HasPhoneNumber;
+          loggedInUser.CanCreateProfile = userMetadata.CanCreateProfile;
+          loggedInUser.JumioVerified = userMetadata.JumioVerified;
+          loggedInUser.JumioFinishedTime = userMetadata.JumioFinishedTime;
+          loggedInUser.JumioReturned = userMetadata.JumioReturned;
+          // We can merge the blocked public key maps, which means we effectively block the union of public keys from both endpoints.
+          loggedInUser.BlockedPubKeys = { ...loggedInUser.BlockedPubKeys, ...userMetadata.BlockedPubKeys };
+          // Even though we have EmailVerified and HasEmail, we don't overwrite email attributes since each app may want to gather emails on their own.
+        }
+
         // If the logged-in user wasn't in the list, add it to the list.
         if (!loggedInUserFound && loggedInUserPublicKey) {
           this.globalVars.userList.push(loggedInUser);
@@ -150,7 +168,7 @@ export class AppComponent implements OnInit {
         if (res.DefaultFeeRateNanosPerKB > 0) {
           this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         }
-        this.globalVars.globoMods = res.GloboMods;
+        this.globalVars.paramUpdaters = res.ParamUpdaters;
 
         this.ref.detectChanges();
         this.globalVars.loadingInitialAppState = false;
@@ -190,22 +208,32 @@ export class AppComponent implements OnInit {
 
         // Calculate max fee for display in frontend
         // Sort so highest fee is at the top
-        var simpleFeeMap: {txnType:string,fees:number}[] = Object.keys(res.TransactionFeeMap).map(k=>{
-          if ( res.TransactionFeeMap[k] !== null )  {
-            // only return for non empty transactions
-            // sum in case there are multiple fee earners for the txn type
-            var sumOfFees = res.TransactionFeeMap[k].map(f=>f.AmountNanos).reduce((partial_sum, a) => partial_sum + a,0);
-            // Capitalize and use spaces in Txn type
-            var txnType = (" "+k).replace(/_/g,' ').toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => " "+chr.toUpperCase()).trim()
-            return { "txnType": txnType, "fees": sumOfFees }
-          }
-        }).sort( (a,b)=>b.fees-a.fees);
+        var simpleFeeMap: { txnType: string; fees: number }[] = Object.keys(res.TransactionFeeMap)
+          .map((k) => {
+            if (res.TransactionFeeMap[k] !== null) {
+              // only return for non empty transactions
+              // sum in case there are multiple fee earners for the txn type
+              var sumOfFees = res.TransactionFeeMap[k]
+                .map((f) => f.AmountNanos)
+                .reduce((partial_sum, a) => partial_sum + a, 0);
+              // Capitalize and use spaces in Txn type
+              var txnType = (" " + k)
+                .replace(/_/g, " ")
+                .toLowerCase()
+                .replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => " " + chr.toUpperCase())
+                .trim();
+              return { txnType: txnType, fees: sumOfFees };
+            }
+          })
+          .sort((a, b) => b.fees - a.fees);
 
         //Get the max of all fees
-        this.globalVars.transactionFeeMax = Math.max( ...simpleFeeMap.map(k=>k.fees) );
+        this.globalVars.transactionFeeMax = Math.max(...simpleFeeMap.map((k) => k.fees));
 
         //Prepare text detailed info of fees and join with newlines
-        this.globalVars.transactionFeeInfo = simpleFeeMap.map(k=>`${k.txnType}: ${this.globalVars.nanosToUSD(k.fees,4)}`).join("\n");
+        this.globalVars.transactionFeeInfo = simpleFeeMap
+          .map((k) => `${k.txnType}: ${this.globalVars.nanosToUSD(k.fees, 4)}`)
+          .join("\n");
       });
   }
 

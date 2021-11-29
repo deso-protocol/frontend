@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { RouteNames } from "../../app-routing.module";
+import { IdentityService } from "../../identity.service";
 
 @Component({
   selector: "update-profile-get-starter-deso",
@@ -10,7 +11,7 @@ import { RouteNames } from "../../app-routing.module";
 export class UpdateProfileGetStarterDeSoComponent {
   RouteNames = RouteNames;
 
-  constructor(public globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService, private identityService: IdentityService) {}
 
   // rounded to nearest integer
   minPurchaseAmountInUsdRoundedUp() {
@@ -20,9 +21,16 @@ export class UpdateProfileGetStarterDeSoComponent {
   }
 
   getCreateProfileMessage(): string {
-    return this.globalVars.showPhoneNumberVerification
-      ? `You need to verify a phone number or purchase DeSo with Bitcoin in order to create a profile.
-  This helps prevent spam.`
-      : `You need to buy DeSo with Bitcoin in order to create a profile.  This helps prevent spam.`;
+    return "You need to verify a phone number or purchase DESO with Bitcoin in order to create a profile. This helps prevent spam.";
+  }
+
+  launchPhoneNumberVerification() {
+    this.identityService
+      .launchPhoneNumberVerification(this.globalVars?.loggedInUser?.PublicKeyBase58Check)
+      .subscribe((res) => {
+        if (res.phoneNumberSuccess) {
+          this.globalVars.updateEverything();
+        }
+      });
   }
 }

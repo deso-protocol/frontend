@@ -54,6 +54,7 @@ export class BackendRoutes {
   static RoutePathGetRepostsForPost = "/api/v0/get-reposts-for-post";
   static RoutePathGetQuoteRepostsForPost = "/api/v0/get-quote-reposts-for-post";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
+  static RoutePathGetUserMetadata = "/api/v0/get-user-metadata";
 
   // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
@@ -378,6 +379,23 @@ export class DeSoNode {
   URL: string;
   Owner: string;
 }
+
+type GetUserMetadataResponse = {
+  HasPhoneNumber: boolean;
+  CanCreateProfile: boolean;
+  BlockedPubKeys: { [k: string]: any };
+  HasEmail: boolean;
+  EmailVerified: boolean;
+  JumioFinishedTime: number;
+  JumioVerified: boolean;
+  JumioReturned: boolean;
+};
+
+type GetUsersStatelessResponse = {
+  UserList: User[];
+  DefaultFeeRateNanosPerKB: number;
+  ParamUpdaters: { [k: string]: boolean };
+};
 
 @Injectable({
   providedIn: "root",
@@ -704,9 +722,13 @@ export class BackendApiService {
   }
 
   // User-related functions.
-  GetUsersStateless(endpoint: string, publicKeys: any[], SkipForLeaderboard: boolean = false): Observable<any> {
+  GetUsersStateless(
+    endpoint: string,
+    PublicKeysBase58Check: string[],
+    SkipForLeaderboard: boolean = false
+  ): Observable<GetUsersStatelessResponse> {
     return this.post(endpoint, BackendRoutes.GetUsersStatelessRoute, {
-      PublicKeysBase58Check: publicKeys,
+      PublicKeysBase58Check,
       SkipForLeaderboard,
     });
   }
@@ -1625,6 +1647,10 @@ export class BackendApiService {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathDeletePII, PublicKeyBase58Check, {
       PublicKeyBase58Check,
     });
+  }
+
+  GetUserMetadata(endpoint: string, PublicKeyBase58Check: string): Observable<GetUserMetadataResponse> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUserMetadata + "/" + PublicKeyBase58Check);
   }
 
   GetJumioStatusForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {

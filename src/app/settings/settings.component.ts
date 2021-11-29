@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
-import { CountryISO } from "ngx-intl-tel-input";
 import { Title } from "@angular/platform-browser";
 import { ThemeService } from "../theme/theme.service";
 import { environment } from "src/environments/environment";
@@ -15,7 +14,6 @@ import { Router } from "@angular/router";
 })
 export class SettingsComponent implements OnInit {
   loading = false;
-  countryISO = CountryISO;
   emailAddress = "";
   invalidEmailEntered = false;
   updatingSettings = false;
