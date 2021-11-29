@@ -580,9 +580,13 @@ export class BuyDeSoEthComponent implements OnInit {
 
         // Add a gwei to make this transaction more attractive to miners.
         const maxPriorityFeePerGas = toBN(maxPriorityFeePerGasHex).add(new BN(toWei("1", "gwei")));
-        const maxFeePerGas = baseFeePerGas.add(maxPriorityFeePerGas);
+        // Ensure transaction is marketable for the next 6 blocks. The base fee increase by 12.5% when the previos block
+        // was 100% full. 1.125^6 = 2.0273
+        // Source: https://www.blocknative.com/blog/eip-1559-fees
+        const maxFeePerGas = baseFeePerGas.muln(2).add(maxPriorityFeePerGas);
         const totalFeesEIP1559 = maxFeePerGas.mul(BuyDeSoEthComponent.instructionsPerBasicTransfer);
-        const gasPrice = toBN(gasPriceHex);
+        // In order to increase the priority of this transaction, we're willing to pay twice as much in gas.
+        const gasPrice = toBN(gasPriceHex).muln(2);
         const totalFeesLegacy = gasPrice.mul(BuyDeSoEthComponent.instructionsPerBasicTransfer);
         if (BuyDeSoEthComponent.logFees) {
           console.log("gasPrice: ", fromWei(gasPrice, "gwei"));
@@ -601,7 +605,7 @@ export class BuyDeSoEthComponent implements OnInit {
           maxFeePerGasHex: toHex(maxFeePerGas),
           totalFeesEIP1559,
           gasPrice,
-          gasPriceHex,
+          gasPriceHex: toHex(gasPrice),
           totalFeesLegacy,
           maxLegacyGasPrice: maxFeePerGas.gt(gasPrice) ? maxFeePerGas : gasPrice,
           maxLegacyGasPriceHex: toHex(maxFeePerGas.gt(gasPrice) ? maxFeePerGas : gasPrice),
