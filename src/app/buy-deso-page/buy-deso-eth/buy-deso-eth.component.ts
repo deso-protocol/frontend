@@ -12,6 +12,8 @@ import { FeeMarketEIP1559Transaction, Transaction as LegacyTransaction, TxData, 
 import { FeeMarketEIP1559TxData } from "@ethereumjs/tx/src/types";
 import { Transaction, TransactionOptions } from "ethereumjs-tx";
 import { BN } from "ethereumjs-util";
+import { map, switchMap } from "rxjs/operators";
+import { Observable, of, Subscription, zip } from "rxjs";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -207,19 +209,19 @@ export class BuyDeSoEthComponent implements OnInit {
     });
   }
 
-  signAndSubmitETH(retry: boolean = false): Promise<any> {
+  signAndSubmitETH(retry: boolean = false): Subscription {
     return (BuyDeSoEthComponent.useLegacyTransaction
       ? this.constructLegacyTransactionOld()
       : this.constructFeeMarketTransaction()
-    ).then((res) => {
+    ).subscribe((res) => {
       if (!res?.signedTx) {
         console.error("No signedTx found - aborting");
-        return;
+        return of(null);
       }
       const signedHash = res.signedTx.serialize().toString("hex");
       // Submit the transaction.
       this.parentComponent.waitingOnTxnConfirmation = true;
-      this.backendApi
+      return this.backendApi
         .SubmitETHTx(
           this.globalVars.localNode,
           this.globalVars.loggedInUser.PublicKeyBase58Check,
@@ -264,7 +266,7 @@ export class BuyDeSoEthComponent implements OnInit {
   // using the maintained ethereumjs/tx library. Sometimes EIP-1559 transactions are taking too long to mine or are not
   // mining at all due to gas calculations so this function is not currently used. Upgrading to using this function in
   // the future is preferred as we'll lower the amount of gas paid per transaction.
-  constructFeeMarketTransaction(): Promise<SignedTransaction<TransactionType>> {
+  constructFeeMarketTransaction(): Observable<SignedTransaction<TransactionType>> {
     return this.generateSignedTransaction<FeeMarketEIP1559Transaction>(FeeMarketEIP1559Transaction);
   }
 
@@ -272,14 +274,14 @@ export class BuyDeSoEthComponent implements OnInit {
   // library. There is an issue generating a valid signature for legacy transactions using the new library so this
   // is not actively used. However, upgrading to using this once that is resolved would be preferred as the old
   // ethereumjs-tx library is no longer maintained.
-  constructLegacyTransaction(): Promise<SignedTransaction<TransactionType>> {
+  constructLegacyTransaction(): Observable<SignedTransaction<TransactionType>> {
     return this.generateSignedTransaction<LegacyTransaction>(LegacyTransaction);
   }
 
   // constructLegacyTransactionOld creates a LegacyTransaction using the deprecated ethereum-tx library. This deprecated
   // library is being used as the updated version of this library causes issues generating a valid signature in identity
   // for legacy transactions. In the future, we should move to using constructFeeMarketTransaction.
-  constructLegacyTransactionOld(): Promise<SignedTransaction<TransactionType>> {
+  constructLegacyTransactionOld(): Observable<SignedTransaction<TransactionType>> {
     return this.generateSignedTransaction<Transaction>(Transaction);
   }
 
@@ -287,55 +289,57 @@ export class BuyDeSoEthComponent implements OnInit {
   // transaction with the appropriate transaction data and sign it using identity.
   generateSignedTransaction<Type extends TransactionType>(
     type: TypeOfTransactionType
-  ): Promise<SignedTransaction<Type>> {
-    return this.getNonceValueAndFees().then(({ nonce, value, fees }) => {
-      let txData: TxData;
-      let feeMarketTxData: FeeMarketEIP1559TxData;
-      txData = {
-        nonce,
-        value,
-        gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
-        to: this.globalVars.buyETHAddress,
-      };
-      if (BuyDeSoEthComponent.useLegacyTransaction) {
-        txData.gasPrice = fees.maxLegacyGasPriceHex;
-      } else {
-        feeMarketTxData = txData as FeeMarketEIP1559TxData;
-        feeMarketTxData.maxPriorityFeePerGas = fees.maxPriorityFeePerGasHex;
-        feeMarketTxData.maxFeePerGas = fees.maxFeePerGasHex;
-        feeMarketTxData.chainId = toHex(this.getChain());
-      }
-      let toSign: string[];
-      switch (type) {
-        case Transaction: {
-          let tx = new Transaction(txData, this.getOldOptions());
-          // Poached from the sign method on Transaction in deprecated ethereumjs-tx library which demonstrates how to
-          // get the equivalent of getMessageToSign in the new ethereumjs tx library.
-          tx.v = new Buffer([]);
-          tx.r = new Buffer([]);
-          tx.s = new Buffer([]);
-          toSign = [tx.hash(false).toString("hex")];
-          break;
+  ): Observable<SignedTransaction<Type>> {
+    return this.getNonceValueAndFees().pipe(
+      switchMap(({ nonce, value, fees }) => {
+        let txData: TxData;
+        let feeMarketTxData: FeeMarketEIP1559TxData;
+        txData = {
+          nonce,
+          value,
+          gasLimit: toHex(BuyDeSoEthComponent.instructionsPerBasicTransfer),
+          to: this.globalVars.buyETHAddress,
+        };
+        if (BuyDeSoEthComponent.useLegacyTransaction) {
+          txData.gasPrice = fees.maxLegacyGasPriceHex;
+        } else {
+          feeMarketTxData = txData as FeeMarketEIP1559TxData;
+          feeMarketTxData.maxPriorityFeePerGas = fees.maxPriorityFeePerGasHex;
+          feeMarketTxData.maxFeePerGas = fees.maxFeePerGasHex;
+          feeMarketTxData.chainId = toHex(this.getChain());
         }
-        case LegacyTransaction: {
-          // Generate an Unsigned Legacy Transaction from the data and generated a hash message to sign.
-          const tx = LegacyTransaction.fromTxData(txData, { common: this.common });
-          toSign = [tx.getMessageToSign(true).toString("hex")];
-          break;
+        let toSign: string[];
+        switch (type) {
+          case Transaction: {
+            let tx = new Transaction(txData, this.getOldOptions());
+            // Poached from the sign method on Transaction in deprecated ethereumjs-tx library which demonstrates how to
+            // get the equivalent of getMessageToSign in the new ethereumjs tx library.
+            tx.v = new Buffer([]);
+            tx.r = new Buffer([]);
+            tx.s = new Buffer([]);
+            toSign = [tx.hash(false).toString("hex")];
+            break;
+          }
+          case LegacyTransaction: {
+            // Generate an Unsigned Legacy Transaction from the data and generated a hash message to sign.
+            const tx = LegacyTransaction.fromTxData(txData, { common: this.common });
+            toSign = [tx.getMessageToSign(true).toString("hex")];
+            break;
+          }
+          case FeeMarketEIP1559Transaction: {
+            // Generate an Unsigned EIP 1559 Fee Market Transaction from the data and generated a hash message to sign.
+            let tx = FeeMarketEIP1559Transaction.fromTxData(feeMarketTxData, { common: this.common });
+            toSign = [tx.getMessageToSign(true).toString("hex")];
+            break;
+          }
         }
-        case FeeMarketEIP1559Transaction: {
-          // Generate an Unsigned EIP 1559 Fee Market Transaction from the data and generated a hash message to sign.
-          let tx = FeeMarketEIP1559Transaction.fromTxData(feeMarketTxData, { common: this.common });
-          toSign = [tx.getMessageToSign(true).toString("hex")];
-          break;
-        }
-      }
-      return this.getSignedTransactionFromUnsignedHex<Type>(
-        type === FeeMarketEIP1559Transaction ? feeMarketTxData : txData,
-        toSign,
-        type
-      );
-    });
+        return this.getSignedTransactionFromUnsignedHex<Type>(
+          type === FeeMarketEIP1559Transaction ? feeMarketTxData : txData,
+          toSign,
+          type
+        );
+      })
+    );
   }
 
   getTotalFee(fees: FeeDetails): BN {
@@ -343,9 +347,9 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   // getNonceValueAndFees is a helper to get the nonce, transaction value, and current fees when constructing a tx.
-  getNonceValueAndFees(): Promise<{ nonce: Hex; value: Hex; fees: FeeDetails }> {
-    return Promise.all([this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()]).then(
-      ([transactionCount, fees]) => {
+  getNonceValueAndFees(): Observable<{ nonce: Hex; value: Hex; fees: FeeDetails }> {
+    return zip(this.getTransactionCount(this.ethDepositAddress(), "pending"), this.getFees()).pipe(
+      map(([transactionCount, fees]) => {
         const nonce = toHex(transactionCount);
         let value = this.getValue(fees);
         return {
@@ -353,7 +357,7 @@ export class BuyDeSoEthComponent implements OnInit {
           value,
           fees,
         };
-      }
+      })
     );
   }
 
@@ -363,56 +367,59 @@ export class BuyDeSoEthComponent implements OnInit {
     txData: TxData | FeeMarketEIP1559TxData,
     toSign: string[],
     signedTxType: TypeOfTransactionType
-  ): Promise<SignedTransaction<Type>> {
+  ): Observable<SignedTransaction<Type>> {
     return this.identityService
       .signETH({
         ...this.identityService.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
         unsignedHashes: toSign,
       })
-      .toPromise()
-      .then(
-        (res) => {
-          // Get the signature and merge it into the TxData defined above.
-          const signature: { s: any; r: any; v: number | null } = res.signatures[0];
-          // For Legacy transaction using the old library, we need to modify V to satisfy EIP 155 constraints.
-          if (signedTxType === Transaction && this.common.gteHardfork("spuriousDragon")) {
-            signature.v = signature.v === 0 ? this.getChain() * 2 + 35 : this.getChain() * 2 + 36;
-          }
-          // Merge the signature into the transaction data.
-          const signedTxData = {
-            ...txData,
-            ...signature,
-          };
-          let signedTx: Transaction | LegacyTransaction | FeeMarketEIP1559Transaction;
+      .pipe((signed) => {
+        return this.backendApi.launchApproveWindow(signed, {}).pipe(
+          map(
+            (res) => {
+              // Get the signature and merge it into the TxData defined above.
+              const signature: { s: any; r: any; v: number | null } = res.signatures[0];
+              // For Legacy transaction using the old library, we need to modify V to satisfy EIP 155 constraints.
+              if (signedTxType === Transaction && this.common.gteHardfork("spuriousDragon")) {
+                signature.v = signature.v === 0 ? this.getChain() * 2 + 35 : this.getChain() * 2 + 36;
+              }
+              // Merge the signature into the transaction data.
+              const signedTxData = {
+                ...txData,
+                ...signature,
+              };
+              let signedTx: Transaction | LegacyTransaction | FeeMarketEIP1559Transaction;
 
-          switch (signedTxType) {
-            case Transaction: {
-              // Create a signed Legacy transaction using the deprecated ethereumjs-tx library.
-              signedTx = new Transaction(signedTxData, this.getOldOptions());
-              break;
+              switch (signedTxType) {
+                case Transaction: {
+                  // Create a signed Legacy transaction using the deprecated ethereumjs-tx library.
+                  signedTx = new Transaction(signedTxData, this.getOldOptions());
+                  break;
+                }
+                case LegacyTransaction: {
+                  // Create a signed Legacy transaction using the maintained ethereumjs/tx library.
+                  const legacyTxData = txData as TxData;
+                  signedTx = LegacyTransaction.fromTxData(legacyTxData, this.getOptions());
+                  break;
+                }
+                case FeeMarketEIP1559Transaction: {
+                  // Create a Fee Market EIP-1559 transaction using the maintained ethereumjs/tx library.
+                  const feeMarketTxdata = txData as FeeMarketEIP1559TxData;
+                  signedTx = FeeMarketEIP1559Transaction.fromTxData(feeMarketTxdata, this.getOptions());
+                  break;
+                }
+              }
+              // Construct and serialize the transaction.
+              return <SignedTransaction<Type>>{ signedTx, toSign };
+            },
+            (err) => {
+              console.error(err);
+              this.globalVars._alertError(err);
+              return null;
             }
-            case LegacyTransaction: {
-              // Create a signed Legacy transaction using the maintained ethereumjs/tx library.
-              const legacyTxData = txData as TxData;
-              signedTx = LegacyTransaction.fromTxData(legacyTxData, this.getOptions());
-              break;
-            }
-            case FeeMarketEIP1559Transaction: {
-              // Create a Fee Market EIP-1559 transaction using the maintained ethereumjs/tx library.
-              const feeMarketTxdata = txData as FeeMarketEIP1559TxData;
-              signedTx = FeeMarketEIP1559Transaction.fromTxData(feeMarketTxdata, this.getOptions());
-              break;
-            }
-          }
-          // Construct and serialize the transaction.
-          return <SignedTransaction<Type>>{ signedTx, toSign };
-        },
-        (err) => {
-          console.error(err);
-          this.globalVars._alertError(err);
-          return null;
-        }
-      );
+          )
+        );
+      });
   }
 
   getValue(fees: FeeDetails): Hex {
@@ -446,7 +453,7 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   clickMaxDESO() {
-    this.getFees().then((res) => {
+    this.getFees().subscribe((res) => {
       this.weiFeeEstimate = this.getTotalFee(res);
       this.ethFeeEstimate = Number(fromWei(this.weiFeeEstimate));
       this.weiToExchange = this.weiBalance;
@@ -516,17 +523,17 @@ export class BuyDeSoEthComponent implements OnInit {
     if (!this.loadingBalance) {
       this.loadingBalance = true;
       this.getBalance(this.ethDepositAddress(), "latest")
-        .then((res) => {
+        .subscribe((res) => {
           this.weiBalance = toBN(res);
           this.ethBalance = Number(fromWei(this.weiBalance));
         })
-        .finally(() => {
+        .add(() => {
           this.loadingBalance = false;
         });
     }
     if (!this.loadingFee) {
       this.loadingFee = true;
-      this.getFees().then((res) => {
+      this.getFees().subscribe((res) => {
         this.weiFeeEstimate = this.getTotalFee(res);
         this.ethFeeEstimate = Number(fromWei(this.weiFeeEstimate));
         this.weiToExchange = this.weiFeeEstimate;
@@ -535,47 +542,48 @@ export class BuyDeSoEthComponent implements OnInit {
     }
   }
 
-  queryETHRPC<Type>(method: string, params: any[]): Promise<Type> {
+  queryETHRPC<Type>(method: string, params: any[]): Observable<Type> {
     return this.backendApi
       .QueryETHRPC(this.globalVars.localNode, method, params, this.globalVars.loggedInUser?.PublicKeyBase58Check)
-      .toPromise()
-      .then(
-        (res) => {
-          return res.result;
-        },
-        (err) => {
-          console.error(err);
-        }
+      .pipe(
+        map(
+          (res) => res.result,
+          (err) => {
+            console.error(err);
+          }
+        )
       );
   }
 
   // Get current gas price.
-  getGasPrice(): Promise<Hex> {
+  getGasPrice(): Observable<Hex> {
     return this.queryETHRPC<Hex>("eth_gasPrice", []);
   }
 
   // Gets the data about the pending block.
-  getBlock(block: string): Promise<any> {
+  getBlock(block: string): Observable<any> {
     return this.queryETHRPC("eth_getBlockByNumber", [block, false]);
   }
 
-  getTransactionCount(address: string, block: string = "pending"): Promise<number> {
-    return this.queryETHRPC<Hex>("eth_getTransactionCount", [address, block]).then((result) => hexToNumber(result));
+  getTransactionCount(address: string, block: string = "pending"): Observable<number> {
+    return this.queryETHRPC<Hex>("eth_getTransactionCount", [address, block]).pipe(
+      map((result) => hexToNumber(result))
+    );
   }
 
   // Gets balance for address.
-  getBalance(address: string, block: string = "latest"): Promise<Hex> {
+  getBalance(address: string, block: string = "latest"): Observable<Hex> {
     return this.queryETHRPC<Hex>("eth_getBalance", [address, block]);
   }
 
-  getMaxPriorityFeePerGas(): Promise<Hex> {
+  getMaxPriorityFeePerGas(): Observable<Hex> {
     return this.queryETHRPC<Hex>("eth_maxPriorityFeePerGas", []);
   }
 
   // getFees returns all the numbers and hex-strings necessary for computing eth gas.
-  getFees(): Promise<FeeDetails> {
-    return Promise.all([this.getBlock("pending"), this.getMaxPriorityFeePerGas(), this.getGasPrice()]).then(
-      ([block, maxPriorityFeePerGasHex, gasPriceHex]) => {
+  getFees(): Observable<FeeDetails> {
+    return zip(this.getBlock("pending"), this.getMaxPriorityFeePerGas(), this.getGasPrice()).pipe(
+      map(([block, maxPriorityFeePerGasHex, gasPriceHex]) => {
         const baseFeePerGas = toBN(block.baseFeePerGas);
 
         // Add a gwei to make this transaction more attractive to miners.
@@ -611,7 +619,7 @@ export class BuyDeSoEthComponent implements OnInit {
           maxLegacyGasPriceHex: toHex(maxFeePerGas.gt(gasPrice) ? maxFeePerGas : gasPrice),
           maxTotalFeesLegacy: totalFeesEIP1559.gt(totalFeesLegacy) ? totalFeesEIP1559 : totalFeesLegacy,
         };
-      }
+      })
     );
   }
 
