@@ -415,7 +415,7 @@ export class BackendApiService {
   MessageMetaKey = "messageMetaKey";
 
   // Store the identity users in localStorage
-  IdentityUsersKey = "identityUsers";
+  IdentityUsersKey = "identityUsersV2";
 
   // Store last local node URL in localStorage
   LastLocalNodeKey = "lastLocalNodeV2";
@@ -424,7 +424,7 @@ export class BackendApiService {
   LastLoggedInUserKey = "lastLoggedInUser";
 
   // Store the last identity service URL in localStorage
-  LastIdentityServiceKey = "lastIdentityServiceURL";
+  LastIdentityServiceKey = "lastIdentityServiceURLV2";
 
   // TODO: Wipe all this data when transition is complete
   LegacyUserListKey = "userList";
