@@ -5,7 +5,7 @@ locals {
   fullnameOverride  = "gem-frontend"
   replica_count     = 1
   docker_repository = "067550988196.dkr.ecr.us-east-1.amazonaws.com/frontend"
-  docker_tag        = "latest"
+  docker_tag        = "v0.0.2"
   requests_memory   = "1Gi"
 
   tags = {
