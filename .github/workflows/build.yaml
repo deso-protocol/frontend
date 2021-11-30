@@ -89,7 +89,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Stage - Login to Amazon ECR
-        id: login-ecr
+        id: login-ecr-staging
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Stage - Build and push
