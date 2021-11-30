@@ -421,7 +421,7 @@ export class BackendApiService {
   LastLocalNodeKey = "lastLocalNodeV2";
 
   // Store last logged in user public key in localStorage
-  LastLoggedInUserKey = "lastLoggedInUser";
+  LastLoggedInUserKey = "lastLoggedInUserV2";
 
   // Store the last identity service URL in localStorage
   LastIdentityServiceKey = "lastIdentityServiceURLV2";
