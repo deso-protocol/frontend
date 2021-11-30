@@ -325,7 +325,10 @@ export class GlobalVarsService {
 
     // Fetch referralLinks for the userList before completing the load.
     this.backendApi
-      .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
+      .GetReferralInfoForUser(
+        environment.verificationEndpointHostname ? environment.verificationEndpointHostname : this.localNode,
+        this.loggedInUser.PublicKeyBase58Check
+      )
       .subscribe(
         (res: any) => {
           this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
@@ -1136,7 +1139,10 @@ export class GlobalVarsService {
         return;
       }
       this.backendApi
-        .GetJumioStatusForPublicKey(environment.verificationEndpointHostname, publicKey)
+        .GetJumioStatusForPublicKey(
+          environment.verificationEndpointHostname ? environment.verificationEndpointHostname : this.localNode,
+          publicKey
+        )
         .subscribe(
           (res: any) => {
             if (res.JumioVerified) {
@@ -1184,7 +1190,7 @@ export class GlobalVarsService {
     const referralHash = localStorage.getItem("referralCode");
     if (referralHash) {
       this.backendApi
-        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
+        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname ? environment.verificationEndpointHostname : this.localNode, referralHash)
         .subscribe((res) => {
           const referralInfo = res.ReferralInfoResponse.Info;
           if (

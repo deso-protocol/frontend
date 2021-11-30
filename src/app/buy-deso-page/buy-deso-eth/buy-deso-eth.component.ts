@@ -373,53 +373,60 @@ export class BuyDeSoEthComponent implements OnInit {
         ...this.identityService.identityServiceParamsForKey(this.globalVars.loggedInUser.PublicKeyBase58Check),
         unsignedHashes: toSign,
       })
-      .pipe((signed) => {
-        return this.backendApi.launchApproveWindow(signed, {}).pipe(
-          map(
-            (res) => {
-              // Get the signature and merge it into the TxData defined above.
-              const signature: { s: any; r: any; v: number | null } = res.signatures[0];
-              // For Legacy transaction using the old library, we need to modify V to satisfy EIP 155 constraints.
-              if (signedTxType === Transaction && this.common.gteHardfork("spuriousDragon")) {
-                signature.v = signature.v === 0 ? this.getChain() * 2 + 35 : this.getChain() * 2 + 36;
-              }
-              // Merge the signature into the transaction data.
-              const signedTxData = {
-                ...txData,
-                ...signature,
-              };
-              let signedTx: Transaction | LegacyTransaction | FeeMarketEIP1559Transaction;
+      .pipe(
+        switchMap((signed) => {
+          return this.backendApi
+            .launchApproveWindow(signed, {
+              ethTx: toSign[0],
+              publicKey: this.globalVars.loggedInUser?.PublicKeyBase58Check,
+            })
+            .pipe(
+              map(
+                (res) => {
+                  // Get the signature and merge it into the TxData defined above.
+                  const signature: { s: any; r: any; v: number | null } = res.signatures[0];
+                  // For Legacy transaction using the old library, we need to modify V to satisfy EIP 155 constraints.
+                  if (signedTxType === Transaction && this.common.gteHardfork("spuriousDragon")) {
+                    signature.v = signature.v === 0 ? this.getChain() * 2 + 35 : this.getChain() * 2 + 36;
+                  }
+                  // Merge the signature into the transaction data.
+                  const signedTxData = {
+                    ...txData,
+                    ...signature,
+                  };
+                  let signedTx: Transaction | LegacyTransaction | FeeMarketEIP1559Transaction;
 
-              switch (signedTxType) {
-                case Transaction: {
-                  // Create a signed Legacy transaction using the deprecated ethereumjs-tx library.
-                  signedTx = new Transaction(signedTxData, this.getOldOptions());
-                  break;
+                  switch (signedTxType) {
+                    case Transaction: {
+                      // Create a signed Legacy transaction using the deprecated ethereumjs-tx library.
+                      signedTx = new Transaction(signedTxData, this.getOldOptions());
+                      break;
+                    }
+                    case LegacyTransaction: {
+                      // Create a signed Legacy transaction using the maintained ethereumjs/tx library.
+                      const legacyTxData = txData as TxData;
+                      signedTx = LegacyTransaction.fromTxData(legacyTxData, this.getOptions());
+                      break;
+                    }
+                    case FeeMarketEIP1559Transaction: {
+                      // Create a Fee Market EIP-1559 transaction using the maintained ethereumjs/tx library.
+                      const feeMarketTxdata = txData as FeeMarketEIP1559TxData;
+                      signedTx = FeeMarketEIP1559Transaction.fromTxData(feeMarketTxdata, this.getOptions());
+                      break;
+                    }
+                  }
+                  // Construct and serialize the transaction.
+                  return <SignedTransaction<Type>>{ signedTx, toSign };
+                },
+                (err) => {
+                  console.error(err);
+                  this.globalVars._alertError(err);
+                  return null;
                 }
-                case LegacyTransaction: {
-                  // Create a signed Legacy transaction using the maintained ethereumjs/tx library.
-                  const legacyTxData = txData as TxData;
-                  signedTx = LegacyTransaction.fromTxData(legacyTxData, this.getOptions());
-                  break;
-                }
-                case FeeMarketEIP1559Transaction: {
-                  // Create a Fee Market EIP-1559 transaction using the maintained ethereumjs/tx library.
-                  const feeMarketTxdata = txData as FeeMarketEIP1559TxData;
-                  signedTx = FeeMarketEIP1559Transaction.fromTxData(feeMarketTxdata, this.getOptions());
-                  break;
-                }
-              }
-              // Construct and serialize the transaction.
-              return <SignedTransaction<Type>>{ signedTx, toSign };
-            },
-            (err) => {
-              console.error(err);
-              this.globalVars._alertError(err);
-              return null;
-            }
-          )
-        );
-      });
+              )
+            );
+        })
+      );
   }
 
   getValue(fees: FeeDetails): Hex {

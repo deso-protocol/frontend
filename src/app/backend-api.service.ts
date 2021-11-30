@@ -486,6 +486,9 @@ export class BackendApiService {
       return this.identityService
         .launch("/approve", {
           tx: res.TransactionHex,
+          btcTx: res.btcTx,
+          ethTx: res.ethTx,
+          publicKey: res.publicKey,
         })
         .pipe(
           map((approved) => {
@@ -627,7 +630,11 @@ export class BackendApiService {
               ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
               unsignedHashes: res.UnsignedHashes,
             })
-            .pipe(map((signed) => this.launchApproveWindow(signed, res)))
+            .pipe(
+              map((signed) =>
+                this.launchApproveWindow(signed, { btcTx: res.UnsignedHashes[0], publicKey: PublicKeyBase58Check })
+              )
+            )
         )
       );
 
