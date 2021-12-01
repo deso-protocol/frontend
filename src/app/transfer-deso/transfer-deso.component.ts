@@ -137,7 +137,6 @@ export class TransferDeSoComponent implements OnInit {
           this.sendingDeSo = false;
           this.globalVars._alertError(
             this.transferDeSoError,
-            false,
             this.transferDeSoError === Messages.MUST_PURCHASE_CREATOR_COIN
           );
           return;
@@ -207,7 +206,6 @@ export class TransferDeSoComponent implements OnInit {
                   this.globalVars.logEvent("bitpop : send : error", { parsedError: this.transferDeSoError });
                   this.globalVars._alertError(
                     this.transferDeSoError,
-                    false,
                     this.transferDeSoError === Messages.MUST_PURCHASE_CREATOR_COIN
                   );
                 }
