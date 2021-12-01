@@ -1251,7 +1251,40 @@ export class BackendApiService {
       NewStakeMultipleBasisPoints,
       IsHidden,
       MinFeeRateNanosPerKB,
-    });
+    }).pipe(
+      map((res) => {
+        // We need to wait until the profile creation has been comped.
+        if (res.CompProfileCreationTxnHashHex) {
+          let attempts = 0;
+          let numTries = 160;
+          let timeoutMillis = 750;
+          // Set an interval to repeat
+          let interval = setInterval(() => {
+            if (attempts >= numTries) {
+              clearInterval(interval);
+            }
+            this.GetTxn(endpoint, res.CompProfileCreationTxnHashHex)
+              .subscribe(
+                (res: any) => {
+                  if (!res.TxnFound) {
+                    return;
+                  }
+
+                  // clear the interval
+                  clearInterval(interval);
+                },
+                (error) => {
+                  console.error(error);
+                  clearInterval(interval);
+                  throwError(error);
+                }
+              )
+              .add(() => attempts++);
+          }, timeoutMillis) as any;
+        }
+        return res;
+      })
+    );
 
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
