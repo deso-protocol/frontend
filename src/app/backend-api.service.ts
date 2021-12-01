@@ -4,7 +4,7 @@
 // https://github.com/github/fetch#sending-cookies
 import { Injectable } from "@angular/core";
 import { interval, Observable, of, throwError, zip } from "rxjs";
-import { map, switchMap, catchError, filter, take } from "rxjs/operators";
+import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operators";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 import { environment } from "src/environments/environment";
@@ -1257,7 +1257,7 @@ export class BackendApiService {
         if (res.CompProfileCreationTxnHashHex) {
           return interval(500)
             .pipe(
-              switchMap((iteration) => zip(this.GetTxn(endpoint, res.CompProfileCreationTxnHashHex), of(iteration)))
+              concatMap((iteration) => zip(this.GetTxn(endpoint, res.CompProfileCreationTxnHashHex), of(iteration)))
             )
             .pipe(filter(([txFound, iteration]) => txFound.TxnFound || iteration > 120))
             .pipe(take(1))
