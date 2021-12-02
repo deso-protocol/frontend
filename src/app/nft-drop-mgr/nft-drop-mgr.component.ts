@@ -303,7 +303,6 @@ export class NftDropMgrComponent implements OnInit {
       reverseButtons: true,
     }).then(async (res: any) => {
       if (res.isConfirmed) {
-        console.log("Removing this NFT.");
         this.nftBeingRemoved = postHashHex;
         this.backendApi
           .AdminUpdateNFTDrop(

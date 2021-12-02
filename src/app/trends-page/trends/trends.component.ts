@@ -72,7 +72,7 @@ export class TrendsComponent implements OnInit {
     if (this.activeTab === RightBarCreatorsComponent.GAINERS.name) {
       this.loadingNextPage = page !== 0;
       return this.pulseService
-        .getBitCloutLockedPage(page + 1, TrendsComponent.PAGE_SIZE, true)
+        .getDeSoLockedPage(page + 1, TrendsComponent.PAGE_SIZE, true)
         .toPromise()
         .then(
           (res) => {

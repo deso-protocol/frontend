@@ -41,6 +41,25 @@
         <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
         <img class="feed-post__image" src="{{ postImageSrc }}" />
       </div>
+      <!-- Video is processing - please wait -->
+      <div class="d-flex flex-column align-items-center" *ngIf="!isComment && postVideoSrc && !readyToStream">
+        <div>Video Processing In Progress</div>
+        <simple-center-loader [height]="150"></simple-center-loader>
+      </div>
+      <!-- Video Player -->
+      <div
+        *ngIf="!isComment && postVideoSrc && readyToStream"
+        class="feed-post__video-container"
+      >
+        <iframe
+          [src]="postVideoSrc | sanitizeVideoUrl"
+          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+          allowfullscreen
+          class="feed-post__video"
+        >
+        </iframe>
+      </div>
+
       <!-- Embedded Content -->
       <div class="feed-post__embed-container" *ngIf="constructedEmbedURL">
         <i
@@ -57,16 +76,21 @@
           allowfullscreen
         ></iframe>
       </div>
+      <!-- Video Upload Progress bar -->
+      <div class="d-flex flex-column align-items-center" *ngIf="videoUploadPercentage !== null">
+        <div>Uploading: {{videoUploadPercentage}}% Complete</div>
+        <mat-progress-bar [value]="videoUploadPercentage" [mode]="'determinate'"></mat-progress-bar>
+      </div>
     </div>
   </div>
 </div>
-<div class="flex-fill px-15px br-10px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showEmbedURL">
+<div class="flex-fill px-15px br-10px fs-13px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showEmbedURL">
   <input
     class="br-3px"
     type="url"
     [(ngModel)]="embedURL"
     (ngModelChange)="setEmbedURL()"
-    placeholder="Embed Youtube, Vimeo, TikTok, Giphy, Spotify or SoundCloud"
+    placeholder="Embed Youtube, Vimeo, TikTok, Giphy, Spotify, SoundCloud, or Twitch"
   />
 </div>
 <div class="flex-fill px-15px br-10px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showImageLink">
@@ -97,6 +121,11 @@
   ></i>
   <ng-container *ngIf="!isComment">
     <i class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px" (click)="showImageLink = !showImageLink"></i>
+    <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
+    <i
+      class="fas fa-video fa-lg text-grey8A cursor-pointer pr-15px feed-create-post__image-icon"
+      (click)="videoInput.click()"
+    ></i>
     <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
     <i
       class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
@@ -107,7 +136,7 @@
     class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
     style="height: 36px; width: 75px; line-height: 15px"
     [ngClass]="{
-      disabled: (postInput.length <= 0 && !postImageSrc) || characterCountExceedsMaxLength(),
+      disabled: (postInput.length <= 0 && !postImageSrc && !postVideoSrc) || characterCountExceedsMaxLength(),
       'btn-loading': submittingPost
     }"
     (click)="_createPost()"

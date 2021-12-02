@@ -1,9 +1,10 @@
-import { Component, OnInit, Renderer2, ElementRef, ViewChild, TemplateRef } from "@angular/core";
+import { Component, Renderer2, ElementRef, ViewChild } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, User } from "../backend-api.service";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { BackendApiService } from "../backend-api.service";
+import { BsModalService } from "ngx-bootstrap/modal";
 import { Router } from "@angular/router";
 import { IdentityService } from "../identity.service";
+import { filter, get } from "lodash";
 
 @Component({
   selector: "change-account-selector",
@@ -30,9 +31,22 @@ export class ChangeAccountSelectorComponent {
   launchLogoutFlow() {
     const publicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     this.identityService.launch("/logout", { publicKey }).subscribe((res) => {
-      this.backendApi.setIdentityServiceUsers(res.users, Object.keys(res.users)[0]);
-      this.globalVars.updateEverything().subscribe(() => {
-        this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
+      this.globalVars.userList = filter(this.globalVars.userList, (user) => {
+        return res?.users && user?.PublicKeyBase58Check in res?.users;
+      });
+      if (!res?.users) {
+        this.globalVars.userList = [];
+      }
+      let loggedInUser = get(Object.keys(res?.users), "[0]");
+      if (this.globalVars.userList.length === 0) {
+        loggedInUser = null;
+        this.globalVars.setLoggedInUser(null);
+      }
+      this.backendApi.setIdentityServiceUsers(res.users, loggedInUser);
+      this.globalVars.updateEverything().add(() => {
+        if (!this.globalVars.userInTutorial(this.globalVars.loggedInUser)) {
+          this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]);
+        }
       });
     });
   }
@@ -40,13 +54,16 @@ export class ChangeAccountSelectorComponent {
   _switchToUser(user) {
     this.globalVars.setLoggedInUser(user);
     this.globalVars.messageResponse = null;
-    this.globalVars.SetupMessages();
 
-    const currentUrl = this.router.url;
-    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]).then(() => {
-      this.router.navigateByUrl(currentUrl);
+    // Now we call update everything on the newly logged in user to make sure we have the latest info this user.
+    this.globalVars.updateEverything().add(() => {
+      if (!this.globalVars.userInTutorial(this.globalVars.loggedInUser)) {
+        const currentUrl = this.router.url;
+        this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE]).then(() => {
+          this.router.navigateByUrl(currentUrl);
+        });
+      }
+      this.globalVars.isLeftBarMobileOpen = false;
     });
-
-    this.globalVars.isLeftBarMobileOpen = false;
   }
 }

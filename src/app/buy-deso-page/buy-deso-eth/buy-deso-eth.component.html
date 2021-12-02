@@ -1,0 +1,249 @@
+<!-- Step One Box -->
+<div class="w-100 border-top border-color-grey mt-20px">
+  <div
+    class="fs-15px buy-deso__box-label-adjustment pl-5px pr-5px ml-10px"
+    style="background-color: white"
+  >
+    Step One
+    <i
+      (click)="tooltip1.toggle()"
+      class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+      [matTooltip]="stepOneTooltip()"
+      #tooltip1="matTooltip"
+    ></i>
+  </div>
+
+  <div class="px-15px pt-5px">
+    <div class="fs-18px font-weight-bold">
+      Send ETH to this
+
+      <span>
+        address
+        <i
+          (click)="tooltip2.toggle()"
+          class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="depositEthTooltip()"
+          #tooltip2="matTooltip"
+        ></i>
+      </span>
+    </div>
+
+    <div class="fs-18px mt-1 mb-1">
+      <span>
+        Minimum deposit is currently
+        <b>
+          {{ (ethFeeEstimate * 2).toFixed(4) }} ETH
+        </b>
+        <i
+          (click)="tooltip3.toggle()"
+          class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon ml-2"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="minDepositTooltip()"
+          #tooltip3="matTooltip"
+        ></i>
+      </span>
+    </div>
+
+    <div class="row no-gutters pt-5px">
+      <div class="col">
+        <input
+          class="form-control background-color-light-grey-important border"
+          [value]="ethDepositAddress()"
+          disabled
+        />
+      </div>
+      <div class="col-2 pl-2" style="min-width: 85px">
+        <div
+          (click)="globalVars._copyText(ethDepositAddress())"
+          class="btn btn-outline-primary w-100"
+          style="border-radius: 3px"
+        >
+          Copy
+        </div>
+      </div>
+    </div>
+
+    <div class="row pl-15px pt-15px">
+      <div class="col-12 fs-15px pl-0px mb-0" style="border-radius: 3px">
+        <span class="font-weight-bold">Amount deposited</span>
+        <span
+          (click)="tooltip.toggle()"
+          class="text-grey8A fs-15px global__tooltip-icon"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="withdrawEthTooltip()"
+          #tooltip="matTooltip"
+        >
+          &middot; Withdraw
+        </span>
+      </div>
+    </div>
+
+    <div class="row no-gutters pt-5px">
+      <div
+        class="col fs-15px pt-5px pb-5px border background-color-light-grey"
+        style="border-radius: 3px; min-height: 35px"
+      >
+        <div class="pl-10px">
+          <div *ngIf="!loadingBalance">
+            {{ ethBalance.toFixed(8) }} ETH
+
+            <span class="text-grey7">
+              ≈
+              {{
+                globalVars.formatUSD(
+                  (ethBalance * globalVars.usdPerETHExchangeRate),
+                  2
+                )
+              }}
+              USD
+            </span>
+          </div>
+          <div *ngIf="loadingBalance">(Loading...)</div>
+        </div>
+      </div>
+      <div class="col-2 pl-2 my-auto" style="min-width: 85px">
+        <div
+          (click)="refreshBalance()"
+          class="btn btn-outline-secondary w-100 fs-15px p-5px"
+          style="border-radius: 3px; height: 35px"
+        >
+          Refresh
+        </div>
+      </div>
+    </div>
+
+    <div class="row pl-15px pt-5px">
+      <div class="col-12 fs-15px pl-0px fc-muted" style="border-radius: 3px">
+        Click "refresh" to check your ETH balance.
+
+        <i
+          (click)="tooltip3.toggle()"
+          class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="balanceUpdateTooltip()"
+          #tooltip3="matTooltip"
+        ></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Spacer -->
+<div style="height: 40px"></div>
+
+<!-- Step Two Box -->
+<div class="w-100 border-top border-color-grey">
+  <div
+    class="fs-15px pl-5px pr-5px ml-10px buy-deso__box-label-adjustment"
+    style="background-color: white"
+  >
+    Step Two
+  </div>
+
+  <!-- DESO to buy input-->
+  <div class="pl-15px pr-15px pt-5px">
+    <div class="d-flex w-100 fs-18px font-weight-bold">
+      <div style="min-width: 120px">Buy $DESO with ETH</div>
+    </div>
+    <div class="fs-15px mt-20px font-weight-bold">$DESO to buy</div>
+    <div class="pt-5px d-flex align-items-center justify-content-start">
+      <input
+        class="form-control w-50 fs-15px lh-15px"
+        style="text-align: right"
+        placeholder="0"
+        type="number"
+        [(ngModel)]="desoToBuy"
+        (ngModelChange)="updateDESOToBuy($event)"
+      />
+      <div class="ml-2 w-50 fs-15px">
+        $DESO &middot;
+        <a class="text-grey7" (click)="clickMaxDESO()">
+          <u>Max</u>
+        </a>
+      </div>
+    </div>
+    <div class="fs-12px mt-5px text-grey7" *ngIf="globalVars.BuyDeSoFeeBasisPoints">
+      <i>Includes {{ globalVars.BuyDeSoFeeBasisPoints / 100 }}% slippage</i>
+    </div>
+
+    <!-- Ethereum to exchange input-->
+    <div class="fs-15px mt-15px font-weight-bold">ETH to swap</div>
+    <div class="pt-5px d-flex align-items-center justify-content-start">
+      <input
+        class="form-control w-50 fs-15px"
+        style="text-align: right"
+        id="exampleInputEmail1"
+        aria-describedby="emailHelp"
+        placeholder="0"
+        [(ngModel)]="ethToExchange"
+        (ngModelChange)="updateETHToExchange($event)"
+        type="number"
+      />
+      <div class="ml-2 w-50 fs-15px">ETH</div>
+    </div>
+
+    <!-- Ethereum network fee-->
+    <div class="fs-15px mt-15px text-grey7">
+      Ethereum network fee
+
+      <i
+        (click)="tooltip4.toggle()"
+        class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
+        matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+        [matTooltip]="ethereumNetworkFeeTooltip()"
+        #tooltip4="matTooltip"
+      ></i>
+
+      <div class="mt-1 w-100 fs-15px">
+        <div *ngIf="error == null || error === ''">
+          {{ ethFeeEstimate.toFixed(8) }}
+          ETH ≈
+          {{
+            globalVars.formatUSD(ethFeeEstimate * globalVars.usdPerETHExchangeRate, 2)
+          }}
+          USD
+        </div>
+        <div *ngIf="error != null && error !== ''" style="margin-top: 0">
+          0.00000000 ETH ≈ {{ globalVars.formatUSD(0, 2) }} USD
+        </div>
+      </div>
+    </div>
+
+    <!-- Total bitcion to swap -->
+    <div class="fs-15px mt-15px text-grey7">
+      Total ETH to swap
+      <div class="mt-1 w-100 fs-15px">
+        <div *ngIf="!error">
+          {{
+            ethToExchange.toFixed(8)
+          }}
+          ETH ≈
+          {{
+            globalVars.formatUSD(ethToExchange * globalVars.usdPerETHExchangeRate, 2)
+          }}
+          USD
+        </div>
+        <div *ngIf="error" style="margin-top: 0">
+          0.00000000 ETH ≈ {{ globalVars.formatUSD(0, 2) }} USD
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="error != null && error !== ''"
+      class="w-100 fs-18px mt-15px"
+    >
+      <div class="red">
+        {{ error }}
+      </div>
+    </div>
+    <button
+      class="btn btn-primary font-weight-bold mt-25px mb-15px fs-15px btn-lg"
+      (click)="clickBuyDESO()"
+    >
+      Buy $DESO
+    </button>
+  </div>
+</div>

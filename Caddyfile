@@ -28,22 +28,26 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
+    node.deso.org
+    amp.deso.org
+    bithunt.deso.org
+    pulse.deso.org
     bitclout.com:*
     api.bitclout.com
     bithunt.bitclout.com
     pulse.bitclout.com
-    api.bitpop.dev
     localhost:*
-    explorer.bitclout.com:*
+    explorer.bitclout.com
     https://api.blockchain.com/ticker
     https://api.blockchain.com/mempool/fees
     https://ka-f.fontawesome.com/
     bitcoinfees.earn.com
     api.blockcypher.com
-    amp.bitclout.com api.bitclout.green api.bitclout.blue
-    api.bitclout.navy
+    amp.bitclout.com
     api.testwyre.com
-    api.sendwyre.com;
+    api.sendwyre.com
+    https://videodelivery.net
+    https://upload.videodelivery.net;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
     https://ka-f.fontawesome.com/;
@@ -51,13 +55,24 @@ header @html Content-Security-Policy "
     'unsafe-inline'
     https://fonts.googleapis.com
     https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css;
-  img-src 'self' data: i.imgur.com images.bitclout.com quickchart.io arweave.net *.arweave.net cloudflare-ipfs.com;
+  img-src 'self'
+    data:
+    i.imgur.com
+    images.deso.org
+    images.bitclout.com
+    quickchart.io
+    arweave.net
+    *.arweave.net
+    cloudflare-ipfs.com;
   font-src 'self'
     https://fonts.googleapis.com
     https://fonts.gstatic.com
     https://ka-f.fontawesome.com;
   frame-src 'self'
     localhost:*
+    identity.deso.org
+    identity.deso.blue
+    identity.deso.green
     identity.bitclout.com
     identity.bitclout.blue
     identity.bitclout.green
@@ -69,6 +84,9 @@ header @html Content-Security-Policy "
     https://giphy.com
     https://open.spotify.com
     https://w.soundcloud.com
+    https://player.twitch.tv
+    https://clips.twitch.tv
     pay.testwyre.com
-    pay.sendwyre.com;
+    pay.sendwyre.com
+    https://iframe.videodelivery.net;
   frame-ancestors 'self';"

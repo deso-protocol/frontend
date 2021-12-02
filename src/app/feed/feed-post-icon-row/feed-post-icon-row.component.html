@@ -17,13 +17,13 @@
     dropdown
     #dropdown="bs-dropdown"
     [ngClass]="{
-      'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RecloutedByReader : false
+      'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RepostedByReader : false
     }"
   >
     <a
       class="link--unstyled"
       dropdownToggle
-      id="recloutActionsButton"
+      id="repostActionsButton"
       data-toggle="dropdown"
       aria-haspopup="true"
       aria-expanded="false"
@@ -34,30 +34,30 @@
       class="dropdown-menu p-0 fs-12px border background-color-light-grey"
       style="min-width: 6rem"
       *dropdownMenu
-      aria-labelledby="recloutActionsButton"
+      aria-labelledby="repostActionsButton"
     >
       <a
-        *ngIf="sendingRecloutRequest; else recloutOptions"
+        *ngIf="sendingRepostRequest; else repostOptions"
         class="dropdown-menu-item d-block p-5px feed-post__dropdown-menu-item"
       >
         <div class="fc-muted">Loading...</div>
       </a>
-      <ng-template #recloutOptions>
+      <ng-template #repostOptions>
         <a
-          *ngIf="userHasReclouted(); else recloutElseBlock"
+          *ngIf="userHasReposted(); else repostElseBlock"
           class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
-          (click)="_undoReclout($event)"
+          (click)="_undoRepost($event)"
         >
           <i class="icon-repost feed-post-icon-row__icon fs-12px"></i>
           Hide
         </a>
-        <ng-template #recloutElseBlock>
+        <ng-template #repostElseBlock>
           <a
             class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
-            (click)="_reclout($event)"
+            (click)="_repost($event)"
           >
             <i class="icon-repost feed-post-icon-row__icon fs-12px"></i>
-            Reclout
+            Repost
           </a>
         </ng-template>
         <a
@@ -69,7 +69,7 @@
         </a>
       </ng-template>
     </div>
-    <span *ngIf="!hideNumbers">{{ postContent.RecloutCount + postContent.QuoteRecloutCount }}</span>
+    <span *ngIf="!hideNumbers">{{ postContent.RepostCount + postContent.QuoteRepostCount }}</span>
   </div>
 
   <div

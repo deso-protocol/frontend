@@ -1,5 +1,4 @@
 <!-- Top Bar -->
-<!-- FIXME: TODO: post threads: loading skeletons -->
 <div *ngIf="nftPost" style="padding-bottom: 20vh" class="d-flex flex-column">
   <div
     class="global__top-bar d-flex align-items-center justify-content-between fs-18px font-weight-bold px-15px border-bottom border-color-grey"
@@ -148,7 +147,7 @@
             </span>
                 </div>
                 <div class="text-grey9" *ngIf="bidEntry.ProfileEntryResponse">
-                  {{ globalVars.nanosToUSD(bidEntry.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+                  {{ globalVars.nanosToUSD(bidEntry.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
                 </div>
               </div>
             </div>
@@ -157,7 +156,7 @@
               class="d-flex align-items-center mb-0 justify-content-around p-0"
               [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }"
             >
-              <span>{{ globalVars.nanosToBitClout(bidEntry.BidAmountNanos, 5) }} $CLOUT</span>
+              <span>{{ globalVars.nanosToDeSo(bidEntry.BidAmountNanos, 5) }} $DESO</span>
               <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 2) }}</span>
             </div>
           </div>
@@ -217,7 +216,7 @@
             </span>
                 </div>
                 <div class="text-grey9" *ngIf="owner.ProfileEntryResponse">
-                  {{ globalVars.nanosToUSD(owner.ProfileEntryResponse.CoinPriceBitCloutNanos, 2) }}
+                  {{ globalVars.nanosToUSD(owner.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
                 </div>
               </div>
             </div>
@@ -226,7 +225,7 @@
               class="d-flex align-items-center mb-0 justify-content-around p-0"
               [ngClass]="{ 'col-7': nftPost.NumNFTCopies == 1, 'col-5': nftPost.NumNFTCopies > 1 }"
             >
-              <span>{{ globalVars.nanosToBitClout(owner.LastAcceptedBidAmountNanos, 5) }} $CLOUT</span>
+              <span>{{ globalVars.nanosToDeSo(owner.LastAcceptedBidAmountNanos, 5) }} $DESO</span>
               <span>~{{ globalVars.nanosToUSD(owner.LastAcceptedBidAmountNanos, 2) }}</span>
             </div>
           </div>

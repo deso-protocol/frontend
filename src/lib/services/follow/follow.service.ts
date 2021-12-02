@@ -42,7 +42,7 @@ export class FollowService {
         followerPublicKeyBase58Check,
         followedPubKeyBase58Check,
         !isFollow /*isUnfollow*/,
-        this.appData.feeRateBitCloutPerKB * 1e9
+        this.appData.feeRateDeSoPerKB * 1e9
       )
       .subscribe(
         (response) => {
@@ -64,7 +64,7 @@ export class FollowService {
             // TODO: there's prob some "out of funds" error which is a problem
             const parsedError = this.backendApi.parseMessageError(error);
             this.globalVars.logEvent(`user : ${isFollow ? "follow" : "unfollow"} : error`, { parsedError });
-            this.appData._alertError(parsedError, !!parsedError.indexOf("insufficient"));
+            this.appData._alertError(parsedError);
           }
         }
       )

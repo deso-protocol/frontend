@@ -16,10 +16,10 @@
       <!-- Availability metadata -->
       <div class="fs-15px" *ngIf="!loading">
         <div *ngIf="highBid != null && lowBid != null" class="pb-15px">
-          <span class="d-lg-inline-block d-block">Highest bid {{ globalVars.nanosToBitClout(highBid) }} CLOUT&nbsp;</span>
+          <span class="d-lg-inline-block d-block">Highest bid {{ globalVars.nanosToDeSo(highBid) }} DESO&nbsp;</span>
           <span class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(highBid, 2)}})</span>
           <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
-          <span class="d-lg-inline-block d-block">From {{ globalVars.nanosToBitClout(lowBid) }} CLOUT&nbsp;</span>
+          <span class="d-lg-inline-block d-block">From {{ globalVars.nanosToDeSo(lowBid) }} DESO&nbsp;</span>
           <span class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(lowBid, 2)}})</span>
         </div>
         <div class="pb-15px">
@@ -78,7 +78,7 @@
               </div>
             <input
               [(ngModel)]="bidAmountUSD"
-              (ngModelChange)="updateBidAmountCLOUT($event)"
+              (ngModelChange)="updateBidAmountDESO($event)"
               class="form-control fs-15px text-right d-inline-block"
               aria-describedby="usd-label"
               type="number"
@@ -87,17 +87,17 @@
               [disabled]="placingBids"/>
             </div>
             <div class="input-group py-5px" [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
-              <div class="input-group-prepend" id="clout-label">
-                <span class="input-group-text fs-15px">CLOUT</span>
+              <div class="input-group-prepend" id="deso-label">
+                <span class="input-group-text fs-15px">DESO</span>
               </div>
               <input
-                [(ngModel)]="bidAmountCLOUT"
+                [(ngModel)]="bidAmountDESO"
                 (ngModelChange)="updateBidAmountUSD($event)"
                 class="form-control fs-15px text-right d-inline-block"
                 type="number"
                 min="0"
-                aria-describedby="clout-label"
-                placeholder="0 CLOUT"
+                aria-describedby="deso-label"
+                placeholder="0 DESO"
                 [disabled]="placingBids"/>
             </div>
           </div>
@@ -114,7 +114,7 @@
         >
           {{ placingBids ? "Placing Bids" : "Place Bid" }}
         </button>
-        <div class="fs-15px ml-30px cursor-pointer text-grey7" (click)="navigateToBuyCLOUT()">Buy $CLOUT</div>
+        <div class="fs-15px ml-30px cursor-pointer text-grey7" (click)="navigateToBuyDESO()">Buy $DESO</div>
       </div>
 
     </div>
@@ -147,13 +147,13 @@
             </div>
             <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
               <div>
-                <div class="d-lg-inline-block d-block">{{globalVars.nanosToBitClout(nft.HighestBidAmountNanos)}} CLOUT </div>
+                <div class="d-lg-inline-block d-block">{{globalVars.nanosToDeSo(nft.HighestBidAmountNanos)}} DESO </div>
                 <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2)}})</div>
               </div>
             </div>
             <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
               <div>
-                <div class="d-lg-inline-block d-block">{{ globalVars.nanosToBitClout(nft.MinBidAmountNanos) }} CLOUT </div>
+                <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO </div>
                 <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.MinBidAmountNanos, 2)}})</div>
               </div>
              </div>

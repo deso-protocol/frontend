@@ -1,19 +1,19 @@
 <div class="fs-15px font-weight-bold mt-15px px-15px">
   Node Sync State
   <div>
-    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_BITCOIN'" style="color: goldenrod">
+    <span *ngIf="globalVars.nodeInfo.DeSoStatus.State === 'SYNCING_BITCOIN'" style="color: goldenrod">
       Syncing Bitcoin Headers
     </span>
-    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_HEADERS'" style="color: goldenrod">
-      Syncing BitClout Headers
+    <span *ngIf="globalVars.nodeInfo.DeSoStatus.State === 'SYNCING_HEADERS'" style="color: goldenrod">
+      Syncing DeSo Headers
     </span>
-    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_BLOCKS'" style="color: goldenrod">
-      Syncing BitClout Blocks
+    <span *ngIf="globalVars.nodeInfo.DeSoStatus.State === 'SYNCING_BLOCKS'" style="color: goldenrod">
+      Syncing DeSo Blocks
     </span>
-    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'NEED_BLOCKS'" style="color: goldenrod">
-      Syncing Last BitClout Blocks
+    <span *ngIf="globalVars.nodeInfo.DeSoStatus.State === 'NEED_BLOCKS'" style="color: goldenrod">
+      Syncing Last DeSo Blocks
     </span>
-    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'FULLY_CURRENT'" style="color: green">Fully Synced</span>
+    <span *ngIf="globalVars.nodeInfo.DeSoStatus.State === 'FULLY_CURRENT'" style="color: green">Fully Synced</span>
   </div>
 </div>
 
@@ -24,28 +24,28 @@
     Detailed Sync Info
   </span>
   <div *ngIf="isOpen.detailedSyncInfo" class="ml-15px">
-    <div *ngIf="globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_HEADERS'">
-      BitClout Headers Left:
+    <div *ngIf="globalVars.nodeInfo.DeSoStatus.State === 'SYNCING_HEADERS'">
+      DeSo Headers Left:
       <div class="fc-blue">
-        {{ globalVars.nodeInfo.BitCloutStatus.HeadersRemaining }}
+        {{ globalVars.nodeInfo.DeSoStatus.HeadersRemaining }}
       </div>
     </div>
     <div
       *ngIf="
-        globalVars.nodeInfo.BitCloutStatus.State === 'SYNCING_BLOCKS' ||
-        globalVars.nodeInfo.BitCloutStatus.State === 'NEED_BLOCKS'
+        globalVars.nodeInfo.DeSoStatus.State === 'SYNCING_BLOCKS' ||
+        globalVars.nodeInfo.DeSoStatus.State === 'NEED_BLOCKS'
       "
     >
-      <div>BitClout Blocks Left:</div>
+      <div>DeSo Blocks Left:</div>
       <div class="fc-blue">
-        {{ globalVars.nodeInfo.BitCloutStatus.BlocksRemaining }}
+        {{ globalVars.nodeInfo.DeSoStatus.BlocksRemaining }}
       </div>
     </div>
 
     Last Block Height:
     <div class="fc-blue d-flex align-items-center">
       <span>
-        {{ globalVars.nodeInfo.BitCloutStatus.LatestHeaderHeight }}
+        {{ globalVars.nodeInfo.DeSoStatus.LatestHeaderHeight }}
       </span>
       <div (click)="_copyNetworkInfo('lastBlockHeight')" class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px">
         <i class="far fa-copy fa-xs"></i>
@@ -56,7 +56,7 @@
     </div>
     Last Block Hash:
     <div class="fc-blue d-flex align-items-center">
-      {{ globalVars.nodeInfo.BitCloutStatus.LatestHeaderHash.slice(0, 15) }}...
+      {{ globalVars.nodeInfo.DeSoStatus.LatestHeaderHash.slice(0, 15) }}...
       <div (click)="_copyNetworkInfo('lastBlockHash')" class="btn btn-outline-secondary d-flex fs-15px p-5px ml-10px">
         <i class="far fa-copy fa-xs"></i>
       </div>
@@ -66,12 +66,12 @@
     </div>
     Last Block Time:
     <div class="fc-blue">
-      {{ _tstampToDate(globalVars.nodeInfo.BitCloutStatus.LatestHeaderTstampSecs) }}
+      {{ _tstampToDate(globalVars.nodeInfo.DeSoStatus.LatestHeaderTstampSecs) }}
     </div>
-    <span *ngIf="globalVars.nodeInfo.BitCloutStatus.LatestTxIndexHeight">
+    <span *ngIf="globalVars.nodeInfo.DeSoStatus.LatestTxIndexHeight">
       Last TxIndex Block Height:
       <div class="fc-blue">
-        {{ globalVars.nodeInfo.BitCloutStatus.LatestTxIndexHeight }}
+        {{ globalVars.nodeInfo.DeSoStatus.LatestTxIndexHeight }}
       </div>
     </span>
   </div>
@@ -144,26 +144,26 @@
 </div>
 
 <div class="fs-15px mt-15px px-15px">
-  <span (click)="isOpen.bitcloutNode = !isOpen.bitcloutNode" class="font-weight-bold cursor-pointer">
-    <i *ngIf="!isOpen.bitcloutNode" class="fas fa-caret-right"></i>
-    <i *ngIf="isOpen.bitcloutNode" class="fas fa-caret-down"></i>
-    BitClout Node Info
+  <span (click)="isOpen.desoNode = !isOpen.desoNode" class="font-weight-bold cursor-pointer">
+    <i *ngIf="!isOpen.desoNode" class="fas fa-caret-right"></i>
+    <i *ngIf="isOpen.desoNode" class="fas fa-caret-down"></i>
+    DeSo Node Info
   </span>
-  <div *ngIf="isOpen.bitcloutNode && updatingBitCloutPeer" class="ml-15px fc-muted">Updating BitClout peers...</div>
-  <div *ngIf="isOpen.bitcloutNode && !updatingBitCloutPeer" class="ml-15px">
-    Outbound Peers ({{ globalVars.nodeInfo.BitCloutOutboundPeers.length }}):
+  <div *ngIf="isOpen.desoNode && updatingDeSoPeer" class="ml-15px fc-muted">Updating DeSo peers...</div>
+  <div *ngIf="isOpen.desoNode && !updatingDeSoPeer" class="ml-15px">
+    Outbound Peers ({{ globalVars.nodeInfo.DeSoOutboundPeers.length }}):
     <div
       class="fc-blue border border-color-grey px-5px pt-5px"
       style="max-height: 150px; overflow-y: scroll; width: fit-content"
     >
       <div
         *ngIf="
-          globalVars.nodeInfo.BitCloutOutboundPeers == null || globalVars.nodeInfo.BitCloutOutboundPeers.length === 0
+          globalVars.nodeInfo.DeSoOutboundPeers == null || globalVars.nodeInfo.DeSoOutboundPeers.length === 0
         "
       >
         Not connected to any outbound peers.
       </div>
-      <div *ngFor="let peer of globalVars.nodeInfo.BitCloutOutboundPeers; index as peerIndex">
+      <div *ngFor="let peer of globalVars.nodeInfo.DeSoOutboundPeers; index as peerIndex">
         <div class="d-flex align-items-center justify-content-between pb-5px">
           <div style="display: inline-block">
             {{ peer.IP + ":" + peer.ProtocolPort }}
@@ -180,7 +180,7 @@
               <i class="far fa-check-circle fa-xs"></i>
             </div>
             <div
-              (click)="disconnectBitCloutPeer(peer.IP + ':' + peer.ProtocolPort)"
+              (click)="disconnectDeSoPeer(peer.IP + ':' + peer.ProtocolPort)"
               class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
             >
               Disconnect
@@ -189,19 +189,19 @@
         </div>
       </div>
     </div>
-    Inbound Peers ({{ globalVars.nodeInfo.BitCloutInboundPeers.length }}):
+    Inbound Peers ({{ globalVars.nodeInfo.DeSoInboundPeers.length }}):
     <div
       class="fc-blue border border-color-grey px-5px pt-5px"
       style="max-height: 150px; overflow-y: scroll; width: fit-content"
     >
       <div
         *ngIf="
-          globalVars.nodeInfo.BitCloutInboundPeers == null || globalVars.nodeInfo.BitCloutInboundPeers.length === 0
+          globalVars.nodeInfo.DeSoInboundPeers == null || globalVars.nodeInfo.DeSoInboundPeers.length === 0
         "
       >
         Not connected to any inbound peers.
       </div>
-      <div *ngFor="let peer of globalVars.nodeInfo.BitCloutInboundPeers; index as peerIndex">
+      <div *ngFor="let peer of globalVars.nodeInfo.DeSoInboundPeers; index as peerIndex">
         <div class="d-flex align-items-center justify-content-between pb-5px">
           <div style="display: inline-block">
             {{ peer.IP + ":" + peer.ProtocolPort }}
@@ -218,7 +218,7 @@
               <i class="far fa-check-circle fa-xs"></i>
             </div>
             <div
-              (click)="disconnectBitCloutPeer(peer.IP + ':' + peer.ProtocolPort)"
+              (click)="disconnectDeSoPeer(peer.IP + ':' + peer.ProtocolPort)"
               class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
             >
               Disconnect
@@ -227,20 +227,20 @@
         </div>
       </div>
     </div>
-    Unconnected Peers ({{ globalVars.nodeInfo.BitCloutUnconnectedPeers.length }}):
+    Unconnected Peers ({{ globalVars.nodeInfo.DeSoUnconnectedPeers.length }}):
     <div
       class="fc-blue border border-color-grey px-5px pt-5px"
       style="max-height: 150px; overflow-y: scroll; width: fit-content"
     >
       <div
         *ngIf="
-          globalVars.nodeInfo.BitCloutUnconnectedPeers == null ||
-          globalVars.nodeInfo.BitCloutUnconnectedPeers.length === 0
+          globalVars.nodeInfo.DeSoUnconnectedPeers == null ||
+          globalVars.nodeInfo.DeSoUnconnectedPeers.length === 0
         "
       >
         No other peers available.
       </div>
-      <div *ngFor="let peer of globalVars.nodeInfo.BitCloutUnconnectedPeers; index as peerIndex">
+      <div *ngFor="let peer of globalVars.nodeInfo.DeSoUnconnectedPeers; index as peerIndex">
         <div class="d-flex align-items-center justify-content-between pb-5px">
           <div style="display: inline-block">
             {{ peer.IP + ":" + peer.ProtocolPort }}
@@ -257,7 +257,7 @@
               <i class="far fa-check-circle fa-xs"></i>
             </div>
             <div
-              (click)="connectBitCloutPeer(peer.IP + ':' + peer.ProtocolPort)"
+              (click)="connectDeSoPeer(peer.IP + ':' + peer.ProtocolPort)"
               class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
             >
               Connect
@@ -269,12 +269,12 @@
     Manual Connection:
     <div class="fc-blue d-flex align-items-center">
       <input
-        [(ngModel)]="manualBitcloutPeer"
+        [(ngModel)]="manualDeSoPeer"
         placeholder="Enter an address."
         style="width: 200px; border-radius: 3px"
       />
       <div
-        (click)="connectBitCloutPeer(manualBitcloutPeer)"
+        (click)="connectDeSoPeer(manualDeSoPeer)"
         class="btn btn-outline-secondary fs-15px lh-15px p-5px ml-5px"
       >
         Connect

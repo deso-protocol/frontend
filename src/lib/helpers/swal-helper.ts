@@ -1,5 +1,5 @@
 import * as sweetalert2 from "sweetalert2";
-import Swal from "sweetalert2";
+import Swal, { SweetAlertOptions } from "sweetalert2";
 import * as _ from "lodash";
 
 type Awaited<T> = T extends Promise<infer U> ? U : T;
@@ -25,6 +25,8 @@ export class SwalHelper {
     "showDenyButton",
     "reverseButtons",
     "focusCancel",
+    "allowOutsideClick",
+    "allowEscapeKey",
   ];
 
   // Only the fields listed in ESCAPED_FIELDS and UNESCAPED_FIELDS are passed to sweetalert.
@@ -33,7 +35,7 @@ export class SwalHelper {
   // to escape them.
   //
   // We can add an htmlSafe option (i.e. do not sanitize) in the future if needed.
-  static fire<T = any>(options): Promise<sweetalert2.SweetAlertResult<Awaited<T>>> {
+  static fire<T = any>(options: SweetAlertOptions): Promise<sweetalert2.SweetAlertResult<Awaited<T>>> {
     // Feel free to add more classes here as needed
     let escapedCustomClass = {
       confirmButton: _.escape(options?.customClass?.confirmButton),

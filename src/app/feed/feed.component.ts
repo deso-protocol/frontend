@@ -8,6 +8,7 @@ import * as _ from "lodash";
 import PullToRefresh from "pulltorefreshjs";
 import { Title } from "@angular/platform-browser";
 import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "feed",
@@ -111,7 +112,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit() {
     this._initializeFeeds();
-    this.titleService.setTitle("Feed - BitClout");
+    this.titleService.setTitle(`Feed - ${environment.node.name}`);
   }
 
   ngAfterViewChecked() {
@@ -326,7 +327,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
         tap(
           (res) => {
             if (lastPostHash !== "") {
-              res.PostsFound.shift();
               this.globalVars.postsToShow = this.globalVars.postsToShow.concat(res.PostsFound);
             } else {
               this.globalVars.postsToShow = res.PostsFound;
@@ -480,7 +480,6 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
 
     if (postIndex === -1) {
-      // TODO: rollbar
       console.error(`Problem finding postEntryResponse in postsToShow in onPostHidden`, {
         postEntryResponse,
         postsToShow,

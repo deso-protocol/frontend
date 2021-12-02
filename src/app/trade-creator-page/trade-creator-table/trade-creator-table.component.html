@@ -28,8 +28,8 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Network Fee</span>
 
     <div class="d-inline-block" style="text-align: end">
-      {{ globalVars.nanosToBitClout(creatorCoinTrade.networkFeeNanos, 9) }}
-      BitClout
+      {{ globalVars.nanosToDeSo(creatorCoinTrade.networkFeeNanos, 9) }}
+      DeSo
 
       <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" class="d-none d-lg-inline">
         ≈ {{ globalVars.nanosToUSD(creatorCoinTrade.networkFeeNanos, 9) }}
@@ -50,11 +50,13 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">You're exchanging</span>
 
     <div class="d-inline-block">
-      {{ creatorCoinTrade.assetToSellAmount() | number: "0.0-9" }}
-      {{ creatorCoinTrade.assetToSellString() }}
+      <span *ngIf="!inTutorial || !creatorCoinTrade.isBuyingCreatorCoin">
+        {{ creatorCoinTrade.assetToSellAmount() | number: "0.0-9" }}
+        {{ creatorCoinTrade.assetToSellString() }}
+      </span>
 
-      <span *ngIf="creatorCoinTrade.isBuyingCreatorCoin" class="text-muted">
-        ≈ {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
+      <span *ngIf="creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
+        {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.assetToSellAmountInUsd() | currency }}
         USD
       </span>
     </div>
@@ -65,11 +67,13 @@
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">You receive</span>
 
     <div class="d-inline-block">
-      {{ creatorCoinTrade.assetReturnedAmount() | number: "0.0-9" }}
-      {{ creatorCoinTrade.assetReturnedString() }}
+      <span *ngIf="!inTutorial || creatorCoinTrade.isBuyingCreatorCoin">
+        {{ creatorCoinTrade.assetReturnedAmount() | number: "0.0-9" }}
+        {{ creatorCoinTrade.assetReturnedString() }}
+      </span>
 
-      <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin">
-        ≈ {{ creatorCoinTrade.assetReturnedAmountInUsd() | currency }}
+      <span *ngIf="!creatorCoinTrade.isBuyingCreatorCoin" [ngClass]="{ 'text-muted': !inTutorial }">
+        {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.assetReturnedAmountInUsd() | currency }}
         USD
       </span>
     </div>
@@ -77,17 +81,20 @@
 
   <!-- Price -->
   <div
-    *ngIf="creatorCoinTrade.bitCloutPriceOfCreatorCoin()"
+    *ngIf="creatorCoinTrade.desoPriceOfCreatorCoin()"
     class="py-3 border-bottom d-flex justify-content-between flex-wrap"
   >
     <span [ngClass]="{ 'font-weight-bold': !displayForCreatorForm }">Price per coin</span>
 
     <div class="d-inline-block">
-      ~{{ creatorCoinTrade.bitCloutPriceOfCreatorCoin().toFixed(4) }}
-      BitClout
+      <span *ngIf="!inTutorial">
+        ~{{ creatorCoinTrade.desoPriceOfCreatorCoin().toFixed(4) }}
+        DeSo
+      </span>
 
-      <span class="text-muted">
-        ≈ {{ creatorCoinTrade.usdPriceOfCreatorCoin() | currency }}
+
+      <span [ngClass]="{ 'text-muted': !inTutorial }">
+        {{ !inTutorial ? "≈" : "" }} {{ creatorCoinTrade.usdPriceOfCreatorCoin() | currency }}
         USD
       </span>
     </div>
@@ -119,6 +126,7 @@
   </div>
   <div
     *ngIf="
+      !inTutorial &&
       !(
         followService._isLoggedInUserFollowing(creatorCoinTrade.creatorProfile.PublicKeyBase58Check) ||
         appData.loggedInUser.PublicKeyBase58Check === creatorCoinTrade.creatorProfile.PublicKeyBase58Check ||

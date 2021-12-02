@@ -11,10 +11,12 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 })
 export class AdminJumioComponent {
   usernameToResetJumio = "";
+  usernameToExecuteJumioCallback = "";
   resettingJumio = false;
+  executingJumioCallback = false;
 
-  jumioBitCloutNanos: number = 0;
-  updatingJumioBitCloutNanos = false;
+  jumioDeSoNanos: number = 0;
+  updatingJumioDeSoNanos = false;
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -22,7 +24,7 @@ export class AdminJumioComponent {
     private route: ActivatedRoute,
     private backendApi: BackendApiService
   ) {
-    this.jumioBitCloutNanos = globalVars.jumioBitCloutNanos;
+    this.jumioDeSoNanos = globalVars.jumioDeSoNanos;
   }
 
   _resetJumio(): void {
@@ -42,7 +44,9 @@ export class AdminJumioComponent {
         username
       )
       .subscribe(
-        (res) => {},
+        (res) => {
+          this.globalVars._alertSuccess("Successfully reset jumio status");
+        },
         (err) => {
           this.globalVars._alertError(err.error.error);
         }
@@ -50,12 +54,39 @@ export class AdminJumioComponent {
       .add(() => (this.resettingJumio = false));
   }
 
-  updateJumioBitCloutNanos(): void {
+  _executeJumioCallback(): void {
+    this.executingJumioCallback = true;
+    let pubKey = "";
+    let username = "";
+    if (this.globalVars.isMaybePublicKey(this.usernameToExecuteJumioCallback)) {
+      pubKey = this.usernameToExecuteJumioCallback;
+    } else {
+      username = this.usernameToExecuteJumioCallback;
+    }
+    this.backendApi
+      .AdminJumioCallback(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        pubKey,
+        username
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess("Successfully executed jumio callback");
+        },
+        (err) => {
+          this.globalVars._alertError(err.error.error);
+        }
+      )
+      .add(() => (this.executingJumioCallback = false));
+  }
+
+  updateJumioDeSoNanos(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the amount of $CLOUT sent for verifying with Jumio to ${this.globalVars.nanosToBitClout(
-        this.jumioBitCloutNanos
+      html: `You are about to update the amount of $DESO sent for verifying with Jumio to ${this.globalVars.nanosToDeSo(
+        this.jumioDeSoNanos
       )}.`,
       showConfirmButton: true,
       showCancelButton: true,
@@ -68,22 +99,22 @@ export class AdminJumioComponent {
       cancelButtonText: "Cancel",
     }).then((res) => {
       if (res.isConfirmed) {
-        this.updatingJumioBitCloutNanos = true;
+        this.updatingJumioDeSoNanos = true;
         this.backendApi
-          .AdminUpdateJumioBitClout(
+          .AdminUpdateJumioDeSo(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.jumioBitCloutNanos
+            this.jumioDeSoNanos
           )
           .subscribe(
             (res) => {
-              this.globalVars.jumioBitCloutNanos = res.BitCloutNanos;
+              this.globalVars.jumioDeSoNanos = res.DeSoNanos;
             },
             (err) => {
               console.error(err);
             }
           )
-          .add(() => (this.updatingJumioBitCloutNanos = false));
+          .add(() => (this.updatingJumioDeSoNanos = false));
       }
     });
   }

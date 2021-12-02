@@ -40,7 +40,17 @@ export class IdentityService {
 
   // Launch a new identity window
 
-  launch(path?: string, params?: { publicKey?: string; tx?: string }): Observable<any> {
+  launch(
+    path?: string,
+    params?: {
+      publicKey?: string;
+      tx?: string;
+      referralCode?: string;
+      public_key?: string;
+      hideJumio?: boolean;
+      accessLevelRequest?: number;
+    }
+  ): Observable<any> {
     let url = this.identityServiceURL as string;
     if (path) {
       url += path;
@@ -57,6 +67,22 @@ export class IdentityService {
 
     if (params?.tx) {
       httpParams = httpParams.append("tx", params.tx);
+    }
+
+    if (params?.referralCode) {
+      httpParams = httpParams.append("referralCode", params.referralCode);
+    }
+
+    if (params?.public_key) {
+      httpParams = httpParams.append("public_key", params.public_key);
+    }
+
+    if (params?.hideJumio) {
+      httpParams = httpParams.append("hideJumio", params.hideJumio.toString());
+    }
+
+    if (params?.accessLevelRequest) {
+      httpParams = httpParams.append("accessLevelRequest", params.accessLevelRequest.toString());
     }
 
     const paramsStr = httpParams.toString();
@@ -85,6 +111,15 @@ export class IdentityService {
     unsignedHashes: string[];
   }): Observable<any> {
     return this.send("burn", payload);
+  }
+
+  signETH(payload: {
+    accessLevel: number;
+    accessLevelHmac: string;
+    encryptedSeedHex: string;
+    unsignedHashes: string[];
+  }): Observable<any> {
+    return this.send("signETH", payload);
   }
 
   sign(payload: {
@@ -121,6 +156,12 @@ export class IdentityService {
 
   info(): Observable<any> {
     return this.send("info", {});
+  }
+
+  launchPhoneNumberVerification(public_key: string): Observable<{ phoneNumberSuccess: boolean }> {
+    return this.launch("/verify-phone-number", {
+      public_key,
+    });
   }
 
   // Helpers

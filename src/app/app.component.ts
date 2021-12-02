@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { BackendApiService, User } from "./backend-api.service";
+import { BackendApiService, TutorialStatus, User } from "./backend-api.service";
 import { GlobalVarsService } from "./global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
+import { of, Subscription, zip } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
 
   showUsernameTooltip = false;
 
-  bitcloutToUSDExchangeRateToDisplay = "fetching...";
+  desoToUSDExchangeRateToDisplay = "fetching...";
 
   // Throttle the calls to update the top-level data so they only happen after a
   // previous call has finished.
@@ -91,12 +91,13 @@ export class AppComponent implements OnInit {
     const userCopy = JSON.parse(JSON.stringify(user));
   }
 
-  _updateTopLevelData() {
+  _updateTopLevelData(): Subscription {
     if (this.callingUpdateTopLevelData) {
-      return;
+      return new Subscription();
     }
 
     const publicKeys = Object.keys(this.identityService.identityServiceUsers);
+
     let loggedInUserPublicKey =
       this.globalVars.loggedInUser?.PublicKeyBase58Check ||
       this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey) ||
@@ -109,23 +110,47 @@ export class AppComponent implements OnInit {
     }
 
     this.callingUpdateTopLevelData = true;
-    const observable = this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, false);
 
-    observable.subscribe(
-      (res: any) => {
+    return zip(
+      this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
+      environment.verificationEndpointHostname
+        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey)
+        : of(null)
+    ).subscribe(
+      ([res, userMetadata]) => {
         this.problemWithNodeConnection = false;
         this.callingUpdateTopLevelData = false;
 
-        // Only update if things have changed to avoid unnecessary DOM manipulation
-        if (!_.isEqual(this.globalVars.userList, res.UserList)) {
-          this.globalVars.userList = res.UserList || [];
+        let loggedInUser: User = res.UserList[0];
+        let loggedInUserFound: boolean = false;
+        // Find the logged in user in the user list and replace it with the logged in user from this GetUsersStateless call.
+        this.globalVars.userList.forEach((user, index) => {
+          if (user.PublicKeyBase58Check === loggedInUser.PublicKeyBase58Check) {
+            loggedInUserFound = true;
+            this.globalVars.userList[index] = loggedInUser;
+            // This breaks out of the lodash foreach.
+            return false;
+          }
+        });
+
+        // If we got user metadata from some external global state, let's overwrite certain attributes of the logged in user.
+        if (userMetadata) {
+          loggedInUser.HasPhoneNumber = userMetadata.HasPhoneNumber;
+          loggedInUser.CanCreateProfile = userMetadata.CanCreateProfile;
+          loggedInUser.JumioVerified = userMetadata.JumioVerified;
+          loggedInUser.JumioFinishedTime = userMetadata.JumioFinishedTime;
+          loggedInUser.JumioReturned = userMetadata.JumioReturned;
+          // We can merge the blocked public key maps, which means we effectively block the union of public keys from both endpoints.
+          loggedInUser.BlockedPubKeys = { ...loggedInUser.BlockedPubKeys, ...userMetadata.BlockedPubKeys };
+          // Even though we have EmailVerified and HasEmail, we don't overwrite email attributes since each app may want to gather emails on their own.
         }
 
-        // Find the loggedInUser in our results
-        const loggedInUser: User = _.find(res.UserList, { PublicKeyBase58Check: loggedInUserPublicKey });
-
-        // Only update if things have changed to avoid unnecessary DOM manipulation
-        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser)) {
+        // If the logged-in user wasn't in the list, add it to the list.
+        if (!loggedInUserFound && loggedInUserPublicKey) {
+          this.globalVars.userList.push(loggedInUser);
+        }
+        // Only call setLoggedInUser if logged in user has changed.
+        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser) && loggedInUserPublicKey) {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
@@ -143,7 +168,8 @@ export class AppComponent implements OnInit {
         if (res.DefaultFeeRateNanosPerKB > 0) {
           this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         }
-        this.globalVars.globoMods = res.GloboMods;
+        this.globalVars.paramUpdaters = res.ParamUpdaters;
+
         this.ref.detectChanges();
         this.globalVars.loadingInitialAppState = false;
       },
@@ -154,12 +180,10 @@ export class AppComponent implements OnInit {
         console.error(error);
       }
     );
-
-    return observable;
   }
 
-  _updateBitCloutExchangeRate() {
-    this.globalVars._updateBitCloutExchangeRate();
+  _updateDeSoExchangeRate() {
+    this.globalVars._updateDeSoExchangeRate();
   }
 
   _updateAppState() {
@@ -168,29 +192,48 @@ export class AppComponent implements OnInit {
       .subscribe((res: any) => {
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
-        this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
+        this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
-        this.globalVars.jumioBitCloutNanos = res.JumioBitCloutNanos;
-        // Setup amplitude on first run
-        if (!this.globalVars.amplitude && res.AmplitudeKey) {
-          this.globalVars.amplitude = require("amplitude-js");
-          this.globalVars.amplitude.init(res.AmplitudeKey, null, {
-            apiEndpoint: res.AmplitudeDomain,
-          });
-
-          // Track initial app load event so we are aware of every user
-          // who visits our site (and not just those who click a button)
-          this.globalVars.logEvent("app : load");
-        }
-
-        // Store other important app state stuff
+        this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
-        this.globalVars.supportEmail = res.SupportEmail;
-        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterBitCloutSeed;
+        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
+        this.globalVars.buyETHAddress = res.BuyETHAddress;
+        this.globalVars.nodes = res.Nodes;
+
+        this.globalVars.transactionFeeMap = res.TransactionFeeMap;
+
+        // Calculate max fee for display in frontend
+        // Sort so highest fee is at the top
+        var simpleFeeMap: { txnType: string; fees: number }[] = Object.keys(res.TransactionFeeMap)
+          .map((k) => {
+            if (res.TransactionFeeMap[k] !== null) {
+              // only return for non empty transactions
+              // sum in case there are multiple fee earners for the txn type
+              var sumOfFees = res.TransactionFeeMap[k]
+                .map((f) => f.AmountNanos)
+                .reduce((partial_sum, a) => partial_sum + a, 0);
+              // Capitalize and use spaces in Txn type
+              var txnType = (" " + k)
+                .replace(/_/g, " ")
+                .toLowerCase()
+                .replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => " " + chr.toUpperCase())
+                .trim();
+              return { txnType: txnType, fees: sumOfFees };
+            }
+          })
+          .sort((a, b) => b.fees - a.fees);
+
+        //Get the max of all fees
+        this.globalVars.transactionFeeMax = Math.max(...simpleFeeMap.map((k) => k.fees));
+
+        //Prepare text detailed info of fees and join with newlines
+        this.globalVars.transactionFeeInfo = simpleFeeMap
+          .map((k) => `${k.txnType}: ${this.globalVars.nanosToUSD(k.fees, 4)}`)
+          .join("\n");
       });
   }
 
@@ -229,12 +272,14 @@ export class AppComponent implements OnInit {
                 return;
               }
 
-              this._updateTopLevelData();
-              this._updateBitCloutExchangeRate();
+              this._updateDeSoExchangeRate();
               this._updateAppState();
 
-              clearInterval(interval);
-              successCallback(comp);
+              this._updateTopLevelData().add(() => {
+                // We make sure the logged in user is updated before the success callback triggers
+                successCallback(comp);
+                clearInterval(interval);
+              });
             },
             (error) => {
               clearInterval(interval);
@@ -247,7 +292,7 @@ export class AppComponent implements OnInit {
       if (this.globalVars.pausePolling) {
         return;
       }
-      this._updateBitCloutExchangeRate();
+      this._updateDeSoExchangeRate();
       this._updateAppState();
       return this._updateTopLevelData();
     }
@@ -257,16 +302,16 @@ export class AppComponent implements OnInit {
     // Load the theme
     this.themeService.init();
 
-    // Update the BitClout <-> Bitcoin exchange rate every five minutes. This prevents
+    // Update the DeSo <-> Bitcoin exchange rate every five minutes. This prevents
     // a stale price from showing in a tab that's been open for a while
     setInterval(() => {
-      this._updateBitCloutExchangeRate();
+      this._updateDeSoExchangeRate();
     }, 5 * 60 * 1000);
 
     this.globalVars.updateEverything = this._updateEverything;
 
     // We need to fetch this data before we start an import. Can remove once import code is gone.
-    this._updateBitCloutExchangeRate();
+    this._updateDeSoExchangeRate();
     this._updateAppState();
 
     this.identityService.info().subscribe((res) => {
@@ -289,6 +334,7 @@ export class AppComponent implements OnInit {
     });
 
     this.installDD();
+    this.installAmplitude();
   }
 
   loadApp() {
@@ -302,7 +348,12 @@ export class AppComponent implements OnInit {
     }
     this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
 
-    this.globalVars.updateEverything();
+    this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, true).subscribe((res) => {
+      if (!_.isEqual(this.globalVars.userList, res.UserList)) {
+        this.globalVars.userList = res.UserList || [];
+      }
+      this.globalVars.updateEverything();
+    });
 
     // Clean up legacy seedinfo storage. only called when a user visits the site again after a successful import
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
@@ -326,5 +377,21 @@ export class AppComponent implements OnInit {
     datadomeScript.async = true;
     datadomeScript.src = jsPath;
     firstScript.parentNode.insertBefore(datadomeScript, firstScript);
+  }
+
+  installAmplitude() {
+    const { key, domain } = environment.amplitude;
+    if (!key || !domain || this.globalVars.amplitude) {
+      return;
+    }
+
+    this.globalVars.amplitude = require("amplitude-js");
+    this.globalVars.amplitude.init(key, null, {
+      apiEndpoint: domain,
+    });
+
+    // Track initial app load event so we are aware of every user
+    // who visits our site (and not just those who click a button)
+    this.globalVars.logEvent("app : load");
   }
 }
