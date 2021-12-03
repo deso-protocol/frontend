@@ -28,6 +28,7 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
+    *.dev.yourgem.app
     node.deso.org
     amp.deso.org
     bithunt.deso.org
