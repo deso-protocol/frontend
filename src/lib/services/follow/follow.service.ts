@@ -64,7 +64,7 @@ export class FollowService {
             // TODO: there's prob some "out of funds" error which is a problem
             const parsedError = this.backendApi.parseMessageError(error);
             this.globalVars.logEvent(`user : ${isFollow ? "follow" : "unfollow"} : error`, { parsedError });
-            this.appData._alertError(parsedError, !!parsedError.indexOf("insufficient"));
+            this.appData._alertError(parsedError);
           }
         }
       )

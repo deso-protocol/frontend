@@ -719,25 +719,22 @@ export class GlobalVarsService {
     });
   }
 
-  _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
+  _alertError(err: any, showBuyCreatorCoin: boolean = false) {
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
-      showCancelButton: showBuyDeSo || showBuyCreatorCoin,
+      showCancelButton: showBuyCreatorCoin,
       focusConfirm: true,
       customClass: {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: showBuyDeSo ? "Buy DeSo" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
+      confirmButtonText: showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
       reverseButtons: true,
     }).then((res) => {
-      if (showBuyDeSo && res.isConfirmed) {
-        this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
-      }
       if (showBuyCreatorCoin && res.isConfirmed) {
         this.router.navigate([RouteNames.CREATORS]);
       }
