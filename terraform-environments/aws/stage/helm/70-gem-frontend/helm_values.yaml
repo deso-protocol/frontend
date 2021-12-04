@@ -35,7 +35,7 @@ ingress:
     - path: /
       servicePort: http
   hosts:
-    - www.stage.yourgem.app
+    - www.prod.yourgem.app
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
