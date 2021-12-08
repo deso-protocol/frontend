@@ -1,54 +1,98 @@
 <div>
-  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-    Set Jumio Starter $DESO amount (in nanos):
-    <div class="d-flex mt-5px">
-      <input
-        [(ngModel)]="jumioDeSoNanos"
-        (keydown.enter)="updateJumioDeSoNanos()"
-        class="form-control w-100 fs-15px lh-15px"
-        placeholder="Enter an amount"
-        type="number"
-      />
-      <button *ngIf="!updatingJumioDeSoNanos" (click)="updateJumioDeSoNanos()" class="btn btn-outline-primary fs-15px ml-5px">
-        Update
-      </button>
-      <button *ngIf="updatingJumioDeSoNanos" class="btn btn-primary fs-15px ml-5px" disabled>
-        Working...
-      </button>
+  <tab-selector
+    [tabs]="tabs"
+    [activeTab]="activeTab"
+    (tabClick)="_handleTabClick($event)"></tab-selector>
+  <div class="p-15px fs-15px" *ngIf="activeTab === AdminJumioComponent.GENERAL">
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Set Jumio Starter $DESO amount (in nanos):
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="jumioDeSoNanos"
+          (keydown.enter)="updateJumioDeSoNanos()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter an amount"
+          type="number"
+        />
+        <button *ngIf="!updatingJumioDeSoNanos" (click)="updateJumioDeSoNanos()" class="btn btn-outline-primary fs-15px ml-5px">
+          Update
+        </button>
+        <button *ngIf="updatingJumioDeSoNanos" class="btn btn-primary fs-15px ml-5px" disabled>
+          Working...
+        </button>
+      </div>
+    </div>
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Reset Jumio for Public Key or Username:
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="usernameToResetJumio"
+          (keydown.enter)="_resetJumio()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key."
+        />
+        <button *ngIf="!resettingJumio" (click)="_resetJumio()" class="btn btn-outline-primary fs-15px ml-5px">
+          Reset
+        </button>
+        <button *ngIf="resettingJumio" class="btn btn-primary fs-15px ml-5px" disabled>
+          Working...
+        </button>
+      </div>
+    </div>
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Execute Jumio Callback for Public Key or Username:
+      <div class="d-flex mt-5px">
+        <input
+          [(ngModel)]="usernameToExecuteJumioCallback"
+          (keydown.enter)="_executeJumioCallback()"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username or public key."
+        />
+        <button *ngIf="!executingJumioCallback" (click)="_executeJumioCallback()" class="btn btn-outline-primary fs-15px ml-5px">
+          Execute
+        </button>
+        <button *ngIf="executingJumioCallback" class="btn btn-primary fs-15px ml-5px" disabled>
+          Working...
+        </button>
+      </div>
     </div>
   </div>
-  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-    Reset Jumio for Public Key or Username:
-    <div class="d-flex mt-5px">
-      <input
-        [(ngModel)]="usernameToResetJumio"
-        (keydown.enter)="_resetJumio()"
-        class="form-control w-100 fs-15px lh-15px"
-        placeholder="Enter a username or public key."
-      />
-      <button *ngIf="!resettingJumio" (click)="_resetJumio()" class="btn btn-outline-primary fs-15px ml-5px">
-        Reset
-      </button>
-      <button *ngIf="resettingJumio" class="btn btn-primary fs-15px ml-5px" disabled>
-        Working...
-      </button>
+  <div class="p-15px fs-15px" *ngIf="activeTab === AdminJumioComponent.COUNTRY_BONUSES">
+    <div class="d-flex align-items-center">
+      <div class="col-4">Country</div>
+      <div class="col-2">Referral Amount</div>
+      <div class="col-2">Allow Referral Override</div>
+      <div class="col-2">Kickback Amount</div>
+      <div class="col-2">Allow Kickback Override</div>
     </div>
-  </div>
-  <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-    Execute Jumio Callback for Public Key or Username:
-    <div class="d-flex mt-5px">
-      <input
-        [(ngModel)]="usernameToExecuteJumioCallback"
-        (keydown.enter)="_executeJumioCallback()"
-        class="form-control w-100 fs-15px lh-15px"
-        placeholder="Enter a username or public key."
-      />
-      <button *ngIf="!executingJumioCallback" (click)="_executeJumioCallback()" class="btn btn-outline-primary fs-15px ml-5px">
-        Execute
-      </button>
-      <button *ngIf="executingJumioCallback" class="btn btn-primary fs-15px ml-5px" disabled>
-        Working...
-      </button>
-    </div>
+      <div *ngFor="let signUpBonus of countryLevelSignUpBonuses | keyvalue; let ii = index" class="py-15px d-flex">
+        <div class="col-4 d-flex align-items-center">
+          <i class="fa fa-pencil pr-5px"
+             aria-hidden="true"
+             (click)="editCountry(signUpBonus.value.CountryCodeDetails.Alpha3)"
+          ></i>
+          <span>{{ signUpBonus.key }}</span>
+        </div>
+        <div class="col-2 d-flex">
+          {{ countryLevelSignUpBonuses[signUpBonus.key].CountryLevelSignUpBonus.ReferralAmountOverrideUSDCents }}
+        </div>
+        <div class="col-2 d-flex">
+          <input
+            type="checkbox"
+            (ngModel)="value.CountryLevelSignUpBonus.AllowCustomReferralAmount"
+            disabled
+          />
+        </div>
+        <div class="col-2 d-flex flex-column">
+          {{ signUpBonus.value.CountryLevelSignUpBonus.KickbackAmountOverrideUSDCents }}
+        </div>
+        <div class="col-2">
+          <input
+            type="checkbox"
+            (ngModel)="value.CountryLevelSignUpBonus.AllowCustomKickbackAmount"
+            disabled
+          />
+        </div>
+      </div>
   </div>
 </div>

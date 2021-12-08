@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import {BackendApiService, CountryLevelSignUpBonus, CountryLevelSignUpBonusResponse} from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 
 @Component({
@@ -18,6 +18,15 @@ export class AdminJumioComponent {
   jumioDeSoNanos: number = 0;
   updatingJumioDeSoNanos = false;
 
+  countryLevelSignUpBonuses: { [k: string]: CountryLevelSignUpBonusResponse } = {};
+  defaultSignUpBonus: CountryLevelSignUpBonus;
+
+  static GENERAL = "General";
+  static COUNTRY_BONUSES = "Country Bonuses";
+  tabs = [AdminJumioComponent.GENERAL, AdminJumioComponent.COUNTRY_BONUSES];
+  activeTab: string = AdminJumioComponent.GENERAL;
+  AdminJumioComponent = AdminJumioComponent;
+
   constructor(
     private globalVars: GlobalVarsService,
     private router: Router,
@@ -25,6 +34,20 @@ export class AdminJumioComponent {
     private backendApi: BackendApiService
   ) {
     this.jumioDeSoNanos = globalVars.jumioDeSoNanos;
+    backendApi
+      .AdminGetAllCountryLevelSignUpBonuses(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )
+      .subscribe(
+        (res) => {
+          this.countryLevelSignUpBonuses = res.SignUpBonusMetadata;
+          this.defaultSignUpBonus = res.DefaultSignUpBonusMetadata;
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
   }
 
   _resetJumio(): void {
@@ -117,5 +140,13 @@ export class AdminJumioComponent {
           .add(() => (this.updatingJumioDeSoNanos = false));
       }
     });
+  }
+
+  _handleTabClick(tab: string): void {
+    this.activeTab = tab;
+  }
+
+  editCountry(countryCode: string): void {
+    console.log(countryCode);
   }
 }
