@@ -5,19 +5,19 @@
     (tabClick)="_handleTabClick($event)"></tab-selector>
   <div class="p-15px fs-15px" *ngIf="activeTab === AdminJumioComponent.GENERAL">
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Set Jumio Starter $DESO amount (in nanos):
+      Set Jumio Starter Amount in $USD:
       <div class="d-flex mt-5px">
         <input
-          [(ngModel)]="jumioDeSoNanos"
-          (keydown.enter)="updateJumioDeSoNanos()"
+          [(ngModel)]="jumioUSD"
+          (keydown.enter)="updateJumioUSDCents()"
           class="form-control w-100 fs-15px lh-15px"
           placeholder="Enter an amount"
           type="number"
         />
-        <button *ngIf="!updatingJumioDeSoNanos" (click)="updateJumioDeSoNanos()" class="btn btn-outline-primary fs-15px ml-5px">
+        <button *ngIf="!updatingJumioUSD" (click)="updateJumioUSDCents()" class="btn btn-outline-primary fs-15px ml-5px">
           Update
         </button>
-        <button *ngIf="updatingJumioDeSoNanos" class="btn btn-primary fs-15px ml-5px" disabled>
+        <button *ngIf="updatingJumioUSD" class="btn btn-primary fs-15px ml-5px" disabled>
           Working...
         </button>
       </div>
@@ -42,12 +42,24 @@
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Execute Jumio Callback for Public Key or Username:
       <div class="d-flex mt-5px">
-        <input
-          [(ngModel)]="usernameToExecuteJumioCallback"
-          (keydown.enter)="_executeJumioCallback()"
-          class="form-control w-100 fs-15px lh-15px"
-          placeholder="Enter a username or public key."
-        />
+        <div class="d-flex flex-column">
+          <input
+            [(ngModel)]="usernameToExecuteJumioCallback"
+            (keydown.enter)="_executeJumioCallback()"
+            class="form-control w-100 fs-15px lh-15px"
+            placeholder="Enter a username or public key."
+          />
+          <select
+            name="country"
+            id="country-callback"
+            [(ngModel)]="jumioCallbackCountrySelected"
+            class="form-control selector mt-15px">
+            <option
+              *ngFor="let country of countryLevelSignUpBonuses | keyvalue"
+              [value]="country.value.CountryCodeDetails.Alpha3"
+              [selected]="jumioCallbackCountrySelected === country.value.CountryCodeDetails.Alpha3">{{ country.key }}</option>
+          </select>
+        </div>
         <button *ngIf="!executingJumioCallback" (click)="_executeJumioCallback()" class="btn btn-outline-primary fs-15px ml-5px">
           Execute
         </button>
@@ -69,12 +81,12 @@
         <div class="col-4 d-flex align-items-center">
           <i class="fa fa-pencil pr-5px"
              aria-hidden="true"
-             (click)="editCountry(signUpBonus.value.CountryCodeDetails.Alpha3)"
+             (click)="editCountry(signUpBonus.value.CountryCodeDetails.Name, $event)"
           ></i>
           <span>{{ signUpBonus.key }}</span>
         </div>
         <div class="col-2 d-flex">
-          {{ countryLevelSignUpBonuses[signUpBonus.key].CountryLevelSignUpBonus.ReferralAmountOverrideUSDCents }}
+          {{ globalVars.formatUSD(signUpBonus.value.CountryLevelSignUpBonus.ReferralAmountOverrideUSDCents / 100, 2) }}
         </div>
         <div class="col-2 d-flex">
           <input
@@ -84,7 +96,7 @@
           />
         </div>
         <div class="col-2 d-flex flex-column">
-          {{ signUpBonus.value.CountryLevelSignUpBonus.KickbackAmountOverrideUSDCents }}
+          {{ globalVars.formatUSD(signUpBonus.value.CountryLevelSignUpBonus.KickbackAmountOverrideUSDCents / 100, 2) }}
         </div>
         <div class="col-2">
           <input

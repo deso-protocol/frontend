@@ -2021,12 +2021,14 @@ export class BackendApiService {
     endpoint: string,
     AdminPublicKey: string,
     PublicKeyBase58Check: string,
-    Username: string
+    Username: string,
+    CountryAlpha3: string = ""
   ): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminJumioCallback, AdminPublicKey, {
       PublicKeyBase58Check,
       Username,
       AdminPublicKey,
+      CountryAlpha3,
     });
   }
 

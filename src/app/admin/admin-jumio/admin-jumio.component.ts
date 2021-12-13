@@ -1,8 +1,12 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
-import {BackendApiService, CountryLevelSignUpBonus, CountryLevelSignUpBonusResponse} from "../../backend-api.service";
+import { BackendApiService, CountryLevelSignUpBonus, CountryLevelSignUpBonusResponse } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { AdminJumioEditCountrySignUpBonusComponent } from "./admin-jumio-edit-country-sign-up-bonus/admin-jumio-edit-country-sign-up-bonus.component";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { Subscription } from "rxjs";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "admin-jumio",
@@ -14,9 +18,10 @@ export class AdminJumioComponent {
   usernameToExecuteJumioCallback = "";
   resettingJumio = false;
   executingJumioCallback = false;
+  jumioCallbackCountrySelected: string = "";
 
-  jumioDeSoNanos: number = 0;
-  updatingJumioDeSoNanos = false;
+  jumioUSD: number = 0;
+  updatingJumioUSDCents = false;
 
   countryLevelSignUpBonuses: { [k: string]: CountryLevelSignUpBonusResponse } = {};
   defaultSignUpBonus: CountryLevelSignUpBonus;
@@ -31,10 +36,16 @@ export class AdminJumioComponent {
     private globalVars: GlobalVarsService,
     private router: Router,
     private route: ActivatedRoute,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private modalService: BsModalService,
+    private toastr: ToastrService
   ) {
-    this.jumioDeSoNanos = globalVars.jumioDeSoNanos;
-    backendApi
+    this.jumioUSD = globalVars.jumioUSDCents / 100;
+    this.refreshCountryBonuses();
+  }
+
+  refreshCountryBonuses(): Subscription {
+    return this.backendApi
       .AdminGetAllCountryLevelSignUpBonuses(
         this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check
@@ -91,7 +102,8 @@ export class AdminJumioComponent {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         pubKey,
-        username
+        username,
+        this.jumioCallbackCountrySelected
       )
       .subscribe(
         (res) => {
@@ -104,12 +116,13 @@ export class AdminJumioComponent {
       .add(() => (this.executingJumioCallback = false));
   }
 
-  updateJumioDeSoNanos(): void {
+  updateJumioUSDCents(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the amount of $DESO sent for verifying with Jumio to ${this.globalVars.nanosToDeSo(
-        this.jumioDeSoNanos
+      html: `You are about to update the default sign-up amount sent for verifying with Jumio to ${this.globalVars.formatUSD(
+        this.jumioUSD,
+        2
       )}.`,
       showConfirmButton: true,
       showCancelButton: true,
@@ -122,22 +135,22 @@ export class AdminJumioComponent {
       cancelButtonText: "Cancel",
     }).then((res) => {
       if (res.isConfirmed) {
-        this.updatingJumioDeSoNanos = true;
+        this.updatingJumioUSDCents = true;
         this.backendApi
-          .AdminUpdateJumioDeSo(
+          .AdminUpdateJumioUSDCents(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.jumioDeSoNanos
+            this.jumioUSD * 100
           )
           .subscribe(
             (res) => {
-              this.globalVars.jumioDeSoNanos = res.DeSoNanos;
+              this.globalVars.jumioUSDCents = res.USDCents;
             },
             (err) => {
               console.error(err);
             }
           )
-          .add(() => (this.updatingJumioDeSoNanos = false));
+          .add(() => (this.updatingJumioUSDCents = false));
       }
     });
   }
@@ -146,7 +159,17 @@ export class AdminJumioComponent {
     this.activeTab = tab;
   }
 
-  editCountry(countryCode: string): void {
-    console.log(countryCode);
+  editCountry(country: string, event): void {
+    event.stopPropagation();
+    const editBonusModal = this.modalService.show(AdminJumioEditCountrySignUpBonusComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { countryLevelSignUpBonusResponse: this.countryLevelSignUpBonuses[country] },
+    });
+    editBonusModal.onHide.subscribe((res) => {
+      if (res === "sign-up-bonus-updated") {
+        this.refreshCountryBonuses();
+        this.toastr.info(`Sign-Up Bonus updated for ${country}`, null, { positionClass: "toast-top-center", timeOut: 3000 });
+      }
+    });
   }
 }

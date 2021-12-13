@@ -213,6 +213,7 @@ export class GlobalVarsService {
   profileUpdateTimestamp: number;
 
   jumioDeSoNanos = 0;
+  jumioUSDCents = 0;
 
   referralUSDCents: number = 0;
 
@@ -1174,7 +1175,7 @@ export class GlobalVarsService {
   getFreeDESOMessage(): string {
     return this.referralUSDCents
       ? this.formatUSD(this.referralUSDCents / 100, 0)
-      : this.nanosToUSD(this.jumioDeSoNanos, 0);
+      : this.formatUSD(this.jumioUSDCents / 100, 0);
   }
 
   getReferralUSDCents(): void {
