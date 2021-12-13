@@ -145,6 +145,7 @@ export class AdminJumioComponent {
           .subscribe(
             (res) => {
               this.globalVars.jumioUSDCents = res.USDCents;
+              this.refreshCountryBonuses();
             },
             (err) => {
               console.error(err);
