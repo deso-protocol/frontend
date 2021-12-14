@@ -156,6 +156,7 @@ import { BuyDeSoEthComponent } from "./buy-deso-page/buy-deso-eth/buy-deso-eth.c
 import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 import { AdminNodeFeesComponent } from "./admin/admin-node-fees/admin-node-fees.component";
 import { AdminNodeAddFeesComponent } from "./admin/admin-node-fees/admin-node-add-fee/admin-node-add-fees.component";
+import { FreeDesoMessageComponent } from "./free-deso-message/free-deso-message.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -301,6 +302,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     SanitizeVideoUrlPipe,
     AdminNodeFeesComponent,
     AdminNodeAddFeesComponent,
+    FreeDesoMessageComponent,
   ],
   imports: [
     BrowserModule,

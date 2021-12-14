@@ -23,7 +23,7 @@
 </div>
 <div class="w-100 d-lg-none d-flex align-items-center justify-content-center">
   <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">
-    Sign Up and Get <b>{{ globalVars.getFreeDESOMessage() }} Free</b>
+    Sign Up and Get <free-deso-message></free-deso-message><b>Free</b>
   </a>
 </div>
 
@@ -33,7 +33,7 @@
       <div class="col landing__logo deso" [ngStyle]="{'background': getLogoBackground()}"></div>
       <div class="col d-lg-flex d-none align-items-center">
         <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">
-          Sign Up and Get <b>{{ globalVars.getFreeDESOMessage() }} Free</b>
+          Sign Up and Get <free-deso-message></free-deso-message><b>Free</b>
         </a>
       </div>
       <div class="d-flex align-items-center">
@@ -76,7 +76,7 @@
             Sign Up
           </div>
           <div class="mt-1 fs-15px">
-            Get {{ globalVars.getFreeDESOMessage() }} Free
+            Get <free-deso-message></free-deso-message> Free
           </div>
         </a>
         <a class="landing__log-in d-none d-sm-block" (click)="globalVars.launchLoginFlow()" style="font-size: 15px;">Log in</a>
