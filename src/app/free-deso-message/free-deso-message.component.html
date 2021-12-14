@@ -2,10 +2,10 @@
   <span>{{ globalVars.getFreeDESOMessage() }}</span>
   <sup style="padding-left: 1px">
     <i
-      (click)="tooltip1.toggle()"
+      (click)="$event.stopPropagation(); tooltip1.show();"
       class="fas fa-info-circle text-greyC global__tooltip-icon"
       matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-      matTooltip="Amount may vary based on ID"
+      matTooltip="Amount may vary based on locality of ID"
       #tooltip1="matTooltip"
     ></i>
   </sup>
