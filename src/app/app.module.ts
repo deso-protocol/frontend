@@ -159,6 +159,12 @@ import { AdminNodeAddFeesComponent } from "./admin/admin-node-fees/admin-node-ad
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
+import {
+  SupplyMonitoringStatsPageComponent
+} from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
+import {
+  SupplyMonitoringStatsComponent
+} from "./supply-monitoring-stats-page/supply-monitoring-stats/supply-monitoring-stats.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -299,6 +305,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     SanitizeVideoUrlPipe,
     AdminNodeFeesComponent,
     AdminNodeAddFeesComponent,
+    SupplyMonitoringStatsPageComponent,
+    SupplyMonitoringStatsComponent,
   ],
   imports: [
     BrowserModule,
