@@ -146,6 +146,10 @@ export class BackendRoutes {
   static RoutePathAdminGetTransactionFeeMap = "/api/v0/admin/get-transaction-fee-map";
   static RoutePathAdminAddExemptPublicKey = "/api/v0/admin/add-exempt-public-key";
   static RoutePathAdminGetExemptPublicKeys = "/api/v0/admin/get-exempt-public-keys";
+
+  // Supply Monitoring endpoints
+  static RoutePathGetTotalSupply = "/api/v0/total-supply";
+  static RoutePathGetRichList = "/api/v0/rich-list";
 }
 
 export class Transaction {
@@ -395,6 +399,14 @@ type GetUsersStatelessResponse = {
   UserList: User[];
   DefaultFeeRateNanosPerKB: number;
   ParamUpdaters: { [k: string]: boolean };
+};
+
+export type RichListEntryResponse = {
+  PublicKeyBase58Check: string;
+  BalanceNanos: number;
+  BalanceDESO: number;
+  Percentage: number;
+  Value: number;
 };
 
 @Injectable({
@@ -2227,6 +2239,14 @@ export class BackendApiService {
 
   GetVideoStatus(endpoint: string, videoId: string): Observable<any> {
     return this.get(endpoint, `${BackendRoutes.RoutePathGetVideoStatus}/${videoId}`);
+  }
+
+  GetTotalSupply(endpoint: string): Observable<number> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetTotalSupply);
+  }
+
+  GetRichList(endpoint: string): Observable<RichListEntryResponse[]> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetRichList);
   }
 
   // Error parsing

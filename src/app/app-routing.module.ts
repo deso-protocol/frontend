@@ -36,6 +36,9 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
+import {
+  SupplyMonitoringStatsPageComponent
+} from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -81,6 +84,7 @@ class RouteNames {
   public static TUTORIAL = "tutorial";
   public static CREATE_PROFILE = "create-profile";
   public static INVEST = "invest";
+  public static SUPPLY_STATS = "supply-stats";
 }
 
 const routes: Routes = [
@@ -160,6 +164,11 @@ const routes: Routes = [
   {
     path: RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST,
     component: CreatePostTutorialPageComponent,
+    pathMatch: "full",
+  },
+  {
+    path: RouteNames.SUPPLY_STATS,
+    component: SupplyMonitoringStatsPageComponent,
     pathMatch: "full",
   },
   // This NotFound route must be the last one as it catches all paths that were not matched above.

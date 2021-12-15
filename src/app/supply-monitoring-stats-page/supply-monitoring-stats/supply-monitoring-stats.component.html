@@ -1,0 +1,20 @@
+<div class="p-15px">
+  <simple-center-loader *ngIf="loadingTotalSupply && loadingRichList"></simple-center-loader>
+  <div>Total Supply: {{ loadingTotalSupply ? "...loading" : totalSupplyDESO }}</div>
+  <div *ngIf="!loadingRichList">
+    <div class="d-flex fs-12px">
+      <div class="col-1">Rank</div>
+      <div class="col-4">Public Key</div>
+      <div class="col-2">Balance (DESO)</div>
+      <div class="col-2">Percentage</div>
+      <div class="col-2">USD Value</div>
+    </div>
+    <div #uiScroll *uiScroll="let entry of datasource; let ii = index" class="d-flex fs-12px">
+      <div class="col-1">#{{ ii + 1}}</div>
+      <div class="col-4 text-truncate">{{ entry.PublicKeyBase58Check }}</div>
+      <div class="col-2">{{ globalVars.nanosToDeSo(entry.BalanceNanos) }}</div>
+      <div class="col-2">{{ (entry.Percentage * 100).toFixed(2) }} %</div>
+      <div class="col-2">{{ globalVars.nanosToUSD(entry.BalanceNanos, 2) }}</div>
+    </div>
+  </div>
+</div>
