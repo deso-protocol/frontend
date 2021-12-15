@@ -1,12 +1,7 @@
-import { Component, OnDestroy } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse, RichListEntryResponse } from "../../backend-api.service";
+import { Component } from "@angular/core";
+import { BackendApiService, RichListEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from "rxjs";
-import { RouteNames, AppRoutingModule } from "../../app-routing.module";
-import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
-import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
   selector: "supply-monitoring-stats",
@@ -21,6 +16,7 @@ export class SupplyMonitoringStatsComponent {
   loadingTotalSupply: boolean = true;
   richList: RichListEntryResponse[];
   loadingRichList: boolean = true;
+  noSupplyMonitoring: boolean = false;
   datasource: IDatasource<IAdapter<any>> = this.getDatasource();
   constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {
     this.backendApi
