@@ -1365,18 +1365,14 @@ export class BackendApiService {
       map((res) => {
         // This array contains encrypted messages with public keys
         // Public keys of the other party involved in the correspondence
-        const encryptedMessages = [];
-        for (const threads of res.OrderedContactsWithMessages) {
-          for (const message of threads.Messages) {
-            const payload = {
-              EncryptedHex: message.EncryptedText,
-              PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
-              IsSender: message.IsSender,
-              Legacy: !message.V2,
-            };
-            encryptedMessages.push(payload);
-          }
-        }
+        const encryptedMessages = res.OrderedContactsWithMessages.map((thread) =>
+          thread.Messages.map((message) => ({
+            EncryptedHex: message.EncryptedText,
+            PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
+            IsSender: message.IsSender,
+            Legacy: !message.V2,
+          }))
+        );
         return { ...res, encryptedMessages };
       })
     );
@@ -1391,12 +1387,11 @@ export class BackendApiService {
           })
           .pipe(
             map((decrypted) => {
-              for (const threads of res.OrderedContactsWithMessages) {
-                for (const message of threads.Messages) {
-                  message.DecryptedText = decrypted.decryptedHexes[message.EncryptedText];
-                }
-              }
-
+              res.OrderedContactsWithMessages.forEach((threads) =>
+                threads.Messages.forEach(
+                  (message) => (message.DecryptedText = decrypted.decryptedHexes[message.EncryptedText])
+                )
+              );
               return { ...res, ...decrypted };
             })
           );
