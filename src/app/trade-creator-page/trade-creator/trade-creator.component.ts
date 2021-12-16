@@ -204,7 +204,8 @@ export class TradeCreatorComponent implements OnInit {
 
   setUpBuyTutorial(): void {
     let balance = this.appData.loggedInUser?.BalanceNanos;
-    const jumioDeSoNanos = this.appData.jumioDeSoNanos > 0 ? this.appData.jumioDeSoNanos : 1e8;
+    const jumioDeSoNanos =
+      this.appData.jumioUSDCents > 0 ? this.appData.usdToNanosNumber(this.appData.jumioUSDCents / 100) : 1e8;
     balance = balance > jumioDeSoNanos ? jumioDeSoNanos : balance;
     const percentToBuy =
       this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check ? 0.1 : 0.5;
