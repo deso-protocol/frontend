@@ -14,22 +14,34 @@ export class SupplyMonitoringStatsComponent {
   static WINDOW_VIEWPORT = true;
   totalSupplyDESO: number;
   loadingTotalSupply: boolean = true;
+  failedLoadingTotalSupply: boolean = false;
   richList: RichListEntryResponse[];
   loadingRichList: boolean = true;
+  failedLoadingRichList: boolean = false;
   noSupplyMonitoring: boolean = false;
   datasource: IDatasource<IAdapter<any>> = this.getDatasource();
   constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {
     this.backendApi
       .GetRichList(this.globalVars.localNode)
-      .subscribe((res) => {
-        this.richList = res || [];
-      })
+      .subscribe(
+        (res) => {
+          this.richList = res || [];
+        },
+        (err) => {
+          this.failedLoadingRichList = true;
+        }
+      )
       .add(() => (this.loadingRichList = false));
     this.backendApi
       .GetTotalSupply(this.globalVars.localNode)
-      .subscribe((res) => {
-        this.totalSupplyDESO = res;
-      })
+      .subscribe(
+        (res) => {
+          this.totalSupplyDESO = res;
+        },
+        (err) => {
+          this.failedLoadingTotalSupply = true;
+        }
+      )
       .add(() => (this.loadingTotalSupply = false));
   }
 
