@@ -91,7 +91,7 @@
         <div class="col-2 d-flex">
           <input
             type="checkbox"
-            (ngModel)="value.CountryLevelSignUpBonus.AllowCustomReferralAmount"
+            [(ngModel)]="signUpBonus.value.CountryLevelSignUpBonus.AllowCustomReferralAmount"
             disabled
           />
         </div>
@@ -101,7 +101,7 @@
         <div class="col-2">
           <input
             type="checkbox"
-            (ngModel)="value.CountryLevelSignUpBonus.AllowCustomKickbackAmount"
+            [(ngModel)]="signUpBonus.value.CountryLevelSignUpBonus.AllowCustomKickbackAmount"
             disabled
           />
         </div>
