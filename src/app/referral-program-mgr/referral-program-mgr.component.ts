@@ -200,24 +200,12 @@ export class ReferralProgramMgrComponent implements OnInit {
       return;
     }
 
-    // Process the file. The CSV has a simple, expected input format so we can parse it manually.
-    fileToUpload.text().then((text) => {
-      let rowStrings = text.split("\n");
-      let rows = [];
-      for (let ii = 0; ii < rowStrings.length; ii++) {
-        if (rowStrings[ii].length == 0) {
-          break;
-        }
-        let row = rowStrings[ii].split(",");
-        rows.push(row);
-      }
-      this._uploadCSVRows(rows);
-    });
+    this._uploadCSV(fileToUpload);
   }
 
-  _uploadCSVRows(csvRows: Array<Array<String>>) {
+  _uploadCSV(file: File) {
     this.backendApi
-      .AdminUploadReferralCSV(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, csvRows)
+      .AdminUploadReferralCSV(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
       .subscribe(
         (res) => {
           this.globalVars._alertSuccess(

@@ -2125,11 +2125,20 @@ export class BackendApiService {
     });
   }
 
-  AdminUploadReferralCSV(endpoint: string, AdminPublicKey: string, CSVRows: Array<Array<String>>): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUploadReferralCSV, AdminPublicKey, {
-      AdminPublicKey,
-      CSVRows,
+  AdminUploadReferralCSV(endpoint: string, AdminPublicKey: string, file: File): Observable<any> {
+    const request = this.identityService.jwt({
+      ...this.identityService.identityServiceParamsForKey(AdminPublicKey),
     });
+    return request.pipe(
+      switchMap((signed) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("UserPublicKeyBase58Check", AdminPublicKey);
+        formData.append("JWT", signed.jwt);
+
+        return this.post(endpoint, BackendRoutes.RoutePathAdminUploadReferralCSV, formData);
+      })
+    );
   }
 
   GetReferralInfoForUser(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
