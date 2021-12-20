@@ -223,7 +223,7 @@ export class GlobalVarsService {
 
   buyETHAddress: string = "";
 
-  nodes: { [id: number]: DeSoNode }
+  nodes: { [id: number]: DeSoNode };
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -1185,11 +1185,16 @@ export class GlobalVarsService {
         .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
         .subscribe((res) => {
           const referralInfo = res.ReferralInfoResponse.Info;
-          if (
+          const countrySignUpBonus = res.CountrySignUpBonus;
+          if (!countrySignUpBonus.AllowCustomReferralAmount) {
+            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
+          } else if (
             res.ReferralInfoResponse.IsActive &&
             (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
           ) {
             this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
+          } else {
+            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
           }
         });
     }

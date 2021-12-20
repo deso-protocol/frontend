@@ -2138,7 +2138,10 @@ export class BackendApiService {
     });
   }
 
-  GetReferralInfoForReferralHash(endpoint: string, ReferralHash: string): Observable<any> {
+  GetReferralInfoForReferralHash(
+    endpoint: string,
+    ReferralHash: string
+  ): Observable<{ ReferralInfoResponse: any; CountrySignUpBonus: CountryLevelSignUpBonus }> {
     return this.post(endpoint, BackendRoutes.RoutePathGetReferralInfoForReferralHash, {
       ReferralHash,
     });
