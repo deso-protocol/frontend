@@ -1365,8 +1365,8 @@ export class BackendApiService {
       map((res) => {
         // This array contains encrypted messages with public keys
         // Public keys of the other party involved in the correspondence
-        const encryptedMessages = res.OrderedContactsWithMessages.map((thread) =>
-          thread.Messages.map((message) => ({
+        const encryptedMessages = res.OrderedContactsWithMessages.flatMap((thread) =>
+          thread.Messages.flatMap((message) => ({
             EncryptedHex: message.EncryptedText,
             PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
             IsSender: message.IsSender,
