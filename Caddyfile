@@ -31,11 +31,10 @@ header @html Content-Security-Policy "
     node.deso.org
     amp.deso.org
     bithunt.deso.org
-    pulse.deso.org
     bitclout.com:*
     api.bitclout.com
     bithunt.bitclout.com
-    pulse.bitclout.com
+    https://altumbase.com
     localhost:*
     explorer.bitclout.com
     https://api.blockchain.com/ticker

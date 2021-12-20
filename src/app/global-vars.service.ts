@@ -20,8 +20,7 @@ import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
-import { AltumbaseResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
+import { LeaderboardResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
@@ -939,12 +938,11 @@ export class GlobalVarsService {
   }
 
   updateLeaderboard(forceRefresh: boolean = false): void {
-    const pulseService = new PulseService(this.httpClient, this.backendApi, this);
+    const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      altumbaseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
 
-    const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
       altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
     }
