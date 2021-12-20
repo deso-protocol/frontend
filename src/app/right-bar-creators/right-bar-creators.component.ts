@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
-import {environment} from "../../environments/environment";
+import { environment } from "../../environments/environment";
 
 export class RightBarTabOption {
   name: string;
