@@ -3,6 +3,7 @@ import { GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService } from "../../backend-api.service";
 import { HttpClient } from "@angular/common/http";
 import { PulseService } from "../../../lib/services/pulse/pulse-service";
+import { AltumbaseService } from "../../../lib/services/altumbase/altumbase-service";
 import { BithuntService } from "../../../lib/services/bithunt/bithunt-service";
 import { RightBarCreatorsComponent, RightBarTabOption } from "../../right-bar-creators/right-bar-creators.component";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
@@ -36,6 +37,7 @@ export class TrendsComponent implements OnInit {
 
   bithuntService: BithuntService;
   pulseService: PulseService;
+  altumbaseService: AltumbaseService;
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -52,6 +54,7 @@ export class TrendsComponent implements OnInit {
     });
     this.bithuntService = new BithuntService(this.httpClient, this.backendApi, this.globalVars);
     this.pulseService = new PulseService(this.httpClient, this.backendApi, this.globalVars);
+    this.altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this.globalVars);
     this.selectTab();
   }
 
@@ -90,8 +93,8 @@ export class TrendsComponent implements OnInit {
     }
     if (this.activeTab === RightBarCreatorsComponent.DIAMONDS.name) {
       this.loadingNextPage = page !== 0;
-      return this.pulseService
-        .getDiamondsReceivedPage(page + 1, TrendsComponent.PAGE_SIZE, true)
+      return this.altumbaseService
+        .getDiamondsReceivedPage(page + 1, TrendsComponent.PAGE_SIZE, false)
         .toPromise()
         .then(
           (res) => {

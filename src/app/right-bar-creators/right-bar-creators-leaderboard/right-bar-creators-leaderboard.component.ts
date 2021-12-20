@@ -5,6 +5,7 @@ import { BackendApiService } from "../../backend-api.service";
 import { RightBarCreatorsComponent } from "../right-bar-creators.component";
 import { HttpClient } from "@angular/common/http";
 import { PulseService } from "../../../lib/services/pulse/pulse-service";
+import { AltumbaseService } from "../../../lib/services/altumbase/altumbase-service";
 import { BithuntService } from "../../../lib/services/bithunt/bithunt-service";
 
 @Component({
