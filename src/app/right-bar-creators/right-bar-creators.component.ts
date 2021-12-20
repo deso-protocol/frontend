@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
+import { environment } from "../../environments/environment";
 
 export class RightBarTabOption {
   name: string;
@@ -32,12 +33,12 @@ export class RightBarCreatorsComponent implements OnInit {
   static GAINERS: RightBarTabOption = {
     name: "Top Daily Gainers",
     width: 175,
-    poweredBy: { name: "Bitclout Pulse", link: "https://desopulse.com" },
+    poweredBy: { name: "Altumbase", link: `https://altumbase.com/tools?${environment.node.name}` },
   };
   static DIAMONDS: RightBarTabOption = {
     name: "Top Daily Diamonded Creators",
     width: 275,
-    poweredBy: { name: "Altumbase", link: "https://altumbase.com/tools" },
+    poweredBy: { name: "Altumbase", link: `https://altumbase.com/tools?${environment.node.name}` },
   };
   static COMMUNITY: RightBarTabOption = {
     name: "Top Community Projects",
