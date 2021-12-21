@@ -125,6 +125,7 @@ export class BackendRoutes {
   static RoutePathAdminGetAllCountryLevelSignUpBonuses = "/api/v0/admin/get-all-country-level-sign-up-bonuses";
   static RoutePathAdminUpdateJumioCountrySignUpBonus = "/api/v0/admin/update-jumio-country-sign-up-bonus";
   static RoutePathAdminUpdateJumioUSDCents = "/api/v0/admin/update-jumio-usd-cents";
+  static RoutePathAdminUpdateJumioKickbackUSDCents = "/api/v0/admin/update-jumio-kickback-usd-cents";
 
   // Referral program admin routes.
   static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
@@ -2019,6 +2020,13 @@ export class BackendApiService {
 
   AdminUpdateJumioUSDCents(endpoint: string, AdminPublicKey: string, USDCents: number): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioUSDCents, AdminPublicKey, {
+      AdminPublicKey,
+      USDCents,
+    });
+  }
+
+  AdminUpdateJumioKickbackUSDCents(endpoint: string, AdminPublicKey: string, USDCents: number): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioKickbackUSDCents, AdminPublicKey, {
       AdminPublicKey,
       USDCents,
     });

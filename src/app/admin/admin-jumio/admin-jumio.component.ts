@@ -21,7 +21,9 @@ export class AdminJumioComponent {
   jumioCallbackCountrySelected: string = "";
 
   jumioUSD: number = 0;
+  jumioKickbackUSD: number = 0;
   updatingJumioUSDCents = false;
+  updatingJumioKickbackUSDCents = false;
 
   countryLevelSignUpBonuses: { [k: string]: CountryLevelSignUpBonusResponse } = {};
   defaultSignUpBonus: CountryLevelSignUpBonus;
@@ -156,6 +158,45 @@ export class AdminJumioComponent {
     });
   }
 
+  updateJumioKickbackUSDCents(): void {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Are you ready?",
+      html: `You are about to update the default kickback amount to ${this.globalVars.formatUSD(
+        this.jumioKickbackUSD,
+        2
+      )}. This is the default amount referrers will get when they refer someone who verifies with Jumio.`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      reverseButtons: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      confirmButtonText: "Ok",
+      cancelButtonText: "Cancel",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.updatingJumioKickbackUSDCents = true;
+        this.backendApi
+          .AdminUpdateJumioKickbackUSDCents(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.jumioKickbackUSD * 100
+          )
+          .subscribe(
+            (res) => {
+              this.refreshCountryBonuses();
+            },
+            (err) => {
+              console.error(err);
+            }
+          )
+          .add(() => (this.updatingJumioKickbackUSDCents = false));
+      }
+    });
+  }
+
   _handleTabClick(tab: string): void {
     this.activeTab = tab;
   }
@@ -169,7 +210,10 @@ export class AdminJumioComponent {
     editBonusModal.onHide.subscribe((res) => {
       if (res === "sign-up-bonus-updated") {
         this.refreshCountryBonuses();
-        this.toastr.info(`Sign-Up Bonus updated for ${country}`, null, { positionClass: "toast-top-center", timeOut: 3000 });
+        this.toastr.info(`Sign-Up Bonus updated for ${country}`, null, {
+          positionClass: "toast-top-center",
+          timeOut: 3000,
+        });
       }
     });
   }
