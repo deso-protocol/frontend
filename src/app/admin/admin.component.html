@@ -455,6 +455,18 @@
           <span>Email:</span>
           {{ getUserAdminDataResponse.Email }}
         </div>
+        <div class="admin__get-user-admin-data-line pt-15px">
+          <span>Referral Code:</span>
+          {{ getUserAdminDataResponse.ReferralHashBase58Check }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Jumio Starter Payment Txn ID:</span>
+          {{ getUserAdminDataResponse.JumioStarterDeSoTxnHashBase58Check }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Referrer Payment Txn ID:</span>
+          {{ getUserAdminDataResponse.ReferrerDeSoTxnHashBase58Check }}
+        </div>
       </div>
     </div>
   </div>
