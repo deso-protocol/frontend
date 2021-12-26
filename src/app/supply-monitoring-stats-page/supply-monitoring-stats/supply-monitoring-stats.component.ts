@@ -1,12 +1,7 @@
-import { Component, OnDestroy } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse, RichListEntryResponse } from "../../backend-api.service";
+import { Component } from "@angular/core";
+import { BackendApiService, RichListEntryResponse } from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from "rxjs";
-import { RouteNames, AppRoutingModule } from "../../app-routing.module";
-import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
-import { InfiniteScroller } from "src/app/infinite-scroller";
 
 @Component({
   selector: "supply-monitoring-stats",
@@ -19,22 +14,50 @@ export class SupplyMonitoringStatsComponent {
   static WINDOW_VIEWPORT = true;
   totalSupplyDESO: number;
   loadingTotalSupply: boolean = true;
+  failedLoadingTotalSupply: boolean = false;
   richList: RichListEntryResponse[];
   loadingRichList: boolean = true;
+  failedLoadingRichList: boolean = false;
+  countKeysWithDESO: number;
+  loadingCountKeysWithDESO: boolean = false;
+  failedLoadingCountKeysWithDESO: boolean = false;
+  noSupplyMonitoring: boolean = false;
   datasource: IDatasource<IAdapter<any>> = this.getDatasource();
   constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {
     this.backendApi
       .GetRichList(this.globalVars.localNode)
-      .subscribe((res) => {
-        this.richList = res || [];
-      })
+      .subscribe(
+        (res) => {
+          this.richList = res || [];
+        },
+        (err) => {
+          this.failedLoadingRichList = true;
+        }
+      )
       .add(() => (this.loadingRichList = false));
     this.backendApi
       .GetTotalSupply(this.globalVars.localNode)
-      .subscribe((res) => {
-        this.totalSupplyDESO = res;
-      })
+      .subscribe(
+        (res) => {
+          this.totalSupplyDESO = res;
+        },
+        (err) => {
+          this.failedLoadingTotalSupply = true;
+        }
+      )
       .add(() => (this.loadingTotalSupply = false));
+
+    this.backendApi
+      .GetCountOfKeysWithDESO(this.globalVars.localNode)
+      .subscribe(
+        (res) => {
+          this.countKeysWithDESO = res;
+        },
+        (err) => {
+          this.failedLoadingCountKeysWithDESO = true;
+        }
+      )
+      .add(() => (this.loadingCountKeysWithDESO = false));
   }
 
   getDatasource(): IDatasource<IAdapter<any>> {
