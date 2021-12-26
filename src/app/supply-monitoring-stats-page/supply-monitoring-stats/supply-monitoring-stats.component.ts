@@ -18,6 +18,9 @@ export class SupplyMonitoringStatsComponent {
   richList: RichListEntryResponse[];
   loadingRichList: boolean = true;
   failedLoadingRichList: boolean = false;
+  countKeysWithDESO: number;
+  loadingCountKeysWithDESO: boolean = false;
+  failedLoadingCountKeysWithDESO: boolean = false;
   noSupplyMonitoring: boolean = false;
   datasource: IDatasource<IAdapter<any>> = this.getDatasource();
   constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {
@@ -43,6 +46,18 @@ export class SupplyMonitoringStatsComponent {
         }
       )
       .add(() => (this.loadingTotalSupply = false));
+
+    this.backendApi
+      .GetCountOfKeysWithDESO(this.globalVars.localNode)
+      .subscribe(
+        (res) => {
+          this.countKeysWithDESO = res;
+        },
+        (err) => {
+          this.failedLoadingCountKeysWithDESO = true;
+        }
+      )
+      .add(() => (this.loadingCountKeysWithDESO = false));
   }
 
   getDatasource(): IDatasource<IAdapter<any>> {

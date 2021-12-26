@@ -154,6 +154,7 @@ export class BackendRoutes {
   // Supply Monitoring endpoints
   static RoutePathGetTotalSupply = "/api/v0/total-supply";
   static RoutePathGetRichList = "/api/v0/rich-list";
+  static RoutePathGetCountKeysWithDESO = "/api/v0/count-keys-with-deso"
 }
 
 export class Transaction {
@@ -2317,6 +2318,10 @@ export class BackendApiService {
 
   GetRichList(endpoint: string): Observable<RichListEntryResponse[]> {
     return this.get(endpoint, BackendRoutes.RoutePathGetRichList);
+  }
+
+  GetCountOfKeysWithDESO(endpoint: string): Observable<number> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetCountKeysWithDESO);
   }
 
   // Error parsing
