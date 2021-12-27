@@ -740,10 +740,24 @@ export class BackendApiService {
       .pipe(
         switchMap((encrypted) => {
           const EncryptedMessageText = encrypted.encryptedMessage;
+          let senderV3 = false;
+          let recipientV3 = false;
+          if(encrypted.messagingParty){
+            senderV3 = encrypted.messagingParty.isSenderMessagingKey;
+            recipientV3 = encrypted.messagingParty.isRecipientMessagingKey;
+          }
+          const SenderMessagingPublicKey = senderV3 ? encrypted.messagingParty.senderMessagingPublicKey : "";
+          const SenderMessagingKeyName = senderV3 ? encrypted.messagingParty.senderMessagingKeyName : "";
+          const RecipientMessagingPublicKey = recipientV3 ? encrypted.messagingParty.recipientMessagingPublicKey : "";
+          const RecipientMessagingKeyName = recipientV3 ? encrypted.messagingParty.recipientMessagingKeyName : "";
           return this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
             SenderPublicKeyBase58Check,
             RecipientPublicKeyBase58Check,
             EncryptedMessageText,
+            SenderMessagingPublicKey,
+            SenderMessagingKeyName,
+            RecipientMessagingPublicKey,
+            RecipientMessagingKeyName,
             MinFeeRateNanosPerKB,
           }).pipe(
             map((request) => {
@@ -1371,7 +1385,12 @@ export class BackendApiService {
             EncryptedHex: message.EncryptedText,
             PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
             IsSender: message.IsSender,
-            Legacy: !message.V2,
+            Legacy: !message.V2 && !message.Version,
+            Version: message.Version,
+            SenderMessagingPublicKey: message.SenderMessagingPublicKey,
+            SenderMessagingKeyName: message.SenderMessagingKeyName,
+            RecipientMessagingPublicKey: message.RecipientMessagingPublicKey,
+            RecipientMessagingKeyName: message.RecipientMessagingKeyName
           }))
         );
         return { ...res, encryptedMessages };
