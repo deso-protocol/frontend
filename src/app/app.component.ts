@@ -197,6 +197,7 @@ export class AppComponent implements OnInit {
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
         this.globalVars.jumioUSDCents = res.JumioUSDCents;
+        this.globalVars.jumioKickbackUSDCents = res.JumioKickbackUSDCents;
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
         this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
