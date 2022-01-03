@@ -160,6 +160,9 @@ export class NftPostComponent {
           if (!this.nftBidData.BidEntryResponses) {
             this.nftBidData.BidEntryResponses = [];
           }
+          if (!this.nftBidData.NFTEntryResponses) {
+            this.nftBidData.NFTEntryResponses = [];
+          }
           this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
             (nftEntryResponse) => nftEntryResponse.IsForSale
           );

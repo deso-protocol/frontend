@@ -1,0 +1,115 @@
+<div app-theme class="nft-modal-container p-15px">
+  <nft-modal-header [header]="isSelectingSerialNumber ? 'Select an edition' : 'Transfer NFT'" [bsModalRef]="bsModalRef"></nft-modal-header>
+  <simple-center-loader *ngIf="loading"></simple-center-loader>
+  <div *ngIf="!loading">
+    <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
+      <div class="fs-15px text-grey5">
+        You are about to transfer the NFT shown below.
+      </div>
+
+      <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
+          <span class="m-16px">Number #{{ selectedSerialNumber?.SerialNumber }}</span>
+          <a class="fc-blue m-16px" (click)="goBackToSerialSelection()">Change</a>
+      </div>
+
+      <div *ngIf="globalVars.isMobile()">
+        <div class="nft-modal-bid-details d-flex justify-content-between p-16px">
+          <span class="font-weight-bold">Number #{{ selectedSerialNumber?.SerialNumber }}</span>
+          <div>
+            <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()">Change</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="font-weight-semibold mb-10px">
+        Search for a public key or username to whom you want to transfer this NFT
+      </div>
+      <search-bar
+        [isSearchForUsersToSendDESO]="true"
+        [resultsUnderBar]="true"
+        (creatorToMessage)="_selectCreator($event)"
+      ></search-bar>
+      <simple-profile-card
+        [profile]="selectedCreator"
+        [singleColumn]="true"
+        [hideFollowLink]="true"
+        *ngIf="selectedCreator"
+      ></simple-profile-card>
+
+      <div *ngIf="post.HasUnlockable">
+        <div class="fs-15px pt-15px pb-30px text-grey5">
+          This NFT includes unlockable content. Enter it below.
+        </div>
+
+        <textarea
+          class="fs-15px lh-18px br-8px form-control mb-30px"
+          style="width: 100%; padding: 10px"
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="5"
+          [(ngModel)]="unlockableText"
+          #autosize="cdkTextareaAutosize"
+          placeholder="Enter URL, code to redeem, link, etc... "
+        ></textarea>
+      </div>
+
+      <div
+        [ngClass]="{
+          'floating-bottom-bar': globalVars.isMobile(),
+          'mb-15px': !globalVars.isMobile(),
+          'mt-30px': !globalVars.isMobile()
+        }"
+        class="d-flex align-items-center"
+      >
+        <button
+          class="primary-button font-weight-bold fs-15px br-12px"
+          style="height: 48px; width: 140px; line-height: 15px"
+          (click)="transferNFT()"
+          [disabled]="
+            transferringNFT ||
+            !selectedSerialNumber ||
+            !selectedCreator ||
+            (post.HasUnlockable && (unlockableText === null || unlockableText === ''))
+          "
+          [class]="{
+            'disabled-button':
+              transferringNFT ||
+              !selectedSerialNumber ||
+              !selectedCreator ||
+              (post.HasUnlockable && (unlockableText === null || unlockableText === ''))
+          }"
+        >
+          {{ transferringNFT ? "Transferring NFT" : "Transfer NFT" }}
+        </button>
+      </div>
+
+      <!-- Second separator line -->
+      <div class="py-16px d-flex align-items-center fs-15px text-grey7">
+        <div class="flex-grow-1 nft-modal-separator-2"></div>
+      </div>
+
+      <feed-post
+        [post]="post"
+        [includePaddingOnPost]="true"
+        [isParentPostInThread]="true"
+        [showLeftSelectedBorder]="false"
+        [showInteractionDetails]="false"
+        [contentShouldLinkToThread]="false"
+      ></feed-post>
+
+    </div>
+
+
+    <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
+      <div class="nft-modal__subtitle">These are the serial numbers that are transferable</div>
+      <div class="container fs-15px px-0px">
+        <nft-select-serial-number
+          [serialNumbers]="transferableSerialNumbers"
+          (serialNumberSelected)="selectSerialNumber($event)"
+        ></nft-select-serial-number>
+      </div>
+    </div>
+    <div *ngIf="!transferableSerialNumbers.length" class="fs-15px">
+      There are no serial numbers available for you to transfer.
+    </div>
+  </div>
+</div>
