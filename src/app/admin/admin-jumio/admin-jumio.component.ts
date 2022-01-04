@@ -43,6 +43,7 @@ export class AdminJumioComponent {
     private toastr: ToastrService
   ) {
     this.jumioUSD = globalVars.jumioUSDCents / 100;
+    this.jumioKickbackUSD = globalVars.jumioKickbackUSDCents / 100;
     this.refreshCountryBonuses();
   }
 
@@ -186,6 +187,7 @@ export class AdminJumioComponent {
           )
           .subscribe(
             (res) => {
+              this.globalVars.jumioKickbackUSDCents = res.USDCents;
               this.refreshCountryBonuses();
             },
             (err) => {

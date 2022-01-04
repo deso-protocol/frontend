@@ -214,6 +214,7 @@ export class GlobalVarsService {
 
   jumioDeSoNanos = 0;
   jumioUSDCents = 0;
+  jumioKickbackUSDCents = 0;
 
   referralUSDCents: number = 0;
 
