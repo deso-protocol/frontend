@@ -102,6 +102,7 @@ export class NftPostComponent {
   }
 
   refreshPosts() {
+    this.loading = true;
     // Fetch the post entry
     this.getPost().subscribe(
       (res) => {

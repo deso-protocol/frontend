@@ -142,8 +142,8 @@ export class PlaceBidModalComponent implements OnInit {
     }
   }
 
-  selectSerialNumber(idx: number) {
-    this.selectedSerialNumber = this.availableSerialNumbers.find((sn) => sn.SerialNumber === idx);
+  selectSerialNumber(serialNumber: NFTEntryResponse) {
+    this.selectedSerialNumber = serialNumber;
     this.saveSelection();
   }
 

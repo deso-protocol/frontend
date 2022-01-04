@@ -108,7 +108,7 @@
       <div class="d-flex align-items-center mb-15px">
         <button
           class="btn btn-primary font-weight-bold fs-15px br-12px"
-          style="height: 36px; width: 140px; line-height: 15px"
+          style="height: 36px; width: 180px; line-height: 15px"
           (click)="placeBid()"
           [disabled]="placingBids || errors"
         >
@@ -125,40 +125,10 @@
        An NFT can have multiple editions, each with its own unique serial number.
       </div>
       <div class="container fs-15px pb-30px px-0px">
-        <div class="row no-gutters py-15px create-nft-auction-row-border"
-             style="opacity: 50%">
-          <div class="col-2 mb-0px text-align-center">
-            Serial Number
-          </div>
-          <div class="col-5 mb-0px text-align-center">
-            Highest Bid
-          </div>
-          <div class="col-5 mb-0px text-align-center">
-            Min Bid Amount
-          </div>
-        </div>
-        <div style="max-height: 250px; overflow-y: scroll" class="mb-30px">
-          <div #uiScroll *uiScroll="let nft of datasource"
-               class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border cursor-pointer"
-               (click)="selectSerialNumber(nft.SerialNumber)"
-          >
-            <div class="col-2 mb-0px d-flex align-items-center">
-              <span class="lh-15px">#{{nft.SerialNumber}}</span>
-            </div>
-            <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
-              <div>
-                <div class="d-lg-inline-block d-block">{{globalVars.nanosToDeSo(nft.HighestBidAmountNanos)}} DESO </div>
-                <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2)}})</div>
-              </div>
-            </div>
-            <div class="col-5 mb-0px d-flex justify-content-around align-items-center">
-              <div>
-                <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO </div>
-                <div class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(nft.MinBidAmountNanos, 2)}})</div>
-              </div>
-             </div>
-          </div>
-        </div>
+        <nft-select-serial-number
+          [serialNumbers]="biddableSerialNumbers"
+          (serialNumberSelected)="selectSerialNumber($event)"
+        ></nft-select-serial-number>
       </div>
     </div>
     <div *ngIf="!biddableSerialNumbers.length" class="fs-15px">

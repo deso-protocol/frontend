@@ -86,6 +86,7 @@ export class CreateNftAuctionModalComponent {
     return this.nftEntryResponses.filter(
       (nftEntryResponse) =>
         !nftEntryResponse.IsForSale &&
+        !nftEntryResponse.IsPending &&
         nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
     );
   }

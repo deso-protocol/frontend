@@ -75,11 +75,10 @@
         class="d-flex align-items-center"
       >
         <button
-          class="primary-button font-weight-bold fs-15px br-12px"
-          style="height: 48px; width: 140px; line-height: 15px"
+          class="btn btn-primary font-weight-bold fs-15px br-12px"
+          style="height: 36px; width: 190px; line-height: 15px"
           (click)="acceptTransfer()"
           [disabled]="acceptingTransfer"
-          [class]="{ 'disabled-button': acceptingTransfer }"
         >
           {{ acceptingTransfer ? "Accepting Transfer" : "Accept Transfer" }}
         </button>
