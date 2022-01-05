@@ -23,6 +23,7 @@ export class NftSelectSerialNumberComponent implements OnInit {
   HIGH_BID_FIELD = "HighestBidAmountNanos";
   MIN_BID_FIELD = "MinBidAmountNanos";
   BUY_NOW_FIELD = "BuyNowPriceNanos";
+
   selectedSerialNumber: NFTEntryResponse = null;
   sortedSerialNumbers: NFTEntryResponse[];
   sortByField = this.SN_FIELD;
