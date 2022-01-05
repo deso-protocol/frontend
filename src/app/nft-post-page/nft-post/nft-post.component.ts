@@ -102,6 +102,7 @@ export class NftPostComponent {
   }
 
   refreshPosts() {
+    this.loading = true;
     // Fetch the post entry
     this.getPost().subscribe(
       (res) => {
@@ -159,6 +160,9 @@ export class NftPostComponent {
           this.nftBidData = res;
           if (!this.nftBidData.BidEntryResponses) {
             this.nftBidData.BidEntryResponses = [];
+          }
+          if (!this.nftBidData.NFTEntryResponses) {
+            this.nftBidData.NFTEntryResponses = [];
           }
           this.availableSerialNumbers = this.nftBidData.NFTEntryResponses.filter(
             (nftEntryResponse) => nftEntryResponse.IsForSale

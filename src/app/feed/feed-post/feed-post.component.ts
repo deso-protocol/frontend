@@ -16,6 +16,7 @@ import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.co
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { environment } from "src/environments/environment";
+import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 
 @Component({
   selector: "feed-post",
@@ -111,6 +112,9 @@ export class FeedPostComponent implements OnInit {
 
   @Input() inTutorial: boolean = false;
 
+  // If this is a pending NFT post that still needs to be accepted by the user
+  @Input() acceptNFT: boolean = false;
+
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
 
@@ -122,6 +126,9 @@ export class FeedPostComponent implements OnInit {
 
   // emits diamondSent event
   @Output() diamondSent = new EventEmitter();
+
+  // Emit tells parent component to refresh NFT data
+  @Output() refreshNFTEntries = new EventEmitter();
 
   AppRoutingModule = AppRoutingModule;
   addingPostToGlobalFeed = false;
@@ -204,6 +211,11 @@ export class FeedPostComponent implements OnInit {
           }
         }
       });
+  }
+
+  refreshNFTEntriesHandler() {
+    this.getNFTEntries();
+    this.refreshNFTEntries.emit();
   }
 
   ngOnInit() {
@@ -545,6 +557,30 @@ export class FeedPostComponent implements OnInit {
       return imgURL.replace("https://i.imgur.com", "https://images.bitclout.com/i.imgur.com");
     }
     return imgURL;
+  }
+
+  acceptTransfer(event) {
+    event.stopPropagation();
+    const transferNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+      return (
+        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+        nftEntryResponse.IsPending
+      );
+    });
+
+    const modalDetails = this.modalService.show(TransferNftAcceptModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: {
+        post: this.postContent,
+        transferNFTEntryResponses,
+      },
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "transfer accepted") {
+        this.getNFTEntries();
+      }
+    });
   }
 
   openPlaceBidModal(event: any) {

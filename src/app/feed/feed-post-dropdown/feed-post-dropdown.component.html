@@ -12,7 +12,7 @@
       (click)="copyPostLinkToClipboard($event)"
     >
       <i class="icon-link"></i>
-      Link to Post
+      Link to {{ post.IsNFT ? "NFT" : "Post" }}
     </a>
     <a
       *ngIf="showSharePost"
@@ -20,7 +20,7 @@
       (click)="sharePostUrl($event)"
       >
       <i class="fas fa-share-square"></i>
-      Share Post
+      Share {{ post.IsNFT ? "NFT" : "Post" }}
     </a>
     <a
       *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT && !post.ParentStakeID"
@@ -35,7 +35,24 @@
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
       (click)="openCreateNFTAuctionModal($event)"
     >
+      <i class="fas fa-dollar-sign"></i>
       Put On Sale
+    </a>
+    <a
+      *ngIf="showTransferNFT()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+      (click)="openTransferNFTModal($event)"
+    >
+      <i class="fas fa-paper-plane"></i>
+      Transfer NFT
+    </a>
+    <a
+      *ngIf="showBurnNFT()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+      (click)="openBurnNFTModal($event)"
+    >
+      <i class="fa fa-fire"></i>
+      Burn NFT
     </a>
     <a
       *ngIf="post.IsNFT && globalVars.showAdminTools()"

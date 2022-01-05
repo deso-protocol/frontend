@@ -6,10 +6,13 @@ import { PlatformLocation } from "@angular/common";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { BackendApiService } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { filter } from "lodash";
 
 // RPH Modals
 import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.component";
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
+import { NftBurnModalComponent } from "../../nft-burn-modal/nft-burn-modal.component";
+import { TransferNftModalComponent } from "../../transfer-nft-modal/transfer-nft-modal.component";
 
 @Component({
   selector: "feed-post-dropdown",
@@ -25,6 +28,7 @@ export class FeedPostDropdownComponent {
   @Output() userBlocked = new EventEmitter();
   @Output() toggleGlobalFeed = new EventEmitter();
   @Output() togglePostPin = new EventEmitter();
+  @Output() refreshNFTEntries = new EventEmitter();
 
   showSharePost: boolean = false;
 
@@ -135,7 +139,7 @@ export class FeedPostDropdownComponent {
     const loggedInUserIsParamUpdater =
       this.globalVars.paramUpdaters && this.globalVars.paramUpdaters[this.globalVars.loggedInUser.PublicKeyBase58Check];
 
-    return loggedInUserPostedThis || loggedInUserIsParamUpdater;
+    return (loggedInUserPostedThis || loggedInUserIsParamUpdater) && !this.post.IsNFT;
   }
 
   globalFeedEligible(): boolean {
@@ -159,6 +163,29 @@ export class FeedPostDropdownComponent {
   }
 
   showCreateNFTAuction(): boolean {
+    return (
+      this.post.IsNFT &&
+      !!this.nftEntryResponses?.filter(
+        (nftEntryResponse) =>
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )?.length
+    );
+  }
+
+  showTransferNFT(): boolean {
+    return (
+      this.post.IsNFT &&
+      !!this.nftEntryResponses?.filter(
+        (nftEntryResponse) =>
+          !nftEntryResponse.IsPending &&
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )?.length
+    );
+  }
+
+  showBurnNFT(): boolean {
     return (
       this.post.IsNFT &&
       !!this.nftEntryResponses?.filter(
@@ -228,9 +255,47 @@ export class FeedPostDropdownComponent {
   }
 
   openCreateNFTAuctionModal(event): void {
-    this.modalService.show(CreateNftAuctionModalComponent, {
+    const modalDetails = this.modalService.show(CreateNftAuctionModalComponent, {
       class: "modal-dialog-centered",
       initialState: { post: this.post, nftEntryResponses: this.nftEntryResponses },
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "auction created") {
+        this.refreshNFTEntries.emit();
+      }
+    });
+  }
+
+  openTransferNFTModal(event): void {
+    const modalDetails = this.modalService.show(TransferNftModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { post: this.post, postHashHex: this.post.PostHashHex },
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "nft transferred") {
+        this.refreshNFTEntries.emit();
+      }
+    });
+  }
+
+  openBurnNFTModal(event): void {
+    const burnNFTEntryResponses = filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+      return (
+        !nftEntryResponse.IsForSale &&
+        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+      );
+    });
+    const modalDetails = this.modalService.show(NftBurnModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { post: this.post, postHashHex: this.post.PostHashHex, burnNFTEntryResponses },
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "nft burned") {
+        this.refreshNFTEntries.emit();
+      }
     });
   }
 }
