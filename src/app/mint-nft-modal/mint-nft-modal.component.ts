@@ -28,10 +28,9 @@ export class MintNftModalComponent {
   includeUnlockable: boolean = false;
   createNFTFeeNanos: number;
   maxCopiesPerNFT: number;
-
-  // Errors.
-  unreasonableRoyaltiesSet: boolean = false;
-  unreasonableNumCopiesSet: boolean = false;
+  buyNowPriceDESO: number = 0;
+  buyNowPriceUSD: string = "0";
+  isBuyNow: boolean = false;
 
   constructor(
     private _globalVars: GlobalVarsService,
@@ -49,7 +48,7 @@ export class MintNftModalComponent {
       });
   }
 
-  hasUnreasonableRoyalties() {
+  hasUnreasonableRoyalties(): boolean {
     let isEitherUnreasonable =
       this.creatorRoyaltyPercent < 0 ||
       this.creatorRoyaltyPercent > 100 ||
@@ -59,24 +58,73 @@ export class MintNftModalComponent {
     return isEitherUnreasonable || isSumUnreasonable;
   }
 
-  hasUnreasonableNumCopies() {
+  hasUnreasonableNumCopies(): boolean {
     return this.numCopies > (this.maxCopiesPerNFT || 1000) || this.numCopies < 1;
   }
 
-  hasUnreasonableMinBidAmount() {
+  hasUnreasonableMinBidAmount(): boolean {
     return parseFloat(this.minBidAmountUSD) < 0 || this.minBidAmountDESO < 0;
   }
 
-  updateMinBidAmountUSD(desoAmount) {
+  hasUnreasonableBuyNowPrice(): boolean {
+    const buyNowPriceUSD = parseFloat(this.buyNowPriceUSD);
+    return (
+      this.isBuyNow &&
+      (buyNowPriceUSD < parseFloat(this.minBidAmountUSD) ||
+        buyNowPriceUSD < 0 ||
+        this.buyNowPriceDESO < this.minBidAmountDESO ||
+        this.buyNowPriceDESO < 0)
+    );
+  }
+
+  updateOnSaleStatus(isOnSale: boolean): void {
+    if (!isOnSale) {
+      this.isBuyNow = false;
+      this.buyNowPriceDESO = 0;
+      this.buyNowPriceUSD = "0";
+      this.minBidAmountDESO = 0;
+      this.minBidAmountUSD = "0";
+    }
+  }
+
+  updateBuyNowStatus(isBuyNow: boolean): void {
+    if (!isBuyNow) {
+      this.buyNowPriceDESO = 0;
+      this.buyNowPriceUSD = "0";
+    }
+  }
+
+  updateIncludeUnlockable(includeUnlockable: boolean): void {
+    if (includeUnlockable) {
+      this.isBuyNow = false;
+      this.buyNowPriceDESO = 0;
+      this.buyNowPriceUSD = "0";
+    }
+  }
+
+  updateMinBidAmountUSD(desoAmount): void {
     this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
   }
 
-  updateMinBidAmountDESO(usdAmount) {
+  updateMinBidAmountDESO(usdAmount): void {
     this.minBidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
+  updateBuyNowPriceUSD(desoAmount): void {
+    this.buyNowPriceUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
+  }
+
+  updateBuyNowPriceDESO(usdAmount): void {
+    this.buyNowPriceDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  }
+
   mintNft() {
-    if (this.hasUnreasonableRoyalties() || this.hasUnreasonableNumCopies() || this.hasUnreasonableMinBidAmount()) {
+    if (
+      this.hasUnreasonableRoyalties() ||
+      this.hasUnreasonableNumCopies() ||
+      this.hasUnreasonableMinBidAmount() ||
+      this.hasUnreasonableBuyNowPrice()
+    ) {
       // It should not be possible to trigger this since the button is disabled w/these conditions.
       return;
     }
@@ -108,6 +156,8 @@ export class MintNftModalComponent {
         this.includeUnlockable,
         this.putOnSale,
         Math.trunc(this.minBidAmountDESO * 1e9),
+        this.isBuyNow,
+        Math.trunc(this.buyNowPriceDESO * 1e9),
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(

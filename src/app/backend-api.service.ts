@@ -340,6 +340,8 @@ export class NFTEntryResponse {
   IsPending?: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
+  IsBuyNow: number;
+  BuyNowPriceNanos: number;
 
   HighestBidAmountNanos: number;
   LowestBidAmountNanos: number;
@@ -887,6 +889,8 @@ export class BackendApiService {
     HasUnlockable: boolean,
     IsForSale: boolean,
     MinBidAmountNanos: number,
+    IsBuyNow: boolean,
+    BuyNowPriceNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathCreateNft, {
@@ -898,6 +902,8 @@ export class BackendApiService {
       HasUnlockable,
       IsForSale,
       MinBidAmountNanos,
+      IsBuyNow,
+      BuyNowPriceNanos,
       MinFeeRateNanosPerKB,
     });
 
@@ -911,6 +917,8 @@ export class BackendApiService {
     SerialNumber: number,
     IsForSale: boolean,
     MinBidAmountNanos: number,
+    IsBuyNow: boolean,
+    BuyNowPriceNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathUpdateNFT, {
@@ -919,6 +927,8 @@ export class BackendApiService {
       SerialNumber,
       IsForSale,
       MinBidAmountNanos,
+      IsBuyNow,
+      BuyNowPriceNanos,
       MinFeeRateNanosPerKB,
     });
 
