@@ -88,6 +88,9 @@
               [disabled]="creatingAuction || !isBuyNow"/>
           </div>
         </div>
+        <div *ngIf="buyNowPriceDESO < minBidAmountDESO && isBuyNow" class="fc-red">
+          Buy Now price must be greater than min bid amount
+        </div>
       </ng-container>
 
     </div>

@@ -15,14 +15,14 @@ export class CreateNftAuctionModalComponent {
   @Input() post: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
   loading = false;
-  minBidAmountUSD: string;
-  minBidAmountDESO: number;
+  minBidAmountUSD: string = "0";
+  minBidAmountDESO: number = 0;
   selectedSerialNumbers: boolean[] = [];
   selectAll: boolean = false;
   creatingAuction: boolean = false;
   isBuyNow: boolean = false;
-  buyNowPriceUSD: string;
-  buyNowPriceDESO: number;
+  buyNowPriceUSD: string = "0";
+  buyNowPriceDESO: number = 0;
 
   constructor(
     private backendApi: BackendApiService,
@@ -118,7 +118,10 @@ export class CreateNftAuctionModalComponent {
   }
 
   createAuctionDisabled(): boolean {
-    return !this.selectedSerialNumbers.filter((isSelected) => isSelected)?.length;
+    return (
+      !this.selectedSerialNumbers.filter((isSelected) => isSelected)?.length ||
+      (this.isBuyNow && this.buyNowPriceDESO < this.minBidAmountDESO)
+    );
   }
 
   selectSerialNumber(idx: number): void {
