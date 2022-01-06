@@ -112,7 +112,7 @@ jobs:
   trigger-deploy-dev:
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') && !endsWith(github.ref, '_stage')
     steps:
     # Including the PERSONAL_ACCESS_TOKEN_CORE in the checkout.  Without this the
     # following stefanzweifel/git-auto-commit-action will not trigger a
@@ -148,4 +148,55 @@ jobs:
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: "Automated Change | Deploy to dev | tags: ${{ steps.tag_id.outputs.tag }}"
+        file_pattern: terraform-environments/*
+
+  ## Deploy to stage
+  ## Will only run on a tag release: v*_stage
+  ## Will update the stage's TF file's docker tag with the tag and commit it back into the 'main' branch
+  ## This will trigger a TF run to apply the changes
+  trigger-deploy-stage:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref, '_stage')
+    steps:
+    # Including the PERSONAL_ACCESS_TOKEN_CORE in the checkout.  Without this the
+    # following stefanzweifel/git-auto-commit-action will not trigger a
+    # new github action for deployment
+    # doc: https://github.com/stefanzweifel/git-auto-commit-action#commits-made-by-this-action-do-not-trigger-new-workflow-runs
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN_CORE }}
+        ref: 'main'
+
+    - name: Extract tag var
+      id: tag_id
+      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      
+    - name: Remove _stage
+      id: get-tag
+      run: |
+        tag_val=$(echo ${{steps.tag_id.outputs.tag}} | cut -d_ -f1)
+        echo "::set-output name=tag_val::$tag_val"
+
+    # Update the docker tags in the TF/helm deployment
+    - name: Update stage image tag
+      uses: jacobtomlinson/gha-find-replace@0.1.4
+      with:
+        find: "docker_tag        = \".*\""
+        replace: "docker_tag        = \"${{ steps.get-tag.outputs.tag_val }}\""
+        include: "terraform-environments/aws/stage/helm/70-gem-frontend/main.tf"
+
+    - name: Check output
+      run: |
+        echo "ref: ${{ github.ref }}"
+        echo "head_ref: ${{ github.head_ref }}"
+        echo "base_ref: ${{ github.base_ref }}"
+        echo ${{ steps.get-tag.outputs.tag_val }}
+        cat terraform-environments/aws/stage/helm/70-gem-frontend/main.tf
+
+    - name: Update dev deploy docker tags file
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Automated Change | Deploy to stage | tags: ${{ steps.get-tag.outputs.tag_val }}"
         file_pattern: terraform-environments/*
