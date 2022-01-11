@@ -103,7 +103,7 @@ export class CloutCastPageComponent implements OnInit {
       if (url.startsWith("/casts/")) {
         // we have a castID!
         if (!!!this.isInitialized) {
-          let {selectedTab = "Available"} = history.state;
+          let {selectedTab = "For Me"} = history.state;
           await this.ccTabClick(selectedTab);
         }
 
@@ -121,6 +121,12 @@ export class CloutCastPageComponent implements OnInit {
           // console.log(history.state);
           let {selectedTab = "Inbox"} = history.state;
           await this.ccTabClick(selectedTab);
+          console.log(this.showCasts);
+          if (Array.isArray(this.showCasts)) {
+            if (this.showCasts.length <= 0) {
+              await this.ccTabClick('For Me');
+            }
+          }
         } else {
           await this.ccTabClick(this.selectedTab);
         }
@@ -246,11 +252,11 @@ export class CloutCastPageComponent implements OnInit {
             this.showCasts.sort((a, b) => {return b.RateNanos - a.RateNanos})
 
             break;
-          case "Available":
-            this.showCasts = this.allCasts;
-            this.showCasts.sort((a, b) => {return b.RateNanos - a.RateNanos})
+          // case "Available":
+          //   this.showCasts = this.allCasts;
+          //   this.showCasts.sort((a, b) => {return b.RateNanos - a.RateNanos})
 
-            break;
+          //   break;
         }
         // console.log(tabName);
         } catch (ex) {
@@ -444,7 +450,7 @@ export class CloutCastPageComponent implements OnInit {
           }
         }
       } else {
-        this.globalVars._alertError("Please enter a value greater than zero to withdraw from your CloutCast wallet", false, false);
+        this.globalVars._alertError("Please enter a value greater than zero to withdraw from your CloutCast wallet", false);
       }
     } catch (ex) {
       this.globalVars._alertError(ex.message || "Unspecified Error trying to withdraw.");

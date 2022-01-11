@@ -82,7 +82,7 @@
             </div>
             <div *ngIf="!showListLoading" class="ovy">
               <tab-selector
-                [tabs]="['Inbox', 'For Me', 'Available']"
+                [tabs]="['Inbox', 'For Me']"
                 [activeTab]="selectedTab"
                 (tabClick)="ccTabClick($event)"
               ></tab-selector>
@@ -103,7 +103,7 @@
                       </div>
                       <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
                       <div>
-                        {{item.TargetActionText == 'ReClout' ? 'ReClout or Quote' : item.TargetActionText}}
+                        {{item.TargetActionText == 'ReClout' ? 'Repost or Quote' : item.TargetActionText}}
                       </div>
                     </span>
                   </div>
@@ -128,7 +128,7 @@
 
               </feed-post>
               <div class="cc-info p-3">
-                <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'ReClout or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToDeSo(selectedCastObject.RateNanos)}} $DESO (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+                <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'Repost or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToDeSo(selectedCastObject.RateNanos)}} $DESO (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
                 <button
                   class="btn-block my-2 btn-primary"
                   (click)="proveWork()"
@@ -247,7 +247,7 @@
 
 
         <tab-selector
-          [tabs]="['Inbox', 'For Me', 'Available']"
+          [tabs]="['Inbox', 'For Me']"
           [activeTab]="selectedTab"
           (tabClick)="ccTabClick($event)"
         ></tab-selector>
@@ -271,7 +271,7 @@
                 </div>
                 <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
                 <div>
-                  {{item.TargetActionText == 'ReClout' ? 'ReClout or Quote' : item.TargetActionText}}
+                  {{item.TargetActionText == 'ReClout' ? 'Repost or Quote' : item.TargetActionText}}
                 </div>
               </span>
             </div>
@@ -291,7 +291,7 @@
 
         </feed-post>
         <div class="cc-info p-3">
-          <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'ReClout or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToDeSo(selectedCastObject.RateNanos)}} $DESO (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+          <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'Repost or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToDeSo(selectedCastObject.RateNanos)}} $DESO (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
           <button
             class="btn-block my-2 btn-primary"
             (click)="proveWork()"

@@ -170,19 +170,16 @@ const routes: Routes = [
     component: CreatePostTutorialPageComponent,
     pathMatch: "full",
   },
-<<<<<<< HEAD
   // CloutCast routes
   { path: RouteNames.CLOUTCAST_PREFIX, component: CloutCastPageComponent, pathMatch: "full" },
   { path: RouteNames.CLOUTCAST_PREFIX + "/:cloutCastId", component: CloutCastPageComponent, pathMatch: "full" },
   // End CloutCast routes
  
-=======
   {
     path: RouteNames.SUPPLY_STATS,
     component: SupplyMonitoringStatsPageComponent,
     pathMatch: "full",
   },
->>>>>>> main
   // This NotFound route must be the last one as it catches all paths that were not matched above.
   { path: "**", component: NotFoundPageComponent, pathMatch: "full" },
 ];

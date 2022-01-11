@@ -40,7 +40,8 @@ export class CloutCastModalComponent implements OnInit {
     public bsModalRef: BsModalRef,
     public globalVars: GlobalVarsService,
     private cloutcastApi: CloutcastApiService,
-    private router: Router
+    private router: Router,
+    private userPublicKey: String
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -48,8 +49,11 @@ export class CloutCastModalComponent implements OnInit {
     this.selectedCreators = [];
     this.castType = 1;
     try {
+      this.userPublicKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
+      
       let t = await this.cloutcastApi.getWallet();
-      // console.log(t);
+      
+      console.log(t);
       // this.userCastBalances = t;
       let {data = {settled: 0}} = t;
       this.nanosAvailableInCloutCastWallet = data.settled;
