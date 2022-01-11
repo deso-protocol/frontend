@@ -4,6 +4,7 @@ import { BackendApiService, PostEntryResponse, TutorialStatus } from "../../../b
 import { RouteNames } from "../../../app-routing.module";
 import { Title } from "@angular/platform-browser";
 import { Router } from "@angular/router";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "diamond-tutorial",
@@ -25,7 +26,7 @@ export class DiamondTutorialComponent implements OnInit {
   loading: boolean = true;
 
   ngOnInit() {
-    this.titleService.setTitle("Diamond Tutorial - DeSo");
+    this.titleService.setTitle(`Diamond Tutorial - ${environment.node.name}`);
     this.backendApi
       .GetSinglePost(
         this.globalVars.localNode,

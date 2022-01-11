@@ -314,6 +314,19 @@ export class NotificationsListComponent {
       result.icon = "fas fa-trophy";
       result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
       return result;
+    } else if (txnMeta.TxnType == "NFT_TRANSFER") {
+      const nftTransferMeta = txnMeta.NFTTransferTxindexMetadata;
+      if (!nftTransferMeta) {
+        return null;
+      }
+
+      const postHash = nftTransferMeta.NFTPostHashHex;
+
+      const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
+      result.post = this.postMap[postHash];
+      result.action = `${actorName} transferred you an NFT`;
+      result.icon = "fas fa-paper-plane fc-blue";
+      return result;
     }
 
     // If we don't recognize the transaction type we return null

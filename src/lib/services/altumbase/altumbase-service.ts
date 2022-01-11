@@ -6,59 +6,59 @@ import { GlobalVarsService } from "../../../app/global-vars.service";
 import { map, switchMap } from "rxjs/operators";
 import * as _ from "lodash";
 
-class PulseLeaderboardResult {
+class AltumbaseLeaderboardResult {
   public_key: string;
-  diamonds?: number;
-  net_change_24h_bitclout_nanos?: number;
+  diamonds_received_24h?: number;
+  diamonds_received_value_24h?: number;
 }
 
-class PulseLeaderboardResponse {
-  results: PulseLeaderboardResult[];
+class AltumbaseLeaderboardResponse {
+  data: AltumbaseLeaderboardResult[];
   pagination: {
     current_page: number;
-    total_pages: number;
+    last_page: number;
   };
 }
 
-const DeSoLocked = "bitclout_locked_24h";
+const DeSoLocked = "deso_locked_24h";
 const Diamonds = "diamonds_received_24h";
 
-export enum PulseLeaderboardType {
-  DeSoLocked = "bitclout_locked_24h",
+export enum AltumbaseLeaderboardType {
+  DeSoLocked = "deso_locked_24h",
   Diamonds = "diamonds_received_24h",
 }
 
 export class LeaderboardResponse {
   Profile: ProfileEntryResponse;
-  DeSoLockedGained: number;
   DiamondsReceived: number;
+  DiamondsReceivedValue: number;
   User: User;
 }
 
 export const LeaderboardToDataAttribute = {
-  [PulseLeaderboardType.DeSoLocked]: "net_change_24h_bitclout_nanos",
-  [PulseLeaderboardType.Diamonds]: "diamonds",
+  [AltumbaseLeaderboardType.DeSoLocked]: "deso_locked_24h",
+  [AltumbaseLeaderboardType.Diamonds]: "diamonds_received_24h",
 };
 
 @Injectable({
   providedIn: "root",
 })
-export class PulseService {
-  static pulseApiURL = "https://pulse.bitclout.com/api/bitclout/leaderboard";
-  static pulseRef = "ref=bcl";
-  static pulsePageSize = 20;
+export class AltumbaseService {
+  static altumbaseApiURL = "https://altumbase.com/api";
+  static altumbaseRef = "ref=bcl";
+  static altumbasePageSize = 20;
   constructor(
     private httpClient: HttpClient,
     private backendApi: BackendApiService,
     private globalVars: GlobalVarsService
   ) {}
 
-  constructPulseURL(
+  constructAltumbaseURL(
     leaderboardType: string,
-    pageIndex: number = 0,
-    pageSize: number = PulseService.pulsePageSize
+    pageIndex: number = 1,
+    pageSize: number = AltumbaseService.altumbasePageSize
   ): string {
-    return `${PulseService.pulseApiURL}/${leaderboardType}?${PulseService.pulseRef}&page_size=${pageSize}&page_index=${pageIndex}`;
+    return `${AltumbaseService.altumbaseApiURL}/${leaderboardType}?${AltumbaseService.altumbaseRef}&page_size=${pageSize}&page=${pageIndex}`;
   }
 
   getDiamondsReceivedLeaderboard(): Observable<any> {
@@ -67,40 +67,43 @@ export class PulseService {
 
   getDiamondsReceivedPage(
     pageNumber: number,
-    pageSize: number = PulseService.pulsePageSize,
+    pageSize: number = AltumbaseService.altumbasePageSize,
     skipFilters = false
   ): Observable<any> {
-    return this.httpClient.get(this.constructPulseURL(PulseLeaderboardType.Diamonds, pageNumber, pageSize)).pipe(
-      switchMap((res: PulseLeaderboardResponse) => {
-        return this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.Diamonds, skipFilters);
-      })
-    );
+    return this.httpClient
+      .get(this.constructAltumbaseURL(AltumbaseLeaderboardType.Diamonds, pageNumber, pageSize))
+      .pipe(
+        switchMap((res: AltumbaseLeaderboardResponse) => {
+          return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.Diamonds, skipFilters);
+        })
+      );
   }
 
-  getDeSoLockedLeaderboard(): Observable<LeaderboardResponse[]> {
+  getDeSoLockedLeaderboard(): Observable<any> {
     return this.getDeSoLockedPage(0);
   }
 
   getDeSoLockedPage(
     pageNumber: number,
-    pageSize: number = PulseService.pulsePageSize,
+    pageSize: number = AltumbaseService.altumbasePageSize,
     skipFilters = false
   ): Observable<any> {
     return this.httpClient
-      .get(this.constructPulseURL(PulseLeaderboardType.DeSoLocked, pageNumber, pageSize))
+      .get(this.constructAltumbaseURL(AltumbaseLeaderboardType.DeSoLocked, pageNumber, pageSize))
       .pipe(
-        switchMap((res: PulseLeaderboardResponse) =>
-          this.getProfilesForPulseLeaderboard(res, PulseLeaderboardType.DeSoLocked, skipFilters)
-        )
+        switchMap((res: AltumbaseLeaderboardResponse) => {
+          return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.DeSoLocked, skipFilters);
+        })
       );
   }
 
-  getProfilesForPulseLeaderboard(
-    res: PulseLeaderboardResponse,
-    leaderboardType: PulseLeaderboardType,
+  getProfilesForAltumbaseLeaderboard(
+    res: AltumbaseLeaderboardResponse,
+    leaderboardType: AltumbaseLeaderboardType,
     skipFilters: boolean = false
-  ): Observable<LeaderboardResponse[]> {
-    const results = res.results;
+  ): Observable<AltumbaseLeaderboardResponse[]> {
+    const results = res.data;
+
     if (results.length === 0) {
       return of([]);
     }
@@ -121,17 +124,20 @@ export class PulseService {
               res.UserList = res.UserList.slice(0, 10);
             }
           }
-
           return res.UserList.map((user: User, index: number) => {
             return {
               User: user,
               Profile: user.ProfileEntryResponse,
-              DeSoLockedGained:
-                leaderboardType === PulseLeaderboardType.DeSoLocked
+              DiamondsReceived:
+                leaderboardType === AltumbaseLeaderboardType.Diamonds
                   ? results[index][LeaderboardToDataAttribute[leaderboardType]]
                   : null,
-              DiamondsReceived:
-                leaderboardType === PulseLeaderboardType.Diamonds
+              DiamondsReceivedValue:
+                leaderboardType === AltumbaseLeaderboardType.Diamonds
+                  ? results[index]["diamonds_received_value_24h"]
+                  : null,
+              DeSoLockedGained:
+                leaderboardType === AltumbaseLeaderboardType.DeSoLocked
                   ? results[index][LeaderboardToDataAttribute[leaderboardType]]
                   : null,
             };

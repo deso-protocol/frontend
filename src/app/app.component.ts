@@ -6,7 +6,7 @@ import { IdentityService } from "./identity.service";
 import * as _ from "lodash";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
-import { Subscription } from "rxjs";
+import { of, Subscription, zip } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -111,12 +111,17 @@ export class AppComponent implements OnInit {
 
     this.callingUpdateTopLevelData = true;
 
-    return this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false).subscribe(
-      (res: any) => {
+    return zip(
+      this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
+      environment.verificationEndpointHostname
+        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey)
+        : of(null)
+    ).subscribe(
+      ([res, userMetadata]) => {
         this.problemWithNodeConnection = false;
         this.callingUpdateTopLevelData = false;
 
-        const loggedInUser: User = res.UserList[0];
+        let loggedInUser: User = res.UserList[0];
         let loggedInUserFound: boolean = false;
         // Find the logged in user in the user list and replace it with the logged in user from this GetUsersStateless call.
         this.globalVars.userList.forEach((user, index) => {
@@ -127,6 +132,19 @@ export class AppComponent implements OnInit {
             return false;
           }
         });
+
+        // If we got user metadata from some external global state, let's overwrite certain attributes of the logged in user.
+        if (userMetadata) {
+          loggedInUser.HasPhoneNumber = userMetadata.HasPhoneNumber;
+          loggedInUser.CanCreateProfile = userMetadata.CanCreateProfile;
+          loggedInUser.JumioVerified = userMetadata.JumioVerified;
+          loggedInUser.JumioFinishedTime = userMetadata.JumioFinishedTime;
+          loggedInUser.JumioReturned = userMetadata.JumioReturned;
+          // We can merge the blocked public key maps, which means we effectively block the union of public keys from both endpoints.
+          loggedInUser.BlockedPubKeys = { ...loggedInUser.BlockedPubKeys, ...userMetadata.BlockedPubKeys };
+          // Even though we have EmailVerified and HasEmail, we don't overwrite email attributes since each app may want to gather emails on their own.
+        }
+
         // If the logged-in user wasn't in the list, add it to the list.
         if (!loggedInUserFound && loggedInUserPublicKey) {
           this.globalVars.userList.push(loggedInUser);
@@ -153,7 +171,7 @@ export class AppComponent implements OnInit {
         if (res.DefaultFeeRateNanosPerKB > 0) {
           this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
         }
-        this.globalVars.globoMods = res.GloboMods;
+        this.globalVars.paramUpdaters = res.ParamUpdaters;
 
         this.ref.detectChanges();
         this.globalVars.loadingInitialAppState = false;
@@ -177,30 +195,51 @@ export class AppComponent implements OnInit {
       .subscribe((res: any) => {
         this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
-        this.globalVars.showProcessingSpinners = res.ShowProcessingSpinners;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
         this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
-        // Setup amplitude on first run
-        if (!this.globalVars.amplitude && res.AmplitudeKey) {
-          this.globalVars.amplitude = require("amplitude-js");
-          this.globalVars.amplitude.init(res.AmplitudeKey, null, {
-            apiEndpoint: res.AmplitudeDomain,
-          });
-
-          // Track initial app load event so we are aware of every user
-          // who visits our site (and not just those who click a button)
-          this.globalVars.logEvent("app : load");
-        }
-
-        // Store other important app state stuff
+        this.globalVars.jumioUSDCents = res.JumioUSDCents;
+        this.globalVars.jumioKickbackUSDCents = res.JumioKickbackUSDCents;
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
-        this.globalVars.supportEmail = res.SupportEmail;
         this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
         this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
+        this.globalVars.buyETHAddress = res.BuyETHAddress;
+        this.globalVars.nodes = res.Nodes;
+
+        this.globalVars.transactionFeeMap = res.TransactionFeeMap;
+
+        // Calculate max fee for display in frontend
+        // Sort so highest fee is at the top
+        const simpleFeeMap: { txnType: string; fees: number }[] = Object.keys(res.TransactionFeeMap)
+          .map((k) => {
+            if (res.TransactionFeeMap[k] !== null) {
+              // only return for non empty transactions
+              // sum in case there are multiple fee earners for the txn type
+              const sumOfFees = res.TransactionFeeMap[k]
+                .map((f) => f.AmountNanos)
+                .reduce((partial_sum, a) => partial_sum + a, 0);
+              // Capitalize and use spaces in Txn type
+              const txnType = (" " + k)
+                .replace(/_/g, " ")
+                .toLowerCase()
+                .replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => " " + chr.toUpperCase())
+                .trim();
+              return { txnType: txnType, fees: sumOfFees };
+            }
+          })
+          .filter((fee) => fee)
+          .sort((a, b) => b.fees - a.fees);
+
+        //Get the max of all fees
+        this.globalVars.transactionFeeMax = Math.max(...simpleFeeMap.map((k) => k.fees));
+
+        //Prepare text detailed info of fees and join with newlines
+        this.globalVars.transactionFeeInfo = simpleFeeMap
+          .map((k) => `${k.txnType}: ${this.globalVars.nanosToUSD(k.fees, 4)}`)
+          .join("\n");
       });
   }
 
@@ -301,6 +340,7 @@ export class AppComponent implements OnInit {
     });
 
     this.installDD();
+    this.installAmplitude();
   }
 
   loadApp() {
@@ -343,5 +383,21 @@ export class AppComponent implements OnInit {
     datadomeScript.async = true;
     datadomeScript.src = jsPath;
     firstScript.parentNode.insertBefore(datadomeScript, firstScript);
+  }
+
+  installAmplitude() {
+    const { key, domain } = environment.amplitude;
+    if (!key || !domain || this.globalVars.amplitude) {
+      return;
+    }
+
+    this.globalVars.amplitude = require("amplitude-js");
+    this.globalVars.amplitude.init(key, null, {
+      apiEndpoint: domain,
+    });
+
+    // Track initial app load event so we are aware of every user
+    // who visits our site (and not just those who click a button)
+    this.globalVars.logEvent("app : load");
   }
 }

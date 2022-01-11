@@ -153,6 +153,7 @@
         class="form-control w-50 fs-15px lh-15px"
         style="text-align: right"
         placeholder="0"
+        type="number"
         [(ngModel)]="desoToBuy"
         (ngModelChange)="updateDESOToBuy($event)"
       />
@@ -178,6 +179,7 @@
         placeholder="0"
         [(ngModel)]="ethToExchange"
         (ngModelChange)="updateETHToExchange($event)"
+        type="number"
       />
       <div class="ml-2 w-50 fs-15px">ETH</div>
     </div>

@@ -6,6 +6,7 @@ import { sprintf } from "sprintf-js";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import * as _ from "lodash";
 import { Title } from "@angular/platform-browser";
+import { environment } from "src/environments/environment";
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -151,6 +152,7 @@ export class AdminComponent implements OnInit {
   ngOnInit() {
     if (this.globalVars.showSuperAdminTools()) {
       this.adminTabs.push("Super");
+      this.adminTabs.push("Node Fees");
     }
 
     this.route.queryParams.subscribe((queryParams) => {
@@ -178,7 +180,7 @@ export class AdminComponent implements OnInit {
     this._loadBuyDeSoFeeRate();
     this._loadUSDToDeSoReserveExchangeRate();
 
-    this.titleService.setTitle("Admin - DeSo");
+    this.titleService.setTitle(`Admin - ${environment.node.name}`);
   }
 
   _updateNodeInfo() {
@@ -1174,7 +1176,7 @@ export class AdminComponent implements OnInit {
           this.userProfileEntryResponseToUpdate?.StakeMultipleBasisPoints || 1.25 * 100 * 100;
         return this.backendApi
           .UpdateProfile(
-            this.globalVars.localNode,
+            environment.verificationEndpointHostname,
             this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
             this.changeUsernamePublicKey /*ProfilePublicKeyBase58Check*/,
             // Start params

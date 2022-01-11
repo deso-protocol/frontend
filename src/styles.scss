@@ -1112,6 +1112,8 @@ input.bs-timepicker-field {
   overflow: hidden;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 
 .feed-post__video {
@@ -1600,10 +1602,9 @@ input.bs-timepicker-field {
 .landing__logo {
   height: 28px;
   flex: 0 0 130px;
-  background: url("/assets/img/camelcase_logo.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center center;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
   text-indent: -9999px;
 
   @media (max-width: 992px) {
@@ -2829,4 +2830,32 @@ input {
 
 .referral-link-info__blue-border {
   border-left: 5px solid $buy-button-blue !important;
+}
+
+.checkbox-circle {
+  i {
+    display: none;
+    position: relative;
+    top: -5px;
+  }
+  padding: 3px;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border);
+  border-radius: 100%;
+  background: none;
+  transition: background-color .5s;
+  &.radio {
+    transition: background-color 0s;
+  }
+  &.checked {
+    background: var(--highlight);
+    i {
+      display: inline;
+      color: var(--tile-bg);
+    }
+    &.radio {
+      transition: background-color .5s;
+    }
+  }
 }

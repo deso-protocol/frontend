@@ -2,7 +2,9 @@ import { Injectable } from "@angular/core";
 import {
   BackendApiService,
   BalanceEntryResponse,
+  DeSoNode,
   PostEntryResponse,
+  TransactionFee,
   TutorialStatus,
   User,
 } from "./backend-api.service";
@@ -18,7 +20,7 @@ import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
+import { LeaderboardResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
@@ -100,6 +102,7 @@ export class GlobalVarsService {
   cloutCastNotificationCount = 0;
 
   // Whether or not to show processing spinners in the UI for unmined transactions.
+  // TODO: Move into environment.ts
   showProcessingSpinners = false;
 
   rightBarLeaderboard = [];
@@ -117,7 +120,7 @@ export class GlobalVarsService {
   TutorialStatus: TutorialStatus;
 
   // map[pubkey]->bool of globomods
-  globoMods: any;
+  paramUpdaters: { [k: string]: boolean };
   feeRateDeSoPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
@@ -179,9 +182,6 @@ export class GlobalVarsService {
   // Current fee to create a profile.
   createProfileFeeNanos: number;
 
-  // Support email for this node (renders Help in the left bar nav)
-  supportEmail: string = null;
-
   // ETH exchange rates
   usdPerETHExchangeRate: number;
   nanosPerETHExchangeRate: number;
@@ -216,6 +216,8 @@ export class GlobalVarsService {
   profileUpdateTimestamp: number;
 
   jumioDeSoNanos = 0;
+  jumioUSDCents = 0;
+  jumioKickbackUSDCents = 0;
 
   referralUSDCents: number = 0;
 
@@ -238,6 +240,13 @@ export class GlobalVarsService {
     }
   }
   
+  transactionFeeMap: { [k: string]: TransactionFee[] };
+  transactionFeeMax: number = 0;
+  transactionFeeInfo: string;
+
+  buyETHAddress: string = "";
+
+  nodes: { [id: number]: DeSoNode };
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -339,14 +348,16 @@ export class GlobalVarsService {
     this.loggedInUser = user;
 
     // Fetch referralLinks for the userList before completing the load.
-    this.backendApi.GetReferralInfoForUser(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe(
-      (res: any) => {
-        this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
-      },
-      (err: any) => {
-        console.log(err);
-      }
-    );
+    this.backendApi
+      .GetReferralInfoForUser(environment.verificationEndpointHostname, this.loggedInUser.PublicKeyBase58Check)
+      .subscribe(
+        (res: any) => {
+          this.loggedInUser.ReferralInfoResponses = res.ReferralInfoResponses;
+        },
+        (err: any) => {
+          console.log(err);
+        }
+      );
 
     // If Jumio callback hasn't returned yet, we need to poll to update the user metadata.
     if (user && user?.JumioFinishedTime > 0 && !user?.JumioReturned) {
@@ -727,25 +738,22 @@ export class GlobalVarsService {
     });
   }
 
-  _alertError(err: any, showBuyDeSo: boolean = false, showBuyCreatorCoin: boolean = false) {
+  _alertError(err: any, showBuyCreatorCoin: boolean = false) {
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
       icon: "error",
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
-      showCancelButton: showBuyDeSo || showBuyCreatorCoin,
+      showCancelButton: showBuyCreatorCoin,
       focusConfirm: true,
       customClass: {
         confirmButton: "btn btn-light",
         cancelButton: "btn btn-light no",
       },
-      confirmButtonText: showBuyDeSo ? "Buy DeSo" : showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
+      confirmButtonText: showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
       reverseButtons: true,
     }).then((res) => {
-      if (showBuyDeSo && res.isConfirmed) {
-        this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
-      }
       if (showBuyCreatorCoin && res.isConfirmed) {
         this.router.navigate([RouteNames.CREATORS]);
       }
@@ -829,7 +837,7 @@ export class GlobalVarsService {
   // Use the data object to store extra event metadata. Don't use
   // the metadata to differentiate two events with the same name.
   // Instead, just create two (or more) events with better names.
-  logEvent(event: string, data?: any) {
+  logEvent(event: string, data: any = {}) {
     if (!this.amplitude) {
       return;
     }
@@ -837,6 +845,16 @@ export class GlobalVarsService {
     if (this.userInTutorial(this.loggedInUser)) {
       event = "tutorial : " + event;
     }
+
+    // Attach node name
+    data.node = environment.node.name;
+
+    // Attach referralCode
+    const referralCode = this.referralCode();
+    if (referralCode) {
+      data.referralCode = referralCode;
+    }
+
     this.amplitude.logEvent(event, data);
   }
 
@@ -846,7 +864,7 @@ export class GlobalVarsService {
     this.identityService
       .launch("/get-free-deso", {
         public_key: this.loggedInUser?.PublicKeyBase58Check,
-        referralCode: localStorage.getItem("referralCode"),
+        referralCode: this.referralCode(),
       })
       .subscribe(() => {
         this.logEvent("identity : jumio : success");
@@ -856,7 +874,7 @@ export class GlobalVarsService {
 
   launchIdentityFlow(event: string): void {
     this.logEvent(`account : ${event} : launch`);
-    this.identityService.launch("/log-in", { referralCode: localStorage.getItem("referralCode") }).subscribe((res) => {
+    this.identityService.launch("/log-in", { referralCode: this.referralCode(), hideJumio: true }).subscribe((res) => {
       this.logEvent(`account : ${event} : success`);
       this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
       this.updateEverything().add(() => {
@@ -871,6 +889,10 @@ export class GlobalVarsService {
 
   launchSignupFlow() {
     this.launchIdentityFlow("create");
+  }
+
+  referralCode(): string {
+    return localStorage.getItem("referralCode");
   }
 
   flowRedirect(signedUp: boolean): void {
@@ -919,7 +941,7 @@ export class GlobalVarsService {
 
     let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
     if (!identityServiceURL) {
-      identityServiceURL = "https://identity.deso.org";
+      identityServiceURL = environment.identityURL;
       this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
     }
     this.identityService.identityServiceURL = identityServiceURL;
@@ -937,13 +959,13 @@ export class GlobalVarsService {
   }
 
   updateLeaderboard(forceRefresh: boolean = false): void {
-    const pulseService = new PulseService(this.httpClient, this.backendApi, this);
-
+    const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      altumbaseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
+
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
+      altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
     }
 
     if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
@@ -1133,7 +1155,7 @@ export class GlobalVarsService {
         return;
       }
       this.backendApi
-        .GetJumioStatusForPublicKey(environment.jumioEndpointHostname, publicKey)
+        .GetJumioStatusForPublicKey(environment.verificationEndpointHostname, publicKey)
         .subscribe(
           (res: any) => {
             if (res.JumioVerified) {
@@ -1151,7 +1173,6 @@ export class GlobalVarsService {
               if (user) {
                 this.setLoggedInUser(user);
               }
-              localStorage.setItem("referralCode", undefined);
               this.celebrate();
               if (user.TutorialStatus === TutorialStatus.EMPTY) {
                 this.startTutorialAlert();
@@ -1175,21 +1196,26 @@ export class GlobalVarsService {
   getFreeDESOMessage(): string {
     return this.referralUSDCents
       ? this.formatUSD(this.referralUSDCents / 100, 0)
-      : this.nanosToUSD(this.jumioDeSoNanos, 0);
+      : this.formatUSD(this.jumioUSDCents / 100, 0);
   }
 
   getReferralUSDCents(): void {
     const referralHash = localStorage.getItem("referralCode");
     if (referralHash) {
       this.backendApi
-        .GetReferralInfoForReferralHash(environment.jumioEndpointHostname, referralHash)
+        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
         .subscribe((res) => {
           const referralInfo = res.ReferralInfoResponse.Info;
-          if (
+          const countrySignUpBonus = res.CountrySignUpBonus;
+          if (!countrySignUpBonus.AllowCustomReferralAmount) {
+            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
+          } else if (
             res.ReferralInfoResponse.IsActive &&
             (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
           ) {
             this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
+          } else {
+            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
           }
         });
     }

@@ -5,6 +5,7 @@ import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
+import { environment } from "src/environments/environment";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -57,7 +58,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this._updateFormBasedOnLoggedInUser();
-    this.titleService.setTitle("Update Profile - DeSo");
+    this.titleService.setTitle(`Update Profile - ${environment.node.name}`);
   }
 
   // This is used to handle any changes to the loggedInUser elegantly.
@@ -167,7 +168,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   // This is a standalone function in case we decide we want to confirm fees before doing a real transaction.
   _callBackendUpdateProfile() {
     return this.backendApi.UpdateProfile(
-      this.globalVars.localNode,
+      environment.verificationEndpointHostname,
       this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
       "" /*ProfilePublicKeyBase58Check*/,
       // Start params

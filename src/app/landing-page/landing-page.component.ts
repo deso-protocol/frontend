@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { AppRoutingModule } from "../app-routing.module";
 import { GlobalVarsService } from "../global-vars.service";
 import { Router } from "@angular/router";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-landing-page",
@@ -10,6 +11,7 @@ import { Router } from "@angular/router";
 })
 export class LandingPageComponent implements OnInit {
   AppRoutingModule = AppRoutingModule;
+  environment = environment;
 
   featuredCreators = [
     {
@@ -111,5 +113,9 @@ export class LandingPageComponent implements OnInit {
     if (!this.globalVars.showLandingPage()) {
       this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], { queryParamsHandling: "merge" });
     }
+  }
+
+  getLogoBackground() {
+    return `url("${environment.node.logoAssetDir}camelcase_logo.svg")`
   }
 }

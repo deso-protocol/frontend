@@ -58,12 +58,24 @@
         name="theme"
         id="theme"
         (change)="selectChangeHandler($event)"
-        class="form-control selector">
+        class="form-control selector mb-30px">
         <option
           *ngFor="let theme of themeService.themes"
           [value]="theme.key"
           [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
       </select>
+
+      <div class="fs-15px pt-30px">Personal Information</div>
+      <br/>
+      <div class="w-100 d-flex align-items-center">
+        <button
+          class="btn btn-danger btn-lg font-weight-bold fs-15px mt-5px"
+          (click)="deletePII()"
+          [disabled]="deletingPII"
+        >
+          Delete Personal Information
+        </button>
+      </div>
       <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
       <div class="global__bottom-bar-mobile-height"></div>
       <div class="global__bottom-bar-mobile-height"></div>

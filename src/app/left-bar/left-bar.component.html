@@ -10,7 +10,7 @@
           queryParamsHandling="merge"
         >
           <img
-            src="assets/img/camelcase_logo.svg"
+            [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
             class="deso"
             style="height: 27px; margin-left: 17px; margin-bottom: 3px"
           />
@@ -130,7 +130,7 @@
           <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
         </div>
 
-        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.supportEmail" (click)="logHelp()">
+        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="environment.supportEmail" (click)="logHelp()">
           <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
           <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
         </div>
@@ -154,7 +154,7 @@
           queryParamsHandling="merge"
         >
           <img
-            src="assets/img/camelcase_logo.svg"
+            [src]="environment.node.logoAssetDir + 'camelcase_logo.svg'"
             class="deso"
             style="height: 27px; margin-left: 17px; margin-bottom: 3px"
           />

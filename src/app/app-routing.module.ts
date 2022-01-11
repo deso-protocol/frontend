@@ -37,6 +37,10 @@ import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
 import { CloutCastPageComponent } from "./cloutcast-page/cloutcast-page.component";
+import {
+  SupplyMonitoringStatsPageComponent
+} from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
+
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
   //   1. /:username/following
@@ -84,6 +88,7 @@ class RouteNames {
 
   // CloutCast Route Prefix
   public static CLOUTCAST_PREFIX = 'casts'
+  public static SUPPLY_STATS = "supply-stats";
 }
 
 const routes: Routes = [
@@ -165,11 +170,19 @@ const routes: Routes = [
     component: CreatePostTutorialPageComponent,
     pathMatch: "full",
   },
+<<<<<<< HEAD
   // CloutCast routes
   { path: RouteNames.CLOUTCAST_PREFIX, component: CloutCastPageComponent, pathMatch: "full" },
   { path: RouteNames.CLOUTCAST_PREFIX + "/:cloutCastId", component: CloutCastPageComponent, pathMatch: "full" },
   // End CloutCast routes
  
+=======
+  {
+    path: RouteNames.SUPPLY_STATS,
+    component: SupplyMonitoringStatsPageComponent,
+    pathMatch: "full",
+  },
+>>>>>>> main
   // This NotFound route must be the last one as it catches all paths that were not matched above.
   { path: "**", component: NotFoundPageComponent, pathMatch: "full" },
 ];

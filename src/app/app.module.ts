@@ -82,7 +82,6 @@ import { AdminWyreComponent } from "./admin/admin-wyre/admin-wyre.component";
 import { NetworkInfoComponent } from "./network-info/network-info.component";
 import { SanitizeAndAutoLinkPipe } from "../lib/pipes/sanitize-and-auto-link-pipe";
 import { SanitizeEmbedPipe } from "../lib/pipes/sanitize-embed-pipe";
-import { NgxIntlTelInputModule } from "ngx-intl-tel-input";
 import { SettingsComponent } from "./settings/settings.component";
 import { NotificationsListComponent } from "./notifications-page/notifications-list/notifications-list.component";
 import { UiScrollModule } from "ngx-ui-scroll";
@@ -137,6 +136,7 @@ import { NftDropMgrComponent } from "./nft-drop-mgr/nft-drop-mgr.component";
 import { NftShowcaseComponent } from "./nft-showcase/nft-showcase.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
 import { AdminJumioComponent } from "./admin/admin-jumio/admin-jumio.component";
+import { AdminJumioEditCountrySignUpBonusComponent } from "./admin/admin-jumio/admin-jumio-edit-country-sign-up-bonus/admin-jumio-edit-country-sign-up-bonus.component";
 import { JumioStatusComponent } from "./jumio-status/jumio-status.component";
 import { AdminTutorialComponent } from "./admin/admin-tutorial/admin-tutorial.component";
 import { CreateProfileTutorialPageComponent } from "./tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component";
@@ -157,6 +157,15 @@ import { CloutCastPageComponent } from './cloutcast-page/cloutcast-page.componen
 import { CloutCastModalComponent } from './cloutcast-modal/cloutcast-modal.component';
 import { BuyDeSoEthComponent } from "./buy-deso-page/buy-deso-eth/buy-deso-eth.component";
 import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
+import { AdminNodeFeesComponent } from "./admin/admin-node-fees/admin-node-fees.component";
+import { AdminNodeAddFeesComponent } from "./admin/admin-node-fees/admin-node-add-fee/admin-node-add-fees.component";
+import { FreeDesoMessageComponent } from "./free-deso-message/free-deso-message.component";
+import { SupplyMonitoringStatsPageComponent } from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
+import { SupplyMonitoringStatsComponent } from "./supply-monitoring-stats-page/supply-monitoring-stats/supply-monitoring-stats.component";
+import { TransferNftModalComponent } from "./transfer-nft-modal/transfer-nft-modal.component";
+import { TransferNftAcceptModalComponent } from "./transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { NftBurnModalComponent } from "./nft-burn-modal/nft-burn-modal.component";
+import { NftSelectSerialNumberComponent } from "./nft-select-serial-number/nft-select-serial-number.component";
 
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
@@ -285,6 +294,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     NftShowcaseComponent,
     VerifyEmailComponent,
     AdminJumioComponent,
+    AdminJumioEditCountrySignUpBonusComponent,
     JumioStatusComponent,
     ReferralProgramMgrComponent,
     ReferralsComponent,
@@ -302,10 +312,17 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     CloutCastPageComponent,
     CloutCastModalComponent,
     CloutCastBarButtonComponent,
-    BuyDeSoEthComponent
     BuyDeSoEthComponent,
-    SanitizeVideoUrlPipe
-    
+    SanitizeVideoUrlPipe,
+    AdminNodeFeesComponent,
+    AdminNodeAddFeesComponent,
+    SupplyMonitoringStatsPageComponent,
+    SupplyMonitoringStatsComponent,
+    FreeDesoMessageComponent,
+    TransferNftAcceptModalComponent,
+    TransferNftModalComponent,
+    NftBurnModalComponent,
+    NftSelectSerialNumberComponent,
   ],
   imports: [
     BrowserModule,
@@ -320,7 +337,6 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     BrowserAnimationsModule,
     MatTooltipModule,
     TextFieldModule,
-    NgxIntlTelInputModule,
     UiScrollModule,
     AnimateOnScrollModule.forRoot(),
     ToastrModule.forRoot(),

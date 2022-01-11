@@ -102,8 +102,8 @@ export class BuyDeSoUSDComponent implements OnInit {
         if (res.url) {
           Swal.fire({
             target: this.globalVars.getTargetComponentSelector(),
-            title: "Purchase DeSo",
-            html: `You will complete your purchase through Wyre. Your ${this.selectedFiatCurrency} will be converted to <b>Bitcoin</b> and then into <b>DeSo</b> automatically.`,
+            title: "Purchase $DESO",
+            html: `You will complete your purchase through Wyre. Your ${this.selectedFiatCurrency} will be converted to <b>Bitcoin</b> and then into <b>$DESO</b> automatically.`,
             showCancelButton: true,
             showConfirmButton: true,
             confirmButtonText: "Buy",

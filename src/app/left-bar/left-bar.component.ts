@@ -6,6 +6,7 @@ import { IdentityService } from "../identity.service";
 import { BackendApiService, TutorialStatus } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "left-bar",
@@ -14,6 +15,7 @@ import { SwalHelper } from "../../lib/helpers/swal-helper";
 })
 export class LeftBarComponent {
   MessagesInboxComponent = MessagesInboxComponent;
+  environment = environment;
 
   @HostBinding("class") get classes() {
     return !this.isMobile ? "global__nav__flex" : "";
@@ -53,7 +55,7 @@ export class LeftBarComponent {
       `The below information helps support address your case.\nMy public key: ${pubKey} \nMy BTC Address: ${btcAddress}`
     );
     const body = loggedInUser ? `?body=${bodyContent}` : "";
-    return `mailto:${this.globalVars.supportEmail}${body}`;
+    return `mailto:${environment.supportEmail}${body}`;
   }
 
   logHelp(): void {

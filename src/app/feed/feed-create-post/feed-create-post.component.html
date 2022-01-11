@@ -84,13 +84,13 @@
     </div>
   </div>
 </div>
-<div class="flex-fill px-15px br-10px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showEmbedURL">
+<div class="flex-fill px-15px br-10px fs-13px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showEmbedURL">
   <input
     class="br-3px"
     type="url"
     [(ngModel)]="embedURL"
     (ngModelChange)="setEmbedURL()"
-    placeholder="Embed Youtube, Vimeo, TikTok, Giphy, Spotify or SoundCloud"
+    placeholder="Embed Youtube, Vimeo, TikTok, Giphy, Spotify, SoundCloud, or Twitch"
   />
 </div>
 <div class="flex-fill px-15px br-10px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showImageLink">

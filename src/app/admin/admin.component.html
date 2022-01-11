@@ -455,6 +455,18 @@
           <span>Email:</span>
           {{ getUserAdminDataResponse.Email }}
         </div>
+        <div class="admin__get-user-admin-data-line pt-15px">
+          <span>Referral Code:</span>
+          {{ getUserAdminDataResponse.ReferralHashBase58Check }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Jumio Starter Payment Txn ID:</span>
+          {{ getUserAdminDataResponse.JumioStarterDeSoTxnHashBase58Check }}
+        </div>
+        <div class="admin__get-user-admin-data-line pt-5px">
+          <span>Referrer Payment Txn ID:</span>
+          {{ getUserAdminDataResponse.ReferrerDeSoTxnHashBase58Check }}
+        </div>
       </div>
     </div>
   </div>
@@ -975,6 +987,11 @@
   <div *ngIf="activeTab == 'Jumio'" class="w-100 d-flex flex-column" style="overflow-y: scroll">
     <admin-jumio></admin-jumio>
   </div>
+
+  <!-- Node Fees -->
+  <div *ngIf="activeTab == 'Node Fees'" class="w-100 d-flex flex-column" style="overflow-y: scroll">
+    <admin-node-fees></admin-node-fees>
+  </div>
 </div>
 
 <div
@@ -984,3 +1001,5 @@
 >
   Access denied.
 </div>
+<div class="global__bottom-bar-mobile-height"></div>
+<div class="global__bottom-bar-mobile-height"></div>
