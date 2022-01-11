@@ -7,7 +7,7 @@
   <div class="flex-grow-1 p-15px" *ngIf="!!nanosAvailableInCloutCastWallet">
     <div class="row">
       <div class="col-3">
-        <img src="//{{this.globalVars.localNode}}/api/v0/get-single-profile-picture/{{this.userPublicKey}}?fallback=https://node.deso.org/assets/img/default_profile_pic.png" class="profilePic" />
+        <img src="//{{this.globalVars.localNode}}/api/v0/get-single-profile-picture/{{this.globalVars.loggedInUser.PublicKeyBase58Check}}?fallback=https://node.deso.org/assets/img/default_profile_pic.png" class="profilePic" />
       </div>
       <div class="col-9">
         <b>Available Balance</b><br />
