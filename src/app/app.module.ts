@@ -163,6 +163,8 @@ import { TransferNftModalComponent } from "./transfer-nft-modal/transfer-nft-mod
 import { TransferNftAcceptModalComponent } from "./transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 import { NftBurnModalComponent } from "./nft-burn-modal/nft-burn-modal.component";
 import { NftSelectSerialNumberComponent } from "./nft-select-serial-number/nft-select-serial-number.component";
+import { DaoCoinsComponent } from "./dao-coins/dao-coins.component";
+import { DaoCoinsPageComponent } from "./dao-coins/dao-coins-page/dao-coins-page.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
@@ -315,6 +317,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     TransferNftModalComponent,
     NftBurnModalComponent,
     NftSelectSerialNumberComponent,
+    DaoCoinsComponent,
+    DaoCoinsPageComponent,
   ],
   imports: [
     BrowserModule,

@@ -204,10 +204,8 @@ export class WalletComponent implements OnInit, OnDestroy {
 
     for (const holding of this.globalVars.loggedInUser.UsersYouHODL) {
       result +=
-        this.globalVars.desoNanosYouWouldGetIfYouSold(
-          holding.BalanceNanos,
-          holding.ProfileEntryResponse.CoinEntry
-        ) || 0;
+        this.globalVars.desoNanosYouWouldGetIfYouSold(holding.BalanceNanos, holding.ProfileEntryResponse.CoinEntry) ||
+        0;
     }
 
     return result;
@@ -266,7 +264,8 @@ export class WalletComponent implements OnInit, OnDestroy {
       return false;
     }
     return (
-      balanceEntryResponse.ProfileEntryResponse.Username.toLowerCase() === this.balanceEntryToHighlight.ProfileEntryResponse.Username.toLowerCase()
+      balanceEntryResponse.ProfileEntryResponse.Username.toLowerCase() ===
+      this.balanceEntryToHighlight.ProfileEntryResponse.Username.toLowerCase()
     );
   }
 

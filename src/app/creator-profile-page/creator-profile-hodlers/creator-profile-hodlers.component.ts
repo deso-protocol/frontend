@@ -17,6 +17,7 @@ export class CreatorProfileHodlersComponent {
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   @Input() profile: ProfileEntryResponse;
+  @Input() isDAOCoin: boolean = false;
 
   showTotal = false;
   lastPage = null;
@@ -40,7 +41,8 @@ export class CreatorProfileHodlersComponent {
         lastPublicKeyBase58Check,
         CreatorProfileHodlersComponent.PAGE_SIZE,
         false,
-        false
+        false,
+        this.isDAOCoin,
       )
       .toPromise()
       .then((res) => {

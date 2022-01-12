@@ -1,0 +1,41 @@
+<div class="btn-group" dropdown #dropdown="bs-dropdown">
+  <a dropdownToggle id="walletActionsButton" class="dropdown-basic link--unstyled" aria-controls="dropdown-basic">
+    <i class="fas fa-exchange-alt fs-18px" [ngClass]="{ 'fc-blue': dropdown.isOpen && (!inTutorial || isHighlightedCreator) }"></i>
+  </a>
+  <div *ngIf="!inTutorial || (isHighlightedCreator && showSellOnly)">
+    <div
+      id="dropdown-basic"
+      *dropdownMenu
+      aria-labelledby="walletActionsButton"
+      class="dropdown-menu dropdown-menu-right p-0px"
+      style="min-width: max-content"
+    >
+      <a
+        class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
+        [routerLink]="AppRoutingModule.buyCreatorPath(hodlingUsername)"
+        queryParamsHandling="merge"
+        *ngIf="!showSellOnly"
+      >
+        <i class="fas fa-plus fs-12px"></i>
+        Buy
+      </a>
+      <a
+        class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
+        [routerLink]="inTutorial ? ['', RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, hodlingUsername].join('/') : AppRoutingModule.sellCreatorPath(hodlingUsername)"
+        queryParamsHandling="merge"
+      >
+        <i class="fas fa-minus fs-12px"></i>
+        Sell
+      </a>
+      <a
+        class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
+        [routerLink]="AppRoutingModule.transferCreatorPath(hodlingUsername)"
+        queryParamsHandling="merge"
+        *ngIf="!showSellOnly"
+      >
+        <i class="fas fa-paper-plane fs-12px"></i>
+        Send
+      </a>
+    </div>
+  </div>
+</div>
