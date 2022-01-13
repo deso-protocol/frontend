@@ -23,7 +23,7 @@
           class="d-flex justify-content-between"
         >
           <span>Coins In Circulation:&nbsp;</span>
-          <span class="font-weight-bold">{{ hexNanosToUnitString(myDAOCoin.CoinsInCirculationNanos) }}</span>
+          <span class="font-weight-bold">{{ globalVars.hexNanosToUnitString(myDAOCoin.CoinsInCirculationNanos) }}</span>
         </div>
         <div class="d-flex justify-content-between">
           <span>Transfer Restriction Status:&nbsp;</span>
@@ -121,12 +121,12 @@
         <i class="fas fs-15px" [ngClass]="{'fa-arrows-alt-v':sortedUsernameFromHighToLow === 0, 'fa-sort-alpha-up-alt':sortedUsernameFromHighToLow === 1, 'fa-sort-alpha-down':sortedUsernameFromHighToLow === -1}"></i>
         Name
       </div>
-      <div class="col-5 mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end" (click)="sortWallet('coins')">
+      <div class="col-5 mb-0 cursor-pointer fc-muted text-link_hover text-right" style="text-align: end" (click)="sortWallet('coins')">
           <i class="fas fs-15px"
              [ngClass]="{'fa-arrows-alt-v':sortedCoinsFromHighToLow === 0, 'fa-sort-amount-down':sortedCoinsFromHighToLow === -1, 'fa-sort-amount-up-alt':sortedCoinsFromHighToLow === 1}"></i>
           Coins
     </div>
-      <div class="col-lg-1 col-2 d-block mb-0"></div>
+      <div class="col-1 d-block mb-0"></div>
     </div>
     <div
       #uiScroll
@@ -189,29 +189,26 @@
                 #tooltip="matTooltip"
                 (click)="tooltip.toggle()"
               ></i>
-              {{ hexNanosToUnitString(creator.BalanceNanosUint256) }}
+              {{ globalVars.hexNanosToUnitString(creator.BalanceNanosUint256) }}
             </div>
           </div>
         </div>
 
-        <div class="col-1 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
-          <i
-            class="fas fa-exchange-alt fs-18px"
+        <div class="col-1 mb-0 pt-0px d-flex align-items-center justify-content-around text-right">
+          <ng-container
             *ngIf="showDAOCoinHoldings || creator.HODLerPublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check"
-            (click)="openTransferDAOCoinModal(creator)"
-          ></i>
-        </div>
+          >
+            <i
+              class="fas fa-exchange-alt"
+              (click)="openTransferDAOCoinModal(creator)"
+            ></i>
+            <i
+              class="fa fa-fire fc-red"
+              (click)="openBurnDAOCoinModal(creator)"
+            ></i>
+          </ng-container>
 
-        <!-- Buy / Sell / Transfer Dropdown -->
-  <!--      <div-->
-  <!--        class="wallet__dropdown-parent col-lg-1 col-2 d-flex align-items-center justify-content-center text-grey8A m-0"-->
-  <!--      >-->
-  <!--        <wallet-actions-dropdown-->
-  <!--          [hodlingUsername]="creator.ProfileEntryResponse.Username"-->
-  <!--          [inTutorial]="inTutorial"-->
-  <!--          [isHighlightedCreator]="isHighlightedCreator(creator)"-->
-  <!--        ></wallet-actions-dropdown>-->
-  <!--      </div>-->
+        </div>
       </div>
     </div>
   </ng-container>

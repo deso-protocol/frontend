@@ -19,6 +19,8 @@ import { catchError, map } from "rxjs/operators";
 import { Hex } from "web3-utils/types";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TransferDAOCoinModalComponent } from "./transfer-dao-coin-modal/transfer-dao-coin-modal.component";
+import { BurnDaoCoinModalComponent } from "./burn-dao-coin-modal/burn-dao-coin-modal.component";
+import { split } from "lodash";
 
 @Component({
   selector: "dao-coins",
@@ -93,6 +95,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     } else {
       this.hideMyDAOTab = true;
       this.showDAOCoinHoldings = true;
+      this.activeTab = DaoCoinsComponent.daoCoinsTab;
     }
     this.loadMyDAOCoinHoldings().subscribe((res) => {});
     this.titleService.setTitle(`DAO Coins - ${environment.node.name}`);
@@ -217,7 +220,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
       .subscribe(
         (res) => {
           this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
-            .add(toBN(this.toHexNanos(this.coinsToMint)))
+            .add(toBN(this.globalVars.toHexNanos(this.coinsToMint)))
             .toString("hex");
           zip(this.loadMyDAOCapTable(), this.loadMyDAOCoinHoldings()).subscribe(() => {
             this.loadingNewSelection = false;
@@ -279,7 +282,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   //   this.doDAOCoinTxn(this.globalVars.localNode, DAOCoinOperationTypeString.BURN).subscribe((res) => {
   //     if (profilePublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
   //       this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
-  //         .add(toBN(this.toHexNanos(this.coinsToMint)))
+  //         .add(toBN(this.globalVars.toHexNanos(this.coinsToMint)))
   //         .toString("hex");
   //     }
   //   }, (err) => {
@@ -302,8 +305,8 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
       operationType === DAOCoinOperationTypeString.UPDATE_TRANSFER_RESTRICTION_STATUS
         ? this.transferRestrictionStatus
         : undefined,
-      operationType === DAOCoinOperationTypeString.MINT ? this.toHexNanos(this.coinsToMint) : undefined,
-      operationType === DAOCoinOperationTypeString.BURN ? this.toHexNanos(this.coinsToBurn) : undefined,
+      operationType === DAOCoinOperationTypeString.MINT ? this.globalVars.toHexNanos(this.coinsToMint) : undefined,
+      operationType === DAOCoinOperationTypeString.BURN ? this.globalVars.toHexNanos(this.coinsToBurn) : undefined,
       this.globalVars.defaultFeeRateNanosPerKB
     );
   }
@@ -381,14 +384,6 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     });
   }
 
-  hexNanosToUnitString(hexNanos: Hex): string {
-    return fromWei(toBN(hexNanos), "gwei").toString();
-  }
-
-  toHexNanos(units: number): Hex {
-    return toHex(toWei(units.toString(), "gwei"));
-  }
-
   getDisplayTransferRestrictionStatus(transferRestrictionStatus: TransferRestrictionStatusString): string {
     return transferRestrictionStatus
       .split("_")
@@ -407,6 +402,33 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
       if (response === "dao coins transferred") {
         this.loadingNewSelection = true;
         zip(this.loadMyDAOCoinHoldings(), this.loadMyDAOCapTable()).subscribe((res) => {
+          this.loadingNewSelection = false;
+          this._handleTabClick(this.activeTab);
+        });
+      }
+    });
+  }
+
+  openBurnDAOCoinModal(creator: BalanceEntryResponse): void {
+    const modalDetails = this.modalService.show(BurnDaoCoinModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { balanceEntryResponse: creator },
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response.startsWith("dao coins burned")) {
+        this.loadingNewSelection = true;
+        zip(this.loadMyDAOCoinHoldings(), this.loadMyDAOCapTable()).subscribe((res) => {
+          // If we burned our own coin in the modal, update the coins in circulation.
+          if (creator.CreatorPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+            const splitResponse = response.split("|");
+            if (splitResponse.length === 2) {
+              const burnAmountHex = splitResponse[1];
+              this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
+                .sub(toBN(burnAmountHex))
+                .toString("hex");
+            }
+          }
           this.loadingNewSelection = false;
           this._handleTabClick(this.activeTab);
         });

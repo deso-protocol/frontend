@@ -1,19 +1,18 @@
 import { Component, Input } from "@angular/core";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, BalanceEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
+import { BackendApiService, BalanceEntryResponse, DAOCoinOperationTypeString } from "../../backend-api.service";
 import { Hex, toHex, toWei } from "web3-utils";
 
 @Component({
-  selector: "transfer-dao-coin-modal",
-  templateUrl: "./transfer-dao-coin-modal.component.html",
+  selector: "burn-dao-coin-modal",
+  templateUrl: "./burn-dao-coin-modal.component.html",
 })
-export class TransferDAOCoinModalComponent {
+export class BurnDaoCoinModalComponent {
   @Input() balanceEntryResponse: BalanceEntryResponse;
 
-  amountToTransfer: number = 0;
-  receiver: ProfileEntryResponse;
-  transferringDAOCoin: boolean = false;
+  amountToBurn: number = 0;
+  burningDAOCoin: boolean = false;
   backendErrors: string = "";
   constructor(
     public bsModalRef: BsModalRef,
@@ -22,25 +21,23 @@ export class TransferDAOCoinModalComponent {
     private backendApi: BackendApiService,
   ) {}
 
-  _handleCreatorSelectedInSearch(creator): void {
-    this.receiver = creator;
-  }
-
-  transferDAOCoin(): void {
-    this.transferringDAOCoin = true;
+  burnDAOCoin(): void {
+    this.burningDAOCoin = true;
     this.backendErrors = "";
     this.backendApi
-      .TransferDAOCoin(
+      .DAOCoin(
         this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         this.balanceEntryResponse.CreatorPublicKeyBase58Check,
-        this.receiver.PublicKeyBase58Check,
-        this.globalVars.toHexNanos(this.amountToTransfer),
+        DAOCoinOperationTypeString.BURN,
+        undefined,
+        undefined,
+        this.globalVars.toHexNanos(this.amountToBurn),
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(
         (res) => {
-          this.modalService.setDismissReason("dao coins transferred");
+          this.modalService.setDismissReason(`dao coins burned|${this.globalVars.toHexNanos(this.amountToBurn)}`);
           this.bsModalRef.hide();
         },
         (err) => {
@@ -48,10 +45,9 @@ export class TransferDAOCoinModalComponent {
           console.error(err);
         }
       )
-      .add(() => (this.transferringDAOCoin = false));
+      .add(() => (this.burningDAOCoin = false));
   }
 
-  // TODO: add endpoint to check if transfer is valid.
   // TODO: some basic frontend validation
   errors(): string {
     return "";
