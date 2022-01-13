@@ -14,7 +14,7 @@
 
   <!-- Feed Selector -->
   <tab-selector
-    [tabs]="['Posts', 'Creator Coin', 'Diamonds', 'NFTs']"
+    [tabs]="['Posts', 'Creator Coin', 'DAO Coin', 'Diamonds', 'NFTs']"
     [activeTab]="activeTab"
     (tabClick)="_handleTabClick($event)"
   ></tab-selector>
@@ -83,7 +83,7 @@
   <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'Creator Coin' && !loading">
     <div class="w-100 d-flex justify-content-start px-15px fs-15px">
       <div class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px">
-        Holders of ${{ profile.Username }} coin
+        Holders of ${{ profile.Username }}'s Creator Coin
       </div>
     </div>
 
@@ -104,6 +104,26 @@
           </div>
         </div>
         <creator-profile-hodlers [profile]="profile"></creator-profile-hodlers>
+      </div>
+    </div>
+    <div class="w-100 p-35px"></div>
+  </div>
+
+  <!-- DAO Coin Info -->
+  <div class="w-100 d-flex flex-column" *ngIf="activeTab == 'DAO Coin' && !loading">
+    <div class="w-100 d-flex justify-content-start px-15px fs-15px">
+      <div class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px">
+        Holders of ${{ profile.Username }}'s DAO Coin
+      </div>
+    </div>
+
+    <div>
+      <div class="container fs-15px flex-grow-1">
+        <div class="row no-gutters border-bottom border-color-grey fc-muted">
+          <div class="col-6 d-flex py-15px mb-0">Username or PubKey</div>
+          <div class="col-6 py-15px mb-0">Coins Held</div>
+        </div>
+        <creator-profile-hodlers [profile]="profile" [isDAOCoin]="true"></creator-profile-hodlers>
       </div>
     </div>
     <div class="w-100 p-35px"></div>

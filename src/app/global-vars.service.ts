@@ -27,6 +27,8 @@ import { FeedComponent } from "./feed/feed.component";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Swal from "sweetalert2";
 import Timer = NodeJS.Timer;
+import {fromWei, Hex, toBN, toHex, toWei} from "web3-utils";
+import {BN} from "ethereumjs-util";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -490,7 +492,7 @@ export class GlobalVarsService {
    * */
   abbreviateNumber(value: number, decimals: number, formatUSD: boolean = false): string {
     let shortValue;
-    const suffixes = ["", "K", "M", "B", "T"];
+    const suffixes = ["", "K", "M", "B", "t", "q", "Q"];
     const suffixNum = Math.floor((("" + value.toFixed(0)).length - 1) / 3);
     if (suffixNum === 0) {
       // if the number is less than 1000, we should only show at most 2 decimals places
@@ -516,6 +518,21 @@ export class GlobalVarsService {
       decimal = 4;
     }
     return this.formatUSD(this.nanosToUSDNumber(nanos), decimal);
+  }
+
+  // Used to convert uint256 Hex balances for DAO coins to standard units.
+  hexNanosToUnitString(hexNanos: Hex, decimal: number = 4): string {
+    const result = fromWei(toBN(hexNanos), "gwei").toString();
+    return this.abbreviateNumber(parseFloat(result), 4, false);
+  }
+
+  // Converts a quantity of DAO coins to a Hex representing the number of nanos
+  toHexNanos(units: number): Hex {
+    return toHex(toWei(units.toString(), "gwei"));
+  }
+
+  unitToBNNanos(units: number): BN {
+    return new BN(this.toHexNanos(units));
   }
 
   isMobile(): boolean {
