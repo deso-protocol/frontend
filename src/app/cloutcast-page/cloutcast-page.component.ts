@@ -305,6 +305,30 @@ export class CloutCastPageComponent implements OnInit {
         throw new Error("could not find post");
       }
 
+      // its a real post, lets see if we're in inbox
+      if (this.selectedTab == 'Inbox') {
+        let shouldRun = null;
+
+        let {inbox = []} = this.selectedCastObject;
+        if (Array.isArray(inbox) && inbox.length > 0) {
+          for (let ii in inbox) {
+            let {user = {}, readOn = null} = inbox[ii].user;
+            let {publicKey = null} = user;
+            if (readOn == null && publicKey !== null && publicKey == this.globalVars.loggedInUser.PublicKeyBase58Check) {
+              shouldRun = ii;
+            }
+          }
+        }
+        if (shouldRun !== null) {
+          let isRead = await this.cloutcastApi.readItem(id);
+          if (isRead == true) {
+            this.selectedCastObject.inbox[shouldRun].readOn = new Date().toISOString();
+          } else {
+            console.log("error reading cc post, no worries, continue");
+          }
+        }
+      }
+
       await this.getPost(thePostHex);
     } catch (ex) {
       console.error(ex);

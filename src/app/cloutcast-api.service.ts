@@ -162,6 +162,23 @@ export class CloutcastApiService {
     }
   }
 
+  public async readItem(castID: number): Promise<boolean> {
+    try {
+      let tToken = await this.getToken();
+      await this.httpClient.get(`${environment.cloutcastUri}/api/user/${this.ccTokenUser}/read/${castID}.json`, {
+        headers: {
+          "Content-Type" : 'application/json',
+          "Authorization": `Bearer ${tToken}`
+        } 
+      }).toPromise();
+      return true;
+
+    } catch (ex) {
+      console.error(ex);
+      return false;
+    }
+  }
+
   public async createCast(castPayload: any): Promise<boolean> {
     try {
       let tToken = await this.getToken();
