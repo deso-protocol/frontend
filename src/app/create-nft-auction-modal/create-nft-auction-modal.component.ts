@@ -15,11 +15,14 @@ export class CreateNftAuctionModalComponent {
   @Input() post: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
   loading = false;
-  minBidAmountUSD: string;
-  minBidAmountDESO: number;
+  minBidAmountUSD: string = "0";
+  minBidAmountDESO: number = 0;
   selectedSerialNumbers: boolean[] = [];
   selectAll: boolean = false;
   creatingAuction: boolean = false;
+  isBuyNow: boolean = false;
+  buyNowPriceUSD: string = "0";
+  buyNowPriceDESO: number = 0;
 
   constructor(
     private backendApi: BackendApiService,
@@ -35,6 +38,21 @@ export class CreateNftAuctionModalComponent {
 
   updateMinBidAmountDESO(usdAmount) {
     this.minBidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  }
+
+  updateBuyNowPriceUSD(desoAmount): void {
+    this.buyNowPriceUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
+  }
+
+  updateBuyNowPriceDESO(usdAmount): void {
+    this.buyNowPriceDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  }
+
+  updateBuyNowStatus(isBuyNow: boolean): void {
+    if (!isBuyNow) {
+      this.buyNowPriceDESO = 0;
+      this.buyNowPriceUSD = "0";
+    }
   }
 
   auctionTotal: number;
@@ -54,6 +72,8 @@ export class CreateNftAuctionModalComponent {
                 val,
                 true,
                 Math.trunc(this.minBidAmountDESO * 1e9),
+                this.isBuyNow,
+                Math.trunc(this.buyNowPriceDESO * 1e9),
                 this.globalVars.defaultFeeRateNanosPerKB
               )
               .pipe(
@@ -98,7 +118,10 @@ export class CreateNftAuctionModalComponent {
   }
 
   createAuctionDisabled(): boolean {
-    return !this.selectedSerialNumbers.filter((isSelected) => isSelected)?.length;
+    return (
+      !this.selectedSerialNumbers.filter((isSelected) => isSelected)?.length ||
+      (this.isBuyNow && this.buyNowPriceDESO < this.minBidAmountDESO)
+    );
   }
 
   selectSerialNumber(idx: number): void {

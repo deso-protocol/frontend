@@ -38,6 +38,8 @@ export class CloseNftAuctionModalComponent {
               nftEntry.SerialNumber,
               false,
               nftEntry.MinBidAmountNanos,
+              false,
+              0,
               this.globalVars.defaultFeeRateNanosPerKB
             )
             .pipe(
