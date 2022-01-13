@@ -21,7 +21,7 @@ export class PlaceBidModalComponent implements OnInit {
 
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
-  bidAmountCLOUT: number;
+  bidAmountDESO: number;
   bidAmountUSD: string;
   selectedSerialNumber: NFTEntryResponse = null;
   availableCount: number;
@@ -64,30 +64,30 @@ export class PlaceBidModalComponent implements OnInit {
       .add(() => (this.loading = false));
   }
 
-  updateBidAmountUSD(cloutAmount) {
-    this.bidAmountUSD = this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2);
+  updateBidAmountUSD(desoAmount) {
+    this.bidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
     this.setErrors();
   }
 
-  updateBidAmountCLOUT(usdAmount) {
-    this.bidAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  updateBidAmountDESO(usdAmount) {
+    this.bidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
     this.setErrors();
   }
 
   setErrors(): void {
-    const bidAmountExceedsBalance = this.bidAmountCLOUT * 1e9 > this.globalVars.loggedInUser.BalanceNanos;
-    this.errors = !this.bidAmountCLOUT && this.selectedSerialNumber.MinBidAmountNanos === 0 ? "You must bid more than 0 CLOUT.\n\n" : "";
+    const bidAmountExceedsBalance = this.bidAmountDESO * 1e9 > this.globalVars.loggedInUser.BalanceNanos;
+    this.errors = !this.bidAmountDESO && this.selectedSerialNumber.MinBidAmountNanos === 0 ? "You must bid more than 0 DESO.\n\n" : "";
     this.errors += !this.selectedSerialNumber ? "You must select an edition to bid.\n\n" : "";
     this.errors += bidAmountExceedsBalance
-      ? `You do not have ${this.bidAmountCLOUT} CLOUT to fulfill this bid.\n\n`
+      ? `You do not have ${this.bidAmountDESO} DESO to fulfill this bid.\n\n`
       : "";
     this.errors +=
-      this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountCLOUT * 1e9
+      this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountDESO * 1e9
         ? `Your bid of ${
-            this.bidAmountCLOUT
-          } does not meet the minimum bid requirement of ${this.globalVars.nanosToBitClout(
+            this.bidAmountDESO
+          } does not meet the minimum bid requirement of ${this.globalVars.nanosToDeSo(
             this.selectedSerialNumber.MinBidAmountNanos
-          )} CLOUT (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})\n\n`
+          )} DESO (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})\n\n`
         : "";
   }
 
@@ -104,7 +104,7 @@ export class PlaceBidModalComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.post.PostHashHex,
         this.selectedSerialNumber.SerialNumber,
-        Math.trunc(this.bidAmountCLOUT * 1e9),
+        Math.trunc(this.bidAmountDESO * 1e9),
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(
@@ -127,9 +127,9 @@ export class PlaceBidModalComponent implements OnInit {
       });
   }
 
-  navigateToBuyCLOUT(): void {
+  navigateToBuyDESO(): void {
     this.bsModalRef.hide();
-    this.router.navigate(["/" + this.globalVars.RouteNames.BUY_BITCLOUT]);
+    this.router.navigate(["/" + this.globalVars.RouteNames.BUY_DESO]);
   }
 
   saveSelection(): void {
@@ -142,8 +142,8 @@ export class PlaceBidModalComponent implements OnInit {
     }
   }
 
-  selectSerialNumber(idx: number) {
-    this.selectedSerialNumber = this.availableSerialNumbers.find((sn) => sn.SerialNumber === idx);
+  selectSerialNumber(serialNumber: NFTEntryResponse) {
+    this.selectedSerialNumber = serialNumber;
     this.saveSelection();
   }
 

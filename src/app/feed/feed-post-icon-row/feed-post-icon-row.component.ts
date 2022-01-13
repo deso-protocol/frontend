@@ -1,11 +1,10 @@
-import { Component, Input, ChangeDetectorRef, ViewChild, HostListener } from "@angular/core";
+import { Component, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter } from "@angular/core";
 import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
 import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { PlatformLocation } from "@angular/common";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { RouteNames } from "../../app-routing.module";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
 import { PopoverDirective } from "ngx-bootstrap/popover";
@@ -24,10 +23,14 @@ export class FeedPostIconRowComponent {
   @Input() postContent: PostEntryResponse;
   @Input() parentPost: PostEntryResponse;
   @Input() afterCommentCreatedCallback: any = null;
-  @Input() afterRecloutCreatedCallback: any = null;
+  @Input() afterRepostCreatedCallback: any = null;
   @Input() hideNumbers: boolean = false;
+  // Will need additional inputs if we walk through actions other than diamonds.
+  @Input() inTutorial: boolean = false;
 
-  sendingRecloutRequest = false;
+  @Output() diamondSent = new EventEmitter();
+
+  sendingRepostRequest = false;
 
   // Threshold above which user must confirm before sending diamonds
   static DiamondWarningThreshold = 4;
@@ -112,8 +115,8 @@ export class FeedPostIconRowComponent {
     if (this.diamondIdxDraggedTo != this.diamondCount) {
       this.diamondDragLeftExplainer = true;
     }
-    // If the drag box is at the alloted lower boundry or below, set cancel status to true
-    this.diamondDragCancel = event.distance.y >= 35;
+    // If the drag box is at the alloted lower boundry or below, set confirm status to true
+    this.diamondDragCancel = event.distance.y > 30;
   }
 
   // Triggered on end of a touch. If we determine this was a "click" event, send 1 diamond. Otherwise nothing
@@ -185,19 +188,22 @@ export class FeedPostIconRowComponent {
     });
   }
 
-  userHasReclouted(): boolean {
-    return this.postContent.PostEntryReaderState && this.postContent.PostEntryReaderState.RecloutedByReader;
+  userHasReposted(): boolean {
+    return this.postContent.PostEntryReaderState && this.postContent.PostEntryReaderState.RepostedByReader;
   }
 
-  _reclout(event: any) {
+  _repost(event: any) {
+    if (this.inTutorial) {
+      return;
+    }
     // Prevent the post from navigating.
     event.stopPropagation();
 
     // If the user isn't logged in, alert them.
     if (this.globalVars.loggedInUser == null) {
-      return this._preventNonLoggedInUserActions("reclout");
+      return this._preventNonLoggedInUserActions("repost");
     } else if (this.globalVars && !this.globalVars.doesLoggedInUserHaveProfile()) {
-      this.globalVars.logEvent("alert : reclout : profile");
+      this.globalVars.logEvent("alert : repost : profile");
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
     }
@@ -205,13 +211,13 @@ export class FeedPostIconRowComponent {
       this.postContent.PostEntryReaderState = {};
     }
 
-    this.sendingRecloutRequest = true;
+    this.sendingRepostRequest = true;
     this._detectChanges();
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.postContent.PostEntryReaderState.RecloutPostHashHex || "" /*PostHashHexToModify*/,
+        this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
         {},
@@ -220,47 +226,50 @@ export class FeedPostIconRowComponent {
         "" /*Sub*/,
         false /*IsHidden*/,
         // What should the fee rate be for this?
-        this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
+        this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : reclout");
-          // Only set the RecloutPostHashHex if this is the first time a user is reclouting a post.
-          if (!this.postContent.PostEntryReaderState.RecloutPostHashHex) {
-            this.postContent.PostEntryReaderState.RecloutPostHashHex = response.PostHashHex;
+          this.globalVars.logEvent("post : repost");
+          // Only set the RepostPostHashHex if this is the first time a user is reposting a post.
+          if (!this.postContent.PostEntryReaderState.RepostPostHashHex) {
+            this.postContent.PostEntryReaderState.RepostPostHashHex = response.PostHashHex;
           }
-          this.postContent.RecloutCount += 1;
-          this.postContent.PostEntryReaderState.RecloutedByReader = true;
-          this.sendingRecloutRequest = false;
+          this.postContent.RepostCount += 1;
+          this.postContent.PostEntryReaderState.RepostedByReader = true;
+          this.sendingRepostRequest = false;
           this._detectChanges();
         },
         (err) => {
           console.error(err);
-          this.sendingRecloutRequest = false;
+          this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars.logEvent("post : reclout : error", { parsedError });
+          this.globalVars.logEvent("post : repost : error", { parsedError });
           this.globalVars._alertError(parsedError);
           this._detectChanges();
         }
       );
   }
 
-  _undoReclout(event: any) {
+  _undoRepost(event: any) {
+    if (this.inTutorial) {
+      return;
+    }
     // Prevent the post from navigating.
     event.stopPropagation();
 
     // If the user isn't logged in, alert them.
     if (this.globalVars.loggedInUser == null) {
-      return this._preventNonLoggedInUserActions("undo reclout");
+      return this._preventNonLoggedInUserActions("undo repost");
     }
-    this.sendingRecloutRequest = true;
+    this.sendingRepostRequest = true;
 
     this._detectChanges();
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.postContent.PostEntryReaderState.RecloutPostHashHex || "" /*PostHashHexToModify*/,
+        this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
         "" /*ParentPostHashHex*/,
         "" /*Title*/,
         {} /*BodyObj*/,
@@ -269,21 +278,21 @@ export class FeedPostIconRowComponent {
         "" /*Sub*/,
         true /*IsHidden*/,
         // What should the fee rate be for this?
-        this.globalVars.feeRateBitCloutPerKB * 1e9 /*feeRateNanosPerKB*/
+        this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : unreclout");
-          this.postContent.RecloutCount--;
-          this.postContent.PostEntryReaderState.RecloutedByReader = false;
-          this.sendingRecloutRequest = false;
+          this.globalVars.logEvent("post : unrepost");
+          this.postContent.RepostCount--;
+          this.postContent.PostEntryReaderState.RepostedByReader = false;
+          this.sendingRepostRequest = false;
           this._detectChanges();
         },
         (err) => {
           console.error(err);
-          this.sendingRecloutRequest = false;
+          this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars.logEvent("post : unreclout : error", { parsedError });
+          this.globalVars.logEvent("post : unrepost : error", { parsedError });
           this.globalVars._alertError(parsedError);
           this._detectChanges();
         }
@@ -291,6 +300,9 @@ export class FeedPostIconRowComponent {
   }
 
   toggleLike(event: any) {
+    if (this.inTutorial) {
+      return;
+    }
     // Prevent the post from navigating.
     event.stopPropagation();
 
@@ -323,7 +335,7 @@ export class FeedPostIconRowComponent {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.postContent.PostHashHex,
         isUnlike,
-        this.globalVars.feeRateBitCloutPerKB * 1e9
+        this.globalVars.feeRateDeSoPerKB * 1e9
       )
       .subscribe(
         (res) => {
@@ -337,6 +349,9 @@ export class FeedPostIconRowComponent {
   }
 
   openModal(event, isQuote: boolean = false) {
+    if (this.inTutorial) {
+      return;
+    }
     // Prevent the post navigation click from occurring.
     event.stopPropagation();
 
@@ -350,9 +365,9 @@ export class FeedPostIconRowComponent {
       SharedDialogs.showCreateProfileToPostDialog(this.router);
     } else {
       const initialState = {
-        // If we are quoting a post, make sure we pass the content so we don't reclout a reclout.
+        // If we are quoting a post, make sure we pass the content so we don't repost a repost.
         parentPost: this.postContent,
-        afterCommentCreatedCallback: isQuote ? this.afterRecloutCreatedCallback : this.afterCommentCreatedCallback,
+        afterCommentCreatedCallback: isQuote ? this.afterRepostCreatedCallback : this.afterCommentCreatedCallback,
         isQuote,
       };
 
@@ -374,6 +389,9 @@ export class FeedPostIconRowComponent {
   }
 
   onTimestampClickHandler(event) {
+    if (this.inTutorial) {
+      return;
+    }
     this.globalVars.logEvent("post : share");
 
     // Prevent the post from navigating.
@@ -418,7 +436,8 @@ export class FeedPostIconRowComponent {
         this.postContent.PosterPublicKeyBase58Check,
         this.postContent.PostHashHex,
         diamonds,
-        this.globalVars.feeRateBitCloutPerKB * 1e9
+        this.globalVars.feeRateDeSoPerKB * 1e9,
+        this.inTutorial
       )
       .toPromise()
       .then(
@@ -441,7 +460,7 @@ export class FeedPostIconRowComponent {
         },
         (err) => {
           if (err.status === 0) {
-            return this.globalVars._alertError("BitClout is under heavy load. Please try again in one minute.");
+            return this.globalVars._alertError("DeSo is under heavy load. Please try again in one minute.");
           }
           this.sendingDiamonds = false;
           const parsedError = this.backendApi.parseProfileError(err);
@@ -453,6 +472,7 @@ export class FeedPostIconRowComponent {
 
   sendDiamondsSuccess(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
+    comp.diamondSent.emit(null);
   }
 
   sendDiamondsFailure(comp: FeedPostIconRowComponent) {
@@ -493,14 +513,12 @@ export class FeedPostIconRowComponent {
   }
 
   addDiamondSelection(event) {
-    // Account for the delayed hover appearance with mouse
-    const additionalDelay = event?.type === "initiateDrag" ? 0 : 1000;
     // Need to make sure hover event doesn't trigger on child elements
     if (event?.type === "initiateDrag" || event.target.id === "diamond-button") {
       for (let idx = 0; idx < this.diamondCount; idx++) {
         this.diamondTimeouts[idx] = setTimeout(() => {
           this.diamondsVisible[idx] = true;
-        }, idx * this.diamondAnimationDelay + additionalDelay);
+        }, idx * this.diamondAnimationDelay);
       }
     }
   }
@@ -513,6 +531,10 @@ export class FeedPostIconRowComponent {
   }
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
+    if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+      this.globalVars._alertError("Must be logged in to send diamonds");
+      return;
+    }
     // Disable diamond selection if diamonds are being sent
     if (this.sendingDiamonds) {
       return;

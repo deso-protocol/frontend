@@ -6,6 +6,7 @@ import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/fo
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Title } from "@angular/platform-browser";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "creators-leaderboard",
@@ -95,7 +96,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
   ngOnInit() {
     this.isLoadingProfilesForFirstTime = true;
-    this.titleService.setTitle("Buy Creator Coins - BitClout");
+    this.titleService.setTitle(`Buy Creator Coins - ${environment.node.name}`);
   }
 
   canLoggedInUserFollowTargetPublicKey(targetPubKeyBase58Check) {

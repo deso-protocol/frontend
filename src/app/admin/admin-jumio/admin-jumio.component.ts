@@ -1,8 +1,12 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, CountryLevelSignUpBonus, CountryLevelSignUpBonusResponse } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import { AdminJumioEditCountrySignUpBonusComponent } from "./admin-jumio-edit-country-sign-up-bonus/admin-jumio-edit-country-sign-up-bonus.component";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { Subscription } from "rxjs";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "admin-jumio",
@@ -11,18 +15,53 @@ import { SwalHelper } from "../../../lib/helpers/swal-helper";
 })
 export class AdminJumioComponent {
   usernameToResetJumio = "";
+  usernameToExecuteJumioCallback = "";
   resettingJumio = false;
+  executingJumioCallback = false;
+  jumioCallbackCountrySelected: string = "";
 
-  jumioBitCloutNanos: number = 0;
-  updatingJumioBitCloutNanos = false;
+  jumioUSD: number = 0;
+  jumioKickbackUSD: number = 0;
+  updatingJumioUSDCents = false;
+  updatingJumioKickbackUSDCents = false;
+
+  countryLevelSignUpBonuses: { [k: string]: CountryLevelSignUpBonusResponse } = {};
+  defaultSignUpBonus: CountryLevelSignUpBonus;
+
+  static GENERAL = "General";
+  static COUNTRY_BONUSES = "Country Bonuses";
+  tabs = [AdminJumioComponent.GENERAL, AdminJumioComponent.COUNTRY_BONUSES];
+  activeTab: string = AdminJumioComponent.GENERAL;
+  AdminJumioComponent = AdminJumioComponent;
 
   constructor(
     private globalVars: GlobalVarsService,
     private router: Router,
     private route: ActivatedRoute,
-    private backendApi: BackendApiService
+    private backendApi: BackendApiService,
+    private modalService: BsModalService,
+    private toastr: ToastrService
   ) {
-    this.jumioBitCloutNanos = globalVars.jumioBitCloutNanos;
+    this.jumioUSD = globalVars.jumioUSDCents / 100;
+    this.jumioKickbackUSD = globalVars.jumioKickbackUSDCents / 100;
+    this.refreshCountryBonuses();
+  }
+
+  refreshCountryBonuses(): Subscription {
+    return this.backendApi
+      .AdminGetAllCountryLevelSignUpBonuses(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )
+      .subscribe(
+        (res) => {
+          this.countryLevelSignUpBonuses = res.SignUpBonusMetadata;
+          this.defaultSignUpBonus = res.DefaultSignUpBonusMetadata;
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
   }
 
   _resetJumio(): void {
@@ -42,7 +81,9 @@ export class AdminJumioComponent {
         username
       )
       .subscribe(
-        (res) => {},
+        (res) => {
+          this.globalVars._alertSuccess("Successfully reset jumio status");
+        },
         (err) => {
           this.globalVars._alertError(err.error.error);
         }
@@ -50,12 +91,41 @@ export class AdminJumioComponent {
       .add(() => (this.resettingJumio = false));
   }
 
-  updateJumioBitCloutNanos(): void {
+  _executeJumioCallback(): void {
+    this.executingJumioCallback = true;
+    let pubKey = "";
+    let username = "";
+    if (this.globalVars.isMaybePublicKey(this.usernameToExecuteJumioCallback)) {
+      pubKey = this.usernameToExecuteJumioCallback;
+    } else {
+      username = this.usernameToExecuteJumioCallback;
+    }
+    this.backendApi
+      .AdminJumioCallback(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        pubKey,
+        username,
+        this.jumioCallbackCountrySelected
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess("Successfully executed jumio callback");
+        },
+        (err) => {
+          this.globalVars._alertError(err.error.error);
+        }
+      )
+      .add(() => (this.executingJumioCallback = false));
+  }
+
+  updateJumioUSDCents(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
       title: "Are you ready?",
-      html: `You are about to update the amount of $CLOUT sent for verifying with Jumio to ${this.globalVars.nanosToBitClout(
-        this.jumioBitCloutNanos
+      html: `You are about to update the default sign-up amount sent for verifying with Jumio to ${this.globalVars.formatUSD(
+        this.jumioUSD,
+        2
       )}.`,
       showConfirmButton: true,
       showCancelButton: true,
@@ -68,22 +138,84 @@ export class AdminJumioComponent {
       cancelButtonText: "Cancel",
     }).then((res) => {
       if (res.isConfirmed) {
-        this.updatingJumioBitCloutNanos = true;
+        this.updatingJumioUSDCents = true;
         this.backendApi
-          .AdminUpdateJumioBitClout(
+          .AdminUpdateJumioUSDCents(
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
-            this.jumioBitCloutNanos
+            this.jumioUSD * 100
           )
           .subscribe(
             (res) => {
-              this.globalVars.jumioBitCloutNanos = res.BitCloutNanos;
+              this.globalVars.jumioUSDCents = res.USDCents;
+              this.refreshCountryBonuses();
             },
             (err) => {
               console.error(err);
             }
           )
-          .add(() => (this.updatingJumioBitCloutNanos = false));
+          .add(() => (this.updatingJumioUSDCents = false));
+      }
+    });
+  }
+
+  updateJumioKickbackUSDCents(): void {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Are you ready?",
+      html: `You are about to update the default kickback amount to ${this.globalVars.formatUSD(
+        this.jumioKickbackUSD,
+        2
+      )}. This is the default amount referrers will get when they refer someone who verifies with Jumio.`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      reverseButtons: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      confirmButtonText: "Ok",
+      cancelButtonText: "Cancel",
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.updatingJumioKickbackUSDCents = true;
+        this.backendApi
+          .AdminUpdateJumioKickbackUSDCents(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.jumioKickbackUSD * 100
+          )
+          .subscribe(
+            (res) => {
+              this.globalVars.jumioKickbackUSDCents = res.USDCents;
+              this.refreshCountryBonuses();
+            },
+            (err) => {
+              console.error(err);
+            }
+          )
+          .add(() => (this.updatingJumioKickbackUSDCents = false));
+      }
+    });
+  }
+
+  _handleTabClick(tab: string): void {
+    this.activeTab = tab;
+  }
+
+  editCountry(country: string, event): void {
+    event.stopPropagation();
+    const editBonusModal = this.modalService.show(AdminJumioEditCountrySignUpBonusComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { countryLevelSignUpBonusResponse: this.countryLevelSignUpBonuses[country] },
+    });
+    editBonusModal.onHide.subscribe((res) => {
+      if (res === "sign-up-bonus-updated") {
+        this.refreshCountryBonuses();
+        this.toastr.info(`Sign-Up Bonus updated for ${country}`, null, {
+          positionClass: "toast-top-center",
+          timeOut: 3000,
+        });
       }
     });
   }

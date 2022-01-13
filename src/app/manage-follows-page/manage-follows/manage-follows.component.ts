@@ -67,7 +67,7 @@ export class ManageFollowsComponent implements OnDestroy {
         // Filter out null / undefined values and sort by coin price.
         const sortedProfileEntries: ProfileEntryResponse[] = (Object.values(chunk) as ProfileEntryResponse[])
           .filter((val) => val)
-          .sort((ii: any, jj: any) => jj.CoinEntry.BitCloutLockedNanos - ii.CoinEntry.BitCloutLockedNanos);
+          .sort((ii: any, jj: any) => jj.CoinEntry.DeSoLockedNanos - ii.CoinEntry.DeSoLockedNanos);
 
         if (sortedProfileEntries.length > 0) {
           // Set pagedKeys so we have the last public key for the next page.
@@ -116,11 +116,17 @@ export class ManageFollowsComponent implements OnDestroy {
       case this.appData.RouteNames.FOLLOWING: {
         this.getEntriesFollowingPublicKey = false;
         this.activeTab = ManageFollowsComponent.FOLLOWING;
+        this.lastPage = null;
+        this.infiniteScroller.reset();
+        this.datasource.adapter.reset();
         break;
       }
       case this.appData.RouteNames.FOLLOWERS: {
         this.getEntriesFollowingPublicKey = true;
         this.activeTab = ManageFollowsComponent.FOLLOWERS;
+        this.lastPage = null;
+        this.infiniteScroller.reset();
+        this.datasource.adapter.reset();
         break;
       }
       default: {

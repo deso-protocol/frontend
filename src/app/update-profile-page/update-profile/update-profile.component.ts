@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, OnChanges } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService } from "../../backend-api.service";
+import { BackendApiService, TutorialStatus } from "../../backend-api.service";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { AppRoutingModule, RouteNames } from "../../app-routing.module";
 import { Title } from "@angular/platform-browser";
-import Swal from "sweetalert2";
+import { environment } from "src/environments/environment";
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -27,6 +27,8 @@ export type ProfileUpdateErrors = {
 })
 export class UpdateProfileComponent implements OnInit, OnChanges {
   @Input() loggedInUser: any;
+  @Input() inTutorial: boolean = false;
+
   updateProfileBeingCalled: boolean = false;
   usernameInput: string;
   descriptionInput: string;
@@ -56,7 +58,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this._updateFormBasedOnLoggedInUser();
-    this.titleService.setTitle("Update Profile - BitClout");
+    this.titleService.setTitle(`Update Profile - ${environment.node.name}`);
   }
 
   // This is used to handle any changes to the loggedInUser elegantly.
@@ -166,7 +168,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   // This is a standalone function in case we decide we want to confirm fees before doing a real transaction.
   _callBackendUpdateProfile() {
     return this.backendApi.UpdateProfile(
-      this.globalVars.localNode,
+      environment.verificationEndpointHostname,
       this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
       "" /*ProfilePublicKeyBase58Check*/,
       // Start params
@@ -177,7 +179,7 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
       false /*IsHidden*/,
       // End params
-      this.globalVars.feeRateBitCloutPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+      this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
     );
   }
 
@@ -217,12 +219,12 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
             confirmButton: "btn btn-light",
             cancelButton: "btn btn-light no",
           },
-          confirmButtonText: lowBalance ? "Buy $CLOUT" : null,
+          confirmButtonText: lowBalance ? "Buy $DESO" : null,
           cancelButtonText: lowBalance ? "Later" : null,
-          showCancelButton: lowBalance,
+          showCancelButton: !!lowBalance,
         }).then((res) => {
           if (lowBalance && res.isConfirmed) {
-            this.router.navigate([RouteNames.BUY_BITCLOUT], { queryParamsHandling: "merge" });
+            this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
           }
         });
       }
@@ -233,6 +235,12 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     comp.globalVars.celebrate();
     comp.updateProfileBeingCalled = false;
     comp.profileUpdated = true;
+    if (comp.inTutorial) {
+      comp.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR], {
+        queryParamsHandling: "merge",
+      });
+      return;
+    }
     if (comp.globalVars.loggedInUser.UsersWhoHODLYouCount === 0) {
       SwalHelper.fire({
         target: comp.globalVars.getTargetComponentSelector(),

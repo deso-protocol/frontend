@@ -1,0 +1,66 @@
+<app-page>
+  <!-- Top Bar -->
+  <div class="global__top-bar d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey">
+    <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+    My Referrals
+  </div>
+
+  <div class="global__top-bar__height"></div>
+
+  <div
+    class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
+  >
+    The link{{globalVars.loggedInUser.ReferralInfoResponses?.length > 1 ? 's' : ''}}
+    below gives you and your referrals a bonus on sign up. Note that all
+    bonuses are shown in USD but paid in the DESO equivalent at the time of sign up.
+  </div>
+
+  <div *ngIf="globalVars.loggedInUser" class="p-15px">
+    <div *ngFor="let referral of globalVars.loggedInUser?.ReferralInfoResponses; let ii = index">
+        <div class="mb-15px p-15px fs-15px br-5px border border-color-grey referral-link-info__blue-border">
+          <div class="d-flex align-items-center">
+            <div (click)="_copyLink(ii)"
+                 class="btn btn-outline-secondary d-flex fs-15px p-5px mr-5px"
+                 style="width: fit-content">
+              <i class="far fa-copy fa-sm"></i>
+            </div>
+            <a class="fs-15px" (click)="_copyLink(ii)">
+              {{ globalVars.getLinkForReferralHash(referral.Info.ReferralHashBase58) }}
+            </a>
+            <div *ngIf="linkCopied[ii]" class="fs-15px px-5px py-0px">
+              <i class="far fa-check-circle fa-xs fc-blue"></i>
+            </div>
+          </div>
+          <div *ngIf="!referral.IsActive" class="fc-red">This link is no longer active.</div>
+
+          <div class="font-weight-bold mt-15px">
+            <span>You get ${{ referral.Info.ReferrerAmountUSDCents / 100 }} USD per referral</span>
+            <free-deso-message [hideMessage]="true"></free-deso-message>
+          </div>
+          <div>
+            Total:
+            {{ globalVars.nanosToDeSo(referral.Info.TotalReferrerDeSoNanos) }} DESO
+            ({{ globalVars.nanosToUSD(referral.Info.TotalReferrerDeSoNanos) }})
+          </div>
+
+          <div class="font-weight-bold mt-15px">
+            <span>Your referrals get ${{ referral.Info.RefereeAmountUSDCents / 100 }} USD</span>
+            <free-deso-message [hideMessage]="true"></free-deso-message>
+          </div>
+          <div>
+            Total:
+            {{ globalVars.nanosToDeSo(referral.Info.TotalRefereeDeSoNanos) }} DESO
+            ({{ globalVars.nanosToUSD(referral.Info.TotalRefereeDeSoNanos) }})
+          </div>
+
+          <div class="mt-15px">
+            <span class="font-weight-bold">Referrals remaining: </span>
+            {{ referral.Info.MaxReferrals > 0 ?
+                 referral.Info.MaxReferrals - referral.Info.TotalReferrals
+                 : 'Unlimited'
+            }}
+          </div>
+        </div>
+    </div>
+  </div>
+</app-page>

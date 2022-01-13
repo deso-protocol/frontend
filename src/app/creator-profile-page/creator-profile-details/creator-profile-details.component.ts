@@ -6,6 +6,7 @@ import { Location } from "@angular/common";
 import { SwalHelper } from "../../../lib/helpers/swal-helper";
 import { CreatorProfileTopCardComponent } from "../creator-profile-top-card/creator-profile-top-card.component";
 import { Title } from "@angular/platform-browser";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "creator-profile-details",
@@ -60,7 +61,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(this.userName + " on BitClout");
+    this.titleService.setTitle(this.userName + ` on ${environment.node.name}`);
   }
 
   userBlocked() {
@@ -195,7 +196,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
 
   tweetToClaimLink() {
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      `Just setting up my bitclout 💎🙌\n\nhttps://bitclout.com/u/${this.userName}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`
+      `Just setting up my ${environment.node.name} 💎🙌\n\n${environment.node.url}/u/${this.userName}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`
     )}`;
   }
 

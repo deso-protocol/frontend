@@ -1,5 +1,5 @@
 <div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
-  <div class="d-inline-block d-lg-none fs-12px fc-muted pr-5px">
+  <div class="d-flex d-lg-none fs-12px fc-muted" style="padding-right: 6px;">
     <span class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle" matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size" mat-raised-button #tooltip="matTooltip" [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)">{{
       globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}</span>
   </div>
@@ -12,7 +12,15 @@
       (click)="copyPostLinkToClipboard($event)"
     >
       <i class="icon-link"></i>
-      Link to Post
+      Link to {{ post.IsNFT ? "NFT" : "Post" }}
+    </a>
+    <a
+      *ngIf="showSharePost"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+      (click)="sharePostUrl($event)"
+      >
+      <i class="fas fa-share-square"></i>
+      Share {{ post.IsNFT ? "NFT" : "Post" }}
     </a>
     <a
       *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT && !post.ParentStakeID"
@@ -27,7 +35,24 @@
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
       (click)="openCreateNFTAuctionModal($event)"
     >
+      <i class="fas fa-dollar-sign"></i>
       Put On Sale
+    </a>
+    <a
+      *ngIf="showTransferNFT()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+      (click)="openTransferNFTModal($event)"
+    >
+      <i class="fas fa-paper-plane"></i>
+      Transfer NFT
+    </a>
+    <a
+      *ngIf="showBurnNFT()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+      (click)="openBurnNFTModal($event)"
+    >
+      <i class="fa fa-fire"></i>
+      Burn NFT
     </a>
     <a
       *ngIf="post.IsNFT && globalVars.showAdminTools()"

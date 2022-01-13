@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { BsModalRef } from "ngx-bootstrap/modal";
+import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../global-vars.service";
 import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
 import { concatMap, last, map } from "rxjs/operators";
@@ -16,7 +16,7 @@ export class CreateNftAuctionModalComponent {
   @Input() nftEntryResponses: NFTEntryResponse[];
   loading = false;
   minBidAmountUSD: string;
-  minBidAmountCLOUT: number;
+  minBidAmountDESO: number;
   selectedSerialNumbers: boolean[] = [];
   selectAll: boolean = false;
   creatingAuction: boolean = false;
@@ -25,15 +25,16 @@ export class CreateNftAuctionModalComponent {
     private backendApi: BackendApiService,
     public globalVars: GlobalVarsService,
     public bsModalRef: BsModalRef,
+    private modalService: BsModalService,
     private router: Router
   ) {}
 
-  updateMinBidAmountUSD(cloutAmount) {
-    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(cloutAmount * 1e9).toFixed(2);
+  updateMinBidAmountUSD(desoAmount) {
+    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
   }
 
-  updateMinBidAmountCLOUT(usdAmount) {
-    this.minBidAmountCLOUT = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+  updateMinBidAmountDESO(usdAmount) {
+    this.minBidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
   auctionTotal: number;
@@ -52,7 +53,7 @@ export class CreateNftAuctionModalComponent {
                 this.post.PostHashHex,
                 val,
                 true,
-                Math.trunc(this.minBidAmountCLOUT * 1e9),
+                Math.trunc(this.minBidAmountDESO * 1e9),
                 this.globalVars.defaultFeeRateNanosPerKB
               )
               .pipe(
@@ -70,6 +71,7 @@ export class CreateNftAuctionModalComponent {
       .subscribe(
         (res) => {
           this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.post.PostHashHex]);
+          this.modalService.setDismissReason("auction created");
           this.bsModalRef.hide();
         },
         (err) => {
@@ -84,6 +86,7 @@ export class CreateNftAuctionModalComponent {
     return this.nftEntryResponses.filter(
       (nftEntryResponse) =>
         !nftEntryResponse.IsForSale &&
+        !nftEntryResponse.IsPending &&
         nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
     );
   }

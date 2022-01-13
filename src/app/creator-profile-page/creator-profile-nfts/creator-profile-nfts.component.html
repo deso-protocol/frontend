@@ -48,6 +48,32 @@
 </div>
 <div
   *ngIf="
+    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.TRANSFERABLE
+  "
+  class="p-15px"
+>
+  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No transferable NFTs right now.</span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} has no transferable NFTs yet.</span>
+    </ng-template>
+  </div>
+</div>
+<div
+  *ngIf="
+    !showProfileAsReserved && !isLoading && !nftResponse?.length && activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS
+  "
+  class="p-15px"
+>
+  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">No pending NFTs right now.</span>
+    <ng-template #elseMissingPostBlock>
+      <span>@{{ profile.Username }} has no pending NFTs yet.</span>
+    </ng-template>
+  </div>
+</div>
+<div
+  *ngIf="
     !showProfileAsReserved && !isLoading && !myBids?.length && activeTab === CreatorProfileNftsComponent.MY_BIDS
   "
   class="p-15px"
@@ -69,6 +95,12 @@
     </div>
     <div *ngIf="activeTab === CreatorProfileNftsComponent.FOR_SALE && nftResponse?.length">
       NFTs that @{{ profile.Username }} is currently selling
+    </div>
+    <div *ngIf="activeTab === CreatorProfileNftsComponent.TRANSFERABLE && nftResponse?.length">
+      NFTs that @{{ profile.Username }} can transfer
+    </div>
+    <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS && nftResponse?.length">
+      Transferred NFTs pending acceptance by @{{ profile.Username }}
     </div>
   </div>
   <div *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)">
@@ -96,6 +128,7 @@
         [cardStyle]="true"
         [profilePublicKeyBase58Check]="profile.PublicKeyBase58Check"
         [isForSaleOnly]="activeTab === CreatorProfileNftsComponent.FOR_SALE"
+        [acceptNFT]="activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS"
         (userBlocked)="userBlocked()"
       ></feed-post>
       <div *ngIf="activeTab === CreatorProfileNftsComponent.MY_BIDS && nftEntry.PostEntryResponse">
@@ -113,7 +146,7 @@
             class="d-flex align-items-center mb-0 justify-content-around p-5px fs-12px"
           >
             Bid:
-            <span class="px-5px">{{ globalVars.nanosToBitClout(nftEntry.BidAmountNanos, 5) }} $CLOUT</span>
+            <span class="px-5px">{{ globalVars.nanosToDeSo(nftEntry.BidAmountNanos, 5) }} $DESO</span>
             <span>(~{{ globalVars.nanosToUSD(nftEntry.BidAmountNanos, 2) }})</span>
           </div>
         </div>
@@ -121,7 +154,7 @@
           <div
             class="fc-red"
             *ngIf="nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos">
-            There is a higher bid of {{ globalVars.nanosToBitClout(nftEntry.HighestBidAmountNanos) }} CLOUT (~{{ globalVars.nanosToUSD(nftEntry.HighestBidAmountNanos, 2) }}) for this serial number.
+            There is a higher bid of {{ globalVars.nanosToDeSo(nftEntry.HighestBidAmountNanos) }} DESO (~{{ globalVars.nanosToUSD(nftEntry.HighestBidAmountNanos, 2) }}) for this serial number.
           </div>
           <div
             class="fc-green"
@@ -129,7 +162,7 @@
             Your bid is the highest one for this serial number.
           </div>
           <div class="fs-12px fc-red" *ngIf="nftEntry.BidderBalanceNanos < nftEntry.BidAmountNanos" [ngClass]="{ 'pt-5px': nftEntry.HighestBidAmountNanos > nftEntry.BidAmountNanos }">
-            You do not have enough CLOUT for this bid. Place a lower bid or <a class="link--unstyled" style="text-decoration: underline" [routerLink]="'/' + globalVars.RouteNames.BUY_BITCLOUT">buy CLOUT</a>.
+            You do not have enough DESO for this bid. Place a lower bid or <a class="link--unstyled" style="text-decoration: underline" [routerLink]="'/' + globalVars.RouteNames.BUY_DESO">buy DESO</a>.
           </div>
         </div>
 

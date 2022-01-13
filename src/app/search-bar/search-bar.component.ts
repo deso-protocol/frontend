@@ -15,7 +15,7 @@ export class SearchBarComponent implements OnInit {
   @ViewChild("searchBarRoot", { static: true }) searchBarRoot: ElementRef;
   @Input() isSearchForUsersToMessage: boolean;
   @Input() showCloutavista: boolean = true;
-  @Input() isSearchForUsersToSendClout: boolean;
+  @Input() isSearchForUsersToSendDESO: boolean;
   @Input() startingSearchText: string;
   @Output() creatorToMessage = new EventEmitter<any>();
   searchText: string;
@@ -59,6 +59,7 @@ export class SearchBarComponent implements OnInit {
     if (this.globalVars.isMaybePublicKey(requestedSearchText)) {
       return this.backendApi.GetSingleProfile(this.globalVars.localNode, requestedSearchText, "").subscribe(
         (res) => {
+          this.globalVars.logEvent("search : creators : public-key");
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
             this.loading = false;
             if (res.IsBlacklisted) {
@@ -94,7 +95,7 @@ export class SearchBarComponent implements OnInit {
         this.globalVars.localNode,
         "" /*PublicKeyBase58Check*/,
         "" /*Username*/,
-        this.searchText.trim().replace(/^@/, '') /*UsernamePrefix*/,
+        this.searchText.trim().replace(/^@/, "") /*UsernamePrefix*/,
         "" /*Description*/,
         "" /*Order by*/,
         20 /*NumToFetch*/,
@@ -108,6 +109,7 @@ export class SearchBarComponent implements OnInit {
           // only process this response if it came from
           // the request for the current search text
           if (requestedSearchText === this.searchText || requestedSearchText === this.startingSearchText) {
+            this.globalVars.logEvent("search : creators : username");
             this.loading = false;
             this.creators = response.ProfilesFound;
             // If starting search text is set, we handle the selection of the creator.
@@ -151,8 +153,9 @@ export class SearchBarComponent implements OnInit {
   // This search bar is used for more than just navigating to a user profile. It is also
   // used for finding users to message.  We handle both cases here.
   _handleCreatorSelect(creator: any) {
+    this.globalVars.logEvent("search : creators : select");
     if (creator && creator != "") {
-      if (this.isSearchForUsersToMessage || this.isSearchForUsersToSendClout) {
+      if (this.isSearchForUsersToMessage || this.isSearchForUsersToSendDESO) {
         this.creatorToMessage.emit(creator);
       } else {
         this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, creator.Username], {
@@ -165,7 +168,7 @@ export class SearchBarComponent implements OnInit {
       // this user should be redirected to the profile page of the user with the username
       // equal to that of the current searchText.
       if (this.searchText !== "" && !this.isSearchForUsersToMessage) {
-        if (this.isSearchForUsersToSendClout) {
+        if (this.isSearchForUsersToSendDESO) {
           this.creatorToMessage.emit(this.creators[0]);
         } else {
           this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, this.searchText], {
@@ -206,15 +209,15 @@ export class SearchBarComponent implements OnInit {
       this.debouncedSearchFunction();
     }
   }
-  
+
   _handleMouseOut(creator: string, index: number) {
-      if (this.creatorSelected === creator) {
-        this.creatorSelected = "";
-      }
-      if (this.selectedCreatorIndex === index) {
-        this.selectedCreatorIndex = -1;
-      }
+    if (this.creatorSelected === creator) {
+      this.creatorSelected = "";
     }
+    if (this.selectedCreatorIndex === index) {
+      this.selectedCreatorIndex = -1;
+    }
+  }
 
   _setUpClickOutListener() {
     this.renderer.listen("window", "click", (e: any) => {
