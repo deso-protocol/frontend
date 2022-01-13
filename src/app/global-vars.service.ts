@@ -28,6 +28,7 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import Swal from "sweetalert2";
 import Timer = NodeJS.Timer;
 import {fromWei, Hex, toBN, toHex, toWei} from "web3-utils";
+import {BN} from "ethereumjs-util";
 
 export enum ConfettiSvg {
   DIAMOND = "diamond",
@@ -528,6 +529,10 @@ export class GlobalVarsService {
   // Converts a quantity of DAO coins to a Hex representing the number of nanos
   toHexNanos(units: number): Hex {
     return toHex(toWei(units.toString(), "gwei"));
+  }
+
+  unitToBNNanos(units: number): BN {
+    return new BN(this.toHexNanos(units));
   }
 
   isMobile(): boolean {
