@@ -12,10 +12,13 @@ import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { Observable, Subscription, throwError } from "rxjs";
+import { Observable, Subscription, throwError, zip } from "rxjs";
 import { environment } from "src/environments/environment";
-import { fromWei, hexToNumber, toHex, toBN, toWei } from "web3-utils";
+import { fromWei, toBN, toHex, toWei } from "web3-utils";
+import { catchError, map } from "rxjs/operators";
 import { Hex } from "web3-utils/types";
+import { BsModalService } from "ngx-bootstrap/modal";
+import { TransferDAOCoinModalComponent } from "./transfer-dao-coin-modal/transfer-dao-coin-modal.component";
 
 @Component({
   selector: "dao-coins",
@@ -42,22 +45,39 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   myDAOCapTable: BalanceEntryResponse[] = [];
   daoCoinHoldings: BalanceEntryResponse[] = [];
 
+  loadingMyDAOCapTable: boolean = false;
+  loadingMyDAOCoinHoldings: boolean = false;
+  loadingNewSelection: boolean = false;
+
   static myDAOTab: string = "My DAO";
   static daoCoinsTab: string = "DAO Holdings";
   tabs = [DaoCoinsComponent.myDAOTab, DaoCoinsComponent.daoCoinsTab];
   activeTab: string = DaoCoinsComponent.myDAOTab;
   balanceEntryToHihlight: BalanceEntryResponse;
 
+  TransferRestrictionStatusString = TransferRestrictionStatusString;
   transferRestrictionStatus: TransferRestrictionStatusString;
   coinsToMint: number;
   coinsToBurn: number;
+  mintingDAOCoin: boolean = false;
+  disablingMinting: boolean = false;
+  burningDAOCoin: boolean = false;
+  updatingTransferRestrictionStatus: boolean = false;
+
+  transferRestrictionStatusOptions = [
+    TransferRestrictionStatusString.UNRESTRICTED,
+    TransferRestrictionStatusString.PROFILE_OWNER_ONLY,
+    TransferRestrictionStatusString.DAO_MEMBERS_ONLY,
+    TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED,
+  ];
 
   constructor(
     private appData: GlobalVarsService,
     private titleService: Title,
     private router: Router,
     private route: ActivatedRoute,
-    private backendApi: BackendApiService
+    public backendApi: BackendApiService,
+    private modalService: BsModalService
   ) {
     this.globalVars = appData;
   }
@@ -68,25 +88,50 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     // Don't look up my DAO if I don't have a profile
     if (this.globalVars.loggedInUser?.ProfileEntryResponse) {
       this.myDAOCoin = this.globalVars.loggedInUser.ProfileEntryResponse.DAOCoinEntry;
-      this.backendApi
-        .GetHodlersForPublicKey(
-          this.globalVars.localNode,
-          this.globalVars.loggedInUser?.PublicKeyBase58Check,
-          "",
-          "",
-          0,
-          false,
-          true,
-          true
-        )
-        .subscribe((res) => {
-          this.myDAOCapTable = res.HODLers || [];
-        });
+      this.transferRestrictionStatus = this.myDAOCoin.TransferRestrictionStatus;
+      this.loadMyDAOCapTable().subscribe((res) => {});
     } else {
       this.hideMyDAOTab = true;
       this.showDAOCoinHoldings = true;
     }
-    this.backendApi
+    this.loadMyDAOCoinHoldings().subscribe((res) => {});
+    this.titleService.setTitle(`DAO Coins - ${environment.node.name}`);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  loadMyDAOCapTable(): Observable<BalanceEntryResponse[]> {
+    this.loadingMyDAOCapTable = true;
+    return this.backendApi
+      .GetHodlersForPublicKey(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        "",
+        "",
+        0,
+        false,
+        true,
+        true
+      )
+      .pipe(
+        map((res) => {
+          this.myDAOCapTable = res.Hodlers || [];
+          this.loadingMyDAOCapTable = false;
+          return res.Hodlers;
+        }),
+        catchError((err) => {
+          console.error(err);
+          this.loadingMyDAOCapTable = false;
+          return throwError(err);
+        })
+      );
+  }
+
+  loadMyDAOCoinHoldings(): Observable<BalanceEntryResponse[]> {
+    this.loadingMyDAOCoinHoldings = true;
+    return this.backendApi
       .GetHodlersForPublicKey(
         this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
@@ -97,14 +142,19 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
         true,
         true
       )
-      .subscribe((res) => {
-        this.daoCoinHoldings = res.HODLers || [];
-      });
-    this.titleService.setTitle(`DAO Coins - ${environment.node.name}`);
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+      .pipe(
+        map((res) => {
+          this.daoCoinHoldings = res.Hodlers || [];
+          this.loadingMyDAOCoinHoldings = false;
+          this.loadingMyDAOCoinHoldings = false;
+          return res.Hodlers;
+        }),
+        catchError((err) => {
+          console.error(err);
+          this.loadingMyDAOCoinHoldings = false;
+          return throwError(err);
+        })
+      );
   }
 
   // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.
@@ -158,15 +208,84 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   }
 
   mintDAOCoin(): void {
-    this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.MINT).subscribe(
-      (res) => {
-        console.log(res);
-      },
-      (err) => {
-        console.error(err);
-      }
-    );
+    if (this.myDAOCoin.MintingDisabled || this.mintingDAOCoin) {
+      return;
+    }
+    this.loadingNewSelection = true;
+    this.mintingDAOCoin = true;
+    this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.MINT)
+      .subscribe(
+        (res) => {
+          this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
+            .add(toBN(this.toHexNanos(this.coinsToMint)))
+            .toString("hex");
+          zip(this.loadMyDAOCapTable(), this.loadMyDAOCoinHoldings()).subscribe(() => {
+            this.loadingNewSelection = false;
+            this._handleTabClick(this.activeTab);
+          });
+        },
+        (err) => {
+          console.error(err);
+        }
+      )
+      .add(() => (this.mintingDAOCoin = false));
   }
+
+  disableMinting(): void {
+    if (this.myDAOCoin.MintingDisabled || this.disablingMinting) {
+      return;
+    }
+    this.disablingMinting = true;
+    this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.DISABLE_MINTING)
+      .subscribe(
+        (res) => {
+          this.myDAOCoin.MintingDisabled = true;
+        },
+        (err) => {
+          console.error(err);
+        }
+      )
+      .add(() => (this.disablingMinting = false));
+  }
+
+  updateTransferRestrictionStatus(): void {
+    if (
+      this.myDAOCoin.TransferRestrictionStatus === TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED ||
+      this.updatingTransferRestrictionStatus
+    ) {
+      return;
+    }
+    this.updatingTransferRestrictionStatus = true;
+    this.doDAOCoinTxn(
+      this.globalVars.loggedInUser?.PublicKeyBase58Check,
+      DAOCoinOperationTypeString.UPDATE_TRANSFER_RESTRICTION_STATUS
+    )
+      .subscribe(
+        (res) => {
+          this.myDAOCoin.TransferRestrictionStatus = this.transferRestrictionStatus;
+        },
+        (err) => {
+          console.error(err);
+        }
+      )
+      .add(() => (this.updatingTransferRestrictionStatus = false));
+  }
+
+  // burnDAOCoin(profilePublicKeyBase58Check: string): void {
+  //   if (this.burningDAOCoin) {
+  //     return;
+  //   }
+  //   this.burningDAOCoin = true;
+  //   this.doDAOCoinTxn(this.globalVars.localNode, DAOCoinOperationTypeString.BURN).subscribe((res) => {
+  //     if (profilePublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+  //       this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
+  //         .add(toBN(this.toHexNanos(this.coinsToMint)))
+  //         .toString("hex");
+  //     }
+  //   }, (err) => {
+  //     console.error(err)
+  //   }).add(() => (this.burningDAOCoin));
+  // }
 
   doDAOCoinTxn(profilePublicKeyBase58Check: string, operationType: DAOCoinOperationTypeString): Observable<any> {
     if (
@@ -183,8 +302,8 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
       operationType === DAOCoinOperationTypeString.UPDATE_TRANSFER_RESTRICTION_STATUS
         ? this.transferRestrictionStatus
         : undefined,
-      operationType === DAOCoinOperationTypeString.MINT ? toHex(this.coinsToMint * 1e9) : undefined,
-      operationType === DAOCoinOperationTypeString.BURN ? toHex(this.coinsToBurn * 1e9) : undefined,
+      operationType === DAOCoinOperationTypeString.MINT ? this.toHexNanos(this.coinsToMint) : undefined,
+      operationType === DAOCoinOperationTypeString.BURN ? this.toHexNanos(this.coinsToBurn) : undefined,
       this.globalVars.defaultFeeRateNanosPerKB
     );
   }
@@ -259,6 +378,39 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
           ? this.daoCoinHoldings.slice(startIdx, Math.min(endIdx, this.daoCoinHoldings.length))
           : this.myDAOCapTable.slice(startIdx, Math.min(endIdx, this.myDAOCapTable.length))
       );
+    });
+  }
+
+  hexNanosToUnitString(hexNanos: Hex): string {
+    return fromWei(toBN(hexNanos), "gwei").toString();
+  }
+
+  toHexNanos(units: number): Hex {
+    return toHex(toWei(units.toString(), "gwei"));
+  }
+
+  getDisplayTransferRestrictionStatus(transferRestrictionStatus: TransferRestrictionStatusString): string {
+    return transferRestrictionStatus
+      .split("_")
+      .map((status) => status.charAt(0).toUpperCase() + status.slice(1))
+      .join(" ")
+      .replace("Dao", "DAO");
+  }
+
+  openTransferDAOCoinModal(creator: BalanceEntryResponse): void {
+    const modalDetails = this.modalService.show(TransferDAOCoinModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { balanceEntryResponse: creator },
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "dao coins transferred") {
+        this.loadingNewSelection = true;
+        zip(this.loadMyDAOCoinHoldings(), this.loadMyDAOCapTable()).subscribe((res) => {
+          this.loadingNewSelection = false;
+          this._handleTabClick(this.activeTab);
+        });
+      }
     });
   }
 }

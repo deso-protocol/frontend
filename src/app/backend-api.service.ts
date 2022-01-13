@@ -181,7 +181,7 @@ export class Transaction {
 }
 
 export type DAOCoinEntryResponse = {
-  CoinsInCirculationNanos: number;
+  CoinsInCirculationNanos: Hex;
   MintingDisabled: boolean;
   NumberOfHolders: number;
   TransferRestrictionStatus: TransferRestrictionStatusString;
@@ -337,6 +337,8 @@ export class BalanceEntryResponse {
   HasPurchased: boolean;
   // How much this HODLer owns of a particular creator coin.
   BalanceNanos: number;
+  // Use this balance for DAO Coin balances
+  BalanceNanosUint256: Hex;
   // The net effect of transactions in the mempool on a given BalanceEntry's BalanceNanos.
   // This is used by the frontend to convey info about mining.
   NetBalanceInMempool: number;
@@ -1351,7 +1353,7 @@ export class BackendApiService {
     FetchHodlings: boolean = false,
     FetchAll: boolean = false,
     IsDAOCoin: boolean = false
-  ): Observable<any> {
+  ): Observable<{ Hodlers: BalanceEntryResponse[]; LastPublicKeyBase58Check: string }> {
     return this.post(endpoint, BackendRoutes.RoutePathGetHodlersForPublicKey, {
       PublicKeyBase58Check,
       Username,
@@ -1728,7 +1730,7 @@ export class BackendApiService {
     SenderPublicKeyBase58Check: string,
     ProfilePublicKeyBase58CheckOrUsername: string,
     ReceiverPublicKeyBase58CheckOrUsername: string,
-    DAOCoinToTransferNanos: number,
+    DAOCoinToTransferNanos: Hex,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathTransferDAOCoin, {
