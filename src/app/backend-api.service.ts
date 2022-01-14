@@ -28,6 +28,7 @@ export class BackendRoutes {
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
   static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
+  static RoutePathIsHodlingPublicKey = "/api/v0/is-hodling-public-key";
   static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
   static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
@@ -1382,6 +1383,20 @@ export class BackendApiService {
       IsDAOCoin,
     });
   }
+
+  IsHodlingPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    IsHodlingPublicKeyBase58Check: string,
+    IsDAOCoin: boolean
+  ): Observable<{ IsHodling: boolean; BalanceEntry: BalanceEntryResponse }> {
+    return this.post(endpoint, BackendRoutes.RoutePathIsHodlingPublicKey, {
+      PublicKeyBase58Check,
+      IsHodlingPublicKeyBase58Check,
+      IsDAOCoin,
+    });
+  }
+
   UpdateProfile(
     endpoint: string,
     // Specific fields
