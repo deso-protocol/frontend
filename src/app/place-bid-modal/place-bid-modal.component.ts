@@ -147,6 +147,10 @@ export class PlaceBidModalComponent implements OnInit {
     this.saveSelection();
   }
 
+  sumAdditionalRoyaltiesBasisPoints(royalties: { [k: string]: number }): number {
+    return Object.values(royalties).reduce((prevVal, val) => prevVal + val);
+  }
+
   deselectSerialNumber() {
     if (this.placingBids) {
       return;

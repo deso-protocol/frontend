@@ -1,9 +1,16 @@
 import { Component, Input } from "@angular/core";
-import { BackendApiService } from "../backend-api.service";
+import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
 import { GlobalVarsService } from "../global-vars.service";
 import { BsModalRef } from "ngx-bootstrap/modal";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { Router } from "@angular/router";
+
+type AdditionalRoyalty = {
+  PublicKeyBase58Check?: string;
+  Username?: string;
+  ProfileEntryResponse?: ProfileEntryResponse;
+  RoyaltyPercent: number;
+};
 
 @Component({
   selector: "app-mint-nft-modal",
@@ -31,6 +38,8 @@ export class MintNftModalComponent {
   buyNowPriceDESO: number = 0;
   buyNowPriceUSD: string = "0";
   isBuyNow: boolean = false;
+  additionalDESORoyalties: AdditionalRoyalty[] = [];
+  additionalCoinRoyalties: AdditionalRoyalty[] = [];
 
   constructor(
     private _globalVars: GlobalVarsService,
@@ -48,14 +57,72 @@ export class MintNftModalComponent {
       });
   }
 
+  hasUnreasonableTotalRoyalties(): boolean {
+    let totalAdditionalRoyalties = 0;
+
+    const sumReducer = (previousValue, currentValue) => previousValue + currentValue;
+
+    totalAdditionalRoyalties = this.additionalCoinRoyalties.reduce(sumReducer, totalAdditionalRoyalties);
+    totalAdditionalRoyalties = this.additionalDESORoyalties.reduce(sumReducer, totalAdditionalRoyalties);
+    return this.creatorRoyaltyPercent + this.coinRoyaltyPercent + totalAdditionalRoyalties > 100;
+  }
+
   hasUnreasonableRoyalties(): boolean {
     let isEitherUnreasonable =
       this.creatorRoyaltyPercent < 0 ||
       this.creatorRoyaltyPercent > 100 ||
       this.coinRoyaltyPercent < 0 ||
       this.coinRoyaltyPercent > 100;
-    let isSumUnreasonable = this.creatorRoyaltyPercent + this.coinRoyaltyPercent > 100;
-    return isEitherUnreasonable || isSumUnreasonable;
+    let isAnyAdditionalUnreasonable = false;
+    let totalAdditionalRoyalties = 0;
+    this.additionalCoinRoyalties.forEach((royalty) => {
+      totalAdditionalRoyalties += royalty.RoyaltyPercent;
+      if (royalty.RoyaltyPercent > 100 || royalty.RoyaltyPercent < 0) {
+        isAnyAdditionalUnreasonable = true;
+      }
+    });
+    this.additionalDESORoyalties.forEach((royalty) => {
+      totalAdditionalRoyalties += royalty.RoyaltyPercent;
+      if (royalty.RoyaltyPercent > 100 || royalty.RoyaltyPercent < 0) {
+        isAnyAdditionalUnreasonable = true;
+      }
+    });
+
+    let isSumUnreasonable = this.creatorRoyaltyPercent + this.coinRoyaltyPercent + totalAdditionalRoyalties > 100;
+    return isEitherUnreasonable || isAnyAdditionalUnreasonable || isSumUnreasonable;
+  }
+
+  hasPostCreatorInAdditionalRoyalties(royalties: AdditionalRoyalty[]): boolean {
+    return (
+      royalties.filter((royalty) => royalty.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check)
+        .length > 0
+    );
+  }
+
+  hasDuplicatesInAdditionalRoyalties(royalties: AdditionalRoyalty[]): boolean {
+    let royaltiesSet = new Set();
+    return royalties.some((royalty) => {
+      return royaltiesSet.size === royaltiesSet.add(royalty.PublicKeyBase58Check).size;
+    });
+  }
+
+  isAdditionalDESORoyaltiesMissingPublicKey(): boolean {
+    return this.additionalDESORoyalties.filter((royalty) => !royalty.PublicKeyBase58Check).length > 0;
+  }
+
+  isAdditionalCoinRoyaltiesMissingProfile(): boolean {
+    return this.additionalCoinRoyalties.filter((royalty) => !royalty.Username).length > 0;
+  }
+// tBCKW665XZnvVZcCfcEmyeecSZGKAdaxwV2SH9UFab6PpSRikg4EJ2
+  hasAdditionalRoyaltyError(): boolean {
+    return (
+      this.hasPostCreatorInAdditionalRoyalties(this.additionalCoinRoyalties) ||
+      this.hasPostCreatorInAdditionalRoyalties(this.additionalDESORoyalties) ||
+      this.hasDuplicatesInAdditionalRoyalties(this.additionalCoinRoyalties) ||
+      this.hasDuplicatesInAdditionalRoyalties(this.additionalDESORoyalties) ||
+      this.isAdditionalDESORoyaltiesMissingPublicKey() ||
+      this.isAdditionalCoinRoyaltiesMissingProfile()
+    );
   }
 
   hasUnreasonableNumCopies(): boolean {
@@ -120,10 +187,11 @@ export class MintNftModalComponent {
 
   mintNft() {
     if (
-      this.hasUnreasonableRoyalties() ||
+      this.hasUnreasonableTotalRoyalties() ||
       this.hasUnreasonableNumCopies() ||
       this.hasUnreasonableMinBidAmount() ||
-      this.hasUnreasonableBuyNowPrice()
+      this.hasUnreasonableBuyNowPrice() ||
+      this.hasAdditionalRoyaltyError()
     ) {
       // It should not be possible to trigger this since the button is disabled w/these conditions.
       return;
@@ -144,6 +212,16 @@ export class MintNftModalComponent {
       coinRoyaltyBasisPoints = this.coinRoyaltyPercent * 100;
     }
 
+    let additionalCoinRoyaltiesMap = this.additionalCoinRoyalties.reduce((royaltyMap, royalty) => {
+      royaltyMap[royalty.PublicKeyBase58Check] = royalty.RoyaltyPercent * 100;
+      return royaltyMap;
+    }, {});
+
+    let additionalDESORoyaltiesMap = this.additionalDESORoyalties.reduce((royaltyMap, royalty) => {
+      royaltyMap[royalty.PublicKeyBase58Check] = royalty.RoyaltyPercent * 100;
+      return royaltyMap;
+    }, {});
+
     this.minting = true;
     this.backendApi
       .CreateNft(
@@ -158,6 +236,8 @@ export class MintNftModalComponent {
         Math.trunc(this.minBidAmountDESO * 1e9),
         this.isBuyNow,
         Math.trunc(this.buyNowPriceDESO * 1e9),
+        additionalDESORoyaltiesMap,
+        additionalCoinRoyaltiesMap,
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(
@@ -180,5 +260,36 @@ export class MintNftModalComponent {
   _mintNFTFailure(comp: MintNftModalComponent) {
     comp.minting = false;
     comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
+  }
+
+  addNewDESORoyalty(): void {
+    this.additionalDESORoyalties.push({ RoyaltyPercent: 0 });
+  }
+
+  addNewCoinRoyalty(): void {
+    console.log(this.additionalCoinRoyalties);
+    this.additionalCoinRoyalties.push({ RoyaltyPercent: 0 });
+  }
+
+  resetRoyaltyUser(royalty: AdditionalRoyalty): void {
+    royalty.Username = undefined;
+    royalty.PublicKeyBase58Check = undefined;
+    royalty.ProfileEntryResponse = undefined;
+  }
+
+  removeRoyalty(royalties: AdditionalRoyalty[], idx: number): void {
+    if (royalties.length < idx) {
+      return;
+    }
+    royalties.splice(idx, 1);
+  }
+
+  _handleCreatorSelectedInSearch(creator: ProfileEntryResponse, royalties: AdditionalRoyalty[], idx: number): void {
+    if (royalties.length < idx) {
+      return;
+    }
+    royalties[idx].ProfileEntryResponse = creator;
+    royalties[idx].PublicKeyBase58Check = creator.PublicKeyBase58Check;
+    royalties[idx].Username = creator.Username;
   }
 }
