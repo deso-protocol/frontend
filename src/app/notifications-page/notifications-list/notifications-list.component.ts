@@ -277,7 +277,7 @@ export class NotificationsListComponent {
       result.link = AppRoutingModule.postPath(postHash);
 
       return result;
-    } else if (txnMeta.TxnType == "NFT_BID") {
+    } else if (txnMeta.TxnType === "NFT_BID") {
       const nftBidMeta = txnMeta.NFTBidTxindexMetadata;
       if (!nftBidMeta) {
         return null;
@@ -298,7 +298,7 @@ export class NotificationsListComponent {
       result.icon = nftBidMeta.BidAmountNanos ? "fas fa-dollar-sign fc-blue" : "fas fa-dollar-sign fc-red";
       result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
       return result;
-    } else if (txnMeta.TxnType == "ACCEPT_NFT_BID") {
+    } else if (txnMeta.TxnType === "ACCEPT_NFT_BID") {
       const acceptNFTBidMeta = txnMeta.AcceptNFTBidTxindexMetadata;
       if (!acceptNFTBidMeta) {
         return null;
@@ -314,7 +314,7 @@ export class NotificationsListComponent {
       result.icon = "fas fa-trophy";
       result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
       return result;
-    } else if (txnMeta.TxnType == "NFT_TRANSFER") {
+    } else if (txnMeta.TxnType === "NFT_TRANSFER") {
       const nftTransferMeta = txnMeta.NFTTransferTxindexMetadata;
       if (!nftTransferMeta) {
         return null;
@@ -327,8 +327,51 @@ export class NotificationsListComponent {
       result.action = `${actorName} transferred you an NFT`;
       result.icon = "fas fa-paper-plane fc-blue";
       return result;
-    }
+    } else if (txnMeta.TxnType === "DAO_COIN") {
+      const daoCoinMeta = txnMeta.DAOCoinTxindexMetadata;
+      if (!daoCoinMeta) {
+        return null;
+      }
 
+      switch (daoCoinMeta.OperationType) {
+        case "mint": {
+          result.action = `minted ${this.globalVars.hexNanosToUnitString(daoCoinMeta.CoinsToMintNanos)} ${
+            daoCoinMeta.CreatorUsername
+          } DAO coin`;
+          result.icon = "fas fa-coins fc-green";
+          return result;
+        }
+        case "burn": {
+          result.action = `${actorName} burned ${this.globalVars.hexNanosToUnitString(daoCoinMeta.CoinsToBurnNanos)} ${
+            daoCoinMeta.CreatorUsername
+          } DAO coin`;
+          result.icon = "fa fa-fire fc-red";
+          return result;
+        }
+        case "disable_minting": {
+          result.action = `${actorName} disabled minting for ${daoCoinMeta.CreatorUsername} DAO coin`;
+          result.icon = "fas fa-minus-circle fc-red";
+          return result;
+        }
+        case "update_transfer_restriction_status": {
+          result.action = `${actorName} updated the transfer restriction status of ${daoCoinMeta.CreatorUsername} DAO coin to ${daoCoinMeta.TransferRestrictionStatus}`;
+          result.icon = "fas fa-pen-fancy";
+          return result;
+        }
+      }
+      return null;
+    } else if (txnMeta.TxnType === "DAO_COIN_TRANSFER") {
+      const daoCoinTransferMeta = txnMeta.DAOCoinTransferTxindexMetadata;
+      if (!daoCoinTransferMeta) {
+        return null;
+      }
+      result.icon = "fas fa-money-bill-wave fc-blue";
+      result.action = `${actorName} sent you <b>${this.globalVars.hexNanosToUnitString(
+        daoCoinTransferMeta.DAOCoinToTransferNanos,
+        6
+      )} ${daoCoinTransferMeta.CreatorUsername} coins`;
+      return result;
+    }
     // If we don't recognize the transaction type we return null
     return null;
   }
