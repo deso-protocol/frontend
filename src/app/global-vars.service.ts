@@ -532,7 +532,7 @@ export class GlobalVarsService {
   }
 
   unitToBNNanos(units: number): BN {
-    return new BN(this.toHexNanos(units));
+    return toBN(this.toHexNanos(units));
   }
 
   isMobile(): boolean {

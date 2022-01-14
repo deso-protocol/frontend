@@ -96,6 +96,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
       this.hideMyDAOTab = true;
       this.showDAOCoinHoldings = true;
       this.activeTab = DaoCoinsComponent.daoCoinsTab;
+      this.tabs = [DaoCoinsComponent.daoCoinsTab];
     }
     this.loadMyDAOCoinHoldings().subscribe((res) => {});
     this.titleService.setTitle(`DAO Coins - ${environment.node.name}`);
@@ -394,7 +395,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
 
   openTransferDAOCoinModal(creator: BalanceEntryResponse): void {
     const modalDetails = this.modalService.show(TransferDAOCoinModalComponent, {
-      class: "modal-dialog-centered modal-lg",
+      class: "modal-dialog-centered",
       initialState: { balanceEntryResponse: creator },
     });
     const onHideEvent = modalDetails.onHide;
@@ -411,7 +412,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
 
   openBurnDAOCoinModal(creator: BalanceEntryResponse): void {
     const modalDetails = this.modalService.show(BurnDaoCoinModalComponent, {
-      class: "modal-dialog-centered modal-lg",
+      class: "modal-dialog-centered",
       initialState: { balanceEntryResponse: creator },
     });
     const onHideEvent = modalDetails.onHide;
