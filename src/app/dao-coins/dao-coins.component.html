@@ -58,7 +58,7 @@
             class="btn btn-primary font-weight-bold br-12px"
             style="height: 36px; width: 100px; line-height: 15px"
             (click)="mintDAOCoin()"
-            [disabled]="mintingDAOCoin || myDAOCoin.MintingDisabled"
+            [disabled]="mintingDAOCoin || myDAOCoin.MintingDisabled || coinsToMint <= 0"
           >Mint</button>
         </div>
       </div>
@@ -81,7 +81,7 @@
             class="btn btn-primary font-weight-bold br-12px"
             style="height: 36px; width: 100px; line-height: 15px"
             (click)="burnDAOCoin()"
-            [disabled]="burningDAOCoin"
+            [disabled]="burningDAOCoin || coinsToBurn <= 0"
           >Burn</button>
         </div>
       </div>
