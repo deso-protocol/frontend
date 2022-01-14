@@ -41,64 +41,95 @@
     <div class="container fs-14px p-15px border-bottom border-color-grey" style="max-width: inherit">
       <!-- Mint -->
       <div class="d-flex justify-content-between py-15px w-100" *ngIf="!myDAOCoin.MintingDisabled">
-        <div class="d-flex align-items-center">
-          <label for="mint-dao-coins" class="cursor-pointer mb-0" style="white-space: nowrap">Mint New Coins: </label>
+        <div class="d-flex align-items-center justify-content-between col-10 px-0px">
+          <label for="mint-dao-coins" class="cursor-pointer mb-0 w-50" style="white-space: nowrap">Mint New Coins: </label>
           <input
             id="mint-dao-coins"
             [(ngModel)]="coinsToMint"
-            class="form-control w-100 fs-15px lh-15px"
+            class="form-control w-100 lh-15px mr-15px fs-14px"
             placeholder="Enter an amount"
             type="number"
             min="0"
             step="0.01"
           />
         </div>
-        <button
-          class="btn btn-primary font-weight-bold br-12px"
-          style="height: 36px; width: 180px; line-height: 15px"
-          (click)="mintDAOCoin()"
-          [disabled]="mintingDAOCoin || myDAOCoin.MintingDisabled"
-        >Mint</button>
+        <div class="col-2 px-0px">
+          <button
+            class="btn btn-primary font-weight-bold br-12px"
+            style="height: 36px; width: 100px; line-height: 15px"
+            (click)="mintDAOCoin()"
+            [disabled]="mintingDAOCoin || myDAOCoin.MintingDisabled"
+          >Mint</button>
+        </div>
       </div>
-      <div class="d-flex py-15px w-100 align-items-center justify-content-between" *ngIf="!myDAOCoin.MintingDisabled">
-        <label for="disable-minting" class="cursor-pointer mb-0">Disable Minting:</label>
-        <button
-          id="disable-minting"
-          class="btn btn-primary font-weight-bold br-12px"
-          style="height: 36px; width: 180px; line-height: 15px"
-          (click)="disableMinting()"
-          [disabled]="disablingMinting || myDAOCoin.MintingDisabled"
-        >Disable</button>
+      <!-- Burn -->
+      <div class="d-flex justify-content-between py-15px w-100">
+        <div class="d-flex align-items-center justify-content-between col-10 px-0px">
+          <label for="mint-dao-coins" class="cursor-pointer mb-0 w-50" style="white-space: nowrap">Burn Coins: </label>
+          <input
+            id="burn-dao-coins"
+            [(ngModel)]="coinsToBurn"
+            class="form-control lh-15px mr-15px fs-14px"
+            placeholder="Enter an amount"
+            type="number"
+            min="0"
+            step="0.01"
+          />
+        </div>
+        <div class="col-2 px-0px">
+          <button
+            class="btn btn-primary font-weight-bold br-12px"
+            style="height: 36px; width: 100px; line-height: 15px"
+            (click)="burnDAOCoin()"
+            [disabled]="burningDAOCoin"
+          >Burn</button>
+        </div>
       </div>
       <!-- Disable minting -->
+      <div class="d-flex py-15px w-100 align-items-center justify-content-between" *ngIf="!myDAOCoin.MintingDisabled">
+        <div class="col-10 px-0px">
+          <label for="disable-minting" class="cursor-pointer mb-0 w-50">Disable Minting:</label>
+        </div>
+        <div class="col-2 px-0px">
+          <button
+            id="disable-minting"
+            class="btn btn-primary font-weight-bold br-12px"
+            style="height: 36px; width: 100px; line-height: 15px"
+            (click)="disableMinting()"
+            [disabled]="disablingMinting || myDAOCoin.MintingDisabled"
+          >Disable</button>
+        </div>
+      </div>
       <!-- Transfer Restriction Status -->
       <div
         class="d-flex justify-content-between py-15px w-100"
         *ngIf="myDAOCoin.TransferRestrictionStatus !== TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED">
-        <div class="d-flex align-items-center">
-          <label for="update-transfer-restriction-status" class="cursor-pointer mb-0 w-40">
+        <div class="d-flex align-items-center justify-content-between col-10 px-0px">
+          <label for="update-transfer-restriction-status" class="cursor-pointer mb-0 w-50">
             Update Transfer Restriction Status:
           </label>
           <select
             id="update-transfer-restriction-status"
-            class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer mr-5px"
+            class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer mr-15px"
             [(ngModel)]="transferRestrictionStatus"
           >
             <option
               *ngFor="let option of transferRestrictionStatusOptions"
               [value]="option"
-              class="fs-15px text-grey5 font-weight-bold"
+              class="text-grey5 font-weight-bold"
             >
               {{ getDisplayTransferRestrictionStatus(option) }}
             </option>
           </select>
         </div>
-        <button
-          class="btn btn-primary font-weight-bold br-12px"
-          style="height: 36px; width: 180px; line-height: 15px"
-          (click)="updateTransferRestrictionStatus()"
-          [disabled]="updatingTransferRestrictionStatus || myDAOCoin.TransferRestrictionStatus === TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED"
-        >Update</button>
+        <div class="col-2 px-0px">
+          <button
+            class="btn btn-primary font-weight-bold br-12px"
+            style="height: 36px; width: 100px; line-height: 15px"
+            (click)="updateTransferRestrictionStatus()"
+            [disabled]="updatingTransferRestrictionStatus || myDAOCoin.TransferRestrictionStatus === TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED"
+          >Update</button>
+        </div>
       </div>
     </div>
   </ng-container>

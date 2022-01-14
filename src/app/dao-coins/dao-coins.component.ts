@@ -275,21 +275,26 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
       .add(() => (this.updatingTransferRestrictionStatus = false));
   }
 
-  // burnDAOCoin(profilePublicKeyBase58Check: string): void {
-  //   if (this.burningDAOCoin) {
-  //     return;
-  //   }
-  //   this.burningDAOCoin = true;
-  //   this.doDAOCoinTxn(this.globalVars.localNode, DAOCoinOperationTypeString.BURN).subscribe((res) => {
-  //     if (profilePublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-  //       this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
-  //         .add(toBN(this.globalVars.toHexNanos(this.coinsToMint)))
-  //         .toString("hex");
-  //     }
-  //   }, (err) => {
-  //     console.error(err)
-  //   }).add(() => (this.burningDAOCoin));
-  // }
+  burnDAOCoin(profilePublicKeyBase58Check: string): void {
+    if (this.burningDAOCoin) {
+      return;
+    }
+    this.burningDAOCoin = true;
+    this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.BURN)
+      .subscribe(
+        (res) => {
+          if (profilePublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+            this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
+              .add(toBN(this.globalVars.toHexNanos(this.coinsToBurn)))
+              .toString("hex");
+          }
+        },
+        (err) => {
+          console.error(err);
+        }
+      )
+      .add(() => this.burningDAOCoin);
+  }
 
   doDAOCoinTxn(profilePublicKeyBase58Check: string, operationType: DAOCoinOperationTypeString): Observable<any> {
     if (
