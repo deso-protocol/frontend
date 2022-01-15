@@ -190,22 +190,50 @@ export class CloutCastPageComponent implements OnInit {
           case "Inbox":
             for (var cast of this.allCasts) {
               let isFound = false;
+              let isRead = false;
               if (Array.isArray(cast.AllowedUsers)) {
                 if (cast.AllowedUsers.length) {
                   for (var aU of cast.AllowedUsers) {
                     if (aU == this.globalVars.loggedInUser.PublicKeyBase58Check) {
+                      console.log(cast);
                       isFound = true;
                     }
                   }
                 }
               }
               if (isFound == true) {
-                this.showCasts.push(cast);
+                if (Array.isArray(cast.InboxData)) {
+                  if (cast.InboxData.length) {
+                    for (var iD of cast.InboxData) {
+                      let {publicKey:iPK = null, read = false} = iD;
+                      if (iPK == this.globalVars.loggedInUser.PublicKeyBase58Check) {
+                        isRead = read;
+                      }
+                    }
+                  }
+                }
+                this.showCasts.push({
+                  isRead,
+                  ...cast
+                });
               }
             }
             this.showCasts.sort((a, b) => {return b.RateNanos - a.RateNanos})
+            console.log(this.showCasts);
+            if (!this.globalVars.isMobile()) {
+              if (Array.isArray(this.showCasts)) {
+                if (this.showCasts.length > 0) {
+                  console.log(this.showCasts[0].Id);  
+                  this.selectedCast = this.showCasts[0].Id;
+                  // this.selectedCastObject = this.showCasts[0];
+                  await this.getPostByCastId(this.showCasts[0].Id);
+                }
+              }
+            }
 
             break;
+
+
           case "For Me":
             let coinPrice = 0;
             let followerCount = 0;
@@ -249,7 +277,18 @@ export class CloutCastPageComponent implements OnInit {
                 }
               }
             }
-            this.showCasts.sort((a, b) => {return b.RateNanos - a.RateNanos})
+            this.showCasts.sort((a, b) => {return b.RateNanos - a.RateNanos});
+
+            if (!this.globalVars.isMobile()) {
+              if (Array.isArray(this.showCasts)) {
+                if (this.showCasts.length > 0) {
+                  console.log(this.showCasts[0].Id);  
+                  this.selectedCast = this.showCasts[0].Id;
+                  // this.selectedCastObject = this.showCasts[0];
+                  await this.getPostByCastId(this.showCasts[0].Id);
+                }
+              }
+            }
 
             break;
           // case "Available":
@@ -309,12 +348,11 @@ export class CloutCastPageComponent implements OnInit {
       if (this.selectedTab == 'Inbox') {
         let shouldRun = null;
 
-        let {inbox = []} = this.selectedCastObject;
+        let {InboxData:inbox = []} = this.selectedCastObject;
         if (Array.isArray(inbox) && inbox.length > 0) {
           for (let ii in inbox) {
-            let {user = {}, readOn = null} = inbox[ii].user;
-            let {publicKey = null} = user;
-            if (readOn == null && publicKey !== null && publicKey == this.globalVars.loggedInUser.PublicKeyBase58Check) {
+            let {publicKey = {}, read = null} = inbox[ii]
+            if (read == false && publicKey !== null && publicKey == this.globalVars.loggedInUser.PublicKeyBase58Check) {
               shouldRun = ii;
             }
           }
@@ -322,7 +360,12 @@ export class CloutCastPageComponent implements OnInit {
         if (shouldRun !== null) {
           let isRead = await this.cloutcastApi.readItem(id);
           if (isRead == true) {
-            this.selectedCastObject.inbox[shouldRun].readOn = new Date().toISOString();
+            this.selectedCastObject.InboxData[shouldRun].read = true;
+            for (var iI in this.showCasts) {
+              if (this.showCasts[iI].Id == this.selectedCastObject.Id) {
+                this.showCasts[iI].isRead = true;
+              }
+            }
           } else {
             console.log("error reading cc post, no worries, continue");
           }
@@ -455,7 +498,7 @@ export class CloutCastPageComponent implements OnInit {
         let res = await SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),
           title: "Are you ready?",
-          html: `Are you sure you want to withdraw ${this.withdrawCloutAmount} $DESO (~${this.bitcloutToUSD(this.withdrawCloutAmount)} USD) from your CloutCast Wallet? Deposits take 24-48 hours to verify, and fulfill.`,
+          html: `Are you sure you want to withdraw ${this.withdrawCloutAmount} $DESO (~${this.bitcloutToUSD(this.withdrawCloutAmount)} USD) from your CloutCast Wallet? Withdrawals can take up to 6 hours to verify and fulfill.`,
           showCancelButton: true,
           showConfirmButton: true,
           customClass: {

@@ -171,6 +171,9 @@ export class CloutcastApiService {
           "Authorization": `Bearer ${tToken}`
         } 
       }).toPromise();
+
+      await this.globalVars.SetupCloutCastNotifications();
+      
       return true;
 
     } catch (ex) {

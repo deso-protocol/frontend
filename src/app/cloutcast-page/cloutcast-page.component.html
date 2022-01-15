@@ -54,7 +54,7 @@
               </btn>
               <div class="input-group py-5px col-12 col-sm-6">
               <div class="input-group-prepend" id="clout-label">
-                <span class="input-group-text fs-15px">CLOUT  </span>
+                <span class="input-group-text fs-15px">DESO  </span>
               </div>
               <input
                 [(ngModel)]="withdrawCloutAmount"
@@ -93,7 +93,8 @@
                   <div
                     class="flex-row align-items-center p-2 border-bottom ccListItem"
                     (click)="ccListItemClick(item.Id)"
-                    [ngClass]="{'listActive' : item.Id==selectedCast}"
+                    [ngClass]="{'listActive' : item.Id==selectedCast,
+                                'message-thread__unread-light-blue' : item.isRead==false }"
                     *ngIf="item.isDoneAlready !== true"
                   >
                     <img src="//{{this.globalVars.localNode}}/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
