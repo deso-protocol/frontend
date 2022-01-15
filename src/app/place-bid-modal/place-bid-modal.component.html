@@ -28,9 +28,9 @@
           <span class="d-lg-inline-block d-block">Coin-holder Royalty {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
         </div>
         <div class="pb-15px">
-          <span class="d-lg-inline-block d-block">Additional Creator Royalties {{ sumAdditionalRoyaltiesBasisPoints(post.AdditionalDESORoyaltiesMap) / 100 }}%</span>
-          <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
-          <span class="d-lg-inline-block d-block">Additional Coin-Holder Royalties {{ sumAdditionalRoyaltiesBasisPoints(post.AdditionalCoinRoyaltiesMap) / 100 }}%</span>
+          <span class="d-lg-inline-block d-block" *ngIf="post.AdditionalDESORoyaltiesMap.length">Additional Creator Royalties {{ sumAdditionalRoyaltiesBasisPoints(post.AdditionalDESORoyaltiesMap) / 100 }}%</span>
+          <span class="d-lg-inline-block d-none" *ngIf="post.AdditionalDESORoyaltiesMap.length">&nbsp;|&nbsp;</span>
+          <span class="d-lg-inline-block d-block" *ngIf="post.AdditionalCoinRoyaltiesMap.length">Additional Coin-Holder Royalties {{ sumAdditionalRoyaltiesBasisPoints(post.AdditionalCoinRoyaltiesMap) / 100 }}%</span>
         </div>
         <div class="d-flex align-items-center">
           <button
