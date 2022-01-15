@@ -514,6 +514,7 @@ export class CloutCastPageComponent implements OnInit {
           let withdrawSuccess = await this.cloutcastApi.createWithdrawlRequest(Math.floor(this.withdrawCloutAmount * 1e9));
           if (withdrawSuccess == true) {
             this.globalVars._alertSuccess("Your CloutCast withdrawl request has been received!");
+            await this._toggleWallet(false);
           }
         }
       } else {
