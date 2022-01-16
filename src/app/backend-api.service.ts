@@ -344,7 +344,7 @@ export class NFTEntryResponse {
   IsPending?: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
-  IsBuyNow: number;
+  IsBuyNow: boolean;
   BuyNowPriceNanos: number;
 
   HighestBidAmountNanos: number;
