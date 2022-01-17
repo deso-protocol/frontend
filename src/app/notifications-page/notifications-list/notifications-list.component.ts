@@ -464,7 +464,6 @@ export class NotificationsListComponent {
         }${coinRoyaltyStr} on the sale`;
         return result;
       }
-      return null;
     }
 
     // If we don't recognize the transaction type we return null
