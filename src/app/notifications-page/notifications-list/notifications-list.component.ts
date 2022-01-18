@@ -16,7 +16,7 @@ export class NotificationsListComponent {
   static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = true;
 
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   // stores a mapping of page number to notification index
   pagedIndexes = {
