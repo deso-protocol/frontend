@@ -343,18 +343,15 @@ export class NotificationsListComponent {
         result.action = `${actor.Username} bought an NFT you created that generated ${royaltyString}`;
         return result;
       } else {
-        console.log("in here");
         const additionalCoinRoyaltiesMap: { [k: string]: number } = nftBidMeta.AdditionalCoinRoyaltiesMap || {};
         const additionalDESORoyaltiesMap: { [k: string]: number } = nftBidMeta.AdditionalDESORoyaltiesMap || {};
         if (
           this.globalVars.loggedInUser?.PublicKeyBase58Check in additionalCoinRoyaltiesMap ||
           this.globalVars.loggedInUser?.PublicKeyBase58Check in additionalDESORoyaltiesMap
         ) {
-          console.log("also here");
           const additionalCoinRoyalty = additionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
           const additionalDESORoyalty = additionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
           const royaltyString = this.getRoyaltyString(additionalCoinRoyalty, additionalDESORoyalty, false);
-          console.log("royalty string: ", royaltyString);
           if (!royaltyString) {
             return null;
           }
@@ -508,8 +505,6 @@ export class NotificationsListComponent {
     desoRoyalty: number | undefined,
     usePercent: boolean = false
   ): string {
-    console.log(coinRoyalty);
-    console.log(desoRoyalty);
     if (!coinRoyalty && !desoRoyalty) {
       return "";
     }
