@@ -532,6 +532,9 @@
         <div *ngIf="nftMinBidAmountNanos">
           <b>Min bid: {{ globalVars.nanosToDeSo(nftMinBidAmountNanos) }} $DESO</b>
         </div>
+        <div *ngIf="nftBuyNowPriceNanos">
+          <b>Buy Now Price: {{ globalVars.nanosToDeSo(nftBuyNowPriceNanos) }} $DESO</b>
+        </div>
       </div>
       <button
         class="btn btn-primary font-weight-bold br-8px fs-13px"

@@ -55,6 +55,8 @@ export class BackendRoutes {
   static RoutePathGetQuoteRepostsForPost = "/api/v0/get-quote-reposts-for-post";
   static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
   static RoutePathGetUserMetadata = "/api/v0/get-user-metadata";
+  static RoutePathGetUsernameForPublicKey = "/api/v0/get-user-name-for-public-key";
+  static RoutePathGetPublicKeyForUsername = "/api/v0/get-public-key-for-user-name";
 
   // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
@@ -286,6 +288,8 @@ export class PostEntryResponse {
   IsNFT: boolean;
   NFTRoyaltyToCoinBasisPoints: number;
   NFTRoyaltyToCreatorBasisPoints: number;
+  AdditionalDESORoyaltiesMap: { [k: string]: number };
+  AdditionalCoinRoyaltiesMap: { [k: string]: number };
 }
 
 export class DiamondsPost {
@@ -340,6 +344,8 @@ export class NFTEntryResponse {
   IsPending?: boolean;
   MinBidAmountNanos: number;
   LastAcceptedBidAmountNanos: number;
+  IsBuyNow: boolean;
+  BuyNowPriceNanos: number;
 
   HighestBidAmountNanos: number;
   LowestBidAmountNanos: number;
@@ -887,6 +893,10 @@ export class BackendApiService {
     HasUnlockable: boolean,
     IsForSale: boolean,
     MinBidAmountNanos: number,
+    IsBuyNow: boolean,
+    BuyNowPriceNanos: number,
+    AdditionalDESORoyaltiesMap: { [k: string]: number },
+    AdditionalCoinRoyaltiesMap: { [k: string]: number },
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathCreateNft, {
@@ -898,6 +908,10 @@ export class BackendApiService {
       HasUnlockable,
       IsForSale,
       MinBidAmountNanos,
+      IsBuyNow,
+      BuyNowPriceNanos,
+      AdditionalDESORoyaltiesMap,
+      AdditionalCoinRoyaltiesMap,
       MinFeeRateNanosPerKB,
     });
 
@@ -911,6 +925,8 @@ export class BackendApiService {
     SerialNumber: number,
     IsForSale: boolean,
     MinBidAmountNanos: number,
+    IsBuyNow: boolean,
+    BuyNowPriceNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathUpdateNFT, {
@@ -919,6 +935,8 @@ export class BackendApiService {
       SerialNumber,
       IsForSale,
       MinBidAmountNanos,
+      IsBuyNow,
+      BuyNowPriceNanos,
       MinFeeRateNanosPerKB,
     });
 
@@ -1771,6 +1789,14 @@ export class BackendApiService {
 
   GetUserMetadata(endpoint: string, PublicKeyBase58Check: string): Observable<GetUserMetadataResponse> {
     return this.get(endpoint, BackendRoutes.RoutePathGetUserMetadata + "/" + PublicKeyBase58Check);
+  }
+
+  GetUsernameForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<string> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetUsernameForPublicKey + "/" + PublicKeyBase58Check);
+  }
+
+  GetPublicKeyForUsername(endpoint: string, Username: string): Observable<string> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetPublicKeyForUsername + "/" + Username);
   }
 
   GetJumioStatusForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
