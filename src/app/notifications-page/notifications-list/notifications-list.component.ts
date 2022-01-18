@@ -326,28 +326,36 @@ export class NotificationsListComponent {
           : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber}`;
         result.icon = nftBidMeta.BidAmountNanos ? "fas fa-dollar-sign fc-blue" : "fas fa-dollar-sign fc-red";
         return result;
+      } else if (
+        this.globalVars.loggedInUser?.PublicKeyBase58Check === nftBidMeta.CreatorPublicKeyBase58Check &&
+        nftBidMeta.IsBuyNowBid
+      ) {
+        const royaltyString = this.getRoyaltyString(
+          nftBidMeta.CreatorCoinRoyaltyNanos,
+          nftBidMeta.CreatorRoyaltyNanos,
+          false
+        );
+        if (!royaltyString) {
+          return null;
+        }
+        result.action = `${actor.Username} bought an NFT you created that generated ${royaltyString}`;
       } else {
+        console.log("in here");
         const additionalCoinRoyaltiesMap: { [k: string]: number } = nftBidMeta.AdditionalCoinRoyaltiesMap || {};
         const additionalDESORoyaltiesMap: { [k: string]: number } = nftBidMeta.AdditionalDESORoyaltiesMap || {};
         if (
           this.globalVars.loggedInUser?.PublicKeyBase58Check in additionalCoinRoyaltiesMap ||
           this.globalVars.loggedInUser?.PublicKeyBase58Check in additionalDESORoyaltiesMap
         ) {
+          console.log("also here");
           const additionalCoinRoyalty = additionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
-          const coinRoyaltyStr = additionalCoinRoyalty
-            ? `a royalty of ${this.globalVars.nanosToDeSo(additionalCoinRoyalty)} (~${this.globalVars.nanosToUSD(
-                additionalCoinRoyalty
-              )}) DESO to your creator coin`
-            : "";
           const additionalDESORoyalty = additionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
-          const desoRoyaltyStr = additionalDESORoyalty
-            ? `a royalty of ${this.globalVars.nanosToDeSo(additionalDESORoyalty)} (~${this.globalVars.nanosToUSD(
-                additionalDESORoyalty
-              )}) DESO to your wallet`
-            : "";
-          result.action = `${actor.Username} bought an NFT that generated ${desoRoyaltyStr}${
-            desoRoyaltyStr && coinRoyaltyStr && " and "
-          }${coinRoyaltyStr}`;
+          const royaltyString = this.getRoyaltyString(additionalCoinRoyalty, additionalDESORoyalty, false);
+          console.log("royalty string: ", royaltyString);
+          if (!royaltyString) {
+            return null;
+          }
+          result.action = `${actor.Username} bought an NFT that generated ${royaltyString}`;
           result.icon = "fas fa-hand-holding-usd fc-green";
           return result;
         } else {
@@ -370,22 +378,21 @@ export class NotificationsListComponent {
         this.globalVars.loggedInUser?.PublicKeyBase58Check in additionalDESORoyaltiesMap
       ) {
         const additionalCoinRoyalty = additionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
-        const coinRoyaltyStr = additionalCoinRoyalty
-          ? `a royalty of ${this.globalVars.nanosToDeSo(additionalCoinRoyalty)} (~${this.globalVars.nanosToUSD(
-              additionalCoinRoyalty
-            )}) to your creator coin`
-          : "";
         const additionalDESORoyalty = additionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
-        const desoRoyaltyStr = additionalDESORoyalty
-          ? `a royalty of ${this.globalVars.nanosToDeSo(additionalDESORoyalty)} (~${this.globalVars.nanosToUSD(
-              additionalDESORoyalty
-            )}) to your wallet`
-          : "";
-        result.action = `${actor.Username} accepted a bid on an NFT that generated ${desoRoyaltyStr}${
-          desoRoyaltyStr && coinRoyaltyStr && " and "
-        }${coinRoyaltyStr}`;
+        const royaltyString = this.getRoyaltyString(additionalCoinRoyalty, additionalDESORoyalty, false);
+        result.action = `${actor.Username} accepted a bid on an NFT you created that generated ${royaltyString}`;
         result.icon = "fas fa-hand-holding-usd fc-green";
         return result;
+      } else if (this.globalVars.loggedInUser?.PublicKeyBase58Check === acceptNFTBidMeta.CreatorPublicKeyBase58Check) {
+        const royaltyString = this.getRoyaltyString(
+          acceptNFTBidMeta.CreatorCoinRoyaltyNanos,
+          acceptNFTBidMeta.CreatorRoyaltyNanos,
+          false
+        );
+        if (!royaltyString) {
+          return null;
+        }
+        result.action = `${actor.Username} accept a bid on an NFT you created that generated ${royaltyString}`;
       } else {
         result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToDeSo(
           acceptNFTBidMeta.BidAmountNanos,
@@ -420,18 +427,13 @@ export class NotificationsListComponent {
       createNFTMeta.AdditionalCoinRoyaltiesMap = createNFTMeta.AdditionalCoinRoyaltiesMap || {};
       const additionalCoinRoyalty =
         createNFTMeta.AdditionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
-      const coinRoyaltyStr = additionalCoinRoyalty
-        ? `a royalty of ${additionalCoinRoyalty / 100}% to your creator coin`
-        : "";
       const additionalDESORoyalty =
         createNFTMeta.AdditionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
-      const desoRoyaltyStr = additionalDESORoyalty ? `a royalty of ${additionalDESORoyalty / 100}% to your wallet` : "";
-      if (!coinRoyaltyStr && !desoRoyaltyStr) {
+      const royaltyString = this.getRoyaltyString(additionalCoinRoyalty, additionalDESORoyalty, true);
+      if (!royaltyString) {
         return null;
       }
-      result.action = `${actorName} minted an NFT and gave ${desoRoyaltyStr}${
-        coinRoyaltyStr && desoRoyaltyStr && " and "
-      }${coinRoyaltyStr}`;
+      result.action = `${actorName} minted an NFT and gave ${royaltyString}`;
       result.icon = "fas fa-percentage fc-green";
       result.post = this.postMap[createNFTMeta.NFTPostHashHex];
       return result;
@@ -449,19 +451,12 @@ export class NotificationsListComponent {
         const additionalDESORoyaltiesMap = result.post.AdditionalDESORoyaltiesMap || {};
         const additionalCoinRoyaltiesMap = result.post.AdditionalCoinRoyaltiesMap || {};
         const additionalCoinRoyalty = additionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
-        const coinRoyaltyStr = additionalCoinRoyalty
-          ? `a royalty of ${additionalCoinRoyalty / 100}% to your creator coin`
-          : "";
         const additionalDESORoyalty = additionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
-        const desoRoyaltyStr = additionalDESORoyalty
-          ? `a royalty of ${additionalDESORoyalty / 100}% to your wallet`
-          : "";
-        if (!coinRoyaltyStr && !desoRoyaltyStr) {
+        const royaltyString = this.getRoyaltyString(additionalCoinRoyalty, additionalDESORoyalty, true);
+        if (!royaltyString) {
           return null;
         }
-        result.action = `${actorName} put an NFT on sale - you receive ${desoRoyaltyStr}${
-          desoRoyaltyStr && coinRoyaltyStr && " and "
-        }${coinRoyaltyStr} on the sale`;
+        result.action = `${actorName} put an NFT on sale - you receive ${royaltyString} on the sale`;
         return result;
       }
     }
@@ -502,6 +497,46 @@ export class NotificationsListComponent {
         return true;
       },
     });
+  }
+
+  getRoyaltyString(
+    coinRoyalty: number | undefined,
+    desoRoyalty: number | undefined,
+    usePercent: boolean = false
+  ): string {
+    console.log(coinRoyalty);
+    console.log(desoRoyalty);
+    if (!coinRoyalty && !desoRoyalty) {
+      return "";
+    }
+    const coinRoyaltyStr = coinRoyalty
+      ? `a royalty of ${
+          usePercent ? this.getPercentRoyaltyString(coinRoyalty) : this.getRoyaltyAmountString(coinRoyalty)
+        } to your creator coin`
+      : "";
+    const desoRoyaltyStr = desoRoyalty
+      ? `a royalty of ${
+          usePercent ? this.getPercentRoyaltyString(desoRoyalty) : this.getRoyaltyAmountString(desoRoyalty)
+        } to your wallet`
+      : "";
+    if (!coinRoyaltyStr && !desoRoyaltyStr) {
+      return "";
+    }
+    return `${desoRoyaltyStr}${coinRoyaltyStr && desoRoyaltyStr && " and "}${coinRoyaltyStr}`;
+  }
+
+  getPercentRoyaltyString(royalty: number | undefined): string {
+    if (!royalty) {
+      return "";
+    }
+    return (royalty / 100).toString() + "%";
+  }
+
+  getRoyaltyAmountString(royalty: number | undefined): string {
+    if (!royalty) {
+      return "";
+    }
+    return `${this.globalVars.nanosToDeSo(royalty)} (~${this.globalVars.nanosToUSD(royalty)}`;
   }
 
   infiniteScroller: InfiniteScroller = new InfiniteScroller(
