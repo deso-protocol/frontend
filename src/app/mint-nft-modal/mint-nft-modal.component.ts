@@ -113,7 +113,7 @@ export class MintNftModalComponent {
   isAdditionalCoinRoyaltiesMissingProfile(): boolean {
     return this.additionalCoinRoyalties.filter((royalty) => !royalty.Username).length > 0;
   }
-// tBCKW665XZnvVZcCfcEmyeecSZGKAdaxwV2SH9UFab6PpSRikg4EJ2
+
   hasAdditionalRoyaltyError(): boolean {
     return (
       this.hasPostCreatorInAdditionalRoyalties(this.additionalCoinRoyalties) ||
@@ -267,7 +267,6 @@ export class MintNftModalComponent {
   }
 
   addNewCoinRoyalty(): void {
-    console.log(this.additionalCoinRoyalties);
     this.additionalCoinRoyalties.push({ RoyaltyPercent: 0 });
   }
 

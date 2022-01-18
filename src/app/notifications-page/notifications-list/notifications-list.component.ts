@@ -16,7 +16,7 @@ export class NotificationsListComponent {
   static PAGE_SIZE = 50;
   static WINDOW_VIEWPORT = true;
 
-  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   // stores a mapping of page number to notification index
   pagedIndexes = {
@@ -307,7 +307,7 @@ export class NotificationsListComponent {
       result.post = this.postMap[postHash];
       if (
         nftBidMeta.IsBuyNowBid &&
-        this.globalVars.loggedInUser?.PublicKeyBase58Check === nftBidMeta.OwnerPublicKeyBase58check
+        this.globalVars.loggedInUser?.PublicKeyBase58Check === nftBidMeta.OwnerPublicKeyBase58Check
       ) {
         result.action = `${actorName} bought serial number ${nftBidMeta.SerialNumber} for ${this.globalVars.nanosToDeSo(
           nftBidMeta.BidAmountNanos,
@@ -315,7 +315,9 @@ export class NotificationsListComponent {
         )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)})`;
         result.icon = "fas fa-cash-register fc-green";
         return result;
-      } else if (this.globalVars.loggedInUser?.PublicKeyBase58Check === nftBidMeta.OwnerPublicKeyBase58check) {
+      } else if (
+        this.globalVars.loggedInUser?.PublicKeyBase58Check === nftBidMeta.OwnerPublicKeyBase58Check
+      ) {
         result.action = nftBidMeta.BidAmountNanos
           ? `${actorName} bid ${this.globalVars.nanosToDeSo(
               nftBidMeta.BidAmountNanos,
@@ -339,6 +341,7 @@ export class NotificationsListComponent {
           return null;
         }
         result.action = `${actor.Username} bought an NFT you created that generated ${royaltyString}`;
+        return result;
       } else {
         console.log("in here");
         const additionalCoinRoyaltiesMap: { [k: string]: number } = nftBidMeta.AdditionalCoinRoyaltiesMap || {};
@@ -393,6 +396,7 @@ export class NotificationsListComponent {
           return null;
         }
         result.action = `${actor.Username} accept a bid on an NFT you created that generated ${royaltyString}`;
+        return result;
       } else {
         result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToDeSo(
           acceptNFTBidMeta.BidAmountNanos,
@@ -536,7 +540,7 @@ export class NotificationsListComponent {
     if (!royalty) {
       return "";
     }
-    return `${this.globalVars.nanosToDeSo(royalty)} (~${this.globalVars.nanosToUSD(royalty)}`;
+    return `${this.globalVars.nanosToDeSo(royalty)} DESO (~${this.globalVars.nanosToUSD(royalty)})`;
   }
 
   infiniteScroller: InfiniteScroller = new InfiniteScroller(
