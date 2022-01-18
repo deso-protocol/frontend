@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { NFTEntryResponse } from "../backend-api.service";
+import { BackendApiService, NFTEntryResponse } from "../backend-api.service";
 import * as _ from "lodash";
 
 @Component({
@@ -14,17 +14,22 @@ export class NftSelectSerialNumberComponent implements OnInit {
   static PADDING = 0.5;
 
   @Input() serialNumbers: NFTEntryResponse[];
+  @Input() showBuyNow: boolean = false;
+  @Input() postHashHex: string;
   @Output() serialNumberSelected = new EventEmitter<NFTEntryResponse>();
+  @Output() nftPurchased = new EventEmitter();
 
   SN_FIELD = "SerialNumber";
   HIGH_BID_FIELD = "HighestBidAmountNanos";
   MIN_BID_FIELD = "MinBidAmountNanos";
+  BUY_NOW_FIELD = "BuyNowPriceNanos";
+
   selectedSerialNumber: NFTEntryResponse = null;
   sortedSerialNumbers: NFTEntryResponse[];
   sortByField = this.SN_FIELD;
   sortByOrder: "desc" | "asc" = "desc";
 
-  constructor(public globalVars: GlobalVarsService) {}
+  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   ngOnInit() {
     this.updateBidSort(this.SN_FIELD);
@@ -43,5 +48,21 @@ export class NftSelectSerialNumberComponent implements OnInit {
     }
     this.sortByField = sortField;
     this.sortedSerialNumbers = _.orderBy(this.serialNumbers, [this.sortByField], [this.sortByOrder]);
+  }
+
+  buyNow(event, nft: NFTEntryResponse): void {
+    event.stopPropagation();
+    this.backendApi
+      .CreateNFTBid(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.postHashHex,
+        nft.SerialNumber,
+        nft.BuyNowPriceNanos,
+        this.globalVars.defaultFeeRateNanosPerKB
+      )
+      .subscribe((res) => {
+        this.nftPurchased.emit();
+      });
   }
 }

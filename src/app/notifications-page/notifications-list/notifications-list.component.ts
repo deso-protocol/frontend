@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
+import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
 import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
 import * as _ from "lodash";
 import { AppRoutingModule } from "../../app-routing.module";
@@ -114,14 +114,32 @@ export class NotificationsListComponent {
 
     // We map everything to an easy-to-use object so the template
     // doesn't have to do any hard work
-    const result = {
+    const result: {
+      actor: string;
+      category: string | null;
+      icon: string | null;
+      iconClass: string | null;
+      action: string | null;
+      actionDetails: string | null;
+      post: PostEntryResponse;
+      parentPost: PostEntryResponse;
+      link: string;
+      bidInfo: any | null;
+      comment: string | null;
+      nftEntryResponses: NFTEntryResponse[];
+    } = {
       actor, // who created the notification
       icon: null,
+      category: null, // category used for filtering
+      iconClass: null,
       action: null, // the action they took
+      actionDetails: null, // Summarized details of the action for compact mode
       post: null, // the post involved
       parentPost: null, // the parent post involved
       link: AppRoutingModule.profilePath(actor.Username),
       bidInfo: null,
+      comment: null, // the text of the comment
+      nftEntryResponses: null, // NFT Entry Responses, for transfers
     };
 
     if (txnMeta.TxnType === "BASIC_TRANSFER") {
@@ -284,20 +302,58 @@ export class NotificationsListComponent {
       }
 
       const postHash = nftBidMeta.NFTPostHashHex;
-
       const actorName = actor.Username !== "anonymous" ? actor.Username : txnMeta.TransactorPublicKeyBase58Check;
-      result.post = this.postMap[postHash];
-      result.action = nftBidMeta.BidAmountNanos
-        ? `${actorName} bid ${this.globalVars.nanosToDeSo(
-            nftBidMeta.BidAmountNanos,
-            2
-          )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
-            nftBidMeta.SerialNumber
-          }`
-        : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber}`;
-      result.icon = nftBidMeta.BidAmountNanos ? "fas fa-dollar-sign fc-blue" : "fas fa-dollar-sign fc-red";
       result.bidInfo = { SerialNumber: nftBidMeta.SerialNumber, BidAmountNanos: nftBidMeta.BidAmountNanos };
-      return result;
+      result.post = this.postMap[postHash];
+      if (
+        nftBidMeta.IsBuyNowBid &&
+        this.globalVars.loggedInUser?.PublicKeyBase58Check === nftBidMeta.OwnerPublicKeyBase58check
+      ) {
+        result.action = `${actorName} bought serial number ${nftBidMeta.SerialNumber} for ${this.globalVars.nanosToDeSo(
+          nftBidMeta.BidAmountNanos,
+          2
+        )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)})`;
+        result.icon = "fas fa-cash-register fc-green";
+        return result;
+      } else if (this.globalVars.loggedInUser?.PublicKeyBase58Check === nftBidMeta.OwnerPublicKeyBase58check) {
+        result.action = nftBidMeta.BidAmountNanos
+          ? `${actorName} bid ${this.globalVars.nanosToDeSo(
+              nftBidMeta.BidAmountNanos,
+              2
+            )} DESO (~${this.globalVars.nanosToUSD(nftBidMeta.BidAmountNanos, 2)}) for serial number ${
+              nftBidMeta.SerialNumber
+            }`
+          : `${actorName} cancelled their bid on serial number ${nftBidMeta.SerialNumber}`;
+        result.icon = nftBidMeta.BidAmountNanos ? "fas fa-dollar-sign fc-blue" : "fas fa-dollar-sign fc-red";
+        return result;
+      } else {
+        const additionalCoinRoyaltiesMap: { [k: string]: number } = nftBidMeta.AdditionalCoinRoyaltiesMap || {};
+        const additionalDESORoyaltiesMap: { [k: string]: number } = nftBidMeta.AdditionalDESORoyaltiesMap || {};
+        if (
+          this.globalVars.loggedInUser?.PublicKeyBase58Check in additionalCoinRoyaltiesMap ||
+          this.globalVars.loggedInUser?.PublicKeyBase58Check in additionalDESORoyaltiesMap
+        ) {
+          const additionalCoinRoyalty = additionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
+          const coinRoyaltyStr = additionalCoinRoyalty
+            ? `a royalty of ${this.globalVars.nanosToDeSo(additionalCoinRoyalty)} (~${this.globalVars.nanosToUSD(
+                additionalCoinRoyalty
+              )}) DESO to your creator coin`
+            : "";
+          const additionalDESORoyalty = additionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
+          const desoRoyaltyStr = additionalDESORoyalty
+            ? `a royalty of ${this.globalVars.nanosToDeSo(additionalDESORoyalty)} (~${this.globalVars.nanosToUSD(
+                additionalDESORoyalty
+              )}) DESO to your wallet`
+            : "";
+          result.action = `${actor.Username} bought an NFT that generated ${desoRoyaltyStr}${
+            desoRoyaltyStr && coinRoyaltyStr && " and "
+          }${coinRoyaltyStr}`;
+          result.icon = "fas fa-hand-holding-usd fc-green";
+          return result;
+        } else {
+          return null;
+        }
+      }
     } else if (txnMeta.TxnType === "ACCEPT_NFT_BID") {
       const acceptNFTBidMeta = txnMeta.AcceptNFTBidTxindexMetadata;
       if (!acceptNFTBidMeta) {
@@ -307,14 +363,42 @@ export class NotificationsListComponent {
       const postHash = acceptNFTBidMeta.NFTPostHashHex;
 
       result.post = this.postMap[postHash];
-      result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToDeSo(
-        acceptNFTBidMeta.BidAmountNanos,
-        2
-      )} for serial number ${acceptNFTBidMeta.SerialNumber}`;
-      result.icon = "fas fa-trophy";
-      result.bidInfo = { SerialNumber: acceptNFTBidMeta.SerialNumber, BidAmountNanos: acceptNFTBidMeta.BidAmountNanos };
-      return result;
-    } else if (txnMeta.TxnType === "NFT_TRANSFER") {
+      const additionalCoinRoyaltiesMap: { [k: string]: number } = acceptNFTBidMeta.AdditionalCoinRoyaltiesMap || {};
+      const additionalDESORoyaltiesMap: { [k: string]: number } = acceptNFTBidMeta.AdditionalDESORoyaltiesMap || {};
+      if (
+        this.globalVars.loggedInUser?.PublicKeyBase58Check in additionalCoinRoyaltiesMap ||
+        this.globalVars.loggedInUser?.PublicKeyBase58Check in additionalDESORoyaltiesMap
+      ) {
+        const additionalCoinRoyalty = additionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
+        const coinRoyaltyStr = additionalCoinRoyalty
+          ? `a royalty of ${this.globalVars.nanosToDeSo(additionalCoinRoyalty)} (~${this.globalVars.nanosToUSD(
+              additionalCoinRoyalty
+            )}) to your creator coin`
+          : "";
+        const additionalDESORoyalty = additionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
+        const desoRoyaltyStr = additionalDESORoyalty
+          ? `a royalty of ${this.globalVars.nanosToDeSo(additionalDESORoyalty)} (~${this.globalVars.nanosToUSD(
+              additionalDESORoyalty
+            )}) to your wallet`
+          : "";
+        result.action = `${actor.Username} accepted a bid on an NFT that generated ${desoRoyaltyStr}${
+          desoRoyaltyStr && coinRoyaltyStr && " and "
+        }${coinRoyaltyStr}`;
+        result.icon = "fas fa-hand-holding-usd fc-green";
+        return result;
+      } else {
+        result.action = `${actor.Username} accepted your bid of ${this.globalVars.nanosToDeSo(
+          acceptNFTBidMeta.BidAmountNanos,
+          2
+        )} for serial number ${acceptNFTBidMeta.SerialNumber}`;
+        result.icon = "fas fa-trophy fc-gold";
+        result.bidInfo = {
+          SerialNumber: acceptNFTBidMeta.SerialNumber,
+          BidAmountNanos: acceptNFTBidMeta.BidAmountNanos,
+        };
+        return result;
+      }
+    } else if (txnMeta.TxnType == "NFT_TRANSFER") {
       const nftTransferMeta = txnMeta.NFTTransferTxindexMetadata;
       if (!nftTransferMeta) {
         return null;
@@ -327,12 +411,64 @@ export class NotificationsListComponent {
       result.action = `${actorName} transferred you an NFT`;
       result.icon = "fas fa-paper-plane fc-blue";
       return result;
+    } else if (txnMeta.TxnType === "CREATE_NFT") {
+      const createNFTMeta = txnMeta.CreateNFTTxindexMetadata;
+      if (!createNFTMeta) {
+        return null;
+      }
+      createNFTMeta.AdditionalDESORoyaltiesMap = createNFTMeta.AdditionalDESORoyaltiesMap || {};
+      createNFTMeta.AdditionalCoinRoyaltiesMap = createNFTMeta.AdditionalCoinRoyaltiesMap || {};
+      const additionalCoinRoyalty =
+        createNFTMeta.AdditionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
+      const coinRoyaltyStr = additionalCoinRoyalty
+        ? `a royalty of ${additionalCoinRoyalty / 100}% to your creator coin`
+        : "";
+      const additionalDESORoyalty =
+        createNFTMeta.AdditionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
+      const desoRoyaltyStr = additionalDESORoyalty ? `a royalty of ${additionalDESORoyalty / 100}% to your wallet` : "";
+      if (!coinRoyaltyStr && !desoRoyaltyStr) {
+        return null;
+      }
+      result.action = `${actorName} minted an NFT and gave ${desoRoyaltyStr}${
+        coinRoyaltyStr && desoRoyaltyStr && " and "
+      }${coinRoyaltyStr}`;
+      result.icon = "fas fa-percentage fc-green";
+      result.post = this.postMap[createNFTMeta.NFTPostHashHex];
+      return result;
+    } else if (txnMeta.TxnType === "UPDATE_NFT") {
+      const updateNFTMeta = txnMeta.UpdateNFTTxindexMetadata;
+      if (!updateNFTMeta || !updateNFTMeta.IsForSale) {
+        return null;
+      }
+      result.post = this.postMap[updateNFTMeta.NFTPostHashHex];
+      result.icon = "fas fa-tags fc-green";
+      if (result.post.PosterPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+        result.action = `${actorName} put your NFT on sale`;
+        return result;
+      } else {
+        const additionalDESORoyaltiesMap = result.post.AdditionalDESORoyaltiesMap || {};
+        const additionalCoinRoyaltiesMap = result.post.AdditionalCoinRoyaltiesMap || {};
+        const additionalCoinRoyalty = additionalCoinRoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
+        const coinRoyaltyStr = additionalCoinRoyalty
+          ? `a royalty of ${additionalCoinRoyalty / 100}% to your creator coin`
+          : "";
+        const additionalDESORoyalty = additionalDESORoyaltiesMap[this.globalVars.loggedInUser?.PublicKeyBase58Check];
+        const desoRoyaltyStr = additionalDESORoyalty
+          ? `a royalty of ${additionalDESORoyalty / 100}% to your wallet`
+          : "";
+        if (!coinRoyaltyStr && !desoRoyaltyStr) {
+          return null;
+        }
+        result.action = `${actorName} put an NFT on sale - you receive ${desoRoyaltyStr}${
+          desoRoyaltyStr && coinRoyaltyStr && " and "
+        }${coinRoyaltyStr} on the sale`;
+        return result;
+      }
     } else if (txnMeta.TxnType === "DAO_COIN") {
       const daoCoinMeta = txnMeta.DAOCoinTxindexMetadata;
       if (!daoCoinMeta) {
         return null;
       }
-
       switch (daoCoinMeta.OperationType) {
         case "mint": {
           result.action = `minted ${this.globalVars.hexNanosToUnitString(daoCoinMeta.CoinsToMintNanos)} ${
