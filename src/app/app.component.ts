@@ -196,6 +196,8 @@ export class AppComponent implements OnInit {
         this.globalVars.showBuyWithETH = res.BuyWithETH;
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
+        this.globalVars.jumioUSDCents = res.JumioUSDCents;
+        this.globalVars.jumioKickbackUSDCents = res.JumioKickbackUSDCents;
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
         this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
@@ -208,16 +210,16 @@ export class AppComponent implements OnInit {
 
         // Calculate max fee for display in frontend
         // Sort so highest fee is at the top
-        var simpleFeeMap: { txnType: string; fees: number }[] = Object.keys(res.TransactionFeeMap)
+        const simpleFeeMap: { txnType: string; fees: number }[] = Object.keys(res.TransactionFeeMap)
           .map((k) => {
             if (res.TransactionFeeMap[k] !== null) {
               // only return for non empty transactions
               // sum in case there are multiple fee earners for the txn type
-              var sumOfFees = res.TransactionFeeMap[k]
+              const sumOfFees = res.TransactionFeeMap[k]
                 .map((f) => f.AmountNanos)
                 .reduce((partial_sum, a) => partial_sum + a, 0);
               // Capitalize and use spaces in Txn type
-              var txnType = (" " + k)
+              const txnType = (" " + k)
                 .replace(/_/g, " ")
                 .toLowerCase()
                 .replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => " " + chr.toUpperCase())
@@ -225,6 +227,7 @@ export class AppComponent implements OnInit {
               return { txnType: txnType, fees: sumOfFees };
             }
           })
+          .filter((fee) => fee)
           .sort((a, b) => b.fees - a.fees);
 
         //Get the max of all fees

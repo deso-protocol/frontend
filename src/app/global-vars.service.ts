@@ -20,7 +20,7 @@ import { AmplitudeClient } from "amplitude-js";
 import { DomSanitizer } from "@angular/platform-browser";
 import { IdentityService } from "./identity.service";
 import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse, PulseService } from "../lib/services/pulse/pulse-service";
+import { LeaderboardResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
 import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
 import { HttpClient } from "@angular/common/http";
 import { FeedComponent } from "./feed/feed.component";
@@ -213,6 +213,8 @@ export class GlobalVarsService {
   profileUpdateTimestamp: number;
 
   jumioDeSoNanos = 0;
+  jumioUSDCents = 0;
+  jumioKickbackUSDCents = 0;
 
   referralUSDCents: number = 0;
 
@@ -222,7 +224,7 @@ export class GlobalVarsService {
 
   buyETHAddress: string = "";
 
-  nodes: { [id: number]: DeSoNode }
+  nodes: { [id: number]: DeSoNode };
 
   SetupMessages() {
     // If there's no loggedInUser, we set the notification count to zero
@@ -401,9 +403,7 @@ export class GlobalVarsService {
   }
 
   getLinkForReferralHash(referralHash: string) {
-    // FIXME: Generalize this once there are referral programs running
-    // on other nodes.
-    return `https://diamondapp.com?r=${referralHash}`;
+    return `${window.location.origin}?r=${referralHash}`;
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {
@@ -937,13 +937,13 @@ export class GlobalVarsService {
   }
 
   updateLeaderboard(forceRefresh: boolean = false): void {
-    const pulseService = new PulseService(this.httpClient, this.backendApi, this);
-
+    const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      altumbaseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
     }
+
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
-      pulseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
+      altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
     }
 
     if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
@@ -1174,7 +1174,7 @@ export class GlobalVarsService {
   getFreeDESOMessage(): string {
     return this.referralUSDCents
       ? this.formatUSD(this.referralUSDCents / 100, 0)
-      : this.nanosToUSD(this.jumioDeSoNanos, 0);
+      : this.formatUSD(this.jumioUSDCents / 100, 0);
   }
 
   getReferralUSDCents(): void {
@@ -1184,11 +1184,16 @@ export class GlobalVarsService {
         .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
         .subscribe((res) => {
           const referralInfo = res.ReferralInfoResponse.Info;
-          if (
+          const countrySignUpBonus = res.CountrySignUpBonus;
+          if (!countrySignUpBonus.AllowCustomReferralAmount) {
+            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
+          } else if (
             res.ReferralInfoResponse.IsActive &&
             (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
           ) {
             this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
+          } else {
+            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
           }
         });
     }

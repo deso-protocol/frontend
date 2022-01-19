@@ -1,0 +1,100 @@
+<div class="row no-gutters py-15px create-nft-auction-row-border d-flex align-items-center" style="height: 56px">
+  <div
+    class="mb-0px cursor-pointer"
+    [ngClass]="{'col-3': !showBuyNow, 'col-2': showBuyNow}"
+    (click)="updateBidSort(SN_FIELD)"
+  >
+    Number
+    <i
+      *ngIf="sortByField === SN_FIELD"
+      class="fas"
+      [ngClass]="sortByOrder === 'asc' ? 'fa-sort-amount-down' : 'fa-sort-amount-up-alt'"
+    ></i>
+  </div>
+  <div
+    class="col-3 mb-0px cursor-pointer"
+    (click)="updateBidSort(BUY_NOW_FIELD)"
+    *ngIf="showBuyNow">
+    Buy Now
+    <i
+      *ngIf="sortByField === BUY_NOW_FIELD"
+      class="fas"
+      [ngClass]="sortByOrder === 'asc' ? 'fa-sort-amount-down' : 'fa-sort-amount-up-alt'"
+    ></i>
+  </div>
+
+  <div
+    class="mb-0px cursor-pointer"
+    [ngClass]="{'col-4': !showBuyNow, 'col-3': showBuyNow}"
+    (click)="updateBidSort(HIGH_BID_FIELD)"
+  >
+    Highest Bid
+    <i
+      *ngIf="sortByField === HIGH_BID_FIELD"
+      class="fas"
+      [ngClass]="sortByOrder === 'asc' ? 'fa-sort-amount-down' : 'fa-sort-amount-up-alt'"
+    ></i>
+  </div>
+  <div
+    class="mb-0px cursor-pointer"
+    [ngClass]="{'col-5': !showBuyNow, 'col-4': showBuyNow}"
+    (click)="updateBidSort(MIN_BID_FIELD)"
+  >
+    Min Bid Amount
+    <i
+      *ngIf="sortByField === MIN_BID_FIELD"
+      class="fas"
+      [ngClass]="sortByOrder === 'asc' ? 'fa-sort-amount-down' : 'fa-sort-amount-up-alt'"
+    ></i>
+  </div>
+</div>
+<div class="place-bid-rows mb-30px">
+  <div
+    *ngFor="let nft of sortedSerialNumbers"
+    class="row no-gutters background-color-white py-15px mb-0px create-nft-auction-row-border cursor-pointer"
+    (click)="selectSerialNumber(nft.SerialNumber)"
+  >
+    <div
+      class="mb-0px d-flex align-items-center"
+      [ngClass]="{'col-3': !showBuyNow, 'col-2': showBuyNow}"
+    >
+      <button
+        class="checkbox-circle radio mr-10px ml-10px"
+        [ngClass]="{ checked: selectedSerialNumber?.SerialNumber === nft.SerialNumber }"
+      >
+        <i class="fas fa-check"></i>
+      </button>
+      <span class="lh-15px">#{{ nft.SerialNumber }}</span>
+    </div>
+    <div
+      class="col-3 mb-0px d-flex align-items-center"
+      *ngIf="showBuyNow"
+    >
+      <button
+        class="btn btn-primary font-weight-bold fs-12px br-8px"
+        *ngIf="nft.IsBuyNow"
+        (click)="buyNow($event, nft)"
+      >
+        Buy for {{ globalVars.nanosToDeSo(nft.BuyNowPriceNanos) }} DESO
+      </button>
+    </div>
+    <div
+      class="mb-0px d-flex align-items-center"
+      [ngClass]="{'col-4': !showBuyNow, 'col-3': showBuyNow}"
+    >
+      <div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.HighestBidAmountNanos) }} DESO </div>
+        <div class="text-grey7 d-lg-inline-block d-block">( ~{{globalVars.nanosToUSD(nft.HighestBidAmountNanos, 2) }})</div>
+      </div>
+    </div>
+    <div
+      class="mb-0px d-flex align-items-center"
+      [ngClass]="{'col-5': !showBuyNow, 'col-4': showBuyNow}"
+    >
+      <div>
+        <div class="d-lg-inline-block d-block">{{ globalVars.nanosToDeSo(nft.MinBidAmountNanos) }} DESO </div>
+        <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(nft.MinBidAmountNanos, 2) }})</div>
+      </div>
+    </div>
+  </div>
+</div>

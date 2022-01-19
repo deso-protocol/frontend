@@ -38,6 +38,8 @@ export class CloseNftAuctionModalComponent {
               nftEntry.SerialNumber,
               false,
               nftEntry.MinBidAmountNanos,
+              false,
+              0,
               this.globalVars.defaultFeeRateNanosPerKB
             )
             .pipe(
@@ -52,8 +54,8 @@ export class CloseNftAuctionModalComponent {
       .subscribe(
         (res) => {
           // Hide this modal and open the next one.
-          this.bsModalRef.hide();
           this.modalService.setDismissReason("auction cancelled");
+          this.bsModalRef.hide();
         },
         (err) => {
           console.error(err);

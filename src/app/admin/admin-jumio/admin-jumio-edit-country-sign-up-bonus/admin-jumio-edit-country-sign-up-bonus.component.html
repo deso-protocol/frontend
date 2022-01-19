@@ -1,0 +1,60 @@
+<div app-theme class="p-15px">
+  <div class="d-flex flex-column">
+    <div>Update Sign-Up Bonus for {{ getCountryName() }} </div>
+    <div class="d-flex flex-column">
+      <div class="d-flex py-15px">
+        <label for="referral-amount-override-usd" class="cursor-pointer mb-0">Referral Amount Override ($USD): </label>
+        <input
+          id="referral-amount-override-usd"
+          [(ngModel)]="newReferralAmountOverrideUSD"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter an amount"
+          type="number"
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <div class="d-flex py-15px">
+        <label for="allow-custom-referral-amount" class="cursor-pointer mb-0">Allow Custom Referral Amount: </label>
+        <input
+          id="allow-custom-referral-amount"
+          [(ngModel)]="newAllowCustomReferralAmount"
+          type="checkbox"/>
+      </div>
+
+      <div class="d-flex py-15px">
+        <label for="kickback-amount-override-usd" class="cursor-pointer mb-0">Kickback Amount Override ($USD): </label>
+        <input
+          id="kickback-amount-override-usd"
+          [(ngModel)]="newKickbackAmountOverrideUSD"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter an amount"
+          type="number"
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <div class="d-flex py-15px">
+        <label for="allow-custom-kickback-amount" class="cursor-pointer mb-0">Allow Custom Kickback Amount: </label>
+        <input
+          id="allow-custom-kickback-amount"
+          [(ngModel)]="newAllowCustomKickbackAmount"
+          type="checkbox"/>
+      </div>
+    </div>
+    <div>
+      <button
+        class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
+        style="height: 36px; width: 75px; line-height: 15px"
+        [ngClass]="{
+      disabled: updatingCountryLevelBonus,
+      'btn-loading': updatingCountryLevelBonus
+    }"
+        (click)="updateSignUpBonus()"
+      >Update</button>
+    </div>
+  </div>
+</div>
+

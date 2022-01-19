@@ -76,19 +76,23 @@ export class PlaceBidModalComponent implements OnInit {
 
   setErrors(): void {
     const bidAmountExceedsBalance = this.bidAmountDESO * 1e9 > this.globalVars.loggedInUser.BalanceNanos;
-    this.errors = !this.bidAmountDESO && this.selectedSerialNumber.MinBidAmountNanos === 0 ? "You must bid more than 0 DESO.\n\n" : "";
+    this.errors =
+      !this.bidAmountDESO && this.selectedSerialNumber.MinBidAmountNanos === 0
+        ? "You must bid more than 0 DESO.\n\n"
+        : "";
     this.errors += !this.selectedSerialNumber ? "You must select an edition to bid.\n\n" : "";
-    this.errors += bidAmountExceedsBalance
-      ? `You do not have ${this.bidAmountDESO} DESO to fulfill this bid.\n\n`
-      : "";
+    this.errors += bidAmountExceedsBalance ? `You do not have ${this.bidAmountDESO} DESO to fulfill this bid.\n\n` : "";
     this.errors +=
       this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountDESO * 1e9
-        ? `Your bid of ${
-            this.bidAmountDESO
-          } does not meet the minimum bid requirement of ${this.globalVars.nanosToDeSo(
+        ? `Your bid of ${this.bidAmountDESO} does not meet the minimum bid requirement of ${this.globalVars.nanosToDeSo(
             this.selectedSerialNumber.MinBidAmountNanos
           )} DESO (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})\n\n`
         : "";
+  }
+
+  nftPurchasedHandler() {
+    this.modalService.setDismissReason("nft purchased");
+    this.bsModalRef.hide();
   }
 
   placeBid() {
@@ -109,12 +113,8 @@ export class PlaceBidModalComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          // Hide this modal and open the next one.
-          this.bsModalRef.hide();
-          this.modalService.show(BidPlacedModalComponent, {
-            class: "modal-dialog-centered modal-sm",
-          });
           this.modalService.setDismissReason("bid placed");
+          this.bsModalRef.hide();
         },
         (err) => {
           console.error(err);
@@ -142,9 +142,13 @@ export class PlaceBidModalComponent implements OnInit {
     }
   }
 
-  selectSerialNumber(idx: number) {
-    this.selectedSerialNumber = this.availableSerialNumbers.find((sn) => sn.SerialNumber === idx);
+  selectSerialNumber(serialNumber: NFTEntryResponse) {
+    this.selectedSerialNumber = serialNumber;
     this.saveSelection();
+  }
+
+  sumAdditionalRoyaltiesBasisPoints(royalties: { [k: string]: number }): number {
+    return Object.values(royalties).reduce((prevVal, val) => prevVal + val);
   }
 
   deselectSerialNumber() {

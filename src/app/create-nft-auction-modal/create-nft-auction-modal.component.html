@@ -38,6 +38,61 @@
               [disabled]="creatingAuction"/>
           </div>
         </div>
+      <ng-container *ngIf="!post.HasUnlockable">
+        <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px w-90">
+          <div>Enable "Buy Now"<span class="text-grey7">(Optional)</span></div>
+          <div class="custom-control custom-switch custom-switch-lg d-flex align-items-start">
+            <input
+              [(ngModel)]="isBuyNow"
+              (ngModelChange)="updateBuyNowStatus($event)"
+              type="checkbox"
+              class="custom-control-input"
+              id="buyNowSwitch"
+              [disabled]="creatingAuction"
+            >
+            <label class="custom-control-label" for="buyNowSwitch"></label>
+          </div>
+        </div>
+        <div class="pt-10px">
+          Buy Now Price
+        </div>
+        <div class="d-flex flex-wrap">
+          <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
+               [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+            <div class="input-group-prepend" id="buy-now-usd-label">
+              <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
+            </div>
+            <input
+              [(ngModel)]="buyNowPriceUSD"
+              (ngModelChange)="updateBuyNowPriceDESO($event)"
+              [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}"
+              aria-describedby="buy-now-usd-label"
+              class="form-control fs-15px text-right d-inline-block"
+              type="number" min="0"
+              placeholder="0"
+              [disabled]="creatingAuction || !isBuyNow"/>
+          </div>
+          <div class="input-group py-5px"
+               [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+            <div class="input-group-prepend" id="buy-now-deso-label">
+              <span class="input-group-text fs-15px">DESO</span>
+            </div>
+            <input
+              [(ngModel)]="buyNowPriceDESO"
+              (ngModelChange)="updateBuyNowPriceUSD($event)"
+              aria-describedby="buy-now-deso-label"
+              class="form-control fs-15px text-right d-inline-block"
+              type="number"
+              min="0"
+              placeholder="0"
+              [disabled]="creatingAuction || !isBuyNow"/>
+          </div>
+        </div>
+        <div *ngIf="buyNowPriceDESO < minBidAmountDESO && isBuyNow" class="fc-red">
+          Buy Now price must be greater than min bid amount
+        </div>
+      </ng-container>
+
     </div>
   </div>
 
