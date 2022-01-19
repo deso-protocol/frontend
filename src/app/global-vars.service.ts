@@ -522,7 +522,10 @@ export class GlobalVarsService {
     // from https://stackoverflow.com/questions/1248081/how-to-get-the-browser-viewport-dimensions
     const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 
-    return viewportWidth <= 992;
+    //Safari has this weird issue where it causes a blank screen around 991 & 977 pixels - this 15px increase seems to resolve this
+    //FIXME: Better solution may be in the CSS media queries
+    var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    return isSafari ? viewportWidth <= 1007 : viewportWidth <= 992;
   }
 
   // Calculates the amount of deso one would receive if they sold an amount equal to creatorCoinAmountNano
