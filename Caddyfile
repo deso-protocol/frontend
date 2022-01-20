@@ -28,7 +28,7 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
-    *.dev.yourgem.app
+    *.yourgem.app
     node.deso.org
     amp.deso.org
     bithunt.deso.org
@@ -63,6 +63,7 @@ header @html Content-Security-Policy "
     quickchart.io
     arweave.net
     *.arweave.net
+    *.yourgem.app
     cloudflare-ipfs.com;
   font-src 'self'
     https://fonts.googleapis.com
