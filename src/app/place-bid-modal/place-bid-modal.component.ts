@@ -183,4 +183,11 @@ export class PlaceBidModalComponent implements OnInit {
       resolve(this.biddableSerialNumbers.slice(startIdx, Math.min(endIdx, this.biddableSerialNumbers.length)));
     });
   }
+
+  objectKeysLength(obj: { [k: string]: number } | undefined): number {
+    if (!obj) {
+      return 0;
+    }
+    return Object.keys(obj).length;
+  }
 }

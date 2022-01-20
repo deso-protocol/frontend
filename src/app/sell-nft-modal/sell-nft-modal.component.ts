@@ -20,11 +20,12 @@ export class SellNftModalComponent implements OnInit {
   @Input() selectedBidEntries: NFTBidEntryResponse[];
   loading = false;
   sellNFTDisabled = false;
-  sellingPrice = 2.0887;
-  earnings = 1.3587;
-  creatorRoyalty = 0.42;
-  coinRoyalty = 0.21;
-  serviceFee = 0.1;
+  sellingPrice = 0;
+  earnings = 0;
+  creatorRoyalty = 0;
+  additionalCreatorRoyalty = 0;
+  coinRoyalty = 0;
+  additionalCoinRoyalty = 0;
   sellingNFT = false;
 
   constructor(
@@ -40,10 +41,24 @@ export class SellNftModalComponent implements OnInit {
     this.sellingPrice = _.sumBy(this.selectedBidEntries, "BidAmountNanos") / 1e9;
     const coinRoyaltyBasisPoints = this.post.NFTRoyaltyToCoinBasisPoints;
     const creatorRoyaltyBasisPoints = this.post.NFTRoyaltyToCreatorBasisPoints;
-
+    const additionalCoinRoyaltyBasisPoints = Object.values(this.post.AdditionalCoinRoyaltiesMap || {}).reduce(
+      (acc, val) => acc + val,
+      0
+    );
+    const additionalCreatorRoyaltyBasisPoitns = Object.values(this.post.AdditionalDESORoyaltiesMap || {}).reduce(
+      (acc, val) => acc + val,
+      0
+    );
     this.creatorRoyalty = this.sellingPrice * (creatorRoyaltyBasisPoints / (100 * 100));
+    this.additionalCreatorRoyalty = this.sellingPrice * (additionalCreatorRoyaltyBasisPoitns / (100 * 100));
     this.coinRoyalty = this.sellingPrice * (coinRoyaltyBasisPoints / (100 * 100));
-    this.earnings = this.sellingPrice - this.coinRoyalty - this.creatorRoyalty;
+    this.additionalCoinRoyalty = this.sellingPrice * (additionalCoinRoyaltyBasisPoints / (100 * 100));
+    this.earnings =
+      this.sellingPrice -
+      this.coinRoyalty -
+      this.creatorRoyalty -
+      this.additionalCreatorRoyalty -
+      this.additionalCoinRoyalty;
   }
 
   sellNFTTotal: number;
