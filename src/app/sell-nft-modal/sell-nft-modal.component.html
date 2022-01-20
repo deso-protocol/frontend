@@ -84,7 +84,7 @@
         </div>
       </div>
       <div class="row px-10px pb-10px">
-        <div class="col-6 m-0px">Creator royalty</div>
+        <div class="col-6 m-0px">NFT Creator royalty</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
           <div>
             {{globalVars.abbreviateNumber(creatorRoyalty, 3)}} $DESO
@@ -93,12 +93,30 @@
         </div>
       </div>
       <div class="row px-10px pb-10px">
-        <div class="col-6 m-0px">Coin-holder royalty</div>
+        <div class="col-6 m-0px">DESO Royalties to other users</div>
+        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
+          <div>
+            {{globalVars.abbreviateNumber(additionalCreatorRoyalty, 3)}} $DESO
+          </div>
+          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(additionalCreatorRoyalty*1e9, 2) }})</div>
+        </div>
+      </div>
+      <div class="row px-10px pb-10px">
+        <div class="col-6 m-0px">NFT Creator Coin-holder royalty</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
           <div>
             {{globalVars.abbreviateNumber(coinRoyalty, 3)}} $DESO
           </div>
           <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(coinRoyalty*1e9, 2) }})</div>
+        </div>
+      </div>
+      <div class="row px-10px pb-10px">
+        <div class="col-6 m-0px">Other Creator Coin-holder royalties</div>
+        <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
+          <div>
+            {{globalVars.abbreviateNumber(additionalCoinRoyalty, 3)}} $DESO
+          </div>
+          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(additionalCoinRoyalty*1e9, 2) }})</div>
         </div>
       </div>
     </div>
