@@ -26,7 +26,6 @@ export class SellNftModalComponent implements OnInit {
   additionalCreatorRoyalty = 0;
   coinRoyalty = 0;
   additionalCoinRoyalty = 0;
-  serviceFee = 0;
   sellingNFT = false;
 
   constructor(
