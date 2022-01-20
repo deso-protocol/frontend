@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { GlobalVarsService } from "../../global-vars.service";
 import {
@@ -13,7 +13,7 @@ import { toBN } from "web3-utils";
   selector: "transfer-dao-coin-modal",
   templateUrl: "./transfer-dao-coin-modal.component.html",
 })
-export class TransferDAOCoinModalComponent {
+export class TransferDAOCoinModalComponent implements OnInit {
   @Input() balanceEntryResponse: BalanceEntryResponse;
 
   amountToTransfer: number = 0;
@@ -22,12 +22,26 @@ export class TransferDAOCoinModalComponent {
   transferringDAOCoin: boolean = false;
   backendErrors: string = "";
   validationErrors: string[] = [];
+  hideCreatorSearch: boolean = false;
   constructor(
     public bsModalRef: BsModalRef,
     public modalService: BsModalService,
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService
   ) {}
+
+  ngOnInit(): void {
+    // If this DAO coin can only be transferred to the profile owner and we're not the profile owner, set the receiver
+    // to the profile owner and don't let them search.
+    if (
+      this.balanceEntryResponse?.ProfileEntryResponse?.DAOCoinEntry?.TransferRestrictionStatus ===
+        TransferRestrictionStatusString.PROFILE_OWNER_ONLY &&
+      this.balanceEntryResponse?.CreatorPublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+    ) {
+      this.hideCreatorSearch = true;
+      this.receiver = this.balanceEntryResponse?.ProfileEntryResponse;
+    }
+  }
 
   _handleCreatorSelectedInSearch(creator): void {
     this.receiver = creator;

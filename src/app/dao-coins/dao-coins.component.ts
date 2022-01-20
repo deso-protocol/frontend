@@ -21,6 +21,7 @@ import { BsModalService } from "ngx-bootstrap/modal";
 import { TransferDAOCoinModalComponent } from "./transfer-dao-coin-modal/transfer-dao-coin-modal.component";
 import { BurnDaoCoinModalComponent } from "./burn-dao-coin-modal/burn-dao-coin-modal.component";
 import { split } from "lodash";
+import { SwalHelper } from "../../lib/helpers/swal-helper";
 
 @Component({
   selector: "dao-coins",
@@ -215,41 +216,78 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     if (this.myDAOCoin.MintingDisabled || this.mintingDAOCoin || this.coinsToMint <= 0) {
       return;
     }
-    this.loadingNewSelection = true;
-    this.mintingDAOCoin = true;
-    this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.MINT)
-      .subscribe(
-        (res) => {
-          this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
-            .add(toBN(this.globalVars.toHexNanos(this.coinsToMint)))
-            .toString("hex");
-          zip(this.loadMyDAOCapTable(), this.loadMyDAOCoinHoldings()).subscribe(() => {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Mint DAO Coins",
+      html: `Click confirm to mint ${this.coinsToMint} ${this.globalVars.loggedInUser?.ProfileEntryResponse?.Username} DAO coins`,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((res: any) => {
+      if (res.isConfirmed) {
+        this.loadingNewSelection = true;
+        this.mintingDAOCoin = true;
+        this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.MINT)
+          .subscribe(
+            (res) => {
+              this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
+                .add(toBN(this.globalVars.toHexNanos(this.coinsToMint)))
+                .toString("hex");
+              zip(this.loadMyDAOCapTable(), this.loadMyDAOCoinHoldings()).subscribe(() => {
+                this.loadingNewSelection = false;
+                this._handleTabClick(this.activeTab);
+              });
+              this.coinsToMint = 0;
+            },
+            (err) => {
+              this.globalVars._alertError(err.error.error);
+              console.error(err);
+            }
+          )
+          .add(() => {
+            this.mintingDAOCoin = false;
             this.loadingNewSelection = false;
-            this._handleTabClick(this.activeTab);
           });
-        },
-        (err) => {
-          console.error(err);
-        }
-      )
-      .add(() => (this.mintingDAOCoin = false));
+      }
+    });
   }
 
   disableMinting(): void {
     if (this.myDAOCoin.MintingDisabled || this.disablingMinting) {
       return;
     }
-    this.disablingMinting = true;
-    this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.DISABLE_MINTING)
-      .subscribe(
-        (res) => {
-          this.myDAOCoin.MintingDisabled = true;
-        },
-        (err) => {
-          console.error(err);
-        }
-      )
-      .add(() => (this.disablingMinting = false));
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Disable Minting",
+      html: `Click confirm to disable minting for ${this.globalVars.loggedInUser?.ProfileEntryResponse?.Username} DAO coins. Please note, this is irreversible.`,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((res: any) => {
+      if (res.isConfirmed) {
+        this.disablingMinting = true;
+        this.doDAOCoinTxn(
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          DAOCoinOperationTypeString.DISABLE_MINTING
+        )
+          .subscribe(
+            (res) => {
+              this.myDAOCoin.MintingDisabled = true;
+            },
+            (err) => {
+              this.globalVars._alertError(err.error.error);
+              console.error(err);
+            }
+          )
+          .add(() => (this.disablingMinting = false));
+      }
+    });
   }
 
   updateTransferRestrictionStatus(): void {
@@ -260,41 +298,78 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     ) {
       return;
     }
-    this.updatingTransferRestrictionStatus = true;
-    this.doDAOCoinTxn(
-      this.globalVars.loggedInUser?.PublicKeyBase58Check,
-      DAOCoinOperationTypeString.UPDATE_TRANSFER_RESTRICTION_STATUS
-    )
-      .subscribe(
-        (res) => {
-          this.myDAOCoin.TransferRestrictionStatus = this.transferRestrictionStatus;
-        },
-        (err) => {
-          console.error(err);
-        }
-      )
-      .add(() => (this.updatingTransferRestrictionStatus = false));
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Update Transfer Restriction Status",
+      html: `Click confirm to update the transfer restriction status to ${this.getDisplayTransferRestrictionStatus(
+        this.transferRestrictionStatus
+      )} for ${this.globalVars.loggedInUser?.ProfileEntryResponse?.Username} DAO coins`,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((res: any) => {
+      if (res.isConfirmed) {
+        this.updatingTransferRestrictionStatus = true;
+        this.doDAOCoinTxn(
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          DAOCoinOperationTypeString.UPDATE_TRANSFER_RESTRICTION_STATUS
+        )
+          .subscribe(
+            (res) => {
+              this.myDAOCoin.TransferRestrictionStatus = this.transferRestrictionStatus;
+            },
+            (err) => {
+              this.globalVars._alertError(err.error.error);
+              console.error(err);
+            }
+          )
+          .add(() => (this.updatingTransferRestrictionStatus = false));
+      }
+    });
   }
 
   burnDAOCoin(profilePublicKeyBase58Check: string): void {
     if (this.burningDAOCoin || this.coinsToBurn <= 0) {
       return;
     }
-    this.burningDAOCoin = true;
-    this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.BURN)
-      .subscribe(
-        (res) => {
-          if (profilePublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-            this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
-              .add(toBN(this.globalVars.toHexNanos(this.coinsToBurn)))
-              .toString("hex");
-          }
-        },
-        (err) => {
-          console.error(err);
-        }
-      )
-      .add(() => this.burningDAOCoin);
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: "Burn DAO Coins",
+      html: `Click confirm to burn ${this.coinsToBurn} ${this.globalVars.loggedInUser?.ProfileEntryResponse?.Username} DAO coins`,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-light",
+        cancelButton: "btn btn-light no",
+      },
+      reverseButtons: true,
+    }).then((res: any) => {
+      if (res.isConfirmed) {
+        this.burningDAOCoin = true;
+        this.loadingNewSelection = true;
+        this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.BURN)
+          .subscribe(
+            (res) => {
+              if (profilePublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
+                this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
+                  .add(toBN(this.globalVars.toHexNanos(this.coinsToBurn)))
+                  .toString("hex");
+              }
+              this.coinsToBurn = 0;
+            },
+            (err) => {
+              this.globalVars._alertError(err.error.error);
+              console.error(err);
+            }
+          )
+          .add(() => {
+            this.burningDAOCoin = false;
+            this.loadingNewSelection = false;
+          });
+      }
+    });
   }
 
   doDAOCoinTxn(profilePublicKeyBase58Check: string, operationType: DAOCoinOperationTypeString): Observable<any> {
