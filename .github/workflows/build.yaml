@@ -61,6 +61,8 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          build-args: |
+            environment=pearl-dev
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -97,6 +99,8 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          build-args:
+            environment=pearl-prod
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-staging.outputs.tags }}
           labels: ${{ steps.meta-staging.outputs.labels }}
