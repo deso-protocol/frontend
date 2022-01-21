@@ -135,7 +135,6 @@ export class IdentityService {
     accessLevel: number;
     accessLevelHmac: string;
     encryptedSeedHex: string;
-    senderGroupKeyName: string;
     recipientPublicKey: string;
     message: string;
   }): Observable<any> {
