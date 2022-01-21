@@ -1043,6 +1043,7 @@ export class BackendApiService {
       ? this.identityService.encrypt({
           ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
           recipientPublicKey: ReceiverPublicKeyBase58Check,
+          senderGroupKeyName: "",
           message: UnencryptedUnlockableText,
         })
       : of({ encryptedMessage: "" });
