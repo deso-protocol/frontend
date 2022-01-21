@@ -215,6 +215,7 @@ export class GlobalVarsService {
 
   jumioDeSoNanos = 0;
   jumioUSDCents = 0;
+  jumioKickbackUSDCents = 0;
 
   referralUSDCents: number = 0;
 
@@ -403,9 +404,7 @@ export class GlobalVarsService {
   }
 
   getLinkForReferralHash(referralHash: string) {
-    // FIXME: Generalize this once there are referral programs running
-    // on other nodes.
-    return `https://diamondapp.com?r=${referralHash}`;
+    return `${window.location.origin}?r=${referralHash}`;
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {

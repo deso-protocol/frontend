@@ -105,6 +105,7 @@
             (postHidden)="hidePost()"
             (userBlocked)="blockUser()"
             (toggleGlobalFeed)="_addPostToGlobalFeed()"
+            (refreshNFTEntries)="refreshNFTEntriesHandler()"
           ></feed-post-dropdown>
         </div>
 
@@ -225,6 +226,7 @@
                   (userBlocked)="blockUser()"
                   (toggleGlobalFeed)="_addPostToGlobalFeed($event)"
                   (togglePostPin)="_pinPostToGlobalFeed($event)"
+                  (refreshNFTEntries)="refreshNFTEntriesHandler()"
                 ></feed-post-dropdown>
               </div>
             </div>
@@ -530,6 +532,9 @@
         <div *ngIf="nftMinBidAmountNanos">
           <b>Min bid: {{ globalVars.nanosToDeSo(nftMinBidAmountNanos) }} $DESO</b>
         </div>
+        <div *ngIf="nftBuyNowPriceNanos">
+          <b>Buy Now Price: {{ globalVars.nanosToDeSo(nftBuyNowPriceNanos) }} $DESO</b>
+        </div>
       </div>
       <button
         class="btn btn-primary font-weight-bold br-8px fs-13px"
@@ -538,6 +543,16 @@
         *ngIf="showPlaceABid"
       >
         Place a bid
+      </button>
+      <button
+        class="btn btn-primary font-weight-bold br-8px fs-13px"
+        [ngClass]="{ 'mt-15px': isQuotedContent }"
+        (click)="acceptTransfer($event)"
+        *ngIf="acceptNFT"
+      >
+            <span class="d-flex align-items-center justify-content-center fs-12px">
+              Accept Transfer
+            </span>
       </button>
     </div>
     <div *ngIf="showUnlockableContent">

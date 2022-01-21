@@ -16,6 +16,7 @@ import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.co
 import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
 import { SharedDialogs } from "../../../lib/shared-dialogs";
 import { environment } from "src/environments/environment";
+import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept-modal/transfer-nft-accept-modal.component";
 
 @Component({
   selector: "feed-post",
@@ -96,8 +97,11 @@ export class FeedPostComponent implements OnInit {
   @Input() nftCollectionHighBid = 0;
   @Input() nftCollectionLowBid = 0;
   @Input() isForSaleOnly: boolean = false;
+
+  // Only populated when there is exactly one copy
   nftLastAcceptedBidAmountNanos: number;
   nftMinBidAmountNanos: number;
+  nftBuyNowPriceNanos: number;
 
   @Input() showNFTDetails = false;
   @Input() showExpandedNFTDetails = false;
@@ -111,6 +115,9 @@ export class FeedPostComponent implements OnInit {
 
   @Input() inTutorial: boolean = false;
 
+  // If this is a pending NFT post that still needs to be accepted by the user
+  @Input() acceptNFT: boolean = false;
+
   // emits the PostEntryResponse
   @Output() postDeleted = new EventEmitter();
 
@@ -122,6 +129,9 @@ export class FeedPostComponent implements OnInit {
 
   // emits diamondSent event
   @Output() diamondSent = new EventEmitter();
+
+  // Emit tells parent component to refresh NFT data
+  @Output() refreshNFTEntries = new EventEmitter();
 
   AppRoutingModule = AppRoutingModule;
   addingPostToGlobalFeed = false;
@@ -198,12 +208,21 @@ export class FeedPostComponent implements OnInit {
         this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
         this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
         if (this.nftEntryResponses.length === 1) {
-          this.nftLastAcceptedBidAmountNanos = this.nftEntryResponses[0].LastAcceptedBidAmountNanos;
-          if (this.nftEntryResponses[0].MinBidAmountNanos > 0) {
-            this.nftMinBidAmountNanos = this.nftEntryResponses[0].MinBidAmountNanos;
+          const nftEntryResponse = this.nftEntryResponses[0];
+          this.nftLastAcceptedBidAmountNanos = nftEntryResponse.LastAcceptedBidAmountNanos;
+          if (nftEntryResponse.MinBidAmountNanos > 0) {
+            this.nftMinBidAmountNanos = nftEntryResponse.MinBidAmountNanos;
+          }
+          if (nftEntryResponse.BuyNowPriceNanos > 0 && nftEntryResponse.IsBuyNow) {
+            this.nftBuyNowPriceNanos = nftEntryResponse.BuyNowPriceNanos;
           }
         }
       });
+  }
+
+  refreshNFTEntriesHandler() {
+    this.getNFTEntries();
+    this.refreshNFTEntries.emit();
   }
 
   ngOnInit() {
@@ -547,6 +566,30 @@ export class FeedPostComponent implements OnInit {
     return imgURL;
   }
 
+  acceptTransfer(event) {
+    event.stopPropagation();
+    const transferNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
+      return (
+        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+        nftEntryResponse.IsPending
+      );
+    });
+
+    const modalDetails = this.modalService.show(TransferNftAcceptModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: {
+        post: this.postContent,
+        transferNFTEntryResponses,
+      },
+    });
+    const onHideEvent = modalDetails.onHide;
+    onHideEvent.subscribe((response) => {
+      if (response === "transfer accepted") {
+        this.getNFTEntries();
+      }
+    });
+  }
+
   openPlaceBidModal(event: any) {
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
       SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "place a bid");
@@ -562,6 +605,9 @@ export class FeedPostComponent implements OnInit {
       if (response === "bid placed") {
         this.getNFTEntries();
         this.nftBidPlaced.emit();
+      } else if (response === "nft purchased") {
+        this.getNFTEntries();
+        this.refreshNFTEntries.emit();
       }
     });
   }

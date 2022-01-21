@@ -7,6 +7,7 @@ import * as _ from "lodash";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
 import { of, Subscription, zip } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 @Component({
   selector: "app-root",
@@ -114,7 +115,12 @@ export class AppComponent implements OnInit {
     return zip(
       this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
       environment.verificationEndpointHostname
-        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey)
+        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey).pipe(
+            catchError((err) => {
+              console.error(err);
+              return of(null);
+            })
+          )
         : of(null)
     ).subscribe(
       ([res, userMetadata]) => {
@@ -197,6 +203,7 @@ export class AppComponent implements OnInit {
         this.globalVars.showJumio = res.HasJumioIntegration;
         this.globalVars.jumioDeSoNanos = res.JumioDeSoNanos;
         this.globalVars.jumioUSDCents = res.JumioUSDCents;
+        this.globalVars.jumioKickbackUSDCents = res.JumioKickbackUSDCents;
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
         this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;

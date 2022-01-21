@@ -157,16 +157,16 @@ import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 import { AdminNodeFeesComponent } from "./admin/admin-node-fees/admin-node-fees.component";
 import { AdminNodeAddFeesComponent } from "./admin/admin-node-fees/admin-node-add-fee/admin-node-add-fees.component";
 import { FreeDesoMessageComponent } from "./free-deso-message/free-deso-message.component";
+import { SupplyMonitoringStatsPageComponent } from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
+import { SupplyMonitoringStatsComponent } from "./supply-monitoring-stats-page/supply-monitoring-stats/supply-monitoring-stats.component";
+import { TransferNftModalComponent } from "./transfer-nft-modal/transfer-nft-modal.component";
+import { TransferNftAcceptModalComponent } from "./transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import { NftBurnModalComponent } from "./nft-burn-modal/nft-burn-modal.component";
+import { NftSelectSerialNumberComponent } from "./nft-select-serial-number/nft-select-serial-number.component";
 
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
-import {
-  SupplyMonitoringStatsPageComponent
-} from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
-import {
-  SupplyMonitoringStatsComponent
-} from "./supply-monitoring-stats-page/supply-monitoring-stats/supply-monitoring-stats.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -311,6 +311,10 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     SupplyMonitoringStatsPageComponent,
     SupplyMonitoringStatsComponent,
     FreeDesoMessageComponent,
+    TransferNftAcceptModalComponent,
+    TransferNftModalComponent,
+    NftBurnModalComponent,
+    NftSelectSerialNumberComponent,
   ],
   imports: [
     BrowserModule,
