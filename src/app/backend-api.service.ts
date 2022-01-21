@@ -8,7 +8,6 @@ import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operat
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 import { environment } from "src/environments/environment";
-import {GlobalVarsService} from "./global-vars.service";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
@@ -439,8 +438,7 @@ export type CountryLevelSignUpBonusResponse = {
 export class BackendApiService {
   constructor(
     private httpClient: HttpClient,
-    private identityService: IdentityService,
-    private globalVars: GlobalVarsService
+    private identityService: IdentityService
   ) {}
 
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
@@ -465,6 +463,9 @@ export class BackendApiService {
 
   // Store the last identity service URL in localStorage
   LastIdentityServiceKey = "lastIdentityServiceURLV2";
+
+  // Messaging V3 default key name.
+  DefaultKey = "default-key"
 
   // TODO: Wipe all this data when transition is complete
   LegacyUserListKey = "userList";
@@ -742,9 +743,9 @@ export class BackendApiService {
     // To check the messaging key we call the RoutePathCheckPartyMessaging keys backend API route.
     let req = this.post(endpoint, BackendRoutes.RoutePathCheckPartyMessagingKeys, {
       SenderPublicKeyBase58Check,
-      SenderMessagingKeyName: this.globalVars.messagesDefaultKeyName,
+      SenderMessagingKeyName: this.DefaultKey,
       RecipientPublicKeyBase58Check,
-      RecipientMessagingKeyName: this.globalVars.messagesDefaultKeyName
+      RecipientMessagingKeyName: this.DefaultKey
     })
       .pipe(
         switchMap( (partyMessagingKeys) => {
