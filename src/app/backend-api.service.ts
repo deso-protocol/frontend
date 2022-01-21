@@ -8,6 +8,7 @@ import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operat
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 import { environment } from "src/environments/environment";
+import {GlobalVarsService} from "./global-vars.service";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
@@ -436,7 +437,11 @@ export type CountryLevelSignUpBonusResponse = {
   providedIn: "root",
 })
 export class BackendApiService {
-  constructor(private httpClient: HttpClient, private identityService: IdentityService) {}
+  constructor(
+    private httpClient: HttpClient,
+    private identityService: IdentityService,
+    private globalVars: GlobalVarsService
+  ) {}
 
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
@@ -734,9 +739,9 @@ export class BackendApiService {
     //Then pipe ciphertext to RoutePathSendMessageStateless
     let req = this.post(endpoint, BackendRoutes.RoutePathCheckPartyMessagingKeys, {
       SenderPublicKeyBase58Check,
-      SenderMessagingKeyName: "default-key",
+      SenderMessagingKeyName: this.globalVars.messagesDefaultKeyName,
       RecipientPublicKeyBase58Check,
-      RecipientMessagingKeyName: "default-key"
+      RecipientMessagingKeyName: this.globalVars.messagesDefaultKeyName
     })
       .pipe(
         switchMap( (partyMessagingKeys) => {
@@ -749,21 +754,17 @@ export class BackendApiService {
             .pipe(
               switchMap((encrypted) => {
                 const EncryptedMessageText = encrypted.encryptedMessage;
-                let senderV3 = partyMessagingKeys.IsSenderMessagingKey;
-                let recipientV3 = partyMessagingKeys.IsRecipientMessagingKey;
-
-                // const SenderMessagingPublicKey = senderV3 ? encrypted.messagingParty.senderMessagingPublicKey : "";
-                const SenderMessagingKeyName = senderV3 ? partyMessagingKeys.SenderMessagingKeyName : "";
-                // const RecipientMessagingPublicKey = recipientV3 ? encrypted.messagingParty.recipientMessagingPublicKey : "";
-                const RecipientMessagingKeyName = recipientV3 ? partyMessagingKeys.RecipientMessagingKeyName : "";
+                // Determine whether to use V3 messaging group key names for sender or recipient.
+                const senderV3 = partyMessagingKeys.IsSenderMessagingKey;
+                const SenderMessagingGroupKeyName = senderV3 ? partyMessagingKeys.SenderMessagingKeyName : "";
+                const recipientV3 = partyMessagingKeys.IsRecipientMessagingKey;
+                const RecipientMessagingGroupKeyName = recipientV3 ? partyMessagingKeys.RecipientMessagingKeyName : "";
                 return this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
                   SenderPublicKeyBase58Check,
                   RecipientPublicKeyBase58Check,
                   EncryptedMessageText,
-                  // SenderMessagingPublicKey,
-                  SenderMessagingKeyName,
-                  // RecipientMessagingPublicKey,
-                  RecipientMessagingKeyName,
+                  SenderMessagingGroupKeyName,
+                  RecipientMessagingGroupKeyName,
                   MinFeeRateNanosPerKB,
                 }).pipe(
                   map((request) => {
@@ -1397,9 +1398,9 @@ export class BackendApiService {
             Legacy: !message.V2 && !message.Version,
             Version: message.Version,
             SenderMessagingPublicKey: message.SenderMessagingPublicKey,
-            SenderMessagingKeyName: message.SenderMessagingKeyName,
+            SenderMessagingGroupKeyName: message.SenderMessagingGroupKeyName,
             RecipientMessagingPublicKey: message.RecipientMessagingPublicKey,
-            RecipientMessagingKeyName: message.RecipientMessagingKeyName
+            RecipientMessagingGroupKeyName: message.RecipientMessagingGroupKeyName
           }))
         );
         return { ...res, encryptedMessages };
