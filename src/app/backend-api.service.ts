@@ -735,8 +735,11 @@ export class BackendApiService {
     MessageText: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    //First encrypt message in identity
-    //Then pipe ciphertext to RoutePathSendMessageStateless
+
+    // First check if either sender or recipient has registered the "default-key" messaging group key.
+    // In V3 messages, we expect users to migrate to the V3 messages, which means they'll have the default
+    // key registered on-chain. We want to automatically send messages to this default key is it's registered.
+    // To check the messaging key we call the RoutePathCheckPartyMessaging keys backend API route.
     let req = this.post(endpoint, BackendRoutes.RoutePathCheckPartyMessagingKeys, {
       SenderPublicKeyBase58Check,
       SenderMessagingKeyName: this.globalVars.messagesDefaultKeyName,
@@ -745,6 +748,7 @@ export class BackendApiService {
     })
       .pipe(
         switchMap( (partyMessagingKeys) => {
+          // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
           return this.identityService.encrypt({
             ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
             recipientPublicKey: partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
@@ -753,6 +757,8 @@ export class BackendApiService {
           })
             .pipe(
               switchMap((encrypted) => {
+                // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
+                // sendMessage transaction.
                 const EncryptedMessageText = encrypted.encryptedMessage;
                 // Determine whether to use V3 messaging group key names for sender or recipient.
                 const senderV3 = partyMessagingKeys.IsSenderMessagingKey;
@@ -1395,7 +1401,7 @@ export class BackendApiService {
             EncryptedHex: message.EncryptedText,
             PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
             IsSender: message.IsSender,
-            Legacy: !message.V2 && !message.Version,
+            Legacy: !message.V2 && (!message.Version || message.Version < 2),
             Version: message.Version,
             SenderMessagingPublicKey: message.SenderMessagingPublicKey,
             SenderMessagingGroupKeyName: message.SenderMessagingGroupKeyName,
