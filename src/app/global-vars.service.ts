@@ -98,6 +98,9 @@ export class GlobalVarsService {
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
 
+  // CloutCast adding global inbox count to global-vars for cross-component access.
+  cloutCastNotificationCount = 0;
+
   // Whether or not to show processing spinners in the UI for unmined transactions.
   // TODO: Move into environment.ts
   showProcessingSpinners = false;
@@ -218,6 +221,25 @@ export class GlobalVarsService {
 
   referralUSDCents: number = 0;
 
+  async SetupCloutCastNotifications() {
+    try {
+    if (!this.loggedInUser) {
+      this.cloutCastNotificationCount = 0;
+      return;
+    }
+
+    let tUri = `${environment.cloutcastUri}/api/user/${this.loggedInUser.PublicKeyBase58Check}/notifications.json`;
+
+    let theNotifications = await this.httpClient.get(tUri, {}).toPromise()
+    if (typeof theNotifications["notificationCount"] !== 'undefined') {
+      this.cloutCastNotificationCount = theNotifications["notificationCount"];
+    }
+    } catch (ex) {
+      console.error(ex);
+      this.cloutCastNotificationCount = 0;
+    }
+  }
+  
   transactionFeeMap: { [k: string]: TransactionFee[] };
   transactionFeeMax: number = 0;
   transactionFeeInfo: string;

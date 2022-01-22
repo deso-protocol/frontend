@@ -11,6 +11,7 @@ import { filter } from "lodash";
 // RPH Modals
 import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.component";
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
+import { CloutCastModalComponent } from "src/app/cloutcast-modal/cloutcast-modal.component";
 import { NftBurnModalComponent } from "../../nft-burn-modal/nft-burn-modal.component";
 import { TransferNftModalComponent } from "../../transfer-nft-modal/transfer-nft-modal.component";
 
@@ -52,6 +53,18 @@ export class FeedPostDropdownComponent {
     );
   }
 
+  showCastPost(): boolean {
+    return true;
+  }
+
+  openCastModal(event, component): void {
+    event.stopPropagation();
+    this.modalService.show(CloutCastModalComponent, {
+      class: "modal-dialog-centered modal-lg",
+      initialState: { postHashHex: this.post.PostHashHex },
+    });
+  }
+  
   dropNFT() {
     // Get the latest drop so that we can update it.
     this.backendApi

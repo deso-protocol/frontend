@@ -23,6 +23,14 @@
       Share {{ post.IsNFT ? "NFT" : "Post" }}
     </a>
     <a
+      *ngIf="showCastPost"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+      (click)="openCastModal($event)"
+      >
+      <i class="fas fa-rocket"></i>
+      Cast Post
+    </a>
+    <a
       *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT && !post.ParentStakeID"
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
       (click)="openMintNftModal($event)"

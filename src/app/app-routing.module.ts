@@ -36,6 +36,7 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
+import { CloutCastPageComponent } from "./cloutcast-page/cloutcast-page.component";
 import {
   SupplyMonitoringStatsPageComponent
 } from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
@@ -84,6 +85,9 @@ class RouteNames {
   public static TUTORIAL = "tutorial";
   public static CREATE_PROFILE = "create-profile";
   public static INVEST = "invest";
+
+  // CloutCast Route Prefix
+  public static CLOUTCAST_PREFIX = 'casts'
   public static SUPPLY_STATS = "supply-stats";
 }
 
@@ -166,6 +170,11 @@ const routes: Routes = [
     component: CreatePostTutorialPageComponent,
     pathMatch: "full",
   },
+  // CloutCast routes
+  { path: RouteNames.CLOUTCAST_PREFIX, component: CloutCastPageComponent, pathMatch: "full" },
+  { path: RouteNames.CLOUTCAST_PREFIX + "/:cloutCastId", component: CloutCastPageComponent, pathMatch: "full" },
+  // End CloutCast routes
+ 
   {
     path: RouteNames.SUPPLY_STATS,
     component: SupplyMonitoringStatsPageComponent,

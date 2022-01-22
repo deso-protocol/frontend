@@ -112,6 +112,13 @@
 
         <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
 
+        <cloutcast-bar-button
+        [hasNotifications]="true"
+        [link]="'/' + globalVars.RouteNames.CLOUTCAST_PREFIX"
+        [buttonLabel]="'Casts'"
+        ></cloutcast-bar-button>
+
+        
         <left-bar-button
           *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
           [link]="'/' + globalVars.RouteNames.REFERRALS"

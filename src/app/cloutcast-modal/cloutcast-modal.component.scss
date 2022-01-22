@@ -1,0 +1,36 @@
+.flex-flow-row {
+  display: flex;
+  flex-direction: row;
+
+  // box-sizing: content-box
+  flex-flow: row nowrap;
+}
+
+.castRadios {
+  margin-left: 20px;
+}
+
+.ccLink {
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+[tip] .cctooltip {
+  position: fixed;
+  z-index: 9999;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 5px;
+  background: white;
+  border: 1px solid #ccc;
+  visibility: hidden;
+  box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    visiblity 0s;
+}
+[tip]:hover .cctooltip {
+  visibility: visible;
+  opacity: 1;
+}

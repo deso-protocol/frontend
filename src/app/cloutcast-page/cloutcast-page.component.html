@@ -1,0 +1,309 @@
+<div class="global__desktop" *ngIf="!globalVars.isMobile()">
+  <left-bar></left-bar>
+  <div class="global__content__flex">
+    <div class="global__content__width d-flex vh-100">
+      <div class="flex-down w-100">
+        <div class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey">
+
+          <div class="flex-row w-100">
+            <div class="flex-grow-1">
+              Casts powered by CloutCast
+            </div>
+            <div class="justify-content-end align-items-right pr-icon-settings">
+              <i (click)="_toggleWallet()" class="fas fa-wallet cursor-pointer pt-2px">
+              </i>
+            </div>
+
+          </div>
+
+        </div>
+        <div *ngIf="walletOpen == true">
+          <div class="mr-15px ml-15px pt-15px pb-5px divtext font-weight-bold border-color-blue border-bottom">
+            My CloutCast Wallet
+          </div>
+          <ng-container *ngIf="walletLoading == false">
+            <div class="row m-3">
+              <div class="col">
+                Available<br />
+                {{nanosToDeSo(walletData.available, 4)}} $DESO<br />
+                (~{{nanosToUSD(walletData.available)}} USD)<br />
+                <button (click)="doDeposit()" class="btn btn-block btn-primary">
+                  Deposit
+                </button>
+              </div>
+              <div class="col">
+                Escrow<br />
+                {{nanosToDeSo(walletData.escrow, 4)}} $DESO<br />
+                (~{{nanosToUSD(walletData.escrow)}} USD)<br />
+                <button 
+                  (click) = "_toggleWithdraw()"
+                  class="btn btn-block btn-info"
+                  [disabled]="sendingWithdrawRequest">
+                  Withdraw
+                </button>
+              </div>
+            </div>
+            <div *ngIf="showWithdraw == true" class="row m-3">
+              <!-- <div class="col-12 col-sm-6">
+                <button class="btn btn-block btn-info" (click)="fillMaxWithdraw()">
+                  Maximum
+                </button>
+              </div> -->
+              <btn class="btn btn-block btn-info col-12 col-sm-6" (click)="doWithdraw()">
+                Initiate Withdrawl
+              </btn>
+              <div class="input-group py-5px col-12 col-sm-6">
+              <div class="input-group-prepend" id="clout-label">
+                <span class="input-group-text fs-15px">DESO  </span>
+              </div>
+              <input
+                [(ngModel)]="withdrawCloutAmount"
+                aria-describedby="clout-label"
+                class="form-control fs-15px text-right d-inline-block"
+                type="number" min="0"
+                placeholder="0"
+                [disabled]="sendingWithdrawRequest"/>
+              </div>
+              <div class="text-grey7 col-12">
+                Specify the amount of $DESO to withdraw from your CloutCast wallet. 
+              </div>
+            </div>
+            
+          </ng-container>
+          <div *ngIf="walletLoading == true">
+            Loading...
+          </div>
+        </div>
+      
+        <div class="flex-row ovy">
+          <div class="w-fourty ovy">
+            <div *ngIf="showListLoading">
+              <simple-center-loader></simple-center-loader>
+            </div>
+            <div *ngIf="!showListLoading" class="ovy">
+              <tab-selector
+                [tabs]="['Inbox', 'For Me']"
+                [activeTab]="selectedTab"
+                (tabClick)="ccTabClick($event)"
+              ></tab-selector>
+
+
+              <span *ngIf="showCasts.length > 0">
+                <ng-container *ngFor="let item of showCasts; index as i;">
+                  <div
+                    class="flex-row align-items-center p-2 border-bottom ccListItem"
+                    (click)="ccListItemClick(item.Id)"
+                    [ngClass]="{'listActive' : item.Id==selectedCast,
+                                'message-thread__unread-light-blue' : item.isRead==false }"
+                    *ngIf="item.isDoneAlready !== true"
+                  >
+                    <img src="//{{this.globalVars.localNode}}/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
+                    <span class="ml-2">
+                      <div>
+                        {{item.BitcloutUsername}}
+                      </div>
+                      <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
+                      <div>
+                        {{item.TargetActionText == 'ReClout' ? 'Repost or Quote' : item.TargetActionText}}
+                      </div>
+                    </span>
+                  </div>
+                </ng-container>
+                <div style="height:300px"></div>
+              </span>
+              <span *ngIf="showCasts.length == 0">
+                <h4>No Promos found in {{selectedTab}}</h4>
+                <h6>Try later when there are new promos, or when your criteria has changed!</h6>
+              </span>
+            </div>
+          </div>
+
+          <div class="flex-grow-1 w-sixty-max ovy">
+            <div *ngIf="showContentLoading">
+              <simple-center-loader></simple-center-loader>
+            </div>
+            <div *ngIf="!showContentLoading && selectedPost" class="ovy p-3">
+              <feed-post
+                [post]="selectedPost.PostFound"
+              >
+
+              </feed-post>
+              <div class="cc-info p-3">
+                <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'Repost or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToDeSo(selectedCastObject.RateNanos)}} $DESO (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+                <button
+                  class="btn-block my-2 btn-primary"
+                  (click)="proveWork()"
+                >
+                  Earn {{ nanosToDeSo(selectedCastObject.RateNanos) }} $DESO
+                </button>
+                <span class="text-muted">
+                  $DESO earned from engaging with Casts is put into an escrow account. For more details, click the wallet icon above.
+                </span>
+              </div>
+              <div class="mb-70px"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="global__mobile flex-column" *ngIf="globalVars.isMobile()">
+  <left-bar-mobile></left-bar-mobile>
+
+  <div class="d-flex flex-column flex-grow-1 vh-100">
+    <!-- Header -->
+    <div class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey w-100">
+      <top-bar-mobile-navigation-control 
+      *ngIf="!!!selectedPost"
+      class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+      <a 
+        class="link--unstyled mr-15px d-lg-none d-inline-block" 
+        style="text-align: center" 
+        *ngIf="!!selectedPost"
+        (click)="mobileBack()"
+        queryParamsHandling="merge">
+        <i class="fa fa-angle-left"></i>
+      </a>
+      <span class="flex-grow-1">
+        Casts <sup class="smallerTitle">powered by CloutCast</sup>
+      </span>
+      <div 
+      *ngIf="!!!selectedPost"
+      class="d-flex justify-content-end align-items-right pr-10px">
+        <i
+          (click)="_toggleWallet()"
+          class="fas fa-wallet cursor-pointer messages-header-icon-row__icon pt-2px"
+        ></i>
+      </div>
+
+
+    </div>
+    <div class="w-100 ovy">
+      <div *ngIf="showListLoading || showContentLoading">
+        <simple-center-loader></simple-center-loader>
+      </div>
+      <div *ngIf="(!showContentLoading && !showListLoading) && !!!this.selectedPost" class="ovy">
+        <div *ngIf="walletOpen == true">
+          <div class="mr-15px ml-15px pt-15px pb-5px divtext font-weight-bold border-color-blue border-bottom">
+            My CloutCast Wallet
+          </div>
+          <ng-container *ngIf="walletLoading == false">
+            <div class="row m-3">
+              <div class="col">
+                Available<br />
+                {{nanosToDeSo(walletData.available, 4)}} $DESO<br />
+                (~{{nanosToUSD(walletData.available)}} USD)<br />
+                <button (click)="doDeposit()" class="btn btn-block btn-primary">
+                  Deposit
+                </button>
+              </div>
+              <div class="col">
+                Escrow<br />
+                {{nanosToDeSo(walletData.escrow, 4)}} $DESO<br />
+                (~{{nanosToUSD(walletData.escrow)}} USD)<br />
+                <button 
+                  (click) = "_toggleWithdraw()"
+                  class="btn btn-block btn-info"
+                  [disabled]="sendingWithdrawRequest">
+                  Withdraw
+                </button>
+              </div>
+            </div>
+            <div *ngIf="showWithdraw == true" class="row m-3">
+              <!-- <div class="col-12 col-sm-6">
+                <button class="btn btn-block btn-info" (click)="fillMaxWithdraw()">
+                  Maximum
+                </button>
+              </div> -->
+              <btn class="btn btn-block btn-info col-12 col-sm-6" (click)="doWithdraw()">
+                Initiate Withdrawl
+              </btn>
+              <div class="input-group py-5px col-12 col-sm-6">
+              <div class="input-group-prepend" id="clout-label">
+                <span class="input-group-text fs-15px">CLOUT  </span>
+              </div>
+              <input
+                [(ngModel)]="withdrawCloutAmount"
+                aria-describedby="clout-label"
+                class="form-control fs-15px text-right d-inline-block"
+                type="number" min="0"
+                placeholder="0"
+                [disabled]="sendingWithdrawRequest"/>
+              </div>
+              <div class="text-grey7 col-12">
+                Specify the amount of $DESO to withdraw from your CloutCast wallet. 
+              </div>
+            </div>
+            
+          </ng-container>
+          <div *ngIf="walletLoading == true">
+            Loading...
+          </div>
+        </div>
+
+
+        <tab-selector
+          [tabs]="['Inbox', 'For Me']"
+          [activeTab]="selectedTab"
+          (tabClick)="ccTabClick($event)"
+        ></tab-selector>
+        <span *ngIf="showCasts.length > 0">
+          <ng-container *ngFor="let item of showCasts; index as i;">
+            <div
+              class="flex-row align-items-center p-2 border-bottom ccListItem"
+              (click)="ccListItemClick(item.Id)"
+              [ngClass]="{'listActive' : item.Id==selectedCast}"
+              *ngIf="item.isDoneAlready !== true"
+            >
+              <img src="//{{this.globalVars.localNode}}/api/v0/get-single-profile-picture/{{item.BitcloutPublicKey}}?fallback=https://bitclout.com/assets/img/default_profile_pic.png" class="profilePic" />
+              <span class="ml-2">
+                <div>
+                  {{item.BitcloutUsername}}
+                  <!-- <span
+                    class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
+                    style="width: fit-content">
+                      ${{floored(item.BitCloutUserPrice, 100)}}
+                  </span> -->
+                </div>
+                <div [innerText]="'Earn ~' + floored(item.Rate, 100) + ' USD'"></div>
+                <div>
+                  {{item.TargetActionText == 'ReClout' ? 'Repost or Quote' : item.TargetActionText}}
+                </div>
+              </span>
+            </div>
+          </ng-container>
+          <div style="height:300px"></div>
+
+        </span>
+        <span *ngIf="showCasts.length == 0">
+          <h4>No Casts available in here! ({{selectedTab}})</h4>
+          <h6>Try later when there are new promos, or when your criteria has changed!</h6>
+        </span>
+      </div>
+      <div *ngIf="!showContentLoading && selectedPost" class="ovy p-3">
+        <feed-post
+          [post]="selectedPost.PostFound"
+        >
+
+        </feed-post>
+        <div class="cc-info p-3">
+          <h6>After performing the {{selectedCastObject.TargetActionText == 'ReClout' ? 'Repost or Quote' : selectedCastObject.TargetActionText}}, click the button below to earn {{nanosToDeSo(selectedCastObject.RateNanos)}} $DESO (~ {{nanosToUSD(selectedCastObject.RateNanos)}} USD)</h6>
+          <button
+            class="btn-block my-2 btn-primary"
+            (click)="proveWork()"
+          >
+            Earn {{ nanosToDeSo(selectedCastObject.RateNanos) }} $DESO
+          </button>
+          <span class="text-muted mb-30px">
+            $DESO earned from engaging with Casts is put into an escrow account. For more details, click the settings icon above.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

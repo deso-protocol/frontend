@@ -152,6 +152,9 @@ import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { ReferralProgramMgrComponent } from "./referral-program-mgr/referral-program-mgr.component";
 import { ReferralsComponent } from "./referrals/referrals.component";
+import { CloutCastBarButtonComponent } from "./left-bar/cloutcast-bar-button/cloutcast-bar-button.component";
+import { CloutCastPageComponent } from './cloutcast-page/cloutcast-page.component';
+import { CloutCastModalComponent } from './cloutcast-modal/cloutcast-modal.component';
 import { BuyDeSoEthComponent } from "./buy-deso-page/buy-deso-eth/buy-deso-eth.component";
 import { SanitizeVideoUrlPipe } from "../lib/pipes/sanitize-video-url-pipe";
 import { AdminNodeFeesComponent } from "./admin/admin-node-fees/admin-node-fees.component";
@@ -164,9 +167,11 @@ import { TransferNftAcceptModalComponent } from "./transfer-nft-accept-modal/tra
 import { NftBurnModalComponent } from "./nft-burn-modal/nft-burn-modal.component";
 import { NftSelectSerialNumberComponent } from "./nft-select-serial-number/nft-select-serial-number.component";
 
+
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
+
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -304,6 +309,9 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     DiamondTutorialPageComponent,
     DiamondTutorialComponent,
     CreatePostTutorialPageComponent,
+    CloutCastPageComponent,
+    CloutCastModalComponent,
+    CloutCastBarButtonComponent,
     BuyDeSoEthComponent,
     SanitizeVideoUrlPipe,
     AdminNodeFeesComponent,

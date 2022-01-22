@@ -28,6 +28,8 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
+    https://dev.cloutcast.io
+    https://cloutcast.io
     node.deso.org
     amp.deso.org
     bithunt.deso.org
