@@ -501,7 +501,7 @@ export class NotificationsListComponent {
       result.action = `${actorName} sent you <b>${this.globalVars.hexNanosToUnitString(
         daoCoinTransferMeta.DAOCoinToTransferNanos,
         6
-      )} ${daoCoinTransferMeta.CreatorUsername} coins`;
+      )} ${daoCoinTransferMeta.CreatorUsername} coin`;
       return result;
     }
     // If we don't recognize the transaction type we return null
