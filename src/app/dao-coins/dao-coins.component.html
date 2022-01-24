@@ -1,0 +1,263 @@
+<!-- Top Bar -->
+<div
+  class="global__top-bar  global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+>
+  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+  <div class="d-flex align-items-center w-100 justify-content-between">
+    <div>DAO Coins</div>
+  </div>
+</div>
+
+<div class="global__top-bar__height"></div>
+
+<ng-container class="d-flex flex-column flex-grow-1" *ngIf="globalVars.loggedInUser">
+  <ng-container *ngIf="globalVars.loggedInUser?.ProfileEntryResponse">
+    <!-- My DAO Divider Bar -->
+    <div
+      class="d-flex align-items-center justify-content-between fs-18px p-15px holdings__divider border-bottom border-color-grey"
+    >
+      <div class="font-weight-bold">My DAO</div>
+      <div class="fs-14px d-flex flex-column">
+        <div
+          class="d-flex justify-content-between"
+        >
+          <span>Coins In Circulation:&nbsp;</span>
+          <span class="font-weight-bold">{{ globalVars.hexNanosToUnitString(myDAOCoin?.CoinsInCirculationNanos || 0) }}</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>Transfer Restriction Status:&nbsp;</span>
+          <span class="font-weight-bold">{{ getDisplayTransferRestrictionStatus(myDAOCoin?.TransferRestrictionStatus) }}</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span>Minting Disabled:&nbsp;</span>
+          <span class="font-weight-bold">{{ myDAOCoin?.MintingDisabled || false }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- My DAO Management -->
+    <!-- Override .container's max-width property with max-width: inherit-->
+    <div class="container fs-14px p-15px border-bottom border-color-grey" style="max-width: inherit">
+      <!-- Mint -->
+      <div class="d-flex justify-content-between py-15px w-100" *ngIf="!myDAOCoin?.MintingDisabled">
+        <div class="d-flex align-items-center justify-content-between col-10 px-0px">
+          <label for="mint-dao-coins" class="cursor-pointer mb-0 w-50" style="white-space: nowrap">Mint New Coins: </label>
+          <input
+            id="mint-dao-coins"
+            [(ngModel)]="coinsToMint"
+            class="form-control w-100 lh-15px mr-15px fs-14px"
+            placeholder="Enter an amount"
+            type="number"
+            min="0"
+            step="0.01"
+          />
+        </div>
+        <div class="col-2 px-0px">
+          <button
+            class="btn btn-primary font-weight-bold br-12px"
+            style="height: 36px; width: 100px; line-height: 15px"
+            (click)="mintDAOCoin()"
+            [disabled]="mintingDAOCoin || myDAOCoin?.MintingDisabled || coinsToMint <= 0"
+          >Mint</button>
+        </div>
+      </div>
+      <!-- Burn -->
+      <div class="d-flex justify-content-between py-15px w-100">
+        <div class="d-flex align-items-center justify-content-between col-10 px-0px">
+          <label for="mint-dao-coins" class="cursor-pointer mb-0 w-50" style="white-space: nowrap">Burn Coins: </label>
+          <input
+            id="burn-dao-coins"
+            [(ngModel)]="coinsToBurn"
+            class="form-control lh-15px mr-15px fs-14px"
+            placeholder="Enter an amount"
+            type="number"
+            min="0"
+            step="0.01"
+          />
+        </div>
+        <div class="col-2 px-0px">
+          <button
+            class="btn btn-primary font-weight-bold br-12px"
+            style="height: 36px; width: 100px; line-height: 15px"
+            (click)="burnDAOCoin()"
+            [disabled]="burningDAOCoin || coinsToBurn <= 0"
+          >Burn</button>
+        </div>
+      </div>
+      <!-- Disable minting -->
+      <div class="d-flex py-15px w-100 align-items-center justify-content-between" *ngIf="!myDAOCoin?.MintingDisabled">
+        <div class="col-10 px-0px">
+          <label for="disable-minting" class="cursor-pointer mb-0 w-50">Disable Minting:</label>
+        </div>
+        <div class="col-2 px-0px">
+          <button
+            id="disable-minting"
+            class="btn btn-primary font-weight-bold br-12px"
+            style="height: 36px; width: 100px; line-height: 15px"
+            (click)="disableMinting()"
+            [disabled]="disablingMinting || myDAOCoin?.MintingDisabled"
+          >Disable</button>
+        </div>
+      </div>
+      <!-- Transfer Restriction Status -->
+      <div
+        class="d-flex justify-content-between py-15px w-100"
+        *ngIf="myDAOCoin?.TransferRestrictionStatus !== TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED">
+        <div class="d-flex align-items-center justify-content-between col-10 px-0px">
+          <label for="update-transfer-restriction-status" class="cursor-pointer mb-0 w-50">
+            Update Transfer Restriction Status:
+          </label>
+          <select
+            id="update-transfer-restriction-status"
+            class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer mr-15px"
+            [(ngModel)]="transferRestrictionStatus"
+          >
+            <option
+              *ngFor="let option of transferRestrictionStatusOptions"
+              [value]="option"
+              class="text-grey5 font-weight-bold"
+            >
+              {{ getDisplayTransferRestrictionStatus(option) }}
+            </option>
+          </select>
+        </div>
+        <div class="col-2 px-0px">
+          <button
+            class="btn btn-primary font-weight-bold br-12px"
+            style="height: 36px; width: 100px; line-height: 15px"
+            (click)="updateTransferRestrictionStatus()"
+            [disabled]="updatingTransferRestrictionStatus || myDAOCoin?.TransferRestrictionStatus === TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED"
+          >Update</button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+
+  <!-- DAO Coins Divider Bar -->
+  <div
+    class="d-flex align-items-center justify-content-between fs-18px p-15px holdings__divider border-bottom border-color-grey"
+    >
+    <div class="font-weight-bold">DAO Coins</div>
+  </div>
+
+  <!-- Tab Selector -->
+  <tab-selector [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+  <ng-container *ngIf="(!loadingMyDAOCapTable && !loadingMyDAOCoinHoldings) || loadingNewSelection">
+    <div
+      class="row no-gutters fs-15px d-flex align-items-center border-bottom border-color-grey pl-15px py-15px"
+    >
+      <div class="col-6 mb-0 cursor-pointer fc-muted text-link_hover" (click)="sortWallet('username')">
+        <i class="fas fs-15px" [ngClass]="{'fa-arrows-alt-v':sortedUsernameFromHighToLow === 0, 'fa-sort-alpha-up-alt':sortedUsernameFromHighToLow === 1, 'fa-sort-alpha-down':sortedUsernameFromHighToLow === -1}"></i>
+        Name
+      </div>
+      <div class="col-5 mb-0 cursor-pointer fc-muted text-link_hover text-right" style="text-align: end" (click)="sortWallet('coins')">
+          <i class="fas fs-15px"
+             [ngClass]="{'fa-arrows-alt-v':sortedCoinsFromHighToLow === 0, 'fa-sort-amount-down':sortedCoinsFromHighToLow === -1, 'fa-sort-amount-up-alt':sortedCoinsFromHighToLow === 1}"></i>
+          Coins
+    </div>
+      <div class="col-1 d-block mb-0"></div>
+    </div>
+    <div
+      *ngIf="(showDAOCoinHoldings ? daoCoinHoldings : myDAOCapTable).length == 0"
+      class="d-flex justify-content-center fs-15px fc-muted w-100 mt-30px px-15px"
+      style="text-align: center"
+    >
+      {{ emptyHodlerListMessage() }}
+    </div>
+    <div
+      #uiScroll
+      *uiScroll="let creator of datasource"
+    >
+      <!-- Screen out zero balances and only show highlighted creator in tutorial-->
+      <div
+        *ngIf="
+            creator &&
+            (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
+          "
+        class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px"
+      >
+        <!-- Name-->
+        <a
+          class="col-6 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0 cursor-pointer"
+          [routerLink]="creator.ProfileEntryResponse?.Username ? ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username] : []"
+          queryParamsHandling="merge"
+        >
+          <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse?.PublicKeyBase58Check"></div>
+          <div class="text-truncate holdings__name">
+            <span>
+              {{ creator.ProfileEntryResponse?.Username || (showDAOCoinHoldings ? creator.CreatorPublicKeyBase58Check : creator.HODLerPublicKeyBase58Check) }}
+            </span>
+
+            <span
+              *ngIf="creator.ProfileEntryResponse?.IsReserved && !creator.ProfileEntryResponse?.IsVerified"
+              class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This profile is reserved. The owner has not yet claimed it.'"
+            >
+                <i class="far fa-clock fa-md align-middle"></i>
+              </span>
+            <span
+              *ngIf="creator.ProfileEntryResponse?.IsVerified"
+              (click)="tooltip.toggle()"
+              class="ml-1 cursor-pointer text-primary"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This account is verified'"
+              #tooltip="matTooltip"
+            >
+                <i class="fas fa-check-circle fa-md align-middle"></i>
+              </span>
+
+            <div class="text-grey9 fs-12px d-lg-none" *ngIf="creator.ProfileEntryResponse">
+              {{ globalVars.nanosToUSD(creator.ProfileEntryResponse?.CoinPriceDeSoNanos, 2) }}
+            </div>
+          </div>
+        </a>
+
+        <!-- Balance -->
+        <div class="col-5 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
+          <div>
+            <div>
+              <i
+                *ngIf="creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners"
+                class="fa fa-spinner fc-muted"
+                matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+                [matTooltip]="unminedCreatorCoinToolTip(creator)"
+                #tooltip="matTooltip"
+                (click)="tooltip.toggle()"
+              ></i>
+              {{ globalVars.hexNanosToUnitString(creator.BalanceNanosUint256) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-1 mb-0 pt-0px d-flex align-items-center justify-content-around text-right">
+          <ng-container
+            *ngIf="showDAOCoinHoldings || creator.HODLerPublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check"
+          >
+            <i
+              class="fas fa-exchange-alt"
+              (click)="openTransferDAOCoinModal(creator)"
+            ></i>
+            <i
+              class="fa fa-fire fc-red"
+              (click)="openBurnDAOCoinModal(creator)"
+            ></i>
+          </ng-container>
+
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  </ng-container>
+<div *ngIf="!globalVars.loggedInUser">
+  <simple-center-loader></simple-center-loader>
+</div>
+<!-- SPACER FOR BOTTOM BAR ON MOBILE -->
+<div class="global__bottom-bar-mobile-height"></div>
+<div class="global__bottom-bar-mobile-height"></div>
+
+<!--Spacer (for mobile)-->
+<!--Need this so the blue circle doesn't cover the content-->
+<div style="padding-bottom: 65px"></div>

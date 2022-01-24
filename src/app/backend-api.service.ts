@@ -8,6 +8,7 @@ import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operat
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdentityService } from "./identity.service";
 import { environment } from "src/environments/environment";
+import { Hex } from "web3-utils/types";
 
 export class BackendRoutes {
   static ExchangeRateRoute = "/api/v0/get-exchange-rate";
@@ -27,6 +28,7 @@ export class BackendRoutes {
   static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
   static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
   static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
+  static RoutePathIsHodlingPublicKey = "/api/v0/is-hodling-public-key";
   static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
   static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
@@ -89,6 +91,10 @@ export class BackendRoutes {
   static RoutePathTransferNFT = "/api/v0/transfer-nft";
   static RoutePathAcceptNFTTransfer = "/api/v0/accept-nft-transfer";
   static RoutePathBurnNFT = "/api/v0/burn-nft";
+
+  // DAO routes
+  static RoutePathDAOCoin = "/api/v0/dao-coin";
+  static RoutePathTransferDAOCoin = "/api/v0/transfer-dao-coin";
 
   // ETH
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
@@ -177,6 +183,13 @@ export class Transaction {
   signatureBytesHex: string;
 }
 
+export type DAOCoinEntryResponse = {
+  CoinsInCirculationNanos: Hex;
+  MintingDisabled: boolean;
+  NumberOfHolders: number;
+  TransferRestrictionStatus: TransferRestrictionStatusString;
+};
+
 export class ProfileEntryResponse {
   Username: string;
   Description: string;
@@ -187,6 +200,7 @@ export class ProfileEntryResponse {
     CoinsInCirculationNanos: number;
     CreatorBasisPoints: number;
   };
+  DAOCoinEntry?: DAOCoinEntryResponse;
   CoinPriceDeSoNanos?: number;
   StakeMultipleBasisPoints?: number;
   PublicKeyBase58Check?: string;
@@ -328,6 +342,8 @@ export class BalanceEntryResponse {
   HasPurchased: boolean;
   // How much this HODLer owns of a particular creator coin.
   BalanceNanos: number;
+  // Use this balance for DAO Coin balances
+  BalanceNanosUint256: Hex;
   // The net effect of transactions in the mempool on a given BalanceEntry's BalanceNanos.
   // This is used by the frontend to convey info about mining.
   NetBalanceInMempool: number;
@@ -441,6 +457,20 @@ export type CountryLevelSignUpBonusResponse = {
   CountryLevelSignUpBonus: CountryLevelSignUpBonus;
   CountryCodeDetails: CountryCodeDetails;
 };
+
+export enum DAOCoinOperationTypeString {
+  MINT = "mint",
+  BURN = "burn",
+  UPDATE_TRANSFER_RESTRICTION_STATUS = "update_transfer_restriction_status",
+  DISABLE_MINTING = "disable_minting",
+}
+
+export enum TransferRestrictionStatusString {
+  UNRESTRICTED = "unrestricted",
+  PROFILE_OWNER_ONLY = "profile_owner_only",
+  DAO_MEMBERS_ONLY = "dao_members_only",
+  PERMANENTLY_UNRESTRICTED = "permanently_unrestricted",
+}
 
 @Injectable({
   providedIn: "root",
@@ -1340,8 +1370,9 @@ export class BackendApiService {
     LastPublicKeyBase58Check: string,
     NumToFetch: number,
     FetchHodlings: boolean = false,
-    FetchAll: boolean = false
-  ): Observable<any> {
+    FetchAll: boolean = false,
+    IsDAOCoin: boolean = false
+  ): Observable<{ Hodlers: BalanceEntryResponse[]; LastPublicKeyBase58Check: string }> {
     return this.post(endpoint, BackendRoutes.RoutePathGetHodlersForPublicKey, {
       PublicKeyBase58Check,
       Username,
@@ -1349,8 +1380,23 @@ export class BackendApiService {
       NumToFetch,
       FetchHodlings,
       FetchAll,
+      IsDAOCoin,
     });
   }
+
+  IsHodlingPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    IsHodlingPublicKeyBase58Check: string,
+    IsDAOCoin: boolean
+  ): Observable<{ IsHodling: boolean; BalanceEntry: BalanceEntryResponse }> {
+    return this.post(endpoint, BackendRoutes.RoutePathIsHodlingPublicKey, {
+      PublicKeyBase58Check,
+      IsHodlingPublicKeyBase58Check,
+      IsDAOCoin,
+    });
+  }
+
   UpdateProfile(
     endpoint: string,
     // Specific fields
@@ -1688,6 +1734,46 @@ export class BackendApiService {
     }
 
     return request;
+  }
+
+  DAOCoin(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    ProfilePublicKeyBase58CheckOrUsername: string,
+    OperationType: DAOCoinOperationTypeString,
+    TransferRestrictionStatus: TransferRestrictionStatusString | undefined,
+    CoinsToMintNanos: Hex | undefined,
+    CoinsToBurnNanos: Hex | undefined,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathDAOCoin, {
+      UpdaterPublicKeyBase58Check,
+      ProfilePublicKeyBase58CheckOrUsername,
+      OperationType,
+      CoinsToMintNanos,
+      CoinsToBurnNanos,
+      TransferRestrictionStatus,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  TransferDAOCoin(
+    endpoint: string,
+    SenderPublicKeyBase58Check: string,
+    ProfilePublicKeyBase58CheckOrUsername: string,
+    ReceiverPublicKeyBase58CheckOrUsername: string,
+    DAOCoinToTransferNanos: Hex,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathTransferDAOCoin, {
+      SenderPublicKeyBase58Check,
+      ProfilePublicKeyBase58CheckOrUsername,
+      ReceiverPublicKeyBase58CheckOrUsername,
+      DAOCoinToTransferNanos,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
   }
 
   BlockPublicKey(
