@@ -31,6 +31,7 @@ export class BackendRoutes {
   static RoutePathIsHodlingPublicKey = "/api/v0/is-hodling-public-key";
   static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
   static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
+  static RoutePathCheckPartyMessagingKeys = "/api/v0/check-party-messaging-keys";
   static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
   static RoutePathMarkAllMessagesRead = "/api/v0/mark-all-messages-read";
   static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
@@ -476,7 +477,10 @@ export enum TransferRestrictionStatusString {
   providedIn: "root",
 })
 export class BackendApiService {
-  constructor(private httpClient: HttpClient, private identityService: IdentityService) {}
+  constructor(
+    private httpClient: HttpClient,
+    private identityService: IdentityService
+  ) {}
 
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
@@ -500,6 +504,9 @@ export class BackendApiService {
 
   // Store the last identity service URL in localStorage
   LastIdentityServiceKey = "lastIdentityServiceURLV2";
+
+  // Messaging V3 default key name.
+  DefaultKey = "default-key"
 
   // TODO: Wipe all this data when transition is complete
   LegacyUserListKey = "userList";
@@ -770,29 +777,52 @@ export class BackendApiService {
     MessageText: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    //First encrypt message in identity
-    //Then pipe ciphertext to RoutePathSendMessageStateless
-    let req = this.identityService
-      .encrypt({
-        ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
-        recipientPublicKey: RecipientPublicKeyBase58Check,
-        message: MessageText,
-      })
+
+    // First check if either sender or recipient has registered the "default-key" messaging group key.
+    // In V3 messages, we expect users to migrate to the V3 messages, which means they'll have the default
+    // key registered on-chain. We want to automatically send messages to this default key is it's registered.
+    // To check the messaging key we call the RoutePathCheckPartyMessaging keys backend API route.
+    let req = this.post(endpoint, BackendRoutes.RoutePathCheckPartyMessagingKeys, {
+      SenderPublicKeyBase58Check,
+      SenderMessagingKeyName: this.DefaultKey,
+      RecipientPublicKeyBase58Check,
+      RecipientMessagingKeyName: this.DefaultKey
+    })
       .pipe(
-        switchMap((encrypted) => {
-          const EncryptedMessageText = encrypted.encryptedMessage;
-          return this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
-            SenderPublicKeyBase58Check,
-            RecipientPublicKeyBase58Check,
-            EncryptedMessageText,
-            MinFeeRateNanosPerKB,
-          }).pipe(
-            map((request) => {
-              return { ...request };
-            })
-          );
+        switchMap( (partyMessagingKeys) => {
+          // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
+          return this.identityService.encrypt({
+            ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
+            recipientPublicKey: partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
+            senderGroupKeyName: partyMessagingKeys.SenderMessagingKeyName,
+            message: MessageText,
+          })
+            .pipe(
+              switchMap((encrypted) => {
+                // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
+                // sendMessage transaction.
+                const EncryptedMessageText = encrypted.encryptedMessage;
+                // Determine whether to use V3 messaging group key names for sender or recipient.
+                const senderV3 = partyMessagingKeys.IsSenderMessagingKey;
+                const SenderMessagingGroupKeyName = senderV3 ? partyMessagingKeys.SenderMessagingKeyName : "";
+                const recipientV3 = partyMessagingKeys.IsRecipientMessagingKey;
+                const RecipientMessagingGroupKeyName = recipientV3 ? partyMessagingKeys.RecipientMessagingKeyName : "";
+                return this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
+                  SenderPublicKeyBase58Check,
+                  RecipientPublicKeyBase58Check,
+                  EncryptedMessageText,
+                  SenderMessagingGroupKeyName,
+                  RecipientMessagingGroupKeyName,
+                  MinFeeRateNanosPerKB,
+                }).pipe(
+                  map((request) => {
+                    return {...request};
+                  })
+                );
+              })
+            )
         })
-      );
+      )
     return this.signAndSubmitTransaction(endpoint, req, SenderPublicKeyBase58Check);
   }
 
@@ -1005,6 +1035,7 @@ export class BackendApiService {
       ? this.identityService.encrypt({
           ...this.identityService.identityServiceParamsForKey(UpdaterPublicKeyBase58Check),
           recipientPublicKey: BidderPublicKeyBase58Check,
+          senderGroupKeyName: "",
           message: UnencryptedUnlockableText,
         })
       : of({ encryptedMessage: "" });
@@ -1042,6 +1073,7 @@ export class BackendApiService {
       ? this.identityService.encrypt({
           ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
           recipientPublicKey: ReceiverPublicKeyBase58Check,
+          senderGroupKeyName: "",
           message: UnencryptedUnlockableText,
         })
       : of({ encryptedMessage: "" });
@@ -1511,7 +1543,12 @@ export class BackendApiService {
             EncryptedHex: message.EncryptedText,
             PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
             IsSender: message.IsSender,
-            Legacy: !message.V2,
+            Legacy: !message.V2 && (!message.Version || message.Version < 2),
+            Version: message.Version,
+            SenderMessagingPublicKey: message.SenderMessagingPublicKey,
+            SenderMessagingGroupKeyName: message.SenderMessagingGroupKeyName,
+            RecipientMessagingPublicKey: message.RecipientMessagingPublicKey,
+            RecipientMessagingGroupKeyName: message.RecipientMessagingGroupKeyName
           }))
         );
         return { ...res, encryptedMessages };

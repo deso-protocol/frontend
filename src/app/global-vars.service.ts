@@ -99,6 +99,7 @@ export class GlobalVarsService {
   messagesRequestsHoldingsOnly = false;
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
+  messagesDefaultKeyName = "default-key"
 
   // Whether or not to show processing spinners in the UI for unmined transactions.
   // TODO: Move into environment.ts
