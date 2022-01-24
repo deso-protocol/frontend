@@ -14,13 +14,11 @@ import { InfiniteScroller } from "../infinite-scroller";
 import { IAdapter, IDatasource } from "ngx-ui-scroll";
 import { Observable, Subscription, throwError, zip } from "rxjs";
 import { environment } from "src/environments/environment";
-import { fromWei, toBN, toHex, toWei } from "web3-utils";
+import { toBN } from "web3-utils";
 import { catchError, map } from "rxjs/operators";
-import { Hex } from "web3-utils/types";
 import { BsModalService } from "ngx-bootstrap/modal";
 import { TransferDAOCoinModalComponent } from "./transfer-dao-coin-modal/transfer-dao-coin-modal.component";
 import { BurnDaoCoinModalComponent } from "./burn-dao-coin-modal/burn-dao-coin-modal.component";
-import { split } from "lodash";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 
 @Component({
@@ -91,7 +89,8 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     // Don't look up my DAO if I don't have a profile
     if (this.globalVars.loggedInUser?.ProfileEntryResponse) {
       this.myDAOCoin = this.globalVars.loggedInUser.ProfileEntryResponse.DAOCoinEntry;
-      this.transferRestrictionStatus = this.myDAOCoin.TransferRestrictionStatus;
+      this.transferRestrictionStatus =
+        this.myDAOCoin?.TransferRestrictionStatus || TransferRestrictionStatusString.UNRESTRICTED;
       this.loadMyDAOCapTable().subscribe((res) => {});
     } else {
       this.hideMyDAOTab = true;
@@ -467,6 +466,8 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   }
 
   getDisplayTransferRestrictionStatus(transferRestrictionStatus: TransferRestrictionStatusString): string {
+    // If we're not provided a value, we assume it's unrestricted.
+    transferRestrictionStatus = transferRestrictionStatus || TransferRestrictionStatusString.UNRESTRICTED;
     return transferRestrictionStatus
       .split("_")
       .map((status) => status.charAt(0).toUpperCase() + status.slice(1))
