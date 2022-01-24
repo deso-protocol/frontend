@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
 import { AppRoutingModule } from "../app-routing.module";
-import { Datasource, IDatasource } from "ngx-ui-scroll";
 import { BackendApiService } from "../backend-api.service";
 import { Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
@@ -12,7 +11,7 @@ import { environment } from "src/environments/environment";
   templateUrl: "./messages-page.component.html",
   styleUrls: ["./messages-page.component.scss"],
 })
-export class MessagesPageComponent {
+export class MessagesPageComponent implements OnInit {
   lastContactFetched = null;
   intervalsSet = [];
   selectedThread: any;
