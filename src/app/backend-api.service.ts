@@ -477,10 +477,7 @@ export enum TransferRestrictionStatusString {
   providedIn: "root",
 })
 export class BackendApiService {
-  constructor(
-    private httpClient: HttpClient,
-    private identityService: IdentityService
-  ) {}
+  constructor(private httpClient: HttpClient, private identityService: IdentityService) {}
 
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
@@ -506,7 +503,7 @@ export class BackendApiService {
   LastIdentityServiceKey = "lastIdentityServiceURLV2";
 
   // Messaging V3 default key name.
-  DefaultKey = "default-key"
+  DefaultKey = "default-key";
 
   // TODO: Wipe all this data when transition is complete
   LegacyUserListKey = "userList";
@@ -777,7 +774,6 @@ export class BackendApiService {
     MessageText: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-
     // First check if either sender or recipient has registered the "default-key" messaging group key.
     // In V3 messages, we expect users to migrate to the V3 messages, which means they'll have the default
     // key registered on-chain. We want to automatically send messages to this default key is it's registered.
@@ -786,43 +782,43 @@ export class BackendApiService {
       SenderPublicKeyBase58Check,
       SenderMessagingKeyName: this.DefaultKey,
       RecipientPublicKeyBase58Check,
-      RecipientMessagingKeyName: this.DefaultKey
-    })
-      .pipe(
-        switchMap( (partyMessagingKeys) => {
-          // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
-          return this.identityService.encrypt({
+      RecipientMessagingKeyName: this.DefaultKey,
+    }).pipe(
+      switchMap((partyMessagingKeys) => {
+        // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
+        return this.identityService
+          .encrypt({
             ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
             recipientPublicKey: partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
             senderGroupKeyName: partyMessagingKeys.SenderMessagingKeyName,
             message: MessageText,
           })
-            .pipe(
-              switchMap((encrypted) => {
-                // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
-                // sendMessage transaction.
-                const EncryptedMessageText = encrypted.encryptedMessage;
-                // Determine whether to use V3 messaging group key names for sender or recipient.
-                const senderV3 = partyMessagingKeys.IsSenderMessagingKey;
-                const SenderMessagingGroupKeyName = senderV3 ? partyMessagingKeys.SenderMessagingKeyName : "";
-                const recipientV3 = partyMessagingKeys.IsRecipientMessagingKey;
-                const RecipientMessagingGroupKeyName = recipientV3 ? partyMessagingKeys.RecipientMessagingKeyName : "";
-                return this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
-                  SenderPublicKeyBase58Check,
-                  RecipientPublicKeyBase58Check,
-                  EncryptedMessageText,
-                  SenderMessagingGroupKeyName,
-                  RecipientMessagingGroupKeyName,
-                  MinFeeRateNanosPerKB,
-                }).pipe(
-                  map((request) => {
-                    return {...request};
-                  })
-                );
-              })
-            )
-        })
-      )
+          .pipe(
+            switchMap((encrypted) => {
+              // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
+              // sendMessage transaction.
+              const EncryptedMessageText = encrypted.encryptedMessage;
+              // Determine whether to use V3 messaging group key names for sender or recipient.
+              const senderV3 = partyMessagingKeys.IsSenderMessagingKey;
+              const SenderMessagingGroupKeyName = senderV3 ? partyMessagingKeys.SenderMessagingKeyName : "";
+              const recipientV3 = partyMessagingKeys.IsRecipientMessagingKey;
+              const RecipientMessagingGroupKeyName = recipientV3 ? partyMessagingKeys.RecipientMessagingKeyName : "";
+              return this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
+                SenderPublicKeyBase58Check,
+                RecipientPublicKeyBase58Check,
+                EncryptedMessageText,
+                SenderMessagingGroupKeyName,
+                RecipientMessagingGroupKeyName,
+                MinFeeRateNanosPerKB,
+              }).pipe(
+                map((request) => {
+                  return { ...request };
+                })
+              );
+            })
+          );
+      })
+    );
     return this.signAndSubmitTransaction(endpoint, req, SenderPublicKeyBase58Check);
   }
 
@@ -1548,7 +1544,7 @@ export class BackendApiService {
             SenderMessagingPublicKey: message.SenderMessagingPublicKey,
             SenderMessagingGroupKeyName: message.SenderMessagingGroupKeyName,
             RecipientMessagingPublicKey: message.RecipientMessagingPublicKey,
-            RecipientMessagingGroupKeyName: message.RecipientMessagingGroupKeyName
+            RecipientMessagingGroupKeyName: message.RecipientMessagingGroupKeyName,
           }))
         );
         return { ...res, encryptedMessages };
@@ -1943,11 +1939,10 @@ export class BackendApiService {
     });
   }
 
-  QueryETHRPC(endpoint: string, Method: string, Params: string[], PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathQueryETHRPC, PublicKeyBase58Check, {
+  QueryETHRPC(endpoint: string, Method: string, Params: string[]): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathQueryETHRPC, {
       Method,
       Params,
-      PublicKeyBase58Check,
     });
   }
 

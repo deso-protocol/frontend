@@ -537,7 +537,7 @@ export class BuyDeSoEthComponent implements OnInit {
 
   queryETHRPC<Type>(method: string, params: any[]): Promise<Type> {
     return this.backendApi
-      .QueryETHRPC(this.globalVars.localNode, method, params, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .QueryETHRPC(this.globalVars.localNode, method, params)
       .toPromise()
       .then(
         (res) => {
