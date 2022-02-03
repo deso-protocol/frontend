@@ -45,6 +45,7 @@ header @html Content-Security-Policy "
     amp.bitclout.com
     api.testwyre.com
     api.sendwyre.com
+    *.pearl.app
     https://videodelivery.net
     https://upload.videodelivery.net;
   script-src 'self'
@@ -62,6 +63,7 @@ header @html Content-Security-Policy "
     quickchart.io
     arweave.net
     *.arweave.net
+    *.pearl.app
     cloudflare-ipfs.com;
   font-src 'self'
     https://fonts.googleapis.com
