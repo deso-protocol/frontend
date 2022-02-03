@@ -28,7 +28,6 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
-    *.yourgem.app
     *.pearl.app
     node.deso.org
     amp.deso.org
