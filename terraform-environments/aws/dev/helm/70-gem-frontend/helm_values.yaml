@@ -35,8 +35,8 @@ ingress:
     - path: /
       servicePort: http
   hosts:
-    - www.dev.yourgem.app
-    - www.dev.pearl.app
+    - admin.dev.yourgem.app
+    - admin.dev.pearl.app
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
