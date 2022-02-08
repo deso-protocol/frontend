@@ -5,7 +5,7 @@ export const environment = {
   uploadVideoHostname: "node.deso.org",
   identityURL: "https://identity.deso.org",
   supportEmail: "",
-  localNodeURL: "https://api.prod.yourgem.app",
+  localNodeURL: "https://api.pearl.app",
   dd: {
     apiKey: undefined,
     jsPath: undefined,
