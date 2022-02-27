@@ -1,8 +1,8 @@
-import {Injectable} from "@angular/core";
-import {BackendApiService} from "../../../app/backend-api.service";
-import {GlobalVarsService} from "../../../app/global-vars.service";
-import {Observable, of} from "rxjs";
-import {map} from "rxjs/operators";
+import { Injectable } from "@angular/core";
+import { BackendApiService } from "../../../app/backend-api.service";
+import { GlobalVarsService } from "../../../app/global-vars.service";
+import { Observable, of } from "rxjs";
+import { map } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
