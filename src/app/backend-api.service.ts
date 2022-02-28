@@ -92,6 +92,7 @@ export class BackendRoutes {
   static RoutePathTransferNFT = "/api/v0/transfer-nft";
   static RoutePathAcceptNFTTransfer = "/api/v0/accept-nft-transfer";
   static RoutePathBurnNFT = "/api/v0/burn-nft";
+  static RoutePathGetAcceptedBidHistory = "/api/v0/accepted-bid-history";
 
   // DAO routes
   static RoutePathDAOCoin = "/api/v0/dao-coin";
@@ -167,6 +168,9 @@ export class BackendRoutes {
   static RoutePathGetTotalSupply = "/api/v0/total-supply";
   static RoutePathGetRichList = "/api/v0/rich-list";
   static RoutePathGetCountKeysWithDESO = "/api/v0/count-keys-with-deso";
+
+  static RoutePathAuthorizeDerivedKey = "/api/v0/authorize-derived-key";
+  static RoutePathGetTransactionSpendingLimitHexString = "/api/v0/get-transaction-spending-limit-hex-string";
 }
 
 export class Transaction {
@@ -472,6 +476,59 @@ export enum TransferRestrictionStatusString {
   DAO_MEMBERS_ONLY = "dao_members_only",
   PERMANENTLY_UNRESTRICTED = "permanently_unrestricted",
 }
+export enum CreatorCoinLimitOperationString {
+  ANY = "any",
+  BUY = "buy",
+  SELL = "sell",
+  TRANSFER = "transfer",
+}
+
+export enum DAOCoinLimitOperationString {
+  ANY = "any",
+  MINT = "mint",
+  BURN = "burn",
+  DISABLE_MINTING = "disable_minting",
+  UPDATE_TRANSFER_RESTRICTION_STATUS = "update_transfer_restriction_status",
+  TRANSFER = "transfer",
+}
+
+export type CoinLimitOperationString = DAOCoinLimitOperationString | CreatorCoinLimitOperationString;
+
+export type CoinOperationLimitMap<T extends CoinLimitOperationString> = {
+  [public_key: string]: OperationToCountMap<T>;
+};
+
+export type OperationToCountMap<T extends CoinLimitOperationString | NFTLimitOperationString> = {
+  [operation in T]?: number;
+};
+
+export type CreatorCoinOperationLimitMap = CoinOperationLimitMap<CreatorCoinLimitOperationString>;
+export type DAOCoinOperationLimitMap = CoinOperationLimitMap<DAOCoinLimitOperationString>;
+
+export enum NFTLimitOperationString {
+  ANY = "any",
+  CREATE = "create",
+  UPDATE = "update",
+  BID = "nft_bid",
+  ACCEPT_BID = "accept_nft_bid",
+  TRANSFER = "transfer",
+  BURN = "burn",
+  ACCEPT_TRANSFER = "accept_nft_transfer",
+}
+export type NFTOperationLimitMap = {
+  [post_hash_hex: string]: {
+    [serial_number: number]: OperationToCountMap<NFTLimitOperationString>;
+  };
+};
+
+export type TransactionSpendingLimitResponse = {
+  GlobalDESOLimit: number;
+  // TODO: make enum for transaction type string
+  TransactionCountLimitMap?: { [k: string]: number };
+  CreatorCoinOperationLimitMap?: CreatorCoinOperationLimitMap;
+  DAOCoinOperationLimitMap?: DAOCoinOperationLimitMap;
+  NFTOperationLimitMap?: NFTOperationLimitMap;
+};
 
 @Injectable({
   providedIn: "root",
@@ -1124,6 +1181,10 @@ export class BackendApiService {
       MinFeeRateNanosPerKB,
     });
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  GetAcceptedBidHistory(endpoint: string, PostHashHex: string): Observable<any> {
+    return this.get(endpoint, BackendRoutes.RoutePathGetAcceptedBidHistory + "/" + PostHashHex);
   }
 
   DecryptUnlockableTexts(
@@ -2541,6 +2602,41 @@ export class BackendApiService {
 
   GetCountOfKeysWithDESO(endpoint: string): Observable<number> {
     return this.get(endpoint, BackendRoutes.RoutePathGetCountKeysWithDESO);
+  }
+
+  AuthorizeDerivedKey(
+    endpoint: string,
+    OwnerPublicKeyBase58Check: string,
+    DerivedPublicKeyBase58Check: string,
+    ExpirationBlock: number,
+    AccessSignature: string,
+    DeleteKey: boolean,
+    DerivedKeySignature: boolean,
+    TransactionSpendingLimit: TransactionSpendingLimitResponse,
+    Memo: string | undefined,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    let request = this.post(endpoint, BackendRoutes.RoutePathAuthorizeDerivedKey, {
+      OwnerPublicKeyBase58Check,
+      DerivedPublicKeyBase58Check,
+      ExpirationBlock,
+      AccessSignature,
+      DeleteKey,
+      DerivedKeySignature,
+      TransactionSpendingLimit,
+      Memo,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, OwnerPublicKeyBase58Check);
+  }
+
+  GetTransactionSpendingLimitHexString(
+    endpoint: string,
+    TransactionSpendingLimit: TransactionSpendingLimitResponse
+  ): Observable<{ HexString: string }> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetTransactionSpendingLimitHexString, {
+      TransactionSpendingLimit,
+    });
   }
 
   // Error parsing

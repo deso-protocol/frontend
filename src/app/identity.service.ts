@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { HttpParams } from "@angular/common/http";
+import { TransactionSpendingLimitResponse } from "./backend-api.service";
 
 @Injectable({
   providedIn: "root",
@@ -49,7 +50,10 @@ export class IdentityService {
       public_key?: string;
       hideJumio?: boolean;
       accessLevelRequest?: number;
-    }
+      transactionSpendingLimitResponse?: string;
+      derivedPublicKey?: string;
+    },
+    data?: any
   ): Observable<any> {
     let url = this.identityServiceURL as string;
     if (path) {
@@ -61,29 +65,35 @@ export class IdentityService {
       httpParams = httpParams.append("testnet", "true");
     }
 
-    if (params?.publicKey) {
-      httpParams = httpParams.append("publicKey", params.publicKey);
+    for (const [key, value] of Object.entries(params || {})) {
+      if (key && value !== undefined) {
+        httpParams = httpParams.append(key, value.toString());
+      }
     }
 
-    if (params?.tx) {
-      httpParams = httpParams.append("tx", params.tx);
-    }
-
-    if (params?.referralCode) {
-      httpParams = httpParams.append("referralCode", params.referralCode);
-    }
-
-    if (params?.public_key) {
-      httpParams = httpParams.append("public_key", params.public_key);
-    }
-
-    if (params?.hideJumio) {
-      httpParams = httpParams.append("hideJumio", params.hideJumio.toString());
-    }
-
-    if (params?.accessLevelRequest) {
-      httpParams = httpParams.append("accessLevelRequest", params.accessLevelRequest.toString());
-    }
+    // if (params?.publicKey) {
+    //   httpParams = httpParams.append("publicKey", params.publicKey);
+    // }
+    //
+    // if (params?.tx) {
+    //   httpParams = httpParams.append("tx", params.tx);
+    // }
+    //
+    // if (params?.referralCode) {
+    //   httpParams = httpParams.append("referralCode", params.referralCode);
+    // }
+    //
+    // if (params?.public_key) {
+    //   httpParams = httpParams.append("public_key", params.public_key);
+    // }
+    //
+    // if (params?.hideJumio) {
+    //   httpParams = httpParams.append("hideJumio", params.hideJumio.toString());
+    // }
+    //
+    // if (params?.accessLevelRequest) {
+    //   httpParams = httpParams.append("accessLevelRequest", params.accessLevelRequest.toString());
+    // }
 
     const paramsStr = httpParams.toString();
     if (paramsStr) {
@@ -97,6 +107,9 @@ export class IdentityService {
     const x = window.outerWidth / 2 + window.screenX - w / 2;
 
     this.identityWindow = window.open(url, null, `toolbar=no, width=${w}, height=${h}, top=${y}, left=${x}`);
+    if (data) {
+      this.identityWindow.data = data;
+    }
     this.identityWindowSubject = new Subject();
 
     return this.identityWindowSubject;
@@ -149,6 +162,18 @@ export class IdentityService {
     encryptedMessages: any;
   }): Observable<any> {
     return this.send("decrypt", payload);
+  }
+
+  derive(
+    publicKey?: string,
+    transactionSpendingLimitResponse?: TransactionSpendingLimitResponse,
+    derivedPublicKey?: string
+  ): Observable<any> {
+    return this.launch("/derive", {
+      publicKey: publicKey,
+      transactionSpendingLimitResponse: encodeURIComponent(JSON.stringify(transactionSpendingLimitResponse)),
+      derivedPublicKey: derivedPublicKey,
+    });
   }
 
   jwt(payload: { accessLevel: number; accessLevelHmac: string; encryptedSeedHex: string }): Observable<any> {
@@ -206,6 +231,15 @@ export class IdentityService {
     this.respond(this.identityWindow, id, {});
   }
 
+  private handleDerive(payload: any) {
+    this.identityWindow.close();
+    this.identityWindow = null;
+
+    this.identityWindowSubject.next(payload);
+    this.identityWindowSubject.complete();
+    this.identityWindowSubject = null;
+  }
+
   // Message handling
 
   private handleMessage(event: MessageEvent) {
@@ -237,6 +271,8 @@ export class IdentityService {
       this.handleLogin(payload);
     } else if (method === "info") {
       this.handleInfo(id);
+    } else if (method === "derive") {
+      this.handleDerive(payload);
     } else {
       console.error("Unhandled identity request");
       console.error(event);

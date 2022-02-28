@@ -1,11 +1,17 @@
 import { Component, OnInit } from "@angular/core";
 import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
+import {
+  BackendApiService,
+  CreatorCoinLimitOperationString,
+  NFTLimitOperationString,
+  TransactionSpendingLimitResponse,
+} from "../backend-api.service";
 import { Title } from "@angular/platform-browser";
 import { ThemeService } from "../theme/theme.service";
 import { environment } from "src/environments/environment";
 import { SwalHelper } from "../../lib/helpers/swal-helper";
 import { Router } from "@angular/router";
+import { IdentityService } from "../identity.service";
 
 @Component({
   selector: "settings",
@@ -26,7 +32,8 @@ export class SettingsComponent implements OnInit {
     private backendApi: BackendApiService,
     private titleService: Title,
     public themeService: ThemeService,
-    private router: Router
+    private router: Router,
+    private identityService: IdentityService
   ) {}
 
   selectChangeHandler(event: any) {
@@ -36,7 +43,63 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this._getUserMetadata();
+    this.makeTransactionSpendingLimitResponse();
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
+  }
+
+  // makeDerivedKey()
+  makeTransactionSpendingLimitResponse() {
+    const x: TransactionSpendingLimitResponse = {
+      GlobalDESOLimit: 100 * 1e9,
+      TransactionCountLimitMap: {
+        BASIC_TRANSFER: 10, // basic transfer
+        AUTHORIZE_DERIVED_KEY: 1,
+      },
+      CreatorCoinOperationLimitMap: {
+        tBCKVERmG9nZpHTk2AVPqknWc1Mw9HHAnqrTpW1RnXpXMQ4PsQgnmV: {
+          [CreatorCoinLimitOperationString.BUY]: 10,
+          [CreatorCoinLimitOperationString.TRANSFER]: 2,
+        },
+        "": {
+          [CreatorCoinLimitOperationString.ANY]: 5,
+        },
+      },
+      NFTOperationLimitMap: {
+        "3e42215a120a6e9d4848117f5829a2c4d9f692360fd14b78daea483a72d142dc": {
+          0: {
+            [NFTLimitOperationString.BID]: 2,
+          },
+          1: {
+            [NFTLimitOperationString.ANY]: 4,
+          },
+        },
+      },
+    };
+    this.identityService
+      .derive(
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        x
+        // "tBCKYfSan7WBkpFUV2ctLh5cbv2K7DHnxV6s68JnXghq98mCrEoxUz"
+      )
+      .subscribe((res) => {
+        console.log(res);
+        this.backendApi
+          .AuthorizeDerivedKey(
+            this.globalVars.localNode,
+            res.publicKeyBase58Check,
+            res.derivedPublicKeyBase58Check,
+            res.expirationBlock,
+            res.accessSignature,
+            false,
+            false,
+            x,
+            "xxyyzz",
+            this.globalVars.defaultFeeRateNanosPerKB
+          )
+          .subscribe((res) => {
+            console.log(res);
+          });
+      });
   }
 
   _getUserMetadata() {

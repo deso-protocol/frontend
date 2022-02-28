@@ -137,6 +137,10 @@ export class NftPostComponent {
         this.nftPost = res.PostFound;
         this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
         this.refreshBidData();
+        // debugger;
+        this.backendApi.GetAcceptedBidHistory(this.globalVars.localNode, this.nftPost.PostHashHex).subscribe((res) => {
+          console.log(res);
+        });
       },
       (err) => {
         // TODO: post threads: rollbar
