@@ -252,6 +252,15 @@ export class EmbedUrlParserService {
     return patterns.some((p) => p.test(url.hostname));
   }
 
+  static isMousaiLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isMousaiFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
   static isMousaiFromURL(url: URL): boolean {
     const pattern = /\bmousai\.stream$/;
     return pattern.test(url.hostname);
