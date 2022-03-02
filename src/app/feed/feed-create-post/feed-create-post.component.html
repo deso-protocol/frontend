@@ -37,18 +37,18 @@
         #autosize="cdkTextareaAutosize"
       ></textarea>
       <!-- Post image -->
-      <div class="feed-post__image-container" *ngIf="!isComment && postImageSrc">
+      <div class="feed-post__image-container" *ngIf="postImageSrc">
         <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
         <img class="feed-post__image" src="{{ postImageSrc }}" />
       </div>
       <!-- Video is processing - please wait -->
-      <div class="d-flex flex-column align-items-center" *ngIf="!isComment && postVideoSrc && !readyToStream">
+      <div class="d-flex flex-column align-items-center" *ngIf="postVideoSrc && !readyToStream">
         <div>Video Processing In Progress</div>
         <simple-center-loader [height]="150"></simple-center-loader>
       </div>
       <!-- Video Player -->
       <div
-        *ngIf="!isComment && postVideoSrc && readyToStream"
+        *ngIf="postVideoSrc && readyToStream"
         class="feed-post__video-container"
       >
         <iframe
@@ -115,23 +115,20 @@
     {{ postInput.length }} / {{ GlobalVarsService.MAX_POST_LENGTH }}
   </span>
   <i
-    class="fas fa-code fa-lg text-grey8A cursor-pointer fs-18px"
-    [ngClass]="{'pr-15px': !isComment}"
+    class="fas fa-code fa-lg text-grey8A cursor-pointer fs-18px pr-15px"
     (click)="showEmbedURL = !showEmbedURL"
   ></i>
-  <ng-container *ngIf="!isComment">
-    <i class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px" (click)="showImageLink = !showImageLink"></i>
-    <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
-    <i
-      class="fas fa-video fa-lg text-grey8A cursor-pointer pr-15px feed-create-post__image-icon"
-      (click)="videoInput.click()"
-    ></i>
-    <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
-    <i
-      class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
-      (click)="imageInput.click()"
-    ></i>
-  </ng-container>
+  <i class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px" (click)="showImageLink = !showImageLink"></i>
+  <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
+  <i
+    class="fas fa-video fa-lg text-grey8A cursor-pointer pr-15px feed-create-post__image-icon"
+    (click)="videoInput.click()"
+  ></i>
+  <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
+  <i
+    class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
+    (click)="imageInput.click()"
+  ></i>
   <button
     class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
     style="height: 36px; width: 75px; line-height: 15px"
