@@ -84,6 +84,7 @@ export class SettingsComponent implements OnInit {
         "": {
           0: {
             [NFTLimitOperationString.ACCEPT_BID]: 2,
+            [NFTLimitOperationString.BID]: 5,
           },
         }
       },
