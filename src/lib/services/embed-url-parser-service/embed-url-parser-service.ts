@@ -22,7 +22,7 @@ export class EmbedUrlParserService {
   }
 
   static mousaiParser(url): string | boolean {
-    const regExp = /^.*mousai\.stream\/((album|playlist|track)\/.+?)(?=\/embed|$)/;
+    const regExp = /^.*mousai\.stream\/((album|playlist|track)\/[a-z0-9-_]+)(?=\/embed|$)/;
     const match = url.match(regExp);
     return match ? match[1] : false;
   }
@@ -347,7 +347,7 @@ export class EmbedUrlParserService {
   }
 
   static isValidMousaiEmbedURL(link: string): boolean {
-    const regExp = /(https:\/\/mousai\.stream\/(album|playlist|track).+?\/embed\/?)$/;
+    const regExp = /(https:\/\/mousai\.stream\/(album|playlist|track)\/[a-z0-9-_]+\/embed\/?)$/;
     return !!link.match(regExp);
   }
 
