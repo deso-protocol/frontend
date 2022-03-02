@@ -73,6 +73,14 @@ export class SettingsComponent implements OnInit {
             [NFTLimitOperationString.ANY]: 4,
           },
         },
+        "23e5582cec0344149f3672bb137a7d950f0cacbad9a12ff42d3b8e5aba9384c2": {
+          0: {
+            [NFTLimitOperationString.ACCEPT_BID]: 1,
+          },
+          2: {
+            [NFTLimitOperationString.TRANSFER]: 2,
+          },
+        },
       },
     };
     this.identityService
