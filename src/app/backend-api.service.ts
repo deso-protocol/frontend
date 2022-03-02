@@ -507,7 +507,6 @@ export type DAOCoinOperationLimitMap = CoinOperationLimitMap<DAOCoinLimitOperati
 
 export enum NFTLimitOperationString {
   ANY = "any",
-  CREATE = "create",
   UPDATE = "update",
   BID = "nft_bid",
   ACCEPT_BID = "accept_nft_bid",

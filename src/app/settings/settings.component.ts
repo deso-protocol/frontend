@@ -3,6 +3,7 @@ import { GlobalVarsService } from "../global-vars.service";
 import {
   BackendApiService,
   CreatorCoinLimitOperationString,
+  DAOCoinLimitOperationString,
   NFTLimitOperationString,
   TransactionSpendingLimitResponse,
 } from "../backend-api.service";
@@ -60,8 +61,37 @@ export class SettingsComponent implements OnInit {
           [CreatorCoinLimitOperationString.BUY]: 10,
           [CreatorCoinLimitOperationString.TRANSFER]: 2,
         },
+        tBCKYYbGp3iLwhienWLzbLJM1Yi4WKmWRwNNCchhDLtniDqiHPMGK1: {
+          [CreatorCoinLimitOperationString.BUY]: 2,
+        },
+        tBCKW665XZnvVZcCfcEmyeecSZGKAdaxwV2SH9UFab6PpSRikg4EJ2: {
+          [CreatorCoinLimitOperationString.ANY]: 3,
+        },
+        tBCKUvZnSitfCu8odocnPHoxZsZWpPZpmrc4vBJVtSzV6DQyKs9bYB: {
+          [CreatorCoinLimitOperationString.BUY]: 410928389,
+        },
+        tBCKYZbR5v9cWVTWQ1YwJMbusFFvMtEq8xzPEiQuLaXqr1Eu7HVwrE: {
+          [CreatorCoinLimitOperationString.ANY]: 39012,
+          [CreatorCoinLimitOperationString.BUY]: 190232,
+          [CreatorCoinLimitOperationString.TRANSFER]: 10000,
+          [CreatorCoinLimitOperationString.SELL]: 129038,
+        },
+        tBCKVv5H1Gz6RTRhjxJwdzcfwfwoUo8b4PYWSKkayG4dy76Jsjt2Ro: {
+          [CreatorCoinLimitOperationString.TRANSFER]: 123,
+          [CreatorCoinLimitOperationString.BUY]: 4,
+        },
         "": {
           [CreatorCoinLimitOperationString.ANY]: 5,
+        },
+      },
+      DAOCoinOperationLimitMap: {
+        tBCKW665XZnvVZcCfcEmyeecSZGKAdaxwV2SH9UFab6PpSRikg4EJ2: {
+          [DAOCoinLimitOperationString.ANY]: 2,
+          [DAOCoinLimitOperationString.TRANSFER]: 10,
+        },
+        tBCKVERmG9nZpHTk2AVPqknWc1Mw9HHAnqrTpW1RnXpXMQ4PsQgnmV: {
+          [DAOCoinLimitOperationString.ANY]: 2,
+          [DAOCoinLimitOperationString.TRANSFER]: 10,
         },
       },
       NFTOperationLimitMap: {
@@ -72,8 +102,26 @@ export class SettingsComponent implements OnInit {
           1: {
             [NFTLimitOperationString.ANY]: 4,
           },
+          2: {
+            [NFTLimitOperationString.ANY]: 2,
+          },
+          3: {
+            [NFTLimitOperationString.ACCEPT_BID]: 10,
+          },
+          4: {
+            [NFTLimitOperationString.UPDATE]: 2,
+          },
+          5: {
+            [NFTLimitOperationString.ANY]: 3,
+          },
+          6: {
+            [NFTLimitOperationString.TRANSFER]: 2,
+          },
+          7: {
+            [NFTLimitOperationString.ACCEPT_TRANSFER]: 3,
+          },
         },
-        "23e5582cec0344149f3672bb137a7d950f0cacbad9a12ff42d3b8e5aba9384c2": {
+        "6a90e18da20d76eaa031a1d381a70a48f6f2d413a04bae101c993a47866b2d13": {
           0: {
             [NFTLimitOperationString.ACCEPT_BID]: 1,
           },
@@ -81,12 +129,27 @@ export class SettingsComponent implements OnInit {
             [NFTLimitOperationString.TRANSFER]: 2,
           },
         },
+        "8bfc40f565fcbbf1c1af9c9f01b6003bada6074ef2d5bfe5de3c153ceed7b69f": {
+          1: {
+            [NFTLimitOperationString.BURN]: 3,
+          },
+        },
+        dd5126c89dd61a7bc5143d03396560f272686b42fca6c6dac5fd34ef992b346e: {
+          0: {
+            [NFTLimitOperationString.ACCEPT_BID]: 5,
+          },
+        },
+        d3bc3295f6f74b60794a29ee8f9552401147a86350605ddd149c35d916f1215f: {
+          0: {
+            [NFTLimitOperationString.BID]: 1,
+          },
+        },
         "": {
           0: {
             [NFTLimitOperationString.ACCEPT_BID]: 2,
             [NFTLimitOperationString.BID]: 5,
           },
-        }
+        },
       },
     };
     this.identityService
