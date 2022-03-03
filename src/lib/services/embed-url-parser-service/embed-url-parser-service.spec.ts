@@ -41,8 +41,6 @@ describe("EmbedUrlParserService", () => {
     `https://mousai.stream/${path}/embed`,
     `http://mousai.stream/${path}`,
     `http://mousai.stream/${path}/embed`,
-    `mousai.stream/${path}`,
-    `mousai.stream/${path}/embed`,
   ];
   const validMousaiURLs = [
     ...createValidMousaiURLFromPath(mousaiPaths.album),
