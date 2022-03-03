@@ -66,6 +66,8 @@ export class FeedCreatePostComponent implements OnInit {
   videoStreamInterval: Timer = null;
   readyToStream: boolean = false;
 
+  maxPostLength: number;
+
   // Emits a PostEntryResponse. It would be better if this were typed.
   @Output() postCreated = new EventEmitter();
 
@@ -89,6 +91,7 @@ export class FeedCreatePostComponent implements OnInit {
     if (this.inTutorial) {
       this.postInput = "It's time to DESO!";
     }
+    this.maxPostLength = this.backendApi.GetStorage(this.backendApi.MaxPostLength);
   }
 
   onPaste(event: any): void {
@@ -117,12 +120,12 @@ export class FeedCreatePostComponent implements OnInit {
   showCharacterCountWarning() {
     return (
       this.postInput.length >= FeedCreatePostComponent.SHOW_POST_LENGTH_WARNING_THRESHOLD &&
-      this.postInput.length <= GlobalVarsService.MAX_POST_LENGTH
+      this.postInput.length <= this.maxPostLength
     );
   }
 
   characterCountExceedsMaxLength() {
-    return this.postInput.length > GlobalVarsService.MAX_POST_LENGTH;
+    return this.postInput.length > this.maxPostLength;
   }
 
   getPlaceholderText() {
@@ -146,7 +149,7 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   submitPost() {
-    if (this.postInput.length > GlobalVarsService.MAX_POST_LENGTH) {
+    if (this.postInput.length > this.maxPostLength) {
       return;
     }
 
