@@ -347,7 +347,7 @@ export class EmbedUrlParserService {
   }
 
   static isValidMousaiEmbedURL(link: string): boolean {
-    const regExp = /(https:\/\/mousai\.stream\/(album|playlist|track)\/[a-z0-9-_]+\/embed\/?)$/;
+    const regExp = /https:\/\/mousai\.stream\/((album|playlist|track)\/[0-9]+(\/[a-z0-9-_]+){1,2}?)\/embed$/;
     return !!link.match(regExp);
   }
 
