@@ -65,7 +65,7 @@ export class GlobalVarsService {
     private httpClient: HttpClient
   ) {}
 
-  static MAX_POST_LENGTH = 560;
+  static DEFAULT_MAX_POST_LENGTH = 560;
 
   static FOUNDER_REWARD_BASIS_POINTS_WARNING_THRESHOLD = 50 * 100;
 
@@ -944,6 +944,11 @@ export class GlobalVarsService {
     this.identityService.sanitizedIdentityServiceURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       `${identityServiceURL}/embed?v=2`
     );
+
+    const maxPostLength = this.backendApi.GetStorage(this.backendApi.MaxPostLength);
+    if (!maxPostLength) {
+      this.backendApi.SetStorage(this.backendApi.MaxPostLength, GlobalVarsService.DEFAULT_MAX_POST_LENGTH);
+    }
 
     this._globopoll(() => {
       if (!this.defaultFeeRateNanosPerKB) {
