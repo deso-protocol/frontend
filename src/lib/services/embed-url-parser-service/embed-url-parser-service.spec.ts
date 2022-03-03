@@ -178,7 +178,7 @@ describe("EmbedUrlParserService", () => {
     for (const link of validMousaiURLs) {
       expect(EmbedUrlParserService.isMousaiLink(link)).toBeTruthy();
       const embedURL = EmbedUrlParserService.constructMousaiEmbedURL(new URL(link));
-      expect(embedURL).toEqual(jasmine.arrayContaining(validMousaiEmbedURLs));
+      expect(validMousaiEmbedURLs).toContain(embedURL);
       expect(EmbedUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
     }
     for (const embedLink of validMousaiEmbedURLs) {
