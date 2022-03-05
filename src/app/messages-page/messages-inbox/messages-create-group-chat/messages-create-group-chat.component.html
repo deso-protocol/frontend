@@ -1,0 +1,34 @@
+<div class="fs-16px">
+  <div class="mr-15px ml-15px pt-15px pb-5px divtext font-weight-bold border-color-blue border-bottom">
+    Create Group Chat
+  </div>
+
+  <div class="pt-15px pb-15px">
+    <div class="pl-15px w-100">
+      <p>Add group chat members</p>
+    </div>
+    <!-- Search -->
+    <search-bar
+      [showCloutavista]="false"
+      [isSearchForUsersToMessage]="true"
+      [startingSearchText]="startingSearchText"
+      (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+      class="pb-15px w-100"
+    ></search-bar>
+
+    <div class="mb-15px">
+      <div *ngFor="let member of groupChatMembers; let ii = index">
+        <messages-group-member
+          (click)="_handleMessagesThreadClick(member)"
+          [member]="member"
+        ></messages-group-member>
+      </div>
+    </div>
+  </div>
+</div>
+<!--        [isSelected]="
+          (selectedThread &&
+            selectedThread.PublicKeyBase58Check &&
+            thread.PublicKeyBase58Check == selectedThread.PublicKeyBase58Check) ||
+          (selectedThread === undefined && ii === 0)
+        "-->

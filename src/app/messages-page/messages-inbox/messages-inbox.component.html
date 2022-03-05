@@ -28,6 +28,10 @@
   <!-- Settings -->
   <div class="d-flex w-100 justify-content-end align-items-right pr-10px">
     <i
+      (click)="_toggleGroupChatTray()"
+      class="fa fa-edit fs-20px cursor-pointer mr-10px pt-2px"
+    ></i>
+    <i
       (click)="_toggleSettingsTray()"
       class="fas fa-sliders-h cursor-pointer messages-header-icon-row__icon pt-2px"
     ></i>
@@ -38,9 +42,14 @@
   <messages-filter-menu></messages-filter-menu>
 </div>
 
+<div *ngIf="_groupChatTrayIsOpen()">
+  <messages-create-group-chat></messages-create-group-chat>
+</div>
+
 <div *ngIf="messageThreads" class="messages-inbox__threads vh-100 disable-scrollbars">
   <!-- Search -->
   <search-bar
+    *ngIf="!_groupChatTrayIsOpen()"
     [showCloutavista]="false"
     [isSearchForUsersToMessage]="true"
     [startingSearchText]="startingSearchText"

@@ -94,6 +94,7 @@ export class GlobalVarsService {
   messagesSortAlgorithm = "time";
   messagesPerFetch = 25;
   openSettingsTray = false;
+  groupChatTray = false;
   newMessagesFromPage = 0;
   messagesRequestsHoldersOnly = true;
   messagesRequestsHoldingsOnly = false;

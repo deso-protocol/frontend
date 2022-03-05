@@ -63,6 +63,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       if (params.username) {
         this.startingSearchText = params.username;
       }
+      console.log("message threads", this.messageThreads)
     });
   }
 
@@ -182,10 +183,20 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
   _toggleSettingsTray() {
     this.globalVars.openSettingsTray = !this.globalVars.openSettingsTray;
+    this.globalVars.groupChatTray = false;
   }
 
   _settingsTrayIsOpen() {
     return this.globalVars.openSettingsTray;
+  }
+
+  _toggleGroupChatTray() {
+    this.globalVars.openSettingsTray = false;
+    this.globalVars.groupChatTray = !this.globalVars.groupChatTray;
+  }
+
+  _groupChatTrayIsOpen() {
+    return this.globalVars.groupChatTray;
   }
 
   // This sets the thread based on the defaultContactPublicKey or defaultContactUsername URL

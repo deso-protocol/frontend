@@ -171,6 +171,8 @@ import { BurnDaoCoinModalComponent } from "./dao-coins/burn-dao-coin-modal/burn-
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
+import { MessagesCreateGroupChatComponent } from './messages-page/messages-inbox/messages-create-group-chat/messages-create-group-chat.component';
+import { MessagesGroupMemberComponent } from './messages-page/messages-inbox/messages-group-member/messages-group-member.component';
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -323,6 +325,8 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     DaoCoinsPageComponent,
     TransferDAOCoinModalComponent,
     BurnDaoCoinModalComponent,
+    MessagesCreateGroupChatComponent,
+    MessagesGroupMemberComponent,
   ],
   imports: [
     BrowserModule,
