@@ -22,6 +22,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     "creator-coin": "Creator Coin",
     "coin-purchasers": "Creator Coin",
     dao: "DAO Coin",
+    "dao-coin-exchange": "DAO Coin Exchange",
     diamonds: "Diamonds",
     nfts: "NFTs",
   };
@@ -31,6 +32,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
     Diamonds: "diamonds",
     NFTs: "nfts",
     "DAO Coin": "dao",
+    "DAO Coin Exchange": "dao-coin-exchange",
   };
   appData: GlobalVarsService;
   userName: string;
