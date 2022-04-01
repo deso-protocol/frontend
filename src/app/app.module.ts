@@ -34,6 +34,7 @@ import { SettingsPageComponent } from "./settings-page/settings-page.component";
 import { CreatorProfilePageComponent } from "./creator-profile-page/creator-profile-page.component";
 import { CreatorProfileDetailsComponent } from "./creator-profile-page/creator-profile-details/creator-profile-details.component";
 import { CreatorProfileHodlersComponent } from "./creator-profile-page/creator-profile-hodlers/creator-profile-hodlers.component";
+import { CreatorProfileExchangeComponent } from "./creator-profile-page/creator-profile-exchange/creator-profile-exchange.component";
 import { CreatorProfilePostsComponent } from "./creator-profile-page/creator-profile-posts/creator-profile-posts.component";
 import { TabSelectorComponent } from "./tab-selector/tab-selector.component";
 import { CreatorProfileTopCardComponent } from "./creator-profile-page/creator-profile-top-card/creator-profile-top-card.component";
@@ -204,6 +205,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     CreatorProfilePageComponent,
     CreatorProfileDetailsComponent,
     CreatorProfileHodlersComponent,
+    CreatorProfileExchangeComponent,
     CreatorProfilePostsComponent,
     TabSelectorComponent,
     CreatorProfileTopCardComponent,

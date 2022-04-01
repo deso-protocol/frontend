@@ -1,8 +1,9 @@
 import { Component, Input } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse, BalanceEntryResponse } from "../../backend-api.service";
+import {BackendApiService, ProfileEntryResponse, BalanceEntryResponse, BackendRoutes} from "../../backend-api.service";
 import { GlobalVarsService } from "../../global-vars.service";
 import { IDatasource, IAdapter } from "ngx-ui-scroll";
 import { InfiniteScroller } from "src/app/infinite-scroller";
+import { Hex } from "web3-utils/types";
 
 @Component({
   selector: "creator-profile-exchange",
@@ -17,50 +18,120 @@ export class CreatorProfileExchangeComponent {
   constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
 
   @Input() profile: ProfileEntryResponse;
-  @Input() isDAOCoin: boolean = false;
 
-  showTotal = false;
   lastPage = null;
   loadingFirstPage = true;
   loadingNextPage = false;
-  pagedKeys = {
-    0: "",
-  };
+
+  orderPrice = 0;
+  orderQuantity = 0;
+  orderSide = "BID"
+
+  submitOrder(): void {
+    const buyingDAOCoinCreator = this.orderSide == "BID" ? this.profile.Username : "";
+    const sellingDAOCoinCreator = this.orderSide == "BID" ? "" : this.profile.Username;
+
+    const exchangeRateCoinsToSellPerCoinsToBuy = this.orderSide == "BID" ? this.orderPrice : 1 / this.orderPrice;
+    const quantityToBuy = this.orderSide == "BID" ? this.orderQuantity : this.orderQuantity * this.orderPrice;
+
+    this.backendApi
+      .CreateDAOCoinLimitOrder(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        buyingDAOCoinCreator,
+        sellingDAOCoinCreator,
+        exchangeRateCoinsToSellPerCoinsToBuy,
+        quantityToBuy,
+        this.globalVars.defaultFeeRateNanosPerKB,
+      )
+      .subscribe(
+        (res) => {
+          // this.modalService.setDismissReason("dao coins transferred");
+          // this.bsModalRef.hide();
+          console.log(res)
+        },
+        (err) => {
+          // this.backendErrors = err.error.error;
+          console.error(err);
+        }
+      )
+      .add(() => {});
+  }
+
+  cancelOrder(
+    buyingDAOCoinCreator: string,
+    sellingDAOCoinCreator : string,
+    exchangeRateCoinsToSellPerCoinsToBuy: Hex,
+    quantityToBuyInBaseUnits: Hex,
+  ): void {
+    this.backendApi
+      .CancelDAOCoinLimitOrder(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        buyingDAOCoinCreator,
+        sellingDAOCoinCreator,
+        exchangeRateCoinsToSellPerCoinsToBuy,
+        quantityToBuyInBaseUnits,
+        this.globalVars.defaultFeeRateNanosPerKB,
+      )
+      .subscribe(
+        (res) => {
+          // this.modalService.setDismissReason("dao coins transferred");
+          // this.bsModalRef.hide();
+          console.log(res)
+        },
+        (err) => {
+          // this.backendErrors = err.error.error;
+          console.error(err);
+        }
+      )
+      .add(() => {});
+  }
 
   getPage(page: number) {
-    if (this.lastPage != null && page > this.lastPage) {
-      return [];
-    }
     this.loadingNextPage = true;
-    const lastPublicKeyBase58Check = this.pagedKeys[page];
     return this.backendApi
-      .GetHodlersForPublicKey(
+      .GetDAOCoinLimitOrders(
         this.globalVars.localNode,
-        "",
         this.profile.Username,
-        lastPublicKeyBase58Check,
-        CreatorProfileExchangeComponent.PAGE_SIZE,
-        false,
-        false,
-        this.isDAOCoin,
+        "",
       )
       .toPromise()
       .then((res) => {
-        const balanceEntryResponses: any[] = res.Hodlers;
-        this.pagedKeys[page + 1] = res.LastPublicKeyBase58Check || "";
-        if (
-          balanceEntryResponses.length < CreatorProfileExchangeComponent.PAGE_SIZE ||
-          this.pagedKeys[page + 1] === ""
-        ) {
-          this.lastPage = page;
-          this.showTotal = true;
-          if (page > 0 || (page === 0 && balanceEntryResponses.length !== 0)) {
-            balanceEntryResponses.push({ totalRow: true });
-          }
-        }
         this.loadingNextPage = false;
         this.loadingFirstPage = false;
-        return balanceEntryResponses;
+
+        return res.Orders.map(order => {
+          const price = order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername != "" ?
+              order.ExchangeRateCoinsToSellPerCoinToBuy :
+              1 / order.ExchangeRateCoinsToSellPerCoinToBuy;
+          const quantity = order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername != "" ?
+            order.QuantityToBuy :
+            order.ExchangeRateCoinsToSellPerCoinToBuy * order.QuantityToBuy;
+
+          const canCancel = order.TransactorPublicKeyBase58CheckOrUsername == this.globalVars.loggedInUser?.PublicKeyBase58Check
+
+          return {
+            Price : price,
+            Quantity : quantity,
+            Side : order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername != "" ? "BID" : "ASK",
+
+            TransactorPublicKeyBase58CheckOrUsername: order.TransactorPublicKeyBase58CheckOrUsername,
+            BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername : order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+            SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername: order.SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+            ScaledExchangeRateCoinsToSellPerCoinToBuy : order.ScaledExchangeRateCoinsToSellPerCoinToBuy,
+            QuantityToBuyInBaseUnits: order.QuantityToBuyInBaseUnits,
+
+            Cancel: !canCancel ? null : () => {
+              this.cancelOrder(
+                order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+                order.SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+                order.ScaledExchangeRateCoinsToSellPerCoinToBuy,
+                order.QuantityToBuyInBaseUnits,
+              )
+            }
+          }
+        }).sort((a, b) => b.Price - a.Price);
       });
   }
 

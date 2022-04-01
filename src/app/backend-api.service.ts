@@ -60,6 +60,8 @@ export class BackendRoutes {
   static RoutePathGetUserMetadata = "/api/v0/get-user-metadata";
   static RoutePathGetUsernameForPublicKey = "/api/v0/get-user-name-for-public-key";
   static RoutePathGetPublicKeyForUsername = "/api/v0/get-public-key-for-user-name";
+  static RoutePathGetDAOCoinLimitOrders = "/api/v0/get-dao-coin-limit-orders";
+  static RoutePathGetAllDAOCoinLimitOrdersForTransactor = "/api/v0/get-all-dao-coin-limit-orders-for-transactor";
 
   // Verify
   static RoutePathVerifyEmail = "/api/v0/verify-email";
@@ -96,6 +98,7 @@ export class BackendRoutes {
   // DAO routes
   static RoutePathDAOCoin = "/api/v0/dao-coin";
   static RoutePathTransferDAOCoin = "/api/v0/transfer-dao-coin";
+  static RoutePathCreateOrCancelDAOCoinLimitOrder  = "/api/v0/create-or-cancel-dao-coin-limit-order";
 
   // ETH
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
@@ -350,6 +353,19 @@ export class BalanceEntryResponse {
   NetBalanceInMempool: number;
 
   ProfileEntryResponse: ProfileEntryResponse;
+}
+
+export class DAOCoinLimitOrderResponse {
+  TransactorPublicKeyBase58CheckOrUsername: string;
+
+  BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string;
+  SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string;
+
+  ScaledExchangeRateCoinsToSellPerCoinToBuy: Hex;
+  ExchangeRateCoinsToSellPerCoinToBuy: number;
+
+  QuantityToBuyInBaseUnits: Hex;
+  QuantityToBuy: number;
 }
 
 export class NFTEntryResponse {
@@ -1412,6 +1428,26 @@ export class BackendApiService {
     });
   }
 
+  GetDAOCoinLimitOrders(
+    endpoint: string,
+    DAOCoin1CreatorPublicKeyBase58CheckOrUsername: string,
+    DAOCoin2CreatorPublicKeyBase58CheckOrUsername: string,
+  ): Observable<{ Orders: DAOCoinLimitOrderResponse[] }> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetDAOCoinLimitOrders, {
+      DAOCoin1CreatorPublicKeyBase58CheckOrUsername,
+      DAOCoin2CreatorPublicKeyBase58CheckOrUsername,
+    });
+  }
+
+  GetAllDAOCoinLimitOrdersForTransactor(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+  ): Observable<{ Orders: DAOCoinLimitOrderResponse[] }> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetAllDAOCoinLimitOrdersForTransactor, {
+      PublicKeyBase58Check,
+    });
+  }
+
   IsHodlingPublicKey(
     endpoint: string,
     PublicKeyBase58Check: string,
@@ -1807,6 +1843,52 @@ export class BackendApiService {
       MinFeeRateNanosPerKB,
     });
     return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+  }
+
+  CreateDAOCoinLimitOrder(
+    endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string,
+    SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string,
+    ExchangeRateCoinsToSellPerCoinToBuy: number,
+    QuantityToBuy: number,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCreateOrCancelDAOCoinLimitOrder, {
+      TransactorPublicKeyBase58Check,
+      BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+      SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+      ScaledExchangeRateCoinsToSellPerCoinToBuy : "0x0",
+      ExchangeRateCoinsToSellPerCoinToBuy,
+      Operation : "CREATE",
+      QuantityToBuyInBaseUnits : "0x0",
+      QuantityToBuy,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, TransactorPublicKeyBase58Check);
+  }
+
+  CancelDAOCoinLimitOrder(
+    endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string,
+    SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string,
+    ScaledExchangeRateCoinsToSellPerCoinToBuy: Hex,
+    QuantityToBuyInBaseUnits: Hex,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCreateOrCancelDAOCoinLimitOrder, {
+      TransactorPublicKeyBase58Check,
+      BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+      SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+      ScaledExchangeRateCoinsToSellPerCoinToBuy,
+      ExchangeRateCoinsToSellPerCoinToBuy : 0,
+      Operation : "CANCEL",
+      QuantityToBuyInBaseUnits,
+      QuantityToBuy : 0,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(endpoint, request, TransactorPublicKeyBase58Check);
   }
 
   BlockPublicKey(
