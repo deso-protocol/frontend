@@ -7,7 +7,7 @@ export const environment = {
   uploadImageHostname: "node.deso.org",
   verificationEndpointHostname: "http://localhost:18001",
   uploadVideoHostname: "https://node.deso.org",
-  identityURL: "https://identity.deso.org",
+  identityURL: "http://localhost:4201",
   supportEmail: "",
   dd: {
     apiKey: "DCEB26AC8BF47F1D7B4D87440EDCA6",
