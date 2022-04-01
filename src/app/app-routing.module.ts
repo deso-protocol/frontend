@@ -36,9 +36,8 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
-import {
-  SupplyMonitoringStatsPageComponent
-} from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
+import { SupplyMonitoringStatsPageComponent } from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
+import { DaoCoinsPageComponent } from "./dao-coins/dao-coins-page/dao-coins-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -85,6 +84,7 @@ class RouteNames {
   public static CREATE_PROFILE = "create-profile";
   public static INVEST = "invest";
   public static SUPPLY_STATS = "supply-stats";
+  public static DAO = "dao";
 }
 
 const routes: Routes = [
@@ -108,6 +108,7 @@ const routes: Routes = [
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
   { path: RouteNames.NFT + "/:postHashHex", component: NftPostPageComponent, pathMatch: "full" },
   { path: RouteNames.SEND_DESO, component: TransferDeSoPageComponent, pathMatch: "full" },
+  { path: RouteNames.DAO, component: DaoCoinsPageComponent, pathMatch: "full" },
   { path: RouteNames.TOS, component: TosPageComponent, pathMatch: "full" },
   { path: "tos", component: TosPageComponent, pathMatch: "full" },
   { path: RouteNames.ADMIN, component: AdminPageComponent, pathMatch: "full" },

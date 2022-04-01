@@ -460,8 +460,50 @@ export class NotificationsListComponent {
         result.action = `${actorName} put an NFT on sale - you receive ${royaltyString} on the sale`;
         return result;
       }
+    } else if (txnMeta.TxnType === "DAO_COIN") {
+      const daoCoinMeta = txnMeta.DAOCoinTxindexMetadata;
+      if (!daoCoinMeta) {
+        return null;
+      }
+      switch (daoCoinMeta.OperationType) {
+        case "mint": {
+          result.action = `minted ${this.globalVars.hexNanosToUnitString(daoCoinMeta.CoinsToMintNanos)} ${
+            daoCoinMeta.CreatorUsername
+          } DAO coin`;
+          result.icon = "fas fa-coins fc-green";
+          return result;
+        }
+        case "burn": {
+          result.action = `${actorName} burned ${this.globalVars.hexNanosToUnitString(daoCoinMeta.CoinsToBurnNanos)} ${
+            daoCoinMeta.CreatorUsername
+          } DAO coin`;
+          result.icon = "fa fa-fire fc-red";
+          return result;
+        }
+        case "disable_minting": {
+          result.action = `${actorName} disabled minting for ${daoCoinMeta.CreatorUsername} DAO coin`;
+          result.icon = "fas fa-minus-circle fc-red";
+          return result;
+        }
+        case "update_transfer_restriction_status": {
+          result.action = `${actorName} updated the transfer restriction status of ${daoCoinMeta.CreatorUsername} DAO coin to ${daoCoinMeta.TransferRestrictionStatus}`;
+          result.icon = "fas fa-pen-fancy";
+          return result;
+        }
+      }
+      return null;
+    } else if (txnMeta.TxnType === "DAO_COIN_TRANSFER") {
+      const daoCoinTransferMeta = txnMeta.DAOCoinTransferTxindexMetadata;
+      if (!daoCoinTransferMeta) {
+        return null;
+      }
+      result.icon = "fas fa-money-bill-wave fc-blue";
+      result.action = `${actorName} sent you <b>${this.globalVars.hexNanosToUnitString(
+        daoCoinTransferMeta.DAOCoinToTransferNanos,
+        6
+      )} ${daoCoinTransferMeta.CreatorUsername} coin`;
+      return result;
     }
-
     // If we don't recognize the transaction type we return null
     return null;
   }
