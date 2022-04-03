@@ -56,13 +56,13 @@ export class SwalHelper {
       // undefined as false, and would not show the confirm button, which isn't what the caller
       // intended (the caller left the field unspecified, i.e. Swal should use its default behavior,
       // which is to show a confirm button).
-      if (options[field] !== undefined) {
+      if (options[field]) {
         escapedOptions[field] = options[field];
       }
     }
 
     for (let field of SwalHelper.ESCAPED_FIELDS) {
-      if (options[field] !== undefined) {
+      if (options[field]) {
         escapedOptions[field] = _.escape(options[field]);
       }
     }

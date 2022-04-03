@@ -51,7 +51,8 @@ export class SettingsComponent implements OnInit {
   // makeDerivedKey()
   makeTransactionSpendingLimitResponse() {
     const x: TransactionSpendingLimitResponse = {
-      GlobalDESOLimit: 100 * 1e9,
+      GlobalDESOLimit: 10021.123456789 * 1e9,
+      DerivedKeyMemo: "woohoo!",
       TransactionCountLimitMap: {
         BASIC_TRANSFER: 10, // basic transfer
         AUTHORIZE_DERIVED_KEY: 1,
@@ -169,7 +170,7 @@ export class SettingsComponent implements OnInit {
             res.accessSignature,
             false,
             false,
-            x,
+            res.transactionSpendingLimitHex,
             "xxyyzz",
             this.globalVars.defaultFeeRateNanosPerKB
           )

@@ -8,7 +8,7 @@
     'message-thread__unread-light-blue':
       !isHovered &&
       globalVars.messageResponse &&
-      globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] !== undefined &&
+      globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] &&
       globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] === true
   }"
 >

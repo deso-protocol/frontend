@@ -520,6 +520,7 @@ export type NFTOperationLimitMap = {
   };
 };
 
+// TODO: Should we consolidate this definition with the identity repo?
 export type TransactionSpendingLimitResponse = {
   GlobalDESOLimit: number;
   // TODO: make enum for transaction type string
@@ -527,6 +528,7 @@ export type TransactionSpendingLimitResponse = {
   CreatorCoinOperationLimitMap?: CreatorCoinOperationLimitMap;
   DAOCoinOperationLimitMap?: DAOCoinOperationLimitMap;
   NFTOperationLimitMap?: NFTOperationLimitMap;
+  DerivedKeyMemo?: string;
 };
 
 @Injectable({
@@ -2611,7 +2613,7 @@ export class BackendApiService {
     AccessSignature: string,
     DeleteKey: boolean,
     DerivedKeySignature: boolean,
-    TransactionSpendingLimit: TransactionSpendingLimitResponse,
+    TransactionSpendingLimitHex: string,
     Memo: string | undefined,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
@@ -2622,7 +2624,7 @@ export class BackendApiService {
       AccessSignature,
       DeleteKey,
       DerivedKeySignature,
-      TransactionSpendingLimit,
+      TransactionSpendingLimitHex,
       Memo,
       MinFeeRateNanosPerKB,
     });

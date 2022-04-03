@@ -52,8 +52,7 @@ export class IdentityService {
       accessLevelRequest?: number;
       transactionSpendingLimitResponse?: string;
       derivedPublicKey?: string;
-    },
-    data?: any
+    }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
     if (path) {
@@ -66,7 +65,7 @@ export class IdentityService {
     }
 
     for (const [key, value] of Object.entries(params || {})) {
-      if (key && value !== undefined) {
+      if (key && value) {
         httpParams = httpParams.append(key, value.toString());
       }
     }
@@ -107,9 +106,6 @@ export class IdentityService {
     const x = window.outerWidth / 2 + window.screenX - w / 2;
 
     this.identityWindow = window.open(url, null, `toolbar=no, width=${w}, height=${h}, top=${y}, left=${x}`);
-    if (data) {
-      this.identityWindow.data = data;
-    }
     this.identityWindowSubject = new Subject();
 
     return this.identityWindowSubject;

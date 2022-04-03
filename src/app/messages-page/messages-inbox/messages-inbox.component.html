@@ -64,7 +64,7 @@
         (selectedThread &&
           selectedThread.PublicKeyBase58Check &&
           thread.PublicKeyBase58Check == selectedThread.PublicKeyBase58Check) ||
-        (selectedThread === undefined && ii === 0)
+        (!selectedThread && ii === 0)
       "
       [thread]="thread"
     ></messages-thread>
