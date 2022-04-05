@@ -356,10 +356,10 @@ export class BalanceEntryResponse {
 }
 
 export class DAOCoinLimitOrderResponse {
-  TransactorPublicKeyBase58CheckOrUsername: string;
+  TransactorPublicKeyBase58Check: string;
 
-  BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string;
-  SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string;
+  BuyingDAOCoinCreatorPublicKeyBase58Check: string;
+  SellingDAOCoinCreatorPublicKeyBase58Check: string;
 
   ScaledExchangeRateCoinsToSellPerCoinToBuy: Hex;
   ExchangeRateCoinsToSellPerCoinToBuy: number;

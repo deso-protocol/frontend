@@ -102,30 +102,30 @@ export class CreatorProfileExchangeComponent {
         this.loadingFirstPage = false;
 
         return res.Orders.map(order => {
-          const price = order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername != "" ?
+          const price = order.BuyingDAOCoinCreatorPublicKeyBase58Check != "" ?
               order.ExchangeRateCoinsToSellPerCoinToBuy :
               1 / order.ExchangeRateCoinsToSellPerCoinToBuy;
-          const quantity = order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername != "" ?
+          const quantity = order.BuyingDAOCoinCreatorPublicKeyBase58Check != "" ?
             order.QuantityToBuy :
             order.ExchangeRateCoinsToSellPerCoinToBuy * order.QuantityToBuy;
 
-          const canCancel = order.TransactorPublicKeyBase58CheckOrUsername == this.globalVars.loggedInUser?.PublicKeyBase58Check
+          const canCancel = order.TransactorPublicKeyBase58Check == this.globalVars.loggedInUser?.PublicKeyBase58Check
 
           return {
             Price : price,
             Quantity : quantity,
-            Side : order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername != "" ? "BID" : "ASK",
+            Side : order.BuyingDAOCoinCreatorPublicKeyBase58Check != "" ? "BID" : "ASK",
 
-            TransactorPublicKeyBase58CheckOrUsername: order.TransactorPublicKeyBase58CheckOrUsername,
-            BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername : order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
-            SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername: order.SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+            TransactorPublicKeyBase58Check: order.TransactorPublicKeyBase58Check,
+            BuyingDAOCoinCreatorPublicKeyBase58Check : order.BuyingDAOCoinCreatorPublicKeyBase58Check,
+            SellingDAOCoinCreatorPublicKeyBase58Check: order.SellingDAOCoinCreatorPublicKeyBase58Check,
             ScaledExchangeRateCoinsToSellPerCoinToBuy : order.ScaledExchangeRateCoinsToSellPerCoinToBuy,
             QuantityToBuyInBaseUnits: order.QuantityToBuyInBaseUnits,
 
             Cancel: !canCancel ? null : () => {
               this.cancelOrder(
-                order.BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
-                order.SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
+                order.BuyingDAOCoinCreatorPublicKeyBase58Check,
+                order.SellingDAOCoinCreatorPublicKeyBase58Check,
                 order.ScaledExchangeRateCoinsToSellPerCoinToBuy,
                 order.QuantityToBuyInBaseUnits,
               )
