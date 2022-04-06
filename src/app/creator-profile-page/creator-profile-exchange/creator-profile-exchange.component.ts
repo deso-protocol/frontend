@@ -46,12 +46,10 @@ export class CreatorProfileExchangeComponent {
       )
       .subscribe(
         (res) => {
-          // this.modalService.setDismissReason("dao coins transferred");
-          // this.bsModalRef.hide();
           console.log(res)
+          this.infiniteScroller.reset()
         },
         (err) => {
-          // this.backendErrors = err.error.error;
           console.error(err);
         }
       )
@@ -76,12 +74,10 @@ export class CreatorProfileExchangeComponent {
       )
       .subscribe(
         (res) => {
-          // this.modalService.setDismissReason("dao coins transferred");
-          // this.bsModalRef.hide();
           console.log(res)
+          this.infiniteScroller.reset()
         },
         (err) => {
-          // this.backendErrors = err.error.error;
           console.error(err);
         }
       )

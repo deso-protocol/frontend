@@ -98,7 +98,8 @@ export class BackendRoutes {
   // DAO routes
   static RoutePathDAOCoin = "/api/v0/dao-coin";
   static RoutePathTransferDAOCoin = "/api/v0/transfer-dao-coin";
-  static RoutePathCreateOrCancelDAOCoinLimitOrder  = "/api/v0/create-or-cancel-dao-coin-limit-order";
+  static RoutePathCreateDAOCoinLimitOrder  = "/api/v0/create-dao-coin-limit-order";
+  static RoutePathCancelDAOCoinLimitOrder  = "/api/v0/cancel-dao-coin-limit-order";
 
   // ETH
   static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
@@ -1854,14 +1855,11 @@ export class BackendApiService {
     QuantityToBuy: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateOrCancelDAOCoinLimitOrder, {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCreateDAOCoinLimitOrder, {
       TransactorPublicKeyBase58Check,
       BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
       SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
-      ScaledExchangeRateCoinsToSellPerCoinToBuy : "0x0",
       ExchangeRateCoinsToSellPerCoinToBuy,
-      Operation : "CREATE",
-      QuantityToBuyInBaseUnits : "0x0",
       QuantityToBuy,
       MinFeeRateNanosPerKB,
     });
@@ -1877,15 +1875,12 @@ export class BackendApiService {
     QuantityToBuyInBaseUnits: Hex,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateOrCancelDAOCoinLimitOrder, {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCancelDAOCoinLimitOrder, {
       TransactorPublicKeyBase58Check,
       BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
       SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
       ScaledExchangeRateCoinsToSellPerCoinToBuy,
-      ExchangeRateCoinsToSellPerCoinToBuy : 0,
-      Operation : "CANCEL",
       QuantityToBuyInBaseUnits,
-      QuantityToBuy : 0,
       MinFeeRateNanosPerKB,
     });
     return this.signAndSubmitTransaction(endpoint, request, TransactorPublicKeyBase58Check);
