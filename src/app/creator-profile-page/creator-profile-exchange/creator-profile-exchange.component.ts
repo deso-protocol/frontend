@@ -47,7 +47,6 @@ export class CreatorProfileExchangeComponent {
       .subscribe(
         (res) => {
           console.log(res)
-          this.infiniteScroller.reset()
         },
         (err) => {
           console.error(err);
@@ -75,7 +74,6 @@ export class CreatorProfileExchangeComponent {
       .subscribe(
         (res) => {
           console.log(res)
-          this.infiniteScroller.reset()
         },
         (err) => {
           console.error(err);
