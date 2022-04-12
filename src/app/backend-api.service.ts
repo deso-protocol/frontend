@@ -365,8 +365,10 @@ export class DAOCoinLimitOrderResponse {
   ScaledExchangeRateCoinsToSellPerCoinToBuy: Hex;
   ExchangeRateCoinsToSellPerCoinToBuy: number;
 
-  QuantityToBuyInBaseUnits: Hex;
-  QuantityToBuy: number;
+  QuantityToFillInBaseUnits: Hex;
+  QuantityToFill: number;
+
+  SideToFill: string;
 }
 
 export class NFTEntryResponse {
@@ -1852,7 +1854,8 @@ export class BackendApiService {
     BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string,
     SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string,
     ExchangeRateCoinsToSellPerCoinToBuy: number,
-    QuantityToBuy: number,
+    QuantityToFill: number,
+    SideToFill: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathCreateDAOCoinLimitOrder, {
@@ -1860,7 +1863,8 @@ export class BackendApiService {
       BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
       SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
       ExchangeRateCoinsToSellPerCoinToBuy,
-      QuantityToBuy,
+      QuantityToFill,
+      SideToFill,
       MinFeeRateNanosPerKB,
     });
     return this.signAndSubmitTransaction(endpoint, request, TransactorPublicKeyBase58Check);
@@ -1872,7 +1876,8 @@ export class BackendApiService {
     BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string,
     SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername: string,
     ScaledExchangeRateCoinsToSellPerCoinToBuy: Hex,
-    QuantityToBuyInBaseUnits: Hex,
+    quantityToFillInBaseUnits: Hex,
+    SideToFill: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
     const request = this.post(endpoint, BackendRoutes.RoutePathCancelDAOCoinLimitOrder, {
@@ -1880,7 +1885,8 @@ export class BackendApiService {
       BuyingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
       SellingDAOCoinCreatorPublicKeyBase58CheckOrUsername,
       ScaledExchangeRateCoinsToSellPerCoinToBuy,
-      QuantityToBuyInBaseUnits,
+      quantityToFillInBaseUnits,
+      SideToFill,
       MinFeeRateNanosPerKB,
     });
     return this.signAndSubmitTransaction(endpoint, request, TransactorPublicKeyBase58Check);

@@ -32,7 +32,7 @@ export class CreatorProfileExchangeComponent {
     const sellingDAOCoinCreator = this.orderSide == "BID" ? "" : this.profile.Username;
 
     const exchangeRateCoinsToSellPerCoinsToBuy = this.orderSide == "BID" ? this.orderPrice : 1 / this.orderPrice;
-    const quantityToBuy = this.orderSide == "BID" ? this.orderQuantity : this.orderQuantity * this.orderPrice;
+    const quantityToFill = this.orderQuantity;
 
     this.backendApi
       .CreateDAOCoinLimitOrder(
@@ -41,7 +41,8 @@ export class CreatorProfileExchangeComponent {
         buyingDAOCoinCreator,
         sellingDAOCoinCreator,
         exchangeRateCoinsToSellPerCoinsToBuy,
-        quantityToBuy,
+        quantityToFill,
+        this.orderSide,
         this.globalVars.defaultFeeRateNanosPerKB,
       )
       .subscribe(
@@ -59,7 +60,8 @@ export class CreatorProfileExchangeComponent {
     buyingDAOCoinCreator: string,
     sellingDAOCoinCreator : string,
     exchangeRateCoinsToSellPerCoinsToBuy: Hex,
-    quantityToBuyInBaseUnits: Hex,
+    quantityToFillInBaseUnits: Hex,
+    sideToFill: string,
   ): void {
     this.backendApi
       .CancelDAOCoinLimitOrder(
@@ -68,7 +70,8 @@ export class CreatorProfileExchangeComponent {
         buyingDAOCoinCreator,
         sellingDAOCoinCreator,
         exchangeRateCoinsToSellPerCoinsToBuy,
-        quantityToBuyInBaseUnits,
+        quantityToFillInBaseUnits,
+        sideToFill,
         this.globalVars.defaultFeeRateNanosPerKB,
       )
       .subscribe(
@@ -99,9 +102,7 @@ export class CreatorProfileExchangeComponent {
           const price = order.BuyingDAOCoinCreatorPublicKeyBase58Check != "" ?
               order.ExchangeRateCoinsToSellPerCoinToBuy :
               1 / order.ExchangeRateCoinsToSellPerCoinToBuy;
-          const quantity = order.BuyingDAOCoinCreatorPublicKeyBase58Check != "" ?
-            order.QuantityToBuy :
-            order.ExchangeRateCoinsToSellPerCoinToBuy * order.QuantityToBuy;
+          const quantity = order.QuantityToFill
 
           const canCancel = order.TransactorPublicKeyBase58Check == this.globalVars.loggedInUser?.PublicKeyBase58Check
 
@@ -114,14 +115,15 @@ export class CreatorProfileExchangeComponent {
             BuyingDAOCoinCreatorPublicKeyBase58Check : order.BuyingDAOCoinCreatorPublicKeyBase58Check,
             SellingDAOCoinCreatorPublicKeyBase58Check: order.SellingDAOCoinCreatorPublicKeyBase58Check,
             ScaledExchangeRateCoinsToSellPerCoinToBuy : order.ScaledExchangeRateCoinsToSellPerCoinToBuy,
-            QuantityToBuyInBaseUnits: order.QuantityToBuyInBaseUnits,
+            QuantityToFillInBaseUnits: order.QuantityToFillInBaseUnits,
 
             Cancel: !canCancel ? null : () => {
               this.cancelOrder(
                 order.BuyingDAOCoinCreatorPublicKeyBase58Check,
                 order.SellingDAOCoinCreatorPublicKeyBase58Check,
                 order.ScaledExchangeRateCoinsToSellPerCoinToBuy,
-                order.QuantityToBuyInBaseUnits,
+                order.QuantityToFillInBaseUnits,
+                order.SideToFill,
               )
             }
           }
