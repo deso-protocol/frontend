@@ -31,6 +31,28 @@ describe("EmbedUrlParserService", () => {
   ];
   const validYoutubeEmbedURLs = [`https://www.youtube.com/embed/${youtubeVideoID}`];
 
+  const mousaiPaths = {
+    album: `album/1000/artist-name/album-name`,
+    playlist: `playlist/1000/playlist-name`,
+    track: `track/1000/track-name`,
+  };
+  const createValidMousaiURLFromPath = (path: string) => [
+    `https://mousai.stream/${path}`,
+    `https://mousai.stream/${path}/embed`,
+    `http://mousai.stream/${path}`,
+    `http://mousai.stream/${path}/embed`,
+  ];
+  const validMousaiURLs = [
+    ...createValidMousaiURLFromPath(mousaiPaths.album),
+    ...createValidMousaiURLFromPath(mousaiPaths.playlist),
+    ...createValidMousaiURLFromPath(mousaiPaths.track),
+  ];
+  const validMousaiEmbedURLs = [
+    `https://mousai.stream/${mousaiPaths.album}/embed`,
+    `https://mousai.stream/${mousaiPaths.playlist}/embed`,
+    `https://mousai.stream/${mousaiPaths.track}/embed`,
+  ];
+
   const vimeoVideoID = "310195153";
   const validVimeoURLs = [`http://vimeo.com/${vimeoVideoID}`];
   const validVimeoEmbedURLs = [`https://player.vimeo.com/video/${vimeoVideoID}`];
@@ -121,6 +143,8 @@ describe("EmbedUrlParserService", () => {
     "https://google.com",
     "facebook.com<script></script>",
     `https://www.youtube.com/watch?v=<script>somestuff</script>`,
+    `https://mousai.stream/<script>somestuff</script>`,
+    `https://notmousai.stream/${mousaiPaths.album}`,
     "http://vimeo.com/<b>123</b>",
     "123abc.com/1234556",
     `https://wwwzyoutube.com/embed/${youtubeVideoID}`,
@@ -146,6 +170,21 @@ describe("EmbedUrlParserService", () => {
       expect(EmbedUrlParserService.isYoutubeLink(embedLink)).toBeTruthy();
       expect(EmbedUrlParserService.isValidEmbedURL(embedLink)).toBeTruthy();
       const constructedEmbedURL = EmbedUrlParserService.constructYoutubeEmbedURL(new URL(embedLink));
+      expect(EmbedUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
+    }
+  });
+
+  it("parses mousai URLs from user input correctly and only validates embed urls", () => {
+    for (const link of validMousaiURLs) {
+      expect(EmbedUrlParserService.isMousaiLink(link)).toBeTruthy();
+      const embedURL = EmbedUrlParserService.constructMousaiEmbedURL(new URL(link));
+      expect(validMousaiEmbedURLs).toContain(embedURL);
+      expect(EmbedUrlParserService.isValidEmbedURL(embedURL)).toBeTruthy();
+    }
+    for (const embedLink of validMousaiEmbedURLs) {
+      expect(EmbedUrlParserService.isMousaiLink(embedLink)).toBeTruthy();
+      expect(EmbedUrlParserService.isValidEmbedURL(embedLink)).toBeTruthy();
+      const constructedEmbedURL = EmbedUrlParserService.constructMousaiEmbedURL(new URL(embedLink));
       expect(EmbedUrlParserService.isValidEmbedURL(constructedEmbedURL)).toBeTruthy();
     }
   });
