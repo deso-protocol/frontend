@@ -63,7 +63,7 @@ header @html Content-Security-Policy "
     arweave.net
     *.arweave.net
     *.pearl.app
-    *.twing.com
+    *.twimg.com
     cloudflare-ipfs.com;
   font-src 'self'
     https://fonts.googleapis.com
