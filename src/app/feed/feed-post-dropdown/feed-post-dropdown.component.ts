@@ -48,7 +48,7 @@ export class FeedPostDropdownComponent {
   reportPost(): void {
     this.globalVars.logEvent("post : report-content");
     window.open(
-      `https://desoreporting.aidaform.com?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}`
+      `https://desoreporting.aidaform.com/content?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}`
     );
   }
 
