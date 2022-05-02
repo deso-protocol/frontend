@@ -77,7 +77,7 @@ export class LeftBarComponent {
         customClass: {
           confirmButton: "btn btn-light",
         },
-        confirmButtonText: "Buy $DESO",
+        confirmButtonText: "Buy $BOOTY",
       }).then((res) => {
         if (res.isConfirmed) {
           this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });

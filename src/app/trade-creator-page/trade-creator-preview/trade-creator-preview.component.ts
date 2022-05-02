@@ -201,7 +201,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
     // CloudFlare rate limiting doesn't return an Access-Allow-Control-Origin header so the browser
     // barfs and returns an unknown error code which has a status of 0
     if (response.status === 0) {
-      return this.appData._alertError("DeSo is under heavy load. Please try again in one minute.");
+      return this.appData._alertError("BOOTY is under heavy load. Please try again in one minute.");
     }
 
     const errorMessage = response.error.error;

@@ -17,7 +17,7 @@ class Messages {
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
   static CONFIRM_TRANSFER_TO_PUBKEY = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s";
   static CONFIRM_TRANSFER_TO_USERNAME = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s";
-  static MUST_PURCHASE_CREATOR_COIN = `You must purchase a creator coin before you can send $DESO`;
+  static MUST_PURCHASE_CREATOR_COIN = `You must purchase a creator coin before you can send $BOOTY`;
 }
 
 @Component({
@@ -56,7 +56,7 @@ export class TransferDeSoComponent implements OnInit {
 
   ngOnInit() {
     this.feeRateDeSoPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
-    this.titleService.setTitle(`Send $DESO - ${environment.node.name}`);
+    this.titleService.setTitle(`Send $BOOTY - ${environment.node.name}`);
     this.sendDeSoQRCode = `${this.backendApi._makeRequestURL(
       location.host,
       "/" + RouteNames.SEND_DESO
@@ -101,7 +101,7 @@ export class TransferDeSoComponent implements OnInit {
     }
 
     if (this.payToPublicKey == null || this.payToPublicKey === "") {
-      this.globalVars._alertError("A valid pay-to public key or username must be set before you can send $DESO");
+      this.globalVars._alertError("A valid pay-to public key or username must be set before you can send $BOOTY");
       return;
     }
 
