@@ -66,7 +66,7 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   reportUser(): void {
     this.globalVars.logEvent("post : report-user");
     window.open(
-      `https://report.bitclout.com/account?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&ReportedAccountPublicKey=${this.profile.PublicKeyBase58Check}`
+      `https://desoreporting.aidaform.com/account?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&ReportedAccountPublicKey=${this.profile.PublicKeyBase58Check}`
     );
   }
 
