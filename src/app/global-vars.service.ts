@@ -929,7 +929,7 @@ export class GlobalVarsService {
       if (environment.production) {
         this.localNode = hostname;
       } else {
-        this.localNode = `${hostname}:17001`;
+        this.localNode = `https://api.tijn.club`;
       }
 
       this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);

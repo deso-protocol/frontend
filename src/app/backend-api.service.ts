@@ -494,7 +494,7 @@ export class BackendApiService {
   IdentityUsersKey = "identityUsersV2";
 
   // Store last local node URL in localStorage
-  LastLocalNodeKey = "api.uberbooty.app";
+  LastLocalNodeKey = "lastLocalNodeV2";
 
   // Store last logged in user public key in localStorage
   LastLoggedInUserKey = "lastLoggedInUserV2";
