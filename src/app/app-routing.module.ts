@@ -27,7 +27,6 @@ import { DiamondPostsPageComponent } from "./diamond-posts-page/diamond-posts-pa
 import { TrendsPageComponent } from "./trends-page/trends-page.component";
 import { NftPostPageComponent } from "./nft-post-page/nft-post-page.component";
 import { VerifyEmailComponent } from "./verify-email/verify-email.component";
-import { ReferralsComponent } from "./referrals/referrals.component";
 import { CreateProfileTutorialPageComponent } from "./tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component";
 import { BuyCreatorCoinsTutorialPageComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component";
 import { BuyCreatorCoinsConfirmTutorialComponent } from "./tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component";
@@ -36,9 +35,8 @@ import { WalletTutorialPageComponent } from "./tutorial/wallet-tutorial-page/wal
 import { SellCreatorCoinsTutorialComponent } from "./tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component";
 import { DiamondTutorialPageComponent } from "./tutorial/diamond-tutorial-page/diamond-tutorial-page.component";
 import { CreatePostTutorialPageComponent } from "./tutorial/create-post-tutorial-page/create-post-tutorial-page.component";
-import {
-  SupplyMonitoringStatsPageComponent
-} from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
+import { SupplyMonitoringStatsPageComponent } from "./supply-monitoring-stats-page/supply-monitoring-stats-page.component";
+import { DaoCoinsPageComponent } from "./dao-coins/dao-coins-page/dao-coins-page.component";
 
 class RouteNames {
   // Not sure if we should have a smarter schema for this, e.g. what happens if we have
@@ -77,7 +75,6 @@ class RouteNames {
   public static LANDING = "/";
   public static DIAMONDS = "diamonds";
   public static TRENDS = "trends";
-  public static REFERRALS = "referrals";
   public static NFT = "nft";
   public static VERIFY_EMAIL = "verify-email";
 
@@ -85,6 +82,7 @@ class RouteNames {
   public static CREATE_PROFILE = "create-profile";
   public static INVEST = "invest";
   public static SUPPLY_STATS = "supply-stats";
+  public static DAO = "dao";
 }
 
 const routes: Routes = [
@@ -96,7 +94,6 @@ const routes: Routes = [
   { path: RouteNames.BUY_DESO, component: BuyDeSoPageComponent, pathMatch: "full" },
   { path: RouteNames.PICK_A_COIN, component: PickACoinPageComponent, pathMatch: "full" },
   { path: RouteNames.INBOX_PREFIX, component: MessagesPageComponent, pathMatch: "full" },
-  { path: RouteNames.REFERRALS, component: ReferralsComponent, pathMatch: "full" },
   { path: RouteNames.SIGN_UP, component: SignUpComponent, pathMatch: "full" },
   { path: RouteNames.WALLET, component: WalletPageComponent, pathMatch: "full" },
   { path: RouteNames.UPDATE_PROFILE, component: UpdateProfilePageComponent, pathMatch: "full" },
@@ -108,6 +105,7 @@ const routes: Routes = [
   { path: RouteNames.POSTS + "/:postHashHex", component: PostThreadPageComponent, pathMatch: "full" },
   { path: RouteNames.NFT + "/:postHashHex", component: NftPostPageComponent, pathMatch: "full" },
   { path: RouteNames.SEND_DESO, component: TransferDeSoPageComponent, pathMatch: "full" },
+  { path: RouteNames.DAO, component: DaoCoinsPageComponent, pathMatch: "full" },
   { path: RouteNames.TOS, component: TosPageComponent, pathMatch: "full" },
   { path: "tos", component: TosPageComponent, pathMatch: "full" },
   { path: RouteNames.ADMIN, component: AdminPageComponent, pathMatch: "full" },

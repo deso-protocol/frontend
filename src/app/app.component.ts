@@ -7,6 +7,7 @@ import * as _ from "lodash";
 import { environment } from "../environments/environment";
 import { ThemeService } from "./theme/theme.service";
 import { of, Subscription, zip } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 @Component({
   selector: "app-root",
@@ -113,8 +114,13 @@ export class AppComponent implements OnInit {
 
     return zip(
       this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
-      environment.verificationEndpointHostname
-        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey)
+      environment.verificationEndpointHostname && !_.isNil(loggedInUserPublicKey)
+        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey).pipe(
+            catchError((err) => {
+              console.error(err);
+              return of(null);
+            })
+          )
         : of(null)
     ).subscribe(
       ([res, userMetadata]) => {

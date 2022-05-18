@@ -107,9 +107,7 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   uploadFile(event: any): void {
-    if (!this.isComment) {
-      this._handleFileInput(event[0]);
-    }
+    this._handleFileInput(event[0]);
   }
 
   showCharacterCountIsFine() {
@@ -174,9 +172,8 @@ export class FeedCreatePostComponent implements OnInit {
 
     const bodyObj = {
       Body: this.postInput,
-      // Only submit images if the post is a quoted repost or a vanilla post.
-      ImageURLs: !this.isComment ? [this.postImageSrc].filter((n) => n) : [],
-      VideoURLs: !this.isComment ? [this.postVideoSrc].filter((n) => n) : [],
+      ImageURLs: [this.postImageSrc].filter((n) => n),
+      VideoURLs: [this.postVideoSrc].filter((n) => n),
     };
     const repostedPostHashHex = this.isQuote ? this.parentPost.PostHashHex : "";
     this.submittingPost = true;

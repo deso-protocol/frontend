@@ -1,0 +1,47 @@
+<div app-theme class="nft-modal-container p-15px d-flex flex-column">
+  <div class="fs-20px">
+    Transfer {{ balanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins
+  </div>
+  <search-bar
+    [showCloutavista]="false"
+    [isSearchForUsersToSendDESO]="true"
+    (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+    *ngIf="!hideCreatorSearch"
+  ></search-bar>
+  <simple-profile-card
+    [profile]="receiver"
+    [singleColumn]="true"
+    [hideFollowLink]="true"
+    *ngIf="receiver"
+  ></simple-profile-card>
+  <div>
+    Your Balance: {{ globalVars.hexNanosToUnitString(balanceEntryResponse.BalanceNanosUint256) }} {{ balanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins
+  </div>
+  <div class="input-group py-15px">
+    <div class="input-group-prepend">
+      <span class="input-group-text">Amount To Transfer</span>
+    </div>
+    <input
+      [(ngModel)]="amountToTransfer"
+      (ngModelChange)="updateValidationErrors()"
+      class="form-control fs-15px text-right d-inline-block"
+      type="number"
+      min="0"
+      placeholder="0"
+      [disabled]="transferringDAOCoin"/>
+  </div>
+  <button
+    class="btn btn-primary font-weight-bold br-12px"
+    style="height: 36px; width: 180px; line-height: 15px"
+    (click)="transferDAOCoin()"
+    [disabled]="transferringDAOCoin || validationErrors.length || !amountToTransfer || !receiver"
+  >Transfer</button>
+  <ng-container *ngIf="validationErrors.length">
+    <div *ngFor="let validationError of validationErrors" class="pt-5px fc-red">
+      {{ validationError }}
+    </div>
+  </ng-container>
+  <div class="fc-red pt-5px" *ngIf="backendErrors">
+    {{ backendErrors }}
+  </div>
+</div>

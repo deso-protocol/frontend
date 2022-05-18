@@ -63,13 +63,6 @@
     <div style="color: #333333; text-align: center">Diamond is a cool new DeSo app...<br><a href="https://diamondapp.com" class="font-weight-bold">Check it out!</a></div>
   </div>
 
-  <div
-    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.JumioVerified"
-    class="border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
-  >
-    <jumio-status></jumio-status>
-  </div>
-
   <!-- Tab Selector -->
   <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
 
