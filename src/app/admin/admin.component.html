@@ -115,70 +115,70 @@
 
   <simple-center-loader *ngIf="activeTab == 'Posts' && loadingPosts"></simple-center-loader>
 
-  <!-- Profile Blacklisting -->
+  <!-- Profile Banlisting -->
   <div *ngIf="activeTab == 'Profiles'" class="w-100 d-flex flex-column">
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
-      ☠️ Use the controls below to remove profiles from the UI. Profiles that are "Blacklisted" will be removed
-      everywhere. Profiles that are "Greylisted" will be selectively removed.
+      ☠️ Use the controls below to remove profiles from the UI. Profiles that are "Banlisted" will be removed
+      everywhere. Profiles that are "Restricted" will be selectively removed.
     </div>
 
-    <!-- BLACKLIST -->
+    <!-- BANLIST -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Remove everywhere:
       <div class="d-flex">
         <input
-          [(ngModel)]="blacklistPubKeyOrUsername"
-          (keydown.enter)="updateProfileModerationLevel('blacklist')"
+          [(ngModel)]="banlistPubKeyOrUsername"
+          (keydown.enter)="updateProfileModerationLevel('banlist')"
           class="form-control w-100 fs-15px lh-15px"
           placeholder="Enter a username or public key."
         />
         <button
-          *ngIf="!submittingBlacklistUpdate"
-          (click)="updateProfileModerationLevel('blacklist')"
+          *ngIf="!submittingBanlistUpdate"
+          (click)="updateProfileModerationLevel('banlist')"
           class="btn btn-dark fs-15px ml-5px"
           style="width: 150px"
         >
-          Blacklist
+          Banlist
         </button>
-        <button *ngIf="submittingBlacklistUpdate" class="btn btn-dark fs-15px ml-5px" disabled>Working...</button>
+        <button *ngIf="submittingBanlistUpdate" class="btn btn-dark fs-15px ml-5px" disabled>Working...</button>
       </div>
-      <div *ngIf="updateProfileSuccessType === 'blacklist'" class="font-weight-normal fs-12px" style="color: green">
+      <div *ngIf="updateProfileSuccessType === 'banlist'" class="font-weight-normal fs-12px" style="color: green">
         <i class="far fa-check-circle"></i>
-        Successfully added user to blacklist.
+        Successfully added user to banlist.
       </div>
     </div>
 
-    <!-- GRAYLIST -->
+    <!-- RESTRICTED LIST -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Remove from leaderboards:
       <div class="d-flex">
         <input
-          [(ngModel)]="graylistPubKeyOrUsername"
-          (keydown.enter)="updateProfileModerationLevel('graylist')"
+          [(ngModel)]="restrictPubKeyOrUsername"
+          (keydown.enter)="updateProfileModerationLevel('restrict')"
           class="form-control w-100 fs-15px lh-15px"
           placeholder="Enter a username or public key."
         />
         <button
-          *ngIf="!submittingGraylistUpdate"
-          (click)="updateProfileModerationLevel('graylist')"
+          *ngIf="!submittingRestrictUpdate"
+          (click)="updateProfileModerationLevel('restrict')"
           class="btn btn-secondary fs-15px ml-5px"
           style="width: 150px;background-color:#606060 !important;"
         >
-          Graylist&nbsp;
+          Restrict&nbsp;
         </button>
-        <button *ngIf="submittingGraylistUpdate" class="btn btn-secondary fs-15px ml-5px" style="background-color:#606060 !important;" disabled>Working...</button>
+        <button *ngIf="submittingRestrictUpdate" class="btn btn-secondary fs-15px ml-5px" style="background-color:#606060 !important;" disabled>Working...</button>
       </div>
-      <div *ngIf="updateProfileSuccessType === 'graylist'" class="font-weight-normal fs-12px" style="color: green">
+      <div *ngIf="updateProfileSuccessType === 'restrict'" class="font-weight-normal fs-12px" style="color: green">
         <i class="far fa-check-circle"></i>
-        Successfully added user to graylist.
+        Successfully added user to restricted list.
       </div>
     </div>
 
-    <!-- REMOVE FROM BLACKLISTS -->
+    <!-- REMOVE RESTRICTIONS -->
     <div class="fs-15px font-weight-bold mt-15px px-15px pb-30px border-bottom border-color-grey">
-      Remove from blacklist and graylist:
+      Remove from banlist and restricted list:
       <div class="d-flex">
         <input
           [(ngModel)]="unrestrictPubKeyOrUsername"
@@ -202,64 +202,64 @@
           Working...
         </button>
       </div>
-      <div *ngIf="updateProfileSuccessType === 'restrict'" class="font-weight-normal fs-12px" style="color: green">
+      <div *ngIf="updateProfileSuccessType === 'unrestrict'" class="font-weight-normal fs-12px" style="color: green">
         <i class="far fa-check-circle"></i>
-        Successfully removed user from blacklist and graylist.
+        Successfully removed user from banlist and restricted list.
       </div>
     </div>
 
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
-      ⭐ Use the controls below to Whitelist profiles. Profiles that are Whitelisted will automatically have up to five
+      ⭐ Use the controls below to Grantlist profiles. Profiles that are Grantlisted will automatically have up to five
       of their posts added to the global feed per day.
     </div>
 
-    <!-- WHITELIST -->
+    <!-- GRANTLIST -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Whitelist user:
+      Grantlist user:
       <div class="d-flex">
         <input
-          [(ngModel)]="whitelistPubKeyOrUsername"
-          (keydown.enter)="whitelistClicked()"
+          [(ngModel)]="grantlistPubKeyOrUsername"
+          (keydown.enter)="grantlistClicked()"
           class="form-control w-100 fs-15px lh-15px"
           placeholder="Enter a username or public key."
         />
         <button
-          *ngIf="!submittingWhitelistUpdate"
-          (click)="whitelistClicked()"
+          *ngIf="!submittingGrantlistUpdate"
+          (click)="grantlistClicked()"
           class="btn-default btn-light fs-15px ml-5px border border-color-grey"
           style="width: 150px"
         >
-          Whitelist
+          Grantlist
         </button>
         <button
-          *ngIf="submittingWhitelistUpdate"
+          *ngIf="submittingGrantlistUpdate"
           class="btn-default btn-light fs-15px ml-5px border border-color-grey"
           disabled
         >
           Working...
         </button>
       </div>
-      <div *ngIf="whitelistUpdateSuccess" class="font-weight-normal fs-12px" style="color: green">
+      <div *ngIf="grantlistUpdateSuccess" class="font-weight-normal fs-12px" style="color: green">
         <i class="far fa-check-circle"></i>
-        Successfully added user to whitelist.
+        Successfully added user to grantlist.
       </div>
     </div>
 
-    <!-- REMOVE FROM WHITELIST -->
+    <!-- REMOVE FROM GRANTLIST -->
     <div class="fs-15px font-weight-bold mt-15px px-15px pb-30px border-bottom border-color-grey">
-      Remove user from whitelist:
+      Remove user from grantlist:
       <div class="d-flex">
         <input
-          [(ngModel)]="unwhitelistPubKeyOrUsername"
-          (keydown.enter)="unwhitelistClicked()"
+          [(ngModel)]="ungrantlistPubKeyOrUsername"
+          (keydown.enter)="ungrantlistClicked()"
           class="form-control w-100 fs-15px lh-15px"
           placeholder="Enter a username or public key."
         />
         <button
-          *ngIf="!submittingUnwhitelistUpdate"
-          (click)="unwhitelistClicked()"
+          *ngIf="!submittingUngrantlistUpdate"
+          (click)="ungrantlistClicked()"
           class="btn-default btn-light fs-15px ml-5px border border-color-grey"
           style="width: 150px"
         >
@@ -267,16 +267,16 @@
           Remove
         </button>
         <button
-          *ngIf="submittingUnwhitelistUpdate"
+          *ngIf="submittingUngrantlistUpdate"
           class="btn-default btn-light fs-15px ml-5px border border-color-grey"
           disabled
         >
           Working...
         </button>
       </div>
-      <div *ngIf="unwhitelistUpdateSuccess" class="font-weight-normal fs-12px" style="color: green">
+      <div *ngIf="ungrantlistUpdateSuccess" class="font-weight-normal fs-12px" style="color: green">
         <i class="far fa-check-circle"></i>
-        Successfully removed user from whitelist.
+        Successfully removed user from grantlist.
       </div>
     </div>
 
@@ -320,7 +320,7 @@
     <div
       class="w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted border-bottom border-color-grey light-grey-divider"
     >
-      🖥️ Dump blacklist / whitelist data.
+      🖥️ Dump banlist / grant list data.
     </div>
 
     <!-- PUBLIC KEYS IN THE DB -->
@@ -352,7 +352,7 @@
                   <span class="fc-blue">{{ item.value.RemoveFromLeaderboard }}</span>
                 </li>
                 <li>
-                  WhitelistPosts:
+                  GrantlistPosts:
                   <span class="fc-blue">{{ item.value.WhitelistPosts }}</span>
                 </li>
               </ul>
@@ -412,23 +412,23 @@
           {{ getUserAdminDataResponse.LastVerifyRemoverPublicKey }}
         </div>
         <div class="admin__get-user-admin-data-line pt-15px">
-          <span>Currently Whitelisted:</span>
+          <span>Currently Grantlisted:</span>
           {{ getUserAdminDataResponse.IsWhitelisted }}
         </div>
         <div class="admin__get-user-admin-data-line pt-5px">
-          <span>Last Whitelister:</span>
+          <span>Last Grantlister:</span>
           {{ getUserAdminDataResponse.LastWhitelisterPublicKey }}
         </div>
         <div class="admin__get-user-admin-data-line pt-5px">
-          <span>Last Whitelist Remover:</span>
+          <span>Last Grantlist Remover:</span>
           {{ getUserAdminDataResponse.LastWhitelistRemoverPublicKey }}
         </div>
         <div class="admin__get-user-admin-data-line pt-15px">
-          <span>Currently Graylisted:</span>
+          <span>Currently Restricted:</span>
           {{ getUserAdminDataResponse.IsGraylisted }}
         </div>
         <div class="admin__get-user-admin-data-line pt-5px">
-          <span>Last Graylister:</span>
+          <span>Last Restriction lister:</span>
           {{ getUserAdminDataResponse.LastGraylisterPublicKey }}
         </div>
         <div class="admin__get-user-admin-data-line pt-5px">
@@ -436,15 +436,15 @@
           {{ getUserAdminDataResponse.LastGraylistRemoverPublicKey }}
         </div>
         <div class="admin__get-user-admin-data-line pt-15px">
-          <span>Currently Blacklisted:</span>
+          <span>Currently Banlisted:</span>
           {{ getUserAdminDataResponse.IsBlacklisted }}
         </div>
         <div class="admin__get-user-admin-data-line pt-5px">
-          <span>Last Blacklister:</span>
+          <span>Last Banlister:</span>
           {{ getUserAdminDataResponse.LastBlacklisterPublicKey }}
         </div>
         <div class="admin__get-user-admin-data-line pt-5px">
-          <span>Last Blacklist Remover:</span>
+          <span>Last Banlist Remover:</span>
           {{ getUserAdminDataResponse.LastBlacklistRemoverPublicKey }}
         </div>
         <div class="admin__get-user-admin-data-line pt-15px">
