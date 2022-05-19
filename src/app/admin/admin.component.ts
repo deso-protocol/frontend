@@ -43,6 +43,7 @@ export class AdminComponent implements OnInit {
   whitelistPubKeyOrUsername = "";
   unwhitelistPubKeyOrUsername = "";
   removePhonePubKeyorUsername = "";
+  removePhoneNum = "";
 
   updateProfileSuccessType = "";
   whitelistUpdateSuccess = false;
@@ -63,6 +64,7 @@ export class AdminComponent implements OnInit {
   submittingBuyDeSoFeeRate = false;
 
   submittingRemovePhone = false;
+  submittingRemovePhoneByNumber = false;
   dbDetailsOpen = false;
   dbDetailsLoading = false;
   userMetadataMap = {};
@@ -671,6 +673,26 @@ export class AdminComponent implements OnInit {
       });
   }
 
+  submitRemovePhoneByNumber() {
+    this.submittingRemovePhoneByNumber = true;
+
+    this.backendApi
+      .AdminResetPhoneNumber(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.removePhoneNum
+      )
+      .subscribe(
+        (res) => {
+          this.resetPhoneNumberSuccess();
+        },
+        (err) => {
+          this.globalVars._alertError(JSON.stringify(err.error));
+        }
+      )
+      .add(() => (this.submittingRemovePhoneByNumber = false));
+  }
+
   submitRemovePhoneNumber() {
     const targetPubKeyOrUsername = this.removePhonePubKeyorUsername;
     let pubKey = "";
@@ -699,10 +721,7 @@ export class AdminComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.updateProfileSuccessType = "phone";
-          this.clearSuccessTimeout = setTimeout(() => {
-            this.updateProfileSuccessType = "";
-          }, 1000);
+          this.resetPhoneNumberSuccess();
         },
         (err) => {
           this.globalVars._alertError(JSON.stringify(err.error));
@@ -711,6 +730,13 @@ export class AdminComponent implements OnInit {
       .add(() => {
         this.submittingRemovePhone = false;
       });
+  }
+
+  resetPhoneNumberSuccess(): void {
+    this.updateProfileSuccessType = "phone";
+    this.clearSuccessTimeout = setTimeout(() => {
+      this.updateProfileSuccessType = "";
+    }, 1000);
   }
 
   extractError(err: any): string {

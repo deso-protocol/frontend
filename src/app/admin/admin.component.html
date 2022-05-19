@@ -289,7 +289,8 @@
     <!-- Allow phone number re-registration -->
     <div class="fs-15px font-weight-bold mt-15px pb-30px px-15px border-bottom border-color-grey">
       Allow phone number re-registration:
-      <div class="d-flex">
+      <div class="d-flex pt-10px">
+        <div>By Public Key or Username: </div>
         <input
           [(ngModel)]="removePhonePubKeyorUsername"
           (keydown.enter)="(submitRemovePhoneNumber)"
@@ -305,6 +306,29 @@
         </button>
         <button
           *ngIf="submittingRemovePhone"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+          disabled
+        >
+          Working...
+        </button>
+      </div>
+      <div class="d-flex pt-10px">
+        <div>By Phone Number: </div>
+        <input
+          [(ngModel)]="removePhoneNum"
+          (keydown.enter)="(submitRemovePhoneByNumber)"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a Phone Number."
+        />
+        <button
+          *ngIf="!submittingRemovePhoneByNumber"
+          (click)="submitRemovePhoneByNumber()"
+          class="btn-default btn-light fs-15px ml-5px border border-color-grey"
+        >
+          Allow
+        </button>
+        <button
+          *ngIf="submittingRemovePhoneByNumber"
           class="btn-default btn-light fs-15px ml-5px border border-color-grey"
           disabled
         >

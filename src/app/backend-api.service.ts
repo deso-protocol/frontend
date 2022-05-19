@@ -106,6 +106,7 @@ export class BackendRoutes {
   static ReprocessBitcoinBlockRoute = "/api/v0/admin/reprocess-bitcoin-block";
   static RoutePathSwapIdentity = "/api/v0/admin/swap-identity";
   static RoutePathAdminUpdateUserGlobalMetadata = "/api/v0/admin/update-user-global-metadata";
+  static RoutePathAdminResetPhoneNumber = "/api/v0/admin/reset-phone-number";
   static RoutePathAdminGetAllUserGlobalMetadata = "/api/v0/admin/get-all-user-global-metadata";
   static RoutePathAdminGetUserGlobalMetadata = "/api/v0/admin/get-user-global-metadata";
   static RoutePathAdminUpdateGlobalFeed = "/api/v0/admin/update-global-feed";
@@ -2036,6 +2037,13 @@ export class BackendApiService {
       IsWhitelistUpdate,
       WhitelistPosts,
       RemovePhoneNumberMetadata,
+      AdminPublicKey,
+    });
+  }
+
+  AdminResetPhoneNumber(endpoint: string, AdminPublicKey: string, PhoneNumber: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetPhoneNumber, AdminPublicKey, {
+      PhoneNumber,
       AdminPublicKey,
     });
   }
