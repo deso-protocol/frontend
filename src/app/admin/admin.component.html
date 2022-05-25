@@ -115,6 +115,310 @@
 
   <simple-center-loader *ngIf="activeTab == 'Posts' && loadingPosts"></simple-center-loader>
 
+  <!-- Hot Feed -->
+  <div style="overflow-y: scroll" class="disable-scrollbars" *ngIf="activeTab == 'Hot Feed'">
+    <div *ngIf="globalVars.showSuperAdminTools()" class="
+      w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted
+      border-bottom border-color-grey light-grey-divider">
+      Update the hot feed algorithm by updating the values below.
+    </div>
+
+    <!-- Update HotFeed Interaction Cap (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Update Interaction Cap - Global Hot Feed (max $DESO locked)
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedInteractionCap"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Enter new hot feed interaction cap."
+        />
+        <button
+          *ngIf="!updatingHotFeedInteractionCap"
+          (click)="updateHotFeedInteractionCap()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedInteractionCap"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Update HotFeed Interaction Cap For Tag Feed (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Update Interaction Cap - Tag Specific Feeds (max $DESO locked)
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedTagInteractionCap"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Enter new hot feed tag interaction cap."
+        />
+        <button
+          *ngIf="!updatingHotFeedTagInteractionCap"
+          (click)="updateHotFeedTagInteractionCap()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedTagInteractionCap"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Update HotFeed Time Decay Blocks (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update Time Decay Blocks For Global Feed
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedTimeDecayBlocks"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Enter new hot feed time decay blocks."
+        />
+        <button
+          *ngIf="!updatingHotFeedTimeDecayBlocks"
+          (click)="updateHotFeedTimeDecayBlocks()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedTimeDecayBlocks"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Update HotFeed Time Decay Blocks for Tag feed (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update Time Decay Blocks For Tag Feed
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedTagTimeDecayBlocks"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Enter new hot feed tag time decay blocks."
+        />
+        <button
+          *ngIf="!updatingHotFeedTagTimeDecayBlocks"
+          (click)="updateHotFeedTagTimeDecayBlocks()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedTagTimeDecayBlocks"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Update HotFeed Transaction Type Multipliers (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update Transaction Type Multipliers
+      <div *ngFor="let txnTypeMultiplier of hotFeedTxnTypeMultiplierMap | keyvalue" class="d-flex align-items-center font-weight-normal mt-5px">
+        <input
+          class="form-control fs-15px lh-15px col-4"
+          [placeholder]="txnTypeMultiplier.key"
+        />
+        <input
+          [(ngModel)]="hotFeedTxnTypeMultiplierMap[txnTypeMultiplier.key]"
+          type="number"
+          class="form-control fs-15px lh-15px col-7 ml-5px"
+          placeholder="Multiplier Basis Points"
+        />
+      </div>
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px mb-5px">
+        <input
+          [(ngModel)]="hotFeedTxnTypeMultiplierNewKey"
+          class="form-control fs-15px lh-15px col-4"
+          placeholder="Transaction Type"
+        />
+        <input
+          [(ngModel)]="hotFeedTxnTypeMultiplierNewValue"
+          type="number"
+          class="form-control fs-15px lh-15px col-7 ml-5px"
+          placeholder="Multiplier Basis Points"
+        />
+        <span
+          (click)="addMultiplierToTxnTypeMultiplier()"
+          class="fs-16px col-1 fc-blue cursor-pointer"
+        >
+          +
+        </span>
+      </div>
+      <button
+        *ngIf="!updatingHotFeedTxnTypeMultiplierMap"
+        (click)="updateHotFeedTxnTypeMultiplierMap()"
+        class="btn btn-outline-primary fs-15px"
+        style="width: fit-content"
+      >
+        Update
+      </button>
+      <button
+        *ngIf="updatingHotFeedTxnTypeMultiplierMap"
+        class="btn btn-dark fs-15px"
+        style="width: fit-content" disabled>
+        Updating...
+      </button>
+    </div>
+
+    <!-- Update HotFeed User Posts Multiplier (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update User Posts Multiplier <span class="font-weight-normal">(boost all of a user's posts)</span>
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedUserForPostsMultiplier"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Username"
+        />
+        <input
+          [(ngModel)]="hotFeedUserPostsMultiplier"
+          type="number"
+          class="form-control fs-15px lh-15px w-100 ml-5px"
+          placeholder="Posts Multiplier"
+        />
+        <button
+          *ngIf="!updatingHotFeedUserPostsMultiplier"
+          (click)="updateHotFeedUserPostsMultiplier()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedUserPostsMultiplier"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Update HotFeed User Interaction Multiplier (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Update User Interaction Multiplier <span class="font-weight-normal">(boost all of a user's interactions)</span>
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedUserForInteractionMultiplier"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Username"
+        />
+        <input
+          [(ngModel)]="hotFeedUserInteractionMultiplier"
+          type="number"
+          class="form-control fs-15px lh-15px w-100 ml-5px"
+          placeholder="Interaction Multiplier"
+        />
+        <button
+          *ngIf="!updatingHotFeedUserInteractionMultiplier"
+          (click)="updateHotFeedUserInteractionMultiplier()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingHotFeedUserInteractionMultiplier"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Updating...
+        </button>
+      </div>
+    </div>
+
+    <!-- Look Up HotFeed User Multipliers (Super Admin Only) -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      <i class="fa fa-search"></i>&nbsp;
+      Look Up User Interaction Multipliers
+      <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+        <input
+          [(ngModel)]="hotFeedUserForSearch"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Username"
+        />
+        <button
+          *ngIf="!searchingHotFeedUserMultipliers"
+          (click)="searchForHotFeedUserMultipliers()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+        >
+          Search
+        </button>
+        <button
+          *ngIf="searchingHotFeedUserMultipliers"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content" disabled>
+          Searching...
+        </button>
+      </div>
+    </div>
+    <div *ngIf="hotFeedUserSearchResults" class="px-15px pb-15px" style="white-space: pre">
+      {{ hotFeedUserSearchResults }}
+    </div>
+
+    <div class="
+      w-100 d-flex justify-content-start py-10px pl-15px fs-15px fc-muted
+      border-bottom border-color-grey light-grey-divider mb-5px">
+      Select posts below to whitelist.
+    </div>
+
+    <simple-center-loader *ngIf="loadingHotFeed && hotFeedPosts.length == 0; else showHotFeed"></simple-center-loader>
+    <ng-template #showHotFeed>
+      <div *ngFor="let post of hotFeedPosts; let ii = index">
+        <div *ngIf="post.ProfileEntryResponse" class="border-bottom border-color-grey">
+          <!--
+            The post.parentPost stuff is a hack to make it so that a new comment shows up
+            in the feed with the "replying to @[parentPost.Username]" content diplayed.
+            post.parentPost is set in appendCommentAfterParentPost
+          -->
+          <feed-post
+            *ngIf="post.ProfileEntryResponse"
+            [includePaddingOnPost]="true"
+            [post]="post"
+            [showIconRow]="true"
+            [showAdminRow]="true"
+            [showReplyingToContent]="!!post.parentPost"
+            [parentPost]="post.parentPost"
+            [contentShouldLinkToThread]="false"
+            (addToGlobalFeed)="addToGlobalFeed(ii)"
+          ></feed-post>
+        </div>
+      </div>
+    </ng-template>
+
+    <div
+      *ngIf="hotFeedPosts.length > 0"
+      class="w-100 py-15px d-flex align-items-center justify-content-center cursor-pointer creator-leaderboard__load-more"
+      (click)="_loadHotFeed()"
+    >
+      <div *ngIf="!loadingMoreHotFeed" class="fs-15px">Load More</div>
+      <div *ngIf="loadingMoreHotFeed" class="fs-15px">Loading...</div>
+    </div>
+  </div>
+
   <!-- Profile Blacklisting -->
   <div *ngIf="activeTab == 'Profiles'" class="w-100 d-flex flex-column">
     <div
