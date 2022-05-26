@@ -15,8 +15,8 @@ class Messages {
   static INSUFFICIENT_BALANCE = `You don't have enough DeSo to process the transaction. Try reducing the fee rate.`;
   static SEND_DESO_MIN = `You must send a non-zero amount of DeSo`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
-  static CONFIRM_TRANSFER_TO_PUBKEY = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s";
-  static CONFIRM_TRANSFER_TO_USERNAME = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s";
+  static CONFIRM_TRANSFER_TO_PUBKEY = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s. %s";
+  static CONFIRM_TRANSFER_TO_USERNAME = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s. %s";
   static MUST_PURCHASE_CREATOR_COIN = `You must purchase a creator coin before you can send $DESO`;
 }
 
@@ -36,6 +36,7 @@ export class TransferDeSoComponent implements OnInit {
   feeRateDeSoPerKB: string;
   callingUpdateSendDeSoTxnFee = false;
   loadingMax = false;
+  maxSendAmount = 0;
   sendingDeSo = false;
 
   sendDeSoQRCode: string;
@@ -85,6 +86,7 @@ export class TransferDeSoComponent implements OnInit {
           this.transferDeSoError = "";
           this.networkFee = res.FeeNanos / 1e9;
           this.transferAmount = res.SpendAmountNanos / 1e9;
+          this.maxSendAmount = res.SpendAmountNanos / 1e9;
         },
         (error) => {
           this.loadingMax = false;
@@ -150,7 +152,10 @@ export class TransferDeSoComponent implements OnInit {
             this.globalVars.nanosToDeSo(res.SpendAmountNanos),
             this.globalVars.nanosToDeSo(res.FeeNanos),
             this.globalVars.nanosToDeSo(res.SpendAmountNanos + res.FeeNanos),
-            this.payToPublicKey
+            this.payToPublicKey,
+            res.SpendAmountNanos / 1e9 === this.maxSendAmount
+              ? "Note: this is a max send. All your DESO is being transferred."
+              : ""
           ),
           showCancelButton: true,
           showConfirmButton: true,
@@ -166,7 +171,7 @@ export class TransferDeSoComponent implements OnInit {
                 this.globalVars.localNode,
                 this.globalVars.loggedInUser.PublicKeyBase58Check,
                 this.payToPublicKey,
-                this.transferAmount * 1e9,
+                this.transferAmount === this.maxSendAmount ? -1 : this.transferAmount * 1e9,
                 Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
               )
               .subscribe(
@@ -195,6 +200,7 @@ export class TransferDeSoComponent implements OnInit {
                   this.transferDeSoError = "";
                   this.networkFee = res.FeeNanos / 1e9;
                   this.transferAmount = 0.0;
+                  this.maxSendAmount = 0.0;
 
                   // This will update the user's balance.
                   this.globalVars.updateEverything(res.TxnHashHex, this._sendDeSoSuccess, this._sendDeSoFailure, this);
@@ -259,7 +265,7 @@ export class TransferDeSoComponent implements OnInit {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.payToPublicKey,
-        Math.floor(this.transferAmount * 1e9),
+        this.transferAmount === this.maxSendAmount ? -1 : Math.floor(this.transferAmount * 1e9),
         Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
       )
       .toPromise()
