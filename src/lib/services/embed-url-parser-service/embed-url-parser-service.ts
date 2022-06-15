@@ -22,14 +22,19 @@ export class EmbedUrlParserService {
   }
 
   static mousaiParser(url): string | boolean {
-    const regExp = /^.*mousai\.stream\/((album|playlist|track)\/[0-9]+(\/[a-z0-9-_,#]+){1,2}?)(?=(\/embed|$))/;
+    const regExp = /^.*mousai\.stream\/((album|playlist|track)\/[0-9]+(\/[a-z0-9-_,#%]+){1,2}?)(?=(\/embed|$))/;
     const match = url.match(regExp);
     return match ? match[1] : false;
   }
 
   static constructMousaiEmbedURL(url: URL): string {
     const mousaiPath = this.mousaiParser(url.toString());
-    return mousaiPath ? `https://mousai.stream/${mousaiPath}/embed` : "";
+    return typeof mousaiPath === "string"
+      ? `https://mousai.stream/${mousaiPath
+          .split("/")
+          .map((s) => encodeURIComponent(s))
+          .join("/")}/embed`
+      : "";
   }
 
   // Vimeo video URLs are simple -- anything after the last "/" in the url indicates the videoID.
@@ -347,7 +352,7 @@ export class EmbedUrlParserService {
   }
 
   static isValidMousaiEmbedURL(link: string): boolean {
-    const regExp = /https:\/\/mousai\.stream\/((album|playlist|track)\/[0-9]+(\/[a-z0-9-_,#]+){1,2}?)\/embed$/;
+    const regExp = /https:\/\/mousai\.stream\/((album|playlist|track)\/[0-9]+(\/[a-z0-9-_,%]+){1,2}?)\/embed$/;
     return !!link.match(regExp);
   }
 
