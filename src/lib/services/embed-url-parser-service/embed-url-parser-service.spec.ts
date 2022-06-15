@@ -35,6 +35,7 @@ describe("EmbedUrlParserService", () => {
     album: `album/1000/artist-name/album-name`,
     playlist: `playlist/1000/playlist-name`,
     track: `track/1000/track-name`,
+    trackContainingNumberSign: `track/1000/track-#6`,
   };
   const createValidMousaiURLFromPath = (path: string) => [
     `https://mousai.stream/${path}`,
@@ -46,11 +47,13 @@ describe("EmbedUrlParserService", () => {
     ...createValidMousaiURLFromPath(mousaiPaths.album),
     ...createValidMousaiURLFromPath(mousaiPaths.playlist),
     ...createValidMousaiURLFromPath(mousaiPaths.track),
+    ...createValidMousaiURLFromPath(mousaiPaths.trackContainingNumberSign),
   ];
   const validMousaiEmbedURLs = [
     `https://mousai.stream/${mousaiPaths.album}/embed`,
     `https://mousai.stream/${mousaiPaths.playlist}/embed`,
     `https://mousai.stream/${mousaiPaths.track}/embed`,
+    `https://mousai.stream/${mousaiPaths.trackContainingNumberSign}/embed`,
   ];
 
   const vimeoVideoID = "310195153";
