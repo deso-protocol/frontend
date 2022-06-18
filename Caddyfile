@@ -64,7 +64,8 @@ header @html Content-Security-Policy "
     *.arweave.net
     *.pearl.app
     *.twimg.com
-    cloudflare-ipfs.com;
+    cloudflare-ipfs.com
+    *.mypinata.cloud;
   font-src 'self'
     https://fonts.googleapis.com
     https://fonts.gstatic.com
