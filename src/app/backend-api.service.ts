@@ -22,6 +22,7 @@ export class BackendRoutes {
   static RoutePathSubmitTransaction = "/api/v0/submit-transaction";
   static RoutePathUpdateProfile = "/api/v0/update-profile";
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
+  static RoutePathGetHotFeed = "/api/v0/get-hot-feed";
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
   static RoutePathGetSingleProfilePicture = "/api/v0/get-single-profile-picture";
@@ -1254,6 +1255,15 @@ export class BackendApiService {
     });
 
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+  }
+
+  GetHotFeed(endpoint: string, ReaderPublicKeyBase58Check: string, SeenPosts, ResponseLimit): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetHotFeed, {
+      ReaderPublicKeyBase58Check,
+      SeenPosts,
+      ResponseLimit,
+      SortByNew: false,
+    });
   }
 
   GetPostsStateless(
