@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <div (click)="bsModalRef.hide()" class="modal-header-x">
+    <i class="fas fa-times cursor-pointer"></i>
+  </div>
+</div>
+<div class="buy-deso__container fc-secondary px-15px pb-15px">
+  <div class="fs-15px font-weight-bold mb-15px px-15px">
+    New post multiplier:
+    <div class="d-flex align-items-center justify-content-between font-weight-normal mt-5px">
+      <input
+        [(ngModel)]="postMultiplier" type="number" min="0"
+        class="form-control fs-15px lh-15px w-100"
+        placeholder="Enter new hot feed time decay blocks."
+      />
+      <button
+        *ngIf="!updatingPostMultiplier"
+        (click)="updatePostMultiplier()"
+        class="btn btn-outline-primary fs-15px ml-5px"
+        style="width: fit-content"
+      >
+        Update
+      </button>
+      <button
+        *ngIf="updatingPostMultiplier"
+        class="btn btn-dark fs-15px ml-5px"
+        style="width: fit-content" disabled>
+        Updating...
+      </button>
+    </div>
+    <div *ngIf="errorUpdatingMultiplier" class="fc-red font-weight-normal">
+      Error updating post multiplier.
+    </div>
+    <div *ngIf="successfullyUpdatedMultiplier" class="fc-green font-weight-normal">
+      Success updating post multiplier.
+    </div>
+  </div>
+</div>
