@@ -94,6 +94,14 @@
       Block User
     </a>
     <a
+      *ngIf="globalVars.showSuperAdminTools()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+      (click)="addMultiplier()"
+    >
+      <i class="fa fa-sort-amount-asc"></i>
+      Feed Multiplier
+    </a>
+    <a
       *ngIf="showAddToGlobalFeedDropdownItem()"
       class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success fs-12px"
       (click)="_addPostToGlobalFeed($event)"
