@@ -11,7 +11,7 @@ export class IdentityService {
   private pendingRequests = [];
 
   // All outbound request promises we still need to resolve
-  private outboundRequests = {};
+  private outboundRequests: {[key: string]: Subject<unknown>} = {};
 
   // The currently active identity window
   private identityWindow;
