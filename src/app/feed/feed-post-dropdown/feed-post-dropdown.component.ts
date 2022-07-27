@@ -13,6 +13,7 @@ import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.compo
 import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
 import { NftBurnModalComponent } from "../../nft-burn-modal/nft-burn-modal.component";
 import { TransferNftModalComponent } from "../../transfer-nft-modal/transfer-nft-modal.component";
+import {PostMultiplierComponent} from "./post-multiplier/post-multiplier.component";
 
 @Component({
   selector: "feed-post-dropdown",
@@ -142,7 +143,7 @@ export class FeedPostDropdownComponent {
     return (loggedInUserPostedThis || loggedInUserIsParamUpdater) && !this.post.IsNFT;
   }
 
-  globalFeedEligible(): boolean {
+  globalFeedEligible(): boolean {{}
     return this.globalVars.showAdminTools();
   }
 
@@ -160,6 +161,13 @@ export class FeedPostDropdownComponent {
 
   showUnpinPostFromGlobalFeedDropdownItem(): boolean {
     return this.globalFeedEligible() && this.post.IsPinned;
+  }
+
+  addMultiplier() {
+    this.modalService.show(PostMultiplierComponent, {
+      class: "modal-dialog-centered buy-deso-modal",
+      initialState: { post: this.post },
+    });
   }
 
   showCreateNFTAuction(): boolean {

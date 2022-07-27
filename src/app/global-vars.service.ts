@@ -124,6 +124,7 @@ export class GlobalVarsService {
   feeRateDeSoPerKB = 1000 / 1e9;
   postsToShow = [];
   followFeedPosts = [];
+  newFeedPosts = [];
   messageResponse = null;
   messageMeta = {
     // <public_key || tstamp> -> messageObj
@@ -506,13 +507,13 @@ export class GlobalVarsService {
 
   // Used to convert uint256 Hex balances for DAO coins to standard units.
   hexNanosToUnitString(hexNanos: Hex, decimal: number = 4): string {
-    const result = fromWei(toBN(hexNanos), "gwei").toString();
+    const result = fromWei(toBN(hexNanos), "ether").toString();
     return this.abbreviateNumber(parseFloat(result), 4, false);
   }
 
   // Converts a quantity of DAO coins to a Hex representing the number of nanos
   toHexNanos(units: number): Hex {
-    return toHex(toWei(units.toString(), "gwei"));
+    return toHex(toWei(units.toString(), "ether"));
   }
 
   unitToBNNanos(units: number): BN {

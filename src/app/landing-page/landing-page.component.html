@@ -4,9 +4,7 @@
     <div class="row d-flex justify-content-center landing__ticker">
       <div class="input-group w-auto">
         <div class="input-group-prepend">
-          <label class="landing__nav-buy input-group-text">
-            {{ globalVars.desoToUSDExchangeRateToDisplay }} USD
-          </label>
+          <label class="landing__nav-buy input-group-text">{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</label>
         </div>
         <div class="input-group-append">
           <a
@@ -22,26 +20,20 @@
   </div>
 </div>
 <div class="w-100 d-lg-none d-flex align-items-center justify-content-center">
-  <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">
-    Sign Up and Get <free-deso-message></free-deso-message><b>Free</b>
-  </a>
+  <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">Sign Up</a>
 </div>
 
 <div class="w-100 border-bottom px-10px">
   <div class="container-lg landing__header">
     <div class="row">
-      <div class="col landing__logo deso" [ngStyle]="{'background': getLogoBackground()}"></div>
+      <div class="col landing__logo deso" [ngStyle]="{ background: getLogoBackground() }"></div>
       <div class="col d-lg-flex d-none align-items-center">
-        <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">
-          Sign Up and Get <free-deso-message></free-deso-message><b>Free</b>
-        </a>
+        <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">Sign Up</a>
       </div>
       <div class="d-flex align-items-center">
         <div class="input-group w-auto d-none d-sm-flex" style="margin-left: 25px">
           <div class="input-group-prepend">
-            <label class="landing__nav-buy input-group-text">
-              {{ globalVars.desoToUSDExchangeRateToDisplay }} USD
-            </label>
+            <label class="landing__nav-buy input-group-text">{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</label>
           </div>
           <div class="input-group-append">
             <a
@@ -72,15 +64,18 @@
       </h1>
       <div class="slide-up-2">
         <a class="btn btn-primary landing__sign-up" (click)="globalVars.launchSignupFlow()">
-          <div style="font-weight: bold; font-size: 20px;">
-            Sign Up
-          </div>
-          <div class="mt-1 fs-15px">
-            Get <free-deso-message></free-deso-message> Free
-          </div>
+          <div style="font-weight: bold; font-size: 20px">Sign Up</div>
         </a>
-        <a class="landing__log-in d-none d-sm-block" (click)="globalVars.launchLoginFlow()" style="font-size: 15px;">Log in</a>
-        <a class="landing__log-in d-block d-sm-none mt-3" (click)="globalVars.launchLoginFlow()" style="font-size: 15px;">Log in</a>
+        <a class="landing__log-in d-none d-sm-block" (click)="globalVars.launchLoginFlow()" style="font-size: 15px">
+          Log in
+        </a>
+        <a
+          class="landing__log-in d-block d-sm-none mt-3"
+          (click)="globalVars.launchLoginFlow()"
+          style="font-size: 15px"
+        >
+          Log in
+        </a>
       </div>
     </div>
   </div>
@@ -96,8 +91,7 @@
         <br />
         <br />
         <a href="https://docs.deso.org/" target="_blank">Learn More</a>
-        &nbsp;
-        &nbsp;
+        &nbsp; &nbsp;
         <a href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
@@ -179,8 +173,7 @@
         <br />
         <br />
         <a href="https://docs.deso.org/#the-ultimate-vision" target="_blank">Learn More</a>
-        &nbsp;
-        &nbsp;
+        &nbsp; &nbsp;
         <a href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
@@ -266,7 +259,7 @@
     <div class="row d-flex justify-content-center">
       <div class="col mb-0 text-center">
         <p class="text-grey9 fs-20px">The future is decentralized.</p>
-        <br>
+        <br />
         <a href="mailto:node.admin+contact@protonmail.com" class="fs-12px">Contact</a>
       </div>
     </div>

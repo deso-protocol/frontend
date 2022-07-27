@@ -171,6 +171,7 @@ import { BurnDaoCoinModalComponent } from "./dao-coins/burn-dao-coin-modal/burn-
 // Modular Themes for DeSo by Carsen Klock @carsenk
 import { ThemeModule } from "./theme/theme.module";
 import { Theme } from "./theme/symbols";
+import {PostMultiplierComponent} from "./feed/feed-post-dropdown/post-multiplier/post-multiplier.component";
 const lightTheme: Theme = { key: "light", name: "Light Theme" };
 const darkTheme: Theme = { key: "dark", name: "Dark Theme" };
 const icydarkTheme: Theme = { key: "icydark", name: "Icy Dark Theme" };
@@ -310,6 +311,7 @@ const greenishTheme: Theme = { key: "greenish", name: "Green Theme" };
     CreatePostTutorialPageComponent,
     BuyDeSoEthComponent,
     SanitizeVideoUrlPipe,
+    PostMultiplierComponent,
     AdminNodeFeesComponent,
     AdminNodeAddFeesComponent,
     SupplyMonitoringStatsPageComponent,
