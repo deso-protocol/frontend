@@ -22,6 +22,7 @@ export class BackendRoutes {
   static RoutePathSubmitTransaction = "/api/v0/submit-transaction";
   static RoutePathUpdateProfile = "/api/v0/update-profile";
   static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
+  static RoutePathGetHotFeed = "/api/v0/get-hot-feed";
   static RoutePathGetProfiles = "/api/v0/get-profiles";
   static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
   static RoutePathGetSingleProfilePicture = "/api/v0/get-single-profile-picture";
@@ -106,6 +107,7 @@ export class BackendRoutes {
   static ReprocessBitcoinBlockRoute = "/api/v0/admin/reprocess-bitcoin-block";
   static RoutePathSwapIdentity = "/api/v0/admin/swap-identity";
   static RoutePathAdminUpdateUserGlobalMetadata = "/api/v0/admin/update-user-global-metadata";
+  static RoutePathAdminResetPhoneNumber = "/api/v0/admin/reset-phone-number";
   static RoutePathAdminGetAllUserGlobalMetadata = "/api/v0/admin/get-all-user-global-metadata";
   static RoutePathAdminGetUserGlobalMetadata = "/api/v0/admin/get-user-global-metadata";
   static RoutePathAdminUpdateGlobalFeed = "/api/v0/admin/update-global-feed";
@@ -138,6 +140,12 @@ export class BackendRoutes {
   static RoutePathAdminUpdateJumioCountrySignUpBonus = "/api/v0/admin/update-jumio-country-sign-up-bonus";
   static RoutePathAdminUpdateJumioUSDCents = "/api/v0/admin/update-jumio-usd-cents";
   static RoutePathAdminUpdateJumioKickbackUSDCents = "/api/v0/admin/update-jumio-kickback-usd-cents";
+  static RoutePathAdminGetUnfilteredHotFeed = "/api/v0/admin/get-unfiltered-hot-feed";
+  static RoutePathAdminGetHotFeedAlgorithm = "/api/v0/admin/get-hot-feed-algorithm";
+  static RoutePathAdminUpdateHotFeedAlgorithm = "/api/v0/admin/update-hot-feed-algorithm";
+  static RoutePathAdminUpdateHotFeedPostMultiplier = "/api/v0/admin/update-hot-feed-post-multiplier";
+  static RoutePathAdminUpdateHotFeedUserMultiplier = "/api/v0/admin/update-hot-feed-user-multiplier";
+  static RoutePathAdminGetHotFeedUserMultiplier = "/api/v0/admin/get-hot-feed-user-multiplier";
 
   // Referral program admin routes.
   static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
@@ -1249,6 +1257,15 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
   }
 
+  GetHotFeed(endpoint: string, ReaderPublicKeyBase58Check: string, SeenPosts, ResponseLimit): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetHotFeed, {
+      ReaderPublicKeyBase58Check,
+      SeenPosts,
+      ResponseLimit,
+      SortByNew: false,
+    });
+  }
+
   GetPostsStateless(
     endpoint: string,
     PostHashHex: string,
@@ -2040,6 +2057,13 @@ export class BackendApiService {
     });
   }
 
+  AdminResetPhoneNumber(endpoint: string, AdminPublicKey: string, PhoneNumber: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetPhoneNumber, AdminPublicKey, {
+      PhoneNumber,
+      AdminPublicKey,
+    });
+  }
+
   AdminGetAllUserGlobalMetadata(endpoint: string, AdminPublicKey: string, NumToFetch: number): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetAllUserGlobalMetadata, AdminPublicKey, {
       AdminPublicKey,
@@ -2093,6 +2117,79 @@ export class BackendApiService {
   AdminGetMempoolStats(endpoint: string, AdminPublicKey: string): Observable<any> {
     return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetMempoolStats, AdminPublicKey, {
       AdminPublicKey,
+    });
+  }
+
+  AdminGetUnfilteredHotFeed(
+    endpoint: string,
+    AdminPublicKey: string,
+    ResponseLimit: number,
+    SeenPosts: Array<string>
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUnfilteredHotFeed, AdminPublicKey, {
+      AdminPublicKey,
+      ResponseLimit,
+      SeenPosts,
+    });
+  }
+
+  AdminGetHotFeedAlgorithm(endpoint: string, AdminPublicKey: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetHotFeedAlgorithm, AdminPublicKey, {
+      AdminPublicKey,
+    });
+  }
+
+  AdminUpdateHotFeedAlgorithm(
+    endpoint: string,
+    AdminPublicKey: string,
+    InteractionCap: number,
+    InteractionCapTag: number,
+    TimeDecayBlocks: number,
+    TimeDecayBlocksTag: number,
+    TxnTypeMultiplierMap: { [txnType: number]: number }
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedAlgorithm, AdminPublicKey, {
+      AdminPublicKey,
+      InteractionCap,
+      InteractionCapTag,
+      TimeDecayBlocks,
+      TimeDecayBlocksTag,
+      TxnTypeMultiplierMap,
+    });
+  }
+
+  AdminUpdateHotFeedPostMultiplier(
+    endpoint: string,
+    AdminPublicKey: string,
+    PostHashHex: string,
+    Multiplier: number
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedPostMultiplier, AdminPublicKey, {
+      AdminPublicKey,
+      PostHashHex,
+      Multiplier,
+    });
+  }
+
+  AdminUpdateHotFeedUserMultiplier(
+    endpoint: string,
+    AdminPublicKey: string,
+    Username: string,
+    InteractionMultiplier: number,
+    PostsMultiplier: number
+  ): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateHotFeedUserMultiplier, AdminPublicKey, {
+      AdminPublicKey,
+      Username,
+      InteractionMultiplier,
+      PostsMultiplier,
+    });
+  }
+
+  AdminGetHotFeedUserMultiplier(endpoint: string, AdminPublicKey: string, Username: string): Observable<any> {
+    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetHotFeedUserMultiplier, AdminPublicKey, {
+      AdminPublicKey,
+      Username,
     });
   }
 

@@ -233,7 +233,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
           .subscribe(
             (res) => {
               this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
-                .add(toBN(this.globalVars.toHexNanos(this.coinsToMint)))
+                .add(this.globalVars.unitToBNNanos(this.coinsToMint))
                 .toString("hex");
               zip(this.loadMyDAOCapTable(), this.loadMyDAOCoinHoldings()).subscribe(() => {
                 this.loadingNewSelection = false;
@@ -353,7 +353,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
             (res) => {
               if (profilePublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
                 this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
-                  .add(toBN(this.globalVars.toHexNanos(this.coinsToBurn)))
+                  .add(this.globalVars.unitToBNNanos(this.coinsToBurn))
                   .toString("hex");
               }
               this.coinsToBurn = 0;
