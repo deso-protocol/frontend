@@ -64,6 +64,7 @@ header @html Content-Security-Policy "
     *.arweave.net
     *.pearl.app
     *.twimg.com
+    *.redd.it
     cloudflare-ipfs.com
     *.mypinata.cloud;
   font-src 'self'
