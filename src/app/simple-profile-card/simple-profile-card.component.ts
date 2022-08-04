@@ -1,11 +1,11 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { Router } from "@angular/router";
-import { ProfileEntryResponse } from "../backend-api.service";
+import { Component, OnInit, Input } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import { Router } from '@angular/router';
+import { ProfileEntryResponse } from '../backend-api.service';
 
 @Component({
-  selector: "simple-profile-card",
-  templateUrl: "./simple-profile-card.component.html",
+  selector: 'simple-profile-card',
+  templateUrl: './simple-profile-card.component.html',
 })
 export class SimpleProfileCardComponent implements OnInit {
   @Input() profile: ProfileEntryResponse;
@@ -37,13 +37,16 @@ export class SimpleProfileCardComponent implements OnInit {
     if (!this.profile.Username) {
       return;
     }
-    this.router.navigate(["/" + this.globalVars.RouteNames.USER_PREFIX, this.profile.Username], {
-      queryParamsHandling: "merge",
-    });
+    this.router.navigate(
+      ['/' + this.globalVars.RouteNames.USER_PREFIX, this.profile.Username],
+      {
+        queryParamsHandling: 'merge',
+      }
+    );
   }
 
   onBuyClicked() {
-    this.globalVars.logEvent("buy : creator : select");
+    this.globalVars.logEvent('buy : creator : select');
     this.router.navigate(
       [
         this.globalVars.RouteNames.TUTORIAL,
@@ -51,7 +54,7 @@ export class SimpleProfileCardComponent implements OnInit {
         this.globalVars.RouteNames.BUY_CREATOR,
         this.profile.Username,
       ],
-      { queryParamsHandling: "merge" }
+      { queryParamsHandling: 'merge' }
     );
   }
 }

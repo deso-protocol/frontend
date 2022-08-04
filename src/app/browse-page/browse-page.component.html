@@ -27,7 +27,9 @@
       class="global__top-bar__height d-flex align-items-center w-100 px-15px mr-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
     >
       <div class="d-flex align-items-center">
-        <top-bar-mobile-navigation-control class="mr-15px d-inline-block"></top-bar-mobile-navigation-control>
+        <top-bar-mobile-navigation-control
+          class="mr-15px d-inline-block"
+        ></top-bar-mobile-navigation-control>
         Home
       </div>
 
@@ -51,5 +53,9 @@
   </div>
 
   <!-- The staked posts have a z-index > 0 so we have to put the bottom bar above them. -->
-  <bottom-bar-mobile class="global__bottom-bar-mobile" style="z-index: 10" [showPostButton]="true"></bottom-bar-mobile>
+  <bottom-bar-mobile
+    class="global__bottom-bar-mobile"
+    style="z-index: 10"
+    [showPostButton]="true"
+  ></bottom-bar-mobile>
 </div>

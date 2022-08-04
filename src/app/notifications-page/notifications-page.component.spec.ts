@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NotificationsPageComponent } from "./notifications-page.component";
+import { NotificationsPageComponent } from './notifications-page.component';
 
-describe("NotificationsPageComponent", () => {
+describe('NotificationsPageComponent', () => {
   let component: NotificationsPageComponent;
   let fixture: ComponentFixture<NotificationsPageComponent>;
 
@@ -18,7 +18,7 @@ describe("NotificationsPageComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

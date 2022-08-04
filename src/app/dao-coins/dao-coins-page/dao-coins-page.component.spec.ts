@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DaoCoinsPageComponent } from "./wallet-page.component";
+import { DaoCoinsPageComponent } from './wallet-page.component';
 
-describe("WalletPageComponent", () => {
+describe('WalletPageComponent', () => {
   let component: DaoCoinsPageComponent;
   let fixture: ComponentFixture<DaoCoinsPageComponent>;
 
@@ -18,7 +18,7 @@ describe("WalletPageComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DiamondTutorialComponent } from "./diamond-tutorial.component";
+import { DiamondTutorialComponent } from './diamond-tutorial.component';
 
-describe("BuyCreatorCoinsTutorialComponent", () => {
+describe('BuyCreatorCoinsTutorialComponent', () => {
   let component: DiamondTutorialComponent;
   let fixture: ComponentFixture<DiamondTutorialComponent>;
 
@@ -18,7 +18,7 @@ describe("BuyCreatorCoinsTutorialComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

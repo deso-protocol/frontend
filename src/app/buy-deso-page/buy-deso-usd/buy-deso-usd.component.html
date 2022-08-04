@@ -1,19 +1,33 @@
 <div class="w-100">
   <div class="px-15px">
-    <div class="fs-18px font-weight-bold mb-10px">Enter an amount in USD to convert to $DESO</div>
-    <p class="mb-5px">You can purchase up to ${{ maxUsdAmount }} of $DESO per week using USD.</p>
+    <div class="fs-18px font-weight-bold mb-10px">
+      Enter an amount in USD to convert to $DESO
+    </div>
+    <p class="mb-5px">
+      You can purchase up to ${{ maxUsdAmount }} of $DESO per week using USD.
+    </p>
     <p class="mb-10px">
       For larger purchases,
-      <a [routerLink]="['', 'buy-deso']" [queryParams]="{ btc: true }">buy with Bitcoin.</a>
+      <a [routerLink]="['', 'buy-deso']" [queryParams]="{ btc: true }"
+        >buy with Bitcoin.</a
+      >
     </p>
     <div class="fs-18px py-15px d-flex flex-column">
       <div class="d-flex flex-row">
         <div class="py-15px" style="width: 48%">
           <div class="input-group">
             <div class="input-group-prepend">
-              <span class="input-group-text">{{ selectedFiatCurrencySymbol }}</span>
+              <span class="input-group-text">{{
+                selectedFiatCurrencySymbol
+              }}</span>
             </div>
-            <input class="form-control" type="number" matInput [(ngModel)]="amount" (input)="updateQuotation()" />
+            <input
+              class="form-control"
+              type="number"
+              matInput
+              [(ngModel)]="amount"
+              (input)="updateQuotation()"
+            />
           </div>
         </div>
         <div class="d-flex px-10px" style="align-items: center">≈</div>
@@ -43,12 +57,18 @@
             class="form-control"
             style="background-color: white"
           >
-            <option *ngFor="let fiat of supportedFiatCurrencies | keyvalue" [value]="fiat.key">
+            <option
+              *ngFor="let fiat of supportedFiatCurrencies | keyvalue"
+              [value]="fiat.key"
+            >
               {{ fiat.key }}
             </option>
           </select>
         </div>
-        <div class="d-flex px-15px" style="align-items: center; width: 30px"></div>
+        <div
+          class="d-flex px-15px"
+          style="align-items: center; width: 30px"
+        ></div>
         <div class="input-group" style="width: 48%">
           <div class="input-group-prepend">
             <span class="input-group-text">Country</span>
@@ -59,7 +79,12 @@
             class="form-control"
             style="background-color: white"
           >
-            <option *ngFor="let country of supportedCountries" [value]="country">{{ country }}</option>
+            <option
+              *ngFor="let country of supportedCountries"
+              [value]="country"
+            >
+              {{ country }}
+            </option>
           </select>
         </div>
       </div>

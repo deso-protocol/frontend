@@ -4,7 +4,9 @@
     class="global__top-bar global__top-bar-height background-color-white d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
     style="z-index: 1"
   >
-    <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+    <top-bar-mobile-navigation-control
+      class="mr-15px d-lg-none d-inline-block"
+    ></top-bar-mobile-navigation-control>
     Buy $DESO
   </div>
 
@@ -12,9 +14,16 @@
 
   <div class="d-flex flex-column">
     <div style="flex-grow: 1">
-      <div class="global__mobile-scrollable-section disable-scrollbars" *ngIf="!waitingOnTxnConfirmation">
+      <div
+        class="global__mobile-scrollable-section disable-scrollbars"
+        *ngIf="!waitingOnTxnConfirmation"
+      >
         <div class="pb-15px">
-          <tab-selector [tabs]="buyTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+          <tab-selector
+            [tabs]="buyTabs"
+            [activeTab]="activeTab"
+            (tabClick)="_handleTabClick($event)"
+          ></tab-selector>
         </div>
         <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_USD">
           <buy-deso-usd></buy-deso-usd>
@@ -57,7 +66,14 @@
                 <span>
                   Minimum deposit is currently
                   <b>
-                    {{ ((buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB * 0.3) / 1e8).toFixed(4) }} Bitcoin
+                    {{
+                      (
+                        (buyDeSoFields.bitcoinTransactionFeeRateSatoshisPerKB *
+                          0.3) /
+                        1e8
+                      ).toFixed(4)
+                    }}
+                    Bitcoin
                   </b>
                   <i
                     (click)="tooltip3.toggle()"
@@ -89,7 +105,10 @@
               </div>
 
               <div class="row pl-15px pt-15px">
-                <div class="col-12 fs-15px pl-0px mb-0" style="border-radius: 3px">
+                <div
+                  class="col-12 fs-15px pl-0px mb-0"
+                  style="border-radius: 3px"
+                >
                   <span class="font-weight-bold">Amount deposited</span>
                   <span
                     (click)="tooltip.toggle()"
@@ -110,20 +129,29 @@
                 >
                   <div class="pl-10px">
                     <div *ngIf="appData.latestBitcoinAPIResponse">
-                      {{ (appData.latestBitcoinAPIResponse.final_balance / 1e8).toFixed(8) }} BTC
+                      {{
+                        (
+                          appData.latestBitcoinAPIResponse.final_balance / 1e8
+                        ).toFixed(8)
+                      }}
+                      BTC
 
                       <span class="text-grey7">
                         ≈
                         {{
                           appData.formatUSD(
-                            (appData.latestBitcoinAPIResponse.final_balance * appData.usdPerBitcoinExchangeRate) / 1e8,
+                            (appData.latestBitcoinAPIResponse.final_balance *
+                              appData.usdPerBitcoinExchangeRate) /
+                              1e8,
                             2
                           )
                         }}
                         USD
                       </span>
                     </div>
-                    <div *ngIf="!appData.latestBitcoinAPIResponse">(Loading...)</div>
+                    <div *ngIf="!appData.latestBitcoinAPIResponse">
+                      (Loading...)
+                    </div>
                   </div>
                 </div>
                 <div class="col-2 pl-2 my-auto" style="min-width: 85px">
@@ -138,7 +166,10 @@
               </div>
 
               <div class="row pl-15px pt-5px">
-                <div class="col-12 fs-15px pl-0px fc-muted" style="border-radius: 3px">
+                <div
+                  class="col-12 fs-15px pl-0px fc-muted"
+                  style="border-radius: 3px"
+                >
                   Click "refresh" to check your bitcoin balance.
 
                   <i
@@ -171,7 +202,9 @@
                 <div style="min-width: 120px">Buy $DESO with Bitcoin</div>
               </div>
               <div class="fs-15px mt-20px font-weight-bold">$DESO to buy</div>
-              <div class="pt-5px d-flex align-items-center justify-content-start">
+              <div
+                class="pt-5px d-flex align-items-center justify-content-start"
+              >
                 <input
                   class="form-control w-50 fs-15px lh-15px"
                   style="text-align: right"
@@ -186,13 +219,23 @@
                   </a>
                 </div>
               </div>
-              <div class="fs-12px mt-5px text-grey7" *ngIf="globalVars.BuyDeSoFeeBasisPoints">
-                <i>Includes {{ globalVars.BuyDeSoFeeBasisPoints / 100 }}% slippage</i>
+              <div
+                class="fs-12px mt-5px text-grey7"
+                *ngIf="globalVars.BuyDeSoFeeBasisPoints"
+              >
+                <i
+                  >Includes {{ globalVars.BuyDeSoFeeBasisPoints / 100 }}%
+                  slippage</i
+                >
               </div>
 
               <!-- Bitcoin to exchange input-->
-              <div class="fs-15px mt-15px font-weight-bold">Bitcoin to swap</div>
-              <div class="pt-5px d-flex align-items-center justify-content-start">
+              <div class="fs-15px mt-15px font-weight-bold">
+                Bitcoin to swap
+              </div>
+              <div
+                class="pt-5px d-flex align-items-center justify-content-start"
+              >
                 <input
                   class="form-control w-50 fs-15px"
                   style="text-align: right"
@@ -218,18 +261,33 @@
                 ></i>
 
                 <div class="mt-1 w-100 fs-15px">
-                  <div *ngIf="buyDeSoFields.error == null || buyDeSoFields.error === ''">
-                    {{ (buyDeSoFields.bitcoinTotalTransactionFeeSatoshis / 1e8).toFixed(8) }} Bitcoin ≈
+                  <div
+                    *ngIf="
+                      buyDeSoFields.error == null || buyDeSoFields.error === ''
+                    "
+                  >
+                    {{
+                      (
+                        buyDeSoFields.bitcoinTotalTransactionFeeSatoshis / 1e8
+                      ).toFixed(8)
+                    }}
+                    Bitcoin ≈
                     {{
                       appData.formatUSD(
-                        (buyDeSoFields.bitcoinTotalTransactionFeeSatoshis * appData.usdPerBitcoinExchangeRate) /
+                        (buyDeSoFields.bitcoinTotalTransactionFeeSatoshis *
+                          appData.usdPerBitcoinExchangeRate) /
                           1e8,
                         2
                       )
                     }}
                     USD
                   </div>
-                  <div *ngIf="buyDeSoFields.error != null && buyDeSoFields.error !== ''" style="margin-top: 0">
+                  <div
+                    *ngIf="
+                      buyDeSoFields.error != null && buyDeSoFields.error !== ''
+                    "
+                    style="margin-top: 0"
+                  >
                     0.00000000 Bitcoin ≈ {{ appData.formatUSD(0, 2) }} USD
                   </div>
                 </div>
@@ -266,7 +324,9 @@
               </div>
 
               <div
-                *ngIf="buyDeSoFields.error != null && buyDeSoFields.error !== ''"
+                *ngIf="
+                  buyDeSoFields.error != null && buyDeSoFields.error !== ''
+                "
                 class="w-100 fs-18px mt-15px"
               >
                 <div class="red">
@@ -302,5 +362,7 @@
 </div>
 
 <ng-template #showBuyCompleteElseBlock>
-  <buy-deso-complete (buyMoreDeSoClicked)="onBuyMoreDeSoClicked()"></buy-deso-complete>
+  <buy-deso-complete
+    (buyMoreDeSoClicked)="onBuyMoreDeSoClicked()"
+  ></buy-deso-complete>
 </ng-template>

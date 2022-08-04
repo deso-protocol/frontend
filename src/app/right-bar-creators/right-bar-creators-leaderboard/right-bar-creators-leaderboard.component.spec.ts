@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators-leaderboard.component";
+import { RightBarCreatorsLeaderboardComponent } from './right-bar-creators-leaderboard.component';
 
-describe("RightBarCreatorsLeaderboardComponent", () => {
+describe('RightBarCreatorsLeaderboardComponent', () => {
   let component: RightBarCreatorsLeaderboardComponent;
   let fixture: ComponentFixture<RightBarCreatorsLeaderboardComponent>;
 
@@ -18,7 +18,7 @@ describe("RightBarCreatorsLeaderboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

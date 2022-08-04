@@ -1,10 +1,14 @@
-import { HttpClient } from "@angular/common/http";
-import { forkJoin, Observable, of } from "rxjs";
-import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
-import { GlobalVarsService } from "../../../app/global-vars.service";
-import { map, switchMap } from "rxjs/operators";
-import { flatten } from "lodash";
-import * as _ from "lodash";
+import { HttpClient } from '@angular/common/http';
+import { forkJoin, Observable, of } from 'rxjs';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+  User,
+} from '../../../app/backend-api.service';
+import { GlobalVarsService } from '../../../app/global-vars.service';
+import { map, switchMap } from 'rxjs/operators';
+import { flatten } from 'lodash';
+import * as _ from 'lodash';
 
 class BithuntLeaderboardResponse {
   projects: BithuntProject[];
@@ -28,7 +32,7 @@ export class CommunityProject {
   BithuntProject: BithuntProject;
 }
 
-const bithuntURL = "https://bithunt.bitclout.com/public/projects";
+const bithuntURL = 'https://bithunt.bitclout.com/public/projects';
 
 export class BithuntService {
   static bithuntPageSize = 25;
@@ -40,13 +44,20 @@ export class BithuntService {
 
   getCommunityProjectsLeaderboard(): Observable<CommunityProject[]> {
     const pages = Array.apply(null, { length: 10 });
-    return forkJoin(pages.map((_, index: number) => this.getCommunityProjectsLeaderboardPage(index))).pipe(
+    return forkJoin(
+      pages.map((_, index: number) =>
+        this.getCommunityProjectsLeaderboardPage(index)
+      )
+    ).pipe(
       map((res: CommunityProject[][]) => {
         const projects = flatten(res);
         return projects
           .filter((project: CommunityProject) => project.Profile)
           .sort((a, b) => {
-            return b.Profile.CoinEntry.DeSoLockedNanos - a.Profile.CoinEntry.DeSoLockedNanos;
+            return (
+              b.Profile.CoinEntry.DeSoLockedNanos -
+              a.Profile.CoinEntry.DeSoLockedNanos
+            );
           });
       })
     );
@@ -60,10 +71,14 @@ export class BithuntService {
     return this.httpClient
       .get(`${bithuntURL}?page=${page + 1}&limit=${limit}`, {
         headers: {
-          Accept: "application/json",
+          Accept: 'application/json',
         },
       })
-      .pipe(switchMap((res: BithuntLeaderboardResponse) => this.getProfilesForBithuntLeaderboard(res, skipFilters)));
+      .pipe(
+        switchMap((res: BithuntLeaderboardResponse) =>
+          this.getProfilesForBithuntLeaderboard(res, skipFilters)
+        )
+      );
   }
 
   getProfilesForBithuntLeaderboard(
@@ -82,7 +97,10 @@ export class BithuntService {
       .pipe(
         map((res: any) => {
           if (!skipFilters) {
-            res.UserList = _.filter(res.UserList, (o) => !o.IsGraylisted && !o.IsBlacklisted);
+            res.UserList = _.filter(
+              res.UserList,
+              (o) => !o.IsGraylisted && !o.IsBlacklisted
+            );
           }
 
           return res.UserList.map((user: User, index: number) => {

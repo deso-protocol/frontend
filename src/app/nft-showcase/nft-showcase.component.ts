@@ -1,13 +1,16 @@
-import { Component, OnInit } from "@angular/core";
-import { BackendApiService, NFTCollectionResponse } from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
-import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { uniqBy } from "lodash";
+import { Component, OnInit } from '@angular/core';
+import {
+  BackendApiService,
+  NFTCollectionResponse,
+} from '../backend-api.service';
+import { GlobalVarsService } from '../global-vars.service';
+import { InfiniteScroller } from '../infinite-scroller';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
+import { uniqBy } from 'lodash';
 
 @Component({
-  selector: "nft-showcase",
-  templateUrl: "./nft-showcase.component.html",
+  selector: 'nft-showcase',
+  templateUrl: './nft-showcase.component.html',
 })
 export class NftShowcaseComponent implements OnInit {
   globalVars: GlobalVarsService;
@@ -27,9 +30,14 @@ export class NftShowcaseComponent implements OnInit {
     NftShowcaseComponent.PADDING
   );
 
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  constructor(
+    private _globalVars: GlobalVarsService,
+    private backendApi: BackendApiService
+  ) {
     this.globalVars = _globalVars;
   }
 
@@ -45,13 +53,17 @@ export class NftShowcaseComponent implements OnInit {
         (res: any) => {
           this.nftCollections = res.NFTCollections;
           if (this.nftCollections) {
-            this.nftCollections.sort((a, b) => b.HighestBidAmountNanos - a.HighestBidAmountNanos);
+            this.nftCollections.sort(
+              (a, b) => b.HighestBidAmountNanos - a.HighestBidAmountNanos
+            );
             this.nftCollections = uniqBy(
               this.nftCollections,
               (nftCollection) => nftCollection.PostEntryResponse.PostHashHex
             );
           }
-          this.lastPage = Math.floor(this.nftCollections?.length / NftShowcaseComponent.PAGE_SIZE);
+          this.lastPage = Math.floor(
+            this.nftCollections?.length / NftShowcaseComponent.PAGE_SIZE
+          );
         },
         (error) => {
           this.globalVars._alertError(error.error.error);
@@ -70,7 +82,12 @@ export class NftShowcaseComponent implements OnInit {
     const endIdx = (page + 1) * NftShowcaseComponent.PAGE_SIZE;
 
     return new Promise((resolve, reject) => {
-      resolve(this.nftCollections.slice(startIdx, Math.min(endIdx, this.nftCollections.length)));
+      resolve(
+        this.nftCollections.slice(
+          startIdx,
+          Math.min(endIdx, this.nftCollections.length)
+        )
+      );
     });
   }
 }

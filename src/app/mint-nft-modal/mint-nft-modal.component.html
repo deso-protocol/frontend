@@ -1,5 +1,8 @@
 <div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="'NFT Settings'" [bsModalRef]="bsModalRef"></nft-modal-header>
+  <nft-modal-header
+    [header]="'NFT Settings'"
+    [bsModalRef]="bsModalRef"
+  ></nft-modal-header>
 
   <!-- Type of NFT -->
   <div class="d-flex align-items-center fs-15px pt-15px text-grey7">
@@ -8,45 +11,56 @@
   </div>
   <div class="pt-30px font-weight-500">
     <div class="d-flex align-items-center fs-15px">
-      <input [(ngModel)]="copiesRadioValue"
-             [value]="IS_SINGLE_COPY"
-             type="radio"
-             name="test"
-             class="mr-15px nft-modal-radio-size cursor-pointer">
+      <input
+        [(ngModel)]="copiesRadioValue"
+        [value]="IS_SINGLE_COPY"
+        type="radio"
+        name="test"
+        class="mr-15px nft-modal-radio-size cursor-pointer"
+      />
       Single
     </div>
     <div class="d-flex justify-content-between align-items-center fs-15px">
       <div class="d-flex align-items-center">
-        <input [(ngModel)]="copiesRadioValue"
-               [value]="IS_MULTIPLE_COPIES"
-               type="radio"
-               name="test"
-               class="mr-15px nft-modal-radio-size cursor-pointer">
+        <input
+          [(ngModel)]="copiesRadioValue"
+          [value]="IS_MULTIPLE_COPIES"
+          type="radio"
+          name="test"
+          class="mr-15px nft-modal-radio-size cursor-pointer"
+        />
         Multiple editions
       </div>
       <input
-         [(ngModel)]="numCopies"
-         *ngIf="copiesRadioValue === IS_MULTIPLE_COPIES"
-         class="form-control fs-15px text-right d-inline-block"
-         style="max-width: 150px"
-         type="number"
-         min=1 [max]="maxCopiesPerNFT"
-         placeholder="1"/>
+        [(ngModel)]="numCopies"
+        *ngIf="copiesRadioValue === IS_MULTIPLE_COPIES"
+        class="form-control fs-15px text-right d-inline-block"
+        style="max-width: 150px"
+        type="number"
+        min="1"
+        [max]="maxCopiesPerNFT"
+        placeholder="1"
+      />
       <!-- CSS was being annoying so I added this placeholder as a lazy hack. -->
       <input
-         *ngIf="copiesRadioValue === IS_SINGLE_COPY"
-         class="form-control fs-15px text-right d-inline-block"
-         style="max-width: 150px; background-color: #e9ecef !important;"
-         placeholder="1"
-         disabled/>
+        *ngIf="copiesRadioValue === IS_SINGLE_COPY"
+        class="form-control fs-15px text-right d-inline-block"
+        style="max-width: 150px; background-color: #e9ecef !important"
+        placeholder="1"
+        disabled
+      />
     </div>
-    <div *ngIf="copiesRadioValue === IS_MULTIPLE_COPIES && hasUnreasonableNumCopies()"
-         class="fs-15px fc-red pt-15px">
+    <div
+      *ngIf="
+        copiesRadioValue === IS_MULTIPLE_COPIES && hasUnreasonableNumCopies()
+      "
+      class="fs-15px fc-red pt-15px"
+    >
       The number of NFT copies must be between 1 and {{ maxCopiesPerNFT }}.
     </div>
   </div>
   <div class="fs-15px text-grey7 mt-15px mb-30px">
-      An NFT can have multiple editions, each with its own unique serial number.
+    An NFT can have multiple editions, each with its own unique serial number.
   </div>
 
   <!-- Sale Status and Price -->
@@ -63,46 +77,54 @@
           (ngModelChange)="updateOnSaleStatus($event)"
           type="checkbox"
           class="custom-control-input"
-          id="onSaleSwitch">
+          id="onSaleSwitch"
+        />
         <label class="custom-control-label" for="onSaleSwitch"></label>
       </div>
     </div>
-    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
-      <div>
-        Minimum Bid
-      </div>
+    <div
+      class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px"
+    >
+      <div>Minimum Bid</div>
       <div class="d-flex flex-wrap">
-        <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
-             [ngStyle]="{'max-width': !globalVars.isMobile() ? '250px' : 'none'}">
+        <div
+          class="input-group py-5px"
+          [ngClass]="{ 'mr-15px': !globalVars.isMobile() }"
+          [ngStyle]="{ 'max-width': !globalVars.isMobile() ? '250px' : 'none' }"
+        >
           <div class="input-group-prepend" id="usd-label">
             <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
           </div>
           <input
-             [(ngModel)]="minBidAmountUSD"
-             (ngModelChange)="updateMinBidAmountDESO($event)"
-             [ngStyle]="{'max-width': !globalVars.isMobile() ? '250px' : 'none'}"
-             aria-describedby="usd-label"
-             class="form-control fs-15px text-right d-inline-block"
-             type="number"
-             min="0"
-             placeholder="0"
-             [disabled]="!putOnSale"
+            [(ngModel)]="minBidAmountUSD"
+            (ngModelChange)="updateMinBidAmountDESO($event)"
+            [ngStyle]="{
+              'max-width': !globalVars.isMobile() ? '250px' : 'none'
+            }"
+            aria-describedby="usd-label"
+            class="form-control fs-15px text-right d-inline-block"
+            type="number"
+            min="0"
+            placeholder="0"
+            [disabled]="!putOnSale"
           />
         </div>
-        <div class="input-group py-5px"
-             [ngStyle]="{'max-width': !globalVars.isMobile() ? '250px' : 'none'}">
+        <div
+          class="input-group py-5px"
+          [ngStyle]="{ 'max-width': !globalVars.isMobile() ? '250px' : 'none' }"
+        >
           <div class="input-group-prepend" id="deso-label">
             <span class="input-group-text fs-15px">DESO</span>
           </div>
           <input
-             [(ngModel)]="minBidAmountDESO"
-             (ngModelChange)="updateMinBidAmountUSD($event)"
-             aria-describedby="deso-label"
-             class="form-control fs-15px text-right d-inline-block"
-             type="number"
-             min="0"
-             placeholder="0"
-             [disabled]="!putOnSale"
+            [(ngModel)]="minBidAmountDESO"
+            (ngModelChange)="updateMinBidAmountUSD($event)"
+            aria-describedby="deso-label"
+            class="form-control fs-15px text-right d-inline-block"
+            type="number"
+            min="0"
+            placeholder="0"
+            [disabled]="!putOnSale"
           />
         </div>
       </div>
@@ -110,10 +132,10 @@
     <div *ngIf="hasUnreasonableMinBidAmount()" class="fs-15px fc-red pt-15px">
       The minimum bid must be greater than or equal to zero.
     </div>
-    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
-      <div>
-        Enable "Buy Now"
-      </div>
+    <div
+      class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px"
+    >
+      <div>Enable "Buy Now"</div>
       <div class="custom-control custom-switch custom-switch-lg">
         <input
           [(ngModel)]="isBuyNow"
@@ -122,24 +144,29 @@
           class="custom-control-input"
           id="buyNowSwitch"
           [disabled]="includeUnlockable || !putOnSale"
-        >
+        />
         <label class="custom-control-label" for="buyNowSwitch"></label>
       </div>
     </div>
-    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
-      <div>
-        Buy Now Price
-      </div>
+    <div
+      class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px"
+    >
+      <div>Buy Now Price</div>
       <div class="d-flex flex-wrap">
-        <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
-             [ngStyle]="{'max-width': !globalVars.isMobile() ? '250px' : 'none'}">
+        <div
+          class="input-group py-5px"
+          [ngClass]="{ 'mr-15px': !globalVars.isMobile() }"
+          [ngStyle]="{ 'max-width': !globalVars.isMobile() ? '250px' : 'none' }"
+        >
           <div class="input-group-prepend" id="buy-now-usd-label">
             <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
           </div>
           <input
             [(ngModel)]="buyNowPriceUSD"
             (ngModelChange)="updateBuyNowPriceDESO($event)"
-            [ngStyle]="{'max-width': !globalVars.isMobile() ? '250px' : 'none'}"
+            [ngStyle]="{
+              'max-width': !globalVars.isMobile() ? '250px' : 'none'
+            }"
             aria-describedby="buy-now-usd-label"
             class="form-control fs-15px text-right d-inline-block"
             type="number"
@@ -148,8 +175,10 @@
             [disabled]="!isBuyNow"
           />
         </div>
-        <div class="input-group py-5px"
-             [ngStyle]="{'max-width': !globalVars.isMobile() ? '250px' : 'none'}">
+        <div
+          class="input-group py-5px"
+          [ngStyle]="{ 'max-width': !globalVars.isMobile() ? '250px' : 'none' }"
+        >
           <div class="input-group-prepend" id="buy-now-deso-label">
             <span class="input-group-text fs-15px">DESO</span>
           </div>
@@ -177,18 +206,20 @@
     <div class="flex-grow-1 nft-modal-separator"></div>
   </div>
   <div class="pt-15px pb-30px font-weight-500">
-    <div class="d-flex justify-content-between align-items-center fs-15px pt-10px">
-      <div style="white-space: nowrap">
-        Creator Royalty
-      </div>
+    <div
+      class="d-flex justify-content-between align-items-center fs-15px pt-10px"
+    >
+      <div style="white-space: nowrap">Creator Royalty</div>
       <div class="input-group d-flex align-items-center justify-content-end">
         <input
-           [(ngModel)]="creatorRoyaltyPercent"
-           class="form-control fs-15px text-right d-inline-block"
-           style="max-width: 150px"
-           type="number"
-           min="0" max="100"
-           placeholder="0%"/>
+          [(ngModel)]="creatorRoyaltyPercent"
+          class="form-control fs-15px text-right d-inline-block"
+          style="max-width: 150px"
+          type="number"
+          min="0"
+          max="100"
+          placeholder="0%"
+        />
         <div class="input-group-append">
           <span class="input-group-text fs-15px">&nbsp;%&nbsp;</span>
         </div>
@@ -196,21 +227,24 @@
     </div>
     <div
       class="fc-red"
-      *ngIf="creatorRoyaltyPercent < 0 || creatorRoyaltyPercent > 100">
+      *ngIf="creatorRoyaltyPercent < 0 || creatorRoyaltyPercent > 100"
+    >
       Creator royalty must be between 0% and 100%
     </div>
-    <div class="d-flex justify-content-between align-items-center fs-15px pt-10px">
-      <div style="white-space: nowrap">
-        Coin-holder Royalty
-      </div>
+    <div
+      class="d-flex justify-content-between align-items-center fs-15px pt-10px"
+    >
+      <div style="white-space: nowrap">Coin-holder Royalty</div>
       <div class="input-group d-flex align-items-center justify-content-end">
         <input
           [(ngModel)]="coinRoyaltyPercent"
           class="form-control fs-15px text-right d-inline-block"
           style="max-width: 150px; background-color: white"
           type="number"
-          min="0" max="100"
-          placeholder="0%"/>
+          min="0"
+          max="100"
+          placeholder="0%"
+        />
         <div class="input-group-append">
           <span class="input-group-text fs-15px">&nbsp;%&nbsp;</span>
         </div>
@@ -218,21 +252,34 @@
     </div>
     <div
       class="fc-red"
-      *ngIf="coinRoyaltyPercent < 0 || coinRoyaltyPercent > 100">
+      *ngIf="coinRoyaltyPercent < 0 || coinRoyaltyPercent > 100"
+    >
       Coin royalty must be between 0% and 100%
     </div>
-    <div class="d-flex flex-column justify-content-between align-items-start fs-15px pt-10px">
+    <div
+      class="d-flex flex-column justify-content-between align-items-start fs-15px pt-10px"
+    >
       <div>
         Additional DESO Royalties
         <!-- TODO: explain? Fix copy? -->
       </div>
-      <ng-container *ngFor="let additionalDESORoyalty of additionalDESORoyalties; let ii = index">
-        <div
-          class="d-flex align-items-center justify-content-between w-100">
+      <ng-container
+        *ngFor="
+          let additionalDESORoyalty of additionalDESORoyalties;
+          let ii = index
+        "
+      >
+        <div class="d-flex align-items-center justify-content-between w-100">
           <search-bar
             [isSearchForUsersToSendDESO]="true"
             [showCloutavista]="false"
-            (creatorToMessage)="_handleCreatorSelectedInSearch($event, additionalDESORoyalties, ii)"
+            (creatorToMessage)="
+              _handleCreatorSelectedInSearch(
+                $event,
+                additionalDESORoyalties,
+                ii
+              )
+            "
             *ngIf="!additionalDESORoyalty.ProfileEntryResponse"
           ></search-bar>
           <div
@@ -243,9 +290,10 @@
               class="fas fa-trash text-danger pr-5px"
               (click)="removeRoyalty(additionalDESORoyalties, ii)"
             ></i>
-            <i class="fa fa-pencil pr-5px"
-               aria-hidden="true"
-               (click)="resetRoyaltyUser(additionalDESORoyalty)"
+            <i
+              class="fa fa-pencil pr-5px"
+              aria-hidden="true"
+              (click)="resetRoyaltyUser(additionalDESORoyalty)"
             ></i>
             <simple-profile-card
               [profile]="additionalDESORoyalty.ProfileEntryResponse"
@@ -253,14 +301,18 @@
               [hideFollowLink]="true"
             ></simple-profile-card>
           </div>
-          <div class="input-group d-flex align-items-center justify-content-end">
+          <div
+            class="input-group d-flex align-items-center justify-content-end"
+          >
             <input
               [(ngModel)]="additionalDESORoyalty.RoyaltyPercent"
               class="form-control fs-15px text-right d-inline-block"
               style="max-width: 150px; background-color: white"
               type="number"
-              min="0" max="100"
-              placeholder="0%"/>
+              min="0"
+              max="100"
+              placeholder="0%"
+            />
             <div class="input-group-append">
               <span class="input-group-text fs-15px">&nbsp;%&nbsp;</span>
             </div>
@@ -268,13 +320,22 @@
         </div>
         <div
           class="fc-red"
-          *ngIf="additionalDESORoyalty.RoyaltyPercent < 0 || additionalDESORoyalty > 100">
+          *ngIf="
+            additionalDESORoyalty.RoyaltyPercent < 0 ||
+            additionalDESORoyalty > 100
+          "
+        >
           Each royalty must be between 0% and 100%
         </div>
         <div
           class="fc-red"
-          *ngIf="additionalDESORoyalty.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check">
-          Cannot specify an additional royalty to the post creator. Please specify above in the Creator Royalty section.
+          *ngIf="
+            additionalDESORoyalty.PublicKeyBase58Check ===
+            globalVars.loggedInUser?.PublicKeyBase58Check
+          "
+        >
+          Cannot specify an additional royalty to the post creator. Please
+          specify above in the Creator Royalty section.
         </div>
       </ng-container>
       <div *ngIf="hasDuplicatesInAdditionalRoyalties(additionalDESORoyalties)">
@@ -290,19 +351,30 @@
         </button>
       </div>
     </div>
-    <div class="d-flex flex-column justify-content-between align-items-start fs-15px pt-10px">
+    <div
+      class="d-flex flex-column justify-content-between align-items-start fs-15px pt-10px"
+    >
       <div>
         Additional Coin Royalties
         <!-- TODO: explain? Fix copy? -->
       </div>
-      <ng-container *ngFor="let additionalCoinRoyalty of additionalCoinRoyalties; let ii = index">
-        <div
-          class="d-flex align-items-center justify-content-between w-100"
-        >
+      <ng-container
+        *ngFor="
+          let additionalCoinRoyalty of additionalCoinRoyalties;
+          let ii = index
+        "
+      >
+        <div class="d-flex align-items-center justify-content-between w-100">
           <search-bar
             [isSearchForUsersToSendDESO]="true"
             [showCloutavista]="false"
-            (creatorToMessage)="_handleCreatorSelectedInSearch($event, additionalCoinRoyalties, ii)"
+            (creatorToMessage)="
+              _handleCreatorSelectedInSearch(
+                $event,
+                additionalCoinRoyalties,
+                ii
+              )
+            "
             *ngIf="!additionalCoinRoyalty.ProfileEntryResponse"
           ></search-bar>
           <div
@@ -313,9 +385,10 @@
               class="fas fa-trash text-danger pr-5px"
               (click)="removeRoyalty(additionalCoinRoyalties, ii)"
             ></i>
-            <i class="fa fa-pencil pr-5px"
-               aria-hidden="true"
-               (click)="resetRoyaltyUser(additionalCoinRoyalty)"
+            <i
+              class="fa fa-pencil pr-5px"
+              aria-hidden="true"
+              (click)="resetRoyaltyUser(additionalCoinRoyalty)"
             ></i>
             <simple-profile-card
               [profile]="additionalCoinRoyalty.ProfileEntryResponse"
@@ -324,14 +397,18 @@
             ></simple-profile-card>
           </div>
 
-          <div class="input-group d-flex align-items-center justify-content-end">
+          <div
+            class="input-group d-flex align-items-center justify-content-end"
+          >
             <input
               [(ngModel)]="additionalCoinRoyalty.RoyaltyPercent"
               class="form-control fs-15px text-right d-inline-block"
               style="max-width: 150px; background-color: white"
               type="number"
-              min="0" max="100"
-              placeholder="0%"/>
+              min="0"
+              max="100"
+              placeholder="0%"
+            />
             <div class="input-group-append">
               <span class="input-group-text fs-15px">&nbsp;%&nbsp;</span>
             </div>
@@ -339,19 +416,32 @@
         </div>
         <div
           class="fc-red"
-          *ngIf="additionalCoinRoyalty.RoyaltyPercent < 0 || additionalCoinRoyalty > 100">
+          *ngIf="
+            additionalCoinRoyalty.RoyaltyPercent < 0 ||
+            additionalCoinRoyalty > 100
+          "
+        >
           Each royalty must be between 0% and 100%
         </div>
         <div
           class="fc-red"
-          *ngIf="additionalCoinRoyalty.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check">
-          Cannot specify an additional royalty to the post creator's coin. Please specify above in the Coin-Holder Royalty section.
+          *ngIf="
+            additionalCoinRoyalty.PublicKeyBase58Check ===
+            globalVars.loggedInUser?.PublicKeyBase58Check
+          "
+        >
+          Cannot specify an additional royalty to the post creator's coin.
+          Please specify above in the Coin-Holder Royalty section.
         </div>
         <div
           class="fc-red"
-          *ngIf="additionalCoinRoyalty.PublicKeyBase58Check && !additionalCoinRoyalty.Username"
+          *ngIf="
+            additionalCoinRoyalty.PublicKeyBase58Check &&
+            !additionalCoinRoyalty.Username
+          "
         >
-          Additional Coin Royalties may only be specified for public key's that already have a profile.
+          Additional Coin Royalties may only be specified for public key's that
+          already have a profile.
         </div>
       </ng-container>
       <div *ngIf="hasDuplicatesInAdditionalRoyalties(additionalCoinRoyalties)">
@@ -368,11 +458,12 @@
       </div>
     </div>
     <div *ngIf="hasUnreasonableRoyalties()" class="fs-15px fc-red pt-15px">
-      The sum of creator and coin-holder and additional royalties must be less than 100.
+      The sum of creator and coin-holder and additional royalties must be less
+      than 100.
     </div>
     <div class="fs-15px text-grey7 mt-15px" style="font-weight: 400">
-      On every sale, including resale, a customizable percentage goes to you, the creator, and to your
-      coin-holders.
+      On every sale, including resale, a customizable percentage goes to you,
+      the creator, and to your coin-holders.
     </div>
   </div>
 
@@ -391,7 +482,8 @@
         (ngModelChange)="updateIncludeUnlockable($event)"
         type="checkbox"
         class="custom-control-input"
-        id="includeUnlockableSwitch">
+        id="includeUnlockableSwitch"
+      />
       <label class="custom-control-label" for="includeUnlockableSwitch"></label>
     </div>
   </div>
@@ -404,17 +496,25 @@
     </div>
     <div class="fs-15px">
       {{ globalVars.nanosToDeSo(createNFTFeeNanos * numCopies, 5) }} DESO
-      <span class="text-grey7">(~{{globalVars.nanosToUSD(createNFTFeeNanos * numCopies, 2)}})</span>
+      <span class="text-grey7"
+        >(~{{ globalVars.nanosToUSD(createNFTFeeNanos * numCopies, 2) }})</span
+      >
     </div>
   </div>
 
   <button
-    [disabled]="hasUnreasonableRoyalties() || hasUnreasonableNumCopies() || hasUnreasonableMinBidAmount() ||
-      hasUnreasonableBuyNowPrice() || hasAdditionalRoyaltyError() || minting"
+    [disabled]="
+      hasUnreasonableRoyalties() ||
+      hasUnreasonableNumCopies() ||
+      hasUnreasonableMinBidAmount() ||
+      hasUnreasonableBuyNowPrice() ||
+      hasAdditionalRoyaltyError() ||
+      minting
+    "
     (click)="mintNft()"
     class="btn btn-primary font-weight-bold fs-15px br-12px mb-15px"
     style="height: 36px; width: 135px; line-height: 15px"
   >
-    {{ minting ? "Minting NFT" : "Mint NFT" }}
+    {{ minting ? 'Minting NFT' : 'Mint NFT' }}
   </button>
 </div>

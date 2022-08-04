@@ -1,11 +1,18 @@
 <div class="comment-modal">
   <div class="modal-header">
-    <button type="button" class="close feed-create-comment-form__close" (click)="bsModalRef.hide()">
+    <button
+      type="button"
+      class="close feed-create-comment-form__close"
+      (click)="bsModalRef.hide()"
+    >
       <span>&times;</span>
     </button>
   </div>
 
-  <div class="px-15px pt-15px pb-5px" style="max-height:500px; overflow-y:hidden;">
+  <div
+    class="px-15px pt-15px pb-5px"
+    style="max-height: 500px; overflow-y: hidden"
+  >
     <feed-post
       [post]="parentPost"
       [includePaddingOnPost]="false"
@@ -17,9 +24,8 @@
     ></feed-post>
   </div>
 
-
   <div class="fs-12px text-muted feed-create-comment-form__reply-container">
-    {{ isQuote ? "Quoting " : "Replying to " }}
+    {{ isQuote ? 'Quoting ' : 'Replying to ' }}
     @{{ parentPost.ProfileEntryResponse.Username }}
   </div>
 

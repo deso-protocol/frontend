@@ -1,21 +1,24 @@
-import { Component, OnDestroy } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from "rxjs";
-import { RouteNames, AppRoutingModule } from "../../app-routing.module";
-import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { InfiniteScroller } from "src/app/infinite-scroller";
+import { Component, OnDestroy } from '@angular/core';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+} from '../../backend-api.service';
+import { GlobalVarsService } from '../../global-vars.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { RouteNames, AppRoutingModule } from '../../app-routing.module';
+import { CanPublicKeyFollowTargetPublicKeyHelper } from '../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
+import { InfiniteScroller } from 'src/app/infinite-scroller';
 
 @Component({
-  selector: "manage-follows",
-  templateUrl: "./manage-follows.component.html",
-  styleUrls: ["./manage-follows.component.scss"],
+  selector: 'manage-follows',
+  templateUrl: './manage-follows.component.html',
+  styleUrls: ['./manage-follows.component.scss'],
 })
 export class ManageFollowsComponent implements OnDestroy {
-  static FOLLOWING = "Following";
-  static FOLLOWERS = "Followers";
+  static FOLLOWING = 'Following';
+  static FOLLOWERS = 'Followers';
   static PAGE_SIZE = 50;
   static BUFFER_SIZE = 50;
   static WINDOW_VIEWPORT = true;
@@ -40,7 +43,7 @@ export class ManageFollowsComponent implements OnDestroy {
   lastPage = null;
 
   pagedKeys = {
-    0: "",
+    0: '',
   };
 
   getPage(page: number) {
@@ -54,7 +57,7 @@ export class ManageFollowsComponent implements OnDestroy {
       .GetFollows(
         this.appData.localNode,
         this.targetUsername,
-        "" /* PublicKeyBase58Check */,
+        '' /* PublicKeyBase58Check */,
         this.getEntriesFollowingPublicKey,
         fetchPubKey,
         ManageFollowsComponent.PAGE_SIZE
@@ -65,22 +68,34 @@ export class ManageFollowsComponent implements OnDestroy {
         this.totalFollowerCount = res.NumFollowers;
         const chunk = res.PublicKeyToProfileEntry;
         // Filter out null / undefined values and sort by coin price.
-        const sortedProfileEntries: ProfileEntryResponse[] = (Object.values(chunk) as ProfileEntryResponse[])
+        const sortedProfileEntries: ProfileEntryResponse[] = (Object.values(
+          chunk
+        ) as ProfileEntryResponse[])
           .filter((val) => val)
-          .sort((ii: any, jj: any) => jj.CoinEntry.DeSoLockedNanos - ii.CoinEntry.DeSoLockedNanos);
+          .sort(
+            (ii: any, jj: any) =>
+              jj.CoinEntry.DeSoLockedNanos - ii.CoinEntry.DeSoLockedNanos
+          );
 
         if (sortedProfileEntries.length > 0) {
           // Set pagedKeys so we have the last public key for the next page.
-          this.pagedKeys[page + 1] = sortedProfileEntries[sortedProfileEntries.length - 1].PublicKeyBase58Check;
+          this.pagedKeys[page + 1] =
+            sortedProfileEntries[
+              sortedProfileEntries.length - 1
+            ].PublicKeyBase58Check;
         } else {
-          this.pagedKeys[page + 1] = "";
+          this.pagedKeys[page + 1] = '';
         }
         // Increment profile follower count -- maintained so we can compute anonymous followers at the end.
         this.profileFollowerCount += sortedProfileEntries.length;
         // If we've hit the end of the followers with profiles, set last page and anonymous follower count.
-        if (sortedProfileEntries.length < ManageFollowsComponent.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
+        if (
+          sortedProfileEntries.length < ManageFollowsComponent.PAGE_SIZE ||
+          this.pagedKeys[page + 1] === ''
+        ) {
           this.lastPage = page;
-          this.anonymousFollowerCount = res.NumFollowers - this.profileFollowerCount;
+          this.anonymousFollowerCount =
+            res.NumFollowers - this.profileFollowerCount;
         }
         // Set loading variables to false.
         this.loadingNextPage = false;
@@ -101,7 +116,10 @@ export class ManageFollowsComponent implements OnDestroy {
       console.error(`unrecognized tabName: ${tabName}`);
     }
 
-    this.router.navigate([RouteNames.USER_PREFIX, this.targetUsername, routeSuffix], { queryParamsHandling: "merge" });
+    this.router.navigate(
+      [RouteNames.USER_PREFIX, this.targetUsername, routeSuffix],
+      { queryParamsHandling: 'merge' }
+    );
   }
 
   _setStateFromActivatedRoute(route) {
@@ -131,7 +149,9 @@ export class ManageFollowsComponent implements OnDestroy {
       }
       default: {
         // unexpected state
-        console.error(`unexpected path in _setStateFromActivatedRoute: ${path}`);
+        console.error(
+          `unexpected path in _setStateFromActivatedRoute: ${path}`
+        );
         // TODO: rollbar
       }
     }
@@ -153,11 +173,13 @@ export class ManageFollowsComponent implements OnDestroy {
     }
 
     // don't navigate if the user clicked a link
-    if (event.target.tagName.toLowerCase() === "a") {
+    if (event.target.tagName.toLowerCase() === 'a') {
       return true;
     }
 
-    this.router.navigate([RouteNames.USER_PREFIX, username], { queryParamsHandling: "merge" });
+    this.router.navigate([RouteNames.USER_PREFIX, username], {
+      queryParamsHandling: 'merge',
+    });
   }
 
   constructor(
@@ -170,29 +192,31 @@ export class ManageFollowsComponent implements OnDestroy {
     this.appData = globalVars;
 
     // Start obtaining the following data once we have a loggedInUser
-    this.loggedInUserSubscription = this.appData.loggedInUserObservable.subscribe((loggedInUserObservableResult) => {
-      // Only refresh if the current loggedInUser is different than the last
-      // one. If we don't do this, then every time we unfollow someone,
-      // the unfollowed user may disappear from the followed list, which isn't what
-      // we want. Instead, we want the unfollowed user to remain in the followed list
-      // until page refresh, so that the loggedInUser has a chance to re-follow if he misclicked.
-      //
-      // This can happen since the User data that app.component pulls from the server
-      // contains the follower list, and that data can look different then the client-side
-      // follower list, and so app.component will think that the user has been updated
-      // and try to set a new logged in user.
-      //
-      // In theory, this shouldn't happen, since the frontend and backend aim to
-      // update and sort the follower lists identically, but I've seen weird behavior
-      // here, so I'm just being defensive.
-      //
-      // ^^ I'm guessing "weird behavior" is due to other pieces of user data (unrelated
-      // to follows) being out of sync between the frontend and backend (either not updated
-      // appropriately or not sorted).
-      if (!loggedInUserObservableResult.isSameUserAsBefore) {
-        this.datasource.get(0, ManageFollowsComponent.PAGE_SIZE, null);
+    this.loggedInUserSubscription = this.appData.loggedInUserObservable.subscribe(
+      (loggedInUserObservableResult) => {
+        // Only refresh if the current loggedInUser is different than the last
+        // one. If we don't do this, then every time we unfollow someone,
+        // the unfollowed user may disappear from the followed list, which isn't what
+        // we want. Instead, we want the unfollowed user to remain in the followed list
+        // until page refresh, so that the loggedInUser has a chance to re-follow if he misclicked.
+        //
+        // This can happen since the User data that app.component pulls from the server
+        // contains the follower list, and that data can look different then the client-side
+        // follower list, and so app.component will think that the user has been updated
+        // and try to set a new logged in user.
+        //
+        // In theory, this shouldn't happen, since the frontend and backend aim to
+        // update and sort the follower lists identically, but I've seen weird behavior
+        // here, so I'm just being defensive.
+        //
+        // ^^ I'm guessing "weird behavior" is due to other pieces of user data (unrelated
+        // to follows) being out of sync between the frontend and backend (either not updated
+        // appropriately or not sorted).
+        if (!loggedInUserObservableResult.isSameUserAsBefore) {
+          this.datasource.get(0, ManageFollowsComponent.PAGE_SIZE, null);
+        }
       }
-    });
+    );
 
     this.route.params.subscribe((params) => {
       window.scroll(0, 0);
@@ -213,5 +237,7 @@ export class ManageFollowsComponent implements OnDestroy {
     ManageFollowsComponent.WINDOW_VIEWPORT,
     ManageFollowsComponent.BUFFER_SIZE
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 }

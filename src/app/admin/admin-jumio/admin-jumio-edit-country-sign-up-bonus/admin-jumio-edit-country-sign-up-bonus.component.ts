@@ -1,18 +1,18 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from '@angular/core';
 import {
   BackendApiService,
   CountryCodeDetails,
   CountryLevelSignUpBonus,
   CountryLevelSignUpBonusResponse,
-} from "../../../backend-api.service";
-import { GlobalVarsService } from "../../../global-vars.service";
-import { BsModalRef } from "ngx-bootstrap/modal";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { Router } from "@angular/router";
+} from '../../../backend-api.service';
+import { GlobalVarsService } from '../../../global-vars.service';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "admin-jumio-edit-country-sign-up-bonus",
-  templateUrl: "./admin-jumio-edit-country-sign-up-bonus.component.html",
+  selector: 'admin-jumio-edit-country-sign-up-bonus',
+  templateUrl: './admin-jumio-edit-country-sign-up-bonus.component.html',
 })
 export class AdminJumioEditCountrySignUpBonusComponent implements OnInit {
   @Input() countryLevelSignUpBonusResponse: CountryLevelSignUpBonusResponse;
@@ -34,8 +34,10 @@ export class AdminJumioEditCountrySignUpBonusComponent implements OnInit {
   ngOnInit(): void {
     this.newAllowCustomKickbackAmount = this.getAllowCustomKickbackAmount();
     this.newAllowCustomReferralAmount = this.getAllowCustomReferralAmount();
-    this.newReferralAmountOverrideUSD = this.getReferralAmountOverrideUSDCents() / 100;
-    this.newKickbackAmountOverrideUSD = this.getKickbackAmountOverrideUSDCents() / 100;
+    this.newReferralAmountOverrideUSD =
+      this.getReferralAmountOverrideUSDCents() / 100;
+    this.newKickbackAmountOverrideUSD =
+      this.getKickbackAmountOverrideUSDCents() / 100;
   }
 
   getCountryCodeDetails(): CountryCodeDetails {
@@ -80,13 +82,17 @@ export class AdminJumioEditCountrySignUpBonusComponent implements OnInit {
         {
           AllowCustomKickbackAmount: this.newAllowCustomKickbackAmount,
           AllowCustomReferralAmount: this.newAllowCustomReferralAmount,
-          ReferralAmountOverrideUSDCents: Math.trunc(this.newReferralAmountOverrideUSD * 100),
-          KickbackAmountOverrideUSDCents: Math.trunc(this.newKickbackAmountOverrideUSD * 100),
+          ReferralAmountOverrideUSDCents: Math.trunc(
+            this.newReferralAmountOverrideUSD * 100
+          ),
+          KickbackAmountOverrideUSDCents: Math.trunc(
+            this.newKickbackAmountOverrideUSD * 100
+          ),
         }
       )
       .subscribe(
         () => {
-          this.modalService.setDismissReason("sign-up-bonus-updated");
+          this.modalService.setDismissReason('sign-up-bonus-updated');
           this.bsModalRef.hide();
         },
         (err) => {

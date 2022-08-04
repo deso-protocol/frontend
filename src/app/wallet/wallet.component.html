@@ -1,58 +1,87 @@
 <!-- Top Bar -->
 <div
-  class="global__top-bar  global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+  class="global__top-bar global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
   *ngIf="!inTutorial"
 >
-  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+  <top-bar-mobile-navigation-control
+    class="mr-15px d-lg-none d-inline-block"
+  ></top-bar-mobile-navigation-control>
   <div class="d-flex align-items-center w-100 justify-content-between">
     <div>Wallet</div>
-    <div class="p-15px fs-14px"><span>≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos + totalValue(), 2) }}&nbsp;</span><small>USD Total</small></div>
+    <div class="p-15px fs-14px">
+      <span
+        >≈
+        {{
+          globalVars.nanosToUSD(
+            globalVars.loggedInUser.BalanceNanos + totalValue(),
+            2
+          )
+        }}&nbsp;</span
+      ><small>USD Total</small>
+    </div>
   </div>
 </div>
 
 <div class="global__top-bar__height" *ngIf="!inTutorial"></div>
-<div
-  class=""
-  *ngIf="inTutorial"
->
-  <div class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg">
-    <top-bar-mobile-hamburger-menu class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-hamburger-menu>
+<div class="" *ngIf="inTutorial">
+  <div
+    class="d-flex align-items-center justify-content-start w-100 p-3 fs-18px font-weight-bold border-bottom border-color-grey secalt-bg"
+  >
+    <top-bar-mobile-hamburger-menu
+      class="mr-15px d-lg-none d-inline-block"
+    ></top-bar-mobile-hamburger-menu>
     <div *ngIf="inTutorial">
       <h3 class="mb-1 fs-24px font-weight-semibold">
         {{ tutorialHeaderText }}
       </h3>
-      <h5 class="fs-15px fc-muted">
-        Step {{ tutorialStepNumber }} of 6
-      </h5>
+      <h5 class="fs-15px fc-muted">Step {{ tutorialStepNumber }} of 6</h5>
     </div>
   </div>
 
   <div class="pl-3 pr-3 pt-3 d-flex flex-column justify-flex-start">
-    <div class="d-flex align-items-center font-weight-bold fs-18px">
-      Wallet
-    </div>
-    <div class="fs-15px py-15px pr-15px" *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY">
+    <div class="d-flex align-items-center font-weight-bold fs-18px">Wallet</div>
+    <div
+      class="fs-15px py-15px pr-15px"
+      *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY"
+    >
       <div>
         <p>
-          You now have {{ globalVars.nanosToDeSo(balanceEntryToHighlight.BalanceNanos, 4) }} ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
+          You now have
+          {{
+            globalVars.nanosToDeSo(balanceEntryToHighlight.BalanceNanos, 4)
+          }}
+          ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
         </p>
         <p class="mt-3">
-          <b>Click the arrows in the highlighted row and select "Sell" to sell some ${{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins.</b>
+          <b
+            >Click the arrows in the highlighted row and select "Sell" to sell
+            some ${{
+              balanceEntryToHighlight.ProfileEntryResponse.Username
+            }}
+            coins.</b
+          >
         </p>
       </div>
       <p *ngIf="tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL">
-        You just sold {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins. Click "Next: Setup Your Profile" to set up your own coin!
+        You just sold
+        {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins. Click
+        "Next: Setup Your Profile" to set up your own coin!
       </p>
       <p *ngIf="tutorialStatus === TutorialStatus.INVEST_SELF">
-        You now have {{ globalVars.nanosToDeSo(balanceEntryToHighlight.BalanceNanos, 4) }} {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins!
-        Each of your coins is currently worth {{ globalVars.nanosToUSD(balanceEntryToHighlight.ProfileEntryResponse.CoinPriceDeSoNanos, 2)}}!
-        Click "Next: Give a Diamond" to learn about Diamonds.
+        You now have
+        {{ globalVars.nanosToDeSo(balanceEntryToHighlight.BalanceNanos, 4) }}
+        {{ balanceEntryToHighlight.ProfileEntryResponse.Username }} coins! Each
+        of your coins is currently worth
+        {{
+          globalVars.nanosToUSD(
+            balanceEntryToHighlight.ProfileEntryResponse.CoinPriceDeSoNanos,
+            2
+          )
+        }}! Click "Next: Give a Diamond" to learn about Diamonds.
       </p>
     </div>
   </div>
-
 </div>
-
 
 <div class="d-flex flex-column flex-grow-1" *ngIf="globalVars.loggedInUser">
   <!-- $DESO Divider Bar -->
@@ -64,13 +93,20 @@
     <div class="fs-15px" style="margin-top: 2px" *ngIf="!inTutorial">
       <a
         *ngIf="globalVars.loggedInUser"
-        href="{{ 'https://explorer.deso.org/?public-key=' + globalVars.loggedInUser.PublicKeyBase58Check }}"
+        href="{{
+          'https://explorer.deso.org/?public-key=' +
+            globalVars.loggedInUser.PublicKeyBase58Check
+        }}"
         class="fc-blue"
       >
         Transactions
       </a>
       <span class="px-5px">·</span>
-      <a [routerLink]="'/' + globalVars.RouteNames.SEND_DESO" queryParamsHandling="merge" class="fc-blue">
+      <a
+        [routerLink]="'/' + globalVars.RouteNames.SEND_DESO"
+        queryParamsHandling="merge"
+        class="fc-blue"
+      >
         Send
       </a>
     </div>
@@ -78,14 +114,24 @@
 
   <!-- $DESO Holdings -->
   <!-- Override .container's max-width property with max-width: inherit-->
-  <div class="container fs-15px p-15px border-bottom border-color-grey" style="max-width: inherit" *ngIf="!inTutorial">
+  <div
+    class="container fs-15px p-15px border-bottom border-color-grey"
+    style="max-width: inherit"
+    *ngIf="!inTutorial"
+  >
     <div class="row pt-5px">
       <div class="col-3 font-weight-bold">Balance</div>
       <div class="col-9">
         <div>
-          {{ globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos, 9) }} $DESO
+          {{
+            globalVars.nanosToDeSo(globalVars.loggedInUser.BalanceNanos, 9)
+          }}
+          $DESO
           <i
-            *ngIf="globalVars.loggedInUser.UnminedBalanceNanos != 0 && globalVars.showProcessingSpinners"
+            *ngIf="
+              globalVars.loggedInUser.UnminedBalanceNanos != 0 &&
+              globalVars.showProcessingSpinners
+            "
             class="fa fa-spinner fc-muted"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
             [matTooltip]="unminedDeSoToolTip()"
@@ -93,7 +139,13 @@
             (click)="tooltip.toggle()"
           ></i>
         </div>
-        <div class="fc-muted">≈ {{ globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2) }} USD</div>
+        <div class="fc-muted">
+          ≈
+          {{
+            globalVars.nanosToUSD(globalVars.loggedInUser.BalanceNanos, 2)
+          }}
+          USD
+        </div>
       </div>
     </div>
     <div class="row pt-15px pb-15px">
@@ -102,7 +154,9 @@
         {{ globalVars.loggedInUser.PublicKeyBase58Check }}
         <i
           class="far fa-copy ml-15px holdings__copy"
-          (click)="globalVars._copyText(globalVars.loggedInUser.PublicKeyBase58Check)"
+          (click)="
+            globalVars._copyText(globalVars.loggedInUser.PublicKeyBase58Check)
+          "
         ></i>
       </div>
     </div>
@@ -113,82 +167,140 @@
   <div
     class="d-flex align-items-center justify-content-between fs-18px p-15px holdings__divider border-bottom border-color-grey"
     *ngIf="!inTutorial"
-    >
-    <div class="font-weight-bold">Creator Coins  <span style="font-size:13px;">({{ this.globalVars.loggedInUser.UsersYouHODL.length }} Held)</span>
+  >
+    <div class="font-weight-bold">
+      Creator Coins
+      <span style="font-size: 13px"
+        >({{ this.globalVars.loggedInUser.UsersYouHODL.length }} Held)</span
+      >
     </div>
     <div class="fs-14px">
-      <span class="font-weight-bold">≈ {{ globalVars.nanosToUSD(totalValue(), 2) }}</span>
-      USD<br>
-      <span class="font-weight-bold" style="font-size:13px;">≈ {{ globalVars.nanosToDeSo(totalValue(), 4) }}</span>
+      <span class="font-weight-bold"
+        >≈ {{ globalVars.nanosToUSD(totalValue(), 2) }}</span
+      >
+      USD<br />
+      <span class="font-weight-bold" style="font-size: 13px"
+        >≈ {{ globalVars.nanosToDeSo(totalValue(), 4) }}</span
+      >
       $DESO
     </div>
   </div>
 
   <!-- Tab Selector -->
-  <tab-selector [tabs]="tabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+  <tab-selector
+    [tabs]="tabs"
+    [activeTab]="activeTab"
+    (tabClick)="_handleTabClick($event)"
+  ></tab-selector>
 
   <div
     class="row no-gutters fs-15px d-flex align-items-center border-bottom border-color-grey pl-15px py-15px"
   >
-    <div class="col mb-0 cursor-pointer fc-muted text-link_hover" (click)="sortWallet('username')">
-      <i class="fas fs-15px" [ngClass]="{'fa-arrows-alt-v':sortedUsernameFromHighToLow === 0, 'fa-sort-alpha-up-alt':sortedUsernameFromHighToLow === 1, 'fa-sort-alpha-down':sortedUsernameFromHighToLow === -1}"></i>
+    <div
+      class="col mb-0 cursor-pointer fc-muted text-link_hover"
+      (click)="sortWallet('username')"
+    >
+      <i
+        class="fas fs-15px"
+        [ngClass]="{
+          'fa-arrows-alt-v': sortedUsernameFromHighToLow === 0,
+          'fa-sort-alpha-up-alt': sortedUsernameFromHighToLow === 1,
+          'fa-sort-alpha-down': sortedUsernameFromHighToLow === -1
+        }"
+      ></i>
       Name
     </div>
-    <div class="col-2 d-lg-block d-none mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end" (click)="sortWallet('price')">
-      <i class="fas fs-15px" [ngClass]="{'fa-arrows-alt-v':sortedPriceFromHighToLow === 0, 'fa-sort-amount-down':sortedPriceFromHighToLow === -1, 'fa-sort-amount-up-alt':sortedPriceFromHighToLow === 1}"></i>
+    <div
+      class="col-2 d-lg-block d-none mb-0 cursor-pointer fc-muted text-link_hover"
+      style="text-align: end"
+      (click)="sortWallet('price')"
+    >
+      <i
+        class="fas fs-15px"
+        [ngClass]="{
+          'fa-arrows-alt-v': sortedPriceFromHighToLow === 0,
+          'fa-sort-amount-down': sortedPriceFromHighToLow === -1,
+          'fa-sort-amount-up-alt': sortedPriceFromHighToLow === 1
+        }"
+      ></i>
       Price
     </div>
-    <div class="col-4 mb-0 cursor-pointer fc-muted text-link_hover" style="text-align: end">
-        <span (click)="sortWallet('value')">
-          <i class="fas fs-15px"
-             [ngClass]="{'fa-arrows-alt-v':sortedUSDValueFromHighToLow === 0, 'fa-sort-amount-down':sortedUSDValueFromHighToLow === -1, 'fa-sort-amount-up-alt':sortedUSDValueFromHighToLow === 1}"></i>
-          USD Value
-        </span>
+    <div
+      class="col-4 mb-0 cursor-pointer fc-muted text-link_hover"
+      style="text-align: end"
+    >
+      <span (click)="sortWallet('value')">
+        <i
+          class="fas fs-15px"
+          [ngClass]="{
+            'fa-arrows-alt-v': sortedUSDValueFromHighToLow === 0,
+            'fa-sort-amount-down': sortedUSDValueFromHighToLow === -1,
+            'fa-sort-amount-up-alt': sortedUSDValueFromHighToLow === 1
+          }"
+        ></i>
+        USD Value
+      </span>
       <i
         class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon"
         matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-        [matTooltip]="'This is the amount you would get if you sold your holdings.'"
+        [matTooltip]="
+          'This is the amount you would get if you sold your holdings.'
+        "
         #tooltip="matTooltip"
         (click)="tooltip.toggle()"
       ></i>
     </div>
     <div class="col-lg-1 col-2 d-block mb-0"></div>
   </div>
-  <div
-    #uiScroll
-    *uiScroll="let creator of datasource"
-  >
+  <div #uiScroll *uiScroll="let creator of datasource">
     <!-- Screen out zero balances and only show highlighted creator in tutorial-->
     <div
       *ngIf="
-          creator &&
-          (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners))
-        "
+        creator &&
+        (creator.BalanceNanos ||
+          (creator.NetBalanceInMempool != 0 &&
+            globalVars.showProcessingSpinners))
+      "
       class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px"
       [ngStyle]="{
-        'border': isHighlightedCreator(creator) ? '1px solid var(--cblue)' : '',
+        border: isHighlightedCreator(creator) ? '1px solid var(--cblue)' : '',
         'border-radius': isHighlightedCreator(creator) ? '12px' : ''
-        }"
+      }"
     >
       <!-- Name-->
       <a
         class="col-lg-5 col-6 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0"
-        [routerLink]="inTutorial ? [] : ['/' + globalVars.RouteNames.USER_PREFIX, creator.ProfileEntryResponse.Username]"
+        [routerLink]="
+          inTutorial
+            ? []
+            : [
+                '/' + globalVars.RouteNames.USER_PREFIX,
+                creator.ProfileEntryResponse.Username
+              ]
+        "
         queryParamsHandling="merge"
-        [ngStyle]="{ 'cursor': inTutorial ? 'auto' : 'pointer' }"
+        [ngStyle]="{ cursor: inTutorial ? 'auto' : 'pointer' }"
       >
-        <div class="holdings__avatar" [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"></div>
+        <div
+          class="holdings__avatar"
+          [avatar]="creator.ProfileEntryResponse.PublicKeyBase58Check"
+        ></div>
         <div class="text-truncate holdings__name">
           <span>{{ creator.ProfileEntryResponse.Username }}</span>
 
           <span
-            *ngIf="creator.ProfileEntryResponse.IsReserved && !creator.ProfileEntryResponse.IsVerified"
+            *ngIf="
+              creator.ProfileEntryResponse.IsReserved &&
+              !creator.ProfileEntryResponse.IsVerified
+            "
             class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
             matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-            [matTooltip]="'This profile is reserved. The owner has not yet claimed it.'"
+            [matTooltip]="
+              'This profile is reserved. The owner has not yet claimed it.'
+            "
           >
-              <i class="far fa-clock fa-md align-middle"></i>
-            </span>
+            <i class="far fa-clock fa-md align-middle"></i>
+          </span>
           <span
             *ngIf="creator.ProfileEntryResponse.IsVerified"
             (click)="tooltip.toggle()"
@@ -197,28 +309,45 @@
             [matTooltip]="'This account is verified'"
             #tooltip="matTooltip"
           >
-              <i class="fas fa-check-circle fa-md align-middle"></i>
-            </span>
+            <i class="fas fa-check-circle fa-md align-middle"></i>
+          </span>
 
           <div class="text-grey9 fs-12px d-lg-none">
-            {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
+            {{
+              globalVars.nanosToUSD(
+                creator.ProfileEntryResponse.CoinPriceDeSoNanos,
+                2
+              )
+            }}
           </div>
         </div>
       </a>
 
       <!-- Price-->
-      <div class="col-lg-2 d-none d-lg-flex align-items-center justify-content-end">
+      <div
+        class="col-lg-2 d-none d-lg-flex align-items-center justify-content-end"
+      >
         <div class="d-flex align-items-center justify-content-end">
-          {{ globalVars.nanosToUSD(creator.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
+          {{
+            globalVars.nanosToUSD(
+              creator.ProfileEntryResponse.CoinPriceDeSoNanos,
+              2
+            )
+          }}
         </div>
       </div>
 
       <!-- Balance -->
-      <div class="col-4 mb-0 pt-0px d-flex align-items-center justify-content-end text-right">
+      <div
+        class="col-4 mb-0 pt-0px d-flex align-items-center justify-content-end text-right"
+      >
         <div>
           <div>
             <i
-              *ngIf="creator.NetBalanceInMempool != 0 && globalVars.showProcessingSpinners"
+              *ngIf="
+                creator.NetBalanceInMempool != 0 &&
+                globalVars.showProcessingSpinners
+              "
               class="fa fa-spinner fc-muted"
               matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
               [matTooltip]="unminedCreatorCoinToolTip(creator)"
@@ -226,10 +355,10 @@
               (click)="tooltip.toggle()"
             ></i>
             ~{{
-            globalVars.usdYouWouldGetIfYouSoldDisplay(
-            creator.BalanceNanos,
-            creator.ProfileEntryResponse.CoinEntry
-            )
+              globalVars.usdYouWouldGetIfYouSoldDisplay(
+                creator.BalanceNanos,
+                creator.ProfileEntryResponse.CoinEntry
+              )
             }}
           </div>
           <div class="text-grey8A fs-12px text-right">
@@ -251,9 +380,14 @@
     </div>
   </div>
 
-  <div *ngIf="inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY" class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px">
+  <div
+    *ngIf="inTutorial && tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY"
+    class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px"
+  >
     <div class="col"></div>
-    <div class="col-lg-1 col-2 d-flex flex-column align-items-center justify-content-center">
+    <div
+      class="col-lg-1 col-2 d-flex flex-column align-items-center justify-content-center"
+    >
       <i class="fas fa-hand-point-up fc-red fa-lg mb-5px"></i>
       <div class="fc-red fs-12px">Click</div>
       <div class="fc-red fs-12px">here!</div>
@@ -261,7 +395,9 @@
   </div>
 
   <div
-    *ngIf="(showTransferredCoins ? usersYouReceived : usersYouPurchased).length == 0"
+    *ngIf="
+      (showTransferredCoins ? usersYouReceived : usersYouPurchased).length == 0
+    "
     class="d-flex justify-content-center fs-15px fc-muted w-100 mt-30px px-15px"
     style="text-align: center"
   >
@@ -269,16 +405,26 @@
   </div>
 
   <div *ngIf="inTutorial" class="d-flex">
-    <div *ngIf="inTutorial && tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY" (click)="tutorialNext()" class="p-15px">
+    <div
+      *ngIf="inTutorial && tutorialStatus !== TutorialStatus.INVEST_OTHERS_BUY"
+      (click)="tutorialNext()"
+      class="p-15px"
+    >
       <a class="btn btn-primary btn-lg fs-18px text-left">
         Next: {{ nextButtonText }}
       </a>
     </div>
 
-    <div *ngIf="inTutorial && (!globalVars.loggedInUser?.MustCompleteTutorial || globalVars.loggedInUser?.IsAdmin)" (click)="globalVars.skipTutorial()" class="p-15px">
-      <a class="btn btn-outline-primary btn-lg fs-18px text-left">
-        Exit
-      </a>
+    <div
+      *ngIf="
+        inTutorial &&
+        (!globalVars.loggedInUser?.MustCompleteTutorial ||
+          globalVars.loggedInUser?.IsAdmin)
+      "
+      (click)="globalVars.skipTutorial()"
+      class="p-15px"
+    >
+      <a class="btn btn-outline-primary btn-lg fs-18px text-left"> Exit </a>
     </div>
   </div>
 </div>

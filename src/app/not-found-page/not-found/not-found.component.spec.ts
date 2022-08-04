@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NotFoundComponent } from "./not-found.component";
+import { NotFoundComponent } from './not-found.component';
 
-describe("NotFoundComponent", () => {
+describe('NotFoundComponent', () => {
   let component: NotFoundComponent;
   let fixture: ComponentFixture<NotFoundComponent>;
 
@@ -18,7 +18,7 @@ describe("NotFoundComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

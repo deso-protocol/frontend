@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TransferDeSoPageComponent } from "./transfer-deso-page.component";
+import { TransferDeSoPageComponent } from './transfer-deso-page.component';
 
-describe("TransferDeSoPageComponent", () => {
+describe('TransferDeSoPageComponent', () => {
   let component: TransferDeSoPageComponent;
   let fixture: ComponentFixture<TransferDeSoPageComponent>;
 
@@ -18,7 +18,7 @@ describe("TransferDeSoPageComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

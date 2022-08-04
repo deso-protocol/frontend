@@ -1,24 +1,27 @@
-import { Component, OnInit, Input, ViewChild } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { AppRoutingModule } from "../../app-routing.module";
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import { BackendApiService } from '../../backend-api.service';
+import { AppRoutingModule } from '../../app-routing.module';
 
 @Component({
-  selector: "messages-thread-view",
-  templateUrl: "./messages-thread-view.component.html",
-  styleUrls: ["./messages-thread-view.component.scss"],
+  selector: 'messages-thread-view',
+  templateUrl: './messages-thread-view.component.html',
+  styleUrls: ['./messages-thread-view.component.scss'],
 })
 export class MessagesThreadViewComponent {
   @Input() messageThread: any;
   @Input() isMobile = false;
-  messageText = "";
+  messageText = '';
   sendMessageBeingCalled = false;
   AppRoutingModule = AppRoutingModule;
 
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(
+    public globalVars: GlobalVarsService,
+    private backendApi: BackendApiService
+  ) {}
 
   // Update the scroll when the messageContainer element is rendered.
-  @ViewChild("messagesContainer") set userContent(element) {
+  @ViewChild('messagesContainer') set userContent(element) {
     if (element) {
       element.nativeElement.scrollTop = element.nativeElement.scrollHeight;
     }
@@ -33,7 +36,7 @@ export class MessagesThreadViewComponent {
   }
 
   _scrollToMostRecentMessage() {
-    var element = document.getElementById("messagesContainer");
+    var element = document.getElementById('messagesContainer');
     if (element) {
       element.scrollTop = element.scrollHeight;
     }
@@ -55,7 +58,7 @@ export class MessagesThreadViewComponent {
     if (event.shiftKey) {
       return;
     }
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       this._sendMessage();
     }
   }
@@ -63,20 +66,23 @@ export class MessagesThreadViewComponent {
   _sendMessage() {
     // If we get here then it means Enter has been pressed without the shift
     // key held down or the send message button has been pressed.
-    if (this.messageText == null || this.messageText === "") {
-      this.globalVars._alertError("Please enter a message to send.");
-      this.messageText = "";
+    if (this.messageText == null || this.messageText === '') {
+      this.globalVars._alertError('Please enter a message to send.');
+      this.messageText = '';
       this._scrollToMostRecentMessage();
       return;
     }
     if (this.sendMessageBeingCalled) {
-      this.globalVars._alertError("Still processing your previous message. Please wait a few seconds.");
+      this.globalVars._alertError(
+        'Still processing your previous message. Please wait a few seconds.'
+      );
       return;
     }
 
     // Immediately add the message to the list  to make it feel instant.
     const messageObj: any = {
-      SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
+      SenderPublicKeyBase58Check: this.globalVars.loggedInUser
+        .PublicKeyBase58Check,
       RecipientPublicKeyBase58Check: this.messageThread.PublicKeyBase58Check,
       DecryptedText: this.messageText,
       IsSender: true,
@@ -86,11 +92,15 @@ export class MessagesThreadViewComponent {
     this._scrollToMostRecentMessage();
 
     // Move the thread to the top of the messageResponse object to make it feel responsive.
-    for (let ii = 0; ii < this.globalVars.messageResponse.OrderedContactsWithMessages.length; ii++) {
+    for (
+      let ii = 0;
+      ii < this.globalVars.messageResponse.OrderedContactsWithMessages.length;
+      ii++
+    ) {
       // Check if we've hit the contact in the list
       if (
-        this.globalVars.messageResponse.OrderedContactsWithMessages[ii].PublicKeyBase58Check ===
-        this.messageThread.PublicKeyBase58Check
+        this.globalVars.messageResponse.OrderedContactsWithMessages[ii]
+          .PublicKeyBase58Check === this.messageThread.PublicKeyBase58Check
       ) {
         // Check if this thread is already at the top
         if (ii == 0) {
@@ -98,9 +108,15 @@ export class MessagesThreadViewComponent {
         }
 
         // Move the threads around inside OrderedContactsWithMessages to put the current thread at the top.
-        let currentContact = this.globalVars.messageResponse.OrderedContactsWithMessages[ii];
-        let messagesBelow = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(ii + 1);
-        let messagesAbove = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(0, ii);
+        let currentContact = this.globalVars.messageResponse
+          .OrderedContactsWithMessages[ii];
+        let messagesBelow = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(
+          ii + 1
+        );
+        let messagesAbove = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(
+          0,
+          ii
+        );
         let newMessageList = messagesAbove.concat(messagesBelow);
         newMessageList.unshift(currentContact);
         this.globalVars.messageResponse.OrderedContactsWithMessages = newMessageList;
@@ -111,7 +127,7 @@ export class MessagesThreadViewComponent {
     this.sendMessageBeingCalled = true;
     this.globalVars.pauseMessageUpdates = true;
     const textToSend = this.messageText;
-    this._resetMessageText("");
+    this._resetMessageText('');
 
     this.backendApi
       .SendMessage(
@@ -123,23 +139,29 @@ export class MessagesThreadViewComponent {
       )
       .subscribe(
         (res: any) => {
-          this.globalVars.logEvent("message : send");
+          this.globalVars.logEvent('message : send');
 
           this.sendMessageBeingCalled = false;
           this.globalVars.messageMeta.decryptedMessgesMap[
-            this.globalVars.loggedInUser.PublicKeyBase58Check + "" + res.TstampNanos
+            this.globalVars.loggedInUser.PublicKeyBase58Check +
+              '' +
+              res.TstampNanos
           ] = messageObj;
-          this.backendApi.SetStorage(this.backendApi.MessageMetaKey, this.globalVars.messageMeta);
+          this.backendApi.SetStorage(
+            this.backendApi.MessageMetaKey,
+            this.globalVars.messageMeta
+          );
           // Set the timestamp in this case since it's normally set by the BE.
           messageObj.TstampNanos = res.TstampNanos;
 
           // Increment the notification map.
           this.globalVars.messageMeta.notificationMap[
-            this.globalVars.loggedInUser.PublicKeyBase58Check + this.messageThread.PublicKeyBase58Check
+            this.globalVars.loggedInUser.PublicKeyBase58Check +
+              this.messageThread.PublicKeyBase58Check
           ]++;
         },
         (error) => {
-          this.globalVars.logEvent("message : send : error");
+          this.globalVars.logEvent('message : send : error');
 
           // Remove the previous message since it didn't actually post and reset
           // the text area to the old message.

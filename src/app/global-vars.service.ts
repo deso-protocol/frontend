@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import {
   BackendApiService,
   BalanceEntryResponse,
@@ -7,35 +7,41 @@ import {
   TransactionFee,
   TutorialStatus,
   User,
-} from "./backend-api.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { RouteNames } from "./app-routing.module";
-import ConfettiGenerator from "confetti-js";
-import { Observable, Observer } from "rxjs";
-import { LoggedInUserObservableResult } from "../lib/observable-results/logged-in-user-observable-result";
-import { FollowChangeObservableResult } from "../lib/observable-results/follow-change-observable-result";
-import { SwalHelper } from "../lib/helpers/swal-helper";
-import { environment } from "../environments/environment";
-import { AmplitudeClient } from "amplitude-js";
-import { DomSanitizer } from "@angular/platform-browser";
-import { IdentityService } from "./identity.service";
-import { BithuntService, CommunityProject } from "../lib/services/bithunt/bithunt-service";
-import { LeaderboardResponse, AltumbaseService } from "../lib/services/altumbase/altumbase-service";
-import { RightBarCreatorsLeaderboardComponent } from "./right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component";
-import { HttpClient } from "@angular/common/http";
-import { FeedComponent } from "./feed/feed.component";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import Swal from "sweetalert2";
+} from './backend-api.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RouteNames } from './app-routing.module';
+import ConfettiGenerator from 'confetti-js';
+import { Observable, Observer } from 'rxjs';
+import { LoggedInUserObservableResult } from '../lib/observable-results/logged-in-user-observable-result';
+import { FollowChangeObservableResult } from '../lib/observable-results/follow-change-observable-result';
+import { SwalHelper } from '../lib/helpers/swal-helper';
+import { environment } from '../environments/environment';
+import { AmplitudeClient } from 'amplitude-js';
+import { DomSanitizer } from '@angular/platform-browser';
+import { IdentityService } from './identity.service';
+import {
+  BithuntService,
+  CommunityProject,
+} from '../lib/services/bithunt/bithunt-service';
+import {
+  LeaderboardResponse,
+  AltumbaseService,
+} from '../lib/services/altumbase/altumbase-service';
+import { RightBarCreatorsLeaderboardComponent } from './right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component';
+import { HttpClient } from '@angular/common/http';
+import { FeedComponent } from './feed/feed.component';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import Swal from 'sweetalert2';
 import Timer = NodeJS.Timer;
-import {fromWei, Hex, toBN, toHex, toWei} from "web3-utils";
-import {BN} from "ethereumjs-util";
+import { fromWei, Hex, toBN, toHex, toWei } from 'web3-utils';
+import { BN } from 'ethereumjs-util';
 
 export enum ConfettiSvg {
-  DIAMOND = "diamond",
-  BOMB = "bomb",
-  ROCKET = "rocket",
-  COMET = "comet",
-  LAMBO = "lambo",
+  DIAMOND = 'diamond',
+  BOMB = 'bomb',
+  ROCKET = 'rocket',
+  COMET = 'comet',
+  LAMBO = 'lambo',
 }
 
 const svgToProps = {
@@ -47,7 +53,7 @@ const svgToProps = {
 };
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class GlobalVarsService {
   // Note: I don't think we should have default values for this. I think we should just
@@ -86,12 +92,12 @@ export class GlobalVarsService {
   pausePolling = false; // TODO: Monkey patch for when polling conflicts with other calls.
   pauseMessageUpdates = false; // TODO: Monkey patch for when message polling conflicts with other calls.
 
-  desoToUSDExchangeRateToDisplay = "Fetching...";
+  desoToUSDExchangeRateToDisplay = 'Fetching...';
 
   // We keep information regarding the messages tab in global vars for smooth
   // transitions to and from messages.
   messageNotificationCount = 0;
-  messagesSortAlgorithm = "time";
+  messagesSortAlgorithm = 'time';
   messagesPerFetch = 25;
   openSettingsTray = false;
   newMessagesFromPage = 0;
@@ -99,7 +105,7 @@ export class GlobalVarsService {
   messagesRequestsHoldingsOnly = false;
   messagesRequestsFollowersOnly = false;
   messagesRequestsFollowedOnly = false;
-  messagesDefaultKeyName = "default-key"
+  messagesDefaultKeyName = 'default-key';
 
   // Whether or not to show processing spinners in the UI for unmined transactions.
   // TODO: Move into environment.ts
@@ -133,7 +139,7 @@ export class GlobalVarsService {
     notificationMap: {},
   };
   // Search and filter params
-  filterType = "";
+  filterType = '';
   // The coin balance and user profiles of the coins the the user
   // hodls and the users who hodl him.
   youHodlMap: { [k: string]: BalanceEntryResponse } = {};
@@ -226,7 +232,7 @@ export class GlobalVarsService {
   transactionFeeMax: number = 0;
   transactionFeeInfo: string;
 
-  buyETHAddress: string = "";
+  buyETHAddress: string = '';
 
   nodes: { [id: number]: DeSoNode };
 
@@ -242,10 +248,10 @@ export class GlobalVarsService {
       return;
     }
 
-    let storedTab = this.backendApi.GetStorage("mostRecentMessagesTab");
+    let storedTab = this.backendApi.GetStorage('mostRecentMessagesTab');
     if (storedTab === null) {
-      storedTab = "My Holders";
-      this.backendApi.SetStorage("mostRecentMessagesTab", storedTab);
+      storedTab = 'My Holders';
+      this.backendApi.SetStorage('mostRecentMessagesTab', storedTab);
     }
 
     // Set the filters most recently used and load the messages
@@ -256,18 +262,28 @@ export class GlobalVarsService {
   SetMessagesFilter(tabName: any) {
     // Set the request parameters if it's a known tab.
     // Custom is set in the filter menu component and saved in local storage.
-    if (tabName !== "Custom") {
-      this.messagesRequestsHoldersOnly = tabName === "My Holders";
+    if (tabName !== 'Custom') {
+      this.messagesRequestsHoldersOnly = tabName === 'My Holders';
       this.messagesRequestsHoldingsOnly = false;
       this.messagesRequestsFollowersOnly = false;
       this.messagesRequestsFollowedOnly = false;
-      this.messagesSortAlgorithm = "time";
+      this.messagesSortAlgorithm = 'time';
     } else {
-      this.messagesRequestsHoldersOnly = this.backendApi.GetStorage("customMessagesRequestsHoldersOnly");
-      this.messagesRequestsHoldingsOnly = this.backendApi.GetStorage("customMessagesRequestsHoldingsOnly");
-      this.messagesRequestsFollowersOnly = this.backendApi.GetStorage("customMessagesRequestsFollowersOnly");
-      this.messagesRequestsFollowedOnly = this.backendApi.GetStorage("customMessagesRequestsFollowedOnly");
-      this.messagesSortAlgorithm = this.backendApi.GetStorage("customMessagesSortAlgorithm");
+      this.messagesRequestsHoldersOnly = this.backendApi.GetStorage(
+        'customMessagesRequestsHoldersOnly'
+      );
+      this.messagesRequestsHoldingsOnly = this.backendApi.GetStorage(
+        'customMessagesRequestsHoldingsOnly'
+      );
+      this.messagesRequestsFollowersOnly = this.backendApi.GetStorage(
+        'customMessagesRequestsFollowersOnly'
+      );
+      this.messagesRequestsFollowedOnly = this.backendApi.GetStorage(
+        'customMessagesRequestsFollowedOnly'
+      );
+      this.messagesSortAlgorithm = this.backendApi.GetStorage(
+        'customMessagesSortAlgorithm'
+      );
     }
   }
 
@@ -280,7 +296,7 @@ export class GlobalVarsService {
       .GetMessages(
         this.localNode,
         this.loggedInUser.PublicKeyBase58Check,
-        "",
+        '',
         this.messagesPerFetch,
         this.messagesRequestsHoldersOnly,
         this.messagesRequestsHoldingsOnly,
@@ -307,7 +323,10 @@ export class GlobalVarsService {
       );
   }
 
-  _notifyLoggedInUserObservers(newLoggedInUser: User, isSameUserAsBefore: boolean) {
+  _notifyLoggedInUserObservers(
+    newLoggedInUser: User,
+    isSameUserAsBefore: boolean
+  ) {
     this.loggedInUserObservers.forEach((observer) => {
       const result = new LoggedInUserObservableResult();
       result.loggedInUser = newLoggedInUser;
@@ -318,20 +337,30 @@ export class GlobalVarsService {
 
   userInTutorial(user: User): boolean {
     return (
-      user && [TutorialStatus.COMPLETE, TutorialStatus.EMPTY, TutorialStatus.SKIPPED].indexOf(user?.TutorialStatus) < 0
+      user &&
+      [
+        TutorialStatus.COMPLETE,
+        TutorialStatus.EMPTY,
+        TutorialStatus.SKIPPED,
+      ].indexOf(user?.TutorialStatus) < 0
     );
   }
 
   // NEVER change loggedInUser property directly. Use this method instead.
   setLoggedInUser(user: User) {
     const isSameUserAsBefore =
-      this.loggedInUser && user && this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
+      this.loggedInUser &&
+      user &&
+      this.loggedInUser.PublicKeyBase58Check === user.PublicKeyBase58Check;
 
     this.loggedInUser = user;
 
     if (!isSameUserAsBefore) {
       // Store the user in localStorage
-      this.backendApi.SetStorage(this.backendApi.LastLoggedInUserKey, user?.PublicKeyBase58Check);
+      this.backendApi.SetStorage(
+        this.backendApi.LastLoggedInUserKey,
+        user?.PublicKeyBase58Check
+      );
 
       // Identify the user in amplitude
       this.amplitude?.setUserId(user?.PublicKeyBase58Check);
@@ -347,7 +376,10 @@ export class GlobalVarsService {
       this.followFeedPosts = [];
     }
 
-    if (this.loggedInUser?.MustCompleteTutorial && this.loggedInUser?.TutorialStatus === TutorialStatus.EMPTY) {
+    if (
+      this.loggedInUser?.MustCompleteTutorial &&
+      this.loggedInUser?.TutorialStatus === TutorialStatus.EMPTY
+    ) {
       this.startTutorialAlert();
     }
 
@@ -361,27 +393,47 @@ export class GlobalVarsService {
       let route = [];
       switch (user.TutorialStatus) {
         case TutorialStatus.STARTED: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          route = [
+            RouteNames.TUTORIAL,
+            RouteNames.INVEST,
+            RouteNames.BUY_CREATOR,
+          ];
           break;
         }
         case TutorialStatus.INVEST_OTHERS_BUY: {
-          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
+          route = [
+            RouteNames.TUTORIAL,
+            RouteNames.WALLET,
+            user.CreatorPurchasedInTutorialUsername,
+          ];
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
-          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.CreatorPurchasedInTutorialUsername];
+          route = [
+            RouteNames.TUTORIAL,
+            RouteNames.WALLET,
+            user.CreatorPurchasedInTutorialUsername,
+          ];
           break;
         }
         case TutorialStatus.CREATE_PROFILE: {
-          route = [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR];
+          route = [
+            RouteNames.TUTORIAL,
+            RouteNames.INVEST,
+            RouteNames.BUY_CREATOR,
+          ];
           break;
         }
         case TutorialStatus.INVEST_SELF: {
-          route = [RouteNames.TUTORIAL, RouteNames.WALLET, user.ProfileEntryResponse?.Username];
+          route = [
+            RouteNames.TUTORIAL,
+            RouteNames.WALLET,
+            user.ProfileEntryResponse?.Username,
+          ];
           break;
         }
         case TutorialStatus.DIAMOND: {
-          route = [RouteNames.TUTORIAL + "/" + RouteNames.CREATE_POST];
+          route = [RouteNames.TUTORIAL + '/' + RouteNames.CREATE_POST];
           break;
         }
       }
@@ -394,7 +446,10 @@ export class GlobalVarsService {
   }
 
   hasUserBlockedCreator(publicKeyBase58Check): boolean {
-    return this.loggedInUser?.BlockedPubKeys && publicKeyBase58Check in this.loggedInUser?.BlockedPubKeys;
+    return (
+      this.loggedInUser?.BlockedPubKeys &&
+      publicKeyBase58Check in this.loggedInUser?.BlockedPubKeys
+    );
   }
 
   showAdminTools(): boolean {
@@ -406,7 +461,7 @@ export class GlobalVarsService {
   }
 
   networkName(): string {
-    return this.isTestnet ? "testnet" : "mainnet";
+    return this.isTestnet ? 'testnet' : 'mainnet';
   }
 
   getUSDForDiamond(index: number): string {
@@ -419,7 +474,10 @@ export class GlobalVarsService {
   }
 
   nanosToDeSo(nanos: number, maximumFractionDigits?: number): string {
-    if (this.nanosToDeSoMemo[nanos] && this.nanosToDeSoMemo[nanos][maximumFractionDigits]) {
+    if (
+      this.nanosToDeSoMemo[nanos] &&
+      this.nanosToDeSoMemo[nanos][maximumFractionDigits]
+    ) {
       return this.nanosToDeSoMemo[nanos][maximumFractionDigits];
     }
 
@@ -444,9 +502,11 @@ export class GlobalVarsService {
     // Always show at least 2 digits
     const minimumFractionDigits = 2;
     const num = nanos / 1e9;
-    this.nanosToDeSoMemo[nanos][maximumFractionDigits] = Number(num).toLocaleString("en-US", {
-      style: "decimal",
-      currency: "USD",
+    this.nanosToDeSoMemo[nanos][maximumFractionDigits] = Number(
+      num
+    ).toLocaleString('en-US', {
+      style: 'decimal',
+      currency: 'USD',
       minimumFractionDigits,
       maximumFractionDigits,
     });
@@ -460,9 +520,9 @@ export class GlobalVarsService {
 
     this.formatUSDMemo[num] = this.formatUSDMemo[num] || {};
 
-    this.formatUSDMemo[num][decimal] = Number(num).toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
+    this.formatUSDMemo[num][decimal] = Number(num).toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
       minimumFractionDigits: decimal,
       maximumFractionDigits: decimal,
     });
@@ -475,10 +535,14 @@ export class GlobalVarsService {
    *   value: 12345, decimals: 1 => 12.3K
    *   value: 3492311, decimals: 2 => 3.49M
    * */
-  abbreviateNumber(value: number, decimals: number, formatUSD: boolean = false): string {
+  abbreviateNumber(
+    value: number,
+    decimals: number,
+    formatUSD: boolean = false
+  ): string {
     let shortValue;
-    const suffixes = ["", "K", "M", "B", "t", "q", "Q"];
-    const suffixNum = Math.floor((("" + value.toFixed(0)).length - 1) / 3);
+    const suffixes = ['', 'K', 'M', 'B', 't', 'q', 'Q'];
+    const suffixNum = Math.floor((('' + value.toFixed(0)).length - 1) / 3);
     if (suffixNum === 0) {
       // if the number is less than 1000, we should only show at most 2 decimals places
       decimals = Math.min(2, decimals);
@@ -507,13 +571,13 @@ export class GlobalVarsService {
 
   // Used to convert uint256 Hex balances for DAO coins to standard units.
   hexNanosToUnitString(hexNanos: Hex, decimal: number = 4): string {
-    const result = fromWei(toBN(hexNanos), "ether").toString();
+    const result = fromWei(toBN(hexNanos), 'ether').toString();
     return this.abbreviateNumber(parseFloat(result), 4, false);
   }
 
   // Converts a quantity of DAO coins to a Hex representing the number of nanos
   toHexNanos(units: number): Hex {
-    return toHex(toWei(units.toString(), "ether"));
+    return toHex(toWei(units.toString(), 'ether'));
   }
 
   unitToBNNanos(units: number): BN {
@@ -522,14 +586,20 @@ export class GlobalVarsService {
 
   isMobile(): boolean {
     // from https://stackoverflow.com/questions/1248081/how-to-get-the-browser-viewport-dimensions
-    const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const viewportWidth = Math.max(
+      document.documentElement.clientWidth || 0,
+      window.innerWidth || 0
+    );
 
     return viewportWidth <= 992;
   }
 
   // Calculates the amount of deso one would receive if they sold an amount equal to creatorCoinAmountNano
   // given the current state of a creator's coin as defined by the coinEntry
-  desoNanosYouWouldGetIfYouSold(creatorCoinAmountNano: number, coinEntry: any): number {
+  desoNanosYouWouldGetIfYouSold(
+    creatorCoinAmountNano: number,
+    coinEntry: any
+  ): number {
     // These calculations are derived from the Bancor pricing formula, which
     // is proportional to a polynomial price curve (and equivalent to Uniswap
     // under certain assumptions). For more information, see the comment on
@@ -554,20 +624,40 @@ export class GlobalVarsService {
           1 / GlobalVarsService.CREATOR_COIN_RESERVE_RATIO
         ));
 
-    return (desoBeforeFeesNanos * (100 * 100 - GlobalVarsService.CREATOR_COIN_TRADE_FEED_BASIS_POINTS)) / (100 * 100);
+    return (
+      (desoBeforeFeesNanos *
+        (100 * 100 - GlobalVarsService.CREATOR_COIN_TRADE_FEED_BASIS_POINTS)) /
+      (100 * 100)
+    );
   }
 
   // Return a formatted version of the amount one would receive in USD if they sold creatorCoinAmountNano number of Creator Coins
   // given the current state of a creator's coin as defined by the coinEntry
-  usdYouWouldGetIfYouSoldDisplay(creatorCoinAmountNano: number, coinEntry: any, abbreviate: boolean = true): string {
-    if (creatorCoinAmountNano == 0) return "$0";
-    const usdValue = this.nanosToUSDNumber(this.desoNanosYouWouldGetIfYouSold(creatorCoinAmountNano, coinEntry));
-    return abbreviate ? this.abbreviateNumber(usdValue, 2, true) : this.formatUSD(usdValue, 2);
+  usdYouWouldGetIfYouSoldDisplay(
+    creatorCoinAmountNano: number,
+    coinEntry: any,
+    abbreviate: boolean = true
+  ): string {
+    if (creatorCoinAmountNano == 0) return '$0';
+    const usdValue = this.nanosToUSDNumber(
+      this.desoNanosYouWouldGetIfYouSold(creatorCoinAmountNano, coinEntry)
+    );
+    return abbreviate
+      ? this.abbreviateNumber(usdValue, 2, true)
+      : this.formatUSD(usdValue, 2);
   }
 
-  creatorCoinNanosToUSDNaive(creatorCoinNanos, coinPriceDeSoNanos, abbreviate: boolean = false): string {
-    const usdValue = this.nanosToUSDNumber((creatorCoinNanos / 1e9) * coinPriceDeSoNanos);
-    return abbreviate ? this.abbreviateNumber(usdValue, 2, true) : this.formatUSD(usdValue, 2);
+  creatorCoinNanosToUSDNaive(
+    creatorCoinNanos,
+    coinPriceDeSoNanos,
+    abbreviate: boolean = false
+  ): string {
+    const usdValue = this.nanosToUSDNumber(
+      (creatorCoinNanos / 1e9) * coinPriceDeSoNanos
+    );
+    return abbreviate
+      ? this.abbreviateNumber(usdValue, 2, true)
+      : this.formatUSD(usdValue, 2);
   }
 
   createProfileFeeInDeSo(): number {
@@ -593,8 +683,8 @@ export class GlobalVarsService {
     // calculate (and subtract) whole minutes
     const minutes = Math.ceil(delta / 60) % 60;
 
-    return `${days ? days + "d " : ""} ${!days && hours ? hours + "h" : ""} ${
-      !days && !hours && minutes ? minutes + "m" : ""
+    return `${days ? days + 'd ' : ''} ${!days && hours ? hours + 'h' : ''} ${
+      !days && !hours && minutes ? minutes + 'm' : ''
     }`;
   }
 
@@ -606,10 +696,13 @@ export class GlobalVarsService {
       date.getMonth() != currentDate.getMonth() ||
       date.getFullYear() != currentDate.getFullYear()
     ) {
-      return date.toLocaleString("default", { month: "short", day: "numeric" });
+      return date.toLocaleString('default', { month: 'short', day: 'numeric' });
     }
 
-    return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
+    return date.toLocaleString('default', {
+      hour: 'numeric',
+      minute: 'numeric',
+    });
   }
 
   convertTstampToDateTime(tstampNanos: number) {
@@ -620,18 +713,21 @@ export class GlobalVarsService {
       date.getMonth() != currentDate.getMonth() ||
       date.getFullYear() != currentDate.getFullYear()
     ) {
-      return date.toLocaleString("default", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
+      return date.toLocaleString('default', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
         hour12: true,
       });
     }
 
-    return date.toLocaleString("default", { hour: "numeric", minute: "numeric" });
+    return date.toLocaleString('default', {
+      hour: 'numeric',
+      minute: 'numeric',
+    });
   }
 
   doesLoggedInUserHaveProfile() {
@@ -640,22 +736,23 @@ export class GlobalVarsService {
     }
 
     const hasProfile =
-      this.loggedInUser.ProfileEntryResponse && this.loggedInUser.ProfileEntryResponse.Username.length > 0;
+      this.loggedInUser.ProfileEntryResponse &&
+      this.loggedInUser.ProfileEntryResponse.Username.length > 0;
 
     return hasProfile;
   }
 
   _copyText(val: string) {
-    const selBox = document.createElement("textarea");
-    selBox.style.position = "fixed";
-    selBox.style.left = "0";
-    selBox.style.top = "0";
-    selBox.style.opacity = "0";
+    const selBox = document.createElement('textarea');
+    selBox.style.position = 'fixed';
+    selBox.style.left = '0';
+    selBox.style.top = '0';
+    selBox.style.opacity = '0';
     selBox.value = val;
     document.body.appendChild(selBox);
     selBox.focus();
     selBox.select();
-    document.execCommand("copy");
+    document.execCommand('copy');
     document.body.removeChild(selBox);
   }
 
@@ -667,7 +764,7 @@ export class GlobalVarsService {
     if (!ss || ss.length <= ll) {
       return ss;
     }
-    return ss.slice(0, ll) + "...";
+    return ss.slice(0, ll) + '...';
   }
 
   _parseFloat(val: any) {
@@ -689,7 +786,10 @@ export class GlobalVarsService {
       if (passedFunc()) {
         clearInterval(interval);
       }
-      if (expirationSecs && new Date().getTime() - startTime.getTime() > expirationSecs * 1000) {
+      if (
+        expirationSecs &&
+        new Date().getTime() - startTime.getTime() > expirationSecs * 1000
+      ) {
         return true;
       }
     }, 1000);
@@ -702,14 +802,14 @@ export class GlobalVarsService {
     }
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
-      icon: "success",
+      icon: 'success',
       title,
       html: val,
       showConfirmButton: true,
       focusConfirm: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
     }).then((res: any) => {
       if (funcAfter) {
@@ -721,17 +821,17 @@ export class GlobalVarsService {
   _alertError(err: any, showBuyCreatorCoin: boolean = false) {
     SwalHelper.fire({
       target: this.getTargetComponentSelector(),
-      icon: "error",
+      icon: 'error',
       title: `Oops...`,
       html: err,
       showConfirmButton: true,
       showCancelButton: showBuyCreatorCoin,
       focusConfirm: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
-      confirmButtonText: showBuyCreatorCoin ? "Buy Creator Coin" : "Ok",
+      confirmButtonText: showBuyCreatorCoin ? 'Buy Creator Coin' : 'Ok',
       reverseButtons: true,
     }).then((res) => {
       if (showBuyCreatorCoin && res.isConfirmed) {
@@ -741,7 +841,7 @@ export class GlobalVarsService {
   }
 
   celebrate(svgList: ConfettiSvg[] = []) {
-    const canvasID = "my-canvas-" + this.canvasCount;
+    const canvasID = 'my-canvas-' + this.canvasCount;
     this.canvasCount++;
     this.canvasCount = this.canvasCount % 5;
     const confettiSettings = {
@@ -754,8 +854,11 @@ export class GlobalVarsService {
       clock: 100,
     };
     if (svgList.length > 0) {
-      confettiSettings["props"] = svgList.map((svg) => {
-        return { ...{ type: "svg", src: `/assets/img/${svg}.svg` }, ...svgToProps[svg] };
+      confettiSettings['props'] = svgList.map((svg) => {
+        return {
+          ...{ type: 'svg', src: `/assets/img/${svg}.svg` },
+          ...svgToProps[svg],
+        };
       });
       if (svgList.indexOf(ConfettiSvg.DIAMOND) >= 0) {
         confettiSettings.clock = 150;
@@ -783,15 +886,22 @@ export class GlobalVarsService {
   // Does some basic checks on a public key.
   isMaybePublicKey(pk: string) {
     // Test net public keys start with 'tBC', regular public keys start with 'BC'.
-    return (pk.startsWith("tBC") && pk.length == 54) || (pk.startsWith("BC") && pk.length == 55);
+    return (
+      (pk.startsWith('tBC') && pk.length == 54) ||
+      (pk.startsWith('BC') && pk.length == 55)
+    );
   }
 
   isVanillaRepost(post: PostEntryResponse): boolean {
-    return !post.Body && !post.ImageURLs?.length && !!post.RepostedPostEntryResponse;
+    return (
+      !post.Body && !post.ImageURLs?.length && !!post.RepostedPostEntryResponse
+    );
   }
 
   getPostContentHashHex(post: PostEntryResponse): string {
-    return this.isVanillaRepost(post) ? post.RepostedPostEntryResponse.PostHashHex : post.PostHashHex;
+    return this.isVanillaRepost(post)
+      ? post.RepostedPostEntryResponse.PostHashHex
+      : post.PostHashHex;
   }
 
   incrementCommentCount(post: PostEntryResponse): PostEntryResponse {
@@ -823,7 +933,7 @@ export class GlobalVarsService {
     }
     // If the user is in the tutorial, add the "tutorial : " prefix.
     if (this.userInTutorial(this.loggedInUser)) {
-      event = "tutorial : " + event;
+      event = 'tutorial : ' + event;
     }
 
     // Attach node name
@@ -840,50 +950,52 @@ export class GlobalVarsService {
 
   // Helper to launch the get free deso flow in identity.
   launchGetFreeDESOFlow() {
-    this.logEvent("identity : jumio : launch");
+    this.logEvent('identity : jumio : launch');
     this.identityService
-      .launch("/get-free-deso", {
+      .launch('/get-free-deso', {
         public_key: this.loggedInUser?.PublicKeyBase58Check,
         referralCode: this.referralCode(),
       })
       .subscribe(() => {
-        this.logEvent("identity : jumio : success");
+        this.logEvent('identity : jumio : success');
         this.updateEverything();
       });
   }
 
   launchIdentityFlow(event: string): void {
     this.logEvent(`account : ${event} : launch`);
-    this.identityService.launch("/log-in", { referralCode: this.referralCode(), hideJumio: true }).subscribe((res) => {
-      this.logEvent(`account : ${event} : success`);
-      this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
-      this.updateEverything().add(() => {
-        this.flowRedirect(res.signedUp);
+    this.identityService
+      .launch('/log-in', { referralCode: this.referralCode(), hideJumio: true })
+      .subscribe((res) => {
+        this.logEvent(`account : ${event} : success`);
+        this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
+        this.updateEverything().add(() => {
+          this.flowRedirect(res.signedUp);
+        });
       });
-    });
   }
 
   launchLoginFlow() {
-    this.launchIdentityFlow("login");
+    this.launchIdentityFlow('login');
   }
 
   launchSignupFlow() {
-    this.launchIdentityFlow("create");
+    this.launchIdentityFlow('create');
   }
 
   referralCode(): string {
-    return localStorage.getItem("referralCode");
+    return localStorage.getItem('referralCode');
   }
 
   flowRedirect(signedUp: boolean): void {
     if (signedUp) {
       // If this node supports phone number verification, go to step 3, else proceed to step 4.
       const stepNum = this.showPhoneNumberVerification ? 3 : 4;
-      this.router.navigate(["/" + this.RouteNames.SIGN_UP], {
+      this.router.navigate(['/' + this.RouteNames.SIGN_UP], {
         queryParams: { stepNum },
       });
     } else {
-      this.router.navigate(["/" + this.RouteNames.BROWSE]);
+      this.router.navigate(['/' + this.RouteNames.BROWSE]);
     }
   }
 
@@ -893,8 +1005,11 @@ export class GlobalVarsService {
 
     route.queryParams.subscribe((queryParams) => {
       if (queryParams.r) {
-        localStorage.setItem("referralCode", queryParams.r);
-        this.router.navigate([], { queryParams: { r: undefined }, queryParamsHandling: "merge" });
+        localStorage.setItem('referralCode', queryParams.r);
+        this.router.navigate([], {
+          queryParams: { r: undefined },
+          queryParamsHandling: 'merge',
+        });
         this.getReferralUSDCents();
       }
     });
@@ -902,11 +1017,14 @@ export class GlobalVarsService {
     this.getReferralUSDCents();
     this.userList = userList;
     this.satoshisPerDeSoExchangeRate = 0;
-    this.nanosPerUSDExchangeRate = GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE;
+    this.nanosPerUSDExchangeRate =
+      GlobalVarsService.DEFAULT_NANOS_PER_USD_EXCHANGE_RATE;
     this.usdPerBitcoinExchangeRate = 10000;
     this.defaultFeeRateNanosPerKB = 1000.0;
 
-    this.localNode = this.backendApi.GetStorage(this.backendApi.LastLocalNodeKey);
+    this.localNode = this.backendApi.GetStorage(
+      this.backendApi.LastLocalNodeKey
+    );
 
     if (!this.localNode) {
       const hostname = (window as any).location.hostname;
@@ -916,13 +1034,21 @@ export class GlobalVarsService {
         this.localNode = `${hostname}:17001`;
       }
 
-      this.backendApi.SetStorage(this.backendApi.LastLocalNodeKey, this.localNode);
+      this.backendApi.SetStorage(
+        this.backendApi.LastLocalNodeKey,
+        this.localNode
+      );
     }
 
-    let identityServiceURL = this.backendApi.GetStorage(this.backendApi.LastIdentityServiceKey);
+    let identityServiceURL = this.backendApi.GetStorage(
+      this.backendApi.LastIdentityServiceKey
+    );
     if (!identityServiceURL) {
       identityServiceURL = environment.identityURL;
-      this.backendApi.SetStorage(this.backendApi.LastIdentityServiceKey, identityServiceURL);
+      this.backendApi.SetStorage(
+        this.backendApi.LastIdentityServiceKey,
+        identityServiceURL
+      );
     }
     this.identityService.identityServiceURL = identityServiceURL;
     this.identityService.sanitizedIdentityServiceURL = this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -939,25 +1065,40 @@ export class GlobalVarsService {
   }
 
   updateLeaderboard(forceRefresh: boolean = false): void {
-    const altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this);
+    const altumbaseService = new AltumbaseService(
+      this.httpClient,
+      this.backendApi,
+      this
+    );
     if (this.topGainerLeaderboard.length === 0 || forceRefresh) {
-      altumbaseService.getDeSoLockedLeaderboard().subscribe((res) => (this.topGainerLeaderboard = res));
+      altumbaseService
+        .getDeSoLockedLeaderboard()
+        .subscribe((res) => (this.topGainerLeaderboard = res));
     }
 
     if (this.topDiamondedLeaderboard.length === 0 || forceRefresh) {
-      altumbaseService.getDiamondsReceivedLeaderboard().subscribe((res) => (this.topDiamondedLeaderboard = res));
+      altumbaseService
+        .getDiamondsReceivedLeaderboard()
+        .subscribe((res) => (this.topDiamondedLeaderboard = res));
     }
 
     if (this.topCommunityProjectsLeaderboard.length === 0 || forceRefresh) {
-      const bithuntService = new BithuntService(this.httpClient, this.backendApi, this);
+      const bithuntService = new BithuntService(
+        this.httpClient,
+        this.backendApi,
+        this
+      );
       bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
         this.allCommunityProjectsLeaderboard = res;
-        this.topCommunityProjectsLeaderboard = this.allCommunityProjectsLeaderboard.slice(0, 10);
+        this.topCommunityProjectsLeaderboard = this.allCommunityProjectsLeaderboard.slice(
+          0,
+          10
+        );
       });
     }
 
     if (this.topCreatorsAllTimeLeaderboard.length === 0 || forceRefresh) {
-      const readerPubKey = this.loggedInUser?.PublicKeyBase58Check ?? "";
+      const readerPubKey = this.loggedInUser?.PublicKeyBase58Check ?? '';
       this.backendApi
         .GetProfiles(
           this.localNode,
@@ -968,7 +1109,7 @@ export class GlobalVarsService {
           BackendApiService.GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE /*Order by*/,
           10 /*NumEntriesToReturn*/,
           readerPubKey /*ReaderPublicKeyBase58Check*/,
-          "leaderboard" /*ModerationType*/,
+          'leaderboard' /*ModerationType*/,
           false /*FetchUsersThatHODL*/,
           false /*AddGlobalFeedBool*/
         )
@@ -996,16 +1137,16 @@ export class GlobalVarsService {
   }
 
   static getTargetComponentSelectorFromRouter(router: Router): string {
-    if (router.url.startsWith("/" + RouteNames.BROWSE)) {
-      return "browse-page";
+    if (router.url.startsWith('/' + RouteNames.BROWSE)) {
+      return 'browse-page';
     }
-    if (router.url.startsWith("/" + RouteNames.LANDING)) {
-      return "landing-page";
+    if (router.url.startsWith('/' + RouteNames.LANDING)) {
+      return 'landing-page';
     }
-    if (router.url.startsWith("/" + RouteNames.INBOX_PREFIX)) {
-      return "messages-page";
+    if (router.url.startsWith('/' + RouteNames.INBOX_PREFIX)) {
+      return 'messages-page';
     }
-    return "app-page";
+    return 'app-page';
   }
 
   _updateDeSoExchangeRate() {
@@ -1013,8 +1154,10 @@ export class GlobalVarsService {
       (res: any) => {
         // BTC
         this.satoshisPerDeSoExchangeRate = res.SatoshisPerDeSoExchangeRate;
-        this.ProtocolUSDCentsPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate;
-        this.usdPerBitcoinExchangeRate = res.USDCentsPerBitcoinExchangeRate / 100;
+        this.ProtocolUSDCentsPerBitcoinExchangeRate =
+          res.USDCentsPerBitcoinExchangeRate;
+        this.usdPerBitcoinExchangeRate =
+          res.USDCentsPerBitcoinExchangeRate / 100;
 
         // ETH
         this.usdPerETHExchangeRate = res.USDCentsPerETHExchangeRate / 100;
@@ -1023,12 +1166,17 @@ export class GlobalVarsService {
         // DESO
         this.NanosSold = res.NanosSold;
         this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoExchangeRate;
-        this.USDCentsPerDeSoReservePrice = res.USDCentsPerDeSoReserveExchangeRate;
+        this.USDCentsPerDeSoReservePrice =
+          res.USDCentsPerDeSoReserveExchangeRate;
         this.BuyDeSoFeeBasisPoints = res.BuyDeSoFeeBasisPoints;
 
         const nanosPerUnit = GlobalVarsService.NANOS_PER_UNIT;
-        this.nanosPerUSDExchangeRate = nanosPerUnit / (this.ExchangeUSDCentsPerDeSo / 100);
-        this.desoToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, null);
+        this.nanosPerUSDExchangeRate =
+          nanosPerUnit / (this.ExchangeUSDCentsPerDeSo / 100);
+        this.desoToUSDExchangeRateToDisplay = this.nanosToUSD(
+          nanosPerUnit,
+          null
+        );
         this.desoToUSDExchangeRateToDisplay = this.nanosToUSD(nanosPerUnit, 2);
       },
       (error) => {
@@ -1039,37 +1187,40 @@ export class GlobalVarsService {
 
   exploreShowcase(bsModalRef: BsModalRef, modalService: BsModalService): void {
     if (modalService) {
-      modalService.setDismissReason("explore");
+      modalService.setDismissReason('explore');
     }
     if (bsModalRef) {
       bsModalRef.hide();
     }
-    this.router.navigate(["/" + this.RouteNames.BROWSE], {
+    this.router.navigate(['/' + this.RouteNames.BROWSE], {
       queryParams: { feedTab: FeedComponent.SHOWCASE_TAB },
     });
   }
 
   resentVerifyEmail = false;
   resendVerifyEmail() {
-    this.backendApi.ResendVerifyEmail(this.localNode, this.loggedInUser.PublicKeyBase58Check).subscribe();
+    this.backendApi
+      .ResendVerifyEmail(this.localNode, this.loggedInUser.PublicKeyBase58Check)
+      .subscribe();
     this.resentVerifyEmail = true;
   }
 
   startTutorialAlert(): void {
     Swal.fire({
       target: this.getTargetComponentSelector(),
-      title: "Congrats!",
-      html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
+      title: 'Congrats!',
+      html:
+        "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
       showConfirmButton: true,
       // Only show skip option to admins
       showCancelButton: !!this.loggedInUser?.IsAdmin,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
-      confirmButtonText: "Start Tutorial",
-      cancelButtonText: "Skip",
+      confirmButtonText: 'Start Tutorial',
+      cancelButtonText: 'Skip',
       // User must skip or start tutorial
       allowOutsideClick: false,
       allowEscapeKey: false,
@@ -1081,11 +1232,17 @@ export class GlobalVarsService {
           !res.isConfirmed /* if it's not confirmed, skip tutorial*/
         )
         .subscribe((response) => {
-          this.logEvent(`tutorial : ${res.isConfirmed ? "start" : "skip"}`);
+          this.logEvent(`tutorial : ${res.isConfirmed ? 'start' : 'skip'}`);
           // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
-          this.loggedInUser.TutorialStatus = res.isConfirmed ? TutorialStatus.STARTED : TutorialStatus.SKIPPED;
+          this.loggedInUser.TutorialStatus = res.isConfirmed
+            ? TutorialStatus.STARTED
+            : TutorialStatus.SKIPPED;
           if (res.isConfirmed) {
-            this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR]);
+            this.router.navigate([
+              RouteNames.TUTORIAL,
+              RouteNames.INVEST,
+              RouteNames.BUY_CREATOR,
+            ]);
           }
         });
     });
@@ -1094,28 +1251,34 @@ export class GlobalVarsService {
   skipTutorial(): void {
     Swal.fire({
       target: this.getTargetComponentSelector(),
-      icon: "warning",
-      title: "Exit Tutorial?",
-      html: "Are you sure?",
+      icon: 'warning',
+      title: 'Exit Tutorial?',
+      html: 'Are you sure?',
       showConfirmButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
+        confirmButton: 'btn btn-light',
       },
       reverseButtons: true,
-      confirmButtonText: "Yes",
+      confirmButtonText: 'Yes',
     }).then((res) => {
       if (res.isConfirmed) {
-        this.backendApi.StartOrSkipTutorial(this.localNode, this.loggedInUser?.PublicKeyBase58Check, true).subscribe(
-          (response) => {
-            this.logEvent(`tutorial : skip`);
-            // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
-            this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
-            this.router.navigate([RouteNames.BROWSE]);
-          },
-          (err) => {
-            this._alertError(err.error.error);
-          }
-        );
+        this.backendApi
+          .StartOrSkipTutorial(
+            this.localNode,
+            this.loggedInUser?.PublicKeyBase58Check,
+            true
+          )
+          .subscribe(
+            (response) => {
+              this.logEvent(`tutorial : skip`);
+              // Auto update logged in user's tutorial status - we don't need to fetch it via get users stateless right now.
+              this.loggedInUser.TutorialStatus = TutorialStatus.SKIPPED;
+              this.router.navigate([RouteNames.BROWSE]);
+            },
+            (err) => {
+              this._alertError(err.error.error);
+            }
+          );
       }
     });
   }
@@ -1135,7 +1298,10 @@ export class GlobalVarsService {
         return;
       }
       this.backendApi
-        .GetJumioStatusForPublicKey(environment.verificationEndpointHostname, publicKey)
+        .GetJumioStatusForPublicKey(
+          environment.verificationEndpointHostname,
+          publicKey
+        )
         .subscribe(
           (res: any) => {
             if (res.JumioVerified) {
@@ -1180,22 +1346,28 @@ export class GlobalVarsService {
   }
 
   getReferralUSDCents(): void {
-    const referralHash = localStorage.getItem("referralCode");
+    const referralHash = localStorage.getItem('referralCode');
     if (referralHash) {
       this.backendApi
-        .GetReferralInfoForReferralHash(environment.verificationEndpointHostname, referralHash)
+        .GetReferralInfoForReferralHash(
+          environment.verificationEndpointHostname,
+          referralHash
+        )
         .subscribe((res) => {
           const referralInfo = res.ReferralInfoResponse.Info;
           const countrySignUpBonus = res.CountrySignUpBonus;
           if (!countrySignUpBonus.AllowCustomReferralAmount) {
-            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
+            this.referralUSDCents =
+              countrySignUpBonus.ReferralAmountOverrideUSDCents;
           } else if (
             res.ReferralInfoResponse.IsActive &&
-            (referralInfo.TotalReferrals < referralInfo.MaxReferrals || referralInfo.MaxReferrals == 0)
+            (referralInfo.TotalReferrals < referralInfo.MaxReferrals ||
+              referralInfo.MaxReferrals == 0)
           ) {
             this.referralUSDCents = referralInfo.RefereeAmountUSDCents;
           } else {
-            this.referralUSDCents = countrySignUpBonus.ReferralAmountOverrideUSDCents;
+            this.referralUSDCents =
+              countrySignUpBonus.ReferralAmountOverrideUSDCents;
           }
         });
     }

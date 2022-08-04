@@ -1,18 +1,23 @@
-import { ChangeDetectorRef, Component, HostListener, OnInit } from "@angular/core";
-import { BackendApiService, TutorialStatus, User } from "./backend-api.service";
-import { GlobalVarsService } from "./global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { IdentityService } from "./identity.service";
-import * as _ from "lodash";
-import { environment } from "../environments/environment";
-import { ThemeService } from "./theme/theme.service";
-import { of, Subscription, zip } from "rxjs";
-import { catchError } from "rxjs/operators";
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit,
+} from '@angular/core';
+import { BackendApiService, TutorialStatus, User } from './backend-api.service';
+import { GlobalVarsService } from './global-vars.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IdentityService } from './identity.service';
+import * as _ from 'lodash';
+import { environment } from '../environments/environment';
+import { ThemeService } from './theme/theme.service';
+import { of, Subscription, zip } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   constructor(
@@ -37,22 +42,23 @@ export class AppComponent implements OnInit {
     //
     // TODO: I'm pretty sure all of this could fail on IE so we should make sure people
     // only use the app with chrome.
-    Object.defineProperty(document, "referrer", {
+    Object.defineProperty(document, 'referrer', {
       get() {
-        return "";
+        return '';
       },
     });
-    Object.defineProperty(document, "referer", {
+    Object.defineProperty(document, 'referer', {
       get() {
-        return "";
+        return '';
       },
     });
   }
-  static DYNAMICALLY_ADDED_ROUTER_LINK_CLASS = "js-app-component__dynamically-added-router-link-class";
+  static DYNAMICALLY_ADDED_ROUTER_LINK_CLASS =
+    'js-app-component__dynamically-added-router-link-class';
 
   showUsernameTooltip = false;
 
-  desoToUSDExchangeRateToDisplay = "fetching...";
+  desoToUSDExchangeRateToDisplay = 'fetching...';
 
   // Throttle the calls to update the top-level data so they only happen after a
   // previous call has finished.
@@ -64,23 +70,25 @@ export class AppComponent implements OnInit {
   // This is used to add router links dynamically. Feed posts use this
   // to turn @-mentions into links.
   // See https://stackoverflow.com/a/62783788 for more info
-  @HostListener("document:click", ["$event"])
+  @HostListener('document:click', ['$event'])
   public handleClick(event: Event): void {
     if (event.target instanceof HTMLAnchorElement) {
       const element = event.target as HTMLAnchorElement;
-      if (element.className === AppComponent.DYNAMICALLY_ADDED_ROUTER_LINK_CLASS) {
+      if (
+        element.className === AppComponent.DYNAMICALLY_ADDED_ROUTER_LINK_CLASS
+      ) {
         event.preventDefault();
 
         if (!element) {
           return;
         }
 
-        const route = element.getAttribute("href");
+        const route = element.getAttribute('href');
         if (route) {
           // FYI, this seems to give a js error if the route isn't in our list
           // of routes, which should help prevent attackers from tricking users into
           // clicking misleading links
-          this.router.navigate([route], { queryParamsHandling: "merge" });
+          this.router.navigate([route], { queryParamsHandling: 'merge' });
         }
       }
     }
@@ -106,21 +114,32 @@ export class AppComponent implements OnInit {
 
     // If we recently added a new public key, log in the user and clear the value
     if (this.identityService.identityServicePublicKeyAdded) {
-      loggedInUserPublicKey = this.identityService.identityServicePublicKeyAdded;
+      loggedInUserPublicKey = this.identityService
+        .identityServicePublicKeyAdded;
       this.identityService.identityServicePublicKeyAdded = null;
     }
 
     this.callingUpdateTopLevelData = true;
 
     return zip(
-      this.backendApi.GetUsersStateless(this.globalVars.localNode, [loggedInUserPublicKey], false),
-      environment.verificationEndpointHostname && !_.isNil(loggedInUserPublicKey)
-        ? this.backendApi.GetUserMetadata(environment.verificationEndpointHostname, loggedInUserPublicKey).pipe(
-            catchError((err) => {
-              console.error(err);
-              return of(null);
-            })
-          )
+      this.backendApi.GetUsersStateless(
+        this.globalVars.localNode,
+        [loggedInUserPublicKey],
+        false
+      ),
+      environment.verificationEndpointHostname &&
+        !_.isNil(loggedInUserPublicKey)
+        ? this.backendApi
+            .GetUserMetadata(
+              environment.verificationEndpointHostname,
+              loggedInUserPublicKey
+            )
+            .pipe(
+              catchError((err) => {
+                console.error(err);
+                return of(null);
+              })
+            )
         : of(null)
     ).subscribe(
       ([res, userMetadata]) => {
@@ -147,7 +166,10 @@ export class AppComponent implements OnInit {
           loggedInUser.JumioFinishedTime = userMetadata.JumioFinishedTime;
           loggedInUser.JumioReturned = userMetadata.JumioReturned;
           // We can merge the blocked public key maps, which means we effectively block the union of public keys from both endpoints.
-          loggedInUser.BlockedPubKeys = { ...loggedInUser.BlockedPubKeys, ...userMetadata.BlockedPubKeys };
+          loggedInUser.BlockedPubKeys = {
+            ...loggedInUser.BlockedPubKeys,
+            ...userMetadata.BlockedPubKeys,
+          };
           // Even though we have EmailVerified and HasEmail, we don't overwrite email attributes since each app may want to gather emails on their own.
         }
 
@@ -156,7 +178,10 @@ export class AppComponent implements OnInit {
           this.globalVars.userList.push(loggedInUser);
         }
         // Only call setLoggedInUser if logged in user has changed.
-        if (!_.isEqual(this.globalVars.loggedInUser, loggedInUser) && loggedInUserPublicKey) {
+        if (
+          !_.isEqual(this.globalVars.loggedInUser, loggedInUser) &&
+          loggedInUserPublicKey
+        ) {
           this.globalVars.setLoggedInUser(loggedInUser);
         }
 
@@ -172,7 +197,8 @@ export class AppComponent implements OnInit {
         }
 
         if (res.DefaultFeeRateNanosPerKB > 0) {
-          this.globalVars.defaultFeeRateNanosPerKB = res.DefaultFeeRateNanosPerKB;
+          this.globalVars.defaultFeeRateNanosPerKB =
+            res.DefaultFeeRateNanosPerKB;
         }
         this.globalVars.paramUpdaters = res.ParamUpdaters;
 
@@ -194,9 +220,13 @@ export class AppComponent implements OnInit {
 
   _updateAppState() {
     this.backendApi
-      .GetAppState(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .GetAppState(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )
       .subscribe((res: any) => {
-        this.globalVars.minSatoshisBurnedForProfileCreation = res.MinSatoshisBurnedForProfileCreation;
+        this.globalVars.minSatoshisBurnedForProfileCreation =
+          res.MinSatoshisBurnedForProfileCreation;
         this.globalVars.diamondLevelMap = res.DiamondLevelMap;
         this.globalVars.showBuyWithUSD = res.HasWyreIntegration;
         this.globalVars.showBuyWithETH = res.BuyWithETH;
@@ -206,9 +236,12 @@ export class AppComponent implements OnInit {
         this.globalVars.jumioKickbackUSDCents = res.JumioKickbackUSDCents;
         this.globalVars.isTestnet = res.IsTestnet;
         this.identityService.isTestnet = res.IsTestnet;
-        this.globalVars.showPhoneNumberVerification = res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
+        this.globalVars.showPhoneNumberVerification =
+          res.HasTwilioAPIKey && res.HasStarterDeSoSeed;
         this.globalVars.createProfileFeeNanos = res.CreateProfileFeeNanos;
-        this.globalVars.isCompProfileCreation = this.globalVars.showPhoneNumberVerification && res.CompProfileCreation;
+        this.globalVars.isCompProfileCreation =
+          this.globalVars.showPhoneNumberVerification &&
+          res.CompProfileCreation;
         this.globalVars.buyETHAddress = res.BuyETHAddress;
         this.globalVars.nodes = res.Nodes;
 
@@ -216,7 +249,9 @@ export class AppComponent implements OnInit {
 
         // Calculate max fee for display in frontend
         // Sort so highest fee is at the top
-        const simpleFeeMap: { txnType: string; fees: number }[] = Object.keys(res.TransactionFeeMap)
+        const simpleFeeMap: { txnType: string; fees: number }[] = Object.keys(
+          res.TransactionFeeMap
+        )
           .map((k) => {
             if (res.TransactionFeeMap[k] !== null) {
               // only return for non empty transactions
@@ -225,10 +260,13 @@ export class AppComponent implements OnInit {
                 .map((f) => f.AmountNanos)
                 .reduce((partial_sum, a) => partial_sum + a, 0);
               // Capitalize and use spaces in Txn type
-              const txnType = (" " + k)
-                .replace(/_/g, " ")
+              const txnType = (' ' + k)
+                .replace(/_/g, ' ')
                 .toLowerCase()
-                .replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => " " + chr.toUpperCase())
+                .replace(
+                  /[^a-zA-Z0-9]+(.)/g,
+                  (m, chr) => ' ' + chr.toUpperCase()
+                )
                 .trim();
               return { txnType: txnType, fees: sumOfFees };
             }
@@ -237,23 +275,27 @@ export class AppComponent implements OnInit {
           .sort((a, b) => b.fees - a.fees);
 
         //Get the max of all fees
-        this.globalVars.transactionFeeMax = Math.max(...simpleFeeMap.map((k) => k.fees));
+        this.globalVars.transactionFeeMax = Math.max(
+          ...simpleFeeMap.map((k) => k.fees)
+        );
 
         //Prepare text detailed info of fees and join with newlines
         this.globalVars.transactionFeeInfo = simpleFeeMap
           .map((k) => `${k.txnType}: ${this.globalVars.nanosToUSD(k.fees, 4)}`)
-          .join("\n");
+          .join('\n');
       });
   }
 
   _updateEverything = (
-    waitTxn: string = "",
+    waitTxn: string = '',
     successCallback: (comp: any) => void = () => {},
     errorCallback: (comp: any) => void = () => {},
-    comp: any = ""
+    comp: any = ''
   ) => {
     // Refresh the messageMeta periodically.
-    this.globalVars.messageMeta = this.backendApi.GetStorage(this.backendApi.MessageMetaKey);
+    this.globalVars.messageMeta = this.backendApi.GetStorage(
+      this.backendApi.MessageMetaKey
+    );
     if (!this.globalVars.messageMeta) {
       this.globalVars.messageMeta = {
         decryptedMessgesMap: {},
@@ -263,7 +305,7 @@ export class AppComponent implements OnInit {
 
     // If we have a transaction to wait for, we do a GetTxn call for a maximum of 10s (250ms * 40).
     // There is a success and error callback so that the caller gets feedback on the polling.
-    if (waitTxn !== "") {
+    if (waitTxn !== '') {
       let attempts = 0;
       let numTries = 160;
       let timeoutMillis = 750;
@@ -330,7 +372,9 @@ export class AppComponent implements OnInit {
         return;
       }
 
-      const isLoggedIn = this.backendApi.GetStorage(this.backendApi.LastLoggedInUserKey);
+      const isLoggedIn = this.backendApi.GetStorage(
+        this.backendApi.LastLoggedInUserKey
+      );
       if (res.hasStorageAccess || !isLoggedIn) {
         this.loadApp();
       } else {
@@ -347,7 +391,8 @@ export class AppComponent implements OnInit {
   }
 
   loadApp() {
-    this.identityService.identityServiceUsers = this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
+    this.identityService.identityServiceUsers =
+      this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
     // Filter out invalid public keys
     const publicKeys = Object.keys(this.identityService.identityServiceUsers);
     for (const publicKey of publicKeys) {
@@ -355,14 +400,19 @@ export class AppComponent implements OnInit {
         delete this.identityService.identityServiceUsers[publicKey];
       }
     }
-    this.backendApi.SetStorage(this.backendApi.IdentityUsersKey, this.identityService.identityServiceUsers);
+    this.backendApi.SetStorage(
+      this.backendApi.IdentityUsersKey,
+      this.identityService.identityServiceUsers
+    );
 
-    this.backendApi.GetUsersStateless(this.globalVars.localNode, publicKeys, true).subscribe((res) => {
-      if (!_.isEqual(this.globalVars.userList, res.UserList)) {
-        this.globalVars.userList = res.UserList || [];
-      }
-      this.globalVars.updateEverything();
-    });
+    this.backendApi
+      .GetUsersStateless(this.globalVars.localNode, publicKeys, true)
+      .subscribe((res) => {
+        if (!_.isEqual(this.globalVars.userList, res.UserList)) {
+          this.globalVars.userList = res.UserList || [];
+        }
+        this.globalVars.updateEverything();
+      });
 
     // Clean up legacy seedinfo storage. only called when a user visits the site again after a successful import
     this.backendApi.DeleteIdentities(this.globalVars.localNode).subscribe();
@@ -381,8 +431,8 @@ export class AppComponent implements OnInit {
     // @ts-ignore
     window.ddoptions = { ajaxListenerPath, endpoint };
 
-    const datadomeScript = document.createElement("script");
-    const firstScript = document.getElementsByTagName("script")[0];
+    const datadomeScript = document.createElement('script');
+    const firstScript = document.getElementsByTagName('script')[0];
     datadomeScript.async = true;
     datadomeScript.src = jsPath;
     firstScript.parentNode.insertBefore(datadomeScript, firstScript);
@@ -394,13 +444,13 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    this.globalVars.amplitude = require("amplitude-js");
+    this.globalVars.amplitude = require('amplitude-js');
     this.globalVars.amplitude.init(key, null, {
       apiEndpoint: domain,
     });
 
     // Track initial app load event so we are aware of every user
     // who visits our site (and not just those who click a button)
-    this.globalVars.logEvent("app : load");
+    this.globalVars.logEvent('app : load');
   }
 }

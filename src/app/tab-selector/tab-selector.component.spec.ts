@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TabSelectorComponent } from "./tab-selector.component";
+import { TabSelectorComponent } from './tab-selector.component';
 
-describe("TabSelectorComponent", () => {
+describe('TabSelectorComponent', () => {
   let component: TabSelectorComponent;
   let fixture: ComponentFixture<TabSelectorComponent>;
 
@@ -18,7 +18,7 @@ describe("TabSelectorComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

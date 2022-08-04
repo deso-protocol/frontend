@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SimpleCenterLoaderComponent } from "./simple-center-loader.component";
+import { SimpleCenterLoaderComponent } from './simple-center-loader.component';
 
-describe("SimpleCenterLoaderComponent", () => {
+describe('SimpleCenterLoaderComponent', () => {
   let component: SimpleCenterLoaderComponent;
   let fixture: ComponentFixture<SimpleCenterLoaderComponent>;
 
@@ -18,7 +18,7 @@ describe("SimpleCenterLoaderComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

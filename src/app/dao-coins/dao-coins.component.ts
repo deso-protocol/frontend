@@ -1,29 +1,29 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule } from "../app-routing.module";
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import { AppRoutingModule } from '../app-routing.module';
 import {
   BackendApiService,
   BalanceEntryResponse,
   DAOCoinEntryResponse,
   DAOCoinOperationTypeString,
   TransferRestrictionStatusString,
-} from "../backend-api.service";
-import { Title } from "@angular/platform-browser";
-import { ActivatedRoute, Router } from "@angular/router";
-import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { Observable, Subscription, throwError, zip } from "rxjs";
-import { environment } from "src/environments/environment";
-import { toBN } from "web3-utils";
-import { catchError, map } from "rxjs/operators";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { TransferDAOCoinModalComponent } from "./transfer-dao-coin-modal/transfer-dao-coin-modal.component";
-import { BurnDaoCoinModalComponent } from "./burn-dao-coin-modal/burn-dao-coin-modal.component";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
+} from '../backend-api.service';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
+import { InfiniteScroller } from '../infinite-scroller';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
+import { Observable, Subscription, throwError, zip } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { toBN } from 'web3-utils';
+import { catchError, map } from 'rxjs/operators';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { TransferDAOCoinModalComponent } from './transfer-dao-coin-modal/transfer-dao-coin-modal.component';
+import { BurnDaoCoinModalComponent } from './burn-dao-coin-modal/burn-dao-coin-modal.component';
+import { SwalHelper } from '../../lib/helpers/swal-helper';
 
 @Component({
-  selector: "dao-coins",
-  templateUrl: "./dao-coins.component.html",
+  selector: 'dao-coins',
+  templateUrl: './dao-coins.component.html',
 })
 export class DaoCoinsComponent implements OnInit, OnDestroy {
   static PAGE_SIZE = 20;
@@ -50,8 +50,8 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   loadingMyDAOCoinHoldings: boolean = false;
   loadingNewSelection: boolean = false;
 
-  static myDAOTab: string = "My DAO";
-  static daoCoinsTab: string = "DAO Holdings";
+  static myDAOTab: string = 'My DAO';
+  static daoCoinsTab: string = 'DAO Holdings';
   tabs = [DaoCoinsComponent.myDAOTab, DaoCoinsComponent.daoCoinsTab];
   activeTab: string = DaoCoinsComponent.myDAOTab;
   balanceEntryToHihlight: BalanceEntryResponse;
@@ -90,7 +90,8 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     if (this.globalVars.loggedInUser?.ProfileEntryResponse) {
       this.myDAOCoin = this.globalVars.loggedInUser.ProfileEntryResponse.DAOCoinEntry;
       this.transferRestrictionStatus =
-        this.myDAOCoin?.TransferRestrictionStatus || TransferRestrictionStatusString.UNRESTRICTED;
+        this.myDAOCoin?.TransferRestrictionStatus ||
+        TransferRestrictionStatusString.UNRESTRICTED;
       this.loadMyDAOCapTable().subscribe((res) => {});
     } else {
       this.hideMyDAOTab = true;
@@ -112,8 +113,8 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
       .GetHodlersForPublicKey(
         this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        "",
-        "",
+        '',
+        '',
         0,
         false,
         true,
@@ -139,8 +140,8 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
       .GetHodlersForPublicKey(
         this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        "",
-        "",
+        '',
+        '',
         0,
         true,
         true,
@@ -164,14 +165,19 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.
   // https://github.com/dhilt/ngx-ui-scroll/issues/111#issuecomment-697269318
   correctDataPaddingForwardElementHeight(viewportElement: HTMLElement): void {
-    const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-forward]`);
+    const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(
+      `[data-padding-forward]`
+    );
     if (dataPaddingForwardElement) {
-      dataPaddingForwardElement.setAttribute("style", "height: 0px;");
+      dataPaddingForwardElement.setAttribute('style', 'height: 0px;');
     }
   }
 
   // sort by Coins held
-  sortHodlingsCoins(hodlings: BalanceEntryResponse[], descending: boolean): void {
+  sortHodlingsCoins(
+    hodlings: BalanceEntryResponse[],
+    descending: boolean
+  ): void {
     this.sortedUsernameFromHighToLow = 0;
     this.sortedCoinsFromHighToLow = descending ? -1 : 1;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
@@ -180,13 +186,18 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   }
 
   // sort by username
-  sortHodlingsUsername(hodlings: BalanceEntryResponse[], descending: boolean): void {
+  sortHodlingsUsername(
+    hodlings: BalanceEntryResponse[],
+    descending: boolean
+  ): void {
     this.sortedUsernameFromHighToLow = descending ? -1 : 1;
     this.sortedCoinsFromHighToLow = 0;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
         this.sortedUsernameFromHighToLow *
-        b.ProfileEntryResponse.Username.localeCompare(a.ProfileEntryResponse.Username)
+        b.ProfileEntryResponse.Username.localeCompare(
+          a.ProfileEntryResponse.Username
+        )
       );
     });
   }
@@ -194,13 +205,13 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   sortWallet(column: string) {
     let descending: boolean;
     switch (column) {
-      case "username":
+      case 'username':
         // code block
         descending = this.sortedUsernameFromHighToLow !== -1;
         this.sortHodlingsUsername(this.myDAOCapTable, descending);
         this.sortHodlingsUsername(this.daoCoinHoldings, descending);
         break;
-      case "coins":
+      case 'coins':
         descending = this.sortedCoinsFromHighToLow !== -1;
         this.sortHodlingsCoins(this.myDAOCapTable, descending);
         this.sortHodlingsCoins(this.daoCoinHoldings, descending);
@@ -212,30 +223,42 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   }
 
   mintDAOCoin(): void {
-    if (this.myDAOCoin.MintingDisabled || this.mintingDAOCoin || this.coinsToMint <= 0) {
+    if (
+      this.myDAOCoin.MintingDisabled ||
+      this.mintingDAOCoin ||
+      this.coinsToMint <= 0
+    ) {
       return;
     }
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Mint DAO Coins",
+      title: 'Mint DAO Coins',
       html: `Click confirm to mint ${this.coinsToMint} ${this.globalVars.loggedInUser?.ProfileEntryResponse?.Username} DAO coins`,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
         this.loadingNewSelection = true;
         this.mintingDAOCoin = true;
-        this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.MINT)
+        this.doDAOCoinTxn(
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          DAOCoinOperationTypeString.MINT
+        )
           .subscribe(
             (res) => {
-              this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
+              this.myDAOCoin.CoinsInCirculationNanos = toBN(
+                this.myDAOCoin.CoinsInCirculationNanos
+              )
                 .add(this.globalVars.unitToBNNanos(this.coinsToMint))
-                .toString("hex");
-              zip(this.loadMyDAOCapTable(), this.loadMyDAOCoinHoldings()).subscribe(() => {
+                .toString('hex');
+              zip(
+                this.loadMyDAOCapTable(),
+                this.loadMyDAOCoinHoldings()
+              ).subscribe(() => {
                 this.loadingNewSelection = false;
                 this._handleTabClick(this.activeTab);
               });
@@ -260,12 +283,12 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     }
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Disable Minting",
+      title: 'Disable Minting',
       html: `Click confirm to disable minting for ${this.globalVars.loggedInUser?.ProfileEntryResponse?.Username} DAO coins. Please note, this is irreversible.`,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((res: any) => {
@@ -291,22 +314,26 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
 
   updateTransferRestrictionStatus(): void {
     if (
-      this.myDAOCoin.TransferRestrictionStatus === TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED ||
+      this.myDAOCoin.TransferRestrictionStatus ===
+        TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED ||
       this.updatingTransferRestrictionStatus ||
-      this.transferRestrictionStatus === this.myDAOCoin.TransferRestrictionStatus
+      this.transferRestrictionStatus ===
+        this.myDAOCoin.TransferRestrictionStatus
     ) {
       return;
     }
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Update Transfer Restriction Status",
+      title: 'Update Transfer Restriction Status',
       html: `Click confirm to update the transfer restriction status to ${this.getDisplayTransferRestrictionStatus(
         this.transferRestrictionStatus
-      )} for ${this.globalVars.loggedInUser?.ProfileEntryResponse?.Username} DAO coins`,
+      )} for ${
+        this.globalVars.loggedInUser?.ProfileEntryResponse?.Username
+      } DAO coins`,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((res: any) => {
@@ -336,25 +363,33 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     }
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Burn DAO Coins",
+      title: 'Burn DAO Coins',
       html: `Click confirm to burn ${this.coinsToBurn} ${this.globalVars.loggedInUser?.ProfileEntryResponse?.Username} DAO coins`,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
         this.burningDAOCoin = true;
         this.loadingNewSelection = true;
-        this.doDAOCoinTxn(this.globalVars.loggedInUser?.PublicKeyBase58Check, DAOCoinOperationTypeString.BURN)
+        this.doDAOCoinTxn(
+          this.globalVars.loggedInUser?.PublicKeyBase58Check,
+          DAOCoinOperationTypeString.BURN
+        )
           .subscribe(
             (res) => {
-              if (profilePublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-                this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
+              if (
+                profilePublicKeyBase58Check ===
+                this.globalVars.loggedInUser?.PublicKeyBase58Check
+              ) {
+                this.myDAOCoin.CoinsInCirculationNanos = toBN(
+                  this.myDAOCoin.CoinsInCirculationNanos
+                )
                   .add(this.globalVars.unitToBNNanos(this.coinsToBurn))
-                  .toString("hex");
+                  .toString('hex');
               }
               this.coinsToBurn = 0;
             },
@@ -371,48 +406,65 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     });
   }
 
-  doDAOCoinTxn(profilePublicKeyBase58Check: string, operationType: DAOCoinOperationTypeString): Observable<any> {
+  doDAOCoinTxn(
+    profilePublicKeyBase58Check: string,
+    operationType: DAOCoinOperationTypeString
+  ): Observable<any> {
     if (
-      profilePublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+      profilePublicKeyBase58Check !==
+        this.globalVars.loggedInUser?.PublicKeyBase58Check &&
       operationType !== DAOCoinOperationTypeString.BURN
     ) {
-      return throwError("invalid dao coin operation - must be owner to perform " + operationType);
+      return throwError(
+        'invalid dao coin operation - must be owner to perform ' + operationType
+      );
     }
     return this.backendApi.DAOCoin(
       this.globalVars.localNode,
       this.globalVars.loggedInUser?.PublicKeyBase58Check,
       profilePublicKeyBase58Check,
       operationType,
-      operationType === DAOCoinOperationTypeString.UPDATE_TRANSFER_RESTRICTION_STATUS
+      operationType ===
+        DAOCoinOperationTypeString.UPDATE_TRANSFER_RESTRICTION_STATUS
         ? this.transferRestrictionStatus
         : undefined,
-      operationType === DAOCoinOperationTypeString.MINT ? this.globalVars.toHexNanos(this.coinsToMint) : undefined,
-      operationType === DAOCoinOperationTypeString.BURN ? this.globalVars.toHexNanos(this.coinsToBurn) : undefined,
+      operationType === DAOCoinOperationTypeString.MINT
+        ? this.globalVars.toHexNanos(this.coinsToMint)
+        : undefined,
+      operationType === DAOCoinOperationTypeString.BURN
+        ? this.globalVars.toHexNanos(this.coinsToBurn)
+        : undefined,
       this.globalVars.defaultFeeRateNanosPerKB
     );
   }
 
   unminedDeSoToolTip() {
     return (
-      "Mining in progress. Feel free to transact in the meantime.\n\n" +
-      "Mined balance:\n" +
-      this.globalVars.nanosToDeSo(this.globalVars.loggedInUser.BalanceNanos, 9) +
-      " DeSo.\n\n" +
-      "Unmined balance:\n" +
-      this.globalVars.nanosToDeSo(this.globalVars.loggedInUser.UnminedBalanceNanos, 9) +
-      " DeSo."
+      'Mining in progress. Feel free to transact in the meantime.\n\n' +
+      'Mined balance:\n' +
+      this.globalVars.nanosToDeSo(
+        this.globalVars.loggedInUser.BalanceNanos,
+        9
+      ) +
+      ' DeSo.\n\n' +
+      'Unmined balance:\n' +
+      this.globalVars.nanosToDeSo(
+        this.globalVars.loggedInUser.UnminedBalanceNanos,
+        9
+      ) +
+      ' DeSo.'
     );
   }
 
   unminedCreatorCoinToolTip(creator: any) {
     return (
-      "Mining in progress. Feel free to transact in the meantime.\n\n" +
-      "Net unmined transactions:\n" +
+      'Mining in progress. Feel free to transact in the meantime.\n\n' +
+      'Net unmined transactions:\n' +
       this.globalVars.nanosToDeSo(creator.NetBalanceInMempool, 9) +
-      " DeSo.\n\n" +
-      "Balance w/unmined transactions:\n" +
+      ' DeSo.\n\n' +
+      'Balance w/unmined transactions:\n' +
       this.globalVars.nanosToDeSo(creator.BalanceNanos, 9) +
-      " DeSo.\n\n"
+      ' DeSo.\n\n'
     );
   }
 
@@ -421,13 +473,16 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   }
 
   emptyHodlerListMessage(): string {
-    return this.showDAOCoinHoldings ? "You don't hold any DAO coins" : "Your DAO doesn't have any coins yet.";
+    return this.showDAOCoinHoldings
+      ? "You don't hold any DAO coins"
+      : "Your DAO doesn't have any coins yet.";
   }
 
   _handleTabClick(tab: string) {
     this.showDAOCoinHoldings = tab === DaoCoinsComponent.daoCoinsTab;
     this.lastPage = Math.floor(
-      (this.showDAOCoinHoldings ? this.daoCoinHoldings : this.myDAOCapTable).length / DaoCoinsComponent.PAGE_SIZE
+      (this.showDAOCoinHoldings ? this.daoCoinHoldings : this.myDAOCapTable)
+        .length / DaoCoinsComponent.PAGE_SIZE
     );
     this.activeTab = tab;
     this.scrollerReset();
@@ -446,7 +501,9 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     DaoCoinsComponent.BUFFER_SIZE,
     DaoCoinsComponent.PADDING
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
@@ -459,62 +516,80 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     return new Promise((resolve, reject) => {
       resolve(
         this.showDAOCoinHoldings
-          ? this.daoCoinHoldings.slice(startIdx, Math.min(endIdx, this.daoCoinHoldings.length))
-          : this.myDAOCapTable.slice(startIdx, Math.min(endIdx, this.myDAOCapTable.length))
+          ? this.daoCoinHoldings.slice(
+              startIdx,
+              Math.min(endIdx, this.daoCoinHoldings.length)
+            )
+          : this.myDAOCapTable.slice(
+              startIdx,
+              Math.min(endIdx, this.myDAOCapTable.length)
+            )
       );
     });
   }
 
-  getDisplayTransferRestrictionStatus(transferRestrictionStatus: TransferRestrictionStatusString): string {
+  getDisplayTransferRestrictionStatus(
+    transferRestrictionStatus: TransferRestrictionStatusString
+  ): string {
     // If we're not provided a value, we assume it's unrestricted.
-    transferRestrictionStatus = transferRestrictionStatus || TransferRestrictionStatusString.UNRESTRICTED;
+    transferRestrictionStatus =
+      transferRestrictionStatus || TransferRestrictionStatusString.UNRESTRICTED;
     return transferRestrictionStatus
-      .split("_")
+      .split('_')
       .map((status) => status.charAt(0).toUpperCase() + status.slice(1))
-      .join(" ")
-      .replace("Dao", "DAO");
+      .join(' ')
+      .replace('Dao', 'DAO');
   }
 
   openTransferDAOCoinModal(creator: BalanceEntryResponse): void {
     const modalDetails = this.modalService.show(TransferDAOCoinModalComponent, {
-      class: "modal-dialog-centered",
+      class: 'modal-dialog-centered',
       initialState: { balanceEntryResponse: creator },
     });
     const onHideEvent = modalDetails.onHide;
     onHideEvent.subscribe((response) => {
-      if (response === "dao coins transferred") {
+      if (response === 'dao coins transferred') {
         this.loadingNewSelection = true;
-        zip(this.loadMyDAOCoinHoldings(), this.loadMyDAOCapTable()).subscribe((res) => {
-          this.loadingNewSelection = false;
-          this._handleTabClick(this.activeTab);
-        });
+        zip(this.loadMyDAOCoinHoldings(), this.loadMyDAOCapTable()).subscribe(
+          (res) => {
+            this.loadingNewSelection = false;
+            this._handleTabClick(this.activeTab);
+          }
+        );
       }
     });
   }
 
   openBurnDAOCoinModal(creator: BalanceEntryResponse): void {
     const modalDetails = this.modalService.show(BurnDaoCoinModalComponent, {
-      class: "modal-dialog-centered",
+      class: 'modal-dialog-centered',
       initialState: { balanceEntryResponse: creator },
     });
     const onHideEvent = modalDetails.onHide;
     onHideEvent.subscribe((response) => {
-      if (response.startsWith("dao coins burned")) {
+      if (response.startsWith('dao coins burned')) {
         this.loadingNewSelection = true;
-        zip(this.loadMyDAOCoinHoldings(), this.loadMyDAOCapTable()).subscribe((res) => {
-          // If we burned our own coin in the modal, update the coins in circulation.
-          if (creator.CreatorPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-            const splitResponse = response.split("|");
-            if (splitResponse.length === 2) {
-              const burnAmountHex = splitResponse[1];
-              this.myDAOCoin.CoinsInCirculationNanos = toBN(this.myDAOCoin.CoinsInCirculationNanos)
-                .sub(toBN(burnAmountHex))
-                .toString("hex");
+        zip(this.loadMyDAOCoinHoldings(), this.loadMyDAOCapTable()).subscribe(
+          (res) => {
+            // If we burned our own coin in the modal, update the coins in circulation.
+            if (
+              creator.CreatorPublicKeyBase58Check ===
+              this.globalVars.loggedInUser?.PublicKeyBase58Check
+            ) {
+              const splitResponse = response.split('|');
+              if (splitResponse.length === 2) {
+                const burnAmountHex = splitResponse[1];
+                this.myDAOCoin.CoinsInCirculationNanos = toBN(
+                  this.myDAOCoin.CoinsInCirculationNanos
+                )
+                  .sub(toBN(burnAmountHex))
+                  .toString('hex');
+              }
             }
+            this.loadingNewSelection = false;
+            this._handleTabClick(this.activeTab);
           }
-          this.loadingNewSelection = false;
-          this._handleTabClick(this.activeTab);
-        });
+        );
       }
     });
   }

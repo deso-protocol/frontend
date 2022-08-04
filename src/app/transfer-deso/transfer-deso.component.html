@@ -2,7 +2,9 @@
 <div
   class="global__top-bar__height d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
 >
-  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+  <top-bar-mobile-navigation-control
+    class="mr-15px d-lg-none d-inline-block"
+  ></top-bar-mobile-navigation-control>
 
   Send $DESO
 </div>
@@ -11,7 +13,8 @@
 <div
   class="d-flex align-items-center fs-15px fc-muted p-15px border-bottom border-color-grey background-color-light-grey"
 >
-  Sending $DESO is easy. Just enter a public key below and the protocol will handle the rest.
+  Sending $DESO is easy. Just enter a public key below and the protocol will
+  handle the rest.
 </div>
 
 <div class="fs-15px font-weight-bold mt-15px px-15px">
@@ -34,9 +37,16 @@
   ></simple-profile-card>
 </div>
 
-<div class="fs-15px font-weight-bold mt-15px px-15px">Amount of $DESO to send:</div>
+<div class="fs-15px font-weight-bold mt-15px px-15px">
+  Amount of $DESO to send:
+</div>
 <div class="d-flex align-items-center px-15px mt-5px">
-  <input type="number" class="form-control w-100 fs-15px lh-15px" placeholder="0" [(ngModel)]="transferAmount" />
+  <input
+    type="number"
+    class="form-control w-100 fs-15px lh-15px"
+    placeholder="0"
+    [(ngModel)]="transferAmount"
+  />
   <button
     *ngIf="!loadingMax"
     class="btn btn-primary font-weight-bold fs-15px ml-5px py-10px"
@@ -96,8 +106,11 @@
 </button>
 
 <div class="p-15px d-flex flex-column align-items-center">
-  <p>Scan QR code to send {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO</p>
-  <img [src]="sendDeSoQRCode | sanitizeQRCode"/>
+  <p>
+    Scan QR code to send
+    {{ globalVars.loggedInUser.ProfileEntryResponse?.Username }} $DESO
+  </p>
+  <img [src]="sendDeSoQRCode | sanitizeQRCode" />
 </div>
 
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->

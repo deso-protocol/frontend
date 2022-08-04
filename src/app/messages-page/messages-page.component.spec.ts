@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MessagesPageComponent } from "./messages-page.component";
+import { MessagesPageComponent } from './messages-page.component';
 
-describe("MessagesPageComponent", () => {
+describe('MessagesPageComponent', () => {
   let component: MessagesPageComponent;
   let fixture: ComponentFixture<MessagesPageComponent>;
 
@@ -18,7 +18,7 @@ describe("MessagesPageComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

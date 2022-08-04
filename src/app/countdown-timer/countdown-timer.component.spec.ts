@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CountdownTimerComponent } from "./countdown-timer.component";
+import { CountdownTimerComponent } from './countdown-timer.component';
 
-describe("CountdownTimerComponent", () => {
+describe('CountdownTimerComponent', () => {
   let component: CountdownTimerComponent;
   let fixture: ComponentFixture<CountdownTimerComponent>;
 
@@ -18,7 +18,7 @@ describe("CountdownTimerComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

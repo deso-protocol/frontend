@@ -1,12 +1,15 @@
-import { Component } from "@angular/core";
-import { BackendApiService, RichListEntryResponse } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Component } from '@angular/core';
+import {
+  BackendApiService,
+  RichListEntryResponse,
+} from '../../backend-api.service';
+import { GlobalVarsService } from '../../global-vars.service';
+import { Datasource, IAdapter, IDatasource } from 'ngx-ui-scroll';
 
 @Component({
-  selector: "supply-monitoring-stats",
-  templateUrl: "./supply-monitoring-stats.component.html",
-  styleUrls: ["./supply-monitoring-stats.component.scss"],
+  selector: 'supply-monitoring-stats',
+  templateUrl: './supply-monitoring-stats.component.html',
+  styleUrls: ['./supply-monitoring-stats.component.scss'],
 })
 export class SupplyMonitoringStatsComponent {
   static BUFFER_SIZE = 10;
@@ -23,7 +26,10 @@ export class SupplyMonitoringStatsComponent {
   failedLoadingCountKeysWithDESO: boolean = false;
   noSupplyMonitoring: boolean = false;
   datasource: IDatasource<IAdapter<any>> = this.getDatasource();
-  constructor(public globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  constructor(
+    public globalVars: GlobalVarsService,
+    private backendApi: BackendApiService
+  ) {
     this.backendApi
       .GetRichList(this.globalVars.localNode)
       .subscribe(

@@ -8,10 +8,20 @@
         class="form-control w-100 fs-15px lh-15px"
         placeholder="Enter a username or public key."
       />
-      <button *ngIf="!loadingWyreOrders" (click)="_loadWyreOrders()" class="btn btn-outline-primary fs-15px ml-5px">
+      <button
+        *ngIf="!loadingWyreOrders"
+        (click)="_loadWyreOrders()"
+        class="btn btn-outline-primary fs-15px ml-5px"
+      >
         Fetch
       </button>
-      <button *ngIf="loadingWyreOrders" class="btn btn-primary fs-15px ml-5px" disabled>Working...</button>
+      <button
+        *ngIf="loadingWyreOrders"
+        class="btn btn-primary fs-15px ml-5px"
+        disabled
+      >
+        Working...
+      </button>
     </div>
   </div>
   <div *ngFor="let order of wyreOrders" class="px-15px">
@@ -20,20 +30,29 @@
     <ul>
       <li>Created at: {{ order.Timestamp }}</li>
       <li *ngIf="order.LatestWyreWalletOrderWebhookPayload.failedReason">
-        Failed Reason: {{ order.LatestWyreWalletOrderWebhookPayload.failedReason }}
+        Failed Reason:
+        {{ order.LatestWyreWalletOrderWebhookPayload.failedReason }}
       </li>
-      <li style="word-break: break-word" *ngIf="order.LatestWyreTrackWalletOrderResponse">
-        btc tx: {{ order.LatestWyreTrackWalletOrderResponse.blockchainNetworkTx }}
+      <li
+        style="word-break: break-word"
+        *ngIf="order.LatestWyreTrackWalletOrderResponse"
+      >
+        btc tx:
+        {{ order.LatestWyreTrackWalletOrderResponse.blockchainNetworkTx }}
       </li>
       <li *ngIf="order.LatestWyreTrackWalletOrderResponse">
-        Source amount: {{ order.LatestWyreTrackWalletOrderResponse.sourceAmount }}
+        Source amount:
+        {{ order.LatestWyreTrackWalletOrderResponse.sourceAmount }}
         {{ order.LatestWyreTrackWalletOrderResponse.sourceCurrency }}
       </li>
       <li *ngIf="order.LatestWyreTrackWalletOrderResponse">
-        Destination amount: {{ order.LatestWyreTrackWalletOrderResponse.destAmount }}
+        Destination amount:
+        {{ order.LatestWyreTrackWalletOrderResponse.destAmount }}
         {{ order.LatestWyreTrackWalletOrderResponse.destCurrency }}
       </li>
-      <li *ngIf="order.DeSoPurchasedNanos">DeSo Nanos Purchased: {{ order.DeSoPurchasedNanos }}</li>
+      <li *ngIf="order.DeSoPurchasedNanos">
+        DeSo Nanos Purchased: {{ order.DeSoPurchasedNanos }}
+      </li>
       <li style="word-break: break-word" *ngIf="order.BasicTransferTxnHash">
         DeSo Basic Transfer Hash: {{ order.BasicTransferTxnHash }}
       </li>

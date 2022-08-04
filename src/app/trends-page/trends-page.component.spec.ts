@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TrendsPageComponent } from "./trends-page.component";
+import { TrendsPageComponent } from './trends-page.component';
 
-describe("TrendsPageComponent", () => {
+describe('TrendsPageComponent', () => {
   let component: TrendsPageComponent;
   let fixture: ComponentFixture<TrendsPageComponent>;
 
@@ -18,7 +18,7 @@ describe("TrendsPageComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

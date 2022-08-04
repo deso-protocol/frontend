@@ -1,5 +1,7 @@
 <!--Generally I don't like components that render nothing in some cases. I'd prefer-->
 <!--the calling component check whether anything should be rendered. But it seems ok here.-->
 <div *ngIf="!globalVars.loggedInUser" class="d-lg-none d-block">
-  <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold">Sign Up</a>
+  <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold"
+    >Sign Up</a
+  >
 </div>

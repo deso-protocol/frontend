@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreatorsLeaderboardComponent } from "./creators-leaderboard.component";
+import { CreatorsLeaderboardComponent } from './creators-leaderboard.component';
 
-describe("CreatorsLeaderboardComponent", () => {
+describe('CreatorsLeaderboardComponent', () => {
   let component: CreatorsLeaderboardComponent;
   let fixture: ComponentFixture<CreatorsLeaderboardComponent>;
 
@@ -18,7 +18,7 @@ describe("CreatorsLeaderboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

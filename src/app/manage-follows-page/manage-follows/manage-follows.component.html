@@ -6,8 +6,13 @@
       class="global__top-bar__height d-flex align-items-center justify-content-between w-100 px-15px fs-18px font-weight-bold fc-default border-bottom border-color-grey"
     >
       <div class="d-flex align-items-center">
-        <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-        <a class="link--unstyled" [routerLink]="['/' + appData.RouteNames.USER_PREFIX, targetUsername]">
+        <top-bar-mobile-navigation-control
+          class="mr-15px d-lg-none d-inline-block"
+        ></top-bar-mobile-navigation-control>
+        <a
+          class="link--unstyled"
+          [routerLink]="['/' + appData.RouteNames.USER_PREFIX, targetUsername]"
+        >
           {{ targetUsername }}
         </a>
       </div>
@@ -17,7 +22,10 @@
 
     <!-- Tabs -->
     <tab-selector
-      [tabs]="[ManageFollowsComponent.FOLLOWERS, ManageFollowsComponent.FOLLOWING]"
+      [tabs]="[
+        ManageFollowsComponent.FOLLOWERS,
+        ManageFollowsComponent.FOLLOWING
+      ]"
       [activeTab]="activeTab"
       (tabClick)="_handleTabClick($event)"
     ></tab-selector>
@@ -28,7 +36,10 @@
     <div
       class="d-flex w-100 px-15px global__top-bar__height align-items-center justify-content-between fs-18px font-weight-bold fc-default border-bottom border-color-grey"
     >
-      <a class="link--unstyled" [routerLink]="['/' + appData.RouteNames.USER_PREFIX, targetUsername]">
+      <a
+        class="link--unstyled"
+        [routerLink]="['/' + appData.RouteNames.USER_PREFIX, targetUsername]"
+      >
         {{ targetUsername }}
       </a>
       <top-bar-mobile-log-in-or-sign-up></top-bar-mobile-log-in-or-sign-up>
@@ -36,7 +47,10 @@
 
     <!-- Tabs -->
     <tab-selector
-      [tabs]="[ManageFollowsComponent.FOLLOWERS, ManageFollowsComponent.FOLLOWING]"
+      [tabs]="[
+        ManageFollowsComponent.FOLLOWERS,
+        ManageFollowsComponent.FOLLOWING
+      ]"
       [activeTab]="activeTab"
       (tabClick)="_handleTabClick($event)"
     ></tab-selector>
@@ -65,7 +79,10 @@
         <a
           class="manage-follows__avatar br-12px"
           [avatar]="profileEntry.PublicKeyBase58Check"
-          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntry.Username]"
+          [routerLink]="[
+            '/' + globalVars.RouteNames.USER_PREFIX,
+            profileEntry.Username
+          ]"
           queryParamsHandling="merge"
         ></a>
       </div>
@@ -76,31 +93,61 @@
           <!-- Username-->
           <a
             class="fc-default font-weight-bold"
-            [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntry.Username]"
+            [routerLink]="[
+              '/' + globalVars.RouteNames.USER_PREFIX,
+              profileEntry.Username
+            ]"
             queryParamsHandling="merge"
           >
             {{ profileEntry.Username }}
           </a>
-          <span *ngIf="profileEntry?.IsVerified" class="ml-1 d-inline-block align-center text-primary"><i class="fas fa-check-circle fa-md align-middle"></i></span>
+          <span
+            *ngIf="profileEntry?.IsVerified"
+            class="ml-1 d-inline-block align-center text-primary"
+            ><i class="fas fa-check-circle fa-md align-middle"></i
+          ></span>
           <!-- Coin price-->
           <!-- Hidden on mobile, UI gets too crowded otherwise -->
           <a
             style="padding: 3px"
             class="ml-2 fs-13px font-weight-bold px-2 feed-post__coin-price-holder d-lg-block d-none br-12px"
-            [routerLink]="AppRoutingModule.buyCreatorPath(profileEntry.Username)"
+            [routerLink]="
+              AppRoutingModule.buyCreatorPath(profileEntry.Username)
+            "
             queryParamsHandling="merge"
           >
-            <span class="fc-default">~{{ globalVars.nanosToUSD(profileEntry.CoinPriceDeSoNanos, 2) }}</span>
+            <span class="fc-default"
+              >~{{
+                globalVars.nanosToUSD(profileEntry.CoinPriceDeSoNanos, 2)
+              }}</span
+            >
 
             <!-- Buy link -->
             Buy
           </a>
 
           <!-- Follow button -->
-          <div *ngIf="canLoggedInUserFollowTargetPublicKey(profileEntry.PublicKeyBase58Check)" class="ml-auto">
+          <div
+            *ngIf="
+              canLoggedInUserFollowTargetPublicKey(
+                profileEntry.PublicKeyBase58Check
+              )
+            "
+            class="ml-auto"
+          >
             <follow-button
-              [followButtonClasses]="['js-manage-follows__follow-button', 'btn', 'btn-sm', 'btn-outline-primary']"
-              [unfollowButtonClasses]="['js-manage-follows__follow-button', 'btn', 'btn-sm', 'btn-primary']"
+              [followButtonClasses]="[
+                'js-manage-follows__follow-button',
+                'btn',
+                'btn-sm',
+                'btn-outline-primary'
+              ]"
+              [unfollowButtonClasses]="[
+                'js-manage-follows__follow-button',
+                'btn',
+                'btn-sm',
+                'btn-primary'
+              ]"
               [followedPubKeyBase58Check]="profileEntry.PublicKeyBase58Check"
             ></follow-button>
           </div>
@@ -109,17 +156,29 @@
         <!-- Content -->
         <div
           class="roboto-regular mt-1"
-          style="overflow-wrap: anywhere; -ms-word-break: break-all; word-break: break-all; word-break: break-word"
+          style="
+            overflow-wrap: anywhere;
+            -ms-word-break: break-all;
+            word-break: break-all;
+            word-break: break-word;
+          "
           [innerHTML]="profileEntry.Description | sanitizeAndAutoLink"
         ></div>
       </div>
     </a>
   </div>
-  <simple-center-loader *ngIf="loadingNextPage && !loadingFirstPage" [height]="100"></simple-center-loader>
+  <simple-center-loader
+    *ngIf="loadingNextPage && !loadingFirstPage"
+    [height]="100"
+  ></simple-center-loader>
   <!-- Num anonymous followers-->
-  <div *ngIf="anonymousFollowerCount > 0" class="fs-15px d-flex justify-content-left w-100 p-15px">
+  <div
+    *ngIf="anonymousFollowerCount > 0"
+    class="fs-15px d-flex justify-content-left w-100 p-15px"
+  >
     <!--TODO: pluralize-->
-    ... Plus {{ anonymousFollowerCount }} anonymous {{ this.activeTab.toLowerCase() }}
+    ... Plus {{ anonymousFollowerCount }} anonymous
+    {{ this.activeTab.toLowerCase() }}
   </div>
   <div class="d-lg-none global__bottom-bar-mobile-height"></div>
   <div class="d-lg-none global__bottom-bar-mobile-height"></div>

@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BuyCreatorCoinsTutorialComponent } from "./buy-creator-coins-tutorial.component";
+import { BuyCreatorCoinsTutorialComponent } from './buy-creator-coins-tutorial.component';
 
-describe("BuyCreatorCoinsTutorialComponent", () => {
+describe('BuyCreatorCoinsTutorialComponent', () => {
   let component: BuyCreatorCoinsTutorialComponent;
   let fixture: ComponentFixture<BuyCreatorCoinsTutorialComponent>;
 
@@ -18,7 +18,7 @@ describe("BuyCreatorCoinsTutorialComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

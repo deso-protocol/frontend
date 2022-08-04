@@ -1,12 +1,18 @@
 <!-- Top Bar -->
 <!-- FIXME: TODO: post threads: loading skeletons -->
-<div *ngIf="currentPost" style="padding-bottom: 20vh" class="d-flex flex-column">
+<div
+  *ngIf="currentPost"
+  style="padding-bottom: 20vh"
+  class="d-flex flex-column"
+>
   <div
     class="global__top-bar d-flex align-items-center justify-content-between fs-18px font-weight-bold px-15px border-bottom border-color-grey"
     *ngIf="!hideHeader"
   >
     <div class="d-flex align-items-center">
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+      <top-bar-mobile-navigation-control
+        class="mr-15px d-lg-none d-inline-block"
+      ></top-bar-mobile-navigation-control>
 
       <div>Thread with {{ currentPost.ProfileEntryResponse.Username }}</div>
     </div>
@@ -21,7 +27,9 @@
       [post]="parentPost"
       [includePaddingOnPost]="true"
       [contentShouldLinkToThread]="true"
-      [afterCommentCreatedCallback]="updateCommentCountAndShowToast.bind(this, parentPost)"
+      [afterCommentCreatedCallback]="
+        updateCommentCountAndShowToast.bind(this, parentPost)
+      "
       [isParentPostInThread]="true"
       [showThreadConnectionLine]="true"
       [blocked]="isPostBlocked(parentPost)"
@@ -37,7 +45,9 @@
       [post]="currentPost"
       [includePaddingOnPost]="true"
       [contentShouldLinkToThread]="true"
-      [afterCommentCreatedCallback]="prependToCommentList.bind(this, currentPost)"
+      [afterCommentCreatedCallback]="
+        prependToCommentList.bind(this, currentPost)
+      "
       [isParentPostInThread]="true"
       [showLeftSelectedBorder]="true"
       [showInteractionDetails]="true"
@@ -60,14 +70,19 @@
           [contentShouldLinkToThread]="true"
           [showIconRow]="true"
           [showReplyingToContent]="true"
-          [afterCommentCreatedCallback]="prependToSubcommentList.bind(this, item, currentPost)"
+          [afterCommentCreatedCallback]="
+            prependToSubcommentList.bind(this, item, currentPost)
+          "
           [blocked]="isPostBlocked(item)"
           (postDeleted)="onPostHidden(item, currentPost, null)"
           (userBlocked)="afterUserBlocked($event)"
         ></feed-post>
 
         <div *ngFor="let subcommentPost of item.Comments">
-          <div class="px-15px pb-15px post-thread__subcomment-container" *ngIf="!isPostBlocked(item)">
+          <div
+            class="px-15px pb-15px post-thread__subcomment-container"
+            *ngIf="!isPostBlocked(item)"
+          >
             <!--  afterCommentCreatedCallback explanation: Here, the "post" is a subcomment. A new comment on a -->
             <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
             <feed-post
@@ -81,7 +96,9 @@
               [showDropdown]="false"
               [showReplyingToContent]="false"
               [isSubcomment]="true"
-              [afterCommentCreatedCallback]="appendToSubcommentList.bind(this, item, currentPost)"
+              [afterCommentCreatedCallback]="
+                appendToSubcommentList.bind(this, item, currentPost)
+              "
               [blocked]="isPostBlocked(subcommentPost)"
               (postDeleted)="onPostHidden(subcommentPost, item, currentPost)"
               (userBlocked)="afterUserBlocked($event)"

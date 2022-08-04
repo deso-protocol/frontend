@@ -1,17 +1,17 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { GlobalVarsService } from "../../global-vars.service";
+import { Component, Input, OnInit } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { GlobalVarsService } from '../../global-vars.service';
 import {
   BackendApiService,
   BalanceEntryResponse,
   ProfileEntryResponse,
   TransferRestrictionStatusString,
-} from "../../backend-api.service";
-import { toBN } from "web3-utils";
+} from '../../backend-api.service';
+import { toBN } from 'web3-utils';
 
 @Component({
-  selector: "transfer-dao-coin-modal",
-  templateUrl: "./transfer-dao-coin-modal.component.html",
+  selector: 'transfer-dao-coin-modal',
+  templateUrl: './transfer-dao-coin-modal.component.html',
 })
 export class TransferDAOCoinModalComponent implements OnInit {
   @Input() balanceEntryResponse: BalanceEntryResponse;
@@ -20,7 +20,7 @@ export class TransferDAOCoinModalComponent implements OnInit {
   receiver: ProfileEntryResponse;
   receiverIsDAOMember: boolean = false;
   transferringDAOCoin: boolean = false;
-  backendErrors: string = "";
+  backendErrors: string = '';
   validationErrors: string[] = [];
   hideCreatorSearch: boolean = false;
   constructor(
@@ -34,9 +34,11 @@ export class TransferDAOCoinModalComponent implements OnInit {
     // If this DAO coin can only be transferred to the profile owner and we're not the profile owner, set the receiver
     // to the profile owner and don't let them search.
     if (
-      this.balanceEntryResponse?.ProfileEntryResponse?.DAOCoinEntry?.TransferRestrictionStatus ===
+      this.balanceEntryResponse?.ProfileEntryResponse?.DAOCoinEntry
+        ?.TransferRestrictionStatus ===
         TransferRestrictionStatusString.PROFILE_OWNER_ONLY &&
-      this.balanceEntryResponse?.CreatorPublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+      this.balanceEntryResponse?.CreatorPublicKeyBase58Check !==
+        this.globalVars.loggedInUser?.PublicKeyBase58Check
     ) {
       this.hideCreatorSearch = true;
       this.receiver = this.balanceEntryResponse?.ProfileEntryResponse;
@@ -46,7 +48,8 @@ export class TransferDAOCoinModalComponent implements OnInit {
   _handleCreatorSelectedInSearch(creator): void {
     this.receiver = creator;
     if (
-      this.balanceEntryResponse.ProfileEntryResponse.DAOCoinEntry.TransferRestrictionStatus ===
+      this.balanceEntryResponse.ProfileEntryResponse.DAOCoinEntry
+        .TransferRestrictionStatus ===
       TransferRestrictionStatusString.DAO_MEMBERS_ONLY
     ) {
       this.backendApi
@@ -66,7 +69,7 @@ export class TransferDAOCoinModalComponent implements OnInit {
 
   transferDAOCoin(): void {
     this.transferringDAOCoin = true;
-    this.backendErrors = "";
+    this.backendErrors = '';
     this.backendApi
       .TransferDAOCoin(
         this.globalVars.localNode,
@@ -78,7 +81,7 @@ export class TransferDAOCoinModalComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.modalService.setDismissReason("dao coins transferred");
+          this.modalService.setDismissReason('dao coins transferred');
           this.bsModalRef.hide();
         },
         (err) => {
@@ -91,36 +94,48 @@ export class TransferDAOCoinModalComponent implements OnInit {
 
   updateValidationErrors(): void {
     let err: string[] = [];
-    if (this.receiver?.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-      err.push("Cannot transfer to yourself\n");
+    if (
+      this.receiver?.PublicKeyBase58Check ===
+      this.globalVars.loggedInUser?.PublicKeyBase58Check
+    ) {
+      err.push('Cannot transfer to yourself\n');
     }
     if (this.receiver && this.amountToTransfer <= 0) {
-      err.push("Must transfer a non-zero amount\n");
+      err.push('Must transfer a non-zero amount\n');
     }
     if (
-      this.globalVars.unitToBNNanos(this.amountToTransfer || 0).gt(toBN(this.balanceEntryResponse.BalanceNanosUint256))
+      this.globalVars
+        .unitToBNNanos(this.amountToTransfer || 0)
+        .gt(toBN(this.balanceEntryResponse.BalanceNanosUint256))
     ) {
-      err.push("Amount to transfer exceeds balance\n");
+      err.push('Amount to transfer exceeds balance\n');
     }
     if (
       this.receiver &&
-      this.balanceEntryResponse.ProfileEntryResponse.DAOCoinEntry.TransferRestrictionStatus ===
+      this.balanceEntryResponse.ProfileEntryResponse.DAOCoinEntry
+        .TransferRestrictionStatus ===
         TransferRestrictionStatusString.PROFILE_OWNER_ONLY &&
       this.balanceEntryResponse.ProfileEntryResponse.PublicKeyBase58Check !==
         this.globalVars.loggedInUser?.PublicKeyBase58Check &&
-      this.balanceEntryResponse.ProfileEntryResponse.PublicKeyBase58Check !== this.receiver?.PublicKeyBase58Check
+      this.balanceEntryResponse.ProfileEntryResponse.PublicKeyBase58Check !==
+        this.receiver?.PublicKeyBase58Check
     ) {
-      err.push("This DAO coin can only be transferred to or from the profile owner\n");
+      err.push(
+        'This DAO coin can only be transferred to or from the profile owner\n'
+      );
     }
     if (
       this.receiver &&
-      this.balanceEntryResponse.ProfileEntryResponse.DAOCoinEntry.TransferRestrictionStatus ===
+      this.balanceEntryResponse.ProfileEntryResponse.DAOCoinEntry
+        .TransferRestrictionStatus ===
         TransferRestrictionStatusString.DAO_MEMBERS_ONLY &&
       !this.receiverIsDAOMember &&
       this.balanceEntryResponse.ProfileEntryResponse.PublicKeyBase58Check !==
         this.globalVars.loggedInUser?.PublicKeyBase58Check
     ) {
-      err.push("This DAO coin can only be transferred to existing DAO members\n");
+      err.push(
+        'This DAO coin can only be transferred to existing DAO members\n'
+      );
     }
     this.validationErrors = err;
   }

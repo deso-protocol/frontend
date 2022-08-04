@@ -1,13 +1,13 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Component, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import { BackendApiService } from '../backend-api.service';
+import { SwalHelper } from '../../lib/helpers/swal-helper';
+import { InfiniteScroller } from '../infinite-scroller';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
 
 @Component({
-  selector: "nft-drop-mgr",
-  templateUrl: "./nft-drop-mgr.component.html",
+  selector: 'nft-drop-mgr',
+  templateUrl: './nft-drop-mgr.component.html',
 })
 export class NftDropMgrComponent implements OnInit {
   globalVars: GlobalVarsService;
@@ -18,10 +18,10 @@ export class NftDropMgrComponent implements OnInit {
   togglingActivation: boolean = false;
   addingNFT: boolean = false;
   hideDateTimeAdjuster: boolean = false;
-  dropSelectorError: string = "";
+  dropSelectorError: string = '';
 
-  nftToAdd: string = "";
-  nftBeingRemoved: string = "";
+  nftToAdd: string = '';
+  nftBeingRemoved: string = '';
   dropNumber: number = 1;
   latestDropNumber: number = 1;
   latestDropEntry: any;
@@ -45,9 +45,14 @@ export class NftDropMgrComponent implements OnInit {
     NftDropMgrComponent.PADDING
   );
 
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  constructor(
+    private _globalVars: GlobalVarsService,
+    private backendApi: BackendApiService
+  ) {
     this.globalVars = _globalVars;
   }
 
@@ -55,7 +60,11 @@ export class NftDropMgrComponent implements OnInit {
     // Get the latest NFT drop
     this.loading = true;
     this.backendApi
-      .AdminGetNFTDrop(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, -1 /*DropNumber*/)
+      .AdminGetNFTDrop(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        -1 /*DropNumber*/
+      )
       .subscribe(
         (res: any) => {
           this.dropEntry = res.DropEntry;
@@ -89,7 +98,12 @@ export class NftDropMgrComponent implements OnInit {
   }
 
   isWorking() {
-    return this.loading || this.settingDate || this.togglingActivation || this.addingNFT;
+    return (
+      this.loading ||
+      this.settingDate ||
+      this.togglingActivation ||
+      this.addingNFT
+    );
   }
 
   updateStateBasedOnNewDropEntry(dropEntry: any, posts: any) {
@@ -100,14 +114,16 @@ export class NftDropMgrComponent implements OnInit {
     this.dropTime = new Date(dropEntry.DropTstampNanos / 1e6);
     let currentTime = new Date();
     this.hideDateTimeAdjuster = this.dropTime < currentTime;
-    this.lastPage = Math.floor(this.posts.length / NftDropMgrComponent.PAGE_SIZE);
+    this.lastPage = Math.floor(
+      this.posts.length / NftDropMgrComponent.PAGE_SIZE
+    );
     this.setIsUpdatable();
   }
 
   updateErrorWithTimeout(errorMsg: string) {
     this.dropSelectorError = errorMsg;
     setTimeout(() => {
-      this.dropSelectorError = "";
+      this.dropSelectorError = '';
     }, 1500);
   }
 
@@ -123,11 +139,13 @@ export class NftDropMgrComponent implements OnInit {
     if (this.isWorking()) {
       return;
     }
-    this.dropSelectorError = "";
+    this.dropSelectorError = '';
 
     let currentTime = new Date();
     if (this.dropTime > currentTime) {
-      this.updateErrorWithTimeout("Cannot make a new drop while this drop is pending.");
+      this.updateErrorWithTimeout(
+        'Cannot make a new drop while this drop is pending.'
+      );
       return;
     }
 
@@ -156,7 +174,9 @@ export class NftDropMgrComponent implements OnInit {
           this.updateStateBasedOnNewDropEntry(res.DropEntry, res.Posts);
         },
         (error) => {
-          this.updateErrorWithTimeout("Error getting drop #" + nextDropNumber.toString() + ".");
+          this.updateErrorWithTimeout(
+            'Error getting drop #' + nextDropNumber.toString() + '.'
+          );
         }
       )
       .add(() => {
@@ -168,7 +188,7 @@ export class NftDropMgrComponent implements OnInit {
     if (this.isWorking()) {
       return;
     }
-    this.dropSelectorError = "";
+    this.dropSelectorError = '';
 
     let prevDropNumber = this.dropNumber - 1;
 
@@ -185,7 +205,9 @@ export class NftDropMgrComponent implements OnInit {
           this.updateStateBasedOnNewDropEntry(res.DropEntry, res.Posts);
         },
         (error) => {
-          this.updateErrorWithTimeout("Error getting drop #" + prevDropNumber.toString() + ".");
+          this.updateErrorWithTimeout(
+            'Error getting drop #' + prevDropNumber.toString() + '.'
+          );
         }
       )
       .add(() => {
@@ -206,8 +228,8 @@ export class NftDropMgrComponent implements OnInit {
         this.dropNumber,
         this.dropTime.getTime() * 1e6,
         false /*IsActive*/,
-        "" /*NFTHashHexToAdd*/,
-        "" /*NFTHashHexToRemove*/
+        '' /*NFTHashHexToAdd*/,
+        '' /*NFTHashHexToRemove*/
       )
       .subscribe(
         (res: any) => {
@@ -238,8 +260,8 @@ export class NftDropMgrComponent implements OnInit {
         this.dropEntry.DropNumber,
         this.dropEntry.DropTstampNanos,
         !this.dropEntry.IsActive /*IsActive*/,
-        "" /*NFTHashHexToAdd*/,
-        "" /*NFTHashHexToRemove*/
+        '' /*NFTHashHexToAdd*/,
+        '' /*NFTHashHexToRemove*/
       )
       .subscribe(
         (res: any) => {
@@ -268,7 +290,7 @@ export class NftDropMgrComponent implements OnInit {
         this.dropEntry.DropTstampNanos,
         this.dropEntry.IsActive /*IsActive*/,
         this.nftToAdd /*NFTHashHexToAdd*/,
-        "" /*NFTHashHexToRemove*/
+        '' /*NFTHashHexToRemove*/
       )
       .subscribe(
         (res: any) => {
@@ -295,11 +317,11 @@ export class NftDropMgrComponent implements OnInit {
       showConfirmButton: true,
       focusConfirm: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
       reverseButtons: true,
     }).then(async (res: any) => {
       if (res.isConfirmed) {
@@ -311,7 +333,7 @@ export class NftDropMgrComponent implements OnInit {
             this.dropEntry.DropNumber,
             this.dropEntry.DropTstampNanos,
             this.dropEntry.IsActive /*IsActive*/,
-            "" /*NFTHashHexToAdd*/,
+            '' /*NFTHashHexToAdd*/,
             postHashHex /*NFTHashHexToRemove*/
           )
           .subscribe(
@@ -323,7 +345,7 @@ export class NftDropMgrComponent implements OnInit {
             }
           )
           .add(() => {
-            this.nftBeingRemoved = "";
+            this.nftBeingRemoved = '';
           });
       }
     });
@@ -335,11 +357,18 @@ export class NftDropMgrComponent implements OnInit {
     //   - The next "pending" drop.
     let canUpdateDrop = false;
     let currentTime = new Date();
-    let latestDropIsPending = this.latestDropEntry.DropTstampNanos / 1e6 > currentTime.getTime();
-    if (latestDropIsPending && this.dropEntry.DropNumber >= this.latestDropEntry.DropNumber - 1) {
+    let latestDropIsPending =
+      this.latestDropEntry.DropTstampNanos / 1e6 > currentTime.getTime();
+    if (
+      latestDropIsPending &&
+      this.dropEntry.DropNumber >= this.latestDropEntry.DropNumber - 1
+    ) {
       // In this case their is a pending drop so the latest drop and the previous drop are editable.
       canUpdateDrop = true;
-    } else if (!latestDropIsPending && this.dropEntry.DropNumber == this.latestDropEntry.DropNumber) {
+    } else if (
+      !latestDropIsPending &&
+      this.dropEntry.DropNumber == this.latestDropEntry.DropNumber
+    ) {
       // In this case there is no pending drop so you can only update the latest drop.
       canUpdateDrop = true;
     }

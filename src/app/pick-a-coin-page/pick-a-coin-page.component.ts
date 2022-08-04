@@ -1,12 +1,12 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule } from "../app-routing.module";
-import { Title } from "@angular/platform-browser";
-import { environment } from "src/environments/environment";
+import { Component, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import { AppRoutingModule } from '../app-routing.module';
+import { Title } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "app-pick-a-coin-page",
-  templateUrl: "./pick-a-coin-page.component.html",
+  selector: 'app-pick-a-coin-page',
+  templateUrl: './pick-a-coin-page.component.html',
 })
 export class PickACoinPageComponent implements OnInit {
   globalVars: GlobalVarsService;
@@ -30,8 +30,14 @@ export class PickACoinPageComponent implements OnInit {
     const creators = this.globalVars.loggedInUser.UsersYouHODL;
     creators.sort((a, b) => {
       return (
-        this.globalVars.desoNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry) -
-        this.globalVars.desoNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry)
+        this.globalVars.desoNanosYouWouldGetIfYouSold(
+          b.BalanceNanos,
+          b.ProfileEntryResponse.CoinEntry
+        ) -
+        this.globalVars.desoNanosYouWouldGetIfYouSold(
+          a.BalanceNanos,
+          a.ProfileEntryResponse.CoinEntry
+        )
       );
     });
     return creators;

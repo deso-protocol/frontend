@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LeftBarMobileComponent } from "./left-bar-mobile.component";
+import { LeftBarMobileComponent } from './left-bar-mobile.component';
 
-describe("LeftBarMobileComponent", () => {
+describe('LeftBarMobileComponent', () => {
   let component: LeftBarMobileComponent;
   let fixture: ComponentFixture<LeftBarMobileComponent>;
 
@@ -18,7 +18,7 @@ describe("LeftBarMobileComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

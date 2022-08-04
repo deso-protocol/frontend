@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FeedPostIconRowComponent } from "./feed-post-icon-row.component";
+import { FeedPostIconRowComponent } from './feed-post-icon-row.component';
 
-describe("FeedPostIconRowComponent", () => {
+describe('FeedPostIconRowComponent', () => {
   let component: FeedPostIconRowComponent;
   let fixture: ComponentFixture<FeedPostIconRowComponent>;
 
@@ -18,7 +18,7 @@ describe("FeedPostIconRowComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

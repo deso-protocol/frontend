@@ -1,16 +1,28 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
-import { BackendApiService, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { InfiniteScroller } from "src/app/infinite-scroller";
-import * as _ from "lodash";
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import {
+  BackendApiService,
+  PostEntryResponse,
+  ProfileEntryResponse,
+} from '../../backend-api.service';
+import { GlobalVarsService } from '../../global-vars.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
+import { InfiniteScroller } from 'src/app/infinite-scroller';
+import * as _ from 'lodash';
 
 @Component({
-  selector: "creator-profile-posts",
-  templateUrl: "./creator-profile-posts.component.html",
-  styleUrls: ["./creator-profile-posts.component.scss"],
+  selector: 'creator-profile-posts',
+  templateUrl: './creator-profile-posts.component.html',
+  styleUrls: ['./creator-profile-posts.component.scss'],
 })
 export class CreatorProfilePostsComponent {
   static PAGE_SIZE = 10;
@@ -27,7 +39,7 @@ export class CreatorProfilePostsComponent {
   loadingNextPage = false;
 
   pagedKeys = {
-    0: "",
+    0: '',
   };
 
   @Output() blockUser = new EventEmitter();
@@ -50,7 +62,7 @@ export class CreatorProfilePostsComponent {
     return this.backendApi
       .GetPostsForPublicKey(
         this.globalVars.localNode,
-        "",
+        '',
         this.profile.Username,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         lastPostHashHex,
@@ -60,8 +72,12 @@ export class CreatorProfilePostsComponent {
       .toPromise()
       .then((res) => {
         const posts: PostEntryResponse[] = res.Posts;
-        this.pagedKeys[page + 1] = res.LastPostHashHex || "";
-        if (!posts || posts.length < CreatorProfilePostsComponent.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
+        this.pagedKeys[page + 1] = res.LastPostHashHex || '';
+        if (
+          !posts ||
+          posts.length < CreatorProfilePostsComponent.PAGE_SIZE ||
+          this.pagedKeys[page + 1] === ''
+        ) {
           this.lastPage = page;
         }
 
@@ -75,7 +91,9 @@ export class CreatorProfilePostsComponent {
   }
 
   async _prependComment(uiPostParent, index, newComment) {
-    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
+    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(
+      uiPostParent
+    );
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
       predicate: ({ $index, data, element }) => {
@@ -85,7 +103,10 @@ export class CreatorProfilePostsComponent {
           currentPost.Comments = currentPost.Comments || [];
           currentPost.Comments.unshift(_.cloneDeep(newComment));
           return [this.globalVars.incrementCommentCount(currentPost)];
-        } else if (this.globalVars.getPostContentHashHex(currentPost) === uiPostParentHashHex) {
+        } else if (
+          this.globalVars.getPostContentHashHex(currentPost) ===
+          uiPostParentHashHex
+        ) {
           // We also want to increment the comment count on any other notifications related to the same post hash hex.
           return [this.globalVars.incrementCommentCount(currentPost)];
         }
@@ -102,7 +123,8 @@ export class CreatorProfilePostsComponent {
   profileBelongsToLoggedInUser(): boolean {
     return (
       this.globalVars.loggedInUser?.ProfileEntryResponse &&
-      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
+      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check ===
+        this.profile.PublicKeyBase58Check
     );
   }
 
@@ -113,5 +135,7 @@ export class CreatorProfilePostsComponent {
     CreatorProfilePostsComponent.BUFFER_SIZE,
     CreatorProfilePostsComponent.PADDING
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 }

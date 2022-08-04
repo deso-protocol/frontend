@@ -1,7 +1,10 @@
 <!--                                         -->
 <!-- LOGGED-IN USER *IS* THE MESSAGE SENDER. -->
 <!--                                         -->
-<div *ngIf="message.IsSender" class="d-flex justify-content-end align-items-end">
+<div
+  *ngIf="message.IsSender"
+  class="d-flex justify-content-end align-items-end"
+>
   <!--"Pre-wrap" allows us to render new lines properly-->
   <!--"overflow-wrap" prevents long words from overflowing messages container (such as URLs)-->
   <!-- The messages are received from the backend encrypted. If we have the unencrypted
@@ -10,20 +13,26 @@
     *ngIf="!message.Legacy && message.TstampNanos"
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
     style="white-space: pre-wrap; overflow-wrap: anywhere"
-  >{{ message.DecryptedText }}</div>
+  >
+    {{ message.DecryptedText }}
+  </div>
   <div
     *ngIf="message.Legacy && message.TstampNanos"
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
     style="white-space: pre-wrap; overflow-wrap: anywhere"
-  >{{
+  >
+    {{
       globalVars.messageMeta.decryptedMessgesMap[
-      globalVars.loggedInUser.PublicKeyBase58Check + "" + message.TstampNanos
+        globalVars.loggedInUser.PublicKeyBase58Check + '' + message.TstampNanos
       ]
-      ? globalVars.messageMeta.decryptedMessgesMap[
-      globalVars.loggedInUser.PublicKeyBase58Check + "" + message.TstampNanos
-      ].DecryptedText
-      : "&#60;Message is not decryptable on this device&#62;"
-    }}</div>
+        ? globalVars.messageMeta.decryptedMessgesMap[
+            globalVars.loggedInUser.PublicKeyBase58Check +
+              '' +
+              message.TstampNanos
+          ].DecryptedText
+        : '&#60;Message is not decryptable on this device&#62;'
+    }}
+  </div>
   <div
     *ngIf="!message.TstampNanos"
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height message__sender-bubble-color"
@@ -42,9 +51,17 @@
   ></div>
 </div>
 <!-- Consider whether or not to show the timestamp. -->
-<div *ngIf="message.IsSender" class="d-flex justify-content-end align-items-end mt-5px">
-  <div *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true" class="fs-12px fc-muted">
-    <span *ngIf="message.TstampNanos">{{ globalVars.convertTstampToDateOrTime(message.TstampNanos) }}</span>
+<div
+  *ngIf="message.IsSender"
+  class="d-flex justify-content-end align-items-end mt-5px"
+>
+  <div
+    *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+    class="fs-12px fc-muted"
+  >
+    <span *ngIf="message.TstampNanos">{{
+      globalVars.convertTstampToDateOrTime(message.TstampNanos)
+    }}</span>
     <span *ngIf="!message.TstampNanos">Sending...</span>
   </div>
   <div class="message__avatar-placeholder ml-15px"></div>
@@ -69,13 +86,17 @@
   <div
     class="d-flex align-items-center py-5px px-15px messages-thread__border-radius fs-15px message__min-height background-color-light-grey disable-scrollbars"
     style="white-space: pre-wrap; overflow-wrap: anywhere"
-  >{{ message.DecryptedText }}
+  >
+    {{ message.DecryptedText }}
   </div>
 </div>
 <!-- Consider whether or not to show the timestamp. -->
 <div *ngIf="!message.IsSender" class="d-flex align-items-end">
   <div class="message__avatar-placeholder ml-15px"></div>
-  <div *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true" class="fs-12px fc-muted">
+  <div
+    *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+    class="fs-12px fc-muted"
+  >
     {{ globalVars.convertTstampToDateOrTime(message.TstampNanos) }}
   </div>
 </div>

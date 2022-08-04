@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MessagesThreadViewComponent } from "./messages-thread-view.component";
+import { MessagesThreadViewComponent } from './messages-thread-view.component';
 
-describe("MessagesThreadViewComponent", () => {
+describe('MessagesThreadViewComponent', () => {
   let component: MessagesThreadViewComponent;
   let fixture: ComponentFixture<MessagesThreadViewComponent>;
 
@@ -18,7 +18,7 @@ describe("MessagesThreadViewComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

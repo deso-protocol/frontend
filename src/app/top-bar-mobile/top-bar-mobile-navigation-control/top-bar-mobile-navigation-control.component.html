@@ -1,11 +1,15 @@
 <div
   class="fs-24px"
   [ngClass]="
-    isLightColor ? 'top-bar-mobile-navigation-control__light-color ' : 'top-bar-mobile-navigation-control__dark-color'
+    isLightColor
+      ? 'top-bar-mobile-navigation-control__light-color '
+      : 'top-bar-mobile-navigation-control__dark-color'
   "
   style="margin-top: -1px"
 >
   <div>
-    <top-bar-mobile-hamburger-menu class="fs-24px"></top-bar-mobile-hamburger-menu>
+    <top-bar-mobile-hamburger-menu
+      class="fs-24px"
+    ></top-bar-mobile-hamburger-menu>
   </div>
 </div>

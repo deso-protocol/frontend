@@ -1,20 +1,20 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
-import { Title } from "@angular/platform-browser";
-import { ThemeService } from "../theme/theme.service";
-import { environment } from "src/environments/environment";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { Router } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import { BackendApiService } from '../backend-api.service';
+import { Title } from '@angular/platform-browser';
+import { ThemeService } from '../theme/theme.service';
+import { environment } from 'src/environments/environment';
+import { SwalHelper } from '../../lib/helpers/swal-helper';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "settings",
-  templateUrl: "./settings.component.html",
-  styleUrls: ["./settings.component.scss"],
+  selector: 'settings',
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.scss'],
 })
 export class SettingsComponent implements OnInit {
   loading = false;
-  emailAddress = "";
+  emailAddress = '';
   invalidEmailEntered = false;
   updatingSettings = false;
   showSuccessMessage = false;
@@ -44,7 +44,8 @@ export class SettingsComponent implements OnInit {
     this.backendApi
       .GetUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/
+        this.globalVars.loggedInUser
+          .PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/
       )
       .subscribe(
         (res) => {
@@ -60,7 +61,7 @@ export class SettingsComponent implements OnInit {
   }
 
   _validateEmail(email) {
-    if (email === "" || this.globalVars.emailRegExp.test(email)) {
+    if (email === '' || this.globalVars.emailRegExp.test(email)) {
       this.invalidEmailEntered = false;
     } else {
       this.invalidEmailEntered = true;
@@ -77,7 +78,8 @@ export class SettingsComponent implements OnInit {
     this.backendApi
       .UpdateUserGlobalMetadata(
         this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+        this.globalVars.loggedInUser
+          .PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
         this.emailAddress /*EmailAddress*/,
         null /*MessageReadStateUpdatesByContact*/
       )
@@ -98,29 +100,34 @@ export class SettingsComponent implements OnInit {
 
   deletePII() {
     SwalHelper.fire({
-      target: GlobalVarsService.getTargetComponentSelectorFromRouter(this.router),
-      icon: "warning",
+      target: GlobalVarsService.getTargetComponentSelectorFromRouter(
+        this.router
+      ),
+      icon: 'warning',
       title: `Delete Your Personal Information`,
       html: `Clicking confirm will remove your phone number, email address, and any other personal information associated with your public key.`,
       showCancelButton: true,
       showConfirmButton: true,
       focusConfirm: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
-      confirmButtonText: "Confirm",
-      cancelButtonText: "Cancel",
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
       reverseButtons: true,
     }).then((res) => {
       if (res.isConfirmed) {
         this.deletingPII = true;
         this.backendApi
-          .DeletePII(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+          .DeletePII(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser?.PublicKeyBase58Check
+          )
           .subscribe(
             (res) => {
-              this.globalVars._alertSuccess("PII Deleted successfully");
-              this.emailAddress = "";
+              this.globalVars._alertSuccess('PII Deleted successfully');
+              this.emailAddress = '';
               this.globalVars.updateEverything();
             },
             (err) => {

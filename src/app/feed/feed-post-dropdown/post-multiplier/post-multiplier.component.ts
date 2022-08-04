@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { BackendApiService, PostEntryResponse } from "../../../backend-api.service";
-import { GlobalVarsService } from "../../../global-vars.service";
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import {
+  BackendApiService,
+  PostEntryResponse,
+} from '../../../backend-api.service';
+import { GlobalVarsService } from '../../../global-vars.service';
 
 @Component({
   selector: 'post-multiplier',
@@ -17,26 +20,31 @@ export class PostMultiplierComponent implements OnInit {
   constructor(
     public globalVars: GlobalVarsService,
     public bsModalRef: BsModalRef,
-    private backendApi: BackendApiService,
-  ) { }
+    private backendApi: BackendApiService
+  ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   updatePostMultiplier() {
     this.updatingPostMultiplier = true;
-    this.backendApi.AdminUpdateHotFeedPostMultiplier(
+    this.backendApi
+      .AdminUpdateHotFeedPostMultiplier(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.post.PostHashHex,
-        this.postMultiplier,
-      ).subscribe(
-        (res) => {this.successfullyUpdatedMultiplier = true},
+        this.postMultiplier
+      )
+      .subscribe(
+        (res) => {
+          this.successfullyUpdatedMultiplier = true;
+        },
         (err) => {
           console.error(err);
           this.errorUpdatingMultiplier = true;
         }
-      ).add(() => { this.updatingPostMultiplier = false; });
+      )
+      .add(() => {
+        this.updatingPostMultiplier = false;
+      });
   }
-
 }

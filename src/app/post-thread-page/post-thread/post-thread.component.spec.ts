@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PostThreadComponent } from "./post-thread.component";
+import { PostThreadComponent } from './post-thread.component';
 
-describe("PostThreadComponent", () => {
+describe('PostThreadComponent', () => {
   let component: PostThreadComponent;
   let fixture: ComponentFixture<PostThreadComponent>;
 
@@ -18,7 +18,7 @@ describe("PostThreadComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

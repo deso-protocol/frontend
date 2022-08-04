@@ -1,11 +1,19 @@
 <div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="isSelectingSerialNumber ? 'Select an edition' : 'Place a bid'" [bsModalRef]="bsModalRef"></nft-modal-header>
+  <nft-modal-header
+    [header]="isSelectingSerialNumber ? 'Select an edition' : 'Place a bid'"
+    [bsModalRef]="bsModalRef"
+  ></nft-modal-header>
 
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
-    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
+    <div
+      *ngIf="biddableSerialNumbers?.length"
+      [ngClass]="{ 'd-none': isSelectingSerialNumber }"
+    >
       <div class="fs-15px text-grey5">
-        You are about to place a bid for an NFT auctioned by @{{ post.ProfileEntryResponse.Username}}.
+        You are about to place a bid for an NFT auctioned by @{{
+          post.ProfileEntryResponse.Username
+        }}.
       </div>
 
       <!-- First separator line -->
@@ -16,21 +24,57 @@
       <!-- Availability metadata -->
       <div class="fs-15px" *ngIf="!loading">
         <div *ngIf="highBid != null && lowBid != null" class="pb-15px">
-          <span class="d-lg-inline-block d-block">Highest bid {{ globalVars.nanosToDeSo(highBid) }} DESO&nbsp;</span>
-          <span class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(highBid, 2)}})</span>
+          <span class="d-lg-inline-block d-block"
+            >Highest bid {{ globalVars.nanosToDeSo(highBid) }} DESO&nbsp;</span
+          >
+          <span class="text-grey7 d-lg-inline-block d-block"
+            >(~{{ globalVars.nanosToUSD(highBid, 2) }})</span
+          >
           <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
-          <span class="d-lg-inline-block d-block">From {{ globalVars.nanosToDeSo(lowBid) }} DESO&nbsp;</span>
-          <span class="text-grey7 d-lg-inline-block d-block">(~{{globalVars.nanosToUSD(lowBid, 2)}})</span>
+          <span class="d-lg-inline-block d-block"
+            >From {{ globalVars.nanosToDeSo(lowBid) }} DESO&nbsp;</span
+          >
+          <span class="text-grey7 d-lg-inline-block d-block"
+            >(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span
+          >
         </div>
         <div class="pb-15px">
-          <span class="d-lg-inline-block d-block">Creator Royalty {{ post.NFTRoyaltyToCreatorBasisPoints / 100 }}%</span>
+          <span class="d-lg-inline-block d-block"
+            >Creator Royalty
+            {{ post.NFTRoyaltyToCreatorBasisPoints / 100 }}%</span
+          >
           <span class="d-lg-inline-block d-none">&nbsp;|&nbsp;</span>
-          <span class="d-lg-inline-block d-block">Coin-holder Royalty {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span>
+          <span class="d-lg-inline-block d-block"
+            >Coin-holder Royalty
+            {{ post.NFTRoyaltyToCoinBasisPoints / 100 }}%</span
+          >
         </div>
         <div class="pb-15px">
-          <span class="d-lg-inline-block d-block" *ngIf="objectKeysLength(post.AdditionalDESORoyaltiesMap)">Additional Creator Royalties {{ sumAdditionalRoyaltiesBasisPoints(post.AdditionalDESORoyaltiesMap) / 100 }}%</span>
-          <span class="d-lg-inline-block d-none" *ngIf="objectKeysLength(post.AdditionalDESORoyaltiesMap)">&nbsp;|&nbsp;</span>
-          <span class="d-lg-inline-block d-block" *ngIf="objectKeysLength(post.AdditionalCoinRoyaltiesMap)">Additional Coin-Holder Royalties {{ sumAdditionalRoyaltiesBasisPoints(post.AdditionalCoinRoyaltiesMap) / 100 }}%</span>
+          <span
+            class="d-lg-inline-block d-block"
+            *ngIf="objectKeysLength(post.AdditionalDESORoyaltiesMap)"
+            >Additional Creator Royalties
+            {{
+              sumAdditionalRoyaltiesBasisPoints(
+                post.AdditionalDESORoyaltiesMap
+              ) / 100
+            }}%</span
+          >
+          <span
+            class="d-lg-inline-block d-none"
+            *ngIf="objectKeysLength(post.AdditionalDESORoyaltiesMap)"
+            >&nbsp;|&nbsp;</span
+          >
+          <span
+            class="d-lg-inline-block d-block"
+            *ngIf="objectKeysLength(post.AdditionalCoinRoyaltiesMap)"
+            >Additional Coin-Holder Royalties
+            {{
+              sumAdditionalRoyaltiesBasisPoints(
+                post.AdditionalCoinRoyaltiesMap
+              ) / 100
+            }}%</span
+          >
         </div>
         <div class="d-flex align-items-center">
           <button
@@ -44,14 +88,16 @@
             {{ availableCount }} of {{ post.NumNFTCopies }} available
           </span>
         </div>
-        <div class="pt-15px d-flex justify-content-between align-items-center" *ngIf="showSelectedSerialNumbers">
+        <div
+          class="pt-15px d-flex justify-content-between align-items-center"
+          *ngIf="showSelectedSerialNumbers"
+        >
           <div>
             <span>Serial Number</span>
           </div>
           <div class="d-flex align-items-center">
-            <span
-              class="badge formbg fs-15px font-weight-normal"
-            >#{{ selectedSerialNumber.SerialNumber }}
+            <span class="badge formbg fs-15px font-weight-normal"
+              >#{{ selectedSerialNumber.SerialNumber }}
               <sup>
                 <i
                   class="fas fa-times pl-5px pt-5px cursor-pointer"
@@ -60,7 +106,6 @@
               </sup>
             </span>
           </div>
-
         </div>
       </div>
 
@@ -71,27 +116,41 @@
 
       <!-- The bid -->
       <div class="pb-15px font-weight-500">
-        <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px">
-          <div>
-            Your Bid
-          </div>
-          <div class="d-flex flex-wrap justify-content-between pt-5px" style="width: 415px">
-            <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
-                 [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+        <div
+          class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px"
+        >
+          <div>Your Bid</div>
+          <div
+            class="d-flex flex-wrap justify-content-between pt-5px"
+            style="width: 415px"
+          >
+            <div
+              class="input-group py-5px"
+              [ngClass]="{ 'mr-15px': !globalVars.isMobile() }"
+              [ngStyle]="{
+                'max-width': !globalVars.isMobile() ? '200px' : 'none'
+              }"
+            >
               <div class="input-group-prepend" id="usd-label">
                 <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
               </div>
-            <input
-              [(ngModel)]="bidAmountUSD"
-              (ngModelChange)="updateBidAmountDESO($event)"
-              class="form-control fs-15px text-right d-inline-block"
-              aria-describedby="usd-label"
-              type="number"
-              min="0"
-              placeholder="0 USD"
-              [disabled]="placingBids"/>
+              <input
+                [(ngModel)]="bidAmountUSD"
+                (ngModelChange)="updateBidAmountDESO($event)"
+                class="form-control fs-15px text-right d-inline-block"
+                aria-describedby="usd-label"
+                type="number"
+                min="0"
+                placeholder="0 USD"
+                [disabled]="placingBids"
+              />
             </div>
-            <div class="input-group py-5px" [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+            <div
+              class="input-group py-5px"
+              [ngStyle]="{
+                'max-width': !globalVars.isMobile() ? '200px' : 'none'
+              }"
+            >
               <div class="input-group-prepend" id="deso-label">
                 <span class="input-group-text fs-15px">DESO</span>
               </div>
@@ -103,13 +162,16 @@
                 min="0"
                 aria-describedby="deso-label"
                 placeholder="0 DESO"
-                [disabled]="placingBids"/>
+                [disabled]="placingBids"
+              />
             </div>
           </div>
         </div>
       </div>
 
-      <div *ngIf="errors" class="text-danger" style="white-space: pre-line;">{{ errors }}</div>
+      <div *ngIf="errors" class="text-danger" style="white-space: pre-line">
+        {{ errors }}
+      </div>
       <div class="d-flex align-items-center mb-15px">
         <button
           class="btn btn-primary font-weight-bold fs-15px br-12px"
@@ -117,17 +179,24 @@
           (click)="placeBid()"
           [disabled]="placingBids || errors"
         >
-          {{ placingBids ? "Placing Bids" : "Place Bid" }}
+          {{ placingBids ? 'Placing Bids' : 'Place Bid' }}
         </button>
-        <div class="fs-15px ml-30px cursor-pointer text-grey7" (click)="navigateToBuyDESO()">Buy $DESO</div>
+        <div
+          class="fs-15px ml-30px cursor-pointer text-grey7"
+          (click)="navigateToBuyDESO()"
+        >
+          Buy $DESO
+        </div>
       </div>
-
     </div>
 
-
-    <div *ngIf="biddableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
+    <div
+      *ngIf="biddableSerialNumbers?.length"
+      [ngClass]="{ 'd-none': !isSelectingSerialNumber }"
+    >
       <div class="fs-15px text-grey5">
-       An NFT can have multiple editions, each with its own unique serial number.
+        An NFT can have multiple editions, each with its own unique serial
+        number.
       </div>
       <div class="container fs-15px pb-30px px-0px">
         <nft-select-serial-number

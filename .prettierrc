@@ -1,7 +1,6 @@
 {
-    "printWidth": 120,
-    "tabWidth": 2,
-    "useTabs": false,
-    "quoteProps": "as-needed",
-    "htmlWhitespaceSensitivity": "ignore",
+  "tabWidth": 2,
+  "useTabs": false,
+  "printWidth": 80,
+  "singleQuote": true
 }

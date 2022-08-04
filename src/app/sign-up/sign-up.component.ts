@@ -1,22 +1,26 @@
-import { Component } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../global-vars.service";
-import { FeedComponent } from "../feed/feed.component";
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GlobalVarsService } from '../global-vars.service';
+import { FeedComponent } from '../feed/feed.component';
 
 @Component({
-  selector: "sign-up",
-  templateUrl: "./sign-up.component.html",
-  styleUrls: ["./sign-up.component.scss"],
+  selector: 'sign-up',
+  templateUrl: './sign-up.component.html',
+  styleUrls: ['./sign-up.component.scss'],
 })
 export class SignUpComponent {
   stepNum: number;
   loading: boolean = false;
-  emailAddress = "";
+  emailAddress = '';
   invalidEmailEntered = false;
   storingEmailAndPhone = false;
   showPhoneNumberVerifiedContent = false;
 
-  constructor(private globalVars: GlobalVarsService, private router: Router, private route: ActivatedRoute) {
+  constructor(
+    private globalVars: GlobalVarsService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.route.queryParams.subscribe((queryParams) => {
       this.stepNum = 1;
       if (queryParams.stepNum) {
@@ -28,7 +32,7 @@ export class SignUpComponent {
   ////// NOTIFICATIONS STEP BUTTONS ///////
 
   notificationsStepSkipped(): void {
-    this.globalVars.logEvent("account : create : notifications-step : skip");
+    this.globalVars.logEvent('account : create : notifications-step : skip');
     this.nextPage();
   }
 
@@ -39,7 +43,7 @@ export class SignUpComponent {
       return;
     }
 
-    this.globalVars.logEvent("account : create : notifications-step");
+    this.globalVars.logEvent('account : create : notifications-step');
     this.storeEmail();
   }
 
@@ -50,7 +54,7 @@ export class SignUpComponent {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { stepNum: this.stepNum },
-      queryParamsHandling: "merge",
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -59,12 +63,15 @@ export class SignUpComponent {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { stepNum: this.stepNum },
-      queryParamsHandling: "merge",
+      queryParamsHandling: 'merge',
     });
   }
 
   validateEmail() {
-    if (this.emailAddress.length > 0 && this.globalVars.emailRegExp.test(this.emailAddress)) {
+    if (
+      this.emailAddress.length > 0 &&
+      this.globalVars.emailRegExp.test(this.emailAddress)
+    ) {
       this.invalidEmailEntered = false;
     } else {
       this.invalidEmailEntered = true;
@@ -72,7 +79,9 @@ export class SignUpComponent {
   }
 
   backToPreviousSignupStepClicked() {
-    this.globalVars.logEvent("account : create : create-phone-number-verification : back");
+    this.globalVars.logEvent(
+      'account : create : create-phone-number-verification : back'
+    );
     this.prevPage();
   }
 
@@ -82,7 +91,9 @@ export class SignUpComponent {
   }
 
   skipButtonClickedOnStarterDeSoStep() {
-    this.globalVars.logEvent("account : create : create-phone-number-verification : skip");
+    this.globalVars.logEvent(
+      'account : create : create-phone-number-verification : skip'
+    );
     this.nextPage();
   }
 
@@ -114,18 +125,18 @@ export class SignUpComponent {
   }
 
   buyDeSoClicked(): void {
-    this.globalVars.logEvent("account : create : buy-deso");
-    this.router.navigate(["/" + this.globalVars.RouteNames.BUY_DESO], {
+    this.globalVars.logEvent('account : create : buy-deso');
+    this.router.navigate(['/' + this.globalVars.RouteNames.BUY_DESO], {
       queryParams: { stepNum: null },
-      queryParamsHandling: "merge",
+      queryParamsHandling: 'merge',
     });
   }
 
   buyDeSoSkipped(): void {
-    this.globalVars.logEvent("account : create : buy-deso : skip");
-    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], {
+    this.globalVars.logEvent('account : create : buy-deso : skip');
+    this.router.navigate(['/' + this.globalVars.RouteNames.BROWSE], {
       queryParams: { stepNum: null, feedTab: FeedComponent.GLOBAL_TAB },
-      queryParamsHandling: "merge",
+      queryParamsHandling: 'merge',
     });
   }
 }

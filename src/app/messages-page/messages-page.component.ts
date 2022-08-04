@@ -1,24 +1,24 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule } from "../app-routing.module";
-import { Datasource, IDatasource } from "ngx-ui-scroll";
-import { BackendApiService } from "../backend-api.service";
-import { Router } from "@angular/router";
-import { Title } from "@angular/platform-browser";
-import { environment } from "src/environments/environment";
+import { Component, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import { AppRoutingModule } from '../app-routing.module';
+import { Datasource, IDatasource } from 'ngx-ui-scroll';
+import { BackendApiService } from '../backend-api.service';
+import { Router } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "app-messages-page",
-  templateUrl: "./messages-page.component.html",
-  styleUrls: ["./messages-page.component.scss"],
+  selector: 'app-messages-page',
+  templateUrl: './messages-page.component.html',
+  styleUrls: ['./messages-page.component.scss'],
 })
 export class MessagesPageComponent {
   lastContactFetched = null;
   intervalsSet = [];
   selectedThread: any;
-  selectedThreadDisplayName = "";
-  selectedThreadPublicKey = "";
-  selectedThreadProfilePic = "";
+  selectedThreadDisplayName = '';
+  selectedThreadPublicKey = '';
+  selectedThreadProfilePic = '';
   showThreadView = false;
   AppRoutingModule = AppRoutingModule;
 
@@ -39,7 +39,7 @@ export class MessagesPageComponent {
     }
     this.selectedThread = thread;
     this.selectedThreadPublicKey = thread.PublicKeyBase58Check;
-    this.selectedThreadProfilePic = "/assets/img/default_profile_pic.png";
+    this.selectedThreadProfilePic = '/assets/img/default_profile_pic.png';
     if (thread.ProfileEntryResponse && thread.ProfileEntryResponse.ProfilePic) {
       this.selectedThreadProfilePic = thread.ProfileEntryResponse.ProfilePic;
     }
@@ -60,21 +60,29 @@ export class MessagesPageComponent {
 
   // This marks all messages as read and relays this request to the server.
   _markAllMessagesReadMobile() {
-    for (let thread of this.globalVars.messageResponse.OrderedContactsWithMessages) {
-      this.globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] = false;
+    for (let thread of this.globalVars.messageResponse
+      .OrderedContactsWithMessages) {
+      this.globalVars.messageResponse.UnreadStateByContact[
+        thread.PublicKeyBase58Check
+      ] = false;
     }
 
     // Send an update back to the server noting that we want to mark all threads read.
     this.backendApi
-      .MarkAllMessagesRead(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .MarkAllMessagesRead(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check
+      )
       .subscribe(
         () => {
-          this.globalVars.logEvent("user : all-message-read");
+          this.globalVars.logEvent('user : all-message-read');
         },
         (err) => {
           console.log(err);
           const parsedError = this.backendApi.stringifyError(err);
-          this.globalVars.logEvent("user : all-message-read : error", { parsedError });
+          this.globalVars.logEvent('user : all-message-read : error', {
+            parsedError,
+          });
           this.globalVars._alertError(parsedError);
         }
       );
@@ -85,8 +93,11 @@ export class MessagesPageComponent {
 
   navigateToInbox() {
     this.selectedThread = null;
-    this.selectedThreadPublicKey = "";
+    this.selectedThreadPublicKey = '';
     this.showThreadView = false;
-    this.router.navigate([], { queryParams: { username: null }, queryParamsHandling: "merge" });
+    this.router.navigate([], {
+      queryParams: { username: null },
+      queryParamsHandling: 'merge',
+    });
   }
 }

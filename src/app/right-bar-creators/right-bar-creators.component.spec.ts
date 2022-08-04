@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RightBarCreatorsComponent } from "./right-bar-creators.component";
+import { RightBarCreatorsComponent } from './right-bar-creators.component';
 
-describe("RightBarCreatorsComponent", () => {
+describe('RightBarCreatorsComponent', () => {
   let component: RightBarCreatorsComponent;
   let fixture: ComponentFixture<RightBarCreatorsComponent>;
 
@@ -18,7 +18,7 @@ describe("RightBarCreatorsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

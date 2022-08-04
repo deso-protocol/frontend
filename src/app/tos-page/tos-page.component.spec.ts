@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TosPageComponent } from "./tos-page.component";
+import { TosPageComponent } from './tos-page.component';
 
-describe("TosPageComponent", () => {
+describe('TosPageComponent', () => {
   let component: TosPageComponent;
   let fixture: ComponentFixture<TosPageComponent>;
 
@@ -18,7 +18,7 @@ describe("TosPageComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,4 +1,4 @@
-import { User } from "../../app/backend-api.service";
+import { User } from '../../app/backend-api.service';
 
 export class LoggedInUserObservableResult {
   public loggedInUser: User;

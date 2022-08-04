@@ -1,9 +1,11 @@
 <div app-theme class="p-15px">
   <div class="d-flex flex-column">
-    <div>Update Sign-Up Bonus for {{ getCountryName() }} </div>
+    <div>Update Sign-Up Bonus for {{ getCountryName() }}</div>
     <div class="d-flex flex-column">
       <div class="d-flex py-15px">
-        <label for="referral-amount-override-usd" class="cursor-pointer mb-0">Referral Amount Override ($USD): </label>
+        <label for="referral-amount-override-usd" class="cursor-pointer mb-0"
+          >Referral Amount Override ($USD):
+        </label>
         <input
           id="referral-amount-override-usd"
           [(ngModel)]="newReferralAmountOverrideUSD"
@@ -16,15 +18,20 @@
       </div>
 
       <div class="d-flex py-15px">
-        <label for="allow-custom-referral-amount" class="cursor-pointer mb-0">Allow Custom Referral Amount: </label>
+        <label for="allow-custom-referral-amount" class="cursor-pointer mb-0"
+          >Allow Custom Referral Amount:
+        </label>
         <input
           id="allow-custom-referral-amount"
           [(ngModel)]="newAllowCustomReferralAmount"
-          type="checkbox"/>
+          type="checkbox"
+        />
       </div>
 
       <div class="d-flex py-15px">
-        <label for="kickback-amount-override-usd" class="cursor-pointer mb-0">Kickback Amount Override ($USD): </label>
+        <label for="kickback-amount-override-usd" class="cursor-pointer mb-0"
+          >Kickback Amount Override ($USD):
+        </label>
         <input
           id="kickback-amount-override-usd"
           [(ngModel)]="newKickbackAmountOverrideUSD"
@@ -37,11 +44,14 @@
       </div>
 
       <div class="d-flex py-15px">
-        <label for="allow-custom-kickback-amount" class="cursor-pointer mb-0">Allow Custom Kickback Amount: </label>
+        <label for="allow-custom-kickback-amount" class="cursor-pointer mb-0"
+          >Allow Custom Kickback Amount:
+        </label>
         <input
           id="allow-custom-kickback-amount"
           [(ngModel)]="newAllowCustomKickbackAmount"
-          type="checkbox"/>
+          type="checkbox"
+        />
       </div>
     </div>
     <div>
@@ -49,12 +59,13 @@
         class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
         style="height: 36px; width: 75px; line-height: 15px"
         [ngClass]="{
-      disabled: updatingCountryLevelBonus,
-      'btn-loading': updatingCountryLevelBonus
-    }"
+          disabled: updatingCountryLevelBonus,
+          'btn-loading': updatingCountryLevelBonus
+        }"
         (click)="updateSignUpBonus()"
-      >Update</button>
+      >
+        Update
+      </button>
     </div>
   </div>
 </div>
-
