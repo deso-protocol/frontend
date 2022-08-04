@@ -1,28 +1,35 @@
-import { Directive, Output, EventEmitter, HostBinding, HostListener, HostBindingDecorator } from "@angular/core";
+import {
+  Directive,
+  Output,
+  EventEmitter,
+  HostBinding,
+  HostListener,
+  HostBindingDecorator,
+} from '@angular/core';
 
 @Directive({
-  selector: "[dropUpload]",
+  selector: '[dropUpload]',
 })
 export class UploadDirective {
   @Output() onFileDropped = new EventEmitter<any>();
-  @HostBinding("style.opacity") public opacity = "1";
+  @HostBinding('style.opacity') public opacity = '1';
 
-  @HostListener("dragover", ["$event"]) onDragOver(evt) {
+  @HostListener('dragover', ['$event']) onDragOver(evt) {
     evt.preventDefault();
     evt.stopPropagation();
-    this.opacity = "0.5";
+    this.opacity = '0.5';
   }
 
-  @HostListener("dragleave", ["$event"]) public onDragLeave(evt) {
+  @HostListener('dragleave', ['$event']) public onDragLeave(evt) {
     evt.preventDefault();
     evt.stopPropagation();
-    this.opacity = "1";
+    this.opacity = '1';
   }
 
-  @HostListener("drop", ["$event"]) public ondrop(evt) {
+  @HostListener('drop', ['$event']) public ondrop(evt) {
     evt.preventDefault();
     evt.stopPropagation();
-    this.opacity = "1";
+    this.opacity = '1';
     let files = evt.dataTransfer.files;
     if (files.length > 0) {
       this.onFileDropped.emit(files);

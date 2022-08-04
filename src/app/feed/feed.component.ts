@@ -1,25 +1,32 @@
-import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef, AfterViewChecked } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService } from "../backend-api.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from "rxjs";
-import { tap, finalize, first } from "rxjs/operators";
-import * as _ from "lodash";
-import PullToRefresh from "pulltorefreshjs";
-import { Title } from "@angular/platform-browser";
-import { NftPostComponent } from "../nft-post-page/nft-post/nft-post.component";
-import { environment } from "src/environments/environment";
+import {
+  Component,
+  OnInit,
+  Input,
+  OnDestroy,
+  ChangeDetectorRef,
+  AfterViewChecked,
+} from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import { BackendApiService } from '../backend-api.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { tap, finalize, first } from 'rxjs/operators';
+import * as _ from 'lodash';
+import PullToRefresh from 'pulltorefreshjs';
+import { Title } from '@angular/platform-browser';
+import { NftPostComponent } from '../nft-post-page/nft-post/nft-post.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "feed",
-  templateUrl: "./feed.component.html",
-  styleUrls: ["./feed.component.sass"],
+  selector: 'feed',
+  templateUrl: './feed.component.html',
+  styleUrls: ['./feed.component.sass'],
 })
 export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
-  static GLOBAL_TAB = "Global";
-  static FOLLOWING_TAB = "Following";
-  static NEW_TAB = "New";
-  static SHOWCASE_TAB = "⚡ NFT Showcase ⚡";
+  static GLOBAL_TAB = 'Global';
+  static FOLLOWING_TAB = 'Following';
+  static NEW_TAB = 'New';
+  static SHOWCASE_TAB = '⚡ NFT Showcase ⚡';
   static TABS = [
     FeedComponent.GLOBAL_TAB,
     FeedComponent.FOLLOWING_TAB,
@@ -28,7 +35,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   ];
   static NUM_TO_FETCH = 50;
   static MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT = 10;
-  static PULL_TO_REFRESH_MARKER_ID = "pull-to-refresh-marker";
+  static PULL_TO_REFRESH_MARKER_ID = 'pull-to-refresh-marker';
 
   @Input() activeTab: string;
   @Input() isMobile = false;
@@ -85,7 +92,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.feedTab) {
-        if (queryParams.feedTab === "Showcase") {
+        if (queryParams.feedTab === 'Showcase') {
           this.activeTab = FeedComponent.SHOWCASE_TAB;
         } else {
           this.activeTab = queryParams.feedTab;
@@ -98,22 +105,29 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
 
     // Reload the follow feed any time the user follows / unfollows somebody
-    this.followChangeSubscription = this.appData.followChangeObservable.subscribe((followChangeObservableResult) => {
-      this._reloadFollowFeed();
-    });
-
-    this.loggedInUserSubscription = this.appData.loggedInUserObservable.subscribe((loggedInUserObservableResult) => {
-      // Reload the follow feed if the logged in user changed
-      if (!loggedInUserObservableResult.isSameUserAsBefore) {
-        // Set activeTab to null so that a sensible default tab is selected
-        this.activeTab = null;
-        this._initializeFeeds();
+    this.followChangeSubscription = this.appData.followChangeObservable.subscribe(
+      (followChangeObservableResult) => {
+        this._reloadFollowFeed();
       }
-    });
+    );
+
+    this.loggedInUserSubscription = this.appData.loggedInUserObservable.subscribe(
+      (loggedInUserObservableResult) => {
+        // Reload the follow feed if the logged in user changed
+        if (!loggedInUserObservableResult.isSameUserAsBefore) {
+          // Set activeTab to null so that a sensible default tab is selected
+          this.activeTab = null;
+          this._initializeFeeds();
+        }
+      }
+    );
 
     // Go see if there is an upcoming NFT showcase that should be advertised.
     this.backendApi
-      .GetNextNFTShowcase(this.globalVars.localNode, this.globalVars.loggedInUser?.PublicKeyBase58Check)
+      .GetNextNFTShowcase(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check
+      )
       .subscribe((res: any) => {
         if (res.NextNFTShowcaseTstamp) {
           this.nextNFTShowcaseTime = new Date(res.NextNFTShowcaseTstamp / 1e6);
@@ -213,7 +227,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   onPostHidden(postEntryResponse) {
-    const parentPostIndex = FeedComponent.findParentPostIndex(this.postsToShow(), postEntryResponse);
+    const parentPostIndex = FeedComponent.findParentPostIndex(
+      this.postsToShow(),
+      postEntryResponse
+    );
     const parentPost = this.postsToShow()[parentPostIndex];
 
     FeedComponent.onPostHidden(
@@ -233,7 +250,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   appendCommentAfterParentPost(postEntryResponse) {
-    FeedComponent.appendCommentAfterParentPost(this.postsToShow(), postEntryResponse);
+    FeedComponent.appendCommentAfterParentPost(
+      this.postsToShow(),
+      postEntryResponse
+    );
   }
 
   hideFollowLink() {
@@ -267,7 +287,8 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   showLoadingSpinner() {
     return (
-      this.activeTab !== FeedComponent.SHOWCASE_TAB && (this.loadingFirstBatchOfActiveTabPosts() || this.switchingTabs)
+      this.activeTab !== FeedComponent.SHOWCASE_TAB &&
+      (this.loadingFirstBatchOfActiveTabPosts() || this.switchingTabs)
     );
   }
 
@@ -338,30 +359,41 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.loadingMoreGlobalFeedPosts = true;
 
     // Get the reader's public key for the request.
-    let readerPubKey = "";
+    let readerPubKey = '';
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
 
     // Get the last post hash in case this is a "load more" request.
-    let lastPostHash = "";
+    let lastPostHash = '';
     if (this.globalVars.postsToShow.length > 0 && !reload) {
-      lastPostHash = this.globalVars.postsToShow[this.globalVars.postsToShow.length - 1].PostHashHex;
+      lastPostHash = this.globalVars.postsToShow[
+        this.globalVars.postsToShow.length - 1
+      ].PostHashHex;
     }
 
-    const hotFeedPostHashes = _.map(this.globalVars.postsToShow, "PostHashHex");
+    const hotFeedPostHashes = _.map(this.globalVars.postsToShow, 'PostHashHex');
     return this.backendApi
-      .GetHotFeed(this.globalVars.localNode, readerPubKey, hotFeedPostHashes, this.FeedComponent.NUM_TO_FETCH)
+      .GetHotFeed(
+        this.globalVars.localNode,
+        readerPubKey,
+        hotFeedPostHashes,
+        this.FeedComponent.NUM_TO_FETCH
+      )
       .pipe(
         tap(
           (res) => {
             if (res.HotFeedPage) {
-              this.globalVars.postsToShow = this.globalVars.postsToShow.concat(res.HotFeedPage);
+              this.globalVars.postsToShow = this.globalVars.postsToShow.concat(
+                res.HotFeedPage
+              );
             }
           },
           (err) => {
             console.error(err);
-            this.globalVars._alertError("Error loading posts: " + this.backendApi.stringifyError(err));
+            this.globalVars._alertError(
+              'Error loading posts: ' + this.backendApi.stringifyError(err)
+            );
           }
         ),
         finalize(() => {
@@ -378,13 +410,14 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.backendApi
       .GetFollows(
         this.appData.localNode,
-        "" /* username */,
+        '' /* username */,
         this.appData.loggedInUser.PublicKeyBase58Check,
         false /* getEntriesFollowingPublicKey */
       )
       .subscribe(
         (response) => {
-          this.followedPublicKeyToProfileEntry = response.PublicKeyToProfileEntry;
+          this.followedPublicKeyToProfileEntry =
+            response.PublicKeyToProfileEntry;
         },
         (error) => {}
       )
@@ -397,24 +430,26 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.loadingMoreFollowFeedPosts = true;
 
     // Get the reader's public key for the request.
-    let readerPubKey = "";
+    let readerPubKey = '';
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
 
     // Get the last post hash in case this is a "load more" request.
-    let lastPostHash = "";
+    let lastPostHash = '';
     if (this.globalVars.followFeedPosts.length > 0 && !reload) {
-      lastPostHash = this.globalVars.followFeedPosts[this.globalVars.followFeedPosts.length - 1].PostHashHex;
+      lastPostHash = this.globalVars.followFeedPosts[
+        this.globalVars.followFeedPosts.length - 1
+      ].PostHashHex;
     }
     return this.backendApi
       .GetPostsStateless(
         this.globalVars.localNode,
         lastPostHash /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
-        "newest" /*OrderBy*/,
+        'newest' /*OrderBy*/,
         parseInt(this.globalVars.filterType) /*StartTstampSecs*/,
-        "",
+        '',
         FeedComponent.NUM_TO_FETCH /*NumToFetch*/,
         false /*FetchSubcomments*/,
         true /*GetPostsForFollowFeed*/,
@@ -427,8 +462,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       .pipe(
         tap(
           (res) => {
-            if (lastPostHash !== "") {
-              this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(res.PostsFound);
+            if (lastPostHash !== '') {
+              this.globalVars.followFeedPosts = this.globalVars.followFeedPosts.concat(
+                res.PostsFound
+              );
             } else {
               this.globalVars.followFeedPosts = res.PostsFound;
             }
@@ -445,7 +482,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
           },
           (err) => {
             console.error(err);
-            this.globalVars._alertError("Error loading posts: " + this.backendApi.stringifyError(err));
+            this.globalVars._alertError(
+              'Error loading posts: ' + this.backendApi.stringifyError(err)
+            );
           }
         ),
         finalize(() => {
@@ -461,24 +500,26 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.loadingMoreNewFeedPosts = true;
 
     // Get the reader's public key for the request.
-    let readerPubKey = "";
+    let readerPubKey = '';
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
 
     // Get the last post hash in case this is a "load more" request.
-    let lastPostHash = "";
+    let lastPostHash = '';
     if (this.globalVars.newFeedPosts.length > 0 && !reload) {
-      lastPostHash = this.globalVars.newFeedPosts[this.globalVars.newFeedPosts.length - 1].PostHashHex;
+      lastPostHash = this.globalVars.newFeedPosts[
+        this.globalVars.newFeedPosts.length - 1
+      ].PostHashHex;
     }
     return this.backendApi
       .GetPostsStateless(
         this.globalVars.localNode,
         lastPostHash /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
-        "newest" /*OrderBy*/,
+        'newest' /*OrderBy*/,
         parseInt(this.globalVars.filterType) /*StartTstampSecs*/,
-        "",
+        '',
         FeedComponent.NUM_TO_FETCH /*NumToFetch*/,
         false /*FetchSubcomments*/,
         false /*GetPostsForFollowFeed*/,
@@ -491,8 +532,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
       .pipe(
         tap(
           (res) => {
-            if (lastPostHash !== "") {
-              this.globalVars.newFeedPosts = this.globalVars.newFeedPosts.concat(res.PostsFound);
+            if (lastPostHash !== '') {
+              this.globalVars.newFeedPosts = this.globalVars.newFeedPosts.concat(
+                res.PostsFound
+              );
             } else {
               this.globalVars.newFeedPosts = res.PostsFound;
             }
@@ -509,7 +552,9 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
           },
           (err) => {
             console.error(err);
-            this.globalVars._alertError("Error loading posts: " + this.backendApi.stringifyError(err));
+            this.globalVars._alertError(
+              'Error loading posts: ' + this.backendApi.stringifyError(err)
+            );
           }
         ),
         finalize(() => {
@@ -527,8 +572,11 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     // defaultActiveTab is "Following" if the user is following anybody. Otherwise
     // the default is global.
     let defaultActiveTab;
-    const numFollowing = Object.keys(this.followedPublicKeyToProfileEntry).length;
-    if (numFollowing >= FeedComponent.MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT) {
+    const numFollowing = Object.keys(this.followedPublicKeyToProfileEntry)
+      .length;
+    if (
+      numFollowing >= FeedComponent.MIN_FOLLOWING_TO_SHOW_FOLLOW_FEED_BY_DEFAULT
+    ) {
       defaultActiveTab = FeedComponent.FOLLOWING_TAB;
     } else {
       defaultActiveTab = FeedComponent.GLOBAL_TAB;
@@ -552,7 +600,7 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { feedTab: this.activeTab },
-      queryParamsHandling: "merge",
+      queryParamsHandling: 'merge',
     });
     this._onTabSwitch();
   }
@@ -563,16 +611,24 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   // Note: the caller of this function may need to re-render the parentPost and grandparentPost,
   // since we update their CommentCounts
-  static onPostHidden(postsToShow, postEntryResponse, parentPost, grandparentPost) {
+  static onPostHidden(
+    postsToShow,
+    postEntryResponse,
+    parentPost,
+    grandparentPost
+  ) {
     const postIndex = postsToShow.findIndex((post) => {
       return post.PostHashHex === postEntryResponse.PostHashHex;
     });
 
     if (postIndex === -1) {
-      console.error(`Problem finding postEntryResponse in postsToShow in onPostHidden`, {
-        postEntryResponse,
-        postsToShow,
-      });
+      console.error(
+        `Problem finding postEntryResponse in postsToShow in onPostHidden`,
+        {
+          postEntryResponse,
+          postsToShow,
+        }
+      );
     }
 
     // the current post (1) + the CommentCount comments/subcomments were hidden
@@ -596,7 +652,10 @@ export class FeedComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   static appendCommentAfterParentPost(postsToShow, postEntryResponse) {
-    const parentPostIndex = FeedComponent.findParentPostIndex(postsToShow, postEntryResponse);
+    const parentPostIndex = FeedComponent.findParentPostIndex(
+      postsToShow,
+      postEntryResponse
+    );
     const parentPost = postsToShow[parentPostIndex];
 
     // Note: we don't worry about updating the grandparent posts' commentCount in the feed

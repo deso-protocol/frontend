@@ -1,19 +1,26 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { FeedComponent } from "../../feed/feed.component";
-import { Datasource, IDatasource, IAdapter } from "ngx-ui-scroll";
-import { ToastrService } from "ngx-toastr";
-import { Title } from "@angular/platform-browser";
-import { environment } from "src/environments/environment";
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GlobalVarsService } from '../../global-vars.service';
+import { BackendApiService } from '../../backend-api.service';
+import { FeedComponent } from '../../feed/feed.component';
+import { Datasource, IDatasource, IAdapter } from 'ngx-ui-scroll';
+import { ToastrService } from 'ngx-toastr';
+import { Title } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 @Component({
-  selector: "post-thread",
-  templateUrl: "./post-thread.component.html",
-  styleUrls: ["./post-thread.component.scss"],
+  selector: 'post-thread',
+  templateUrl: './post-thread.component.html',
+  styleUrls: ['./post-thread.component.scss'],
 })
 export class PostThreadComponent {
   currentPost;
@@ -64,7 +71,10 @@ export class PostThreadComponent {
           success([]);
           return;
         }
-        if (index + count < comments.length || (index + count > comments.length && this.scrollingDisabled)) {
+        if (
+          index + count < comments.length ||
+          (index + count > comments.length && this.scrollingDisabled)
+        ) {
           // MinIndex doesn't actually prevent us from going below 0, causing initial posts to disappear on long thread
           if (index < 0) {
             index = 0;
@@ -84,7 +94,10 @@ export class PostThreadComponent {
               if (this.currentPost.Comments) {
                 this.currentPost.Comments.push(...res.PostFound.Comments);
                 // Make sure we don't have duplicate comments
-                this.currentPost.Comments = _.uniqBy(this.currentPost.Comments, "PostHashHex");
+                this.currentPost.Comments = _.uniqBy(
+                  this.currentPost.Comments,
+                  'PostHashHex'
+                );
               }
               success(this.currentPost.Comments.slice(index, index + count));
               return;
@@ -98,7 +111,10 @@ export class PostThreadComponent {
           (err) => {
             // TODO: post threads: rollbar
             console.error(err);
-            this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+            this.router.navigateByUrl(
+              '/' + this.globalVars.RouteNames.NOT_FOUND,
+              { skipLocationChange: true }
+            );
           }
         );
       },
@@ -116,13 +132,22 @@ export class PostThreadComponent {
   // after we updated the comment count. This replaces the outdated object with the new object.
   replacePostInDatasource(datasourceAdapter, postEntryResponse) {
     datasourceAdapter.replace({
-      predicate: ({ data }) => (data as any).PostHashHex === postEntryResponse.PostHashHex,
+      predicate: ({ data }) =>
+        (data as any).PostHashHex === postEntryResponse.PostHashHex,
       items: [postEntryResponse],
     });
   }
 
-  appendToSubcommentList(postWithComments, postWithCommentsParent, postEntryResponse) {
-    this.appendSubcomment(postEntryResponse, postWithComments, true /* shouldAppend */);
+  appendToSubcommentList(
+    postWithComments,
+    postWithCommentsParent,
+    postEntryResponse
+  ) {
+    this.appendSubcomment(
+      postEntryResponse,
+      postWithComments,
+      true /* shouldAppend */
+    );
   }
 
   // Appends newPost to uiParentPost's Comments array, and updates CommentCounts as needed
@@ -230,7 +255,10 @@ export class PostThreadComponent {
     parentPost.CommentCount += 1;
 
     // Show toast when adding comment to parent post
-    this.toastr.info("Your post was sent!", null, { positionClass: "toast-top-center", timeOut: 3000 });
+    this.toastr.info('Your post was sent!', null, {
+      positionClass: 'toast-top-center',
+      timeOut: 3000,
+    });
   }
 
   prependToCommentList(parentPost, postEntryResponse) {
@@ -241,18 +269,34 @@ export class PostThreadComponent {
     this.currentPost.ParentPosts.map((parentPost) => parentPost.CommentCount++);
   }
 
-  prependToSubcommentList(postWithComments, postWithCommentsParent, postEntryResponse) {
-    this.appendSubcomment(postEntryResponse, postWithComments, false /* shouldAppend */);
+  prependToSubcommentList(
+    postWithComments,
+    postWithCommentsParent,
+    postEntryResponse
+  ) {
+    this.appendSubcomment(
+      postEntryResponse,
+      postWithComments,
+      false /* shouldAppend */
+    );
   }
 
-  onPostHidden(hiddenPostEntryResponse, parentPostEntryResponse, grandparentPostEntryResponse) {
+  onPostHidden(
+    hiddenPostEntryResponse,
+    parentPostEntryResponse,
+    grandparentPostEntryResponse
+  ) {
     if (parentPostEntryResponse == null) {
       // TODO: this has a bug. Posts cached in the global state can still show up in the
       // user's the global feed after deletion.
       // deleted the root post, redirect home
-      this.router.navigate(["/"], { queryParamsHandling: "merge" });
+      this.router.navigate(['/'], { queryParamsHandling: 'merge' });
     } else {
-      this.onCommentHidden(hiddenPostEntryResponse, parentPostEntryResponse, grandparentPostEntryResponse);
+      this.onCommentHidden(
+        hiddenPostEntryResponse,
+        parentPostEntryResponse,
+        grandparentPostEntryResponse
+      );
     }
   }
 
@@ -261,28 +305,45 @@ export class PostThreadComponent {
   // the frontend is currently only incrementing the parent, so this only decrements the parent.
   // However, the backend is incrementing both the parent and grandparent. We should revisit / unify
   // all this stuff.
-  async onCommentHidden(hiddenPostEntryResponse, parentPostEntryResponse, grandparentPostEntryResponse) {
+  async onCommentHidden(
+    hiddenPostEntryResponse,
+    parentPostEntryResponse,
+    grandparentPostEntryResponse
+  ) {
     let allPosts = await this._allPosts();
-    FeedComponent.onPostHidden(allPosts, hiddenPostEntryResponse, parentPostEntryResponse, null);
+    FeedComponent.onPostHidden(
+      allPosts,
+      hiddenPostEntryResponse,
+      parentPostEntryResponse,
+      null
+    );
 
     // This seems a little off. We're decrementing all the way up the tree, but I think
     // our comment counts only take into account two layers. TODO: reconsider this
     if (parentPostEntryResponse.PostHashHex === this.currentPostHashHex) {
-      this.currentPost.ParentPosts.map((parentPost) => parentPost.CommentCount--);
+      this.currentPost.ParentPosts.map(
+        (parentPost) => parentPost.CommentCount--
+      );
     }
 
     // Remove hidden post from datasource if it's in there. Note: It may not be in there if
     // it's a reply to a subcomment.
     this.datasource.adapter.remove({
       predicate: ({ data }) => {
-        return (data as any).PostHashHex === hiddenPostEntryResponse.PostHashHex;
+        return (
+          (data as any).PostHashHex === hiddenPostEntryResponse.PostHashHex
+        );
       },
     });
   }
 
-  getPost(fetchParents: boolean = true, commentOffset: number = 0, commentLimit: number = this.commentLimit) {
+  getPost(
+    fetchParents: boolean = true,
+    commentOffset: number = 0,
+    commentLimit: number = this.commentLimit
+  ) {
     // Hit the Get Single Post endpoint with specific parameters
-    let readerPubKey = "";
+    let readerPubKey = '';
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
@@ -302,26 +363,38 @@ export class PostThreadComponent {
     this.getPost().subscribe(
       (res) => {
         if (!res || !res.PostFound) {
-          this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          this.router.navigateByUrl(
+            '/' + this.globalVars.RouteNames.NOT_FOUND,
+            { skipLocationChange: true }
+          );
           return;
         }
         if (
           res.PostFound.IsNFT &&
-          (!this.route.snapshot.url.length || this.route.snapshot.url[0].path != this.globalVars.RouteNames.NFT)
+          (!this.route.snapshot.url.length ||
+            this.route.snapshot.url[0].path != this.globalVars.RouteNames.NFT)
         ) {
-          this.router.navigate(["/" + this.globalVars.RouteNames.NFT, this.currentPostHashHex], {
-            queryParamsHandling: "merge",
-          });
+          this.router.navigate(
+            ['/' + this.globalVars.RouteNames.NFT, this.currentPostHashHex],
+            {
+              queryParamsHandling: 'merge',
+            }
+          );
           return;
         }
         // Set current post
         this.currentPost = res.PostFound;
-        this.titleService.setTitle(this.currentPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
+        this.titleService.setTitle(
+          this.currentPost.ProfileEntryResponse.Username +
+            ` on ${environment.node.name}`
+        );
       },
       (err) => {
         // TODO: post threads: rollbar
         console.error(err);
-        this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+        this.router.navigateByUrl('/' + this.globalVars.RouteNames.NOT_FOUND, {
+          skipLocationChange: true,
+        });
       }
     );
   }
@@ -341,7 +414,9 @@ export class PostThreadComponent {
   }
 
   isPostBlocked(post: any): boolean {
-    return this.globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check);
+    return this.globalVars.hasUserBlockedCreator(
+      post.PosterPublicKeyBase58Check
+    );
   }
 
   afterUserBlocked(blockedPubKey: any) {

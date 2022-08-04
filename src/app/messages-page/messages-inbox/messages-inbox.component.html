@@ -7,7 +7,8 @@
   <div class="d-flex justify-content-end align-items-right pr-10px">
     <div
       *ngIf="
-        globalVars.messageResponse != null && globalVars.messageResponse.NumberOfUnreadThreads > 0;
+        globalVars.messageResponse != null &&
+          globalVars.messageResponse.NumberOfUnreadThreads > 0;
         then thenEnvelopeBlock;
         else elseEnvelopeBlock
       "
@@ -38,7 +39,10 @@
   <messages-filter-menu></messages-filter-menu>
 </div>
 
-<div *ngIf="messageThreads" class="messages-inbox__threads vh-100 disable-scrollbars">
+<div
+  *ngIf="messageThreads"
+  class="messages-inbox__threads vh-100 disable-scrollbars"
+>
   <!-- Search -->
   <search-bar
     [showCloutavista]="false"

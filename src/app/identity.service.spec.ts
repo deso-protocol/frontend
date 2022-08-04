@@ -1,11 +1,11 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
-import { IdentityService } from "./identity.service";
+import { IdentityService } from './identity.service';
 
-describe("IdentityService", () => {
+describe('IdentityService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
-  it("should be created", () => {
+  it('should be created', () => {
     const service: IdentityService = TestBed.inject(IdentityService);
     expect(service).toBeTruthy();
   });

@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FollowButtonComponent } from "./follow-button.component";
+import { FollowButtonComponent } from './follow-button.component';
 
-describe("FollowButtonComponent", () => {
+describe('FollowButtonComponent', () => {
   let component: FollowButtonComponent;
   let fixture: ComponentFixture<FollowButtonComponent>;
 
@@ -18,7 +18,7 @@ describe("FollowButtonComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

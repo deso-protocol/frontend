@@ -1,14 +1,18 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse, TutorialStatus } from "../../../backend-api.service";
-import { AppRoutingModule } from "../../../app-routing.module";
-import { Title } from "@angular/platform-browser";
-import { environment } from "src/environments/environment";
+import { Component, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../../../global-vars.service';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+  TutorialStatus,
+} from '../../../backend-api.service';
+import { AppRoutingModule } from '../../../app-routing.module';
+import { Title } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "buy-creator-coins-tutorial",
-  templateUrl: "./buy-creator-coins-tutorial.component.html",
-  styleUrls: ["./buy-creator-coins-tutorial.component.scss"],
+  selector: 'buy-creator-coins-tutorial',
+  templateUrl: './buy-creator-coins-tutorial.component.html',
+  styleUrls: ['./buy-creator-coins-tutorial.component.scss'],
 })
 export class BuyCreatorCoinsTutorialComponent implements OnInit {
   static PAGE_SIZE = 100;
@@ -32,16 +36,25 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
 
   ngOnInit() {
     // this.isLoadingProfilesForFirstTime = true;
-    this.titleService.setTitle(`Buy Creator Coins Tutorial - ${environment.node.name}`);
+    this.titleService.setTitle(
+      `Buy Creator Coins Tutorial - ${environment.node.name}`
+    );
     // If the user just completed their profile, we instruct them to buy their own coin.
-    if (this.globalVars.loggedInUser?.TutorialStatus === TutorialStatus.CREATE_PROFILE) {
+    if (
+      this.globalVars.loggedInUser?.TutorialStatus ===
+      TutorialStatus.CREATE_PROFILE
+    ) {
       this.loggedInUserProfile = this.globalVars.loggedInUser?.ProfileEntryResponse;
       this.investInYourself = true;
       this.loading = false;
       return;
     }
     this.backendApi
-      .GetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 3)
+      .GetTutorialCreators(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        3
+      )
       .subscribe(
         (res: {
           WellKnownProfileEntryResponses: ProfileEntryResponse[];
@@ -50,13 +63,17 @@ export class BuyCreatorCoinsTutorialComponent implements OnInit {
           // Do not let users select themselves in the "Invest In Others" step.
           if (res.WellKnownProfileEntryResponses?.length) {
             this.topCreatorsToHighlight = res.WellKnownProfileEntryResponses.filter(
-              (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+              (profile) =>
+                profile.PublicKeyBase58Check !==
+                this.globalVars.loggedInUser?.PublicKeyBase58Check
             );
           }
 
           if (res.UpAndComingProfileEntryResponses?.length) {
             this.upAndComingCreatorsToHighlight = res.UpAndComingProfileEntryResponses.filter(
-              (profile) => profile.PublicKeyBase58Check !== this.globalVars.loggedInUser?.PublicKeyBase58Check
+              (profile) =>
+                profile.PublicKeyBase58Check !==
+                this.globalVars.loggedInUser?.PublicKeyBase58Check
             );
           }
           this.loading = false;

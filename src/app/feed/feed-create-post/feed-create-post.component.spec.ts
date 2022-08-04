@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FeedCreatePostComponent } from "./feed-create-post.component";
+import { FeedCreatePostComponent } from './feed-create-post.component';
 
-describe("FeedCreatePostComponent", () => {
+describe('FeedCreatePostComponent', () => {
   let component: FeedCreatePostComponent;
   let fixture: ComponentFixture<FeedCreatePostComponent>;
 
@@ -18,7 +18,7 @@ describe("FeedCreatePostComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

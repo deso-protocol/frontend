@@ -1,24 +1,32 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import {
   BackendApiService,
   NFTBidEntryResponse,
   NFTEntryResponse,
   PostEntryResponse,
   ProfileEntryResponse,
-} from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import * as _ from "lodash";
-import { InfiniteScroller } from "../../infinite-scroller";
-import { of, Subscription } from "rxjs";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
+} from '../../backend-api.service';
+import { GlobalVarsService } from '../../global-vars.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
+import * as _ from 'lodash';
+import { InfiniteScroller } from '../../infinite-scroller';
+import { of, Subscription } from 'rxjs';
+import { SwalHelper } from '../../../lib/helpers/swal-helper';
 
 @Component({
-  selector: "creator-profile-nfts",
-  templateUrl: "./creator-profile-nfts.component.html",
-  styleUrls: ["./creator-profile-nfts.component.scss"],
+  selector: 'creator-profile-nfts',
+  templateUrl: './creator-profile-nfts.component.html',
+  styleUrls: ['./creator-profile-nfts.component.scss'],
 })
 export class CreatorProfileNftsComponent implements OnInit {
   static PAGE_SIZE = 10;
@@ -30,18 +38,24 @@ export class CreatorProfileNftsComponent implements OnInit {
   @Input() afterCommentCreatedCallback: any = null;
   @Input() showProfileAsReserved: boolean;
 
-  nftResponse: { NFTEntryResponses: NFTEntryResponse[]; PostEntryResponse: PostEntryResponse }[];
+  nftResponse: {
+    NFTEntryResponses: NFTEntryResponse[];
+    PostEntryResponse: PostEntryResponse;
+  }[];
   myBids: NFTBidEntryResponse[];
 
   lastPage = null;
   isLoading = true;
   loadingNewSelection = false;
-  static FOR_SALE = "For Sale";
-  static MY_BIDS = "My Bids";
-  static MY_GALLERY = "Gallery";
-  static TRANSFERABLE = "Transferable";
-  static MY_PENDING_TRANSFERS = "Pending Transfers";
-  tabs = [CreatorProfileNftsComponent.FOR_SALE, CreatorProfileNftsComponent.MY_GALLERY];
+  static FOR_SALE = 'For Sale';
+  static MY_BIDS = 'My Bids';
+  static MY_GALLERY = 'Gallery';
+  static TRANSFERABLE = 'Transferable';
+  static MY_PENDING_TRANSFERS = 'Pending Transfers';
+  tabs = [
+    CreatorProfileNftsComponent.FOR_SALE,
+    CreatorProfileNftsComponent.MY_GALLERY,
+  ];
   activeTab: string;
 
   nftTabMap = {
@@ -53,11 +67,11 @@ export class CreatorProfileNftsComponent implements OnInit {
   };
 
   nftTabInverseMap = {
-    [CreatorProfileNftsComponent.FOR_SALE]: "for_sale",
-    [CreatorProfileNftsComponent.MY_BIDS]: "my_bids",
-    [CreatorProfileNftsComponent.MY_GALLERY]: "my_gallery",
-    [CreatorProfileNftsComponent.TRANSFERABLE]: "transferable",
-    [CreatorProfileNftsComponent.MY_PENDING_TRANSFERS]: "my_pending_transfers",
+    [CreatorProfileNftsComponent.FOR_SALE]: 'for_sale',
+    [CreatorProfileNftsComponent.MY_BIDS]: 'my_bids',
+    [CreatorProfileNftsComponent.MY_GALLERY]: 'my_gallery',
+    [CreatorProfileNftsComponent.TRANSFERABLE]: 'transferable',
+    [CreatorProfileNftsComponent.MY_PENDING_TRANSFERS]: 'my_pending_transfers',
   };
 
   CreatorProfileNftsComponent = CreatorProfileNftsComponent;
@@ -84,10 +98,16 @@ export class CreatorProfileNftsComponent implements OnInit {
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.nftTab && queryParams.nftTab in this.nftTabMap) {
         if (
-          (queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_BIDS] ||
-            queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.TRANSFERABLE] ||
-            queryParams.nftTab === this.nftTabInverseMap[CreatorProfileNftsComponent.MY_PENDING_TRANSFERS]) &&
-          this.globalVars.loggedInUser?.PublicKeyBase58Check !== this.profile.PublicKeyBase58Check
+          (queryParams.nftTab ===
+            this.nftTabInverseMap[CreatorProfileNftsComponent.MY_BIDS] ||
+            queryParams.nftTab ===
+              this.nftTabInverseMap[CreatorProfileNftsComponent.TRANSFERABLE] ||
+            queryParams.nftTab ===
+              this.nftTabInverseMap[
+                CreatorProfileNftsComponent.MY_PENDING_TRANSFERS
+              ]) &&
+          this.globalVars.loggedInUser?.PublicKeyBase58Check !==
+            this.profile.PublicKeyBase58Check
         ) {
           this.updateNFTTabParam(CreatorProfileNftsComponent.MY_GALLERY);
         } else {
@@ -114,26 +134,36 @@ export class CreatorProfileNftsComponent implements OnInit {
       )
       .subscribe(
         (res: {
-          PublicKeyBase58CheckToProfileEntryResponse: { [k: string]: ProfileEntryResponse };
+          PublicKeyBase58CheckToProfileEntryResponse: {
+            [k: string]: ProfileEntryResponse;
+          };
           PostHashHexToPostEntryResponse: { [k: string]: PostEntryResponse };
           NFTBidEntries: NFTBidEntryResponse[];
         }) => {
           _.forIn(res.PostHashHexToPostEntryResponse, (value, key) => {
             value.ProfileEntryResponse =
-              res.PublicKeyBase58CheckToProfileEntryResponse[value.PosterPublicKeyBase58Check];
+              res.PublicKeyBase58CheckToProfileEntryResponse[
+                value.PosterPublicKeyBase58Check
+              ];
             res.PostHashHexToPostEntryResponse[key] = value;
           });
           this.myBids = res.NFTBidEntries.map((bidEntry) => {
-            bidEntry.PostEntryResponse = res.PostHashHexToPostEntryResponse[bidEntry.PostHashHex];
+            bidEntry.PostEntryResponse =
+              res.PostHashHexToPostEntryResponse[bidEntry.PostHashHex];
             return bidEntry;
           });
-          this.lastPage = Math.floor(this.myBids.length / CreatorProfileNftsComponent.PAGE_SIZE);
+          this.lastPage = Math.floor(
+            this.myBids.length / CreatorProfileNftsComponent.PAGE_SIZE
+          );
           return this.myBids;
         }
       );
   }
 
-  getNFTs(isForSale: boolean | null = null, isPending: boolean | null = null): Subscription {
+  getNFTs(
+    isForSale: boolean | null = null,
+    isPending: boolean | null = null
+  ): Subscription {
     return this.backendApi
       .GetNFTsForUser(
         this.globalVars.localNode,
@@ -144,7 +174,12 @@ export class CreatorProfileNftsComponent implements OnInit {
       )
       .subscribe(
         (res: {
-          NFTsMap: { [k: string]: { PostEntryResponse: PostEntryResponse; NFTEntryResponses: NFTEntryResponse[] } };
+          NFTsMap: {
+            [k: string]: {
+              PostEntryResponse: PostEntryResponse;
+              NFTEntryResponses: NFTEntryResponse[];
+            };
+          };
         }) => {
           this.nftResponse = [];
           for (const k in res.NFTsMap) {
@@ -152,15 +187,19 @@ export class CreatorProfileNftsComponent implements OnInit {
             // Exclude NFTs created by profile from Gallery and don't show pending NFTs in galley.
             if (
               this.activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
-              (responseElement.PostEntryResponse.PosterPublicKeyBase58Check === this.profile.PublicKeyBase58Check ||
-                responseElement.NFTEntryResponses.filter((nftEntryResponse) => !nftEntryResponse.IsPending).length ===
-                  0)
+              (responseElement.PostEntryResponse.PosterPublicKeyBase58Check ===
+                this.profile.PublicKeyBase58Check ||
+                responseElement.NFTEntryResponses.filter(
+                  (nftEntryResponse) => !nftEntryResponse.IsPending
+                ).length === 0)
             ) {
               continue;
             }
             this.nftResponse.push(responseElement);
           }
-          this.lastPage = Math.floor(this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE);
+          this.lastPage = Math.floor(
+            this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE
+          );
           return this.nftResponse;
         }
       );
@@ -177,13 +216,18 @@ export class CreatorProfileNftsComponent implements OnInit {
       resolve(
         this.activeTab === CreatorProfileNftsComponent.MY_BIDS
           ? this.myBids.slice(startIdx, Math.min(endIdx, this.myBids.length))
-          : this.nftResponse.slice(startIdx, Math.min(endIdx, this.nftResponse.length))
+          : this.nftResponse.slice(
+              startIdx,
+              Math.min(endIdx, this.nftResponse.length)
+            )
       );
     });
   }
 
   async _prependComment(uiPostParent, index, newComment) {
-    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(uiPostParent);
+    const uiPostParentHashHex = this.globalVars.getPostContentHashHex(
+      uiPostParent
+    );
     await this.datasource.adapter.relax();
     await this.datasource.adapter.update({
       predicate: ({ $index, data, element }) => {
@@ -193,7 +237,10 @@ export class CreatorProfileNftsComponent implements OnInit {
           currentPost.Comments = currentPost.Comments || [];
           currentPost.Comments.unshift(_.cloneDeep(newComment));
           return [this.globalVars.incrementCommentCount(currentPost)];
-        } else if (this.globalVars.getPostContentHashHex(currentPost) === uiPostParentHashHex) {
+        } else if (
+          this.globalVars.getPostContentHashHex(currentPost) ===
+          uiPostParentHashHex
+        ) {
           // We also want to increment the comment count on any other notifications related to the same post hash hex.
           return [this.globalVars.incrementCommentCount(currentPost)];
         }
@@ -210,7 +257,8 @@ export class CreatorProfileNftsComponent implements OnInit {
   profileBelongsToLoggedInUser(): boolean {
     return (
       this.globalVars.loggedInUser?.ProfileEntryResponse &&
-      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
+      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check ===
+        this.profile.PublicKeyBase58Check
     );
   }
 
@@ -221,7 +269,9 @@ export class CreatorProfileNftsComponent implements OnInit {
     CreatorProfileNftsComponent.BUFFER_SIZE,
     CreatorProfileNftsComponent.PADDING
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 
   onActiveTabChange(event): Subscription {
     if (this.activeTab !== event) {
@@ -234,12 +284,15 @@ export class CreatorProfileNftsComponent implements OnInit {
           this.resetDatasource(event);
         });
       } else {
-        return this.getNFTs(this.getIsForSaleValue(), this.getIsPendingValue()).add(() => {
+        return this.getNFTs(
+          this.getIsForSaleValue(),
+          this.getIsPendingValue()
+        ).add(() => {
           this.resetDatasource(event);
         });
       }
     } else {
-      return of("").subscribe((res) => res);
+      return of('').subscribe((res) => res);
     }
   }
 
@@ -255,8 +308,11 @@ export class CreatorProfileNftsComponent implements OnInit {
   updateNFTTabParam(event): void {
     // Update query params to reflect current tab
     const urlTree = this.router.createUrlTree([], {
-      queryParams: { nftTab: this.nftTabInverseMap[event] || "for_sale", tab: "nfts" },
-      queryParamsHandling: "merge",
+      queryParams: {
+        nftTab: this.nftTabInverseMap[event] || 'for_sale',
+        tab: 'nfts',
+      },
+      queryParamsHandling: 'merge',
       preserveFragment: true,
     });
     this.location.go(urlTree.toString());
@@ -265,12 +321,12 @@ export class CreatorProfileNftsComponent implements OnInit {
   cancelBid(bidEntry: NFTBidEntryResponse): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Cancel Bid",
+      title: 'Cancel Bid',
       html: `Are you sure you'd like to cancel this bid?`,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((res) => {
@@ -291,8 +347,10 @@ export class CreatorProfileNftsComponent implements OnInit {
                   const currBidEntry = (data as any) as NFTBidEntryResponse;
                   return (
                     currBidEntry.SerialNumber === bidEntry.SerialNumber &&
-                    currBidEntry.BidAmountNanos === currBidEntry.BidAmountNanos &&
-                    currBidEntry.PostEntryResponse.PostHashHex === bidEntry.PostEntryResponse.PostHashHex
+                    currBidEntry.BidAmountNanos ===
+                      currBidEntry.BidAmountNanos &&
+                    currBidEntry.PostEntryResponse.PostHashHex ===
+                      bidEntry.PostEntryResponse.PostHashHex
                   );
                 },
               });

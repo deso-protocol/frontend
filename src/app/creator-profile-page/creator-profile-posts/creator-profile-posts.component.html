@@ -1,15 +1,28 @@
 <!-- Posts -->
-<simple-center-loader [height]="200" *ngIf="loadingFirstPage && datasource.adapter.isLoading"></simple-center-loader>
+<simple-center-loader
+  [height]="200"
+  *ngIf="loadingFirstPage && datasource.adapter.isLoading"
+></simple-center-loader>
 <div
   *ngIf="
-    !showProfileAsReserved && !loadingFirstPage && !datasource.adapter.isLoading && datasource.adapter.itemsCount === 0
+    !showProfileAsReserved &&
+    !loadingFirstPage &&
+    !datasource.adapter.isLoading &&
+    datasource.adapter.itemsCount === 0
   "
   class="p-15px"
 >
-  <div class="background-color-grey p-35px br-12px d-flex flex-row align-items-center" style="text-align: center">
-    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock">Create your first post.</span>
+  <div
+    class="background-color-grey p-35px br-12px d-flex flex-row align-items-center"
+    style="text-align: center"
+  >
+    <span *ngIf="profileBelongsToLoggedInUser(); else elseMissingPostBlock"
+      >Create your first post.</span
+    >
     <ng-template #elseMissingPostBlock>
-      <span>@{{ profile.Username }} is on the platform but hasn't posted yet.</span>
+      <span
+        >@{{ profile.Username }} is on the platform but hasn't posted yet.</span
+      >
     </ng-template>
   </div>
 </div>
@@ -22,7 +35,9 @@
         [includePaddingOnPost]="true"
         [post]="post"
         [afterCommentCreatedCallback]="_prependComment.bind(this, post, index)"
-        [blocked]="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+        [blocked]="
+          globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)
+        "
         [cardStyle]="true"
         [showNFTDetails]="true"
         (userBlocked)="userBlocked()"

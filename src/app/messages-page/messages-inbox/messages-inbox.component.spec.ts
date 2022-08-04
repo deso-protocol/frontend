@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MessagesInboxComponent } from "./messages-inbox.component";
+import { MessagesInboxComponent } from './messages-inbox.component';
 
-describe("MessagesInboxComponent", () => {
+describe('MessagesInboxComponent', () => {
   let component: MessagesInboxComponent;
   let fixture: ComponentFixture<MessagesInboxComponent>;
 
@@ -18,7 +18,7 @@ describe("MessagesInboxComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

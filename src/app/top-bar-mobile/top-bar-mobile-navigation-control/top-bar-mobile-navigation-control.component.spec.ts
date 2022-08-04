@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TopBarMobileNavigationControlComponent } from "./top-bar-mobile-navigation-control.component";
+import { TopBarMobileNavigationControlComponent } from './top-bar-mobile-navigation-control.component';
 
-describe("TopBarMobileNavigationControlComponent", () => {
+describe('TopBarMobileNavigationControlComponent', () => {
   let component: TopBarMobileNavigationControlComponent;
   let fixture: ComponentFixture<TopBarMobileNavigationControlComponent>;
 
@@ -18,7 +18,7 @@ describe("TopBarMobileNavigationControlComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

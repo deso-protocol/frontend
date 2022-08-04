@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChangeAccountSelectorComponent } from "./change-account-selector.component";
+import { ChangeAccountSelectorComponent } from './change-account-selector.component';
 
-describe("ChangeAccountSelectorComponent", () => {
+describe('ChangeAccountSelectorComponent', () => {
   let component: ChangeAccountSelectorComponent;
   let fixture: ComponentFixture<ChangeAccountSelectorComponent>;
 
@@ -18,7 +18,7 @@ describe("ChangeAccountSelectorComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

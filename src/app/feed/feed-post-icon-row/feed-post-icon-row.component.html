@@ -17,7 +17,9 @@
     dropdown
     #dropdown="bs-dropdown"
     [ngClass]="{
-      'fc-green': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.RepostedByReader : false
+      'fc-green': postContent.PostEntryReaderState
+        ? postContent.PostEntryReaderState.RepostedByReader
+        : false
     }"
   >
     <a
@@ -64,24 +66,37 @@
           class="dropdown-menu-item d-block link--unstyled p-5px feed-post__dropdown-menu-item"
           (click)="openModal($event, true)"
         >
-          <i class="fas fa-pencil-alt feed-post-icon-row__icon pl-5px" style="font-size: 10px"></i>
+          <i
+            class="fas fa-pencil-alt feed-post-icon-row__icon pl-5px"
+            style="font-size: 10px"
+          ></i>
           Quote
         </a>
       </ng-template>
     </div>
-    <span *ngIf="!hideNumbers">{{ postContent.RepostCount + postContent.QuoteRepostCount }}</span>
+    <span *ngIf="!hideNumbers">{{
+      postContent.RepostCount + postContent.QuoteRepostCount
+    }}</span>
   </div>
 
   <div
     (click)="toggleLike($event)"
-    [ngClass]="{ 'fc-red': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false }"
+    [ngClass]="{
+      'fc-red': postContent.PostEntryReaderState
+        ? postContent.PostEntryReaderState.LikedByReader
+        : false
+    }"
     class="cursor-pointer d-flex align-items-center"
   >
     <i
       [ngClass]="{
         is_animating: animateLike,
-        'icon-heart': postContent.PostEntryReaderState ? !postContent.PostEntryReaderState.LikedByReader : true,
-        'icon-heart-fill': postContent.PostEntryReaderState ? postContent.PostEntryReaderState.LikedByReader : false
+        'icon-heart': postContent.PostEntryReaderState
+          ? !postContent.PostEntryReaderState.LikedByReader
+          : true,
+        'icon-heart-fill': postContent.PostEntryReaderState
+          ? postContent.PostEntryReaderState.LikedByReader
+          : false
       }"
       (click)="animateLike = !animateLike"
       class="feed-post-icon-row__icon"
@@ -109,7 +124,8 @@
       [ngClass]="{
         'hide-diamonds':
           !globalVars.loggedInUser?.PublicKeyBase58Check ||
-          postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
+          postContent.ProfileEntryResponse?.PublicKeyBase58Check ===
+            globalVars.loggedInUser?.PublicKeyBase58Check
       }"
     >
       <div
@@ -117,7 +133,13 @@
         class="diamond-mobile-drag-instructions"
       >
         <p class="d-block">
-          {{ !diamondDragMoved ? "<- Slide ->" : diamondDragCancel ? "Release To Cancel" : "Slide Down To Cancel - Release To Confirm" }}
+          {{
+            !diamondDragMoved
+              ? '<- Slide ->'
+              : diamondDragCancel
+              ? 'Release To Cancel'
+              : 'Slide Down To Cancel - Release To Confirm'
+          }}
         </p>
       </div>
     </div>
@@ -143,7 +165,8 @@
           'dragged-like': diamondDragging,
           'hide-diamonds':
             !globalVars.loggedInUser?.PublicKeyBase58Check ||
-            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check ||
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check ===
+              globalVars.loggedInUser?.PublicKeyBase58Check ||
             sendingDiamonds
         }"
         class="diamond-btn icon-diamond"
@@ -153,17 +176,26 @@
           class="reaction-box"
           [ngStyle]="{
             height:
-              !collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
+              !collapseDiamondInfo ||
+              (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
                 ? '121px'
                 : '55px'
           }"
         >
-          <div *ngIf="!collapseDiamondInfo || (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)">
+          <div
+            *ngIf="
+              !collapseDiamondInfo ||
+              (diamondIdxDraggedTo === diamondCount && diamondDragLeftExplainer)
+            "
+          >
             <ng-container *ngTemplateOutlet="popTemplate"></ng-container>
           </div>
           <div
             *ngFor="let diamondIndex of diamondIndexes"
-            [ngClass]="{ show: diamondsVisible[diamondIndex], 'dragged-icon': diamondIdxDraggedTo === diamondIndex }"
+            [ngClass]="{
+              show: diamondsVisible[diamondIndex],
+              'dragged-icon': diamondIdxDraggedTo === diamondIndex
+            }"
             class="reaction-icon transformable"
             (click)="onDiamondSelected($event, diamondIndex)"
             (mouseover)="diamondHovered = diamondIndex"
@@ -201,7 +233,8 @@
         class="diamond-mobile-drag-grab"
         [ngClass]="{
           'hide-diamonds':
-            postContent.ProfileEntryResponse?.PublicKeyBase58Check === globalVars.loggedInUser?.PublicKeyBase58Check
+            postContent.ProfileEntryResponse?.PublicKeyBase58Check ===
+            globalVars.loggedInUser?.PublicKeyBase58Check
         }"
         id="diamond-mobile-drag-grab"
         cdkDrag
@@ -220,7 +253,9 @@
       matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
       mat-raised-button
       #tooltip="matTooltip"
-      [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)"
+      [matTooltip]="
+        globalVars.convertTstampToDateTime(postContent.TimestampNanos)
+      "
       (auxclick)="onTimestampClickHandler($event)"
     >
       {{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}

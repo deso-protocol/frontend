@@ -1,10 +1,10 @@
-import { Component, HostListener, Input, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
+import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
 
 @Component({
-  selector: "app-page",
-  templateUrl: "./page.component.html",
-  styleUrls: ["./page.component.scss"],
+  selector: 'app-page',
+  templateUrl: './page.component.html',
+  styleUrls: ['./page.component.scss'],
 })
 export class PageComponent implements OnInit {
   @Input() hideSidebar: string;
@@ -12,7 +12,7 @@ export class PageComponent implements OnInit {
   @Input() inTutorial: boolean = false;
   mobile = false;
 
-  @HostListener("window:resize") onResize() {
+  @HostListener('window:resize') onResize() {
     this.setMobileBasedOnViewport();
   }
 

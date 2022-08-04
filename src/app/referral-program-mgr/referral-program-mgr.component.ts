@@ -1,15 +1,18 @@
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
-import * as _ from "lodash";
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+} from '../backend-api.service';
+import * as _ from 'lodash';
 
 @Component({
-  selector: "referral-program-mgr",
-  templateUrl: "./referral-program-mgr.component.html",
+  selector: 'referral-program-mgr',
+  templateUrl: './referral-program-mgr.component.html',
 })
 export class ReferralProgramMgrComponent implements OnInit {
-  tabs = ["Single User", "Bulk CSV Upload"];
-  activeTab = "Single User";
+  tabs = ['Single User', 'Bulk CSV Upload'];
+  activeTab = 'Single User';
   selectedCreator: ProfileEntryResponse;
   requiresJumio: boolean = true;
   refereeAmountUSD: number = 0;
@@ -22,7 +25,7 @@ export class ReferralProgramMgrComponent implements OnInit {
   existingLinks = [];
   linkCopied = [];
   updatingLink = [];
-  fileInput = "";
+  fileInput = '';
 
   constructor(
     private globalVars: GlobalVarsService,
@@ -42,7 +45,7 @@ export class ReferralProgramMgrComponent implements OnInit {
   }
 
   _getCreatorPubKey(creator: ProfileEntryResponse) {
-    return creator?.Username || creator?.PublicKeyBase58Check || "";
+    return creator?.Username || creator?.PublicKeyBase58Check || '';
   }
 
   _setExistingLinkStatusArrays() {
@@ -69,9 +72,10 @@ export class ReferralProgramMgrComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          res.ReferralInfoResponse.Info["referrerAmountUSD"] =
+          res.ReferralInfoResponse.Info['referrerAmountUSD'] =
             res.ReferralInfoResponse.Info.ReferrerAmountUSDCents / 100;
-          res.ReferralInfoResponse.Info["refereeAmountUSD"] = res.ReferralInfoResponse.Info.RefereeAmountUSDCents / 100;
+          res.ReferralInfoResponse.Info['refereeAmountUSD'] =
+            res.ReferralInfoResponse.Info.RefereeAmountUSDCents / 100;
           this.existingLinks.unshift(res.ReferralInfoResponse);
           this._setExistingLinkStatusArrays();
         },
@@ -97,9 +101,10 @@ export class ReferralProgramMgrComponent implements OnInit {
           if (res.ReferralInfoResponses) {
             this.existingLinks = res.ReferralInfoResponses;
             for (let ii = 0; ii < this.existingLinks.length; ii++) {
-              this.existingLinks[ii].Info["referrerAmountUSD"] =
+              this.existingLinks[ii].Info['referrerAmountUSD'] =
                 this.existingLinks[ii].Info.ReferrerAmountUSDCents / 100;
-              this.existingLinks[ii].Info["refereeAmountUSD"] = this.existingLinks[ii].Info.RefereeAmountUSDCents / 100;
+              this.existingLinks[ii].Info['refereeAmountUSD'] =
+                this.existingLinks[ii].Info.RefereeAmountUSDCents / 100;
             }
             this.existingLinks = _.sortBy(this.existingLinks, [
               (o) => {
@@ -109,7 +114,7 @@ export class ReferralProgramMgrComponent implements OnInit {
             this._setExistingLinkStatusArrays();
           } else {
             // If no links are returned, empty out the array.
-            this.existingLinks = []
+            this.existingLinks = [];
           }
         },
         (err) => {
@@ -140,11 +145,12 @@ export class ReferralProgramMgrComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          res.ReferralInfoResponse.Info["referrerAmountUSD"] =
+          res.ReferralInfoResponse.Info['referrerAmountUSD'] =
             res.ReferralInfoResponse.Info.ReferrerAmountUSDCents / 100;
-          res.ReferralInfoResponse.Info["refereeAmountUSD"] = res.ReferralInfoResponse.Info.RefereeAmountUSDCents / 100;
+          res.ReferralInfoResponse.Info['refereeAmountUSD'] =
+            res.ReferralInfoResponse.Info.RefereeAmountUSDCents / 100;
           this.existingLinks[linkNum] = res.ReferralInfoResponse;
-          this.globalVars._alertSuccess("Successfully updated referral link.");
+          this.globalVars._alertSuccess('Successfully updated referral link.');
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
@@ -157,7 +163,7 @@ export class ReferralProgramMgrComponent implements OnInit {
   _getDateString() {
     let date = new Date();
     let mm = (date.getMonth() + 1).toString();
-    mm = mm.length == 1 ? "0" + mm : mm;
+    mm = mm.length == 1 ? '0' + mm : mm;
     let dd = date.getDate().toString();
     let yyyy = date.getFullYear().toString();
     return yyyy + mm + dd;
@@ -166,22 +172,28 @@ export class ReferralProgramMgrComponent implements OnInit {
   _downloadReferralCSV() {
     this.downloadingReferralCSV = true;
     this.backendApi
-      .AdminDownloadReferralCSV(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .AdminDownloadReferralCSV(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check
+      )
       .subscribe(
         (res) => {
           // We construct the CSV on the client side so that we can use our standard JWT post
           // request. Thanks to @isherwood and @Default for the code: https://bit.ly/3zoQRGY.
-          let csvContent = "data:text/csv;charset=utf-8,";
+          let csvContent = 'data:text/csv;charset=utf-8,';
 
           res.CSVRows.forEach(function (rowArray) {
-            let row = rowArray.join(",");
-            csvContent += row + "\r\n";
+            let row = rowArray.join(',');
+            csvContent += row + '\r\n';
           });
 
           var encodedUri = encodeURI(csvContent);
-          var link = document.createElement("a");
-          link.setAttribute("href", encodedUri);
-          link.setAttribute("download", this._getDateString() + "_referral_links.csv");
+          var link = document.createElement('a');
+          link.setAttribute('href', encodedUri);
+          link.setAttribute(
+            'download',
+            this._getDateString() + '_referral_links.csv'
+          );
           document.body.appendChild(link);
 
           link.click();
@@ -195,7 +207,7 @@ export class ReferralProgramMgrComponent implements OnInit {
     this.uploadingReferralCSV = true;
     // Get the CSV file.
     let fileToUpload = files.item(0);
-    if (fileToUpload.type !== "text/csv") {
+    if (fileToUpload.type !== 'text/csv') {
       this.globalVars._alertError("File must have type 'text/csv'.");
       return;
     }
@@ -205,15 +217,19 @@ export class ReferralProgramMgrComponent implements OnInit {
 
   _uploadCSV(file: File) {
     this.backendApi
-      .AdminUploadReferralCSV(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, file)
+      .AdminUploadReferralCSV(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        file
+      )
       .subscribe(
         (res) => {
           this.globalVars._alertSuccess(
-            "Successfully uploaded CSV! " +
+            'Successfully uploaded CSV! ' +
               res.LinksUpdated.toString() +
-              " links updated and " +
+              ' links updated and ' +
               res.LinksCreated.toString() +
-              " links created."
+              ' links created.'
           );
         },
         (err) => {
@@ -225,7 +241,9 @@ export class ReferralProgramMgrComponent implements OnInit {
 
   _copyLink(linkNum: number) {
     this.globalVars._copyText(
-      this.globalVars.getLinkForReferralHash(this.existingLinks[linkNum].Info.ReferralHashBase58)
+      this.globalVars.getLinkForReferralHash(
+        this.existingLinks[linkNum].Info.ReferralHashBase58
+      )
     );
 
     this.linkCopied[linkNum] = true;

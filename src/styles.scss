@@ -1,32 +1,37 @@
-$primary: #0059F7;
-$danger: #E63946;
+$primary: #0059f7;
+$danger: #e63946;
 $secondary: #ecf0f1;
-$success: #32ED4B;
+$success: #32ed4b;
 $info: #689eff;
 $feed-border-radius: 12px;
 
 @import 'variables.scss';
 @import 'app/theme/themes/index';
-@import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+@import '../node_modules/@angular/material/prebuilt-themes/indigo-pink.css';
 
 // regular style toast
 @import '~ngx-toastr/toastr';
 
 // New themeing class
 .main {
-  background: var(--background) !important; // TODO: remove all !important, this is a platform to extend
-  color: var(--text) !important; // TODO: remove all !important, this is a platform to extend
+  background: var(
+    --background
+  ) !important; // TODO: remove all !important, this is a platform to extend
+  color: var(
+    --text
+  ) !important; // TODO: remove all !important, this is a platform to extend
 }
 
 html {
   overflow-y: scroll;
   overscroll-behavior-y: none;
 
-   // removes 300ms click delay on mobile browsers
-   touch-action: manipulation;
+  // removes 300ms click delay on mobile browsers
+  touch-action: manipulation;
 }
 
-html, body {
+html,
+body {
   font-family: 'Roboto Mono';
   min-height: 100%; // allows for scrolling
 }
@@ -44,7 +49,12 @@ h1 {
   color: var(--text);
 }
 
-h2,h3,h4,h5,h6,p {
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   margin: 0;
   color: var(--text);
   font-family: 'Roboto Mono';
@@ -54,7 +64,9 @@ h2,h3,h4,h5,h6,p {
 a {
   cursor: pointer; // for anchors without hrefs
   color: var(--link);
-  &:hover, &:active, &:focus {
+  &:hover,
+  &:active,
+  &:focus {
     text-decoration: inherit; // I prefer no underline when you hover over links
     color: var(--hover);
   }
@@ -63,25 +75,28 @@ a {
 .link--unstyled {
   color: inherit;
   text-decoration: inherit;
-  &:hover, &:active, &:focus {
+  &:hover,
+  &:active,
+  &:focus {
     text-decoration: inherit;
     color: inherit;
     outline: none;
   }
 }
 
-pre, code{
-    white-space:normal;
+pre,
+code {
+  white-space: normal;
 }
 
 .countdown-timer {
   text-align: center;
-  color: #252B37;
+  color: #252b37;
   animation: textColor 4s ease infinite;
 
   @keyframes textColor {
     0% {
-    color: #d6b6fc;
+      color: #d6b6fc;
     }
     50% {
       color: #0fffc1;
@@ -96,15 +111,15 @@ pre, code{
   animation: leftToRight 4s linear infinite;
 
   @keyframes leftToRight {
-      0% {
-        margin-left: 0px;
-      }
-      50% {
-        margin-left: 40px;
-      }
-      100% {
-        margin-left: 0px;
-      }
+    0% {
+      margin-left: 0px;
+    }
+    50% {
+      margin-left: 40px;
+    }
+    100% {
+      margin-left: 0px;
+    }
   }
 }
 
@@ -124,7 +139,6 @@ pre, code{
   }
 }
 
-
 //
 // v0 styles (start)
 //
@@ -136,16 +150,16 @@ $global__center__width: 600px;
 $global__sidebar__width: 375px;
 $global__content__width: $global__center__width + $global__sidebar__width;
 
-$border-grey: #E5E5E5;
-$staking-grey: #F0F0F0;
-$light-grey-for-divider: #F8F8F8;
-$light-grey-for-divider-2: #FAFAFA;
+$border-grey: #e5e5e5;
+$staking-grey: #f0f0f0;
+$light-grey-for-divider: #f8f8f8;
+$light-grey-for-divider-2: #fafafa;
 $buy-button-blue: var(--button);
 // Font colors.
 $light-font-color: #777777;
 $normal-font-color: #222222;
 $red-font-color: #fe3537;
-$green-font-color: #19B028;
+$green-font-color: #19b028;
 
 // For when you want a finger instead of an arrow.
 .cursor-pointer {
@@ -165,251 +179,675 @@ $green-font-color: #19B028;
 }
 
 // Grey text colors
-.text-black { color: #000000 }
-.text-grey1 { color: #111111 }
-.text-grey2 { color: #222222 } // mocks call this G0
-.text-grey3 { color: #333333 }
-.text-grey4 { color: #444444 }
-.text-grey5 { color: var(--grey) } // mocks call this G1
-.text-grey6 { color: #666666 }
-.text-grey7 { color: #777777 }
-.text-grey8 { color: #888888 }
-.text-grey9 { color: #999999 }
-.text-greyA { color: #AAAAAA }
-.text-greyB { color: #BBBBBB }
-.text-greyC { color: #CCCCCC }
-.text-greyD { color: #DDDDDD }
-.text-greyE { color: #EEEEEE }
-.text-greyF { color: #FFFFFF }
+.text-black {
+  color: #000000;
+}
+.text-grey1 {
+  color: #111111;
+}
+.text-grey2 {
+  color: #222222;
+} // mocks call this G0
+.text-grey3 {
+  color: #333333;
+}
+.text-grey4 {
+  color: #444444;
+}
+.text-grey5 {
+  color: var(--grey);
+} // mocks call this G1
+.text-grey6 {
+  color: #666666;
+}
+.text-grey7 {
+  color: #777777;
+}
+.text-grey8 {
+  color: #888888;
+}
+.text-grey9 {
+  color: #999999;
+}
+.text-greyA {
+  color: #aaaaaa;
+}
+.text-greyB {
+  color: #bbbbbb;
+}
+.text-greyC {
+  color: #cccccc;
+}
+.text-greyD {
+  color: #dddddd;
+}
+.text-greyE {
+  color: #eeeeee;
+}
+.text-greyF {
+  color: #ffffff;
+}
 
-.text-grey8A { color: #8A8A8A } // mocks call this G2
-.text-greyE5 { color: #E5E5E5 } // mocks call this G3
-.text-greyF5 { color: #F5F5F5 } // mocks call this G4
+.text-grey8A {
+  color: #8a8a8a;
+} // mocks call this G2
+.text-greyE5 {
+  color: #e5e5e5;
+} // mocks call this G3
+.text-greyF5 {
+  color: #f5f5f5;
+} // mocks call this G4
 
-
-.text-grey-loading { color: var(--loading) }
+.text-grey-loading {
+  color: var(--loading);
+}
 // Set toast-info to use system blue
-.toast-info { background-color: $buy-button-blue}
+.toast-info {
+  background-color: $buy-button-blue;
+}
 
 // font weights
 // font-weight-light: 300
 // font-weight-normal: 400
-.font-weight-semibold { font-weight: 500 }
-.font-weight-normal { font-weight: 400 }
+.font-weight-semibold {
+  font-weight: 500;
+}
+.font-weight-normal {
+  font-weight: 400;
+}
 // font-weight-bold: 700
 
-
 // Widths
-.w-10 { width: 10% }
-.w-20 { width: 20% }
-.w-30 { width: 10% }
-.w-40 { width: 40% }
-.w-50 { width: 50% }
-.w-60 { width: 60% }
-.w-70 { width: 70% }
-.w-80 { width: 80% }
-.w-90 { width: 90% }
-.w-100 { width: 100% }
+.w-10 {
+  width: 10%;
+}
+.w-20 {
+  width: 20%;
+}
+.w-30 {
+  width: 10%;
+}
+.w-40 {
+  width: 40%;
+}
+.w-50 {
+  width: 50%;
+}
+.w-60 {
+  width: 60%;
+}
+.w-70 {
+  width: 70%;
+}
+.w-80 {
+  width: 80%;
+}
+.w-90 {
+  width: 90%;
+}
+.w-100 {
+  width: 100%;
+}
 
-.max-width-420px { max-width: 420px }
+.max-width-420px {
+  max-width: 420px;
+}
 
 // Custom font classes.
-.fc-default { color: var(--norm); }
-.fc-muted { color: var(--textalt); }
-.fc-blue { color: var(--cblue); }
-.fc-red { color: var(--cred); }
-.fc-green { color: var(--cgreen); }
-.fc-gold { color: var(--cgold); }
+.fc-default {
+  color: var(--norm);
+}
+.fc-muted {
+  color: var(--textalt);
+}
+.fc-blue {
+  color: var(--cblue);
+}
+.fc-red {
+  color: var(--cred);
+}
+.fc-green {
+  color: var(--cgreen);
+}
+.fc-gold {
+  color: var(--cgold);
+}
 
-.font-weight-500 { font-weight: 500 }
+.font-weight-500 {
+  font-weight: 500;
+}
 
-.fs-1 { font-size: 2.5rem }
-.fs-2 { font-size: 2rem }
-.fs-3 { font-size: 1.75rem }
+.fs-1 {
+  font-size: 2.5rem;
+}
+.fs-2 {
+  font-size: 2rem;
+}
+.fs-3 {
+  font-size: 1.75rem;
+}
 
-.fs-35px { font-size: 35px; }
-.fs-32px { font-size: 32px; }
-.fs-25px { font-size: 25px; }
-.fs-24px { font-size: 24px; }
-.fs-22px { font-size: 22px; }
-.fs-20px { font-size: 20px; }
-.fs-18px { font-size: 18px; }
-.fs-16px { font-size: 16px; }
-.fs-15px { font-size: 15px; }
-.fs-15px-important { font-size: 15px !important; }
-.fs-14px { font-size: 14px; }
-.fs-13px { font-size: 13px; }
-.fs-12px { font-size: 12px !important; }
-.fs-10px { font-size: 10px !important; }
+.fs-35px {
+  font-size: 35px;
+}
+.fs-32px {
+  font-size: 32px;
+}
+.fs-25px {
+  font-size: 25px;
+}
+.fs-24px {
+  font-size: 24px;
+}
+.fs-22px {
+  font-size: 22px;
+}
+.fs-20px {
+  font-size: 20px;
+}
+.fs-18px {
+  font-size: 18px;
+}
+.fs-16px {
+  font-size: 16px;
+}
+.fs-15px {
+  font-size: 15px;
+}
+.fs-15px-important {
+  font-size: 15px !important;
+}
+.fs-14px {
+  font-size: 14px;
+}
+.fs-13px {
+  font-size: 13px;
+}
+.fs-12px {
+  font-size: 12px !important;
+}
+.fs-10px {
+  font-size: 10px !important;
+}
 // line heights
-.lh-24px { line-height: 24px; }
-.lh-20px { line-height: 20px; }
-.lh-18px { line-height: 18px; }
-.lh-16px { line-height: 16px; }
-.lh-15px { line-height: 15px; }
-.lh-14px { line-height: 14px; }
-.lh-13px { line-height: 13px; }
-.lh-12px { line-height: 12px; }
-.roboto-regular { font-family: 'Roboto' }
-.roboto-mono { font-family: 'Roboto Mono' }
+.lh-24px {
+  line-height: 24px;
+}
+.lh-20px {
+  line-height: 20px;
+}
+.lh-18px {
+  line-height: 18px;
+}
+.lh-16px {
+  line-height: 16px;
+}
+.lh-15px {
+  line-height: 15px;
+}
+.lh-14px {
+  line-height: 14px;
+}
+.lh-13px {
+  line-height: 13px;
+}
+.lh-12px {
+  line-height: 12px;
+}
+.roboto-regular {
+  font-family: 'Roboto';
+}
+.roboto-mono {
+  font-family: 'Roboto Mono';
+}
 
 // Custom border classes.
-.border-color-grey { border-color: var(--border) !important; }
-.border-color-blue { border-color: $buy-button-blue; }
-.tab-underline-active { border-bottom: solid $buy-button-blue 3px; }
-.tab-underline-inactive { border-bottom: solid rgba(0,0,0,0) 3px; }
+.border-color-grey {
+  border-color: var(--border) !important;
+}
+.border-color-blue {
+  border-color: $buy-button-blue;
+}
+.tab-underline-active {
+  border-bottom: solid $buy-button-blue 3px;
+}
+.tab-underline-inactive {
+  border-bottom: solid rgba(0, 0, 0, 0) 3px;
+}
 
-.background-color-grey { background-color: var(--border); } // mocks call this G4
-.background-color-light-grey { background-color: var(--secondary); }
-.background-color-light-grey-important { background-color: var(--secondary) !important }
-.background-color-light-pink { background-color: lightpink; }
-.background-color-lemon-chiffon { background-color: lemonchiffon; }
-.background-color-white { background-color: var(--background); }
+.background-color-grey {
+  background-color: var(--border);
+} // mocks call this G4
+.background-color-light-grey {
+  background-color: var(--secondary);
+}
+.background-color-light-grey-important {
+  background-color: var(--secondary) !important;
+}
+.background-color-light-pink {
+  background-color: lightpink;
+}
+.background-color-lemon-chiffon {
+  background-color: lemonchiffon;
+}
+.background-color-white {
+  background-color: var(--background);
+}
 
 // Custom padding classes.
-.p-35px { padding: 35px; }
-.pt-35px { padding-top: 35px; }
-.pr-35px { padding-right: 35px; }
-.pb-35px { padding-bottom: 35px; }
-.pl-35px { padding-left: 35px; }
-.py-35px { padding-top: 35px; padding-bottom: 35px;}
-.px-35px { padding-left: 35px; padding-right: 35px;}
+.p-35px {
+  padding: 35px;
+}
+.pt-35px {
+  padding-top: 35px;
+}
+.pr-35px {
+  padding-right: 35px;
+}
+.pb-35px {
+  padding-bottom: 35px;
+}
+.pl-35px {
+  padding-left: 35px;
+}
+.py-35px {
+  padding-top: 35px;
+  padding-bottom: 35px;
+}
+.px-35px {
+  padding-left: 35px;
+  padding-right: 35px;
+}
 
-.p-30px { padding: 30px; }
-.pt-30px { padding-top: 30px; }
-.pr-30px { padding-right: 30px; }
-.pb-30px { padding-bottom: 30px; }
-.pl-30px { padding-left: 30px; }
-.py-30px { padding-top: 30px; padding-bottom: 30px;}
-.px-30px { padding-left: 30px; padding-right: 30px;}
+.p-30px {
+  padding: 30px;
+}
+.pt-30px {
+  padding-top: 30px;
+}
+.pr-30px {
+  padding-right: 30px;
+}
+.pb-30px {
+  padding-bottom: 30px;
+}
+.pl-30px {
+  padding-left: 30px;
+}
+.py-30px {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.px-30px {
+  padding-left: 30px;
+  padding-right: 30px;
+}
 
-.p-30px { padding: 30px; }
-.pt-30px { padding-top: 30px; }
-.pr-30px { padding-right: 30px; }
-.pb-30px { padding-bottom: 30px; }
-.pl-30px { padding-left: 30px; }
-.py-30px { padding-top: 30px; padding-bottom: 30px;}
-.px-30px { padding-left: 30px; padding-right: 30px;}
+.p-30px {
+  padding: 30px;
+}
+.pt-30px {
+  padding-top: 30px;
+}
+.pr-30px {
+  padding-right: 30px;
+}
+.pb-30px {
+  padding-bottom: 30px;
+}
+.pl-30px {
+  padding-left: 30px;
+}
+.py-30px {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.px-30px {
+  padding-left: 30px;
+  padding-right: 30px;
+}
 
-.p-25px { padding: 25px; }
-.pt-25px { padding-top: 25px; }
-.pr-25px { padding-right: 25px; }
-.pb-25px { padding-bottom: 25px; }
-.pl-25px { padding-left: 25px; }
-.py-25px { padding-top: 25px; padding-bottom: 25px;}
-.px-25px { padding-left: 25px; padding-right: 25px;}
+.p-25px {
+  padding: 25px;
+}
+.pt-25px {
+  padding-top: 25px;
+}
+.pr-25px {
+  padding-right: 25px;
+}
+.pb-25px {
+  padding-bottom: 25px;
+}
+.pl-25px {
+  padding-left: 25px;
+}
+.py-25px {
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+.px-25px {
+  padding-left: 25px;
+  padding-right: 25px;
+}
 
-.p-20px { padding: 20px; }
-.pt-20px { padding-top: 20px; }
-.pr-20px { padding-right: 20px; }
-.pb-20px { padding-bottom: 20px; }
-.pl-20px { padding-left: 20px; }
-.py-20px { padding-top: 20px; padding-bottom: 20px;}
-.px-20px { padding-left: 20px; padding-right: 20px;}
+.p-20px {
+  padding: 20px;
+}
+.pt-20px {
+  padding-top: 20px;
+}
+.pr-20px {
+  padding-right: 20px;
+}
+.pb-20px {
+  padding-bottom: 20px;
+}
+.pl-20px {
+  padding-left: 20px;
+}
+.py-20px {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.px-20px {
+  padding-left: 20px;
+  padding-right: 20px;
+}
 
-.p-15px { padding: 15px; }
-.pt-15px { padding-top: 15px; }
-.pr-15px { padding-right: 15px; }
-.pb-15px { padding-bottom: 15px; }
-.pl-15px { padding-left: 15px; }
-.py-15px { padding-top: 15px; padding-bottom: 15px;}
-.px-15px { padding-left: 15px; padding-right: 15px;}
+.p-15px {
+  padding: 15px;
+}
+.pt-15px {
+  padding-top: 15px;
+}
+.pr-15px {
+  padding-right: 15px;
+}
+.pb-15px {
+  padding-bottom: 15px;
+}
+.pl-15px {
+  padding-left: 15px;
+}
+.py-15px {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.px-15px {
+  padding-left: 15px;
+  padding-right: 15px;
+}
 
-.p-10px { padding: 10px; }
-.pt-10px { padding-top: 10px; }
-.pr-10px { padding-right: 10px; }
-.pb-10px { padding-bottom: 10px; }
-.pl-10px { padding-left: 10px; }
-.py-10px { padding-top: 10px; padding-bottom: 10px;}
-.px-10px { padding-left: 10px; padding-right: 10px;}
+.p-10px {
+  padding: 10px;
+}
+.pt-10px {
+  padding-top: 10px;
+}
+.pr-10px {
+  padding-right: 10px;
+}
+.pb-10px {
+  padding-bottom: 10px;
+}
+.pl-10px {
+  padding-left: 10px;
+}
+.py-10px {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.px-10px {
+  padding-left: 10px;
+  padding-right: 10px;
+}
 
-.p-5px { padding: 5px; }
-.pt-5px { padding-top: 5px; }
-.pr-5px { padding-right: 5px; }
-.pb-5px { padding-bottom: 5px; }
-.pl-5px { padding-left: 5px; }
-.py-5px { padding-top: 5px; padding-bottom: 5px;}
-.px-5px { padding-left: 5px; padding-right: 5px;}
+.p-5px {
+  padding: 5px;
+}
+.pt-5px {
+  padding-top: 5px;
+}
+.pr-5px {
+  padding-right: 5px;
+}
+.pb-5px {
+  padding-bottom: 5px;
+}
+.pl-5px {
+  padding-left: 5px;
+}
+.py-5px {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.px-5px {
+  padding-left: 5px;
+  padding-right: 5px;
+}
 
-.p-2px { padding: 2px; }
-.pt-2px { padding-top: 2px; }
-.pr-2px { padding-right: 2px; }
-.pb-2px { padding-bottom: 2px; }
-.pl-2px { padding-left: 5px; }
-.py-2px { padding-top: 2px; padding-bottom: 2px;}
-.px-2px { padding-left: 2px; padding-right: 2px;}
+.p-2px {
+  padding: 2px;
+}
+.pt-2px {
+  padding-top: 2px;
+}
+.pr-2px {
+  padding-right: 2px;
+}
+.pb-2px {
+  padding-bottom: 2px;
+}
+.pl-2px {
+  padding-left: 5px;
+}
+.py-2px {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+.px-2px {
+  padding-left: 2px;
+  padding-right: 2px;
+}
 
 // Zero padding classes are useful for things like bootstrap columns that have padding added.
-.p-0px { padding: 0px; }
-.pt-0px { padding-top: 0px; }
-.pr-0px { padding-right: 0px; }
-.pb-0px { padding-bottom: 0px; }
-.pl-0px { padding-left: 0px; }
-.py-0px { padding-top: 0px; padding-bottom: 0px;}
-.px-0px { padding-left: 0px; padding-right: 0px;}
+.p-0px {
+  padding: 0px;
+}
+.pt-0px {
+  padding-top: 0px;
+}
+.pr-0px {
+  padding-right: 0px;
+}
+.pb-0px {
+  padding-bottom: 0px;
+}
+.pl-0px {
+  padding-left: 0px;
+}
+.py-0px {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.px-0px {
+  padding-left: 0px;
+  padding-right: 0px;
+}
 
 // Custom margin classes.
-.m-0px { margin: 0px !important; }
-.mt-0px { margin-top: 0px; }
-.mr-0px { margin-right: 0px; }
-.mb-0px { margin-bottom: 0px !important; }
-.ml-0px { margin-left: 0px; }
+.m-0px {
+  margin: 0px !important;
+}
+.mt-0px {
+  margin-top: 0px;
+}
+.mr-0px {
+  margin-right: 0px;
+}
+.mb-0px {
+  margin-bottom: 0px !important;
+}
+.ml-0px {
+  margin-left: 0px;
+}
 
-.mt-2px { margin-top: 2px; }
+.mt-2px {
+  margin-top: 2px;
+}
 
-.m-5px { margin: 5px; }
-.mt-5px { margin-top: 5px; }
-.mr-5px { margin-right: 5px; }
-.mb-5px { margin-bottom: 5px; }
-.ml-5px { margin-left: 5px; }
+.m-5px {
+  margin: 5px;
+}
+.mt-5px {
+  margin-top: 5px;
+}
+.mr-5px {
+  margin-right: 5px;
+}
+.mb-5px {
+  margin-bottom: 5px;
+}
+.ml-5px {
+  margin-left: 5px;
+}
 
-.m-10px { margin: 10px; }
-.mt-10px { margin-top: 10px; }
-.mr-10px { margin-right: 10px; }
-.mb-10px { margin-bottom: 10px; }
-.ml-10px { margin-left: 10px; }
+.m-10px {
+  margin: 10px;
+}
+.mt-10px {
+  margin-top: 10px;
+}
+.mr-10px {
+  margin-right: 10px;
+}
+.mb-10px {
+  margin-bottom: 10px;
+}
+.ml-10px {
+  margin-left: 10px;
+}
 
-.m-15px { margin: 15px; }
-.mt-15px { margin-top: 15px; }
-.mr-15px { margin-right: 15px; }
-.mb-15px { margin-bottom: 15px; }
-.ml-15px { margin-left: 15px; }
-.mx-15px { margin-left: 15px; margin-right: 15px; }
-.my-15px { margin-top: 15px; margin-bottom: 15px; }
+.m-15px {
+  margin: 15px;
+}
+.mt-15px {
+  margin-top: 15px;
+}
+.mr-15px {
+  margin-right: 15px;
+}
+.mb-15px {
+  margin-bottom: 15px;
+}
+.ml-15px {
+  margin-left: 15px;
+}
+.mx-15px {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.my-15px {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 
-.m-20px { margin: 20px; }
-.mt-20px { margin-top: 20px; }
-.mr-20px { margin-right: 20px; }
-.mb-20px { margin-bottom: 20px; }
-.ml-20px { margin-left: 20px; }
-.mx-20px { margin-left: 20px; margin-right: 20px; }
-.my-20px { margin-top: 20px; margin-bottom: 20px; }
+.m-20px {
+  margin: 20px;
+}
+.mt-20px {
+  margin-top: 20px;
+}
+.mr-20px {
+  margin-right: 20px;
+}
+.mb-20px {
+  margin-bottom: 20px;
+}
+.ml-20px {
+  margin-left: 20px;
+}
+.mx-20px {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.my-20px {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 
-.m-25px { margin: 25px; }
-.mt-25px { margin-top: 25px; }
-.mr-25px { margin-right: 25px; }
-.mb-25px { margin-bottom: 25px; }
-.ml-25px { margin-left: 25px; }
-.mx-25px { margin-left: 25px; margin-right: 25px; }
-.my-25px { margin-top: 25px; margin-bottom: 25px; }
+.m-25px {
+  margin: 25px;
+}
+.mt-25px {
+  margin-top: 25px;
+}
+.mr-25px {
+  margin-right: 25px;
+}
+.mb-25px {
+  margin-bottom: 25px;
+}
+.ml-25px {
+  margin-left: 25px;
+}
+.mx-25px {
+  margin-left: 25px;
+  margin-right: 25px;
+}
+.my-25px {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
 
-.m-30px { margin: 30px; }
-.mt-30px { margin-top: 30px; }
-.mr-30px { margin-right: 30px; }
-.mb-30px { margin-bottom: 30px; }
-.ml-30px { margin-left: 30px; }
-.mx-30px { margin-left: 30px; margin-right: 30px; }
-.my-30px { margin-top: 30px; margin-bottom: 30px; }
+.m-30px {
+  margin: 30px;
+}
+.mt-30px {
+  margin-top: 30px;
+}
+.mr-30px {
+  margin-right: 30px;
+}
+.mb-30px {
+  margin-bottom: 30px;
+}
+.ml-30px {
+  margin-left: 30px;
+}
+.mx-30px {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+.my-30px {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
 
-.br-3px { border-radius: 3px; }
-.br-4px { border-radius: 4px; }
-.br-5px { border-radius: 5px; }
-.br-8px { border-radius: 8px; }
-.br-12px { border-radius: $feed-border-radius; }
+.br-3px {
+  border-radius: 3px;
+}
+.br-4px {
+  border-radius: 4px;
+}
+.br-5px {
+  border-radius: 5px;
+}
+.br-8px {
+  border-radius: 8px;
+}
+.br-12px {
+  border-radius: $feed-border-radius;
+}
 
-.vh-100 { height: 100vh !important; }
+.vh-100 {
+  height: 100vh !important;
+}
 
-.position-fixed { position: fixed; }
+.position-fixed {
+  position: fixed;
+}
 
 .global__container {
   min-height: 100vh;
@@ -449,21 +887,21 @@ $green-font-color: #19B028;
 
 @media (min-width: 992px) {
   .global__desktop {
-      display: flex;
+    display: flex;
   }
 
   .global__mobile {
-      display: none !important;
+    display: none !important;
   }
 }
 
 @media (max-width: 991.98px) {
   .global__desktop {
-      display: none !important;
+    display: none !important;
   }
 
   .global__mobile {
-      display: flex;
+    display: flex;
   }
 }
 
@@ -476,7 +914,8 @@ $green-font-color: #19B028;
   background-color: var(--formbg);
 }
 
-.diamond-popover-container .arrow::after, .diamond-popover-container .arrow::before {
+.diamond-popover-container .arrow::after,
+.diamond-popover-container .arrow::before {
   border-top-color: var(--formbg);
 }
 
@@ -491,7 +930,7 @@ $green-font-color: #19B028;
 .fixed-top-bar {
   position: fixed;
   background-color: var(--background);
-  z-index: 10
+  z-index: 10;
 }
 
 .global__mobile-scrollable-section {
@@ -538,20 +977,19 @@ input.bs-timepicker-field {
   border-color: var(--border) !important;
 }
 
-
 //
 // Top-level css for the feed.
 //
 
 // This removes the scrollbar on the feed.
 .disable-scrollbars::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* Chrome/Safari/Webkit */
+  width: 0px;
+  background: transparent; /* Chrome/Safari/Webkit */
 }
 
 .disable-scrollbars {
   scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* IE 10+ */
+  -ms-overflow-style: none; /* IE 10+ */
 }
 
 .light-grey-divider {
@@ -569,7 +1007,7 @@ input.bs-timepicker-field {
 }
 
 .top-bar-mobile-navigation-control__dark-color {
-  color: #8A8A8A;
+  color: #8a8a8a;
 }
 
 .top-bar-mobile-navigation-control__light-color {
@@ -582,7 +1020,7 @@ input.bs-timepicker-field {
 }
 
 .bottom-bar__message-notifications-bubble {
-  position:absolute;
+  position: absolute;
   top: 5px;
   font-style: normal;
   margin-left: 15px;
@@ -762,7 +1200,7 @@ input.bs-timepicker-field {
     font-weight: bold;
     font-size: 1.25rem;
     vertical-align: middle;
-    padding-bottom: .15rem;
+    padding-bottom: 0.15rem;
     background-color: $x-color;
   }
 }
@@ -860,7 +1298,7 @@ input.bs-timepicker-field {
 
 // Overrides for phone number input defaults.
 .iti {
-	width: 100% !important;
+  width: 100% !important;
 }
 
 .iti__country {
@@ -872,25 +1310,25 @@ input.bs-timepicker-field {
 }
 
 .feed-create-post__avatar.change-account-selector__account-image {
-	width: 24px;
-	height: 24px;
-	min-width: 24px;
-	margin-right: 10px;
-	border-radius: 3px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  margin-right: 10px;
+  border-radius: 3px;
 }
 
 .change-account-selector {
-	position: relative;
-	z-index: 30;
-	background-color: var(--secondary);
-	width: 100%;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	border: 1px solid var(--border);
+  position: relative;
+  z-index: 30;
+  background-color: var(--secondary);
+  width: 100%;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border: 1px solid var(--border);
 }
 
 .change-account-selector_list__inner {
-	border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .change-account-selector__down-arrow {
@@ -899,28 +1337,29 @@ input.bs-timepicker-field {
 }
 
 .change-account-selector__hover:hover {
-	box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.10);
+  box-shadow: 1px 1px 2px rgba(101, 119, 134, 0.1);
 }
 
 .change-account-selector_list {
-	background-color: var(--secondary);
-	padding: 0px 0px 10px;
-	margin-top: 10px;
-	width: 100%;
-	z-index: 99;
-	border: 1px solid var(--border);
+  background-color: var(--secondary);
+  padding: 0px 0px 10px;
+  margin-top: 10px;
+  width: 100%;
+  z-index: 99;
+  border: 1px solid var(--border);
 }
 
-.change-account-selector_list-item{
+.change-account-selector_list-item {
   overflow: hidden;
 }
 
-.change-account-selector_list__inner:hover{
-  background-color:var(--formbg);
+.change-account-selector_list__inner:hover {
+  background-color: var(--formbg);
 }
 
 .change-account-selector__shadow {
-  box-shadow: rgba(101, 119, 134, 0) 0px 0px 15px, rgba(101, 119, 134, 0) 0px 0px 3px 1px;
+  box-shadow: rgba(101, 119, 134, 0) 0px 0px 15px,
+    rgba(101, 119, 134, 0) 0px 0px 3px 1px;
 }
 
 .change-account-selector__ellipsis-restriction {
@@ -935,8 +1374,8 @@ input.bs-timepicker-field {
   opacity: 0;
 }
 
-.text-link_hover:hover{
-  color:var(--hover);
+.text-link_hover:hover {
+  color: var(--hover);
 }
 
 .search-bar__icon {
@@ -947,11 +1386,12 @@ input.bs-timepicker-field {
   border-bottom-left-radius: 12px;
   background-color: var(--formbg);
   border-color: var(--border);
-  border-right-color: rgba(0,0,0,0);
+  border-right-color: rgba(0, 0, 0, 0);
 }
 
 .search-bar__results-dropdown {
-  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+  box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px,
+    rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
   border-radius: 0px 0px 3px 3px;
   cursor: pointer;
   background-color: var(--background);
@@ -982,7 +1422,8 @@ input.bs-timepicker-field {
   border-left: 0px;
 }
 
-.search-bar__fix-active:active, .search-bar__fix-active:focus {
+.search-bar__fix-active:active,
+.search-bar__fix-active:focus {
   border-color: var(--secondary);
   border-left: 0px;
 }
@@ -1012,7 +1453,7 @@ input.bs-timepicker-field {
 }
 
 .feed-create-comment-form__reply-container {
-  margin-left: 80px
+  margin-left: 80px;
 }
 
 .feed-create-comment-form__avatar {
@@ -1025,8 +1466,6 @@ input.bs-timepicker-field {
   background-repeat: no-repeat;
   background-position: center;
 }
-
-
 
 .feed-create-post__avatar {
   height: 50px;
@@ -1169,27 +1608,27 @@ input.bs-timepicker-field {
   }
 }
 /* like button hover animation */
-.feed-post-icon-row__icon.icon-heart, .feed-post-icon-row__icon.icon-heart-fill{
-  &:hover{
+.feed-post-icon-row__icon.icon-heart,
+.feed-post-icon-row__icon.icon-heart-fill {
+  &:hover {
     background-color: $like-hover;
     color: $like-color;
   }
 }
 
 /* diamond button hover animation */
-.feed-post-icon-row__icon.icon-diamond{
-  &:hover{
+.feed-post-icon-row__icon.icon-diamond {
+  &:hover {
     background-color: $diamond-hover;
     color: $diamond-color;
   }
 }
 
 /* copy link button hover animation */
-.feed-post-icon-row__icon.icon-link{
-  &:hover{
+.feed-post-icon-row__icon.icon-link {
+  &:hover {
     background-color: $link-btn-hover;
     color: $link-btn-color;
-
   }
 }
 
@@ -1197,7 +1636,7 @@ input.bs-timepicker-field {
 }
 
 .feed-post__container {
-  font-size: 15px
+  font-size: 15px;
 }
 
 .feed-post__container.feed-post__parent-post-font-size {
@@ -1245,7 +1684,7 @@ input.bs-timepicker-field {
 .left-bar__dot-inactive {
   font-size: 50px;
   line-height: 18px;
-  color: rgba(0,0,0,0);
+  color: rgba(0, 0, 0, 0);
 }
 
 .right-bar-creators-leaderboard__creator-avatar {
@@ -1383,7 +1822,6 @@ input.bs-timepicker-field {
   max-width: 380px;
   border-left: solid 1px var(--border);
   border-right: solid 1px var(--border);
-
 }
 
 .messages-inbox__selected-thread {
@@ -1451,12 +1889,12 @@ input.bs-timepicker-field {
 }
 
 .message__sender-bubble-color {
-  background-color: #005BFF;
+  background-color: #005bff;
   color: white;
 }
 
 .message__non-sender-bubble-color {
-  background-color: #F8F8F8;
+  background-color: #f8f8f8;
 }
 
 .message-thread__unread-light-blue {
@@ -1513,7 +1951,6 @@ input.bs-timepicker-field {
   line-height: 0.65;
 }
 
-
 //
 // Creators leaderboard
 //
@@ -1566,17 +2003,17 @@ input.bs-timepicker-field {
 // Not found page
 //
 .not-found__content-container {
-  margin-top: 100px
+  margin-top: 100px;
 }
 
 // Notifications
 .notifications__avatar {
-   height: 28px;
-   width: 28px;
-   border-radius: 3px;
-   background-size: cover;
-   background-repeat: no-repeat;
-   background-position: center center;
+  height: 28px;
+  width: 28px;
+  border-radius: 3px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
 .notifications__action {
@@ -1585,9 +2022,9 @@ input.bs-timepicker-field {
 }
 
 .notifications__icon {
-   margin-right: 14px;
-   width: 20px;
-   text-align: center;
+  margin-right: 14px;
+  width: 20px;
+  text-align: center;
 }
 
 // Landing page
@@ -1624,7 +2061,7 @@ input.bs-timepicker-field {
 }
 
 .landing__nav-link.btn {
-  color: #FFF;
+  color: #fff;
 }
 
 .landing__nav-buy {
@@ -1665,7 +2102,7 @@ input.bs-timepicker-field {
 
 .landing__prop {
   margin-top: 100px;
-  background: #C4C4C426;
+  background: #c4c4c426;
   border-radius: 25px;
   padding-top: 50px;
 }
@@ -1694,13 +2131,17 @@ input.bs-timepicker-field {
 
 // fade to white
 .landing__example:after {
-  content: "";
+  content: '';
   position: absolute;
   z-index: 1;
   bottom: 0;
   left: 0;
   pointer-events: none;
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0), var(--secondary) 90%);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    var(--secondary) 90%
+  );
   width: 100%;
   height: 4em;
 }
@@ -1753,10 +2194,10 @@ input.bs-timepicker-field {
 }
 
 .landing__footer-links hr {
-    border-top: 1px solid black;
-    width: 200px;
-    padding: 0;
-    margin-left: 0;
+  border-top: 1px solid black;
+  width: 200px;
+  padding: 0;
+  margin-left: 0;
 }
 
 .landing__board {
@@ -1779,7 +2220,7 @@ input.bs-timepicker-field {
 }
 
 .landing__board tr {
-  border-bottom: 1px solid #DDD;
+  border-bottom: 1px solid #ddd;
 }
 
 .landing__post-img {
@@ -1787,7 +2228,6 @@ input.bs-timepicker-field {
   width: 50px;
   border-radius: 5px;
 }
-
 
 //
 // Manage follows page
@@ -1807,7 +2247,6 @@ input.bs-timepicker-field {
   width: 56px; // TODO: figure out why chrome doesn't render this as 50px
   margin-right: 15px;
 }
-
 
 //
 // Simple profile card (for likes, reposts, diamonds modal)
@@ -1853,24 +2292,23 @@ input.bs-timepicker-field {
 .info-tooltip-contents {
   position: absolute;
   text-align: left;
-  top: -.5rem;
+  top: -0.5rem;
   left: 1.5rem;
   background-color: $light-color;
   cursor: pointer;
   border: 1px solid $dark-in-between-color;
-  padding: .5rem;
+  padding: 0.5rem;
   color: $dark-color;
   width: 15rem;
   z-index: 1;
   font-size: 1rem;
-  font-weight: bold;;
+  font-weight: bold;
 }
-
 
 .btn.disabled {
   // I don't think bootstrap's button opacity makes buttons look sufficiently disabled,
   // so I'm overriding bootstrap here.
-  opacity: 0.4
+  opacity: 0.4;
 }
 
 .btn.btn-light {
@@ -1914,7 +2352,8 @@ input.bs-timepicker-field {
   border: 1px solid transparent;
   padding: 0.375rem 0.75rem;
   border-radius: 0.25rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .divtext {
@@ -1964,8 +2403,8 @@ input {
   background-color: transparent;
   border: 1px solid $border-color;
   color: $important-text-color;
-  padding-left: .5rem;
-  padding-right: .5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
   &:focus {
     outline: none;
   }
@@ -1977,8 +2416,8 @@ textarea {
   background-color: transparent;
   border: 1px solid var(--border);
   color: var(--text);
-  padding-left: .5rem;
-  padding-right: .5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
   max-width: 100%;
   &:focus {
     outline: none;
@@ -2031,30 +2470,32 @@ em {
   margin-top: 1rem;
 }
 .action-items-badge {
- width: auto;
- padding-left: .5rem;
- padding-right: .5rem;
- background-color: $error-color;
- border-radius: 1rem;
- display: flex;
- align-items: center;
- justify-content: center;
- color: $button-text-color-default;
- font-weight: bold;
+  width: auto;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  background-color: $error-color;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $button-text-color-default;
+  font-weight: bold;
 }
 .minus {
   color: $light-color;
   display: inline-block;
-  margin-right: .5rem;
+  margin-right: 0.5rem;
   cursor: pointer;
 }
 .link {
-    color: $light-color;
-    text-decoration: underline;
-    cursor: pointer;
-    display: inline;
+  color: $light-color;
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline;
 }
-.file-upload-button::-webkit-file-upload-button { cursor:pointer; }
+.file-upload-button::-webkit-file-upload-button {
+  cursor: pointer;
+}
 
 @media (min-width: 992px) {
   /* Apply only to screen sizes >= sm */
@@ -2071,8 +2512,8 @@ em {
   .reverse-columns-on-mobile {
     flex-direction: column-reverse;
   }
-  [class*="col-"] {
-      margin-bottom: 15px;
+  [class*='col-'] {
+    margin-bottom: 15px;
   }
 }
 
@@ -2101,19 +2542,20 @@ input {
 }
 
 .btn-primary:hover {
-	color: #fff;
-	background-color: var(--hover);
-	border-color: var(--hover);
+  color: #fff;
+  background-color: var(--hover);
+  border-color: var(--hover);
 }
 
-.btn-primary.disabled, .btn-primary:disabled {
-	color: #fff;
-	background-color: $buy-button-blue;
-	border-color: $buy-button-blue;
+.btn-primary.disabled,
+.btn-primary:disabled {
+  color: #fff;
+  background-color: $buy-button-blue;
+  border-color: $buy-button-blue;
 }
 
 .btn-secondary {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-color: var(--border);
 }
 #foobarxyz p {
@@ -2123,7 +2565,7 @@ input {
   margin: 0;
 }
 .post-submitted p {
-  margin: 0
+  margin: 0;
 }
 .grey {
   color: $grey;
@@ -2134,7 +2576,7 @@ input {
 .slide-up-1,
 .slide-up-2,
 .slide-up-3 {
-  animation: slide-up 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  animation: slide-up 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
   visibility: visible !important;
 }
 
@@ -2198,7 +2640,8 @@ input {
   color: var(--text);
 }
 
-.selector option:active, .selector option:hover {
+.selector option:active,
+.selector option:hover {
   outline-color: blue;
 }
 
@@ -2319,11 +2762,14 @@ input {
   align-items: flex-start;
   justify-content: space-between;
   padding: 1rem 1rem;
-  border-top-left-radius: calc(.3rem - 1px);
-  border-top-right-radius: calc(.3rem - 1px);
+  border-top-left-radius: calc(0.3rem - 1px);
+  border-top-right-radius: calc(0.3rem - 1px);
 }
 
-.likes-modal-container, .quote-reposts-modal-container, .reposts-modal-container, .diamonds-modal-container {
+.likes-modal-container,
+.quote-reposts-modal-container,
+.reposts-modal-container,
+.diamonds-modal-container {
   background-color: var(--background);
   color: var(--text);
   border: var(--mborder);
@@ -2355,34 +2801,41 @@ input {
 }
 
 .nft-modal-separator {
-  border-bottom: #AAAAAA solid 1px;
+  border-bottom: #aaaaaa solid 1px;
 }
 
 .nft-modal-separator-2 {
-  border-bottom: #DDDDDD solid 1px;
+  border-bottom: #dddddd solid 1px;
 }
 
 .create-nft-auction-row-border {
-  border-bottom: #EEEEEE solid 1px;
+  border-bottom: #eeeeee solid 1px;
 }
 
 .interaction-detail {
-  &:hover, &:active, &:focus {
+  &:hover,
+  &:active,
+  &:focus {
     text-decoration: inherit; // I prefer no underline when you hover over links
     color: var(--grey);
   }
 }
 
-[class*='mat-select'], [class*='mat-option-'], .mat-form-field-label, select {
+[class*='mat-select'],
+[class*='mat-option-'],
+.mat-form-field-label,
+select {
   color: var(--text);
 }
 
-.mat-option, option {
+.mat-option,
+option {
   background-color: var(--formbg);
   color: var(--text);
 }
 
-.mat-option:hover:not(.mat-option-disabled), .mat-option:focus:not(.mat-option-disabled) {
+.mat-option:hover:not(.mat-option-disabled),
+.mat-option:focus:not(.mat-option-disabled) {
   background-color: var(--secondary);
 }
 
@@ -2414,10 +2867,10 @@ input {
 // Add class `.custom-switch-lg` to a `custom-switch`
 .custom-switch.custom-switch-lg {
   padding-bottom: 1rem;
-	padding-left: 2.25rem;
+  padding-left: 2.25rem;
 
   & .custom-control-label {
-    padding-left: .75rem;
+    padding-left: 0.75rem;
     padding-top: 0.15rem;
 
     &::before {
@@ -2427,25 +2880,25 @@ input {
     }
 
     &::after {
-			border-radius: .65rem;
+      border-radius: 0.65rem;
       height: calc(1.5rem - 4px);
       width: calc(1.5rem - 4px);
     }
   }
 
-	.custom-control-input:checked ~ .custom-control-label::after{
-  	transform: translateX(1rem);
-	}
+  .custom-control-input:checked ~ .custom-control-label::after {
+    transform: translateX(1rem);
+  }
 }
 
 // Add class `.custom-switch-xl` to a `custom-switch`
 .custom-switch.custom-switch-xl {
   padding-bottom: 1rem;
-	padding-left: 2.25rem;
+  padding-left: 2.25rem;
 
   & .custom-control-label {
     padding-left: 2rem;
-  	padding-top: 0.5rem;
+    padding-top: 0.5rem;
 
     &::before {
       border-radius: 1rem;
@@ -2460,9 +2913,9 @@ input {
     }
   }
 
-	.custom-control-input:checked ~ .custom-control-label::after {
-  	transform: translateX(1.5rem);
-	}
+  .custom-control-input:checked ~ .custom-control-label::after {
+    transform: translateX(1.5rem);
+  }
 }
 
 .text-align-center {
@@ -2472,7 +2925,6 @@ input {
 .borderbg {
   background-color: var(--border);
 }
-
 
 .border {
   border: 1px solid var(--border) !important;
@@ -2513,52 +2965,60 @@ input {
 
   // Contains the button which triggers diamond pop ups
   .diamond-btn {
-    width: 44px; height: 30px;
+    width: 44px;
+    height: 30px;
     position: absolute;
     left: -4px;
     cursor: pointer;
     &::before {
-      display: none
+      display: none;
     }
     // Contains box which contains all of the selectable diamond levels
     .reaction-box {
       // This creates an invisible, hoverable space for our pointer to use without losing hover focus
       // Basically, a bridge between the diamond button and the diamond row
       &::after {
-        content: "."; opacity: 0;
+        content: '.';
+        opacity: 0;
         display: block;
         width: 340px;
         // On desktop, move the diamond bar higher to prevent accidental clicking
         @media (max-width: 991.98px) {
           height: 10px;
-          top: 50px; left: 0px;
+          top: 50px;
+          left: 0px;
         }
         height: 30px;
         position: absolute;
-        top: 50px; left: 0px;
+        top: 50px;
+        left: 0px;
       }
 
       // Need to position box above top bar when explainer is triggered
       z-index: 30;
       position: absolute;
-      width: 340px; height: 55px;
+      width: 340px;
+      height: 55px;
       background: var(--background);
       border: 1px solid var(--border);
       border-radius: 20px;
       // On mobile, need to position this box further left so it doesn't leave the screen
       @media (max-width: 991.98px) {
-        left: -300px; bottom: 35px;
+        left: -300px;
+        bottom: 35px;
       }
-      left: -125px; bottom: 50px;
+      left: -125px;
+      bottom: 50px;
       display: none;
 
       // Each selectable diamond level in the diamond pop-up
       .reaction-icon {
         // Enables "pop-up" animation
-        transition: all 0.3s cubic-bezier(.09,1.22,.5,1.04);
+        transition: all 0.3s cubic-bezier(0.09, 1.22, 0.5, 1.04);
         opacity: 0;
         transform: translate(0, 50px) scale(0);
-        width: 47px; height: 20px;
+        width: 47px;
+        height: 20px;
         display: inline-block;
         background: var(--secondary);
         background-color: transparent;
@@ -2572,20 +3032,20 @@ input {
           top: -30px;
           left: -2px;
           position: relative;
-          transition: color .3s;
+          transition: color 0.3s;
         }
 
         .diamond-help {
           color: var(--grey);
         }
 
-          label {
+        label {
           padding: 3px 5px 3px 5px;
           position: relative;
           top: -24px;
           border-radius: 10px;
           font-size: 11px;
-          color: #FFF;
+          color: #fff;
           background: #333;
           visibility: visible;
         }
@@ -2599,13 +3059,13 @@ input {
 
     // Don't show the diamond selector when it's the user's own post
     &.hide-diamonds {
-      .reaction-box{
+      .reaction-box {
         display: none !important;
       }
     }
 
     // We want to disable phone-sized devices from showing the selector on hover.
-    @media(max-width: 600px) {
+    @media (max-width: 600px) {
       &.dragged-like {
         .reaction-box {
           display: block;
@@ -2613,7 +3073,7 @@ input {
       }
     }
     // Show the selector on hover for tablets and desktop machines
-    @media(min-width: 601px) {
+    @media (min-width: 601px) {
       &:hover {
         .reaction-box {
           display: block;
@@ -2622,12 +3082,10 @@ input {
     }
 
     // If a diamond is either hovered over or selected via the drag interface, grow it and animate it
-    &.dragged-like,&:hover {
-
+    &.dragged-like,
+    &:hover {
       .reaction-box {
-
         .reaction-icon {
-
           // Skip the "show" trigger on tablets, the on-hover property can be touchy
           @media (min-width: 601px) and (pointer: coarse) {
             opacity: 1;
@@ -2640,10 +3098,11 @@ input {
           }
 
           // For those elements we want to grow, scale them up when they're hovered
-          &.transformable{
+          &.transformable {
             // Prevent hover effects on mobile, we use the drag interface for that
             @media (pointer: fine) {
-              &.dragged-icon,&:hover {
+              &.dragged-icon,
+              &:hover {
                 transform: scale(1.3);
                 transform-origin: bottom;
               }
@@ -2663,7 +3122,7 @@ input {
 }
 
 .diamond-mobile-drag-container {
-  display: none
+  display: none;
 }
 
 .diamond-mobile-drag-instructions {
@@ -2699,21 +3158,23 @@ input {
     background: var(--norm);
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s linear 300ms, opacity 300ms, background-color 300ms ease;
+    transition: visibility 0s linear 300ms, opacity 300ms,
+      background-color 300ms ease;
 
     &.show {
       visibility: visible;
       opacity: 1;
-      transition: visibility 0s linear 0s, opacity 300ms, background-color 300ms ease;
+      transition: visibility 0s linear 0s, opacity 300ms,
+        background-color 300ms ease;
     }
 
     p {
       display: block;
       top: 15px;
       text-align: center;
-      position: relative;;
+      position: relative;
       display: table-cell;
-      color: var(--secalt)
+      color: var(--secalt);
     }
   }
 
@@ -2744,7 +3205,11 @@ input {
 }
 
 .follow-on-buy {
-  *, *:after, *:before {box-sizing: border-box;}
+  *,
+  *:after,
+  *:before {
+    box-sizing: border-box;
+  }
 
   body {
     background: whitesmoke;
@@ -2770,10 +3235,11 @@ input {
   #check + label {
     display: block;
     border: 2px solid var(--grey);
-    width: var(--d); height: var(--d);
+    width: var(--d);
+    height: var(--d);
     border-radius: 5px;
     cursor: pointer;
-    transition: all .2s ease;
+    transition: all 0.2s ease;
 
     svg {
       pointer-events: none;
@@ -2786,7 +3252,7 @@ input {
         stroke-linejoin: round;
         stroke-dasharray: 100;
         stroke-dashoffset: 101;
-        transition: all 350ms cubic-bezier(1,0,.37,.91);
+        transition: all 350ms cubic-bezier(1, 0, 0.37, 0.91);
       }
     }
   }
@@ -2828,9 +3294,9 @@ input {
     padding-right: 0rem !important;
     margin-left: 0rem !important;
   }
-  padding-left: .5rem !important;
-  padding-right: .5rem !important;
-  margin-left: .5rem !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  margin-left: 0.5rem !important;
 }
 
 .referral-link-info__blue-border {
@@ -2849,7 +3315,7 @@ input {
   border: 1px solid var(--border);
   border-radius: 100%;
   background: none;
-  transition: background-color .5s;
+  transition: background-color 0.5s;
   &.radio {
     transition: background-color 0s;
   }
@@ -2860,7 +3326,7 @@ input {
       color: var(--tile-bg);
     }
     &.radio {
-      transition: background-color .5s;
+      transition: background-color 0.5s;
     }
   }
 }

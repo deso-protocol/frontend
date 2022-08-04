@@ -5,7 +5,9 @@
     class="global__top-bar d-flex align-items-center px-15px fs-18px font-weight-bold fc-default justify-content-between border-bottom border-color-grey"
   >
     <div class="d-flex align-items-center">
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+      <top-bar-mobile-navigation-control
+        class="mr-15px d-lg-none d-inline-block"
+      ></top-bar-mobile-navigation-control>
       Home
     </div>
   </div>
@@ -21,11 +23,17 @@
     </div>
 
     <!-- Light Grey Divider -->
-    <div class="w-100 border-bottom border-color-grey light-grey-divider" style="min-height: 10px"></div>
+    <div
+      class="w-100 border-bottom border-color-grey light-grey-divider"
+      style="min-height: 10px"
+    ></div>
   </div>
 
   <!-- Mobile DeSo Price -->
-  <div *ngIf="isMobile" class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px">
+  <div
+    *ngIf="isMobile"
+    class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
+  >
     <div>$DESO Price&nbsp;&nbsp;&nbsp;</div>
     <div>
       <span>~{{ globalVars.desoToUSDExchangeRateToDisplay }}</span>
@@ -35,16 +43,30 @@
 
   <!-- Mobile email confirmation alert -->
   <div
-    *ngIf="isMobile && globalVars.loggedInUser && !globalVars.loggedInUser.EmailVerified"
+    *ngIf="
+      isMobile &&
+      globalVars.loggedInUser &&
+      !globalVars.loggedInUser.EmailVerified
+    "
     class="d-flex border-bottom border-color-grey background-color-light-grey py-5px px-15px fs-12px"
   >
     <div>Your email is not verified.&nbsp;&nbsp;&nbsp;</div>
     <div>
       <div *ngIf="globalVars.loggedInUser.HasEmail">
-        <a class="font-weight-bold" (click)="globalVars.resendVerifyEmail()" *ngIf="!globalVars.resentVerifyEmail">Resend Verification Email</a>
+        <a
+          class="font-weight-bold"
+          (click)="globalVars.resendVerifyEmail()"
+          *ngIf="!globalVars.resentVerifyEmail"
+          >Resend Verification Email</a
+        >
         <span *ngIf="globalVars.resentVerifyEmail">Sent!</span>
       </div>
-      <a *ngIf="!globalVars.loggedInUser.HasEmail" [routerLink]="'/' + globalVars.RouteNames.SETTINGS" class="font-weight-bold">Update your email</a>
+      <a
+        *ngIf="!globalVars.loggedInUser.HasEmail"
+        [routerLink]="'/' + globalVars.RouteNames.SETTINGS"
+        class="font-weight-bold"
+        >Update your email</a
+      >
     </div>
   </div>
 
@@ -53,23 +75,48 @@
     *ngIf="globalVars.loggedInUser?.ReferralInfoResponses?.length > 0"
     class="d-flex border-bottom justify-content-center border-color-grey background-color-lemon-chiffon py-5px px-15px fs-12px"
   >
-    <div style="color: #333333; text-align: center">You have a
-      <b>{{globalVars.formatUSD(globalVars.loggedInUser.ReferralInfoResponses[0].Info.ReferrerAmountUSDCents / 100, 0)}}</b> referral link on Diamond...<br><a href="https://diamondapp.com" class="font-weight-bold">Check it out!</a></div>
+    <div style="color: #333333; text-align: center">
+      You have a
+      <b>{{
+        globalVars.formatUSD(
+          globalVars.loggedInUser.ReferralInfoResponses[0].Info
+            .ReferrerAmountUSDCents / 100,
+          0
+        )
+      }}</b>
+      referral link on Diamond...<br /><a
+        href="https://diamondapp.com"
+        class="font-weight-bold"
+        >Check it out!</a
+      >
+    </div>
   </div>
   <div
     *ngIf="!globalVars.loggedInUser?.ReferralInfoResponses?.length"
     class="d-flex border-bottom justify-content-center border-color-grey background-color-lemon-chiffon py-5px px-15px fs-12px"
   >
-    <div style="color: #333333; text-align: center">Diamond is a cool new DeSo app...<br><a href="https://diamondapp.com" class="font-weight-bold">Check it out!</a></div>
+    <div style="color: #333333; text-align: center">
+      Diamond is a cool new DeSo app...<br /><a
+        href="https://diamondapp.com"
+        class="font-weight-bold"
+        >Check it out!</a
+      >
+    </div>
   </div>
 
   <!-- Tab Selector -->
-  <tab-selector [tabs]="feedTabs" [activeTab]="activeTab" (tabClick)="_handleTabClick($event)"></tab-selector>
+  <tab-selector
+    [tabs]="feedTabs"
+    [activeTab]="activeTab"
+    (tabClick)="_handleTabClick($event)"
+  ></tab-selector>
 
-  <countdown-timer *ngIf="nextNFTShowcaseTime"
+  <countdown-timer
+    *ngIf="nextNFTShowcaseTime"
     [timerText]="'The next NFT showcase drops in...'"
     [fontWeight]="500"
-    [timerEnd]="nextNFTShowcaseTime"></countdown-timer>
+    [timerEnd]="nextNFTShowcaseTime"
+  ></countdown-timer>
 
   <div [id]="getPullToRefreshMarkerId()"></div>
 
@@ -86,13 +133,17 @@
           *ngIf="!post.IsHidden"
           [post]="post"
           [includePaddingOnPost]="true"
-          [afterCommentCreatedCallback]="appendCommentAfterParentPost.bind(this)"
+          [afterCommentCreatedCallback]="
+            appendCommentAfterParentPost.bind(this)
+          "
           [afterRepostCreatedCallback]="prependPostToFeed.bind(this)"
           [showReplyingToContent]="!!post.parentPost"
           [parentPost]="post.parentPost"
           [contentShouldLinkToThread]="true"
           [showLeftSelectedBorder]="post.IsPinned"
-          [blocked]="globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)"
+          [blocked]="
+            globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check)
+          "
           [cardStyle]="true"
           [showNFTDetails]="true"
           (postDeleted)="onPostHidden($event)"

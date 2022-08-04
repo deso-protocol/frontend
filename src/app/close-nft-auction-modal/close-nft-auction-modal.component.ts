@@ -1,13 +1,17 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { of } from "rxjs";
-import { concatMap, last, map } from "rxjs/operators";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
+import { Component, Input, OnInit } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { of } from 'rxjs';
+import { concatMap, last, map } from 'rxjs/operators';
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from '../backend-api.service';
+import { GlobalVarsService } from '../global-vars.service';
 
 @Component({
-  selector: "close-nft-auction-modal",
-  templateUrl: "./close-nft-auction-modal.component.html",
+  selector: 'close-nft-auction-modal',
+  templateUrl: './close-nft-auction-modal.component.html',
 })
 export class CloseNftAuctionModalComponent {
   @Input() post: PostEntryResponse;
@@ -54,7 +58,7 @@ export class CloseNftAuctionModalComponent {
       .subscribe(
         (res) => {
           // Hide this modal and open the next one.
-          this.modalService.setDismissReason("auction cancelled");
+          this.modalService.setDismissReason('auction cancelled');
           this.bsModalRef.hide();
         },
         (err) => {

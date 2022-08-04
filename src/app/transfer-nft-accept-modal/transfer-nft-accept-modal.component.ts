@@ -1,15 +1,19 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { Router } from "@angular/router";
-import { isNumber } from "lodash";
-import { ToastrService } from "ngx-toastr";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { Location } from "@angular/common";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from '../backend-api.service';
+import { Router } from '@angular/router';
+import { isNumber } from 'lodash';
+import { ToastrService } from 'ngx-toastr';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Location } from '@angular/common';
 
 @Component({
-  selector: "transfer-nft-accept-modal",
-  templateUrl: "./transfer-nft-accept-modal.component.html",
+  selector: 'transfer-nft-accept-modal',
+  templateUrl: './transfer-nft-accept-modal.component.html',
 })
 export class TransferNftAcceptModalComponent {
   static PAGE_SIZE = 50;
@@ -34,7 +38,7 @@ export class TransferNftAcceptModalComponent {
   showSelectedSerialNumbers = false;
   acceptingTransfer: boolean = false;
   errors: string[] = [];
-  minBidCurrency: string = "USD";
+  minBidCurrency: string = 'USD';
   minBidInput: number = 0;
   transferringUser: string;
 
@@ -61,11 +65,11 @@ export class TransferNftAcceptModalComponent {
       )
       .subscribe(
         (res) => {
-          this.modalService.setDismissReason("transfer accepted");
+          this.modalService.setDismissReason('transfer accepted');
           this.bsModalRef.hide();
-          this.toastr.show("Your transfer was completed", null, {
-            toastClass: "info-toast",
-            positionClass: "toast-bottom-center",
+          this.toastr.show('Your transfer was completed', null, {
+            toastClass: 'info-toast',
+            positionClass: 'toast-bottom-center',
           });
         },
         (err) => {
@@ -82,7 +86,7 @@ export class TransferNftAcceptModalComponent {
     if (!this.saveSelectionDisabled) {
       this.isSelectingSerialNumber = false;
       this.showSelectedSerialNumbers = true;
-      this.changeTitle.emit("Confirm Transfer");
+      this.changeTitle.emit('Confirm Transfer');
       this.highBid = this.selectedSerialNumber.HighestBidAmountNanos;
       this.lowBid = this.selectedSerialNumber.LowestBidAmountNanos;
     }
@@ -91,7 +95,7 @@ export class TransferNftAcceptModalComponent {
   goBackToSerialSelection(): void {
     this.isSelectingSerialNumber = true;
     this.showSelectedSerialNumbers = false;
-    this.changeTitle.emit("Choose an edition");
+    this.changeTitle.emit('Choose an edition');
     this.highBid = null;
     this.lowBid = null;
     this.selectedSerialNumber = null;
@@ -100,7 +104,11 @@ export class TransferNftAcceptModalComponent {
   selectSerialNumber(serialNumber: NFTEntryResponse) {
     this.selectedSerialNumber = serialNumber;
     this.backendApi
-      .GetSingleProfile(this.globalVars.localNode, this.selectedSerialNumber.LastOwnerPublicKeyBase58Check, "")
+      .GetSingleProfile(
+        this.globalVars.localNode,
+        this.selectedSerialNumber.LastOwnerPublicKeyBase58Check,
+        ''
+      )
       .subscribe((res) => {
         if (res && !res.IsBlacklisted) {
           this.transferringUser = res.Profile?.Username;
@@ -110,10 +118,14 @@ export class TransferNftAcceptModalComponent {
   }
 
   bidAmountUSDFormatted() {
-    return isNumber(this.bidAmountUSD) ? `~${this.globalVars.formatUSD(this.bidAmountUSD, 0)}` : "";
+    return isNumber(this.bidAmountUSD)
+      ? `~${this.globalVars.formatUSD(this.bidAmountUSD, 0)}`
+      : '';
   }
 
   bidAmountDeSoFormatted() {
-    return isNumber(this.bidAmountDeSo) ? `~${this.bidAmountDeSo.toFixed(2)} $DESO` : "";
+    return isNumber(this.bidAmountDeSo)
+      ? `~${this.bidAmountDeSo.toFixed(2)} $DESO`
+      : '';
   }
 }

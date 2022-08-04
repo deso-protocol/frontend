@@ -13,24 +13,12 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es2015",
-    "types": [
-      "node",
-      "jest",
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "types": ["node", "jest"],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2018", "dom"],
     "paths": {
-      "models": [
-        "dist/models"
-      ],
-      "models/*": [
-        "dist/models/*"
-      ],
+      "models": ["dist/models"],
+      "models/*": ["dist/models/*"],
       "crypto": ["./node_modules/crypto-browserify"],
       "stream": ["./node_modules/stream-browserify"],
       "assert": ["./node_modules/assert"],

@@ -1,25 +1,26 @@
 // Dark Theme
 // By:
 .dark[app-theme] {
-    --background: #121212;
-    --text: #EFF3F8;
-    --grey: #999;
-    --secondary: #202020;
-    --secalt: #111;
-    --textalt: #eee;
-    --norm: #eee;
-    --formbg: #111;
-    --link: #4DA3FF;
-    --hover: #72b6ff;
-    --border: #484848;
-    --mborder: #484848;
-    --filter: invert(98%) sepia(1%) saturate(264%) hue-rotate(181deg) brightness(116%) contrast(100%);
-    --unread: #1a293f;
-    --topbar: #2E2E2E;
-    --cblue: #0058F7;
-    --cred: #fe3537;
-    --cgreen: #19B028;
-    --cgold: #FFD700;
-    --button: #0058F7;
-    --loading: #999;
+  --background: #121212;
+  --text: #eff3f8;
+  --grey: #999;
+  --secondary: #202020;
+  --secalt: #111;
+  --textalt: #eee;
+  --norm: #eee;
+  --formbg: #111;
+  --link: #4da3ff;
+  --hover: #72b6ff;
+  --border: #484848;
+  --mborder: #484848;
+  --filter: invert(98%) sepia(1%) saturate(264%) hue-rotate(181deg)
+    brightness(116%) contrast(100%);
+  --unread: #1a293f;
+  --topbar: #2e2e2e;
+  --cblue: #0058f7;
+  --cred: #fe3537;
+  --cgreen: #19b028;
+  --cgold: #ffd700;
+  --button: #0058f7;
+  --loading: #999;
 }

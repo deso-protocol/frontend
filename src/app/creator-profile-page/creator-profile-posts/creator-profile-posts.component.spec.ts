@@ -1,7 +1,7 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { CreatorProfilePostsComponent } from "./creator-profile-posts.component";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { CreatorProfilePostsComponent } from './creator-profile-posts.component';
 
-describe("CreatorProfilePostsComponent", () => {
+describe('CreatorProfilePostsComponent', () => {
   let component: CreatorProfilePostsComponent;
   let fixture: ComponentFixture<CreatorProfilePostsComponent>;
 
@@ -17,7 +17,7 @@ describe("CreatorProfilePostsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

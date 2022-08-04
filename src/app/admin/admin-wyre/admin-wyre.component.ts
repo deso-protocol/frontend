@@ -1,15 +1,15 @@
-import { Component } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GlobalVarsService } from '../../global-vars.service';
+import { BackendApiService } from '../../backend-api.service';
 
 @Component({
-  selector: "admin-wyre",
-  templateUrl: "./admin-wyre.component.html",
-  styleUrls: ["./admin-wyre.component.scss"],
+  selector: 'admin-wyre',
+  templateUrl: './admin-wyre.component.html',
+  styleUrls: ['./admin-wyre.component.scss'],
 })
 export class AdminWyreComponent {
-  usernameToFetchWyreOrders = "";
+  usernameToFetchWyreOrders = '';
   loadingWyreOrders = false;
   wyreOrders = null;
 
@@ -22,8 +22,8 @@ export class AdminWyreComponent {
 
   _loadWyreOrders(): void {
     this.loadingWyreOrders = true;
-    let pubKey = "";
-    let username = "";
+    let pubKey = '';
+    let username = '';
     if (this.globalVars.isMaybePublicKey(this.usernameToFetchWyreOrders)) {
       pubKey = this.usernameToFetchWyreOrders;
     } else {

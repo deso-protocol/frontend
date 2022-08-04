@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, OnChanges } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { BackendApiService, TutorialStatus } from "../../backend-api.service";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { AppRoutingModule, RouteNames } from "../../app-routing.module";
-import { Title } from "@angular/platform-browser";
-import { environment } from "src/environments/environment";
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BackendApiService, TutorialStatus } from '../../backend-api.service';
+import { SwalHelper } from '../../../lib/helpers/swal-helper';
+import { AppRoutingModule, RouteNames } from '../../app-routing.module';
+import { Title } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 export type ProfileUpdates = {
   usernameUpdate: string;
@@ -21,9 +21,9 @@ export type ProfileUpdateErrors = {
 };
 
 @Component({
-  selector: "update-profile",
-  templateUrl: "./update-profile.component.html",
-  styleUrls: ["./update-profile.component.scss"],
+  selector: 'update-profile',
+  templateUrl: './update-profile.component.html',
+  styleUrls: ['./update-profile.component.scss'],
 })
 export class UpdateProfileComponent implements OnInit, OnChanges {
   @Input() loggedInUser: any;
@@ -34,11 +34,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   descriptionInput: string;
   profilePicInput: string;
   founderRewardInput: number = 100;
-  loggedInUserPublicKey = "";
+  loggedInUserPublicKey = '';
   profileUpdates: ProfileUpdates = {
-    usernameUpdate: "",
-    descriptionUpdate: "",
-    profilePicUpdate: "",
+    usernameUpdate: '',
+    descriptionUpdate: '',
+    profilePicUpdate: '',
   };
   profileUpdateErrors: ProfileUpdateErrors = {
     usernameError: false,
@@ -80,28 +80,31 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
   founderRewardTooltip() {
     return (
-      "When someone purchases your coin, a percentage of that " +
-      "gets allocated to you as a founder reward.\n\n" +
-      "A value of 0% means you get no money when someone buys, " +
-      "whereas a value of 100% means that nobody other than you can ever get coins because 100% of " +
-      "every purchase will just go to you.\n\n" +
-      "Setting this value too high will deter buyers from ever " +
+      'When someone purchases your coin, a percentage of that ' +
+      'gets allocated to you as a founder reward.\n\n' +
+      'A value of 0% means you get no money when someone buys, ' +
+      'whereas a value of 100% means that nobody other than you can ever get coins because 100% of ' +
+      'every purchase will just go to you.\n\n' +
+      'Setting this value too high will deter buyers from ever ' +
       "purchasing your coin. It's a balance, so be careful or just stick " +
-      "with the default."
+      'with the default.'
     );
   }
 
   _updateFormBasedOnLoggedInUser() {
     if (this.globalVars.loggedInUser) {
-      const profileEntryResponse = this.globalVars.loggedInUser.ProfileEntryResponse;
-      this.usernameInput = profileEntryResponse?.Username || "";
-      this.descriptionInput = profileEntryResponse?.Description || "";
+      const profileEntryResponse = this.globalVars.loggedInUser
+        .ProfileEntryResponse;
+      this.usernameInput = profileEntryResponse?.Username || '';
+      this.descriptionInput = profileEntryResponse?.Description || '';
       if (profileEntryResponse) {
         this.backendApi
           .GetSingleProfilePicture(
             this.globalVars.localNode,
             profileEntryResponse?.PublicKeyBase58Check,
-            this.globalVars.profileUpdateTimestamp ? `?${this.globalVars.profileUpdateTimestamp}` : ""
+            this.globalVars.profileUpdateTimestamp
+              ? `?${this.globalVars.profileUpdateTimestamp}`
+              : ''
           )
           .subscribe((res) => {
             this._readImageFileToProfilePicInput(res);
@@ -109,20 +112,32 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       }
 
       // If they don't have CreatorBasisPoints set, use the default.
-      if (this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry?.CreatorBasisPoints != null) {
-        this.founderRewardInput = this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry.CreatorBasisPoints / 100;
+      if (
+        this.globalVars.loggedInUser.ProfileEntryResponse?.CoinEntry
+          ?.CreatorBasisPoints != null
+      ) {
+        this.founderRewardInput =
+          this.globalVars.loggedInUser.ProfileEntryResponse.CoinEntry
+            .CreatorBasisPoints / 100;
       }
     }
   }
 
   _setProfileUpdates() {
-    const profileEntryResponse = this.globalVars.loggedInUser.ProfileEntryResponse;
+    const profileEntryResponse = this.globalVars.loggedInUser
+      .ProfileEntryResponse;
     this.profileUpdates.usernameUpdate =
-      profileEntryResponse?.Username !== this.usernameInput ? this.usernameInput : "";
+      profileEntryResponse?.Username !== this.usernameInput
+        ? this.usernameInput
+        : '';
     this.profileUpdates.descriptionUpdate =
-      profileEntryResponse?.Description !== this.descriptionInput ? this.descriptionInput : "";
+      profileEntryResponse?.Description !== this.descriptionInput
+        ? this.descriptionInput
+        : '';
     this.profileUpdates.profilePicUpdate =
-      profileEntryResponse?.ProfilePic !== this.profilePicInput ? this.profilePicInput : "";
+      profileEntryResponse?.ProfilePic !== this.profilePicInput
+        ? this.profilePicInput
+        : '';
   }
 
   _setProfileErrors(): boolean {
@@ -152,7 +167,11 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       this.profileUpdateErrors.profilePicError = false;
     }
 
-    if (typeof this.founderRewardInput != "number" || this.founderRewardInput < 0 || this.founderRewardInput > 100) {
+    if (
+      typeof this.founderRewardInput != 'number' ||
+      this.founderRewardInput < 0 ||
+      this.founderRewardInput > 100
+    ) {
       this.profileUpdateErrors.founderRewardError = true;
       hasErrors = true;
     } else {
@@ -169,8 +188,9 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   _callBackendUpdateProfile() {
     return this.backendApi.UpdateProfile(
       environment.verificationEndpointHostname,
-      this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-      "" /*ProfilePublicKeyBase58Check*/,
+      this.globalVars.loggedInUser
+        .PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+      '' /*ProfilePublicKeyBase58Check*/,
       // Start params
       this.profileUpdates.usernameUpdate /*NewUsername*/,
       this.profileUpdates.descriptionUpdate /*NewDescription*/,
@@ -190,7 +210,10 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
 
     const hasErrors = this._setProfileErrors();
     if (hasErrors) {
-      this.globalVars.logEvent("profile : update : has-errors", this.profileUpdateErrors);
+      this.globalVars.logEvent(
+        'profile : update : has-errors',
+        this.profileUpdateErrors
+      );
       return;
     }
 
@@ -199,32 +222,42 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     this._callBackendUpdateProfile().subscribe(
       (res) => {
         this.globalVars.profileUpdateTimestamp = Date.now();
-        this.globalVars.logEvent("profile : update");
+        this.globalVars.logEvent('profile : update');
         // This updates things like the username that shows up in the dropdown.
-        this.globalVars.updateEverything(res.TxnHashHex, this._updateProfileSuccess, this._updateProfileFailure, this);
+        this.globalVars.updateEverything(
+          res.TxnHashHex,
+          this._updateProfileSuccess,
+          this._updateProfileFailure,
+          this
+        );
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);
-        const lowBalance = parsedError.indexOf("insufficient");
-        this.globalVars.logEvent("profile : update : error", { parsedError, lowBalance });
+        const lowBalance = parsedError.indexOf('insufficient');
+        this.globalVars.logEvent('profile : update : error', {
+          parsedError,
+          lowBalance,
+        });
         this.updateProfileBeingCalled = false;
         SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),
-          icon: "error",
+          icon: 'error',
           title: `An Error Occurred`,
           html: parsedError,
           showConfirmButton: true,
           focusConfirm: true,
           customClass: {
-            confirmButton: "btn btn-light",
-            cancelButton: "btn btn-light no",
+            confirmButton: 'btn btn-light',
+            cancelButton: 'btn btn-light no',
           },
-          confirmButtonText: lowBalance ? "Buy $DESO" : null,
-          cancelButtonText: lowBalance ? "Later" : null,
+          confirmButtonText: lowBalance ? 'Buy $DESO' : null,
+          cancelButtonText: lowBalance ? 'Later' : null,
           showCancelButton: !!lowBalance,
         }).then((res) => {
           if (lowBalance && res.isConfirmed) {
-            this.router.navigate([RouteNames.BUY_DESO], { queryParamsHandling: "merge" });
+            this.router.navigate([RouteNames.BUY_DESO], {
+              queryParamsHandling: 'merge',
+            });
           }
         });
       }
@@ -236,26 +269,31 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     comp.updateProfileBeingCalled = false;
     comp.profileUpdated = true;
     if (comp.inTutorial) {
-      comp.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR], {
-        queryParamsHandling: "merge",
-      });
+      comp.router.navigate(
+        [RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.BUY_CREATOR],
+        {
+          queryParamsHandling: 'merge',
+        }
+      );
       return;
     }
     if (comp.globalVars.loggedInUser.UsersWhoHODLYouCount === 0) {
       SwalHelper.fire({
         target: comp.globalVars.getTargetComponentSelector(),
-        icon: "success",
-        title: "Buy your creator coin",
+        icon: 'success',
+        title: 'Buy your creator coin',
         showConfirmButton: true,
         focusConfirm: true,
         customClass: {
-          confirmButton: "btn btn-light",
+          confirmButton: 'btn btn-light',
         },
-        confirmButtonText: "Buy Your Coin",
+        confirmButtonText: 'Buy Your Coin',
       }).then((res) => {
         if (res.isConfirmed) {
           comp.router.navigate([
-            AppRoutingModule.buyCreatorPath(comp.globalVars.loggedInUser.ProfileEntryResponse.Username),
+            AppRoutingModule.buyCreatorPath(
+              comp.globalVars.loggedInUser.ProfileEntryResponse.Username
+            ),
           ]);
         }
       });
@@ -263,18 +301,24 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   }
 
   _updateProfileFailure(comp: UpdateProfileComponent) {
-    comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
+    comp.globalVars._alertError(
+      'Transaction broadcast successfully but read node timeout exceeded. Please refresh.'
+    );
     comp.updateProfileBeingCalled = false;
   }
 
   _handleFileInput(files: FileList) {
     let fileToUpload = files.item(0);
-    if (!fileToUpload.type || !fileToUpload.type.startsWith("image/")) {
-      this.globalVars._alertError("File selected does not have an image file type.");
+    if (!fileToUpload.type || !fileToUpload.type.startsWith('image/')) {
+      this.globalVars._alertError(
+        'File selected does not have an image file type.'
+      );
       return;
     }
     if (fileToUpload.size > 5 * 1024 * 1024) {
-      this.globalVars._alertError("Please upload an image that is smaller than 5MB.");
+      this.globalVars._alertError(
+        'Please upload an image that is smaller than 5MB.'
+      );
       return;
     }
     this._readImageFileToProfilePicInput(fileToUpload);
@@ -290,6 +334,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
   }
 
   _resetImage() {
-    this.profilePicInput = "";
+    this.profilePicInput = '';
   }
 }

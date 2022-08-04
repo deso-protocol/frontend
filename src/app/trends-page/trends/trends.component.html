@@ -1,10 +1,12 @@
 <div class="d-flex flex-column">
   <div
     class="global__top-bar d-flex flex-column justify-content-between fs-18px font-weight-bold px-15px border-bottom border-color-grey"
-    style="align-items: flex-start; height: 80px;"
+    style="align-items: flex-start; height: 80px"
   >
     <div class="d-flex align-items-center pt-15px">
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+      <top-bar-mobile-navigation-control
+        class="mr-15px d-lg-none d-inline-block"
+      ></top-bar-mobile-navigation-control>
 
       <div>Trends</div>
       <div class="pl-15px fs-15px">
@@ -26,64 +28,97 @@
       </div>
     </div>
     <div *ngIf="activeRightTabOption.poweredBy" class="pb-10px text-grey5">
-      <a class="link--unstyled fs-14px text-grey7" [href]="activeRightTabOption.poweredBy.link" target="_blank">
+      <a
+        class="link--unstyled fs-14px text-grey7"
+        [href]="activeRightTabOption.poweredBy.link"
+        target="_blank"
+      >
         <i class="fas fa-external-link-alt"></i>
         Powered by {{ activeRightTabOption.poweredBy.name }}
       </a>
     </div>
   </div>
 
-  <div style="height: 80px;"></div>
+  <div style="height: 80px"></div>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
 
-    <div #uiScroll *uiScroll="let profileEntryResponse of datasource">
-      <div class="row no-gutters px-15px border-bottom fs-15px"
-           *ngIf="profileEntryResponse.Profile && !profileEntryResponse.User.IsBlacklisted && !profileEntryResponse.User.IsGraylisted"
+  <div #uiScroll *uiScroll="let profileEntryResponse of datasource">
+    <div
+      class="row no-gutters px-15px border-bottom fs-15px"
+      *ngIf="
+        profileEntryResponse.Profile &&
+        !profileEntryResponse.User.IsBlacklisted &&
+        !profileEntryResponse.User.IsGraylisted
+      "
+    >
+      <a
+        [routerLink]="[
+          '/' + globalVars.RouteNames.USER_PREFIX,
+          profileEntryResponse.Profile.Username
+        ]"
+        queryParamsHandling="merge"
+        class="col mb-0 py-15px link--unstyled d-flex align-items-center"
       >
-        <a
-          [routerLink]="['/' + globalVars.RouteNames.USER_PREFIX, profileEntryResponse.Profile.Username]"
-          queryParamsHandling="merge"
-          class="col mb-0 py-15px link--unstyled d-flex align-items-center"
-        >
-          <div
-            class="creators-leaderboard__avatar d-inline-block align-top rounded"
-            [avatar]="profileEntryResponse.Profile.PublicKeyBase58Check"
-          ></div>
+        <div
+          class="creators-leaderboard__avatar d-inline-block align-top rounded"
+          [avatar]="profileEntryResponse.Profile.PublicKeyBase58Check"
+        ></div>
 
-          <div style="flex-grow: 1" class="mt-2 ml-3 fc-default">
-            <span>{{ profileEntryResponse.Profile.Username }}</span>
-            <span
-              *ngIf="profileEntryResponse.Profile.IsReserved && !profileEntryResponse.Profile.IsVerified"
-              class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
-              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-              [matTooltip]="'This profile is reserved. Click to learn how to claim it.'"
-            >
+        <div style="flex-grow: 1" class="mt-2 ml-3 fc-default">
+          <span>{{ profileEntryResponse.Profile.Username }}</span>
+          <span
+            *ngIf="
+              profileEntryResponse.Profile.IsReserved &&
+              !profileEntryResponse.Profile.IsVerified
+            "
+            class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="
+              'This profile is reserved. Click to learn how to claim it.'
+            "
+          >
             <i class="far fa-clock fa-md"></i>
           </span>
-            <span
-              *ngIf="profileEntryResponse.Profile.IsVerified"
-              (click)="tooltip.toggle()"
-              class="ml-1 cursor-pointer text-primary"
-              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
-              [matTooltip]="'This account is verified'"
-              #tooltip="matTooltip"
-            >
+          <span
+            *ngIf="profileEntryResponse.Profile.IsVerified"
+            (click)="tooltip.toggle()"
+            class="ml-1 cursor-pointer text-primary"
+            matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+            [matTooltip]="'This account is verified'"
+            #tooltip="matTooltip"
+          >
             <i class="fas fa-check-circle fa-md"></i>
           </span>
-          </div>
+        </div>
 
-          <div class="d-flex flex-column" style="align-items: flex-end">
-            <div class="fc-green" *ngIf="activeTab === RightBarCreatorsComponent.GAINERS.name">
-              +${{
-              globalVars.abbreviateNumber(globalVars.nanosToUSDNumber(profileEntryResponse.DeSoLockedGained), 2)
-              }}
-            </div>
-            <div class="fc-blue" *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name">
-              {{ globalVars.abbreviateNumber(profileEntryResponse.DiamondsReceived, 0) }}
-              <i class="icon-diamond" style="margin-left: -10px"></i>
-            </div>
-            <div
-              [ngClass]="{
+        <div class="d-flex flex-column" style="align-items: flex-end">
+          <div
+            class="fc-green"
+            *ngIf="activeTab === RightBarCreatorsComponent.GAINERS.name"
+          >
+            +${{
+              globalVars.abbreviateNumber(
+                globalVars.nanosToUSDNumber(
+                  profileEntryResponse.DeSoLockedGained
+                ),
+                2
+              )
+            }}
+          </div>
+          <div
+            class="fc-blue"
+            *ngIf="activeTab === RightBarCreatorsComponent.DIAMONDS.name"
+          >
+            {{
+              globalVars.abbreviateNumber(
+                profileEntryResponse.DiamondsReceived,
+                0
+              )
+            }}
+            <i class="icon-diamond" style="margin-left: -10px"></i>
+          </div>
+          <div
+            [ngClass]="{
               'text-grey7':
                 activeTab !== RightBarCreatorsComponent.COMMUNITY.name &&
                 activeTab !== RightBarCreatorsComponent.ALL_TIME.name,
@@ -91,27 +126,32 @@
                 activeTab === RightBarCreatorsComponent.COMMUNITY.name ||
                 activeTab === RightBarCreatorsComponent.ALL_TIME.name
             }"
-              [ngStyle]="{
+            [ngStyle]="{
               'font-size':
                 activeTab === RightBarCreatorsComponent.COMMUNITY.name ||
                 activeTab === RightBarCreatorsComponent.ALL_TIME.name
                   ? '15px'
                   : '10px'
             }"
-            >
-              ~{{ globalVars.nanosToUSD(profileEntryResponse.Profile.CoinPriceDeSoNanos, 2) }}
-              <i
-                class="fas fa-external-link-alt"
-                *ngIf="activeTab === RightBarCreatorsComponent.COMMUNITY.name"
-                [href]="profileEntryResponse.BithuntProject.website_url"
-              ></i>
-            </div>
+          >
+            ~{{
+              globalVars.nanosToUSD(
+                profileEntryResponse.Profile.CoinPriceDeSoNanos,
+                2
+              )
+            }}
+            <i
+              class="fas fa-external-link-alt"
+              *ngIf="activeTab === RightBarCreatorsComponent.COMMUNITY.name"
+              [href]="profileEntryResponse.BithuntProject.website_url"
+            ></i>
           </div>
-        </a>
-      </div>
+        </div>
+      </a>
     </div>
+  </div>
 
   <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
-    <div class="global__bottom-bar-mobile-height"></div>
-    <div class="global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
+  <div class="global__bottom-bar-mobile-height"></div>
 </div>

@@ -1,13 +1,13 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { BackendApiService } from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
-import { BsModalRef } from "ngx-bootstrap/modal";
-import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Component, OnInit, Input } from '@angular/core';
+import { BackendApiService } from '../backend-api.service';
+import { GlobalVarsService } from '../global-vars.service';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { InfiniteScroller } from '../infinite-scroller';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
 
 @Component({
-  selector: "quote-reposts-modal",
-  templateUrl: "./quote-reposts-modal.component.html",
+  selector: 'quote-reposts-modal',
+  templateUrl: './quote-reposts-modal.component.html',
 })
 export class QuoteRepostsModalComponent implements OnInit {
   @Input() postHashHex: string;
@@ -68,6 +68,12 @@ export class QuoteRepostsModalComponent implements OnInit {
       );
   };
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, false);
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    this.pageSize,
+    this.getPage,
+    false
+  );
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 }

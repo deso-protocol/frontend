@@ -1,25 +1,30 @@
-import { Component, OnInit, Input, ViewChild } from "@angular/core";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { CdkTextareaAutosize } from "@angular/cdk/text-field";
-import { BackendApiService, NFTBidEntryResponse, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { of } from "rxjs";
-import { concatMap, filter, last, map, take } from "rxjs/operators";
-import { NftSoldModalComponent } from "../nft-sold-modal/nft-sold-modal.component";
-import { GlobalVarsService } from "../global-vars.service";
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import {
+  BackendApiService,
+  NFTBidEntryResponse,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from '../backend-api.service';
+import { of } from 'rxjs';
+import { concatMap, filter, last, map, take } from 'rxjs/operators';
+import { NftSoldModalComponent } from '../nft-sold-modal/nft-sold-modal.component';
+import { GlobalVarsService } from '../global-vars.service';
 
 @Component({
-  selector: "add-unlockable-modal",
-  templateUrl: "./add-unlockable-modal.component.html",
+  selector: 'add-unlockable-modal',
+  templateUrl: './add-unlockable-modal.component.html',
 })
 export class AddUnlockableModalComponent implements OnInit {
-  @ViewChild("autosize") autosize: CdkTextareaAutosize;
+  @ViewChild('autosize') autosize: CdkTextareaAutosize;
   @Input() post: PostEntryResponse;
   @Input() nftEntries: NFTEntryResponse[];
   @Input() selectedBidEntries: NFTBidEntryResponse[];
 
   addDisabled = false;
   sellingNFT = false;
-  unlockableText: string = "";
+  unlockableText: string = '';
 
   constructor(
     private modalService: BsModalService,
@@ -64,9 +69,9 @@ export class AddUnlockableModalComponent implements OnInit {
           // Hide this modal and open the next one.
           this.bsModalRef.hide();
           this.modalService.show(NftSoldModalComponent, {
-            class: "modal-dialog-centered modal-sm",
+            class: 'modal-dialog-centered modal-sm',
           });
-          this.modalService.setDismissReason("nft sold");
+          this.modalService.setDismissReason('nft sold');
         },
         (err) => {
           console.error(err);

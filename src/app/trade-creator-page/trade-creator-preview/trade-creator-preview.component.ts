@@ -1,22 +1,24 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
-import { FollowService } from "../../../lib/services/follow/follow.service";
-import { of } from "rxjs";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GlobalVarsService } from '../../global-vars.service';
+import { BackendApiService } from '../../backend-api.service';
+import { CreatorCoinTrade } from '../../../lib/trade-creator-page/creator-coin-trade';
+import { FollowService } from '../../../lib/services/follow/follow.service';
+import { of } from 'rxjs';
 
 @Component({
-  selector: "trade-creator-preview",
-  templateUrl: "./trade-creator-preview.component.html",
-  styleUrls: ["./trade-creator-preview.component.scss"],
+  selector: 'trade-creator-preview',
+  templateUrl: './trade-creator-preview.component.html',
+  styleUrls: ['./trade-creator-preview.component.scss'],
 })
 export class TradeCreatorPreviewComponent implements OnInit {
   // orders will execute as long as the value doesn't slip by more than 25%
   ALLOWED_SLIPPAGE_PERCENT = 75;
 
-  DESO_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorDeSoReceivedIsLessThanMinimumSetBySeller";
-  CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR = "RuleErrorCreatorCoinLessThanMinimumSetByUser";
+  DESO_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR =
+    'RuleErrorDeSoReceivedIsLessThanMinimumSetBySeller';
+  CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR =
+    'RuleErrorCreatorCoinLessThanMinimumSetByUser';
 
   @Input() creatorCoinTrade: CreatorCoinTrade;
   @Input() inTutorial: boolean = false;
@@ -41,7 +43,9 @@ export class TradeCreatorPreviewComponent implements OnInit {
     let desoToSell = this.creatorCoinTrade.desoToSell || 0;
     let creatorCoinToSell = this.creatorCoinTrade.creatorCoinToSell || 0;
     if (desoToSell > 0 && creatorCoinToSell > 0) {
-      console.error(`desoToSell ${desoToSell} and creatorCoinToSell ${creatorCoinToSell} are both > 0`);
+      console.error(
+        `desoToSell ${desoToSell} and creatorCoinToSell ${creatorCoinToSell} are both > 0`
+      );
       // TODO: creator coin buys: rollbar
 
       // in case that happened, as a hack, reset one of them to 0 ... just so the user doesn't
@@ -73,10 +77,12 @@ export class TradeCreatorPreviewComponent implements OnInit {
     this.creatorCoinTradeBeingCalled = true;
 
     const minDeSoExpectedNanos =
-      this.creatorCoinTrade.expectedDeSoReturnedNanos * (this.ALLOWED_SLIPPAGE_PERCENT / 100);
+      this.creatorCoinTrade.expectedDeSoReturnedNanos *
+      (this.ALLOWED_SLIPPAGE_PERCENT / 100);
 
     const minCreatorCoinExpectedNanos =
-      this.creatorCoinTrade.expectedCreatorCoinReturnedNanos * (this.ALLOWED_SLIPPAGE_PERCENT / 100);
+      this.creatorCoinTrade.expectedCreatorCoinReturnedNanos *
+      (this.ALLOWED_SLIPPAGE_PERCENT / 100);
 
     // If we haven't completed the request in 20 seconds, show the high load warning
     window.setTimeout(() => {
@@ -88,11 +94,14 @@ export class TradeCreatorPreviewComponent implements OnInit {
     this.backendApi
       .BuyOrSellCreatorCoin(
         this.appData.localNode,
-        this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-        this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
+        this.appData.loggedInUser
+          .PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+        this.creatorCoinTrade.creatorProfile
+          .PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
         this.creatorCoinTrade.operationType() /*OperationType*/,
         this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
-        this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
+        this.creatorCoinTrade.creatorCoinToSell *
+          1e9 /*CreatorCoinToSellNanos*/,
         0 /*DeSoToAddNanos*/,
         minDeSoExpectedNanos /*MinDeSoExpectedNanos*/,
         minCreatorCoinExpectedNanos /*MinCreatorCoinExpectedNanos*/,
@@ -111,7 +120,7 @@ export class TradeCreatorPreviewComponent implements OnInit {
             ChangeAmountNanos,
             FeeNanos,
           } = response;
-          this.globalVars.logEvent("coins : trade", {
+          this.globalVars.logEvent('coins : trade', {
             Creator: this.creatorCoinTrade.creatorProfile.Username,
             Operation: this.creatorCoinTrade.operationType(),
             ExpectedDeSoReturnedNanos,
@@ -122,16 +131,23 @@ export class TradeCreatorPreviewComponent implements OnInit {
             FeeNanos,
           });
 
-          this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = ExpectedCreatorCoinReturnedNanos || 0;
-          this.creatorCoinTrade.expectedDeSoReturnedNanos = ExpectedDeSoReturnedNanos || 0;
+          this.creatorCoinTrade.expectedCreatorCoinReturnedNanos =
+            ExpectedCreatorCoinReturnedNanos || 0;
+          this.creatorCoinTrade.expectedDeSoReturnedNanos =
+            ExpectedDeSoReturnedNanos || 0;
 
           const observable =
             this.creatorCoinTrade.followCreator &&
-            !this.followService._isLoggedInUserFollowing(this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check) &&
+            !this.followService._isLoggedInUserFollowing(
+              this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check
+            ) &&
             this.appData.loggedInUser.PublicKeyBase58Check !==
               this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check &&
             this.creatorCoinTrade.tradeType === CreatorCoinTrade.BUY_VERB
-              ? this.followService._toggleFollow(true, this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check)
+              ? this.followService._toggleFollow(
+                  true,
+                  this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check
+                )
               : of(null).subscribe();
           observable.add(() => {
             this.appData.updateEverything(
@@ -166,21 +182,32 @@ export class TradeCreatorPreviewComponent implements OnInit {
     this.backendApi
       .TransferCreatorCoin(
         this.appData.localNode,
-        this.appData.loggedInUser.PublicKeyBase58Check /*SenderPublicKeyBase58Check*/,
-        this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
-        this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
+        this.appData.loggedInUser
+          .PublicKeyBase58Check /*SenderPublicKeyBase58Check*/,
+        this.creatorCoinTrade.creatorProfile
+          .PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
+        this.creatorCoinTrade.transferRecipient.value
+          .PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
         this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
         this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
         true
       )
       .subscribe(
         (response) => {
-          const { SpendAmountNanos, TotalInputNanos, ChangeAmountNanos, FeeNanos } = response;
-          this.globalVars.logEvent("coins : transfer", {
+          const {
+            SpendAmountNanos,
+            TotalInputNanos,
+            ChangeAmountNanos,
+            FeeNanos,
+          } = response;
+          this.globalVars.logEvent('coins : transfer', {
             Creator: this.creatorCoinTrade.creatorProfile.Username,
-            SenderPublicKeyBase58Check: this.appData.loggedInUser.PublicKeyBase58Check,
-            ReceiverUsernameOrPublicKeyBase58Check: this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check,
-            CreatorCoinToTransferNanos: this.creatorCoinTrade.amount.value * 1e9,
+            SenderPublicKeyBase58Check: this.appData.loggedInUser
+              .PublicKeyBase58Check,
+            ReceiverUsernameOrPublicKeyBase58Check: this.creatorCoinTrade
+              .transferRecipient.value.PublicKeyBase58Check,
+            CreatorCoinToTransferNanos:
+              this.creatorCoinTrade.amount.value * 1e9,
             SpendAmountNanos,
             TotalInputNanos,
             ChangeAmountNanos,
@@ -188,7 +215,12 @@ export class TradeCreatorPreviewComponent implements OnInit {
           });
 
           // This will update the user's balance.
-          this.appData.updateEverything(response.TxnHashHex, this._creatorCoinSuccess, this._creatorCoinFailure, this);
+          this.appData.updateEverything(
+            response.TxnHashHex,
+            this._creatorCoinSuccess,
+            this._creatorCoinFailure,
+            this
+          );
         },
         (err) => {
           this._handleRequestErrors(err);
@@ -201,7 +233,9 @@ export class TradeCreatorPreviewComponent implements OnInit {
     // CloudFlare rate limiting doesn't return an Access-Allow-Control-Origin header so the browser
     // barfs and returns an unknown error code which has a status of 0
     if (response.status === 0) {
-      return this.appData._alertError("DeSo is under heavy load. Please try again in one minute.");
+      return this.appData._alertError(
+        'DeSo is under heavy load. Please try again in one minute.'
+      );
     }
 
     const errorMessage = response.error.error;
@@ -209,9 +243,14 @@ export class TradeCreatorPreviewComponent implements OnInit {
 
     const hasSlippageError =
       errorMessage.includes(this.DESO_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR) ||
-      errorMessage.includes(this.CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR);
+      errorMessage.includes(
+        this.CREATOR_COIN_RECEIVED_LESS_THAN_MIN_SLIPPAGE_ERROR
+      );
 
-    this.globalVars.logEvent("coins : trade : error", { parsedError, hasSlippageError });
+    this.globalVars.logEvent('coins : trade : error', {
+      parsedError,
+      hasSlippageError,
+    });
 
     if (hasSlippageError) {
       this.slippageError.emit();
@@ -230,7 +269,9 @@ export class TradeCreatorPreviewComponent implements OnInit {
   _creatorCoinFailure = (comp: any) => {
     comp.creatorCoinTradeBeingCalled = false;
     comp.showHighLoadWarning = false;
-    comp.appData._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
+    comp.appData._alertError(
+      'Transaction broadcast successfully but read node timeout exceeded. Please refresh.'
+    );
   };
 
   constructor(

@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { JumioStatusComponent } from "./jumio-status.component";
+import { JumioStatusComponent } from './jumio-status.component';
 
-describe("JumioStatusComponent", () => {
+describe('JumioStatusComponent', () => {
   let component: JumioStatusComponent;
   let fixture: ComponentFixture<JumioStatusComponent>;
 
@@ -18,7 +18,7 @@ describe("JumioStatusComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

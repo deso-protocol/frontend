@@ -17,17 +17,21 @@
   </div>
 </div>
 
-<div *ngIf="!loading && !nftCollections || !nftCollections?.length" class="d-flex align-items-center justify-content-center">
-
-  <div class="d-flex flex-column align-items-center justify-content-center fc-muted fs-15px p-15px text-center" style="height: 400px;">
+<div
+  *ngIf="(!loading && !nftCollections) || !nftCollections?.length"
+  class="d-flex align-items-center justify-content-center"
+>
+  <div
+    class="d-flex flex-column align-items-center justify-content-center fc-muted fs-15px p-15px text-center"
+    style="height: 400px"
+  >
     <div>The NFT Showcase is coming soon!</div>
 
-    <div class="mt-15px">
-      Want a chance to be in the showcase?
-    </div>
+    <div class="mt-15px">Want a chance to be in the showcase?</div>
 
     <div class="mt-15px">
-      Just create an NFT and share it on Twitter or Instagram with <b>#DESONFT</b>!
+      Just create an NFT and share it on Twitter or Instagram with
+      <b>#DESONFT</b>!
     </div>
   </div>
 </div>

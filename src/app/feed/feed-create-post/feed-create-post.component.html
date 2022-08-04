@@ -1,17 +1,28 @@
 <!-- Be careful when modifying this.
      It's used by both the feed and that "create post page."-->
-<div [ngClass]="{'formbg': !parentPost }">
+<div [ngClass]="{ formbg: !parentPost }">
   <!-- Avatar + Input -->
   <div class="d-flex align-items-top pt-15px pr-15px pl-15px">
     <div>
       <div
-        *ngIf="globalVars.userList && (!globalVars.loggedInUser || !globalVars.loggedInUser.ProfileEntryResponse)"
+        *ngIf="
+          globalVars.userList &&
+          (!globalVars.loggedInUser ||
+            !globalVars.loggedInUser.ProfileEntryResponse)
+        "
         class="feed-create-post__avatar feed-create-post__avatar_default"
       ></div>
-      <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse">
+      <div
+        *ngIf="
+          globalVars.loggedInUser &&
+          globalVars.loggedInUser.ProfileEntryResponse
+        "
+      >
         <div
           class="feed-create-post__avatar"
-          [avatar]="globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check"
+          [avatar]="
+            globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check
+          "
         ></div>
       </div>
     </div>
@@ -38,11 +49,17 @@
       ></textarea>
       <!-- Post image -->
       <div class="feed-post__image-container" *ngIf="postImageSrc">
-        <i class="icon-close feed-post__image-delete" (click)="postImageSrc = null"></i>
+        <i
+          class="icon-close feed-post__image-delete"
+          (click)="postImageSrc = null"
+        ></i>
         <img class="feed-post__image" src="{{ postImageSrc }}" />
       </div>
       <!-- Video is processing - please wait -->
-      <div class="d-flex flex-column align-items-center" *ngIf="postVideoSrc && !readyToStream">
+      <div
+        class="d-flex flex-column align-items-center"
+        *ngIf="postVideoSrc && !readyToStream"
+      >
         <div>Video Processing In Progress</div>
         <simple-center-loader [height]="150"></simple-center-loader>
       </div>
@@ -64,7 +81,9 @@
       <div class="feed-post__embed-container" *ngIf="constructedEmbedURL">
         <i
           class="icon-close feed-post__image-delete"
-          (click)="embedURL = ''; showEmbedURL = false; constructedEmbedURL = ''"
+          (click)="
+            embedURL = ''; showEmbedURL = false; constructedEmbedURL = ''
+          "
         ></i>
         <iframe
           [height]="EmbedUrlParserService.getEmbedHeight(constructedEmbedURL)"
@@ -72,19 +91,35 @@
           [src]="constructedEmbedURL | sanitizeEmbed"
           frameborder="0"
           allow="picture-in-picture; clipboard-write; encrypted-media; gyroscope; accelerometer;"
-          [ngStyle]="{'max-width': EmbedUrlParserService.isValidTiktokEmbedURL(constructedEmbedURL) ? '325px' : '' }"
+          [ngStyle]="{
+            'max-width': EmbedUrlParserService.isValidTiktokEmbedURL(
+              constructedEmbedURL
+            )
+              ? '325px'
+              : ''
+          }"
           allowfullscreen
         ></iframe>
       </div>
       <!-- Video Upload Progress bar -->
-      <div class="d-flex flex-column align-items-center" *ngIf="videoUploadPercentage !== null">
-        <div>Uploading: {{videoUploadPercentage}}% Complete</div>
-        <mat-progress-bar [value]="videoUploadPercentage" [mode]="'determinate'"></mat-progress-bar>
+      <div
+        class="d-flex flex-column align-items-center"
+        *ngIf="videoUploadPercentage !== null"
+      >
+        <div>Uploading: {{ videoUploadPercentage }}% Complete</div>
+        <mat-progress-bar
+          [value]="videoUploadPercentage"
+          [mode]="'determinate'"
+        ></mat-progress-bar>
       </div>
     </div>
   </div>
 </div>
-<div class="flex-fill px-15px br-10px fs-13px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showEmbedURL">
+<div
+  class="flex-fill px-15px br-10px fs-13px"
+  [ngClass]="{ 'pt-10px': parentPost }"
+  *ngIf="showEmbedURL"
+>
   <input
     class="br-3px"
     type="url"
@@ -93,7 +128,11 @@
     placeholder="Embed Youtube, Vimeo, TikTok, Giphy, Spotify, SoundCloud, Mousai, or Twitch"
   />
 </div>
-<div class="flex-fill px-15px br-10px" [ngClass]="{ 'pt-10px': parentPost }" *ngIf="showImageLink">
+<div
+  class="flex-fill px-15px br-10px"
+  [ngClass]="{ 'pt-10px': parentPost }"
+  *ngIf="showImageLink"
+>
   <input
     class="br-3px"
     type="url"
@@ -102,7 +141,9 @@
   />
 </div>
 <!-- Image Upload + Post Buttons -->
-<div class="d-flex justify-content-end align-items-center pr-15px pb-15px mt-10px">
+<div
+  class="d-flex justify-content-end align-items-center pr-15px pb-15px mt-10px"
+>
   <span
     class="mr-15px roboto-regular feed-create-post__character-counter fs-15px"
     [ngClass]="{
@@ -118,13 +159,28 @@
     class="fas fa-code fa-lg text-grey8A cursor-pointer fs-18px pr-15px"
     (click)="showEmbedURL = !showEmbedURL"
   ></i>
-  <i class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px" (click)="showImageLink = !showImageLink"></i>
-  <input #videoInput class="d-none" type="file" accept="video/*" (change)="_handleFilesInput($event.target.files)" />
+  <i
+    class="fas fa-external-link-alt fa-lg text-grey8A cursor-pointer pr-15px fs-18px"
+    (click)="showImageLink = !showImageLink"
+  ></i>
+  <input
+    #videoInput
+    class="d-none"
+    type="file"
+    accept="video/*"
+    (change)="_handleFilesInput($event.target.files)"
+  />
   <i
     class="fas fa-video fa-lg text-grey8A cursor-pointer pr-15px feed-create-post__image-icon"
     (click)="videoInput.click()"
   ></i>
-  <input #imageInput class="d-none" type="file" accept="image/*" (change)="_handleFilesInput($event.target.files)" />
+  <input
+    #imageInput
+    class="d-none"
+    type="file"
+    accept="image/*"
+    (change)="_handleFilesInput($event.target.files)"
+  />
   <i
     class="far fa-image fa-lg text-grey8A cursor-pointer feed-create-post__image-icon"
     (click)="imageInput.click()"
@@ -133,7 +189,9 @@
     class="btn btn-primary font-weight-bold ml-15px fs-14px br-12px"
     style="height: 36px; width: 75px; line-height: 15px"
     [ngClass]="{
-      disabled: (postInput.length <= 0 && !postImageSrc && !postVideoSrc) || characterCountExceedsMaxLength(),
+      disabled:
+        (postInput.length <= 0 && !postImageSrc && !postVideoSrc) ||
+        characterCountExceedsMaxLength(),
       'btn-loading': submittingPost
     }"
     (click)="_createPost()"

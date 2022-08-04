@@ -1,9 +1,12 @@
-import { AbstractControl, ValidatorFn } from "@angular/forms";
-import { minValidator } from "./min-validator";
+import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { minValidator } from './min-validator';
 
 // Uses a function getMinFunction to compute the max and evaluates the max against
 // the current value
-export function dynamicMinValidator(getMinFunction: () => number, inclusive: boolean): ValidatorFn {
+export function dynamicMinValidator(
+  getMinFunction: () => number,
+  inclusive: boolean
+): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
     if (!control.value) {
       // let some other validator validate whether the field is required

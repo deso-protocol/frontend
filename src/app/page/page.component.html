@@ -6,13 +6,28 @@
   <left-bar-mobile *ngIf="mobile" [inTutorial]="inTutorial"></left-bar-mobile>
 
   <div class="global__content__flex">
-    <div [class]="mobile || hideSidebar ? 'global__content__width' : 'global__center__width'">
-      <div [class]="mobile || hideSidebar ? 'global__content__inner' : 'global__center__inner'">
+    <div
+      [class]="
+        mobile || hideSidebar
+          ? 'global__content__width'
+          : 'global__center__width'
+      "
+    >
+      <div
+        [class]="
+          mobile || hideSidebar
+            ? 'global__content__inner'
+            : 'global__center__inner'
+        "
+      >
         <ng-content></ng-content>
       </div>
     </div>
     <div class="global__sidebar__width" *ngIf="!mobile && !hideSidebar">
-      <right-bar-creators [inTutorial]="inTutorial" class="global__sidebar__fixed"></right-bar-creators>
+      <right-bar-creators
+        [inTutorial]="inTutorial"
+        class="global__sidebar__fixed"
+      ></right-bar-creators>
     </div>
 
     <bottom-bar-mobile

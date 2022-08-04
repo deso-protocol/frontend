@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TradeCreatorComponent } from "./trade-creator.component";
+import { TradeCreatorComponent } from './trade-creator.component';
 
-describe("TradeCreatorComponent", () => {
+describe('TradeCreatorComponent', () => {
   let component: TradeCreatorComponent;
   let fixture: ComponentFixture<TradeCreatorComponent>;
 
@@ -18,7 +18,7 @@ describe("TradeCreatorComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

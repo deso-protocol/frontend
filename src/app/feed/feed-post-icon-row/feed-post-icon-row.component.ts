@@ -1,23 +1,34 @@
-import { Component, Input, ChangeDetectorRef, ViewChild, Output, EventEmitter } from "@angular/core";
-import { ConfettiSvg, GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, PostEntryResponse } from "../../backend-api.service";
-import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { ActivatedRoute, Router } from "@angular/router";
-import { PlatformLocation } from "@angular/common";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { CommentModalComponent } from "../../comment-modal/comment-modal.component";
-import { PopoverDirective } from "ngx-bootstrap/popover";
-import { ThemeService } from "../../theme/theme.service";
-import { includes, round } from "lodash";
+import {
+  Component,
+  Input,
+  ChangeDetectorRef,
+  ViewChild,
+  Output,
+  EventEmitter,
+} from '@angular/core';
+import { ConfettiSvg, GlobalVarsService } from '../../global-vars.service';
+import {
+  BackendApiService,
+  PostEntryResponse,
+} from '../../backend-api.service';
+import { SharedDialogs } from '../../../lib/shared-dialogs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PlatformLocation } from '@angular/common';
+import { SwalHelper } from '../../../lib/helpers/swal-helper';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { CommentModalComponent } from '../../comment-modal/comment-modal.component';
+import { PopoverDirective } from 'ngx-bootstrap/popover';
+import { ThemeService } from '../../theme/theme.service';
+import { includes, round } from 'lodash';
 
 @Component({
-  selector: "feed-post-icon-row",
-  templateUrl: "./feed-post-icon-row.component.html",
-  styleUrls: ["./feed-post-icon-row.component.sass"],
+  selector: 'feed-post-icon-row',
+  templateUrl: './feed-post-icon-row.component.html',
+  styleUrls: ['./feed-post-icon-row.component.sass'],
 })
 export class FeedPostIconRowComponent {
-  @ViewChild("diamondPopover", { static: false }) diamondPopover: PopoverDirective;
+  @ViewChild('diamondPopover', { static: false })
+  diamondPopover: PopoverDirective;
 
   @Input() post: PostEntryResponse;
   @Input() postContent: PostEntryResponse;
@@ -50,7 +61,7 @@ export class FeedPostIconRowComponent {
   // How quickly the diamonds sequentially appear on hover
   diamondAnimationDelay = 50;
   // Where the drag div should be placed for mobile dragging
-  diamondDragLeftOffset = "0px";
+  diamondDragLeftOffset = '0px';
   // Whether the diamond drag selector is being dragged
   diamondDragging = false;
   // Which diamond is selected by the drag selector
@@ -89,7 +100,7 @@ export class FeedPostIconRowComponent {
     this.diamondDragMoved = false;
     this.diamondDragStarted = new Date();
     this.diamondDragging = true;
-    this.addDiamondSelection({ type: "initiateDrag" });
+    this.addDiamondSelection({ type: 'initiateDrag' });
   }
 
   // Calculate where the drag box has been dragged to, make updates accordingly
@@ -108,7 +119,10 @@ export class FeedPostIconRowComponent {
       this.diamondIdxDraggedTo = this.diamondCount;
     } else {
       // If the selector is in the middle, calculate what % of the middle it has been dragged to, assign a diamond value
-      this.diamondIdxDraggedTo = round(((event.pointerPosition.x - pageMargin) / selectableWidth) * this.diamondCount);
+      this.diamondIdxDraggedTo = round(
+        ((event.pointerPosition.x - pageMargin) / selectableWidth) *
+          this.diamondCount
+      );
     }
     // If the selector has been dragged out of the right margin, enable the helper text
     // (we don't want every drag event to start with the helper text enabled)
@@ -141,7 +155,11 @@ export class FeedPostIconRowComponent {
     // Stop the drag event so that the slider isn't visible during transaction load
     this.diamondDragging = false;
     // If the drag box is not in the "cancel" position, and the selected diamond makes sense, send diamonds
-    if (!this.diamondDragCancel && this.diamondIdxDraggedTo > -1 && this.diamondIdxDraggedTo < this.diamondCount) {
+    if (
+      !this.diamondDragCancel &&
+      this.diamondIdxDraggedTo > -1 &&
+      this.diamondIdxDraggedTo < this.diamondCount
+    ) {
       this.onDiamondSelected(null, this.diamondIdxDraggedTo);
     }
     // Reset drag-related variables
@@ -168,18 +186,18 @@ export class FeedPostIconRowComponent {
 
     return SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      icon: "info",
+      icon: 'info',
       title: `Create an account to ${action}`,
       html: `It's totally anonymous and takes under a minute`,
       showCancelButton: true,
       showConfirmButton: true,
       focusConfirm: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
-      confirmButtonText: "Create an account",
-      cancelButtonText: "Nevermind",
+      confirmButtonText: 'Create an account',
+      cancelButtonText: 'Nevermind',
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
@@ -189,7 +207,10 @@ export class FeedPostIconRowComponent {
   }
 
   userHasReposted(): boolean {
-    return this.postContent.PostEntryReaderState && this.postContent.PostEntryReaderState.RepostedByReader;
+    return (
+      this.postContent.PostEntryReaderState &&
+      this.postContent.PostEntryReaderState.RepostedByReader
+    );
   }
 
   _repost(event: any) {
@@ -201,9 +222,12 @@ export class FeedPostIconRowComponent {
 
     // If the user isn't logged in, alert them.
     if (this.globalVars.loggedInUser == null) {
-      return this._preventNonLoggedInUserActions("repost");
-    } else if (this.globalVars && !this.globalVars.doesLoggedInUserHaveProfile()) {
-      this.globalVars.logEvent("alert : repost : profile");
+      return this._preventNonLoggedInUserActions('repost');
+    } else if (
+      this.globalVars &&
+      !this.globalVars.doesLoggedInUserHaveProfile()
+    ) {
+      this.globalVars.logEvent('alert : repost : profile');
       SharedDialogs.showCreateProfileToPostDialog(this.router);
       return;
     }
@@ -217,23 +241,25 @@ export class FeedPostIconRowComponent {
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
-        "" /*ParentPostHashHex*/,
-        "" /*Title*/,
+        this.postContent.PostEntryReaderState.RepostPostHashHex ||
+          '' /*PostHashHexToModify*/,
+        '' /*ParentPostHashHex*/,
+        '' /*Title*/,
         {},
         this.postContent.PostHashHex,
         {},
-        "" /*Sub*/,
+        '' /*Sub*/,
         false /*IsHidden*/,
         // What should the fee rate be for this?
         this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : repost");
+          this.globalVars.logEvent('post : repost');
           // Only set the RepostPostHashHex if this is the first time a user is reposting a post.
           if (!this.postContent.PostEntryReaderState.RepostPostHashHex) {
-            this.postContent.PostEntryReaderState.RepostPostHashHex = response.PostHashHex;
+            this.postContent.PostEntryReaderState.RepostPostHashHex =
+              response.PostHashHex;
           }
           this.postContent.RepostCount += 1;
           this.postContent.PostEntryReaderState.RepostedByReader = true;
@@ -244,7 +270,7 @@ export class FeedPostIconRowComponent {
           console.error(err);
           this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars.logEvent("post : repost : error", { parsedError });
+          this.globalVars.logEvent('post : repost : error', { parsedError });
           this.globalVars._alertError(parsedError);
           this._detectChanges();
         }
@@ -260,7 +286,7 @@ export class FeedPostIconRowComponent {
 
     // If the user isn't logged in, alert them.
     if (this.globalVars.loggedInUser == null) {
-      return this._preventNonLoggedInUserActions("undo repost");
+      return this._preventNonLoggedInUserActions('undo repost');
     }
     this.sendingRepostRequest = true;
 
@@ -269,20 +295,21 @@ export class FeedPostIconRowComponent {
       .SubmitPost(
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.postContent.PostEntryReaderState.RepostPostHashHex || "" /*PostHashHexToModify*/,
-        "" /*ParentPostHashHex*/,
-        "" /*Title*/,
+        this.postContent.PostEntryReaderState.RepostPostHashHex ||
+          '' /*PostHashHexToModify*/,
+        '' /*ParentPostHashHex*/,
+        '' /*Title*/,
         {} /*BodyObj*/,
         this.postContent.PostHashHex,
         {},
-        "" /*Sub*/,
+        '' /*Sub*/,
         true /*IsHidden*/,
         // What should the fee rate be for this?
         this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
       )
       .subscribe(
         (response) => {
-          this.globalVars.logEvent("post : unrepost");
+          this.globalVars.logEvent('post : unrepost');
           this.postContent.RepostCount--;
           this.postContent.PostEntryReaderState.RepostedByReader = false;
           this.sendingRepostRequest = false;
@@ -292,7 +319,7 @@ export class FeedPostIconRowComponent {
           console.error(err);
           this.sendingRepostRequest = false;
           const parsedError = this.backendApi.parsePostError(err);
-          this.globalVars.logEvent("post : unrepost : error", { parsedError });
+          this.globalVars.logEvent('post : unrepost : error', { parsedError });
           this.globalVars._alertError(parsedError);
           this._detectChanges();
         }
@@ -308,7 +335,7 @@ export class FeedPostIconRowComponent {
 
     // If the user isn't logged in, alert them.
     if (this.globalVars.loggedInUser == null) {
-      return this._preventNonLoggedInUserActions("like");
+      return this._preventNonLoggedInUserActions('like');
     }
 
     // If the reader hasn't liked a post yet, they won't have a reader state.
@@ -339,10 +366,12 @@ export class FeedPostIconRowComponent {
       )
       .subscribe(
         (res) => {
-          this.globalVars.logEvent(`post : ${isUnlike ? "unlike" : "like"}`);
+          this.globalVars.logEvent(`post : ${isUnlike ? 'unlike' : 'like'}`);
         },
         (err) => {
-          this.globalVars.logEvent(`post : ${isUnlike ? "unlike" : "like"} : error`);
+          this.globalVars.logEvent(
+            `post : ${isUnlike ? 'unlike' : 'like'} : error`
+          );
           console.error(err);
         }
       );
@@ -357,30 +386,32 @@ export class FeedPostIconRowComponent {
 
     if (!this.globalVars.loggedInUser) {
       // Check if the user has an account.
-      this.globalVars.logEvent("alert : reply : account");
+      this.globalVars.logEvent('alert : reply : account');
       SharedDialogs.showCreateAccountToPostDialog(this.globalVars);
     } else if (!this.globalVars.doesLoggedInUserHaveProfile()) {
       // Check if the user has a profile.
-      this.globalVars.logEvent("alert : reply : profile");
+      this.globalVars.logEvent('alert : reply : profile');
       SharedDialogs.showCreateProfileToPostDialog(this.router);
     } else {
       const initialState = {
         // If we are quoting a post, make sure we pass the content so we don't repost a repost.
         parentPost: this.postContent,
-        afterCommentCreatedCallback: isQuote ? this.afterRepostCreatedCallback : this.afterCommentCreatedCallback,
+        afterCommentCreatedCallback: isQuote
+          ? this.afterRepostCreatedCallback
+          : this.afterCommentCreatedCallback,
         isQuote,
       };
 
       // If the user has an account and a profile, open the modal so they can comment.
       this.modalService.show(CommentModalComponent, {
-        class: "modal-dialog-centered",
+        class: 'modal-dialog-centered',
         initialState,
       });
     }
   }
 
   copyPostLinkToClipboard(event) {
-    this.globalVars.logEvent("post : share");
+    this.globalVars.logEvent('post : share');
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -392,14 +423,14 @@ export class FeedPostIconRowComponent {
     if (this.inTutorial) {
       return;
     }
-    this.globalVars.logEvent("post : share");
+    this.globalVars.logEvent('post : share');
 
     // Prevent the post from navigating.
     event.stopPropagation();
 
     //condition to check whether middle mouse btn is clicked
     if (event.which == 2) {
-      window.open(this._getPostUrl(), "_blank");
+      window.open(this._getPostUrl(), '_blank');
     }
   }
 
@@ -410,13 +441,17 @@ export class FeedPostIconRowComponent {
   // but the angular docs say not to use PlatformLocation https://angular.io/api/common/PlatformLocation
   // maybe we should just use window.location.href instead...
   _getPostUrl() {
-    const route = this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS;
-    const pathArray = ["/" + route, this.postContent.PostHashHex];
+    const route = this.postContent.IsNFT
+      ? this.globalVars.RouteNames.NFT
+      : this.globalVars.RouteNames.POSTS;
+    const pathArray = ['/' + route, this.postContent.PostHashHex];
 
     // need to preserve the curent query params for our dev env to work
     const currentQueryParams = this.activatedRoute.snapshot.queryParams;
 
-    const path = this.router.createUrlTree(pathArray, { queryParams: currentQueryParams }).toString();
+    const path = this.router
+      .createUrlTree(pathArray, { queryParams: currentQueryParams })
+      .toString();
     const origin = (this.platformLocation as any).location.origin;
 
     return origin + path;
@@ -427,7 +462,10 @@ export class FeedPostIconRowComponent {
     this.collapseDiamondInfo = !this.collapseDiamondInfo;
   }
 
-  sendDiamonds(diamonds: number, skipCelebration: boolean = false): Promise<void> {
+  sendDiamonds(
+    diamonds: number,
+    skipCelebration: boolean = false
+  ): Promise<void> {
     this.sendingDiamonds = true;
     return this.backendApi
       .SendDiamonds(
@@ -443,28 +481,38 @@ export class FeedPostIconRowComponent {
       .then(
         (res) => {
           this.sendingDiamonds = false;
-          this.globalVars.logEvent("diamond: send", {
-            SenderPublicKeyBase58Check: this.globalVars.loggedInUser.PublicKeyBase58Check,
-            ReceiverPublicKeyBase58Check: this.postContent.PosterPublicKeyBase58Check,
+          this.globalVars.logEvent('diamond: send', {
+            SenderPublicKeyBase58Check: this.globalVars.loggedInUser
+              .PublicKeyBase58Check,
+            ReceiverPublicKeyBase58Check: this.postContent
+              .PosterPublicKeyBase58Check,
             DiamondPostHashHex: this.postContent.PostHashHex,
             DiamondLevel: diamonds,
           });
           this.diamondSelected = diamonds;
-          this.postContent.DiamondCount += diamonds - this.getCurrentDiamondLevel();
+          this.postContent.DiamondCount +=
+            diamonds - this.getCurrentDiamondLevel();
           this.postContent.PostEntryReaderState.DiamondLevelBestowed = diamonds;
           if (!skipCelebration) {
             // Celebrate when the SendDiamonds call completes
             this.globalVars.celebrate([ConfettiSvg.DIAMOND]);
           }
-          this.globalVars.updateEverything(res.TxnHashHex, this.sendDiamondsSuccess, this.sendDiamondsFailure, this);
+          this.globalVars.updateEverything(
+            res.TxnHashHex,
+            this.sendDiamondsSuccess,
+            this.sendDiamondsFailure,
+            this
+          );
         },
         (err) => {
           if (err.status === 0) {
-            return this.globalVars._alertError("DeSo is under heavy load. Please try again in one minute.");
+            return this.globalVars._alertError(
+              'DeSo is under heavy load. Please try again in one minute.'
+            );
           }
           this.sendingDiamonds = false;
           const parsedError = this.backendApi.parseProfileError(err);
-          this.globalVars.logEvent("diamonds: send: error", { parsedError });
+          this.globalVars.logEvent('diamonds: send: error', { parsedError });
           this.globalVars._alertError(parsedError);
         }
       );
@@ -477,12 +525,18 @@ export class FeedPostIconRowComponent {
 
   sendDiamondsFailure(comp: FeedPostIconRowComponent) {
     comp.sendingDiamonds = false;
-    comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
+    comp.globalVars._alertError(
+      'Transaction broadcast successfully but read node timeout exceeded. Please refresh.'
+    );
   }
 
   popoverOpenClickHandler = (e: Event) => {
-    const popoverElement = document.getElementById("diamond-popover");
-    if (popoverElement && e.target !== popoverElement && !popoverElement.contains(e.target as any)) {
+    const popoverElement = document.getElementById('diamond-popover');
+    if (
+      popoverElement &&
+      e.target !== popoverElement &&
+      !popoverElement.contains(e.target as any)
+    ) {
       e.stopPropagation();
     }
   };
@@ -499,7 +553,7 @@ export class FeedPostIconRowComponent {
     }
 
     // Don't trigger diamond purchases on tap on tablet
-    if (event && event.pointerType === "touch" && !fromDragEvent) {
+    if (event && event.pointerType === 'touch' && !fromDragEvent) {
       event.stopPropagation();
       return;
     }
@@ -514,7 +568,10 @@ export class FeedPostIconRowComponent {
 
   addDiamondSelection(event) {
     // Need to make sure hover event doesn't trigger on child elements
-    if (event?.type === "initiateDrag" || event.target.id === "diamond-button") {
+    if (
+      event?.type === 'initiateDrag' ||
+      event.target.id === 'diamond-button'
+    ) {
       for (let idx = 0; idx < this.diamondCount; idx++) {
         this.diamondTimeouts[idx] = setTimeout(() => {
           this.diamondsVisible[idx] = true;
@@ -532,7 +589,7 @@ export class FeedPostIconRowComponent {
 
   async onDiamondSelected(event: any, index: number): Promise<void> {
     if (!this.globalVars.loggedInUser?.PublicKeyBase58Check) {
-      this.globalVars._alertError("Must be logged in to send diamonds");
+      this.globalVars._alertError('Must be logged in to send diamonds');
       return;
     }
     // Disable diamond selection if diamonds are being sent
@@ -540,7 +597,11 @@ export class FeedPostIconRowComponent {
       return;
     }
 
-    if (event && event.pointerType === "touch" && includes(event.target.classList, "reaction-icon")) {
+    if (
+      event &&
+      event.pointerType === 'touch' &&
+      includes(event.target.classList, 'reaction-icon')
+    ) {
       event.stopPropagation();
       return;
     }
@@ -550,18 +611,23 @@ export class FeedPostIconRowComponent {
       return;
     }
 
-    if (index + 1 <= this.postContent.PostEntryReaderState.DiamondLevelBestowed) {
-      this.globalVars._alertError("You cannot downgrade a diamond");
+    if (
+      index + 1 <=
+      this.postContent.PostEntryReaderState.DiamondLevelBestowed
+    ) {
+      this.globalVars._alertError('You cannot downgrade a diamond');
       return;
     }
     this.diamondSelected = index + 1;
     if (event) {
       event.stopPropagation();
     }
-    if (this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold) {
+    if (
+      this.diamondSelected > FeedPostIconRowComponent.DiamondWarningThreshold
+    ) {
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
-        icon: "info",
+        icon: 'info',
         title: `Sending ${this.diamondSelected} diamonds to @${this.postContent.ProfileEntryResponse?.Username}`,
         html: `Clicking confirm will send ${this.globalVars.getUSDForDiamond(
           this.diamondSelected
@@ -570,11 +636,11 @@ export class FeedPostIconRowComponent {
         showConfirmButton: true,
         focusConfirm: true,
         customClass: {
-          confirmButton: "btn btn-light",
-          cancelButton: "btn btn-light no",
+          confirmButton: 'btn btn-light',
+          cancelButton: 'btn btn-light no',
         },
-        confirmButtonText: "Confirm",
-        cancelButtonText: "Cancel",
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
         reverseButtons: true,
       }).then(async (res: any) => {
         if (res.isConfirmed) {
@@ -591,7 +657,9 @@ export class FeedPostIconRowComponent {
   }
 
   getPopoverContainerClass() {
-    const mobileClass = this.globalVars.isMobile() ? "diamond-popover-container-mobile " : "";
-    return "diamond-popover-container " + mobileClass;
+    const mobileClass = this.globalVars.isMobile()
+      ? 'diamond-popover-container-mobile '
+      : '';
+    return 'diamond-popover-container ' + mobileClass;
   }
 }

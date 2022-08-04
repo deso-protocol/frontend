@@ -1,10 +1,10 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { NavigationService } from "../../../lib/services/navigation-service";
+import { Component, Input, OnInit } from '@angular/core';
+import { NavigationService } from '../../../lib/services/navigation-service';
 
 @Component({
-  selector: "bottom-bar-mobile-tab",
-  templateUrl: "./bottom-bar-mobile-tab.component.html",
-  styleUrls: ["./bottom-bar-mobile-tab.component.scss"],
+  selector: 'bottom-bar-mobile-tab',
+  templateUrl: './bottom-bar-mobile-tab.component.html',
+  styleUrls: ['./bottom-bar-mobile-tab.component.scss'],
 })
 export class BottomBarMobileTabComponent {
   @Input() link: string;

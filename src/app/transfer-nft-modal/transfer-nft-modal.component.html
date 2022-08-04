@@ -1,28 +1,46 @@
 <div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="isSelectingSerialNumber ? 'Select an edition' : 'Transfer NFT'" [bsModalRef]="bsModalRef"></nft-modal-header>
+  <nft-modal-header
+    [header]="isSelectingSerialNumber ? 'Select an edition' : 'Transfer NFT'"
+    [bsModalRef]="bsModalRef"
+  ></nft-modal-header>
   <simple-center-loader *ngIf="loading"></simple-center-loader>
   <div *ngIf="!loading">
-    <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{'d-none': isSelectingSerialNumber}">
+    <div
+      *ngIf="transferableSerialNumbers?.length"
+      [ngClass]="{ 'd-none': isSelectingSerialNumber }"
+    >
       <div class="fs-15px text-grey5">
         You are about to transfer the NFT shown below.
       </div>
 
-      <div *ngIf="!globalVars.isMobile()" class="d-flex justify-content-between nft-modal-bid-details">
-          <span class="m-16px">Number #{{ selectedSerialNumber?.SerialNumber }}</span>
-          <a class="fc-blue m-16px" (click)="goBackToSerialSelection()">Change</a>
+      <div
+        *ngIf="!globalVars.isMobile()"
+        class="d-flex justify-content-between nft-modal-bid-details"
+      >
+        <span class="m-16px"
+          >Number #{{ selectedSerialNumber?.SerialNumber }}</span
+        >
+        <a class="fc-blue m-16px" (click)="goBackToSerialSelection()">Change</a>
       </div>
 
       <div *ngIf="globalVars.isMobile()">
-        <div class="nft-modal-bid-details d-flex justify-content-between p-16px">
-          <span class="font-weight-bold">Number #{{ selectedSerialNumber?.SerialNumber }}</span>
+        <div
+          class="nft-modal-bid-details d-flex justify-content-between p-16px"
+        >
+          <span class="font-weight-bold"
+            >Number #{{ selectedSerialNumber?.SerialNumber }}</span
+          >
           <div>
-            <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()">Change</a>
+            <a class="fc-blue ml-16px" (click)="goBackToSerialSelection()"
+              >Change</a
+            >
           </div>
         </div>
       </div>
 
       <div class="font-weight-semibold mb-10px">
-        Search for a public key or username to whom you want to transfer this NFT
+        Search for a public key or username to whom you want to transfer this
+        NFT
       </div>
       <search-bar
         [isSearchForUsersToSendDESO]="true"
@@ -68,10 +86,11 @@
             transferringNFT ||
             !selectedSerialNumber ||
             !selectedCreator ||
-            (post.HasUnlockable && (unlockableText === null || unlockableText === ''))
+            (post.HasUnlockable &&
+              (unlockableText === null || unlockableText === ''))
           "
         >
-          {{ transferringNFT ? "Transferring NFT" : "Transfer NFT" }}
+          {{ transferringNFT ? 'Transferring NFT' : 'Transfer NFT' }}
         </button>
       </div>
 
@@ -88,12 +107,15 @@
         [showInteractionDetails]="false"
         [contentShouldLinkToThread]="false"
       ></feed-post>
-
     </div>
 
-
-    <div *ngIf="transferableSerialNumbers?.length" [ngClass]="{'d-none': !isSelectingSerialNumber}">
-      <div class="nft-modal__subtitle">These are the serial numbers that are transferable</div>
+    <div
+      *ngIf="transferableSerialNumbers?.length"
+      [ngClass]="{ 'd-none': !isSelectingSerialNumber }"
+    >
+      <div class="nft-modal__subtitle">
+        These are the serial numbers that are transferable
+      </div>
       <div class="container fs-15px px-0px">
         <nft-select-serial-number
           [serialNumbers]="transferableSerialNumbers"

@@ -13,14 +13,13 @@
       'justify-content-between': !(justifyLeft || justifyAround),
       'justify-left': justifyLeft,
       'justify-around': justifyAround
-    }">
+    }"
+  >
     <div>🎉</div>
-    <div [ngClass]="{'d-flex': !globalVars.isMobile()}">
-      <div>
-        {{ timerText }}&nbsp;&nbsp;
-      </div>
+    <div [ngClass]="{ 'd-flex': !globalVars.isMobile() }">
+      <div>{{ timerText }}&nbsp;&nbsp;</div>
       <div class="font-weight-semibold">
-        {{ days + "d " + hours + "h " + minutes + "m " + seconds + "s" }}
+        {{ days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's' }}
       </div>
     </div>
     <div>🎉</div>

@@ -1,9 +1,12 @@
-import { Component, Input } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
-import { BsModalRef } from "ngx-bootstrap/modal";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { Router } from "@angular/router";
+import { Component, Input } from '@angular/core';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+} from '../backend-api.service';
+import { GlobalVarsService } from '../global-vars.service';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { Router } from '@angular/router';
 
 type AdditionalRoyalty = {
   PublicKeyBase58Check?: string;
@@ -13,12 +16,12 @@ type AdditionalRoyalty = {
 };
 
 @Component({
-  selector: "app-mint-nft-modal",
-  templateUrl: "./mint-nft-modal.component.html",
+  selector: 'app-mint-nft-modal',
+  templateUrl: './mint-nft-modal.component.html',
 })
 export class MintNftModalComponent {
-  IS_SINGLE_COPY = "isSingleCopy";
-  IS_MULTIPLE_COPIES = "isMultipleCopies";
+  IS_SINGLE_COPY = 'isSingleCopy';
+  IS_MULTIPLE_COPIES = 'isMultipleCopies';
   @Input() post: any;
 
   globalVars: GlobalVarsService;
@@ -28,7 +31,7 @@ export class MintNftModalComponent {
   copiesRadioValue = this.IS_SINGLE_COPY;
   numCopies: number = 1;
   putOnSale: boolean = true;
-  minBidAmountUSD: string = "0";
+  minBidAmountUSD: string = '0';
   minBidAmountDESO: number = 0;
   creatorRoyaltyPercent: number = 5;
   coinRoyaltyPercent: number = 10;
@@ -36,7 +39,7 @@ export class MintNftModalComponent {
   createNFTFeeNanos: number;
   maxCopiesPerNFT: number;
   buyNowPriceDESO: number = 0;
-  buyNowPriceUSD: string = "0";
+  buyNowPriceUSD: string = '0';
   isBuyNow: boolean = false;
   additionalDESORoyalties: AdditionalRoyalty[] = [];
   additionalCoinRoyalties: AdditionalRoyalty[] = [];
@@ -50,7 +53,10 @@ export class MintNftModalComponent {
   ) {
     this.globalVars = _globalVars;
     this.backendApi
-      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .GetGlobalParams(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check
+      )
       .subscribe((res) => {
         this.createNFTFeeNanos = res.CreateNFTFeeNanos;
         this.maxCopiesPerNFT = res.MaxCopiesPerNFT;
@@ -60,11 +66,23 @@ export class MintNftModalComponent {
   hasUnreasonableTotalRoyalties(): boolean {
     let totalAdditionalRoyalties = 0;
 
-    const sumReducer = (previousValue, currentValue) => previousValue + currentValue;
+    const sumReducer = (previousValue, currentValue) =>
+      previousValue + currentValue;
 
-    totalAdditionalRoyalties = this.additionalCoinRoyalties.reduce(sumReducer, totalAdditionalRoyalties);
-    totalAdditionalRoyalties = this.additionalDESORoyalties.reduce(sumReducer, totalAdditionalRoyalties);
-    return this.creatorRoyaltyPercent + this.coinRoyaltyPercent + totalAdditionalRoyalties > 100;
+    totalAdditionalRoyalties = this.additionalCoinRoyalties.reduce(
+      sumReducer,
+      totalAdditionalRoyalties
+    );
+    totalAdditionalRoyalties = this.additionalDESORoyalties.reduce(
+      sumReducer,
+      totalAdditionalRoyalties
+    );
+    return (
+      this.creatorRoyaltyPercent +
+        this.coinRoyaltyPercent +
+        totalAdditionalRoyalties >
+      100
+    );
   }
 
   hasUnreasonableRoyalties(): boolean {
@@ -88,30 +106,49 @@ export class MintNftModalComponent {
       }
     });
 
-    let isSumUnreasonable = this.creatorRoyaltyPercent + this.coinRoyaltyPercent + totalAdditionalRoyalties > 100;
-    return isEitherUnreasonable || isAnyAdditionalUnreasonable || isSumUnreasonable;
+    let isSumUnreasonable =
+      this.creatorRoyaltyPercent +
+        this.coinRoyaltyPercent +
+        totalAdditionalRoyalties >
+      100;
+    return (
+      isEitherUnreasonable || isAnyAdditionalUnreasonable || isSumUnreasonable
+    );
   }
 
   hasPostCreatorInAdditionalRoyalties(royalties: AdditionalRoyalty[]): boolean {
     return (
-      royalties.filter((royalty) => royalty.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check)
-        .length > 0
+      royalties.filter(
+        (royalty) =>
+          royalty.PublicKeyBase58Check ===
+          this.globalVars.loggedInUser?.PublicKeyBase58Check
+      ).length > 0
     );
   }
 
   hasDuplicatesInAdditionalRoyalties(royalties: AdditionalRoyalty[]): boolean {
     let royaltiesSet = new Set();
     return royalties.some((royalty) => {
-      return royaltiesSet.size === royaltiesSet.add(royalty.PublicKeyBase58Check).size;
+      return (
+        royaltiesSet.size ===
+        royaltiesSet.add(royalty.PublicKeyBase58Check).size
+      );
     });
   }
 
   isAdditionalDESORoyaltiesMissingPublicKey(): boolean {
-    return this.additionalDESORoyalties.filter((royalty) => !royalty.PublicKeyBase58Check).length > 0;
+    return (
+      this.additionalDESORoyalties.filter(
+        (royalty) => !royalty.PublicKeyBase58Check
+      ).length > 0
+    );
   }
 
   isAdditionalCoinRoyaltiesMissingProfile(): boolean {
-    return this.additionalCoinRoyalties.filter((royalty) => !royalty.Username).length > 0;
+    return (
+      this.additionalCoinRoyalties.filter((royalty) => !royalty.Username)
+        .length > 0
+    );
   }
 
   hasAdditionalRoyaltyError(): boolean {
@@ -126,7 +163,9 @@ export class MintNftModalComponent {
   }
 
   hasUnreasonableNumCopies(): boolean {
-    return this.numCopies > (this.maxCopiesPerNFT || 1000) || this.numCopies < 1;
+    return (
+      this.numCopies > (this.maxCopiesPerNFT || 1000) || this.numCopies < 1
+    );
   }
 
   hasUnreasonableMinBidAmount(): boolean {
@@ -148,16 +187,16 @@ export class MintNftModalComponent {
     if (!isOnSale) {
       this.isBuyNow = false;
       this.buyNowPriceDESO = 0;
-      this.buyNowPriceUSD = "0";
+      this.buyNowPriceUSD = '0';
       this.minBidAmountDESO = 0;
-      this.minBidAmountUSD = "0";
+      this.minBidAmountUSD = '0';
     }
   }
 
   updateBuyNowStatus(isBuyNow: boolean): void {
     if (!isBuyNow) {
       this.buyNowPriceDESO = 0;
-      this.buyNowPriceUSD = "0";
+      this.buyNowPriceUSD = '0';
     }
   }
 
@@ -165,24 +204,30 @@ export class MintNftModalComponent {
     if (includeUnlockable) {
       this.isBuyNow = false;
       this.buyNowPriceDESO = 0;
-      this.buyNowPriceUSD = "0";
+      this.buyNowPriceUSD = '0';
     }
   }
 
   updateMinBidAmountUSD(desoAmount): void {
-    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
+    this.minBidAmountUSD = this.globalVars
+      .nanosToUSDNumber(desoAmount * 1e9)
+      .toFixed(2);
   }
 
   updateMinBidAmountDESO(usdAmount): void {
-    this.minBidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+    this.minBidAmountDESO =
+      Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
   updateBuyNowPriceUSD(desoAmount): void {
-    this.buyNowPriceUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
+    this.buyNowPriceUSD = this.globalVars
+      .nanosToUSDNumber(desoAmount * 1e9)
+      .toFixed(2);
   }
 
   updateBuyNowPriceDESO(usdAmount): void {
-    this.buyNowPriceDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+    this.buyNowPriceDESO =
+      Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
   mintNft() {
@@ -212,15 +257,21 @@ export class MintNftModalComponent {
       coinRoyaltyBasisPoints = this.coinRoyaltyPercent * 100;
     }
 
-    let additionalCoinRoyaltiesMap = this.additionalCoinRoyalties.reduce((royaltyMap, royalty) => {
-      royaltyMap[royalty.PublicKeyBase58Check] = royalty.RoyaltyPercent * 100;
-      return royaltyMap;
-    }, {});
+    let additionalCoinRoyaltiesMap = this.additionalCoinRoyalties.reduce(
+      (royaltyMap, royalty) => {
+        royaltyMap[royalty.PublicKeyBase58Check] = royalty.RoyaltyPercent * 100;
+        return royaltyMap;
+      },
+      {}
+    );
 
-    let additionalDESORoyaltiesMap = this.additionalDESORoyalties.reduce((royaltyMap, royalty) => {
-      royaltyMap[royalty.PublicKeyBase58Check] = royalty.RoyaltyPercent * 100;
-      return royaltyMap;
-    }, {});
+    let additionalDESORoyaltiesMap = this.additionalDESORoyalties.reduce(
+      (royaltyMap, royalty) => {
+        royaltyMap[royalty.PublicKeyBase58Check] = royalty.RoyaltyPercent * 100;
+        return royaltyMap;
+      },
+      {}
+    );
 
     this.minting = true;
     this.backendApi
@@ -242,7 +293,12 @@ export class MintNftModalComponent {
       )
       .subscribe(
         (res) => {
-          this.globalVars.updateEverything(res.TxnHashHex, this._mintNFTSuccess, this._mintNFTFailure, this);
+          this.globalVars.updateEverything(
+            res.TxnHashHex,
+            this._mintNFTSuccess,
+            this._mintNFTFailure,
+            this
+          );
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
@@ -253,13 +309,17 @@ export class MintNftModalComponent {
 
   _mintNFTSuccess(comp: MintNftModalComponent) {
     comp.minting = false;
-    comp.router.navigate(["/" + comp.globalVars.RouteNames.NFT + "/" + comp.post.PostHashHex]);
+    comp.router.navigate([
+      '/' + comp.globalVars.RouteNames.NFT + '/' + comp.post.PostHashHex,
+    ]);
     comp.bsModalRef.hide();
   }
 
   _mintNFTFailure(comp: MintNftModalComponent) {
     comp.minting = false;
-    comp.globalVars._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
+    comp.globalVars._alertError(
+      'Transaction broadcast successfully but read node timeout exceeded. Please refresh.'
+    );
   }
 
   addNewDESORoyalty(): void {
@@ -283,7 +343,11 @@ export class MintNftModalComponent {
     royalties.splice(idx, 1);
   }
 
-  _handleCreatorSelectedInSearch(creator: ProfileEntryResponse, royalties: AdditionalRoyalty[], idx: number): void {
+  _handleCreatorSelectedInSearch(
+    creator: ProfileEntryResponse,
+    royalties: AdditionalRoyalty[],
+    idx: number
+  ): void {
     if (royalties.length < idx) {
       return;
     }

@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminWyreComponent } from "./admin-wyre.component";
+import { AdminWyreComponent } from './admin-wyre.component';
 
-describe("AdminWyreComponent", () => {
+describe('AdminWyreComponent', () => {
   let component: AdminWyreComponent;
   let fixture: ComponentFixture<AdminWyreComponent>;
 
@@ -18,7 +18,7 @@ describe("AdminWyreComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

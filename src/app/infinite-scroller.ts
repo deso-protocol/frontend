@@ -1,8 +1,8 @@
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Datasource, IAdapter, IDatasource } from 'ngx-ui-scroll';
 
 export class InfiniteScroller {
   pagedRequests = {
-    "-1": new Promise((resolve) => {
+    '-1': new Promise((resolve) => {
       resolve([]);
     }),
   };
@@ -52,7 +52,10 @@ export class InfiniteScroller {
         }
 
         return Promise.all(pageRequests).then((pageResults) => {
-          pageResults = pageResults.reduce((acc, result) => [...acc, ...result], []);
+          pageResults = pageResults.reduce(
+            (acc, result) => [...acc, ...result],
+            []
+          );
           const start = startIdx - startPage * this.pageSize;
           const end = start + endIdx - startIdx + 1;
           return pageResults.slice(start, end);
@@ -64,7 +67,7 @@ export class InfiniteScroller {
 
   reset(): void {
     this.pagedRequests = {
-      "-1": new Promise((resolve) => {
+      '-1': new Promise((resolve) => {
         resolve([]);
       }),
     };

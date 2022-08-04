@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreatorProfileTopCardComponent } from "./creator-profile-top-card.component";
+import { CreatorProfileTopCardComponent } from './creator-profile-top-card.component';
 
-describe("CreatorProfileTopCardComponent", () => {
+describe('CreatorProfileTopCardComponent', () => {
   let component: CreatorProfileTopCardComponent;
   let fixture: ComponentFixture<CreatorProfileTopCardComponent>;
 
@@ -18,7 +18,7 @@ describe("CreatorProfileTopCardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

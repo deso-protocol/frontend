@@ -5,12 +5,16 @@
     style="min-height: 80px"
   >
     <div class="d-flex align-items-center">
-      <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+      <top-bar-mobile-navigation-control
+        class="mr-15px d-lg-none d-inline-block"
+      ></top-bar-mobile-navigation-control>
 
       <span class="font-weight-bold">Sign up&nbsp;</span>
       <div *ngIf="stepNum == 1">
         &middot;
-        <a class="font-weight-bold" (click)="globalVars.launchLoginFlow()">Log in</a>
+        <a class="font-weight-bold" (click)="globalVars.launchLoginFlow()"
+          >Log in</a
+        >
       </div>
     </div>
   </div>
@@ -29,16 +33,21 @@
 
     <!-- Step 4 -->
     <div *ngIf="stepNum == 4">
-      <div *ngIf="showPhoneNumberVerifiedContent" class="border-color-grey border-bottom py-15px">
+      <div
+        *ngIf="showPhoneNumberVerifiedContent"
+        class="border-color-grey border-bottom py-15px"
+      >
         <div class="p-15px br-12px background-color-grey fs-15px">
-          Your phone number was verified. We sent you a small amount of DeSo, which is enough to post and follow
-          people.
+          Your phone number was verified. We sent you a small amount of DeSo,
+          which is enough to post and follow people.
         </div>
       </div>
 
       <div class="pt-15px fs-15px fc-muted">STEP 4 of 4</div>
       <div class="fs-24px font-weight-bold pt-15px">Stay in the loop</div>
-      <div class="fs-18px pt-15px">Get notified when someone buys your coin.</div>
+      <div class="fs-18px pt-15px">
+        Get notified when someone buys your coin.
+      </div>
       <div class="fs-15px pt-30px">E-mail</div>
       <div class="form-group pt-10px">
         <input
@@ -47,17 +56,25 @@
           placeholder="Enter an email address."
           [(ngModel)]="emailAddress"
         />
-        <div class="fc-red fs-15px mt-10px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+        <div class="fc-red fs-15px mt-10px" *ngIf="invalidEmailEntered">
+          Please enter a valid email address.
+        </div>
       </div>
       <div class="d-flex justify-content-end">
-        <button (click)="notificationsStepSkipped()" class="btn btn-outline-primary font-weight-bold fs-15px">Skip</button>
+        <button
+          (click)="notificationsStepSkipped()"
+          class="btn btn-outline-primary font-weight-bold fs-15px"
+        >
+          Skip
+        </button>
         <button
           *ngIf="!storingEmailAndPhone"
           (click)="notificationsStepNext()"
           class="btn btn-primary font-weight-bold fs-15px ml-10px"
           [ngClass]="{
             'btn-loading': storingEmailAndPhone
-          }">
+          }"
+        >
           Next
         </button>
       </div>
@@ -79,12 +96,21 @@
         </span>
       </div>
       <div class="fs-18px pt-30px mb-10px">
-        You can use $DESO to trade creator coins, give Diamonds, buy NFTs, and much more.
+        You can use $DESO to trade creator coins, give Diamonds, buy NFTs, and
+        much more.
       </div>
 
       <div class="d-flex justify-content-end mt-15px pt-10px">
-        <button (click)="buyDeSoSkipped()" class="btn btn-outline-primary font-weight-bold fs-15px">Skip</button>
-        <button (click)="buyDeSoClicked()" class="btn btn-primary font-weight-bold fs-15px ml-10px">
+        <button
+          (click)="buyDeSoSkipped()"
+          class="btn btn-outline-primary font-weight-bold fs-15px"
+        >
+          Skip
+        </button>
+        <button
+          (click)="buyDeSoClicked()"
+          class="btn btn-primary font-weight-bold fs-15px ml-10px"
+        >
           Buy $DESO
         </button>
       </div>

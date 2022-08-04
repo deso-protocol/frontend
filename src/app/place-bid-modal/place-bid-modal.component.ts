@@ -1,17 +1,21 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { GlobalVarsService } from "../global-vars.service";
-import { BidPlacedModalComponent } from "../bid-placed-modal/bid-placed-modal.component";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import * as _ from "lodash";
-import { Router } from "@angular/router";
-import { filter, take } from "rxjs/operators";
-import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Component, OnInit, Input } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { GlobalVarsService } from '../global-vars.service';
+import { BidPlacedModalComponent } from '../bid-placed-modal/bid-placed-modal.component';
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from '../backend-api.service';
+import * as _ from 'lodash';
+import { Router } from '@angular/router';
+import { filter, take } from 'rxjs/operators';
+import { InfiniteScroller } from '../infinite-scroller';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
 
 @Component({
-  selector: "place-bid-modal",
-  templateUrl: "./place-bid-modal.component.html",
+  selector: 'place-bid-modal',
+  templateUrl: './place-bid-modal.component.html',
 })
 export class PlaceBidModalComponent implements OnInit {
   static PAGE_SIZE = 50;
@@ -52,46 +56,61 @@ export class PlaceBidModalComponent implements OnInit {
         this.post.PostHashHex
       )
       .subscribe((res) => {
-        this.availableSerialNumbers = _.values(res.SerialNumberToNFTEntryResponse).sort(
-          (a, b) => a.SerialNumber - b.SerialNumber
-        );
-        this.availableCount = res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
+        this.availableSerialNumbers = _.values(
+          res.SerialNumberToNFTEntryResponse
+        ).sort((a, b) => a.SerialNumber - b.SerialNumber);
+        this.availableCount =
+          res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
         this.biddableSerialNumbers = this.availableSerialNumbers.filter(
           (nftEntryResponse) =>
-            nftEntryResponse.OwnerPublicKeyBase58Check !== this.globalVars.loggedInUser.PublicKeyBase58Check
+            nftEntryResponse.OwnerPublicKeyBase58Check !==
+            this.globalVars.loggedInUser.PublicKeyBase58Check
         );
       })
       .add(() => (this.loading = false));
   }
 
   updateBidAmountUSD(desoAmount) {
-    this.bidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
+    this.bidAmountUSD = this.globalVars
+      .nanosToUSDNumber(desoAmount * 1e9)
+      .toFixed(2);
     this.setErrors();
   }
 
   updateBidAmountDESO(usdAmount) {
-    this.bidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+    this.bidAmountDESO =
+      Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
     this.setErrors();
   }
 
   setErrors(): void {
-    const bidAmountExceedsBalance = this.bidAmountDESO * 1e9 > this.globalVars.loggedInUser.BalanceNanos;
+    const bidAmountExceedsBalance =
+      this.bidAmountDESO * 1e9 > this.globalVars.loggedInUser.BalanceNanos;
     this.errors =
       !this.bidAmountDESO && this.selectedSerialNumber.MinBidAmountNanos === 0
-        ? "You must bid more than 0 DESO.\n\n"
-        : "";
-    this.errors += !this.selectedSerialNumber ? "You must select an edition to bid.\n\n" : "";
-    this.errors += bidAmountExceedsBalance ? `You do not have ${this.bidAmountDESO} DESO to fulfill this bid.\n\n` : "";
+        ? 'You must bid more than 0 DESO.\n\n'
+        : '';
+    this.errors += !this.selectedSerialNumber
+      ? 'You must select an edition to bid.\n\n'
+      : '';
+    this.errors += bidAmountExceedsBalance
+      ? `You do not have ${this.bidAmountDESO} DESO to fulfill this bid.\n\n`
+      : '';
     this.errors +=
       this.selectedSerialNumber?.MinBidAmountNanos > this.bidAmountDESO * 1e9
-        ? `Your bid of ${this.bidAmountDESO} does not meet the minimum bid requirement of ${this.globalVars.nanosToDeSo(
+        ? `Your bid of ${
+            this.bidAmountDESO
+          } does not meet the minimum bid requirement of ${this.globalVars.nanosToDeSo(
             this.selectedSerialNumber.MinBidAmountNanos
-          )} DESO (${this.globalVars.nanosToUSD(this.selectedSerialNumber.MinBidAmountNanos, 2)})\n\n`
-        : "";
+          )} DESO (${this.globalVars.nanosToUSD(
+            this.selectedSerialNumber.MinBidAmountNanos,
+            2
+          )})\n\n`
+        : '';
   }
 
   nftPurchasedHandler() {
-    this.modalService.setDismissReason("nft purchased");
+    this.modalService.setDismissReason('nft purchased');
     this.bsModalRef.hide();
   }
 
@@ -113,7 +132,7 @@ export class PlaceBidModalComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.modalService.setDismissReason("bid placed");
+          this.modalService.setDismissReason('bid placed');
           this.bsModalRef.hide();
         },
         (err) => {
@@ -129,7 +148,7 @@ export class PlaceBidModalComponent implements OnInit {
 
   navigateToBuyDESO(): void {
     this.bsModalRef.hide();
-    this.router.navigate(["/" + this.globalVars.RouteNames.BUY_DESO]);
+    this.router.navigate(['/' + this.globalVars.RouteNames.BUY_DESO]);
   }
 
   saveSelection(): void {
@@ -147,7 +166,9 @@ export class PlaceBidModalComponent implements OnInit {
     this.saveSelection();
   }
 
-  sumAdditionalRoyaltiesBasisPoints(royalties: { [k: string]: number }): number {
+  sumAdditionalRoyaltiesBasisPoints(royalties: {
+    [k: string]: number;
+  }): number {
     return Object.values(royalties).reduce((prevVal, val) => prevVal + val);
   }
 
@@ -169,7 +190,9 @@ export class PlaceBidModalComponent implements OnInit {
     PlaceBidModalComponent.BUFFER_SIZE,
     PlaceBidModalComponent.PADDING
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
   lastPage = null;
 
   getPage(page: number) {
@@ -180,7 +203,12 @@ export class PlaceBidModalComponent implements OnInit {
     const endIdx = (page + 1) * PlaceBidModalComponent.PAGE_SIZE;
 
     return new Promise((resolve, reject) => {
-      resolve(this.biddableSerialNumbers.slice(startIdx, Math.min(endIdx, this.biddableSerialNumbers.length)));
+      resolve(
+        this.biddableSerialNumbers.slice(
+          startIdx,
+          Math.min(endIdx, this.biddableSerialNumbers.length)
+        )
+      );
     });
   }
 

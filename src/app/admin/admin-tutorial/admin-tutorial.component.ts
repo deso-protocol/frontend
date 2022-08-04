@@ -1,11 +1,11 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { filter } from "lodash";
+import { Component, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import { BackendApiService } from '../../backend-api.service';
+import { filter } from 'lodash';
 
 @Component({
-  selector: "admin-tutorial",
-  templateUrl: "./admin-tutorial.component.html",
+  selector: 'admin-tutorial',
+  templateUrl: './admin-tutorial.component.html',
 })
 export class AdminTutorialComponent implements OnInit {
   globalVars: GlobalVarsService;
@@ -14,16 +14,23 @@ export class AdminTutorialComponent implements OnInit {
   upAndComingProfiles = [];
   wellKnownProfiles = [];
   loading = false;
-  WELL_KNOWN_TAB = "Well Known";
-  UP_AND_COMING_TAB = "Up And Coming";
-  RESET_TAB = "Reset";
-  adminTutorialTabs = [this.WELL_KNOWN_TAB, this.UP_AND_COMING_TAB, this.RESET_TAB];
+  WELL_KNOWN_TAB = 'Well Known';
+  UP_AND_COMING_TAB = 'Up And Coming';
+  RESET_TAB = 'Reset';
+  adminTutorialTabs = [
+    this.WELL_KNOWN_TAB,
+    this.UP_AND_COMING_TAB,
+    this.RESET_TAB,
+  ];
   activeTutorialTab = this.WELL_KNOWN_TAB;
   filteredProfileEntryResponses = null;
-  publicKeyToReset: string = "";
+  publicKeyToReset: string = '';
   resettingTutorial: boolean = false;
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  constructor(
+    private _globalVars: GlobalVarsService,
+    private backendApi: BackendApiService
+  ) {
     this.globalVars = _globalVars;
   }
 
@@ -33,13 +40,19 @@ export class AdminTutorialComponent implements OnInit {
       return;
     }
     this.filteredProfileEntryResponses =
-      tutorialTabName === this.WELL_KNOWN_TAB ? this.wellKnownProfiles : this.upAndComingProfiles;
+      tutorialTabName === this.WELL_KNOWN_TAB
+        ? this.wellKnownProfiles
+        : this.upAndComingProfiles;
   }
 
   ngOnInit(): void {
     this.loading = true;
     this.backendApi
-      .AdminGetTutorialCreators(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 500)
+      .AdminGetTutorialCreators(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        500
+      )
       .subscribe(
         (res) => {
           this.wellKnownProfiles = res.WellKnownProfileEntryResponses;
@@ -53,7 +66,10 @@ export class AdminTutorialComponent implements OnInit {
       );
   }
 
-  removeCreatorFeaturedTutorialList(profilePublicKeyBase58Check: string, event) {
+  removeCreatorFeaturedTutorialList(
+    profilePublicKeyBase58Check: string,
+    event
+  ) {
     event.stopPropagation();
     this.backendApi
       .AdminUpdateTutorialCreators(
@@ -65,17 +81,35 @@ export class AdminTutorialComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.filteredProfileEntryResponses = filter(this.filteredProfileEntryResponses, (profileEntryResponse) => {
-            return profileEntryResponse.PublicKeyBase58Check != profilePublicKeyBase58Check;
-          });
+          this.filteredProfileEntryResponses = filter(
+            this.filteredProfileEntryResponses,
+            (profileEntryResponse) => {
+              return (
+                profileEntryResponse.PublicKeyBase58Check !=
+                profilePublicKeyBase58Check
+              );
+            }
+          );
           if (this.activeTutorialTab === this.WELL_KNOWN_TAB) {
-            this.wellKnownProfiles = filter(this.wellKnownProfiles, (profileEntryResponse) => {
-              return profileEntryResponse.PublicKeyBase58Check != profilePublicKeyBase58Check;
-            });
+            this.wellKnownProfiles = filter(
+              this.wellKnownProfiles,
+              (profileEntryResponse) => {
+                return (
+                  profileEntryResponse.PublicKeyBase58Check !=
+                  profilePublicKeyBase58Check
+                );
+              }
+            );
           } else {
-            this.upAndComingProfiles = filter(this.upAndComingProfiles, (profileEntryResponse) => {
-              return profileEntryResponse.PublicKeyBase58Check != profilePublicKeyBase58Check;
-            });
+            this.upAndComingProfiles = filter(
+              this.upAndComingProfiles,
+              (profileEntryResponse) => {
+                return (
+                  profileEntryResponse.PublicKeyBase58Check !=
+                  profilePublicKeyBase58Check
+                );
+              }
+            );
           }
         },
         (err) => {
@@ -94,7 +128,7 @@ export class AdminTutorialComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.globalVars._alertSuccess("Successfully reset tutorial status");
+          this.globalVars._alertSuccess('Successfully reset tutorial status');
         },
         (err) => {
           this.globalVars._alertError(err.error.error);
@@ -102,5 +136,4 @@ export class AdminTutorialComponent implements OnInit {
       )
       .add(() => (this.resettingTutorial = false));
   }
-
 }

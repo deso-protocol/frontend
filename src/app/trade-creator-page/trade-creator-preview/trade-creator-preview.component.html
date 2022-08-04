@@ -5,17 +5,27 @@
     [inTutorial]="inTutorial"
   ></trade-creator-table>
 
-  <div *ngIf="showHighLoadWarning" class="bg-light mt-15px p-15px roboto-regular br-12px text-grey5">
-    Due to high load, {{ creatorCoinTrade.tradeVerbString() | lowercase }}s may take several minutes to process. Please
-    keep your browser open. If you refresh the page and resubmit, your next
-    {{ creatorCoinTrade.tradeVerbString() | lowercase }} will still likely be slow, and you may end up making multiple
+  <div
+    *ngIf="showHighLoadWarning"
+    class="bg-light mt-15px p-15px roboto-regular br-12px text-grey5"
+  >
+    Due to high load, {{ creatorCoinTrade.tradeVerbString() | lowercase }}s may
+    take several minutes to process. Please keep your browser open. If you
+    refresh the page and resubmit, your next
+    {{ creatorCoinTrade.tradeVerbString() | lowercase }} will still likely be
+    slow, and you may end up making multiple
     {{ creatorCoinTrade.tradeVerbString() | lowercase }}s.
   </div>
 
   <div class="row no-gutters pt-3">
     <div class="col-3 mb-0" style="min-width: 100px" *ngIf="!inTutorial">
       <div class="pr-3">
-        <button class="w-100 btn btn-outline-primary btn-lg fs-18px" (click)="backButtonClicked.emit()">Back</button>
+        <button
+          class="w-100 btn btn-outline-primary btn-lg fs-18px"
+          (click)="backButtonClicked.emit()"
+        >
+          Back
+        </button>
       </div>
     </div>
 
@@ -32,12 +42,13 @@
     </div>
   </div>
 
-  <div *ngIf="inTutorial && !appData.loggedInUser?.MustCompleteTutorial" (click)="globalVars.skipTutorial()" class="p-15px pl-0px">
-    <a class="btn btn-outline-primary btn-lg fs-18px text-left">
-      Exit
-    </a>
+  <div
+    *ngIf="inTutorial && !appData.loggedInUser?.MustCompleteTutorial"
+    (click)="globalVars.skipTutorial()"
+    class="p-15px pl-0px"
+  >
+    <a class="btn btn-outline-primary btn-lg fs-18px text-left"> Exit </a>
   </div>
-
 
   <!--Spacer (for mobile)-->
   <div class="pb-25px"></div>

@@ -2,7 +2,9 @@
 <div
   class="global__top-bar global__top-bar__height d-flex align-items-center pl-15px fs-18px font-weight-bold border-bottom border-color-grey"
 >
-  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+  <top-bar-mobile-navigation-control
+    class="mr-15px d-lg-none d-inline-block"
+  ></top-bar-mobile-navigation-control>
   Settings
 </div>
 
@@ -10,10 +12,15 @@
 
 <div class="d-flex flex-column">
   <div style="flex-grow: 1">
-    <simple-center-loader *ngIf="!globalVars.loggedInUser || loading"></simple-center-loader>
+    <simple-center-loader
+      *ngIf="!globalVars.loggedInUser || loading"
+    ></simple-center-loader>
 
     <!-- Form Inputs -->
-    <div *ngIf="globalVars.loggedInUser && !loading" class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars">
+    <div
+      *ngIf="globalVars.loggedInUser && !loading"
+      class="fs-18px px-15px global__mobile-scrollable-section disable-scrollbars"
+    >
       <div class="fs-15px pt-30px">E-mail</div>
       <div class="form-group pt-10px">
         <input
@@ -23,13 +30,19 @@
           [(ngModel)]="emailAddress"
           (ngModelChange)="_validateEmail($event)"
         />
-        <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">Please enter a valid email address.</div>
+        <div class="fc-red fs-15px" *ngIf="invalidEmailEntered">
+          Please enter a valid email address.
+        </div>
       </div>
 
       <div class="w-100 my-30px d-flex align-items-center">
         <button
           *ngIf="
-            !updatingSettings && !(invalidEmailEntered || (f && f.form.value.phone && f.form.controls['phone'].invalid))
+            !updatingSettings &&
+            !(
+              invalidEmailEntered ||
+              (f && f.form.value.phone && f.form.controls['phone'].invalid)
+            )
           "
           (click)="_updateSettings()"
           class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
@@ -38,7 +51,9 @@
         </button>
         <button
           *ngIf="
-            !updatingSettings && (invalidEmailEntered || (f && f.form.value.phone && f.form.controls['phone'].invalid))
+            !updatingSettings &&
+            (invalidEmailEntered ||
+              (f && f.form.value.phone && f.form.controls['phone'].invalid))
           "
           (click)="_updateSettings()"
           class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
@@ -46,10 +61,20 @@
         >
           Update Email
         </button>
-        <button *ngIf="updatingSettings" class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px" disabled>
+        <button
+          *ngIf="updatingSettings"
+          class="btn btn-primary btn-lg font-weight-bold fs-15px mt-5px"
+          disabled
+        >
           Updating...
         </button>
-        <div *ngIf="showSuccessMessage" style="color: green" class="fs-15px ml-10px">Success!</div>
+        <div
+          *ngIf="showSuccessMessage"
+          style="color: green"
+          class="fs-15px ml-10px"
+        >
+          Success!
+        </div>
       </div>
 
       <div class="fs-15px pt-30px">DeSo Theme</div>
@@ -58,15 +83,19 @@
         name="theme"
         id="theme"
         (change)="selectChangeHandler($event)"
-        class="form-control selector mb-30px">
+        class="form-control selector mb-30px"
+      >
         <option
           *ngFor="let theme of themeService.themes"
           [value]="theme.key"
-          [selected]="theme.key === themeService.theme">{{ theme.name }}</option>
+          [selected]="theme.key === themeService.theme"
+        >
+          {{ theme.name }}
+        </option>
       </select>
 
       <div class="fs-15px pt-30px">Personal Information</div>
-      <br/>
+      <br />
       <div class="w-100 d-flex align-items-center">
         <button
           class="btn btn-danger btn-lg font-weight-bold fs-15px mt-5px"

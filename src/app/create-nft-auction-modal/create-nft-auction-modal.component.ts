@@ -1,27 +1,31 @@
-import { Component, Input } from "@angular/core";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { concatMap, last, map } from "rxjs/operators";
-import { of } from "rxjs";
-import { Router } from "@angular/router";
+import { Component, Input } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { GlobalVarsService } from '../global-vars.service';
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from '../backend-api.service';
+import { concatMap, last, map } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "create-nft-auction",
-  templateUrl: "./create-nft-auction-modal.component.html",
+  selector: 'create-nft-auction',
+  templateUrl: './create-nft-auction-modal.component.html',
 })
 export class CreateNftAuctionModalComponent {
   @Input() postHashHex: string;
   @Input() post: PostEntryResponse;
   @Input() nftEntryResponses: NFTEntryResponse[];
   loading = false;
-  minBidAmountUSD: string = "0";
+  minBidAmountUSD: string = '0';
   minBidAmountDESO: number = 0;
   selectedSerialNumbers: boolean[] = [];
   selectAll: boolean = false;
   creatingAuction: boolean = false;
   isBuyNow: boolean = false;
-  buyNowPriceUSD: string = "0";
+  buyNowPriceUSD: string = '0';
   buyNowPriceDESO: number = 0;
 
   constructor(
@@ -33,25 +37,31 @@ export class CreateNftAuctionModalComponent {
   ) {}
 
   updateMinBidAmountUSD(desoAmount) {
-    this.minBidAmountUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
+    this.minBidAmountUSD = this.globalVars
+      .nanosToUSDNumber(desoAmount * 1e9)
+      .toFixed(2);
   }
 
   updateMinBidAmountDESO(usdAmount) {
-    this.minBidAmountDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+    this.minBidAmountDESO =
+      Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
   updateBuyNowPriceUSD(desoAmount): void {
-    this.buyNowPriceUSD = this.globalVars.nanosToUSDNumber(desoAmount * 1e9).toFixed(2);
+    this.buyNowPriceUSD = this.globalVars
+      .nanosToUSDNumber(desoAmount * 1e9)
+      .toFixed(2);
   }
 
   updateBuyNowPriceDESO(usdAmount): void {
-    this.buyNowPriceDESO = Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
+    this.buyNowPriceDESO =
+      Math.trunc(this.globalVars.usdToNanosNumber(usdAmount)) / 1e9;
   }
 
   updateBuyNowStatus(isBuyNow: boolean): void {
     if (!isBuyNow) {
       this.buyNowPriceDESO = 0;
-      this.buyNowPriceUSD = "0";
+      this.buyNowPriceUSD = '0';
     }
   }
 
@@ -60,7 +70,11 @@ export class CreateNftAuctionModalComponent {
   createAuction() {
     this.auctionTotal = this.selectedSerialNumbers.filter((res) => res).length;
     this.creatingAuction = true;
-    of(...this.selectedSerialNumbers.map((isSelected, index) => (isSelected ? index : -1)))
+    of(
+      ...this.selectedSerialNumbers.map((isSelected, index) =>
+        isSelected ? index : -1
+      )
+    )
       .pipe(
         concatMap((val) => {
           if (val >= 0) {
@@ -83,15 +97,17 @@ export class CreateNftAuctionModalComponent {
                 })
               );
           } else {
-            return of("");
+            return of('');
           }
         })
       )
       .pipe(last((res) => res))
       .subscribe(
         (res) => {
-          this.router.navigate(["/" + this.globalVars.RouteNames.NFT + "/" + this.post.PostHashHex]);
-          this.modalService.setDismissReason("auction created");
+          this.router.navigate([
+            '/' + this.globalVars.RouteNames.NFT + '/' + this.post.PostHashHex,
+          ]);
+          this.modalService.setDismissReason('auction created');
           this.bsModalRef.hide();
         },
         (err) => {
@@ -107,13 +123,15 @@ export class CreateNftAuctionModalComponent {
       (nftEntryResponse) =>
         !nftEntryResponse.IsForSale &&
         !nftEntryResponse.IsPending &&
-        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+        nftEntryResponse.OwnerPublicKeyBase58Check ===
+          this.globalVars.loggedInUser?.PublicKeyBase58Check
     );
   }
 
   toggleSelectAll(val: boolean) {
     this.mySerialNumbersNotForSale().forEach(
-      (nftEntryResponse) => (this.selectedSerialNumbers[nftEntryResponse.SerialNumber] = val)
+      (nftEntryResponse) =>
+        (this.selectedSerialNumbers[nftEntryResponse.SerialNumber] = val)
     );
   }
 

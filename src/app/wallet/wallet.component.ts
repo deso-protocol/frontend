@@ -1,18 +1,22 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { AppRoutingModule, RouteNames } from "../app-routing.module";
-import { BackendApiService, BalanceEntryResponse, TutorialStatus } from "../backend-api.service";
-import { Title } from "@angular/platform-browser";
-import { ActivatedRoute, Router } from "@angular/router";
-import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { Subscription } from "rxjs";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { environment } from "src/environments/environment";
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import { AppRoutingModule, RouteNames } from '../app-routing.module';
+import {
+  BackendApiService,
+  BalanceEntryResponse,
+  TutorialStatus,
+} from '../backend-api.service';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
+import { InfiniteScroller } from '../infinite-scroller';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
+import { Subscription } from 'rxjs';
+import { SwalHelper } from '../../lib/helpers/swal-helper';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "wallet",
-  templateUrl: "./wallet.component.html",
+  selector: 'wallet',
+  templateUrl: './wallet.component.html',
 })
 export class WalletComponent implements OnInit, OnDestroy {
   static PAGE_SIZE = 20;
@@ -34,8 +38,8 @@ export class WalletComponent implements OnInit, OnDestroy {
   usersYouReceived: BalanceEntryResponse[] = [];
   usersYouPurchased: BalanceEntryResponse[] = [];
 
-  static coinsPurchasedTab: string = "Coins Purchased";
-  static coinsReceivedTab: string = "Coins Received";
+  static coinsPurchasedTab: string = 'Coins Purchased';
+  static coinsReceivedTab: string = 'Coins Received';
   tabs = [WalletComponent.coinsPurchasedTab, WalletComponent.coinsReceivedTab];
   activeTab: string = WalletComponent.coinsPurchasedTab;
   tutorialUsername: string;
@@ -61,59 +65,69 @@ export class WalletComponent implements OnInit, OnDestroy {
   }
 
   subscriptions = new Subscription();
-  tutorialHeaderText: string = "";
+  tutorialHeaderText: string = '';
   tutorialStepNumber: number;
 
   ngOnInit() {
     if (this.inTutorial) {
       this.tabs = [WalletComponent.coinsPurchasedTab];
       this.tutorialStatus = this.globalVars.loggedInUser?.TutorialStatus;
-      this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find((balanceEntry) => {
-        return balanceEntry.ProfileEntryResponse.Username.toLowerCase() === this.tutorialUsername;
-      });
+      this.balanceEntryToHighlight = this.globalVars.loggedInUser?.UsersYouHODL.find(
+        (balanceEntry) => {
+          return (
+            balanceEntry.ProfileEntryResponse.Username.toLowerCase() ===
+            this.tutorialUsername
+          );
+        }
+      );
       switch (this.tutorialStatus) {
         case TutorialStatus.INVEST_OTHERS_BUY: {
-          this.tutorialHeaderText = "Invest in a Creator";
+          this.tutorialHeaderText = 'Invest in a Creator';
           this.tutorialStepNumber = 1;
           this.nextButtonText = `Sell ${this.balanceEntryToHighlight.ProfileEntryResponse.Username} coins`;
           break;
         }
         case TutorialStatus.INVEST_OTHERS_SELL: {
-          this.tutorialHeaderText = "Sell a Creator";
+          this.tutorialHeaderText = 'Sell a Creator';
           this.tutorialStepNumber = 2;
-          this.nextButtonText = "Setup your profile";
+          this.nextButtonText = 'Setup your profile';
           break;
         }
         case TutorialStatus.INVEST_SELF: {
-          this.tutorialHeaderText = "Invest in Yourself";
+          this.tutorialHeaderText = 'Invest in Yourself';
           this.tutorialStepNumber = 4;
-          this.nextButtonText = "Give a diamond";
+          this.nextButtonText = 'Give a diamond';
           break;
         }
       }
     }
-    this.globalVars.loggedInUser.UsersYouHODL.map((balanceEntryResponse: BalanceEntryResponse) => {
-      if (balanceEntryResponse.NetBalanceInMempool != 0) {
-        this.hasUnminedCreatorCoins = true;
+    this.globalVars.loggedInUser.UsersYouHODL.map(
+      (balanceEntryResponse: BalanceEntryResponse) => {
+        if (balanceEntryResponse.NetBalanceInMempool != 0) {
+          this.hasUnminedCreatorCoins = true;
+        }
+        // If you purchased the coin or the balance entry response if for your creator coin, show it in the purchased tab.
+        if (
+          balanceEntryResponse.HasPurchased ||
+          balanceEntryResponse.HODLerPublicKeyBase58Check ===
+            balanceEntryResponse.CreatorPublicKeyBase58Check
+        ) {
+          this.usersYouPurchased.push(balanceEntryResponse);
+        } else {
+          this.usersYouReceived.push(balanceEntryResponse);
+        }
       }
-      // If you purchased the coin or the balance entry response if for your creator coin, show it in the purchased tab.
-      if (
-        balanceEntryResponse.HasPurchased ||
-        balanceEntryResponse.HODLerPublicKeyBase58Check === balanceEntryResponse.CreatorPublicKeyBase58Check
-      ) {
-        this.usersYouPurchased.push(balanceEntryResponse);
-      } else {
-        this.usersYouReceived.push(balanceEntryResponse);
-      }
-    });
-    this.sortWallet("value");
+    );
+    this.sortWallet('value');
     this._handleTabClick(WalletComponent.coinsPurchasedTab);
     if (this.inTutorial) {
       this.subscriptions.add(
         this.datasource.adapter.lastVisible$.subscribe((lastVisible) => {
           // Last Item of myItems is Visible => data-padding-forward should be zero.
           if (lastVisible.$index === 0) {
-            this.correctDataPaddingForwardElementHeight(lastVisible.element.parentElement);
+            this.correctDataPaddingForwardElementHeight(
+              lastVisible.element.parentElement
+            );
           }
         })
       );
@@ -128,48 +142,68 @@ export class WalletComponent implements OnInit, OnDestroy {
   // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.
   // https://github.com/dhilt/ngx-ui-scroll/issues/111#issuecomment-697269318
   correctDataPaddingForwardElementHeight(viewportElement: HTMLElement): void {
-    const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(`[data-padding-forward]`);
+    const dataPaddingForwardElement: HTMLElement = viewportElement.querySelector(
+      `[data-padding-forward]`
+    );
     if (dataPaddingForwardElement) {
-      dataPaddingForwardElement.setAttribute("style", "height: 0px;");
+      dataPaddingForwardElement.setAttribute('style', 'height: 0px;');
     }
   }
 
   // sort by USD value
-  sortHodlingsCoins(hodlings: BalanceEntryResponse[], descending: boolean): void {
+  sortHodlingsCoins(
+    hodlings: BalanceEntryResponse[],
+    descending: boolean
+  ): void {
     this.sortedUsernameFromHighToLow = 0;
     this.sortedPriceFromHighToLow = 0;
     this.sortedUSDValueFromHighToLow = descending ? -1 : 1;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
         this.sortedUSDValueFromHighToLow *
-        (this.globalVars.desoNanosYouWouldGetIfYouSold(a.BalanceNanos, a.ProfileEntryResponse.CoinEntry) -
-          this.globalVars.desoNanosYouWouldGetIfYouSold(b.BalanceNanos, b.ProfileEntryResponse.CoinEntry))
+        (this.globalVars.desoNanosYouWouldGetIfYouSold(
+          a.BalanceNanos,
+          a.ProfileEntryResponse.CoinEntry
+        ) -
+          this.globalVars.desoNanosYouWouldGetIfYouSold(
+            b.BalanceNanos,
+            b.ProfileEntryResponse.CoinEntry
+          ))
       );
     });
   }
 
   // sort by coin price
-  sortHodlingsPrice(hodlings: BalanceEntryResponse[], descending: boolean): void {
+  sortHodlingsPrice(
+    hodlings: BalanceEntryResponse[],
+    descending: boolean
+  ): void {
     this.sortedUsernameFromHighToLow = 0;
     this.sortedPriceFromHighToLow = descending ? -1 : 1;
     this.sortedUSDValueFromHighToLow = 0;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
         this.sortedPriceFromHighToLow *
-        (a.ProfileEntryResponse.CoinEntry.DeSoLockedNanos - b.ProfileEntryResponse.CoinEntry.DeSoLockedNanos)
+        (a.ProfileEntryResponse.CoinEntry.DeSoLockedNanos -
+          b.ProfileEntryResponse.CoinEntry.DeSoLockedNanos)
       );
     });
   }
 
   // sort by username
-  sortHodlingsUsername(hodlings: BalanceEntryResponse[], descending: boolean): void {
+  sortHodlingsUsername(
+    hodlings: BalanceEntryResponse[],
+    descending: boolean
+  ): void {
     this.sortedUsernameFromHighToLow = descending ? -1 : 1;
     this.sortedPriceFromHighToLow = 0;
     this.sortedUSDValueFromHighToLow = 0;
     hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
       return (
         this.sortedUsernameFromHighToLow *
-        b.ProfileEntryResponse.Username.localeCompare(a.ProfileEntryResponse.Username)
+        b.ProfileEntryResponse.Username.localeCompare(
+          a.ProfileEntryResponse.Username
+        )
       );
     });
   }
@@ -177,18 +211,18 @@ export class WalletComponent implements OnInit, OnDestroy {
   sortWallet(column: string) {
     let descending: boolean;
     switch (column) {
-      case "username":
+      case 'username':
         // code block
         descending = this.sortedUsernameFromHighToLow !== -1;
         this.sortHodlingsUsername(this.usersYouPurchased, descending);
         this.sortHodlingsUsername(this.usersYouReceived, descending);
         break;
-      case "price":
+      case 'price':
         descending = this.sortedPriceFromHighToLow !== -1;
         this.sortHodlingsPrice(this.usersYouPurchased, descending);
         this.sortHodlingsPrice(this.usersYouReceived, descending);
         break;
-      case "value":
+      case 'value':
         descending = this.sortedUSDValueFromHighToLow !== -1;
         this.sortHodlingsCoins(this.usersYouPurchased, descending);
         this.sortHodlingsCoins(this.usersYouReceived, descending);
@@ -204,8 +238,10 @@ export class WalletComponent implements OnInit, OnDestroy {
 
     for (const holding of this.globalVars.loggedInUser.UsersYouHODL) {
       result +=
-        this.globalVars.desoNanosYouWouldGetIfYouSold(holding.BalanceNanos, holding.ProfileEntryResponse.CoinEntry) ||
-        0;
+        this.globalVars.desoNanosYouWouldGetIfYouSold(
+          holding.BalanceNanos,
+          holding.ProfileEntryResponse.CoinEntry
+        ) || 0;
     }
 
     return result;
@@ -213,25 +249,31 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   unminedDeSoToolTip() {
     return (
-      "Mining in progress. Feel free to transact in the meantime.\n\n" +
-      "Mined balance:\n" +
-      this.globalVars.nanosToDeSo(this.globalVars.loggedInUser.BalanceNanos, 9) +
-      " DeSo.\n\n" +
-      "Unmined balance:\n" +
-      this.globalVars.nanosToDeSo(this.globalVars.loggedInUser.UnminedBalanceNanos, 9) +
-      " DeSo."
+      'Mining in progress. Feel free to transact in the meantime.\n\n' +
+      'Mined balance:\n' +
+      this.globalVars.nanosToDeSo(
+        this.globalVars.loggedInUser.BalanceNanos,
+        9
+      ) +
+      ' DeSo.\n\n' +
+      'Unmined balance:\n' +
+      this.globalVars.nanosToDeSo(
+        this.globalVars.loggedInUser.UnminedBalanceNanos,
+        9
+      ) +
+      ' DeSo.'
     );
   }
 
   unminedCreatorCoinToolTip(creator: any) {
     return (
-      "Mining in progress. Feel free to transact in the meantime.\n\n" +
-      "Net unmined transactions:\n" +
+      'Mining in progress. Feel free to transact in the meantime.\n\n' +
+      'Net unmined transactions:\n' +
       this.globalVars.nanosToDeSo(creator.NetBalanceInMempool, 9) +
-      " DeSo.\n\n" +
-      "Balance w/unmined transactions:\n" +
+      ' DeSo.\n\n' +
+      'Balance w/unmined transactions:\n' +
       this.globalVars.nanosToDeSo(creator.BalanceNanos, 9) +
-      " DeSo.\n\n"
+      ' DeSo.\n\n'
     );
   }
 
@@ -248,7 +290,10 @@ export class WalletComponent implements OnInit, OnDestroy {
   _handleTabClick(tab: string) {
     this.showTransferredCoins = tab === WalletComponent.coinsReceivedTab;
     this.lastPage = Math.floor(
-      (this.showTransferredCoins ? this.usersYouReceived : this.usersYouPurchased).length / WalletComponent.PAGE_SIZE
+      (this.showTransferredCoins
+        ? this.usersYouReceived
+        : this.usersYouPurchased
+      ).length / WalletComponent.PAGE_SIZE
     );
     this.activeTab = tab;
     this.scrollerReset();
@@ -271,27 +316,32 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   tutorialNext(): void {
     if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_BUY) {
-      this.globalVars.logEvent("invest : others : buy : next");
-      this.router.navigate([RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, this.tutorialUsername]);
+      this.globalVars.logEvent('invest : others : buy : next');
+      this.router.navigate([
+        RouteNames.TUTORIAL,
+        RouteNames.INVEST,
+        RouteNames.SELL_CREATOR,
+        this.tutorialUsername,
+      ]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_OTHERS_SELL) {
-      this.globalVars.logEvent("invest : others : sell : next");
+      this.globalVars.logEvent('invest : others : sell : next');
       this.router.navigate([RouteNames.TUTORIAL, RouteNames.CREATE_PROFILE]);
     } else if (this.tutorialStatus === TutorialStatus.INVEST_SELF) {
-      this.globalVars.logEvent("invest : self : buy : next");
+      this.globalVars.logEvent('invest : self : buy : next');
       SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
-        icon: "info",
+        icon: 'info',
         title: `Allow others to invest in your coin`,
         html: `Click "ok" to allow others to purchase your coin. You will earn 10% of every purchase.`,
         showCancelButton: true,
         showConfirmButton: true,
         focusConfirm: true,
         customClass: {
-          confirmButton: "btn btn-light",
-          cancelButton: "btn btn-light no",
+          confirmButton: 'btn btn-light',
+          cancelButton: 'btn btn-light no',
         },
-        confirmButtonText: "Ok",
-        cancelButtonText: "No thank you",
+        confirmButtonText: 'Ok',
+        cancelButtonText: 'No thank you',
         reverseButtons: true,
         allowEscapeKey: false,
         allowOutsideClick: false,
@@ -302,10 +352,10 @@ export class WalletComponent implements OnInit, OnDestroy {
               .UpdateProfile(
                 environment.verificationEndpointHostname,
                 this.globalVars.loggedInUser.PublicKeyBase58Check,
-                "",
-                "",
-                "",
-                "",
+                '',
+                '',
+                '',
+                '',
                 10 * 100,
                 1.25 * 100 * 100,
                 false,
@@ -313,19 +363,23 @@ export class WalletComponent implements OnInit, OnDestroy {
               )
               .subscribe(
                 () => {
-                  this.globalVars.logEvent("set : founder-reward");
+                  this.globalVars.logEvent('set : founder-reward');
                 },
                 (err) => {
                   console.error(err);
                   const parsedError = this.backendApi.stringifyError(err);
-                  this.globalVars.logEvent("set : founder-reward : error", { parsedError });
+                  this.globalVars.logEvent('set : founder-reward : error', {
+                    parsedError,
+                  });
                 }
               );
           } else {
-            this.globalVars.logEvent("set : founder-reward : skip");
+            this.globalVars.logEvent('set : founder-reward : skip');
           }
         })
-        .finally(() => this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS]));
+        .finally(() =>
+          this.router.navigate([RouteNames.TUTORIAL, RouteNames.DIAMONDS])
+        );
     }
   }
 
@@ -337,7 +391,9 @@ export class WalletComponent implements OnInit, OnDestroy {
     WalletComponent.BUFFER_SIZE,
     WalletComponent.PADDING
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 
   getPage(page: number) {
     if (this.lastPage != null && page > this.lastPage) {
@@ -355,8 +411,14 @@ export class WalletComponent implements OnInit, OnDestroy {
     return new Promise((resolve, reject) => {
       resolve(
         this.showTransferredCoins
-          ? this.usersYouReceived.slice(startIdx, Math.min(endIdx, this.usersYouReceived.length))
-          : this.usersYouPurchased.slice(startIdx, Math.min(endIdx, this.usersYouPurchased.length))
+          ? this.usersYouReceived.slice(
+              startIdx,
+              Math.min(endIdx, this.usersYouReceived.length)
+            )
+          : this.usersYouPurchased.slice(
+              startIdx,
+              Math.min(endIdx, this.usersYouPurchased.length)
+            )
       );
     });
   }

@@ -12,7 +12,7 @@ vscode:
     - angular.ng-template
     - ecmel.vscode-html-css
     - eamodio.gitlens
-    
+
 # Ports to expose on workspace startup
 ports:
   - port: 4200

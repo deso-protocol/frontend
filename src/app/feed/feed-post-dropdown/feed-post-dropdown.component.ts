@@ -1,24 +1,24 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { PlatformLocation } from "@angular/common";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { BackendApiService } from "../../backend-api.service";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { filter } from "lodash";
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import { NFTEntryResponse, PostEntryResponse } from '../../backend-api.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PlatformLocation } from '@angular/common';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BackendApiService } from '../../backend-api.service';
+import { SwalHelper } from '../../../lib/helpers/swal-helper';
+import { filter } from 'lodash';
 
 // RPH Modals
-import { MintNftModalComponent } from "../../mint-nft-modal/mint-nft-modal.component";
-import { CreateNftAuctionModalComponent } from "../../create-nft-auction-modal/create-nft-auction-modal.component";
-import { NftBurnModalComponent } from "../../nft-burn-modal/nft-burn-modal.component";
-import { TransferNftModalComponent } from "../../transfer-nft-modal/transfer-nft-modal.component";
-import {PostMultiplierComponent} from "./post-multiplier/post-multiplier.component";
+import { MintNftModalComponent } from '../../mint-nft-modal/mint-nft-modal.component';
+import { CreateNftAuctionModalComponent } from '../../create-nft-auction-modal/create-nft-auction-modal.component';
+import { NftBurnModalComponent } from '../../nft-burn-modal/nft-burn-modal.component';
+import { TransferNftModalComponent } from '../../transfer-nft-modal/transfer-nft-modal.component';
+import { PostMultiplierComponent } from './post-multiplier/post-multiplier.component';
 
 @Component({
-  selector: "feed-post-dropdown",
-  templateUrl: "./feed-post-dropdown.component.html",
-  styleUrls: ["./feed-post-dropdown.component.sass"],
+  selector: 'feed-post-dropdown',
+  templateUrl: './feed-post-dropdown.component.html',
+  styleUrls: ['./feed-post-dropdown.component.sass'],
 })
 export class FeedPostDropdownComponent {
   @Input() post: PostEntryResponse;
@@ -47,7 +47,7 @@ export class FeedPostDropdownComponent {
   }
 
   reportPost(): void {
-    this.globalVars.logEvent("post : report-content");
+    this.globalVars.logEvent('post : report-content');
     window.open(
       `https://desoreporting.aidaform.com/content?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&PostHash=${this.post.PostHashHex}`
     );
@@ -56,11 +56,17 @@ export class FeedPostDropdownComponent {
   dropNFT() {
     // Get the latest drop so that we can update it.
     this.backendApi
-      .AdminGetNFTDrop(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, -1 /*DropNumber*/)
+      .AdminGetNFTDrop(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        -1 /*DropNumber*/
+      )
       .subscribe(
         (res: any) => {
           if (res.DropEntry.DropTstampNanos == 0) {
-            this.globalVars._alertError("There are no drops. Make one in the admin NFT tab.");
+            this.globalVars._alertError(
+              'There are no drops. Make one in the admin NFT tab.'
+            );
             return;
           }
 
@@ -75,11 +81,11 @@ export class FeedPostDropdownComponent {
               showConfirmButton: true,
               focusConfirm: true,
               customClass: {
-                confirmButton: "btn btn-light",
-                cancelButton: "btn btn-light no",
+                confirmButton: 'btn btn-light',
+                cancelButton: 'btn btn-light no',
               },
-              confirmButtonText: "Yes",
-              cancelButtonText: "No",
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'No',
               reverseButtons: true,
             }).then(async (alertRes: any) => {
               if (alertRes.isConfirmed) {
@@ -106,11 +112,14 @@ export class FeedPostDropdownComponent {
         latestDrop.DropTstampNanos,
         latestDrop.IsActive /*IsActive*/,
         postHash /*NFTHashHexToAdd*/,
-        "" /*NFTHashHexToRemove*/
+        '' /*NFTHashHexToRemove*/
       )
       .subscribe(
         (res: any) => {
-          this.globalVars._alertSuccess("Successfully added NFT to drop #" + latestDrop.DropNumber.toString());
+          this.globalVars._alertSuccess(
+            'Successfully added NFT to drop #' +
+              latestDrop.DropNumber.toString()
+          );
         },
         (error) => {
           this.globalVars._alertError(error.error.error);
@@ -125,8 +134,11 @@ export class FeedPostDropdownComponent {
 
     // User shouldn't be able to block themselves
     return (
-      this.globalVars.loggedInUser?.PublicKeyBase58Check !== this.post.PosterPublicKeyBase58Check &&
-      !this.globalVars.hasUserBlockedCreator(this.post.PosterPublicKeyBase58Check)
+      this.globalVars.loggedInUser?.PublicKeyBase58Check !==
+        this.post.PosterPublicKeyBase58Check &&
+      !this.globalVars.hasUserBlockedCreator(
+        this.post.PosterPublicKeyBase58Check
+      )
     );
   }
 
@@ -136,14 +148,22 @@ export class FeedPostDropdownComponent {
     }
 
     const loggedInUserPostedThis =
-      this.globalVars.loggedInUser.PublicKeyBase58Check === this.post.PosterPublicKeyBase58Check;
+      this.globalVars.loggedInUser.PublicKeyBase58Check ===
+      this.post.PosterPublicKeyBase58Check;
     const loggedInUserIsParamUpdater =
-      this.globalVars.paramUpdaters && this.globalVars.paramUpdaters[this.globalVars.loggedInUser.PublicKeyBase58Check];
+      this.globalVars.paramUpdaters &&
+      this.globalVars.paramUpdaters[
+        this.globalVars.loggedInUser.PublicKeyBase58Check
+      ];
 
-    return (loggedInUserPostedThis || loggedInUserIsParamUpdater) && !this.post.IsNFT;
+    return (
+      (loggedInUserPostedThis || loggedInUserIsParamUpdater) && !this.post.IsNFT
+    );
   }
 
-  globalFeedEligible(): boolean {{}
+  globalFeedEligible(): boolean {
+    {
+    }
     return this.globalVars.showAdminTools();
   }
 
@@ -165,7 +185,7 @@ export class FeedPostDropdownComponent {
 
   addMultiplier() {
     this.modalService.show(PostMultiplierComponent, {
-      class: "modal-dialog-centered buy-deso-modal",
+      class: 'modal-dialog-centered buy-deso-modal',
       initialState: { post: this.post },
     });
   }
@@ -176,7 +196,8 @@ export class FeedPostDropdownComponent {
       !!this.nftEntryResponses?.filter(
         (nftEntryResponse) =>
           !nftEntryResponse.IsForSale &&
-          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+          nftEntryResponse.OwnerPublicKeyBase58Check ===
+            this.globalVars.loggedInUser?.PublicKeyBase58Check
       )?.length
     );
   }
@@ -188,7 +209,8 @@ export class FeedPostDropdownComponent {
         (nftEntryResponse) =>
           !nftEntryResponse.IsPending &&
           !nftEntryResponse.IsForSale &&
-          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+          nftEntryResponse.OwnerPublicKeyBase58Check ===
+            this.globalVars.loggedInUser?.PublicKeyBase58Check
       )?.length
     );
   }
@@ -199,7 +221,8 @@ export class FeedPostDropdownComponent {
       !!this.nftEntryResponses?.filter(
         (nftEntryResponse) =>
           !nftEntryResponse.IsForSale &&
-          nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+          nftEntryResponse.OwnerPublicKeyBase58Check ===
+            this.globalVars.loggedInUser?.PublicKeyBase58Check
       )?.length
     );
   }
@@ -221,7 +244,7 @@ export class FeedPostDropdownComponent {
   }
 
   copyPostLinkToClipboard(event) {
-    this.globalVars.logEvent("post : share");
+    this.globalVars.logEvent('post : share');
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -230,7 +253,7 @@ export class FeedPostDropdownComponent {
   }
 
   sharePostUrl(event): void {
-    this.globalVars.logEvent("post : webapishare");
+    this.globalVars.logEvent('post : webapishare');
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -238,17 +261,22 @@ export class FeedPostDropdownComponent {
     try {
       navigator.share({ url: this._getPostUrl() });
     } catch (err) {
-      console.error("Share failed:", err.message);
+      console.error('Share failed:', err.message);
     }
   }
 
   _getPostUrl() {
-    const pathArray = ["/" + this.globalVars.RouteNames.POSTS, this.postContent.PostHashHex];
+    const pathArray = [
+      '/' + this.globalVars.RouteNames.POSTS,
+      this.postContent.PostHashHex,
+    ];
 
     // need to preserve the curent query params for our dev env to work
     const currentQueryParams = this.activatedRoute.snapshot.queryParams;
 
-    const path = this.router.createUrlTree(pathArray, { queryParams: currentQueryParams }).toString();
+    const path = this.router
+      .createUrlTree(pathArray, { queryParams: currentQueryParams })
+      .toString();
     const origin = (this.platformLocation as any).location.origin;
 
     return origin + path;
@@ -257,19 +285,25 @@ export class FeedPostDropdownComponent {
   openMintNftModal(event, component): void {
     event.stopPropagation();
     this.modalService.show(MintNftModalComponent, {
-      class: "modal-dialog-centered modal-lg",
+      class: 'modal-dialog-centered modal-lg',
       initialState: { post: this.post },
     });
   }
 
   openCreateNFTAuctionModal(event): void {
-    const modalDetails = this.modalService.show(CreateNftAuctionModalComponent, {
-      class: "modal-dialog-centered",
-      initialState: { post: this.post, nftEntryResponses: this.nftEntryResponses },
-    });
+    const modalDetails = this.modalService.show(
+      CreateNftAuctionModalComponent,
+      {
+        class: 'modal-dialog-centered',
+        initialState: {
+          post: this.post,
+          nftEntryResponses: this.nftEntryResponses,
+        },
+      }
+    );
     const onHideEvent = modalDetails.onHide;
     onHideEvent.subscribe((response) => {
-      if (response === "auction created") {
+      if (response === 'auction created') {
         this.refreshNFTEntries.emit();
       }
     });
@@ -277,31 +311,39 @@ export class FeedPostDropdownComponent {
 
   openTransferNFTModal(event): void {
     const modalDetails = this.modalService.show(TransferNftModalComponent, {
-      class: "modal-dialog-centered modal-lg",
+      class: 'modal-dialog-centered modal-lg',
       initialState: { post: this.post, postHashHex: this.post.PostHashHex },
     });
     const onHideEvent = modalDetails.onHide;
     onHideEvent.subscribe((response) => {
-      if (response === "nft transferred") {
+      if (response === 'nft transferred') {
         this.refreshNFTEntries.emit();
       }
     });
   }
 
   openBurnNFTModal(event): void {
-    const burnNFTEntryResponses = filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
-      return (
-        !nftEntryResponse.IsForSale &&
-        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
-      );
-    });
+    const burnNFTEntryResponses = filter(
+      this.nftEntryResponses,
+      (nftEntryResponse: NFTEntryResponse) => {
+        return (
+          !nftEntryResponse.IsForSale &&
+          nftEntryResponse.OwnerPublicKeyBase58Check ===
+            this.globalVars.loggedInUser?.PublicKeyBase58Check
+        );
+      }
+    );
     const modalDetails = this.modalService.show(NftBurnModalComponent, {
-      class: "modal-dialog-centered modal-lg",
-      initialState: { post: this.post, postHashHex: this.post.PostHashHex, burnNFTEntryResponses },
+      class: 'modal-dialog-centered modal-lg',
+      initialState: {
+        post: this.post,
+        postHashHex: this.post.PostHashHex,
+        burnNFTEntryResponses,
+      },
     });
     const onHideEvent = modalDetails.onHide;
     onHideEvent.subscribe((response) => {
-      if (response === "nft burned") {
+      if (response === 'nft burned') {
         this.refreshNFTEntries.emit();
       }
     });

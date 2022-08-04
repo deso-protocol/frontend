@@ -1,17 +1,20 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { HttpClient } from "@angular/common/http";
-import { AltumbaseService } from "../../../lib/services/altumbase/altumbase-service";
-import { BithuntService } from "../../../lib/services/bithunt/bithunt-service";
-import { RightBarCreatorsComponent, RightBarTabOption } from "../../right-bar-creators/right-bar-creators.component";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { InfiniteScroller } from "src/app/infinite-scroller";
+import { Component, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import { BackendApiService } from '../../backend-api.service';
+import { HttpClient } from '@angular/common/http';
+import { AltumbaseService } from '../../../lib/services/altumbase/altumbase-service';
+import { BithuntService } from '../../../lib/services/bithunt/bithunt-service';
+import {
+  RightBarCreatorsComponent,
+  RightBarTabOption,
+} from '../../right-bar-creators/right-bar-creators.component';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
+import { InfiniteScroller } from 'src/app/infinite-scroller';
 
 @Component({
-  selector: "trends",
-  templateUrl: "./trends.component.html",
-  styleUrls: ["./trends.component.scss"],
+  selector: 'trends',
+  templateUrl: './trends.component.html',
+  styleUrls: ['./trends.component.scss'],
 })
 export class TrendsComponent implements OnInit {
   static BUFFER_SIZE = 5;
@@ -44,21 +47,29 @@ export class TrendsComponent implements OnInit {
   ) {
     this.tabs.forEach((tab) => {
       this.pagedRequestsByTab[tab] = {
-        "-1": new Promise((resolve) => {
+        '-1': new Promise((resolve) => {
           resolve([]);
         }),
       };
       this.lastPageByTab[tab] = null;
     });
-    this.bithuntService = new BithuntService(this.httpClient, this.backendApi, this.globalVars);
-    this.altumbaseService = new AltumbaseService(this.httpClient, this.backendApi, this.globalVars);
+    this.bithuntService = new BithuntService(
+      this.httpClient,
+      this.backendApi,
+      this.globalVars
+    );
+    this.altumbaseService = new AltumbaseService(
+      this.httpClient,
+      this.backendApi,
+      this.globalVars
+    );
     this.selectTab();
   }
 
   selectTab() {
     const rightTabOption = RightBarCreatorsComponent.chartMap[this.activeTab];
     this.activeRightTabOption = rightTabOption;
-    this.selectedOptionWidth = rightTabOption.width + "px";
+    this.selectedOptionWidth = rightTabOption.width + 'px';
     this.loading = true;
     this.infiniteScroller.reset();
     this.datasource.adapter.reset().then(() => (this.loading = false));
@@ -113,7 +124,10 @@ export class TrendsComponent implements OnInit {
       if (end > this.globalVars.allCommunityProjectsLeaderboard.length) {
         end = this.globalVars.allCommunityProjectsLeaderboard.length;
       }
-      return this.globalVars.allCommunityProjectsLeaderboard.slice(TrendsComponent.PAGE_SIZE * page, end);
+      return this.globalVars.allCommunityProjectsLeaderboard.slice(
+        TrendsComponent.PAGE_SIZE * page,
+        end
+      );
     }
   }
 
@@ -124,5 +138,7 @@ export class TrendsComponent implements OnInit {
     TrendsComponent.BUFFER_SIZE,
     TrendsComponent.PADDING
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 }

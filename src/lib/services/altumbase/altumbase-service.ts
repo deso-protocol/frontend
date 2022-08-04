@@ -1,10 +1,14 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { BackendApiService, ProfileEntryResponse, User } from "../../../app/backend-api.service";
-import { Observable, of } from "rxjs";
-import { GlobalVarsService } from "../../../app/global-vars.service";
-import { map, switchMap } from "rxjs/operators";
-import * as _ from "lodash";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+  User,
+} from '../../../app/backend-api.service';
+import { Observable, of } from 'rxjs';
+import { GlobalVarsService } from '../../../app/global-vars.service';
+import { map, switchMap } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 class AltumbaseLeaderboardResult {
   public_key: string;
@@ -20,12 +24,12 @@ class AltumbaseLeaderboardResponse {
   };
 }
 
-const DeSoLocked = "deso_locked_24h";
-const Diamonds = "diamonds_received_24h";
+const DeSoLocked = 'deso_locked_24h';
+const Diamonds = 'diamonds_received_24h';
 
 export enum AltumbaseLeaderboardType {
-  DeSoLocked = "deso_locked_24h",
-  Diamonds = "diamonds_received_24h",
+  DeSoLocked = 'deso_locked_24h',
+  Diamonds = 'diamonds_received_24h',
 }
 
 export class LeaderboardResponse {
@@ -36,16 +40,16 @@ export class LeaderboardResponse {
 }
 
 export const LeaderboardToDataAttribute = {
-  [AltumbaseLeaderboardType.DeSoLocked]: "deso_locked_24h",
-  [AltumbaseLeaderboardType.Diamonds]: "diamonds_received_24h",
+  [AltumbaseLeaderboardType.DeSoLocked]: 'deso_locked_24h',
+  [AltumbaseLeaderboardType.Diamonds]: 'diamonds_received_24h',
 };
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class AltumbaseService {
-  static altumbaseApiURL = "https://altumbase.com/api";
-  static altumbaseRef = "ref=bcl";
+  static altumbaseApiURL = 'https://altumbase.com/api';
+  static altumbaseRef = 'ref=bcl';
   static altumbasePageSize = 20;
   constructor(
     private httpClient: HttpClient,
@@ -71,10 +75,20 @@ export class AltumbaseService {
     skipFilters = false
   ): Observable<any> {
     return this.httpClient
-      .get(this.constructAltumbaseURL(AltumbaseLeaderboardType.Diamonds, pageNumber, pageSize))
+      .get(
+        this.constructAltumbaseURL(
+          AltumbaseLeaderboardType.Diamonds,
+          pageNumber,
+          pageSize
+        )
+      )
       .pipe(
         switchMap((res: AltumbaseLeaderboardResponse) => {
-          return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.Diamonds, skipFilters);
+          return this.getProfilesForAltumbaseLeaderboard(
+            res,
+            AltumbaseLeaderboardType.Diamonds,
+            skipFilters
+          );
         })
       );
   }
@@ -89,10 +103,20 @@ export class AltumbaseService {
     skipFilters = false
   ): Observable<any> {
     return this.httpClient
-      .get(this.constructAltumbaseURL(AltumbaseLeaderboardType.DeSoLocked, pageNumber, pageSize))
+      .get(
+        this.constructAltumbaseURL(
+          AltumbaseLeaderboardType.DeSoLocked,
+          pageNumber,
+          pageSize
+        )
+      )
       .pipe(
         switchMap((res: AltumbaseLeaderboardResponse) => {
-          return this.getProfilesForAltumbaseLeaderboard(res, AltumbaseLeaderboardType.DeSoLocked, skipFilters);
+          return this.getProfilesForAltumbaseLeaderboard(
+            res,
+            AltumbaseLeaderboardType.DeSoLocked,
+            skipFilters
+          );
         })
       );
   }
@@ -118,7 +142,10 @@ export class AltumbaseService {
           if (!skipFilters) {
             res.UserList = _.filter(
               res.UserList,
-              (o) => o.ProfileEntryResponse !== null && !o.IsGraylisted && !o.IsBlacklisted
+              (o) =>
+                o.ProfileEntryResponse !== null &&
+                !o.IsGraylisted &&
+                !o.IsBlacklisted
             );
             if (res.UserList.length > 10) {
               res.UserList = res.UserList.slice(0, 10);
@@ -134,7 +161,7 @@ export class AltumbaseService {
                   : null,
               DiamondsReceivedValue:
                 leaderboardType === AltumbaseLeaderboardType.Diamonds
-                  ? results[index]["diamonds_received_value_24h"]
+                  ? results[index]['diamonds_received_value_24h']
                   : null,
               DeSoLockedGained:
                 leaderboardType === AltumbaseLeaderboardType.DeSoLocked

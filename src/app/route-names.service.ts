@@ -1,8 +1,8 @@
-import { RouteNames } from "./app-routing.module";
-import { Injectable } from "@angular/core";
+import { RouteNames } from './app-routing.module';
+import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export default class RouteNamesService extends RouteNames {
   constructor() {

@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MessagesThreadComponent } from "./messages-thread.component";
+import { MessagesThreadComponent } from './messages-thread.component';
 
-describe("MessagesThreadComponent", () => {
+describe('MessagesThreadComponent', () => {
   let component: MessagesThreadComponent;
   let fixture: ComponentFixture<MessagesThreadComponent>;
 
@@ -18,7 +18,7 @@ describe("MessagesThreadComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

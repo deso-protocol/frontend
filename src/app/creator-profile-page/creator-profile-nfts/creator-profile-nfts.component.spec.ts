@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreatorProfileNftsComponent } from "./creator-profile-nfts.component";
+import { CreatorProfileNftsComponent } from './creator-profile-nfts.component';
 
-describe("CreatorProfilePostsComponent", () => {
+describe('CreatorProfilePostsComponent', () => {
   let component: CreatorProfileNftsComponent;
   let fixture: ComponentFixture<CreatorProfileNftsComponent>;
 
@@ -18,7 +18,7 @@ describe("CreatorProfilePostsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

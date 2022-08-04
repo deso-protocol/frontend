@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DiamondTutorialPageComponent } from "./diamond-tutorial-page.component";
+import { DiamondTutorialPageComponent } from './diamond-tutorial-page.component';
 
-describe("DiamondTutorialPageComponent", () => {
+describe('DiamondTutorialPageComponent', () => {
   let component: DiamondTutorialPageComponent;
   let fixture: ComponentFixture<DiamondTutorialPageComponent>;
 
@@ -18,7 +18,7 @@ describe("DiamondTutorialPageComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

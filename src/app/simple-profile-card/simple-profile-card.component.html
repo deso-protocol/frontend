@@ -1,7 +1,7 @@
 <a
   class="container d-flex align-items-center fs-15px p-10px border-color-grey link--unstyled"
   [ngClass]="{ 'border-bottom': !singleColumn }"
-  [ngStyle]="{ 'cursor': !profile.Username ? 'default' : '' }"
+  [ngStyle]="{ cursor: !profile.Username ? 'default' : '' }"
   (click)="onClick()"
 >
   <div class="row no-gutters w-100">
@@ -16,9 +16,12 @@
       <div class="d-flex">
         <div class="text-truncate holdings__name fs-15px">
           <div class="d-flex">
-            <div class="fc-default text-truncate holdings__name link--unstyled"
-                 [ngClass]="{'font-weight-bold': isBold }">
-              {{ profile.Username || profile.PublicKeyBase58Check }}</div>
+            <div
+              class="fc-default text-truncate holdings__name link--unstyled"
+              [ngClass]="{ 'font-weight-bold': isBold }"
+            >
+              {{ profile.Username || profile.PublicKeyBase58Check }}
+            </div>
             <span
               *ngIf="profile.IsVerified"
               (click)="tooltip.toggle()"
@@ -27,8 +30,8 @@
               [matTooltip]="'This account is verified'"
               #tooltip="matTooltip"
             >
-            <i class="fas fa-check-circle fa-md align-middle"></i>
-          </span>
+              <i class="fas fa-check-circle fa-md align-middle"></i>
+            </span>
           </div>
           <div class="text-grey9" *ngIf="profile.CoinPriceDeSoNanos">
             {{ globalVars.nanosToUSD(profile.CoinPriceDeSoNanos, 2) }}
@@ -48,7 +51,10 @@
 
     <div class="d-flex align-items-center justify-content-center mb-0">
       <div *ngIf="diamondLevel > 0" class="d-flex">
-        <i *ngFor="let diamond of counter(diamondLevel)" class="icon-diamond fs-20px d-block"></i>
+        <i
+          *ngFor="let diamond of counter(diamondLevel)"
+          class="icon-diamond fs-20px d-block"
+        ></i>
       </div>
       <div *ngIf="showHeartIcon">
         <i class="icon-heart-fill fs-32px d-block fc-red"></i>
@@ -57,9 +63,7 @@
         <i class="icon-repost fs-32px d-block fc-green"></i>
       </div>
       <div *ngIf="showTutorialBuy" (click)="onBuyClicked()">
-        <a class="btn btn-primary fs-18px text-left">
-          Buy
-        </a>
+        <a class="btn btn-primary fs-18px text-left"> Buy </a>
       </div>
     </div>
   </div>
