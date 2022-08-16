@@ -12,7 +12,7 @@ export const environment = {
     endpoint: 'https://bitclout.com/js/',
   },
   amplitude: {
-    key: 'f66678b0321754fdd5723d179863d16d',
+    key: '23345b239094949bc7f3402cebe9e5d2',
     domain: 'amp.bitclout.com',
   },
   node: {
