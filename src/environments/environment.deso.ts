@@ -4,7 +4,7 @@ export const environment = {
   verificationEndpointHostname: 'https://node.deso.org',
   uploadVideoHostname: 'node.deso.org',
   identityURL: 'https://identity.deso.org',
-  supportEmail: 'node.admin@bitclout.com',
+  supportEmail: '',
   dd: {
     apiKey: 'DCEB26AC8BF47F1D7B4D87440EDCA6',
     jsPath: 'https://bitclout.com/tags.js',
@@ -13,12 +13,12 @@ export const environment = {
   },
   amplitude: {
     key: '5ece1af35cd1bed80fe60bbc30700a00',
-    domain: 'amp.bitclout.com',
+    domain: 'amp.deso.org',
   },
   node: {
-    id: 2,
-    name: 'BitClout',
-    url: 'https://bitclout.com',
-    logoAssetDir: '/assets/bitclout/',
+    id: 1,
+    name: 'DeSo',
+    url: 'https://node.deso.org',
+    logoAssetDir: '/assets/deso/',
   },
 };
