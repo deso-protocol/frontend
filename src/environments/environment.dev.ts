@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  uploadImageHostname: 'node.deso.org',
-  verificationEndpointHostname: 'https://node.deso.org',
-  uploadVideoHostname: 'node.deso.org',
+  uploadImageHostname: 'test.deso.org',
+  verificationEndpointHostname: 'https://test.deso.org',
+  uploadVideoHostname: 'test.deso.org',
   identityURL: 'https://identity.deso.org',
   supportEmail: '',
   dd: {
@@ -18,7 +18,7 @@ export const environment = {
   node: {
     id: 1,
     name: 'DeSo',
-    url: 'https://node.deso.org',
+    url: 'https://test.deso.org',
     logoAssetDir: '/assets/deso/',
   },
 };
