@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { HttpParams } from '@angular/common/http';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +35,7 @@ export class IdentityService {
   // Using testnet or mainnet
   isTestnet = false;
 
-  constructor() {
+  constructor(private sanitizer: DomSanitizer) {
     window.addEventListener('message', (event) => this.handleMessage(event));
   }
 
@@ -181,11 +182,8 @@ export class IdentityService {
   // Helpers
 
   identityServiceParamsForKey(publicKey: string) {
-    const {
-      encryptedSeedHex,
-      accessLevel,
-      accessLevelHmac,
-    } = this.identityServiceUsers[publicKey];
+    const { encryptedSeedHex, accessLevel, accessLevelHmac } =
+      this.identityServiceUsers[publicKey];
     return { encryptedSeedHex, accessLevel, accessLevelHmac };
   }
 
@@ -298,5 +296,14 @@ export class IdentityService {
   // Respond to a received message
   private respond(window: Window, id: string, payload: any): void {
     window.postMessage({ id, service: 'identity', payload }, '*');
+  }
+
+  setSanitizedIdentityServiceURL(): void {
+    this.sanitizedIdentityServiceURL =
+      this.sanitizer.bypassSecurityTrustResourceUrl(
+        `${this.identityServiceURL}/embed?v=2${
+          this.isTestnet ? '&testnet=true' : ''
+        }`
+      );
   }
 }

@@ -17,7 +17,6 @@ import { FollowChangeObservableResult } from '../lib/observable-results/follow-c
 import { SwalHelper } from '../lib/helpers/swal-helper';
 import { environment } from '../environments/environment';
 import { AmplitudeClient } from 'amplitude-js';
-import { DomSanitizer } from '@angular/platform-browser';
 import { IdentityService } from './identity.service';
 import {
   BithuntService,
@@ -65,7 +64,6 @@ export class GlobalVarsService {
 
   constructor(
     private backendApi: BackendApiService,
-    private sanitizer: DomSanitizer,
     private identityService: IdentityService,
     private router: Router,
     private httpClient: HttpClient
@@ -1051,9 +1049,7 @@ export class GlobalVarsService {
       );
     }
     this.identityService.identityServiceURL = identityServiceURL;
-    this.identityService.sanitizedIdentityServiceURL = this.sanitizer.bypassSecurityTrustResourceUrl(
-      `${identityServiceURL}/embed?v=2`
-    );
+    this.identityService.setSanitizedIdentityServiceURL();
 
     this._globopoll(() => {
       if (!this.defaultFeeRateNanosPerKB) {
