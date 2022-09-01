@@ -24,7 +24,7 @@ This frontend works best with Node v14.15.5 and Npm v7. If you cant use these ve
 
 # Start Coding
 
-The quickest way to contribute changes to the Deso Frontend is the following these steps:
+The quickest way to contribute changes to the DeSo Frontend is the following these steps:
 
 1. Open frontend repo in Gitpod
 
