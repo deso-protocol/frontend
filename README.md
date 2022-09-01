@@ -18,9 +18,13 @@ docs should give you everything you need to get started:
 - [Setting Up Your Dev Environment](https://docs.deso.org/code/dev-setup)
 - [Making Your First Changes](https://docs.deso.org/code/making-your-first-changes)
 
+# Node / NPM versions
+
+This frontend works best with Node v14.15.5 and Npm v7. If you cant use these versions, then try `npm install --force`.
+
 # Start Coding
 
-The quickest way to contribute changes to the BitClout Frontend is the following these steps:
+The quickest way to contribute changes to the DeSo Frontend is the following these steps:
 
 1. Open frontend repo in Gitpod
 
