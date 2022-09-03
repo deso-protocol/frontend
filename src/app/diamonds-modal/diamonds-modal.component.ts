@@ -1,13 +1,13 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { BackendApiService } from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
-import { BsModalRef } from "ngx-bootstrap/modal";
-import { InfiniteScroller } from "../infinite-scroller";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
+import { Component, OnInit, Input } from '@angular/core';
+import { BackendApiService } from '../backend-api.service';
+import { GlobalVarsService } from '../global-vars.service';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { InfiniteScroller } from '../infinite-scroller';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
 
 @Component({
-  selector: "diamonds-modal",
-  templateUrl: "./diamonds-modal.component.html",
+  selector: 'diamonds-modal',
+  templateUrl: './diamonds-modal.component.html',
 })
 export class DiamondsModalComponent implements OnInit {
   @Input() postHashHex: string;
@@ -68,6 +68,12 @@ export class DiamondsModalComponent implements OnInit {
       );
   };
 
-  infiniteScroller: InfiniteScroller = new InfiniteScroller(this.pageSize, this.getPage, false);
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  infiniteScroller: InfiniteScroller = new InfiniteScroller(
+    this.pageSize,
+    this.getPage,
+    false
+  );
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 }

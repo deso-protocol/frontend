@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NetworkInfoComponent } from "./network-info.component";
+import { NetworkInfoComponent } from './network-info.component';
 
-describe("NetworkInfoComponent", () => {
+describe('NetworkInfoComponent', () => {
   let component: NetworkInfoComponent;
   let fixture: ComponentFixture<NetworkInfoComponent>;
 
@@ -18,7 +18,7 @@ describe("NetworkInfoComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

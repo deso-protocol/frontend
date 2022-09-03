@@ -1,20 +1,36 @@
 <!-- Top Bar-->
-<div class="global__top-bar d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey">
-  <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
-  <div class="text-truncate" [ngStyle]="{ 'max-width': globalVars.isMobile() ? '350px' : '' }">
+<div
+  class="global__top-bar d-flex align-items-center fs-18px font-weight-bold pl-15px border-bottom border-color-grey"
+>
+  <top-bar-mobile-navigation-control
+    class="mr-15px d-lg-none d-inline-block"
+  ></top-bar-mobile-navigation-control>
+  <div
+    class="text-truncate"
+    [ngStyle]="{ 'max-width': globalVars.isMobile() ? '350px' : '' }"
+  >
     Diamonds from @{{ senderUsername }}
   </div>
 </div>
 <div class="global__top-bar__height"></div>
-<simple-center-loader *ngIf="loadingFirstPage && !loadingNextPage"></simple-center-loader>
+<simple-center-loader
+  *ngIf="loadingFirstPage && !loadingNextPage"
+></simple-center-loader>
 <div class="flex-grow-1">
-  <div #uiScroll *uiScroll="let diamondPost of datasource" class="border-bottom border-color-grey">
+  <div
+    #uiScroll
+    *uiScroll="let diamondPost of datasource"
+    class="border-bottom border-color-grey"
+  >
     <div
       *ngIf="diamondPost.ShowDiamondDivider"
       class="light-grey-divider border-bottom border-color-grey d-flex align-items-center justify-content-center flex-row"
     >
       <div class="py-10px">
-        <i class="icon-diamond fc-blue fs-20px" *ngFor="let _ of diamondArray(diamondPost.Post.DiamondsFromSender)"></i>
+        <i
+          class="icon-diamond fc-blue fs-20px"
+          *ngFor="let _ of diamondArray(diamondPost.Post.DiamondsFromSender)"
+        ></i>
       </div>
     </div>
     <feed-post
@@ -23,7 +39,11 @@
       [contentShouldLinkToThread]="true"
       [includePaddingOnPost]="true"
       [post]="diamondPost.Post"
-      [blocked]="globalVars.hasUserBlockedCreator(diamondPost.Post.ProfileEntryResponse.PublicKeyBase58Check)"
+      [blocked]="
+        globalVars.hasUserBlockedCreator(
+          diamondPost.Post.ProfileEntryResponse.PublicKeyBase58Check
+        )
+      "
       [afterCommentCreatedCallback]="_prependComment.bind(this, post)"
     ></feed-post>
     <div *ngFor="let comment of diamondPost.Post.Comments">
@@ -42,7 +62,10 @@
       </div>
     </div>
   </div>
-  <simple-center-loader [height]="200" *ngIf="loadingNextPage && !loadingFirstPage"></simple-center-loader>
+  <simple-center-loader
+    [height]="200"
+    *ngIf="loadingNextPage && !loadingFirstPage"
+  ></simple-center-loader>
 </div>
 <div class="global__bottom-bar-mobile-height"></div>
 <div class="global__bottom-bar-mobile-height"></div>

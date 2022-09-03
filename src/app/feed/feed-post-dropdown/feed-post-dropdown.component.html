@@ -1,29 +1,57 @@
-<div class="d-flex" dropdown (click)="$event.stopPropagation()" container="body" style="align-items: center">
-  <div class="d-flex d-lg-none fs-12px fc-muted" style="padding-right: 6px;">
-    <span class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle" matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size" mat-raised-button #tooltip="matTooltip" [matTooltip]="globalVars.convertTstampToDateTime(postContent.TimestampNanos)">{{
-      globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}</span>
+<div
+  class="d-flex"
+  dropdown
+  (click)="$event.stopPropagation()"
+  container="body"
+  style="align-items: center"
+>
+  <div class="d-flex d-lg-none fs-12px fc-muted" style="padding-right: 6px">
+    <span
+      class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted align-middle"
+      matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+      mat-raised-button
+      #tooltip="matTooltip"
+      [matTooltip]="
+        globalVars.convertTstampToDateTime(postContent.TimestampNanos)
+      "
+      >{{
+        globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos)
+      }}</span
+    >
   </div>
-  <a class="js-feed-post__dropdown-toggle link--unstyled text-grey9" role="button" dropdownToggle>
+  <a
+    class="js-feed-post__dropdown-toggle link--unstyled text-grey9"
+    role="button"
+    dropdownToggle
+  >
     <i class="fas fa-ellipsis-h"></i>
   </a>
-  <div class="dropdown-menu dropdown-menu-right p-0 border background-color-light-grey" *dropdownMenu>
+  <div
+    class="dropdown-menu dropdown-menu-right p-0 border background-color-light-grey"
+    *dropdownMenu
+  >
     <a
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
       (click)="copyPostLinkToClipboard($event)"
     >
       <i class="icon-link"></i>
-      Link to {{ post.IsNFT ? "NFT" : "Post" }}
+      Link to {{ post.IsNFT ? 'NFT' : 'Post' }}
     </a>
     <a
       *ngIf="showSharePost"
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
       (click)="sharePostUrl($event)"
-      >
+    >
       <i class="fas fa-share-square"></i>
-      Share {{ post.IsNFT ? "NFT" : "Post" }}
+      Share {{ post.IsNFT ? 'NFT' : 'Post' }}
     </a>
     <a
-      *ngIf="globalVars.loggedInUser.PublicKeyBase58Check === post.PosterPublicKeyBase58Check && !post.IsNFT && !post.ParentStakeID"
+      *ngIf="
+        globalVars.loggedInUser.PublicKeyBase58Check ===
+          post.PosterPublicKeyBase58Check &&
+        !post.IsNFT &&
+        !post.ParentStakeID
+      "
       class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item text-success"
       (click)="openMintNftModal($event)"
     >
@@ -92,6 +120,14 @@
     >
       <i class="fas fa-ban"></i>
       Block User
+    </a>
+    <a
+      *ngIf="globalVars.showSuperAdminTools()"
+      class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
+      (click)="addMultiplier()"
+    >
+      <i class="fa fa-sort-amount-asc"></i>
+      Feed Multiplier
     </a>
     <a
       *ngIf="showAddToGlobalFeedDropdownItem()"

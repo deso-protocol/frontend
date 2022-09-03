@@ -2,7 +2,8 @@
   <tab-selector
     [tabs]="tabs"
     [activeTab]="activeTab"
-    (tabClick)="_handleTabClick($event)"></tab-selector>
+    (tabClick)="_handleTabClick($event)"
+  ></tab-selector>
   <div class="p-15px fs-15px" *ngIf="activeTab === AdminJumioComponent.GENERAL">
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
       Set Jumio Starter Amount in $USD:
@@ -16,10 +17,18 @@
           min="0"
           step="0.01"
         />
-        <button *ngIf="!updatingJumioUSD" (click)="updateJumioUSDCents()" class="btn btn-outline-primary fs-15px ml-5px">
+        <button
+          *ngIf="!updatingJumioUSD"
+          (click)="updateJumioUSDCents()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
           Update
         </button>
-        <button *ngIf="updatingJumioUSD" class="btn btn-primary fs-15px ml-5px" disabled>
+        <button
+          *ngIf="updatingJumioUSD"
+          class="btn btn-primary fs-15px ml-5px"
+          disabled
+        >
           Working...
         </button>
       </div>
@@ -36,10 +45,18 @@
           min="0"
           step="0.01"
         />
-        <button *ngIf="!updatingJumioKickbackUSD" (click)="updateJumioKickbackUSDCents()" class="btn btn-outline-primary fs-15px ml-5px">
+        <button
+          *ngIf="!updatingJumioKickbackUSD"
+          (click)="updateJumioKickbackUSDCents()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
           Update
         </button>
-        <button *ngIf="updatingJumioKickbackUSD" class="btn btn-primary fs-15px ml-5px" disabled>
+        <button
+          *ngIf="updatingJumioKickbackUSD"
+          class="btn btn-primary fs-15px ml-5px"
+          disabled
+        >
           Working...
         </button>
       </div>
@@ -53,10 +70,18 @@
           class="form-control w-100 fs-15px lh-15px"
           placeholder="Enter a username or public key."
         />
-        <button *ngIf="!resettingJumio" (click)="_resetJumio()" class="btn btn-outline-primary fs-15px ml-5px">
+        <button
+          *ngIf="!resettingJumio"
+          (click)="_resetJumio()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
           Reset
         </button>
-        <button *ngIf="resettingJumio" class="btn btn-primary fs-15px ml-5px" disabled>
+        <button
+          *ngIf="resettingJumio"
+          class="btn btn-primary fs-15px ml-5px"
+          disabled
+        >
           Working...
         </button>
       </div>
@@ -75,23 +100,41 @@
             name="country"
             id="country-callback"
             [(ngModel)]="jumioCallbackCountrySelected"
-            class="form-control selector mt-15px">
+            class="form-control selector mt-15px"
+          >
             <option
               *ngFor="let country of countryLevelSignUpBonuses | keyvalue"
               [value]="country.value.CountryCodeDetails.Alpha3"
-              [selected]="jumioCallbackCountrySelected === country.value.CountryCodeDetails.Alpha3">{{ country.key }}</option>
+              [selected]="
+                jumioCallbackCountrySelected ===
+                country.value.CountryCodeDetails.Alpha3
+              "
+            >
+              {{ country.key }}
+            </option>
           </select>
         </div>
-        <button *ngIf="!executingJumioCallback" (click)="_executeJumioCallback()" class="btn btn-outline-primary fs-15px ml-5px">
+        <button
+          *ngIf="!executingJumioCallback"
+          (click)="_executeJumioCallback()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+        >
           Execute
         </button>
-        <button *ngIf="executingJumioCallback" class="btn btn-primary fs-15px ml-5px" disabled>
+        <button
+          *ngIf="executingJumioCallback"
+          class="btn btn-primary fs-15px ml-5px"
+          disabled
+        >
           Working...
         </button>
       </div>
     </div>
   </div>
-  <div class="p-15px fs-15px" *ngIf="activeTab === AdminJumioComponent.COUNTRY_BONUSES">
+  <div
+    class="p-15px fs-15px"
+    *ngIf="activeTab === AdminJumioComponent.COUNTRY_BONUSES"
+  >
     <div class="d-flex align-items-center">
       <div class="col-4">Country</div>
       <div class="col-2">Referral Amount</div>
@@ -99,34 +142,59 @@
       <div class="col-2">Kickback Amount</div>
       <div class="col-2">Allow Kickback Override</div>
     </div>
-      <div *ngFor="let signUpBonus of countryLevelSignUpBonuses | keyvalue; let ii = index" class="py-15px d-flex">
-        <div class="col-4 d-flex align-items-center">
-          <i class="fa fa-pencil pr-5px"
-             aria-hidden="true"
-             (click)="editCountry(signUpBonus.value.CountryCodeDetails.Name, $event)"
-          ></i>
-          <span>{{ signUpBonus.key }}</span>
-        </div>
-        <div class="col-2 d-flex">
-          {{ globalVars.formatUSD(signUpBonus.value.CountryLevelSignUpBonus.ReferralAmountOverrideUSDCents / 100, 2) }}
-        </div>
-        <div class="col-2 d-flex">
-          <input
-            type="checkbox"
-            [(ngModel)]="signUpBonus.value.CountryLevelSignUpBonus.AllowCustomReferralAmount"
-            disabled
-          />
-        </div>
-        <div class="col-2 d-flex flex-column">
-          {{ globalVars.formatUSD(signUpBonus.value.CountryLevelSignUpBonus.KickbackAmountOverrideUSDCents / 100, 2) }}
-        </div>
-        <div class="col-2">
-          <input
-            type="checkbox"
-            [(ngModel)]="signUpBonus.value.CountryLevelSignUpBonus.AllowCustomKickbackAmount"
-            disabled
-          />
-        </div>
+    <div
+      *ngFor="
+        let signUpBonus of countryLevelSignUpBonuses | keyvalue;
+        let ii = index
+      "
+      class="py-15px d-flex"
+    >
+      <div class="col-4 d-flex align-items-center">
+        <i
+          class="fa fa-pencil pr-5px"
+          aria-hidden="true"
+          (click)="
+            editCountry(signUpBonus.value.CountryCodeDetails.Name, $event)
+          "
+        ></i>
+        <span>{{ signUpBonus.key }}</span>
       </div>
+      <div class="col-2 d-flex">
+        {{
+          globalVars.formatUSD(
+            signUpBonus.value.CountryLevelSignUpBonus
+              .ReferralAmountOverrideUSDCents / 100,
+            2
+          )
+        }}
+      </div>
+      <div class="col-2 d-flex">
+        <input
+          type="checkbox"
+          [(ngModel)]="
+            signUpBonus.value.CountryLevelSignUpBonus.AllowCustomReferralAmount
+          "
+          disabled
+        />
+      </div>
+      <div class="col-2 d-flex flex-column">
+        {{
+          globalVars.formatUSD(
+            signUpBonus.value.CountryLevelSignUpBonus
+              .KickbackAmountOverrideUSDCents / 100,
+            2
+          )
+        }}
+      </div>
+      <div class="col-2">
+        <input
+          type="checkbox"
+          [(ngModel)]="
+            signUpBonus.value.CountryLevelSignUpBonus.AllowCustomKickbackAmount
+          "
+          disabled
+        />
+      </div>
+    </div>
   </div>
 </div>

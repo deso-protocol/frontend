@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ManageFollowsComponent } from "./manage-follows.component";
+import { ManageFollowsComponent } from './manage-follows.component';
 
-describe("ManageFollowsComponent", () => {
+describe('ManageFollowsComponent', () => {
   let component: ManageFollowsComponent;
   let fixture: ComponentFixture<ManageFollowsComponent>;
 
@@ -18,7 +18,7 @@ describe("ManageFollowsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

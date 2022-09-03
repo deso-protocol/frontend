@@ -1,10 +1,10 @@
-import { Component } from "@angular/core";
-import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
-import { GlobalVarsService } from "../global-vars.service";
+import { Component } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { GlobalVarsService } from '../global-vars.service';
 
 @Component({
-  selector: "bid-placed-modal",
-  templateUrl: "./bid-placed-modal.component.html",
+  selector: 'bid-placed-modal',
+  templateUrl: './bid-placed-modal.component.html',
 })
 export class BidPlacedModalComponent {
   constructor(

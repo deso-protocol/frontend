@@ -1,21 +1,31 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
-import { Location } from "@angular/common";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { Subscription } from "rxjs";
-import { dynamicMaxValidator } from "../../../lib/validators/dynamic-max-validator";
-import { CreatorCoinTrade } from "../../../lib/trade-creator-page/creator-coin-trade";
-import { AppRoutingModule } from "../../app-routing.module";
-import { dynamicMinValidator } from "../../../lib/validators/dynamic-min-validator";
-import * as _ from "lodash";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GlobalVarsService } from '../../global-vars.service';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+} from '../../backend-api.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { dynamicMaxValidator } from '../../../lib/validators/dynamic-max-validator';
+import { CreatorCoinTrade } from '../../../lib/trade-creator-page/creator-coin-trade';
+import { AppRoutingModule } from '../../app-routing.module';
+import { dynamicMinValidator } from '../../../lib/validators/dynamic-min-validator';
+import * as _ from 'lodash';
+import { SwalHelper } from '../../../lib/helpers/swal-helper';
 
 @Component({
-  selector: "trade-creator-form",
-  templateUrl: "./trade-creator-form.component.html",
-  styleUrls: ["./trade-creator-form.component.scss"],
+  selector: 'trade-creator-form',
+  templateUrl: './trade-creator-form.component.html',
+  styleUrls: ['./trade-creator-form.component.scss'],
 })
 export class TradeCreatorFormComponent implements OnInit, OnDestroy {
   // https://stackoverflow.com/questions/12475704/regular-expression-to-allow-only-integer-and-decimal
@@ -54,14 +64,20 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
   updateAmountsSequenceNumber = 0;
 
   _tradeVerbStringForOppositeAction() {
-    return this.creatorCoinTrade.isBuyingCreatorCoin ? CreatorCoinTrade.SELL_VERB : CreatorCoinTrade.BUY_VERB;
+    return this.creatorCoinTrade.isBuyingCreatorCoin
+      ? CreatorCoinTrade.SELL_VERB
+      : CreatorCoinTrade.BUY_VERB;
   }
 
   _pathForOppositeAction() {
     if (this.creatorCoinTrade.isBuyingCreatorCoin) {
-      return AppRoutingModule.sellCreatorPath(this.creatorCoinTrade.creatorProfile.Username);
+      return AppRoutingModule.sellCreatorPath(
+        this.creatorCoinTrade.creatorProfile.Username
+      );
     } else {
-      return AppRoutingModule.buyCreatorPath(this.creatorCoinTrade.creatorProfile.Username);
+      return AppRoutingModule.buyCreatorPath(
+        this.creatorCoinTrade.creatorProfile.Username
+      );
     }
   }
 
@@ -82,9 +98,11 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
     }
 
     // If we get here, this is a regular buy / sell.  Not a transfer.
-    let amountIsValid = this.creatorCoinTrade.amount && this.creatorCoinTrade.amount.valid;
+    let amountIsValid =
+      this.creatorCoinTrade.amount && this.creatorCoinTrade.amount.valid;
     let hasReturnAmount =
-      this.creatorCoinTrade.totalCoinsMinted() > 0 || this.creatorCoinTrade.assetReturnedAmount() > 0;
+      this.creatorCoinTrade.totalCoinsMinted() > 0 ||
+      this.creatorCoinTrade.assetReturnedAmount() > 0;
     return amountIsValid && hasReturnAmount;
   }
 
@@ -151,10 +169,14 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       this.backendApi
         .TransferCreatorCoin(
           this.appData.localNode,
-          this.appData.loggedInUser.PublicKeyBase58Check /*SenderPublicKeyBase58Check*/,
-          this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
-          this.creatorCoinTrade.transferRecipient.value.PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
-          this.creatorCoinTrade.amount.value * 1e9 /*CreatorCoinToTransferNanos*/,
+          this.appData.loggedInUser
+            .PublicKeyBase58Check /*SenderPublicKeyBase58Check*/,
+          this.creatorCoinTrade.creatorProfile
+            .PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
+          this.creatorCoinTrade.transferRecipient.value
+            .PublicKeyBase58Check /*ReceiverPublicKeyBase58Check*/,
+          this.creatorCoinTrade.amount.value *
+            1e9 /*CreatorCoinToTransferNanos*/,
           this.appData.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/,
           false
         )
@@ -173,11 +195,23 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
             this.isUpdatingAmounts = false;
             console.error(err);
             // If we didn't find the profile, show the 'couldn't find username' error text.
-            if (err.error?.error?.indexOf("TransferCreatorCoin: Problem getting profile for username") >= 0) {
+            if (
+              err.error?.error?.indexOf(
+                'TransferCreatorCoin: Problem getting profile for username'
+              ) >= 0
+            ) {
               this.creatorCoinTrade.showUsernameError = true;
-            } else if (err.error?.error?.indexOf("TransferCreatorCoin: Problem decoding receiver public key") >= 0) {
+            } else if (
+              err.error?.error?.indexOf(
+                'TransferCreatorCoin: Problem decoding receiver public key'
+              ) >= 0
+            ) {
               this.creatorCoinTrade.showPubKeyError = true;
-            } else if (err.error?.error?.indexOf("TransferCreatorCoin: Sender and receiver cannot be the same") >= 0) {
+            } else if (
+              err.error?.error?.indexOf(
+                'TransferCreatorCoin: Sender and receiver cannot be the same'
+              ) >= 0
+            ) {
               this.creatorCoinTrade.showCannotSendToSelfError = true;
             } else {
               this.appData._alertError(this.backendApi.parseProfileError(err));
@@ -189,11 +223,14 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       this.backendApi
         .BuyOrSellCreatorCoin(
           this.appData.localNode,
-          this.appData.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
-          this.creatorCoinTrade.creatorProfile.PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
+          this.appData.loggedInUser
+            .PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+          this.creatorCoinTrade.creatorProfile
+            .PublicKeyBase58Check /*CreatorPublicKeyBase58Check*/,
           this.creatorCoinTrade.operationType() /*OperationType*/,
           this.creatorCoinTrade.desoToSell * 1e9 /*DeSoToSellNanos*/,
-          this.creatorCoinTrade.creatorCoinToSell * 1e9 /*CreatorCoinToSellNanos*/,
+          this.creatorCoinTrade.creatorCoinToSell *
+            1e9 /*CreatorCoinToSellNanos*/,
           0 /*DeSoToAddNanos*/,
           0 /*MinDeSoExpectedNanos*/,
           0 /*MinCreatorCoinExpectedNanos*/,
@@ -209,9 +246,12 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
               return;
             }
 
-            this.creatorCoinTrade.expectedCreatorCoinReturnedNanos = response.ExpectedCreatorCoinReturnedNanos || 0;
-            this.creatorCoinTrade.expectedDeSoReturnedNanos = response.ExpectedDeSoReturnedNanos || 0;
-            this.creatorCoinTrade.expectedFounderRewardNanos = response.FounderRewardGeneratedNanos || 0;
+            this.creatorCoinTrade.expectedCreatorCoinReturnedNanos =
+              response.ExpectedCreatorCoinReturnedNanos || 0;
+            this.creatorCoinTrade.expectedDeSoReturnedNanos =
+              response.ExpectedDeSoReturnedNanos || 0;
+            this.creatorCoinTrade.expectedFounderRewardNanos =
+              response.FounderRewardGeneratedNanos || 0;
             this.isUpdatingAmounts = false;
           },
           (err) => {
@@ -244,14 +284,20 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    if (this.creatorCoinTrade.isCreatorCoinTransfer() && !this.creatorCoinTrade.transferRecipient.valid) {
+    if (
+      this.creatorCoinTrade.isCreatorCoinTransfer() &&
+      !this.creatorCoinTrade.transferRecipient.valid
+    ) {
       return false;
     }
 
     this._setAssetToSellAmount();
 
     // If we get to this point and there are no amounts, there is nothing to update.
-    if (this.creatorCoinTrade.desoToSell === 0 && this.creatorCoinTrade.creatorCoinToSell === 0) {
+    if (
+      this.creatorCoinTrade.desoToSell === 0 &&
+      this.creatorCoinTrade.creatorCoinToSell === 0
+    ) {
       return false;
     }
 
@@ -263,7 +309,10 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
   }
 
   _maxAmount() {
-    if (this.creatorCoinTrade == null || this.creatorCoinTrade.selectedCurrency == null) {
+    if (
+      this.creatorCoinTrade == null ||
+      this.creatorCoinTrade.selectedCurrency == null
+    ) {
       return null;
     }
 
@@ -275,7 +324,9 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
 
       balance = this.creatorCoinTrade.assetToSellBalance();
     } else {
-      balance = this.creatorCoinTrade.assetToSellBalance() - this.creatorCoinTrade.currentFeeForSellNanos / 1e9;
+      balance =
+        this.creatorCoinTrade.assetToSellBalance() -
+        this.creatorCoinTrade.currentFeeForSellNanos / 1e9;
     }
 
     if (this.creatorCoinTrade.isBuyingCreatorCoin) {
@@ -333,7 +384,10 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
 
     // Wait 700 ms before calling _executeUpdateAmounts to allow the user to finish typing.
     // This makes the UX a little slower, but reduces server calls.
-    let debouncedExecuteUpdateAmounts = _.debounce(_.bind(this._executeUpdateAmounts, this), 700);
+    let debouncedExecuteUpdateAmounts = _.debounce(
+      _.bind(this._executeUpdateAmounts, this),
+      700
+    );
     let onValueChange = () => {
       // We run _beforeExecuteUpdateAmounts here so we don't debounce if unnecessary.
       if (!this._beforeExecuteUpdateAmounts()) return;
@@ -410,7 +464,8 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
             (response: any) => {
               isFetching = false;
               clearInterval(pollForFee);
-              this.creatorCoinTrade.currentFeeForSellNanos = response.FeeNanos * this.FEE_LEEWAY_MULTIPLE;
+              this.creatorCoinTrade.currentFeeForSellNanos =
+                response.FeeNanos * this.FEE_LEEWAY_MULTIPLE;
             },
             (error) => {
               isFetching = false;
@@ -432,19 +487,21 @@ export class TradeCreatorFormComponent implements OnInit, OnDestroy {
         const hodlersCount = this.globalVars.loggedInUser.UsersWhoHODLYouCount;
         SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),
-          title: "Warning!",
-          html: `You have ${hodlersCount} supporter${hodlersCount > 1 ? "s" : ""}  who own${
-            hodlersCount > 1 ? "" : "s"
+          title: 'Warning!',
+          html: `You have ${hodlersCount} supporter${
+            hodlersCount > 1 ? 's' : ''
+          }  who own${
+            hodlersCount > 1 ? '' : 's'
           } your coin. If you sell, they will be notified. Are you sure?`,
           showCancelButton: true,
           showDenyButton: true,
           showConfirmButton: false,
-          icon: "warning",
-          denyButtonText: "Proceed",
-          cancelButtonText: "Go Back",
+          icon: 'warning',
+          denyButtonText: 'Proceed',
+          cancelButtonText: 'Go Back',
           customClass: {
-            denyButton: "btn btn-light",
-            cancelButton: "btn btn-light no",
+            denyButton: 'btn btn-light',
+            cancelButton: 'btn btn-light no',
           },
           reverseButtons: true,
         }).then((response: any) => {

@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UpdateProfileGetStarterDeSoComponent } from "./update-profile-get-starter-deso.component";
+import { UpdateProfileGetStarterDeSoComponent } from './update-profile-get-starter-deso.component';
 
-describe("UpdateProfileGetStarterDeSoComponent", () => {
+describe('UpdateProfileGetStarterDeSoComponent', () => {
   let component: UpdateProfileGetStarterDeSoComponent;
   let fixture: ComponentFixture<UpdateProfileGetStarterDeSoComponent>;
 
@@ -18,7 +18,7 @@ describe("UpdateProfileGetStarterDeSoComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

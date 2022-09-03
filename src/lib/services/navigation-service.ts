@@ -14,11 +14,11 @@
 // Overall, we should find a more robust way to do this. The code below probably has bugs
 // or handles edge cases poorly.
 
-import { Injectable } from "@angular/core";
-import { Location } from "@angular/common";
-import { Router, NavigationStart, NavigationEnd } from "@angular/router";
+import { Injectable } from '@angular/core';
+import { Location } from '@angular/common';
+import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class NavigationService {
   private urlHistory: string[] = [];
 
@@ -28,7 +28,10 @@ export class NavigationService {
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        if (event.navigationTrigger === "popstate" || event.navigationTrigger === "imperative") {
+        if (
+          event.navigationTrigger === 'popstate' ||
+          event.navigationTrigger === 'imperative'
+        ) {
           let currentUrl = this.urlHistory[this.urlHistory.length - 1];
           let previousUrl = this.urlHistory[this.urlHistory.length - 2];
           // if a click merely changed query params, we want to pop the previous URL (which
@@ -38,7 +41,8 @@ export class NavigationService {
           // this is to match the anecdotal browser behavior I observed in my browser
           // TODO: i'm not sure this anecdotal behavior is correct, see for example the "sign up"
           // flow. it'd probably be safer not to do this
-          let clickChangedQueryParams = currentUrl.split("?")[0] == event.url.split("?")[0];
+          let clickChangedQueryParams =
+            currentUrl.split('?')[0] == event.url.split('?')[0];
 
           if (clickChangedQueryParams) {
             this.urlHistory.pop();
@@ -75,7 +79,9 @@ export class NavigationService {
   back(): void {
     if (this.isHistoryEmpty()) {
       // TODO: rollbar
-      console.error("Attempting to go back when there's nothing in the history");
+      console.error(
+        "Attempting to go back when there's nothing in the history"
+      );
       return;
     }
 

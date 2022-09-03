@@ -1,20 +1,27 @@
-import { Component, Input } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse, BalanceEntryResponse } from "../../backend-api.service";
-import { GlobalVarsService } from "../../global-vars.service";
-import { IDatasource, IAdapter } from "ngx-ui-scroll";
-import { InfiniteScroller } from "src/app/infinite-scroller";
+import { Component, Input } from '@angular/core';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+  BalanceEntryResponse,
+} from '../../backend-api.service';
+import { GlobalVarsService } from '../../global-vars.service';
+import { IDatasource, IAdapter } from 'ngx-ui-scroll';
+import { InfiniteScroller } from 'src/app/infinite-scroller';
 
 @Component({
-  selector: "creator-profile-hodlers",
-  templateUrl: "./creator-profile-hodlers.component.html",
-  styleUrls: ["./creator-profile-hodlers.component.scss"],
+  selector: 'creator-profile-hodlers',
+  templateUrl: './creator-profile-hodlers.component.html',
+  styleUrls: ['./creator-profile-hodlers.component.scss'],
 })
 export class CreatorProfileHodlersComponent {
   static PAGE_SIZE = 100;
   static WINDOW_VIEWPORT = true;
   static BUFFER_SIZE = 5; // todo anna: do we want 5 or default?
 
-  constructor(private globalVars: GlobalVarsService, private backendApi: BackendApiService) {}
+  constructor(
+    private globalVars: GlobalVarsService,
+    private backendApi: BackendApiService
+  ) {}
 
   @Input() profile: ProfileEntryResponse;
   @Input() isDAOCoin: boolean = false;
@@ -24,7 +31,7 @@ export class CreatorProfileHodlersComponent {
   loadingFirstPage = true;
   loadingNextPage = false;
   pagedKeys = {
-    0: "",
+    0: '',
   };
 
   getPage(page: number) {
@@ -36,21 +43,22 @@ export class CreatorProfileHodlersComponent {
     return this.backendApi
       .GetHodlersForPublicKey(
         this.globalVars.localNode,
-        "",
+        '',
         this.profile.Username,
         lastPublicKeyBase58Check,
         CreatorProfileHodlersComponent.PAGE_SIZE,
         false,
         false,
-        this.isDAOCoin,
+        this.isDAOCoin
       )
       .toPromise()
       .then((res) => {
         const balanceEntryResponses: any[] = res.Hodlers;
-        this.pagedKeys[page + 1] = res.LastPublicKeyBase58Check || "";
+        this.pagedKeys[page + 1] = res.LastPublicKeyBase58Check || '';
         if (
-          balanceEntryResponses.length < CreatorProfileHodlersComponent.PAGE_SIZE ||
-          this.pagedKeys[page + 1] === ""
+          balanceEntryResponses.length <
+            CreatorProfileHodlersComponent.PAGE_SIZE ||
+          this.pagedKeys[page + 1] === ''
         ) {
           this.lastPage = page;
           this.showTotal = true;
@@ -70,7 +78,7 @@ export class CreatorProfileHodlersComponent {
 
   usernameStyle() {
     return {
-      "max-width": this.globalVars.isMobile() ? "100px" : "200px",
+      'max-width': this.globalVars.isMobile() ? '100px' : '200px',
     };
   }
 
@@ -100,5 +108,7 @@ export class CreatorProfileHodlersComponent {
     CreatorProfileHodlersComponent.WINDOW_VIEWPORT,
     CreatorProfileHodlersComponent.BUFFER_SIZE
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 }

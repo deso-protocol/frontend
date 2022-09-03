@@ -1,17 +1,17 @@
-import { Component, OnInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { AppRoutingModule } from "../../app-routing.module";
-import { CanPublicKeyFollowTargetPublicKeyHelper } from "../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { Title } from "@angular/platform-browser";
-import { InfiniteScroller } from "src/app/infinite-scroller";
-import { environment } from "src/environments/environment";
+import { Component, OnInit } from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import { BackendApiService } from '../../backend-api.service';
+import { AppRoutingModule } from '../../app-routing.module';
+import { CanPublicKeyFollowTargetPublicKeyHelper } from '../../../lib/helpers/follows/can_public_key_follow_target_public_key_helper';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
+import { Title } from '@angular/platform-browser';
+import { InfiniteScroller } from 'src/app/infinite-scroller';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "creators-leaderboard",
-  templateUrl: "./creators-leaderboard.component.html",
-  styleUrls: ["./creators-leaderboard.component.scss"],
+  selector: 'creators-leaderboard',
+  templateUrl: './creators-leaderboard.component.html',
+  styleUrls: ['./creators-leaderboard.component.scss'],
 })
 export class CreatorsLeaderboardComponent implements OnInit {
   static PAGE_SIZE = 100;
@@ -30,7 +30,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
 
   // stores a mapping of page number to public key to fetch
   pagedKeys = {
-    0: "",
+    0: '',
   };
 
   // tracks if we've reached the end of all notifications
@@ -50,7 +50,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
     }
 
     const fetchPubKey = this.pagedKeys[page];
-    let readerPubKey = "";
+    let readerPubKey = '';
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
@@ -65,7 +65,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
         BackendApiService.GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE /*Order by*/,
         CreatorsLeaderboardComponent.PAGE_SIZE /*NumToFetch*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
-        "leaderboard" /*ModerationType*/,
+        'leaderboard' /*ModerationType*/,
         false /*FetchUsersThatHODL*/,
         false /*AddGlobalFeedBool*/
       )
@@ -79,7 +79,10 @@ export class CreatorsLeaderboardComponent implements OnInit {
           this.pagedKeys[page + 1] = res.NextPublicKey;
 
           // if the chunk was incomplete or the Index was zero we're done
-          if (chunk.length < CreatorsLeaderboardComponent.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
+          if (
+            chunk.length < CreatorsLeaderboardComponent.PAGE_SIZE ||
+            this.pagedKeys[page + 1] === ''
+          ) {
             this.lastPage = page;
           }
 
@@ -112,5 +115,7 @@ export class CreatorsLeaderboardComponent implements OnInit {
     CreatorsLeaderboardComponent.WINDOW_VIEWPORT,
     CreatorsLeaderboardComponent.BUFFER_SIZE
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 }

@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreatorDiamondsComponent } from "./creator-diamonds.component";
+import { CreatorDiamondsComponent } from './creator-diamonds.component';
 
-describe("CreatorDiamondsComponent", () => {
+describe('CreatorDiamondsComponent', () => {
   let component: CreatorDiamondsComponent;
   let fixture: ComponentFixture<CreatorDiamondsComponent>;
 
@@ -18,7 +18,7 @@ describe("CreatorDiamondsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

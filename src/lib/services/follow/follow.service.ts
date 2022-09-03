@@ -1,21 +1,21 @@
-import { Injectable } from "@angular/core";
-import { BackendApiService } from "../../../app/backend-api.service";
-import { FollowChangeObservableResult } from "../../observable-results/follow-change-observable-result";
-import { GlobalVarsService } from "../../../app/global-vars.service";
+import { Injectable } from '@angular/core';
+import { BackendApiService } from '../../../app/backend-api.service';
+import { FollowChangeObservableResult } from '../../observable-results/follow-change-observable-result';
+import { GlobalVarsService } from '../../../app/global-vars.service';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class FollowService {
   constructor(
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
-    private appData: GlobalVarsService,
-  ) {
-  }
+    private appData: GlobalVarsService
+  ) {}
 
-  RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS = "RuleErrorFollowEntryAlreadyExists";
-  RULE_ERROR_CANNOT_UNFOLLOW_NONEXISTENT_FOLLOW_ENTRY = "RuleErrorCannotUnfollowNonexistentFollowEntry";
+  RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS = 'RuleErrorFollowEntryAlreadyExists';
+  RULE_ERROR_CANNOT_UNFOLLOW_NONEXISTENT_FOLLOW_ENTRY =
+    'RuleErrorCannotUnfollowNonexistentFollowEntry';
   createFollowTxnBeingCalled = false;
   isFollowing: boolean;
 
@@ -24,7 +24,9 @@ export class FollowService {
       return false;
     }
 
-    return this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser.includes(followedPubKeyBase58Check);
+    return this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser.includes(
+      followedPubKeyBase58Check
+    );
   }
 
   _toggleFollow(isFollow: boolean, followedPubKeyBase58Check: string) {
@@ -32,7 +34,8 @@ export class FollowService {
       return;
     }
 
-    let followerPublicKeyBase58Check = this.appData.loggedInUser.PublicKeyBase58Check;
+    let followerPublicKeyBase58Check = this.appData.loggedInUser
+      .PublicKeyBase58Check;
 
     this.createFollowTxnBeingCalled = true;
 
@@ -50,20 +53,29 @@ export class FollowService {
           this._notifyFollowChangeObservers(followedPubKeyBase58Check);
         },
         (error) => {
-          let errorString = error.error.error || "";
-          if (errorString.includes(this.RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS)) {
+          let errorString = error.error.error || '';
+          if (
+            errorString.includes(this.RULE_ERROR_FOLLOW_ENTRY_ALREADY_EXISTS)
+          ) {
             // If the user is already following, then set our button to reflect that.
             // Note: a common way this can currently happen is if there are multiple
             // follow buttons on the same page for the same user. TODO: fix this
             this._handleSuccessfulFollow(followedPubKeyBase58Check);
-          } else if (errorString.includes(this.RULE_ERROR_CANNOT_UNFOLLOW_NONEXISTENT_FOLLOW_ENTRY)) {
+          } else if (
+            errorString.includes(
+              this.RULE_ERROR_CANNOT_UNFOLLOW_NONEXISTENT_FOLLOW_ENTRY
+            )
+          ) {
             // If the user is already not following, then set our button to reflect that.
             this._handleSuccessfulUnfollow(followedPubKeyBase58Check);
           } else {
             // TODO: RuleErrorInputSpendsNonexistentUtxo is a problem ... we need a lock in the server endpoint
             // TODO: there's prob some "out of funds" error which is a problem
             const parsedError = this.backendApi.parseMessageError(error);
-            this.globalVars.logEvent(`user : ${isFollow ? "follow" : "unfollow"} : error`, { parsedError });
+            this.globalVars.logEvent(
+              `user : ${isFollow ? 'follow' : 'unfollow'} : error`,
+              { parsedError }
+            );
             this.appData._alertError(parsedError);
           }
         }
@@ -73,7 +85,10 @@ export class FollowService {
       });
   }
 
-  _handleSuccessfulFollowTxn(isFollow: boolean, followedPubKeyBase58Check: string) {
+  _handleSuccessfulFollowTxn(
+    isFollow: boolean,
+    followedPubKeyBase58Check: string
+  ) {
     if (isFollow) {
       this._handleSuccessfulFollow(followedPubKeyBase58Check);
     } else {
@@ -82,10 +97,11 @@ export class FollowService {
   }
 
   _handleSuccessfulFollow(followedPubKeyBase58Check: string) {
-    this.globalVars.logEvent("user : follow");
+    this.globalVars.logEvent('user : follow');
 
     // add to the list of follows (keep the global list correct)
-    let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;
+    let publicKeys = this.appData.loggedInUser
+      .PublicKeysBase58CheckFollowedByUser;
     let index = publicKeys.indexOf(followedPubKeyBase58Check);
     if (index == -1) {
       publicKeys.push(followedPubKeyBase58Check);
@@ -102,10 +118,11 @@ export class FollowService {
   }
 
   _handleSuccessfulUnfollow(followedPubKeyBase58Check: string) {
-    this.globalVars.logEvent("user : unfollow");
+    this.globalVars.logEvent('user : unfollow');
 
     // remove from the list of follows (keep the global list correct)
-    let publicKeys = this.appData.loggedInUser.PublicKeysBase58CheckFollowedByUser;
+    let publicKeys = this.appData.loggedInUser
+      .PublicKeysBase58CheckFollowedByUser;
     let index = publicKeys.indexOf(followedPubKeyBase58Check);
     if (index > -1) {
       publicKeys.splice(index, 1);

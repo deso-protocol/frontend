@@ -1,17 +1,20 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../../backend-api.service";
-import { Datasource, IAdapter, IDatasource } from "ngx-ui-scroll";
-import { Subscription } from "rxjs";
+import { Component, OnInit, Input } from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+} from '../../backend-api.service';
+import { Datasource, IAdapter, IDatasource } from 'ngx-ui-scroll';
+import { Subscription } from 'rxjs';
 
 @Component({
-  selector: "creator-diamonds",
-  templateUrl: "./creator-diamonds.component.html",
-  styleUrls: ["./creator-diamonds.component.scss"],
+  selector: 'creator-diamonds',
+  templateUrl: './creator-diamonds.component.html',
+  styleUrls: ['./creator-diamonds.component.scss'],
 })
 export class CreatorDiamondsComponent implements OnInit {
-  static GIVEN = "Given";
-  static RECEIVED = "Received";
+  static GIVEN = 'Given';
+  static RECEIVED = 'Received';
 
   @Input() profile: ProfileEntryResponse;
   isLoading: boolean = false;
@@ -27,7 +30,10 @@ export class CreatorDiamondsComponent implements OnInit {
   totalAnonDiamondValue = 0;
   highestAnonDiamondLevel = 0;
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService) {
+  constructor(
+    private _globalVars: GlobalVarsService,
+    private backendApi: BackendApiService
+  ) {
     this.globalVars = _globalVars;
   }
 
@@ -38,7 +44,11 @@ export class CreatorDiamondsComponent implements OnInit {
   fetchDiamonds(): Subscription {
     this.isLoading = true;
     return this.backendApi
-      .GetDiamondsForPublicKey(this.globalVars.localNode, this.profile.PublicKeyBase58Check, this.showDiamondsGiven)
+      .GetDiamondsForPublicKey(
+        this.globalVars.localNode,
+        this.profile.PublicKeyBase58Check,
+        this.showDiamondsGiven
+      )
       .subscribe(
         (res) => {
           this.diamondSummaryList = res.DiamondSenderSummaryResponses;
@@ -52,11 +62,20 @@ export class CreatorDiamondsComponent implements OnInit {
               !this.diamondSummaryList[ii].ProfileEntryResponse &&
               this.diamondSummaryList[ii].SenderPublicKeyBase58Check
             ) {
-              this.totalAnonDiamonds += this.diamondSummaryList[ii].TotalDiamonds;
-              this.totalAnonDiamondValue += this.sumDiamondValueForUser(this.diamondSummaryList[ii]);
+              this.totalAnonDiamonds += this.diamondSummaryList[
+                ii
+              ].TotalDiamonds;
+              this.totalAnonDiamondValue += this.sumDiamondValueForUser(
+                this.diamondSummaryList[ii]
+              );
 
-              if (this.diamondSummaryList[ii].HighestDiamondLevel > this.highestAnonDiamondLevel) {
-                this.highestAnonDiamondLevel = this.diamondSummaryList[ii].HighestDiamondLevel;
+              if (
+                this.diamondSummaryList[ii].HighestDiamondLevel >
+                this.highestAnonDiamondLevel
+              ) {
+                this.highestAnonDiamondLevel = this.diamondSummaryList[
+                  ii
+                ].HighestDiamondLevel;
               }
             } else {
               diamondListWithoutAnon.push(this.diamondSummaryList[ii]);
@@ -88,9 +107,14 @@ export class CreatorDiamondsComponent implements OnInit {
   onChange(event): void {
     if (this.activeTab !== event) {
       this.activeTab = event;
-      this.showDiamondsGiven = this.activeTab === CreatorDiamondsComponent.GIVEN;
+      this.showDiamondsGiven =
+        this.activeTab === CreatorDiamondsComponent.GIVEN;
       this.loadingNewSelection = true;
-      this.fetchDiamonds().add(() => this.datasource.adapter.reset().then(() => (this.loadingNewSelection = false)));
+      this.fetchDiamonds().add(() =>
+        this.datasource.adapter
+          .reset()
+          .then(() => (this.loadingNewSelection = false))
+      );
     }
   }
 
@@ -98,7 +122,9 @@ export class CreatorDiamondsComponent implements OnInit {
     let total = 0;
     for (const diamondLevel in diamondSummary.DiamondLevelMap) {
       if (diamondLevel in this.globalVars.diamondLevelMap) {
-        total += this.globalVars.diamondLevelMap[diamondLevel] * diamondSummary.DiamondLevelMap[diamondLevel];
+        total +=
+          this.globalVars.diamondLevelMap[diamondLevel] *
+          diamondSummary.DiamondLevelMap[diamondLevel];
       }
     }
     return total;
@@ -124,7 +150,12 @@ export class CreatorDiamondsComponent implements OnInit {
           return;
         }
         if (endIdx + 1 > this.diamondSummaryList.length) {
-          success(this.diamondSummaryList.slice(startIdx, this.diamondSummaryList.length));
+          success(
+            this.diamondSummaryList.slice(
+              startIdx,
+              this.diamondSummaryList.length
+            )
+          );
           return;
         }
         success(this.diamondSummaryList.slice(startIdx, endIdx + 1));

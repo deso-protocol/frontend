@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GetStarterDeSoComponent } from "./get-starter-deso.component";
+import { GetStarterDeSoComponent } from './get-starter-deso.component';
 
-describe("GetStarterDeSoComponent", () => {
+describe('GetStarterDeSoComponent', () => {
   let component: GetStarterDeSoComponent;
   let fixture: ComponentFixture<GetStarterDeSoComponent>;
 
@@ -18,7 +18,7 @@ describe("GetStarterDeSoComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

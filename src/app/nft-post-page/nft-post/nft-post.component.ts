@@ -1,30 +1,30 @@
-import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../../global-vars.service";
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GlobalVarsService } from '../../global-vars.service';
 import {
   BackendApiService,
   NFTBidData,
   NFTBidEntryResponse,
   NFTEntryResponse,
   PostEntryResponse,
-} from "../../backend-api.service";
-import { Title } from "@angular/platform-browser";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { RouteNames } from "../../app-routing.module";
-import { Location } from "@angular/common";
-import * as _ from "lodash";
-import { SellNftModalComponent } from "../../sell-nft-modal/sell-nft-modal.component";
-import { CloseNftAuctionModalComponent } from "../../close-nft-auction-modal/close-nft-auction-modal.component";
-import { Subscription } from "rxjs";
-import { AddUnlockableModalComponent } from "../../add-unlockable-modal/add-unlockable-modal.component";
-import { FeedPostComponent } from "../../feed/feed-post/feed-post.component";
-import { environment } from "src/environments/environment";
+} from '../../backend-api.service';
+import { Title } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { SwalHelper } from '../../../lib/helpers/swal-helper';
+import { RouteNames } from '../../app-routing.module';
+import { Location } from '@angular/common';
+import * as _ from 'lodash';
+import { SellNftModalComponent } from '../../sell-nft-modal/sell-nft-modal.component';
+import { CloseNftAuctionModalComponent } from '../../close-nft-auction-modal/close-nft-auction-modal.component';
+import { Subscription } from 'rxjs';
+import { AddUnlockableModalComponent } from '../../add-unlockable-modal/add-unlockable-modal.component';
+import { FeedPostComponent } from '../../feed/feed-post/feed-post.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "nft-post",
-  templateUrl: "./nft-post.component.html",
-  styleUrls: ["./nft-post.component.scss"],
+  selector: 'nft-post',
+  templateUrl: './nft-post.component.html',
+  styleUrls: ['./nft-post.component.scss'],
 })
 export class NftPostComponent {
   @ViewChild(FeedPostComponent) feedPost: FeedPostComponent;
@@ -51,11 +51,11 @@ export class NftPostComponent {
 
   activeTab = NftPostComponent.THREAD;
 
-  static ALL_BIDS = "All Bids";
-  static MY_BIDS = "My Bids";
-  static MY_AUCTIONS = "My Auctions";
-  static OWNERS = "Owners";
-  static THREAD = "Thread";
+  static ALL_BIDS = 'All Bids';
+  static MY_BIDS = 'My Bids';
+  static MY_AUCTIONS = 'My Auctions';
+  static OWNERS = 'Owners';
+  static THREAD = 'Thread';
 
   tabs = [
     NftPostComponent.THREAD,
@@ -86,7 +86,7 @@ export class NftPostComponent {
 
   getPost(fetchParents: boolean = true) {
     // Hit the Get Single Post endpoint with specific parameters
-    let readerPubKey = "";
+    let readerPubKey = '';
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
@@ -107,26 +107,31 @@ export class NftPostComponent {
     this.getPost().subscribe(
       (res) => {
         if (!res || !res.PostFound) {
-          this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+          this.router.navigateByUrl(
+            '/' + this.globalVars.RouteNames.NOT_FOUND,
+            { skipLocationChange: true }
+          );
           return;
         }
         if (!res.PostFound.IsNFT) {
           const postHashHex = res.PostFound.PostHashHex;
           SwalHelper.fire({
             target: this.globalVars.getTargetComponentSelector(),
-            html: "This post is not an NFT",
+            html: 'This post is not an NFT',
             showConfirmButton: true,
             showCancelButton: true,
             customClass: {
-              confirmButton: "btn btn-light",
-              cancelButton: "btn btn-light no",
+              confirmButton: 'btn btn-light',
+              cancelButton: 'btn btn-light no',
             },
-            confirmButtonText: "View Post",
-            cancelButtonText: "Go back",
+            confirmButtonText: 'View Post',
+            cancelButtonText: 'Go back',
             reverseButtons: true,
           }).then((res) => {
             if (res.isConfirmed) {
-              this.router.navigate(["/" + RouteNames.POSTS + "/" + postHashHex]);
+              this.router.navigate([
+                '/' + RouteNames.POSTS + '/' + postHashHex,
+              ]);
               return;
             }
             this.location.back();
@@ -135,13 +140,18 @@ export class NftPostComponent {
         }
         // Set current post
         this.nftPost = res.PostFound;
-        this.titleService.setTitle(this.nftPost.ProfileEntryResponse.Username + ` on ${environment.node.name}`);
+        this.titleService.setTitle(
+          this.nftPost.ProfileEntryResponse.Username +
+            ` on ${environment.node.name}`
+        );
         this.refreshBidData();
       },
       (err) => {
         // TODO: post threads: rollbar
         console.error(err);
-        this.router.navigateByUrl("/" + this.globalVars.RouteNames.NOT_FOUND, { skipLocationChange: true });
+        this.router.navigateByUrl('/' + this.globalVars.RouteNames.NOT_FOUND, {
+          skipLocationChange: true,
+        });
         this.loading = false;
       }
     );
@@ -169,22 +179,42 @@ export class NftPostComponent {
           );
           this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
             (nftEntryResponse) =>
-              nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+              nftEntryResponse.OwnerPublicKeyBase58Check ===
+              this.globalVars.loggedInUser?.PublicKeyBase58Check
           );
           if (!this.myAvailableSerialNumbers.length) {
-            this.tabs = this.tabs.filter((t) => t !== NftPostComponent.MY_AUCTIONS);
-            this.activeTab = this.activeTab === NftPostComponent.MY_AUCTIONS ? this.tabs[0] : this.activeTab;
+            this.tabs = this.tabs.filter(
+              (t) => t !== NftPostComponent.MY_AUCTIONS
+            );
+            this.activeTab =
+              this.activeTab === NftPostComponent.MY_AUCTIONS
+                ? this.tabs[0]
+                : this.activeTab;
           }
           this.myBids = this.nftBidData.BidEntryResponses.filter(
-            (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+            (bidEntry) =>
+              bidEntry.PublicKeyBase58Check ===
+              this.globalVars.loggedInUser?.PublicKeyBase58Check
           );
           if (!this.myBids.length) {
             this.tabs = this.tabs.filter((t) => t !== NftPostComponent.MY_BIDS);
-            this.activeTab = this.activeTab === NftPostComponent.MY_BIDS ? this.tabs[0] : this.activeTab;
+            this.activeTab =
+              this.activeTab === NftPostComponent.MY_BIDS
+                ? this.tabs[0]
+                : this.activeTab;
           }
-          this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-          this.highBid = _.maxBy(this.nftBidData.NFTEntryResponses, "HighestBidAmountNanos").HighestBidAmountNanos;
-          this.lowBid = _.minBy(this.nftBidData.NFTEntryResponses, "LowestBidAmountNanos").LowestBidAmountNanos;
+          this.showPlaceABid = !!(
+            this.availableSerialNumbers.length -
+            this.myAvailableSerialNumbers.length
+          );
+          this.highBid = _.maxBy(
+            this.nftBidData.NFTEntryResponses,
+            'HighestBidAmountNanos'
+          ).HighestBidAmountNanos;
+          this.lowBid = _.minBy(
+            this.nftBidData.NFTEntryResponses,
+            'LowestBidAmountNanos'
+          ).LowestBidAmountNanos;
           this.owners = this.nftBidData.NFTEntryResponses;
         },
         (err) => {
@@ -216,7 +246,9 @@ export class NftPostComponent {
   }
 
   isPostBlocked(post: any): boolean {
-    return this.globalVars.hasUserBlockedCreator(post.PosterPublicKeyBase58Check);
+    return this.globalVars.hasUserBlockedCreator(
+      post.PosterPublicKeyBase58Check
+    );
   }
 
   afterUserBlocked(blockedPubKey: any) {
@@ -233,30 +265,37 @@ export class NftPostComponent {
       return;
     }
     const sellNFTModalDetails = this.modalService.show(SellNftModalComponent, {
-      class: "modal-dialog-center",
+      class: 'modal-dialog-center',
       initialState: {
         post: this.nftPost,
         nftEntries: this.nftBidData.NFTEntryResponses,
-        selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
+        selectedBidEntries: this.nftBidData.BidEntryResponses.filter(
+          (bidEntry) => bidEntry.selected
+        ),
       },
     });
     const onHiddenEvent = sellNFTModalDetails.onHidden;
     onHiddenEvent.subscribe((response) => {
-      if (response === "nft sold") {
+      if (response === 'nft sold') {
         this.loading = true;
         this.refreshPosts();
         this.feedPost.getNFTEntries();
-      } else if (response === "unlockable content opened") {
-        const unlockableModalDetails = this.modalService.show(AddUnlockableModalComponent, {
-          class: "modal-dialog-centered",
-          initialState: {
-            post: this.nftPost,
-            selectedBidEntries: this.nftBidData.BidEntryResponses.filter((bidEntry) => bidEntry.selected),
-          },
-        });
+      } else if (response === 'unlockable content opened') {
+        const unlockableModalDetails = this.modalService.show(
+          AddUnlockableModalComponent,
+          {
+            class: 'modal-dialog-centered',
+            initialState: {
+              post: this.nftPost,
+              selectedBidEntries: this.nftBidData.BidEntryResponses.filter(
+                (bidEntry) => bidEntry.selected
+              ),
+            },
+          }
+        );
         const onHiddenEvent = unlockableModalDetails.onHidden;
         onHiddenEvent.subscribe((response) => {
-          if (response === "nft sold") {
+          if (response === 'nft sold') {
             this.loading = true;
             this.refreshPosts();
             this.feedPost.getNFTEntries();
@@ -280,8 +319,9 @@ export class NftPostComponent {
       });
     }
     // enabled / disable the Sell NFT button based on the count of bid entries that are selected.
-    this.sellNFTDisabled = !this.nftBidData.BidEntryResponses.filter((bidEntryResponse) => bidEntryResponse.selected)
-      ?.length;
+    this.sellNFTDisabled = !this.nftBidData.BidEntryResponses.filter(
+      (bidEntryResponse) => bidEntryResponse.selected
+    )?.length;
   }
 
   selectBidEntry(bidEntry: NFTBidEntryResponse): void {
@@ -291,16 +331,19 @@ export class NftPostComponent {
   }
 
   closeAuction(): void {
-    const closeNftAuctionModalDetails = this.modalService.show(CloseNftAuctionModalComponent, {
-      class: "modal-dialog-centered",
-      initialState: {
-        post: this.nftPost,
-        myAvailableSerialNumbers: this.myAvailableSerialNumbers,
-      },
-    });
+    const closeNftAuctionModalDetails = this.modalService.show(
+      CloseNftAuctionModalComponent,
+      {
+        class: 'modal-dialog-centered',
+        initialState: {
+          post: this.nftPost,
+          myAvailableSerialNumbers: this.myAvailableSerialNumbers,
+        },
+      }
+    );
     const onHiddenEvent = closeNftAuctionModalDetails.onHidden;
     onHiddenEvent.subscribe((response) => {
-      if (response === "auction cancelled") {
+      if (response === 'auction cancelled') {
         this.refreshBidData();
         this.feedPost.getNFTEntries();
       }
@@ -311,7 +354,8 @@ export class NftPostComponent {
     const loggedInPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     return !!this.nftBidData.NFTEntryResponses.filter(
       (nftEntryResponse) =>
-        nftEntryResponse.SerialNumber === serialNumber && nftEntryResponse.OwnerPublicKeyBase58Check === loggedInPubKey
+        nftEntryResponse.SerialNumber === serialNumber &&
+        nftEntryResponse.OwnerPublicKeyBase58Check === loggedInPubKey
     ).length;
   }
 
@@ -327,13 +371,18 @@ export class NftPostComponent {
       );
     } else if (this.activeTab === NftPostComponent.MY_BIDS) {
       this.bids = this.nftBidData.BidEntryResponses.filter(
-        (bidEntry) => bidEntry.PublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+        (bidEntry) =>
+          bidEntry.PublicKeyBase58Check ===
+          this.globalVars.loggedInUser?.PublicKeyBase58Check
       );
     } else if (this.activeTab === NftPostComponent.MY_AUCTIONS) {
-      const serialNumbers = this.myAvailableSerialNumbers?.map((nftEntryResponse) => nftEntryResponse.SerialNumber);
+      const serialNumbers = this.myAvailableSerialNumbers?.map(
+        (nftEntryResponse) => nftEntryResponse.SerialNumber
+      );
       this.bids = this.nftBidData.BidEntryResponses.filter(
         (bidEntry) =>
-          (serialNumbers.includes(bidEntry.SerialNumber) || bidEntry.SerialNumber === 0) &&
+          (serialNumbers.includes(bidEntry.SerialNumber) ||
+            bidEntry.SerialNumber === 0) &&
           bidEntry.BidAmountNanos <= bidEntry.BidderBalanceNanos
       );
     }
@@ -344,13 +393,16 @@ export class NftPostComponent {
     }
   }
 
-  static SORT_BY_PRICE = "PRICE";
-  static SORT_BY_USERNAME = "USERNAME";
-  static SORT_BY_EDITION = "EDITION";
+  static SORT_BY_PRICE = 'PRICE';
+  static SORT_BY_USERNAME = 'USERNAME';
+  static SORT_BY_EDITION = 'EDITION';
   sortByField = NftPostComponent.SORT_BY_PRICE;
   sortDescending = true;
 
-  sortBids(attribute: string = NftPostComponent.SORT_BY_PRICE, descending: boolean = true): void {
+  sortBids(
+    attribute: string = NftPostComponent.SORT_BY_PRICE,
+    descending: boolean = true
+  ): void {
     if (!this.bids?.length) {
       return;
     }
@@ -383,12 +435,17 @@ export class NftPostComponent {
   compareBidAmount(a: NFTBidEntryResponse, b: NFTBidEntryResponse): number {
     return a.BidAmountNanos - b.BidAmountNanos;
   }
-  compareSerialNumber(a: NFTBidEntryResponse | NFTEntryResponse, b: NFTBidEntryResponse | NFTEntryResponse): number {
+  compareSerialNumber(
+    a: NFTBidEntryResponse | NFTEntryResponse,
+    b: NFTBidEntryResponse | NFTEntryResponse
+  ): number {
     return a.SerialNumber - b.SerialNumber;
   }
   compareUsername(a: NFTBidEntryResponse, b: NFTBidEntryResponse): number {
-    const aUsername = a.ProfileEntryResponse?.Username || a.PublicKeyBase58Check;
-    const bUsername = b.ProfileEntryResponse?.Username || b.PublicKeyBase58Check;
+    const aUsername =
+      a.ProfileEntryResponse?.Username || a.PublicKeyBase58Check;
+    const bUsername =
+      b.ProfileEntryResponse?.Username || b.PublicKeyBase58Check;
     if (aUsername < bUsername) {
       return -1;
     }
@@ -408,21 +465,32 @@ export class NftPostComponent {
       const serialNumDiff = this.compareSerialNumber(a, b);
       const usernameDiff = this.compareNFTEntryUsername(a, b);
       if (attribute === NftPostComponent.SORT_BY_PRICE) {
-        return sortDescending * lastAcceptedBidDiff || serialNumDiff || usernameDiff;
+        return (
+          sortDescending * lastAcceptedBidDiff || serialNumDiff || usernameDiff
+        );
       } else if (attribute === NftPostComponent.SORT_BY_USERNAME) {
-        return sortDescending * usernameDiff || lastAcceptedBidDiff || serialNumDiff;
+        return (
+          sortDescending * usernameDiff || lastAcceptedBidDiff || serialNumDiff
+        );
       } else if (attribute === NftPostComponent.SORT_BY_EDITION) {
-        return sortDescending * serialNumDiff || lastAcceptedBidDiff || usernameDiff;
+        return (
+          sortDescending * serialNumDiff || lastAcceptedBidDiff || usernameDiff
+        );
       }
     });
   }
 
-  compareLastAcceptedBidAmount(a: NFTEntryResponse, b: NFTEntryResponse): number {
+  compareLastAcceptedBidAmount(
+    a: NFTEntryResponse,
+    b: NFTEntryResponse
+  ): number {
     return a.LastAcceptedBidAmountNanos - b.LastAcceptedBidAmountNanos;
   }
   compareNFTEntryUsername(a: NFTEntryResponse, b: NFTEntryResponse): number {
-    const aUsername = a.ProfileEntryResponse?.Username || a.OwnerPublicKeyBase58Check;
-    const bUsername = b.ProfileEntryResponse?.Username || b.OwnerPublicKeyBase58Check;
+    const aUsername =
+      a.ProfileEntryResponse?.Username || a.OwnerPublicKeyBase58Check;
+    const bUsername =
+      b.ProfileEntryResponse?.Username || b.OwnerPublicKeyBase58Check;
     if (aUsername < bUsername) {
       return -1;
     }
@@ -459,12 +527,12 @@ export class NftPostComponent {
   cancelBid(bidEntry: NFTBidEntryResponse): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Cancel Bid",
+      title: 'Cancel Bid',
       html: `Are you sure you'd like to cancel this bid?`,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((res) => {

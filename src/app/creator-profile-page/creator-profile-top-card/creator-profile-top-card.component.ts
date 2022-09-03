@@ -1,16 +1,25 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, ViewChild, OnDestroy } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService } from "../../backend-api.service";
-import { Subscription, zip } from "rxjs";
-import { map } from "rxjs/operators";
-import { FollowChangeObservableResult } from "../../../lib/observable-results/follow-change-observable-result";
-import { AppRoutingModule } from "../../app-routing.module";
-import { FollowButtonComponent } from "../../follow-button/follow-button.component";
-import { Router } from "@angular/router";
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  ViewChild,
+  OnDestroy,
+} from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import { BackendApiService } from '../../backend-api.service';
+import { Subscription, zip } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { FollowChangeObservableResult } from '../../../lib/observable-results/follow-change-observable-result';
+import { AppRoutingModule } from '../../app-routing.module';
+import { FollowButtonComponent } from '../../follow-button/follow-button.component';
+import { Router } from '@angular/router';
 @Component({
-  selector: "creator-profile-top-card",
-  templateUrl: "./creator-profile-top-card.component.html",
-  styleUrls: ["./creator-profile-top-card.component.scss"],
+  selector: 'creator-profile-top-card',
+  templateUrl: './creator-profile-top-card.component.html',
+  styleUrls: ['./creator-profile-top-card.component.scss'],
 })
 export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   @ViewChild(FollowButtonComponent, { static: false }) childFollowComponent;
@@ -31,19 +40,26 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   refreshFollowingBeingCalled = false;
   publicKeyIsCopied = false;
 
-  constructor(private _globalVars: GlobalVarsService, private backendApi: BackendApiService, private router: Router) {
+  constructor(
+    private _globalVars: GlobalVarsService,
+    private backendApi: BackendApiService,
+    private router: Router
+  ) {
     this.globalVars = _globalVars;
 
     // If the user follows/unfollows this user, update the follower count
-    this.followChangeSubscription = this.globalVars.followChangeObservable.subscribe((followChangeObservableResult) => {
-      this._handleFollowChangeObservableResult(followChangeObservableResult);
-    });
+    this.followChangeSubscription = this.globalVars.followChangeObservable.subscribe(
+      (followChangeObservableResult) => {
+        this._handleFollowChangeObservableResult(followChangeObservableResult);
+      }
+    );
   }
 
   profileBelongsToLoggedInUser(): boolean {
     return (
       this.globalVars.loggedInUser?.ProfileEntryResponse &&
-      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check === this.profile.PublicKeyBase58Check
+      this.globalVars.loggedInUser.ProfileEntryResponse.PublicKeyBase58Check ===
+        this.profile.PublicKeyBase58Check
     );
   }
 
@@ -64,18 +80,24 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   }
 
   reportUser(): void {
-    this.globalVars.logEvent("post : report-user");
+    this.globalVars.logEvent('post : report-user');
     window.open(
-      `https://report.bitclout.com/account?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&ReportedAccountPublicKey=${this.profile.PublicKeyBase58Check}`
+      `https://desoreporting.aidaform.com/account?ReporterPublicKey=${this.globalVars.loggedInUser?.PublicKeyBase58Check}&ReportedAccountPublicKey=${this.profile.PublicKeyBase58Check}`
     );
   }
 
   updateWellKnownCreatorsList(): void {
-    this.updateCreatorFeaturedTutorialList(true, this.profile.IsFeaturedTutorialWellKnownCreator);
+    this.updateCreatorFeaturedTutorialList(
+      true,
+      this.profile.IsFeaturedTutorialWellKnownCreator
+    );
   }
 
   updateUpAndComingCreatorsList(): void {
-    this.updateCreatorFeaturedTutorialList(false, this.profile.IsFeaturedTutorialUpAndComingCreator);
+    this.updateCreatorFeaturedTutorialList(
+      false,
+      this.profile.IsFeaturedTutorialUpAndComingCreator
+    );
   }
 
   updateCreatorFeaturedTutorialList(isWellKnown: boolean, isRemoval: boolean) {
@@ -102,9 +124,9 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
   }
 
   messageUser(): void {
-    this.router.navigate(["/" + this.globalVars.RouteNames.INBOX_PREFIX], {
+    this.router.navigate(['/' + this.globalVars.RouteNames.INBOX_PREFIX], {
       queryParams: { username: this.profile.Username },
-      queryParamsHandling: "merge",
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -114,7 +136,9 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
 
   usdMarketCap() {
     return this.globalVars.abbreviateNumber(
-      this.globalVars.nanosToUSDNumber(this.coinsInCirculation() * this.profile.CoinPriceDeSoNanos),
+      this.globalVars.nanosToUSDNumber(
+        this.coinsInCirculation() * this.profile.CoinPriceDeSoNanos
+      ),
       3,
       true
     );
@@ -128,8 +152,13 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
     );
   }
 
-  _handleFollowChangeObservableResult(followChangeObservableResult: FollowChangeObservableResult) {
-    if (followChangeObservableResult.followedPubKeyBase58Check === this.profile.PublicKeyBase58Check) {
+  _handleFollowChangeObservableResult(
+    followChangeObservableResult: FollowChangeObservableResult
+  ) {
+    if (
+      followChangeObservableResult.followedPubKeyBase58Check ===
+      this.profile.PublicKeyBase58Check
+    ) {
       if (followChangeObservableResult.isFollowing) {
         this.followerCount += 1;
       } else {
@@ -162,9 +191,9 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
       .GetFollows(
         this.globalVars.localNode,
         this.profile.Username,
-        "" /* PublicKeyBase58Check */,
+        '' /* PublicKeyBase58Check */,
         true /* get followers */,
-        "" /* GetEntriesFollowingUsername */,
+        '' /* GetEntriesFollowingUsername */,
         0 /* NumToFetch */
       )
       .pipe(map((res) => res.NumFollowers));
@@ -173,9 +202,9 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
       .GetFollows(
         this.globalVars.localNode,
         this.profile.Username,
-        "" /* PublicKeyBase58Check */,
+        '' /* PublicKeyBase58Check */,
         false /* get following */,
-        "" /* GetEntriesFollowingUsername */,
+        '' /* GetEntriesFollowingUsername */,
         0 /* NumToFetch */
       )
       .pipe(map((res) => res.NumFollowers));
@@ -199,7 +228,9 @@ export class CreatorProfileTopCardComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    return this.globalVars.loggedInUser.PublicKeysBase58CheckFollowedByUser.includes(this.profile.PublicKeyBase58Check);
+    return this.globalVars.loggedInUser.PublicKeysBase58CheckFollowedByUser.includes(
+      this.profile.PublicKeyBase58Check
+    );
   }
 
   // When a user blocks a profile, we make sure to unfollow that profile if the user is currently following it.

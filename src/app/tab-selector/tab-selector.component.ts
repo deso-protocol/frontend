@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: "tab-selector",
-  templateUrl: "./tab-selector.component.html",
-  styleUrls: ["./tab-selector.component.scss"],
+  selector: 'tab-selector',
+  templateUrl: './tab-selector.component.html',
+  styleUrls: ['./tab-selector.component.scss'],
 })
 export class TabSelectorComponent {
   @Output() tabClick = new EventEmitter<string>();

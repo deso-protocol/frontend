@@ -1,6 +1,16 @@
 <div class="btn-group" dropdown #dropdown="bs-dropdown">
-  <a dropdownToggle id="walletActionsButton" class="dropdown-basic link--unstyled" aria-controls="dropdown-basic">
-    <i class="fas fa-exchange-alt fs-18px" [ngClass]="{ 'fc-blue': dropdown.isOpen && (!inTutorial || isHighlightedCreator) }"></i>
+  <a
+    dropdownToggle
+    id="walletActionsButton"
+    class="dropdown-basic link--unstyled"
+    aria-controls="dropdown-basic"
+  >
+    <i
+      class="fas fa-exchange-alt fs-18px"
+      [ngClass]="{
+        'fc-blue': dropdown.isOpen && (!inTutorial || isHighlightedCreator)
+      }"
+    ></i>
   </a>
   <div *ngIf="!inTutorial || (isHighlightedCreator && showSellOnly)">
     <div
@@ -21,7 +31,17 @@
       </a>
       <a
         class="dropdown-menu-item fs-15px d-block link--unstyled py-10px px-30px feed-post__dropdown-menu-item fc-blue"
-        [routerLink]="inTutorial ? ['', RouteNames.TUTORIAL, RouteNames.INVEST, RouteNames.SELL_CREATOR, hodlingUsername].join('/') : AppRoutingModule.sellCreatorPath(hodlingUsername)"
+        [routerLink]="
+          inTutorial
+            ? [
+                '',
+                RouteNames.TUTORIAL,
+                RouteNames.INVEST,
+                RouteNames.SELL_CREATOR,
+                hodlingUsername
+              ].join('/')
+            : AppRoutingModule.sellCreatorPath(hodlingUsername)
+        "
         queryParamsHandling="merge"
       >
         <i class="fas fa-minus fs-12px"></i>

@@ -1,12 +1,15 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
-import { sprintf } from "sprintf-js";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import * as _ from "lodash";
-import { Title } from "@angular/platform-browser";
-import { environment } from "src/environments/environment";
+import { Component, OnInit, Input } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { GlobalVarsService } from '../global-vars.service';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+} from '../backend-api.service';
+import { sprintf } from 'sprintf-js';
+import { SwalHelper } from '../../lib/helpers/swal-helper';
+import * as _ from 'lodash';
+import { Title } from '@angular/platform-browser';
+import { environment } from 'src/environments/environment';
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -18,9 +21,9 @@ class Messages {
 
 // TODO: Cleanup - separate this into multiple components
 @Component({
-  selector: "admin",
-  templateUrl: "./admin.component.html",
-  styleUrls: ["./admin.component.scss"],
+  selector: 'admin',
+  templateUrl: './admin.component.html',
+  styleUrls: ['./admin.component.scss'],
 })
 export class AdminComponent implements OnInit {
   globalVars: GlobalVarsService;
@@ -37,14 +40,15 @@ export class AdminComponent implements OnInit {
   searchingForPostsByDESO = false;
   @Input() isMobile = false;
 
-  blacklistPubKeyOrUsername = "";
-  graylistPubKeyOrUsername = "";
-  unrestrictPubKeyOrUsername = "";
-  whitelistPubKeyOrUsername = "";
-  unwhitelistPubKeyOrUsername = "";
-  removePhonePubKeyorUsername = "";
+  blacklistPubKeyOrUsername = '';
+  graylistPubKeyOrUsername = '';
+  unrestrictPubKeyOrUsername = '';
+  whitelistPubKeyOrUsername = '';
+  unwhitelistPubKeyOrUsername = '';
+  removePhonePubKeyorUsername = '';
+  removePhoneNum = '';
 
-  updateProfileSuccessType = "";
+  updateProfileSuccessType = '';
   whitelistUpdateSuccess = false;
   unwhitelistUpdateSuccess = false;
 
@@ -52,7 +56,7 @@ export class AdminComponent implements OnInit {
   whitelistSuccessTimeout: any;
   unwhitelistSuccessTimeout: any;
 
-  submittingProfileUpdateType = "";
+  submittingProfileUpdateType = '';
   submittingBlacklistUpdate = false;
   submittingGraylistUpdate = false;
   submittingUnrestrictUpdate = false;
@@ -63,6 +67,7 @@ export class AdminComponent implements OnInit {
   submittingBuyDeSoFeeRate = false;
 
   submittingRemovePhone = false;
+  submittingRemovePhoneByNumber = false;
   dbDetailsOpen = false;
   dbDetailsLoading = false;
   userMetadataMap = {};
@@ -81,11 +86,11 @@ export class AdminComponent implements OnInit {
   updatingMaxCopiesPerNFT = false;
   updatingCreateNFTFeeNanos = false;
   feeRateDeSoPerKB = (1000 / 1e9).toFixed(9); // Default fee rate.
-  bitcoinBlockHashOrHeight = "";
-  evictBitcoinTxnHashes = "";
-  usernameToVerify = "";
-  usernameForWhomToRemoveVerification = "";
-  usernameToFetchVerificationAuditLogs = "";
+  bitcoinBlockHashOrHeight = '';
+  evictBitcoinTxnHashes = '';
+  usernameToVerify = '';
+  usernameForWhomToRemoveVerification = '';
+  usernameToFetchVerificationAuditLogs = '';
   removingNilPosts = false;
   submittingReprocessRequest = false;
   submittingRemovalRequest = false;
@@ -105,21 +110,32 @@ export class AdminComponent implements OnInit {
   usernameVerificationAuditLogs: any = [];
   loadingVerifiedUsers = false;
   loadingVerifiedUsersAuditLog = false;
-  adminTabs = ["Posts", "Profiles", "NFTs", "Tutorial", "Network", "Mempool", "Wyre", "Jumio", "Referral Program"];
+  adminTabs = [
+    'Posts',
+    'Hot Feed',
+    'Profiles',
+    'NFTs',
+    'Tutorial',
+    'Network',
+    'Mempool',
+    'Wyre',
+    'Jumio',
+    'Referral Program',
+  ];
 
-  POSTS_TAB = "Posts";
-  POSTS_BY_DESO_TAB = "Posts By DESO";
+  POSTS_TAB = 'Posts';
+  POSTS_BY_DESO_TAB = 'Posts By DESO';
   adminPostTabs = [this.POSTS_TAB, this.POSTS_BY_DESO_TAB];
 
   // Fields for SwapIdentity
   submittingSwapIdentity = false;
-  swapIdentityFromUsernameOrPublicKey = "";
-  swapIdentityToUsernameOrPublicKey = "";
+  swapIdentityFromUsernameOrPublicKey = '';
+  swapIdentityToUsernameOrPublicKey = '';
 
   // Fields for UpdateUsername
   submittingUpdateUsername = false;
-  changeUsernamePublicKey = "";
-  usernameTarget = "";
+  changeUsernamePublicKey = '';
+  usernameTarget = '';
   userMetadataToUpdate = null;
   userProfileEntryResponseToUpdate: ProfileEntryResponse = null;
   searchedForPubKey = false;
@@ -127,17 +143,44 @@ export class AdminComponent implements OnInit {
   // These are the options used to populate the dropdown for selecting a time window over which we want to fetch
   // posts ordered by deso.
   timeWindowOptions = {
-    "15m": 15,
-    "30m": 30,
-    "60m": 60,
+    '15m': 15,
+    '30m': 30,
+    '60m': 60,
   };
   // This is a variable to track the currently selected time window.
   selectedTimeWindow = 60;
 
   // Fields for getting user admin data
   submittingGetUserAdminData = false;
-  getUserAdminDataPublicKey = "";
+  getUserAdminDataPublicKey = '';
   getUserAdminDataResponse = null;
+
+  // Hot feed.
+  hotFeedPosts = [];
+  hotFeedPostHashes = [];
+  loadingHotFeed = false;
+  loadingMoreHotFeed = false;
+  hotFeedInteractionCap = 0;
+  hotFeedTagInteractionCap = 0;
+  hotFeedTimeDecayBlocks = 0;
+  hotFeedTagTimeDecayBlocks = 0;
+  hotFeedTxnTypeMultiplierMap = {};
+  hotFeedTxnTypeMultiplierNewKey: number;
+  hotFeedTxnTypeMultiplierNewValue: number;
+  hotFeedUserForInteractionMultiplier: string;
+  hotFeedUserInteractionMultiplier: number;
+  hotFeedUserForPostsMultiplier: string;
+  hotFeedUserPostsMultiplier: number;
+  updatingHotFeedInteractionCap = false;
+  updatingHotFeedTagInteractionCap = false;
+  updatingHotFeedTimeDecayBlocks = false;
+  updatingHotFeedTagTimeDecayBlocks = false;
+  updatingHotFeedTxnTypeMultiplierMap = false;
+  updatingHotFeedUserInteractionMultiplier = false;
+  updatingHotFeedUserPostsMultiplier = false;
+  searchingHotFeedUserMultipliers = false;
+  hotFeedUserForSearch: string;
+  hotFeedUserSearchResults;
 
   constructor(
     private _globalVars: GlobalVarsService,
@@ -151,15 +194,15 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     if (this.globalVars.showSuperAdminTools()) {
-      this.adminTabs.push("Super");
-      this.adminTabs.push("Node Fees");
+      this.adminTabs.push('Super');
+      this.adminTabs.push('Node Fees');
     }
 
     this.route.queryParams.subscribe((queryParams) => {
       if (queryParams.adminTab) {
         this.activeTab = queryParams.adminTab;
       } else {
-        this.activeTab = "Posts";
+        this.activeTab = 'Posts';
       }
     });
     // load data
@@ -170,6 +213,7 @@ export class AdminComponent implements OnInit {
     this.activePostTab = this.POSTS_TAB;
     this._loadPosts();
     this._loadPostsByDESO();
+    this._loadHotFeed();
 
     // Get the latest mempool stats.
     this._loadMempoolStats();
@@ -188,7 +232,12 @@ export class AdminComponent implements OnInit {
       return;
     }
     this.backendApi
-      .NodeControl(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, "", "get_info")
+      .NodeControl(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        '',
+        'get_info'
+      )
       .subscribe(
         (res: any) => {
           if (res == null || res.DeSoStatus == null) {
@@ -208,7 +257,7 @@ export class AdminComponent implements OnInit {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { adminTab: this.activeTab },
-      queryParamsHandling: "merge",
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -229,7 +278,7 @@ export class AdminComponent implements OnInit {
   _loadPostsByDESO() {
     this.loadingPostsByDESO = true;
     // Get the reader's public key for the request.
-    let readerPubKey = "";
+    let readerPubKey = '';
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
@@ -240,11 +289,11 @@ export class AdminComponent implements OnInit {
     this.backendApi
       .GetPostsStateless(
         this.globalVars.localNode,
-        "" /*PostHash*/,
+        '' /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
-        "" /*OrderBy*/,
+        '' /*OrderBy*/,
         parseInt(this.globalVars.filterType) /*StartTstampSecs*/,
-        "",
+        '',
         50 /*NumToFetch*/,
         false /*FetchSubcomments*/,
         false /*GetPostsForFollowFeed*/,
@@ -263,7 +312,9 @@ export class AdminComponent implements OnInit {
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError("Error loading posts: " + this.backendApi.stringifyError(err));
+          this.globalVars._alertError(
+            'Error loading posts: ' + this.backendApi.stringifyError(err)
+          );
         }
       )
       .add(() => {
@@ -272,17 +323,334 @@ export class AdminComponent implements OnInit {
       });
   }
 
+  _loadHotFeed() {
+    this.loadingHotFeed = true;
+
+    // If the user is a super admin, fetch the hot feed algo constants.
+    if (
+      this.globalVars.showSuperAdminTools() &&
+      (this.hotFeedInteractionCap === 0 || this.hotFeedTimeDecayBlocks === 0)
+    ) {
+      this.backendApi
+        .AdminGetHotFeedAlgorithm(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check
+        )
+        .subscribe(
+          (res) => {
+            this.hotFeedInteractionCap = res.InteractionCap / 1e9;
+            this.hotFeedTagInteractionCap = res.InteractionCapTag / 1e9;
+            this.hotFeedTimeDecayBlocks = res.TimeDecayBlocks;
+            this.hotFeedTagTimeDecayBlocks = res.TimeDecayBlocksTag;
+            this.hotFeedTxnTypeMultiplierMap = res.TxnTypeMultiplierMap;
+          },
+          (err) => {
+            console.error(err);
+            this.globalVars._alertError(
+              'Error getting hot feed constants: ' +
+                this.backendApi.stringifyError(err)
+            );
+          }
+        );
+    }
+
+    // Fetch the hot feed.
+    if (this.hotFeedPostHashes.length > 0) {
+      this.loadingMoreHotFeed = true;
+    }
+    this.backendApi
+      .AdminGetUnfilteredHotFeed(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        50,
+        this.hotFeedPostHashes
+      )
+      .subscribe(
+        (res) => {
+          this.hotFeedPosts = this.hotFeedPosts.concat(res.HotFeedPage);
+          for (let ii = 0; ii < res.HotFeedPage?.length; ii++) {
+            this.hotFeedPostHashes = this.hotFeedPostHashes.concat(
+              res.HotFeedPage[ii].PostHashHex
+            );
+          }
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            'Error loading hot feed: ' + this.backendApi.stringifyError(err)
+          );
+        }
+      )
+      .add(() => {
+        this.loadingHotFeed = false;
+        this.loadingMoreHotFeed = false;
+      });
+  }
+
+  updateHotFeedInteractionCap() {
+    this.updatingHotFeedInteractionCap = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.hotFeedInteractionCap * 1e9,
+        0,
+        0,
+        0,
+        {}
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            'Successfully updated InteractionCap. The hot feed will take ~10s to recompute.'
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            'Error updating InteractionCap: ' +
+              this.backendApi.stringifyError(err)
+          );
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedInteractionCap = false;
+      });
+  }
+
+  updateHotFeedTagInteractionCap() {
+    this.updatingHotFeedTagInteractionCap = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        0,
+        this.hotFeedTagInteractionCap * 1e9,
+        0,
+        0,
+        {}
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            'Successfully updated Tag InteractionCap. The hot feed will take ~10s to recompute.'
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            'Error updating Tag InteractionCap: ' +
+              this.backendApi.stringifyError(err)
+          );
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedTagInteractionCap = false;
+      });
+  }
+
+  updateHotFeedTimeDecayBlocks() {
+    this.updatingHotFeedTimeDecayBlocks = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        0,
+        0,
+        this.hotFeedTimeDecayBlocks,
+        0,
+        {}
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            'Successfully updated TimeDecayBlocks. The hot feed will take ~10s to recompute.'
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            'Error updating hot TimeDecayBlocks: ' +
+              this.backendApi.stringifyError(err)
+          );
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedTimeDecayBlocks = false;
+      });
+  }
+
+  updateHotFeedTagTimeDecayBlocks() {
+    this.updatingHotFeedTagTimeDecayBlocks = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        0,
+        0,
+        0,
+        this.hotFeedTagTimeDecayBlocks,
+        {}
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            'Successfully updated tag TimeDecayBlocks. The hot feed will take ~10s to recompute.'
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            'Error updating tag hot TimeDecayBlocks: ' +
+              this.backendApi.stringifyError(err)
+          );
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedTagTimeDecayBlocks = false;
+      });
+  }
+
+  addMultiplierToTxnTypeMultiplier() {
+    this.hotFeedTxnTypeMultiplierMap[
+      this.hotFeedTxnTypeMultiplierNewKey
+    ] = this.hotFeedTxnTypeMultiplierNewValue;
+    this.hotFeedTxnTypeMultiplierNewKey = null;
+    this.hotFeedTxnTypeMultiplierNewValue = null;
+  }
+
+  updateHotFeedTxnTypeMultiplierMap() {
+    this.updatingHotFeedTxnTypeMultiplierMap = true;
+    this.backendApi
+      .AdminUpdateHotFeedAlgorithm(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        0,
+        0,
+        0,
+        0,
+        this.hotFeedTxnTypeMultiplierMap
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            'Successfully updated txn type multiplier map. The hot feed will take ~10s to recompute.'
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            'Error updating txn type multiplier map: ' +
+              this.backendApi.stringifyError(err)
+          );
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedTxnTypeMultiplierMap = false;
+      });
+  }
+
+  updateHotFeedUserPostsMultiplier() {
+    this.updatingHotFeedUserPostsMultiplier = true;
+    this.backendApi
+      .AdminUpdateHotFeedUserMultiplier(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.hotFeedUserForPostsMultiplier,
+        -1 /*InteractionMultiplier -- negative values are ignored*/,
+        this.hotFeedUserPostsMultiplier
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            'Successfully updated posts multiplier.'
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            'Error updating posts multiplier: ' +
+              this.backendApi.stringifyError(err)
+          );
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedUserPostsMultiplier = false;
+      });
+  }
+
+  updateHotFeedUserInteractionMultiplier() {
+    this.updatingHotFeedUserInteractionMultiplier = true;
+    this.backendApi
+      .AdminUpdateHotFeedUserMultiplier(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.hotFeedUserForInteractionMultiplier,
+        this.hotFeedUserInteractionMultiplier,
+        -1 /*PostsMultiplier -- negative values are ignored*/
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess(
+            'Successfully updated interaction multiplier.'
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            'Error updating interaction multiplier: ' +
+              this.backendApi.stringifyError(err)
+          );
+        }
+      )
+      .add(() => {
+        this.updatingHotFeedUserInteractionMultiplier = false;
+      });
+  }
+
+  searchForHotFeedUserMultipliers() {
+    this.searchingHotFeedUserMultipliers = true;
+    this.backendApi
+      .AdminGetHotFeedUserMultiplier(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.hotFeedUserForSearch
+      )
+      .subscribe(
+        (res) => {
+          this.hotFeedUserSearchResults = JSON.stringify(
+            {
+              InteractionMultiplier: res.InteractionMultiplier,
+              PostsMultiplier: res.PostsMultiplier,
+            },
+            null,
+            4
+          );
+        },
+        (err) => {
+          console.error(err);
+          this.globalVars._alertError(
+            "Error fetching user's multipliers: " +
+              this.backendApi.stringifyError(err)
+          );
+        }
+      )
+      .add(() => {
+        this.searchingHotFeedUserMultipliers = false;
+      });
+  }
+
   _loadPosts() {
     this.loadingMorePosts = true;
 
     // Get the reader's public key for the request.
-    let readerPubKey = "";
+    let readerPubKey = '';
     if (this.globalVars.loggedInUser) {
       readerPubKey = this.globalVars.loggedInUser.PublicKeyBase58Check;
     }
 
     // Get the last post hash in case this is a "load more" request.
-    let lastPostHash = "";
+    let lastPostHash = '';
     if (this.adminPosts.length > 0) {
       lastPostHash = this.adminPosts[this.adminPosts.length - 1].PostHashHex;
     }
@@ -291,9 +659,9 @@ export class AdminComponent implements OnInit {
         this.globalVars.localNode,
         lastPostHash /*PostHash*/,
         readerPubKey /*ReaderPublicKeyBase58Check*/,
-        "newest" /*OrderBy*/,
+        'newest' /*OrderBy*/,
         parseInt(this.globalVars.filterType) /*StartTstampSecs*/,
-        "",
+        '',
         50 /*NumToFetch*/,
         false /*FetchSubcomments*/,
         false /*GetPostsForFollowFeed*/,
@@ -305,7 +673,7 @@ export class AdminComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          if (lastPostHash != "") {
+          if (lastPostHash != '') {
             this.adminPosts = this.adminPosts.concat(res.PostsFound);
           } else {
             this.adminPosts = res.PostsFound;
@@ -316,7 +684,9 @@ export class AdminComponent implements OnInit {
         },
         (err) => {
           console.error(err);
-          this.globalVars._alertError("Error loading posts: " + this.backendApi.stringifyError(err));
+          this.globalVars._alertError(
+            'Error loading posts: ' + this.backendApi.stringifyError(err)
+          );
         }
       )
       .add(() => {
@@ -326,19 +696,28 @@ export class AdminComponent implements OnInit {
   }
 
   _loadMempoolStats() {
-    console.log("Loading mempool stats...");
+    console.log('Loading mempool stats...');
     this.loadingMempoolStats = true;
     this.backendApi
-      .AdminGetMempoolStats(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .AdminGetMempoolStats(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check
+      )
       .subscribe(
         (res) => {
           this.mempoolSummaryStats = res.TransactionSummaryStats;
-          this.mempoolTxnCount = _.sumBy(Object.values(this.mempoolSummaryStats), (o) => {
-            return o["Count"];
-          });
-          this.mempoolTotalBytes = _.sumBy(Object.values(this.mempoolSummaryStats), (o) => {
-            return o["TotalBytes"];
-          });
+          this.mempoolTxnCount = _.sumBy(
+            Object.values(this.mempoolSummaryStats),
+            (o) => {
+              return o['Count'];
+            }
+          );
+          this.mempoolTotalBytes = _.sumBy(
+            Object.values(this.mempoolSummaryStats),
+            (o) => {
+              return o['TotalBytes'];
+            }
+          );
         },
         (err) => {
           console.log(err);
@@ -351,9 +730,12 @@ export class AdminComponent implements OnInit {
 
   _loadVerifiedUsers() {
     this.loadingVerifiedUsers = true;
-    console.log("Loading verified users...");
+    console.log('Loading verified users...');
     this.backendApi
-      .AdminGetVerifiedUsers(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .AdminGetVerifiedUsers(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check
+      )
       .subscribe(
         (res) => {
           this.verifiedUsers = res.VerifiedUsers;
@@ -369,7 +751,7 @@ export class AdminComponent implements OnInit {
 
   _loadVerifiedUsersAuditLog() {
     this.loadingVerifiedUsersAuditLog = true;
-    console.log("Loading username verification audit log...");
+    console.log('Loading username verification audit log...');
     this.backendApi
       .AdminGetUsernameVerificationAuditLogs(
         this.globalVars.localNode,
@@ -391,14 +773,14 @@ export class AdminComponent implements OnInit {
   }
 
   _loadNextBlockStats() {
-    console.log("Loading stats for next block...");
+    console.log('Loading stats for next block...');
     this.loadingNextBlockStats = true;
 
     // The GetBlockTemplate endpoint requires a username so we have two randomly
     // generated pub keys to use as dummies in main / test net.
-    let dummyPubKey = "BC1YLgqAkAJ4sX2YGD85j9rEpTqDrAkgLoXwv6oTzaCyZt3cDpqk8hy";
+    let dummyPubKey = 'BC1YLgqAkAJ4sX2YGD85j9rEpTqDrAkgLoXwv6oTzaCyZt3cDpqk8hy';
     if (this.globalVars.isTestnet) {
-      dummyPubKey = "tBCKYKKdGQpCUYaG2pGy6LcNDeydSXYRHV4phywuc6bZANavsx3Y5f";
+      dummyPubKey = 'tBCKYKKdGQpCUYaG2pGy6LcNDeydSXYRHV4phywuc6bZANavsx3Y5f';
     }
 
     this.backendApi
@@ -419,7 +801,10 @@ export class AdminComponent implements OnInit {
   _loadGlobalParams() {
     this.loadingGlobalParams = true;
     this.backendApi
-      .GetGlobalParams(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check)
+      .GetGlobalParams(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check
+      )
       .subscribe(
         (res) => {
           this.globalParams = {
@@ -432,7 +817,9 @@ export class AdminComponent implements OnInit {
           this.updateGlobalParamsValues = this.globalParams;
         },
         (err) => {
-          this.globalVars._alertError("Error global params: " + this.backendApi.stringifyError(err));
+          this.globalVars._alertError(
+            'Error global params: ' + this.backendApi.stringifyError(err)
+          );
         }
       )
       .add(() => {
@@ -441,17 +828,22 @@ export class AdminComponent implements OnInit {
   }
 
   _loadBuyDeSoFeeRate(): void {
-    this.backendApi.GetBuyDeSoFeeBasisPoints(this.globalVars.localNode).subscribe(
-      (res) => (this.buyDeSoFeeRate = res.BuyDeSoFeeBasisPoints / 100),
-      (err) => console.log(err)
-    );
+    this.backendApi
+      .GetBuyDeSoFeeBasisPoints(this.globalVars.localNode)
+      .subscribe(
+        (res) => (this.buyDeSoFeeRate = res.BuyDeSoFeeBasisPoints / 100),
+        (err) => console.log(err)
+      );
   }
 
   _loadUSDToDeSoReserveExchangeRate(): void {
-    this.backendApi.GetUSDCentsToDeSoReserveExchangeRate(this.globalVars.localNode).subscribe(
-      (res) => (this.usdToDeSoReserveExchangeRate = res.USDCentsPerDeSo / 100),
-      (err) => console.log(err)
-    );
+    this.backendApi
+      .GetUSDCentsToDeSoReserveExchangeRate(this.globalVars.localNode)
+      .subscribe(
+        (res) =>
+          (this.usdToDeSoReserveExchangeRate = res.USDCentsPerDeSo / 100),
+        (err) => console.log(err)
+      );
   }
 
   _toggleDbDetails() {
@@ -494,7 +886,11 @@ export class AdminComponent implements OnInit {
   _removeNilPosts() {
     this.removingNilPosts = true;
     this.backendApi
-      .AdminRemoveNilPosts(this.globalVars.localNode, this.globalVars.loggedInUser.PublicKeyBase58Check, 1000)
+      .AdminRemoveNilPosts(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        1000
+      )
       .subscribe(
         () => {
           this.removingNilPosts = false;
@@ -506,35 +902,35 @@ export class AdminComponent implements OnInit {
   }
 
   updateProfileModerationLevel(level: string) {
-    let targetPubKeyOrUsername = "";
-    let pubKey = "";
-    let username = "";
+    let targetPubKeyOrUsername = '';
+    let pubKey = '';
+    let username = '';
     let removeEverywhere = false;
     let removeFromLeaderboard = false;
-    this.updateProfileSuccessType = "";
+    this.updateProfileSuccessType = '';
     clearTimeout(this.clearSuccessTimeout);
 
     // Determine what variables to set based on the button pressed.
-    if (level === "blacklist") {
-      console.log("Blacklisting Pub Key: " + this.blacklistPubKeyOrUsername);
+    if (level === 'blacklist') {
+      console.log('Blacklisting Pub Key: ' + this.blacklistPubKeyOrUsername);
       targetPubKeyOrUsername = this.blacklistPubKeyOrUsername;
       removeEverywhere = true;
       removeFromLeaderboard = true;
       this.submittingBlacklistUpdate = true;
-    } else if (level === "graylist") {
-      console.log("Graylisting Pub Key: " + this.graylistPubKeyOrUsername);
+    } else if (level === 'graylist') {
+      console.log('Graylisting Pub Key: ' + this.graylistPubKeyOrUsername);
       targetPubKeyOrUsername = this.graylistPubKeyOrUsername;
       removeEverywhere = false;
       removeFromLeaderboard = true;
       this.submittingGraylistUpdate = true;
-    } else if (level === "unrestrict") {
-      console.log("Unrestricting Pub Key: " + this.unrestrictPubKeyOrUsername);
+    } else if (level === 'unrestrict') {
+      console.log('Unrestricting Pub Key: ' + this.unrestrictPubKeyOrUsername);
       targetPubKeyOrUsername = this.unrestrictPubKeyOrUsername;
       removeEverywhere = false;
       removeFromLeaderboard = false;
       this.submittingUnrestrictUpdate = true;
     } else {
-      console.log("Cannot set moderation level to: " + level);
+      console.log('Cannot set moderation level to: ' + level);
       return;
     }
 
@@ -564,7 +960,7 @@ export class AdminComponent implements OnInit {
         (res) => {
           this.updateProfileSuccessType = level;
           this.clearSuccessTimeout = setTimeout(() => {
-            this.updateProfileSuccessType = "";
+            this.updateProfileSuccessType = '';
           }, 1000);
         },
         (err) => {
@@ -572,22 +968,22 @@ export class AdminComponent implements OnInit {
         }
       )
       .add(() => {
-        if (level === "blacklist") {
+        if (level === 'blacklist') {
           this.submittingBlacklistUpdate = false;
-          this.blacklistPubKeyOrUsername = "";
-        } else if (level === "graylist") {
+          this.blacklistPubKeyOrUsername = '';
+        } else if (level === 'graylist') {
           this.submittingGraylistUpdate = false;
-          this.graylistPubKeyOrUsername = "";
-        } else if (level === "unrestrict") {
+          this.graylistPubKeyOrUsername = '';
+        } else if (level === 'unrestrict') {
           this.submittingUnrestrictUpdate = false;
-          this.unrestrictPubKeyOrUsername = "";
+          this.unrestrictPubKeyOrUsername = '';
         }
       });
   }
 
   whitelistClicked() {
-    let pubKey = "";
-    let username = "";
+    let pubKey = '';
+    let username = '';
     this.submittingWhitelistUpdate = true;
     clearTimeout(this.whitelistSuccessTimeout);
 
@@ -624,13 +1020,13 @@ export class AdminComponent implements OnInit {
       )
       .add(() => {
         this.submittingWhitelistUpdate = false;
-        this.whitelistPubKeyOrUsername = "";
+        this.whitelistPubKeyOrUsername = '';
       });
   }
 
   unwhitelistClicked() {
-    let pubKey = "";
-    let username = "";
+    let pubKey = '';
+    let username = '';
     this.submittingUnwhitelistUpdate = true;
     clearTimeout(this.unwhitelistSuccessTimeout);
 
@@ -667,14 +1063,34 @@ export class AdminComponent implements OnInit {
       )
       .add(() => {
         this.submittingUnwhitelistUpdate = false;
-        this.unwhitelistPubKeyOrUsername = "";
+        this.unwhitelistPubKeyOrUsername = '';
       });
+  }
+
+  submitRemovePhoneByNumber() {
+    this.submittingRemovePhoneByNumber = true;
+
+    this.backendApi
+      .AdminResetPhoneNumber(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        this.removePhoneNum
+      )
+      .subscribe(
+        (res) => {
+          this.resetPhoneNumberSuccess();
+        },
+        (err) => {
+          this.globalVars._alertError(JSON.stringify(err.error));
+        }
+      )
+      .add(() => (this.submittingRemovePhoneByNumber = false));
   }
 
   submitRemovePhoneNumber() {
     const targetPubKeyOrUsername = this.removePhonePubKeyorUsername;
-    let pubKey = "";
-    let username = "";
+    let pubKey = '';
+    let username = '';
 
     if (this.globalVars.isMaybePublicKey(targetPubKeyOrUsername)) {
       pubKey = targetPubKeyOrUsername;
@@ -699,10 +1115,7 @@ export class AdminComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          this.updateProfileSuccessType = "phone";
-          this.clearSuccessTimeout = setTimeout(() => {
-            this.updateProfileSuccessType = "";
-          }, 1000);
+          this.resetPhoneNumberSuccess();
         },
         (err) => {
           this.globalVars._alertError(JSON.stringify(err.error));
@@ -713,20 +1126,28 @@ export class AdminComponent implements OnInit {
       });
   }
 
+  resetPhoneNumberSuccess(): void {
+    this.updateProfileSuccessType = 'phone';
+    this.clearSuccessTimeout = setTimeout(() => {
+      this.updateProfileSuccessType = '';
+    }, 1000);
+  }
+
   extractError(err: any): string {
     if (err.error != null && err.error.error != null) {
       // Is it obvious yet that I'm not a frontend gal?
       // TODO: Error handling between BE and FE needs a major redesign.
       const rawError = err.error.error;
-      if (rawError.includes("password")) {
+      if (rawError.includes('password')) {
         return Messages.INCORRECT_PASSWORD;
-      } else if (rawError.includes("not sufficient")) {
+      } else if (rawError.includes('not sufficient')) {
         return Messages.INSUFFICIENT_BALANCE;
-      } else if (rawError.includes("RuleErrorTxnMustHaveAtLeastOneInput")) {
+      } else if (rawError.includes('RuleErrorTxnMustHaveAtLeastOneInput')) {
         return Messages.SEND_DESO_MIN;
       } else if (
-        (rawError.includes("SendDeSo: Problem") && rawError.includes("Invalid input format")) ||
-        rawError.includes("Checksum does not match")
+        (rawError.includes('SendDeSo: Problem') &&
+          rawError.includes('Invalid input format')) ||
+        rawError.includes('Checksum does not match')
       ) {
         return Messages.INVALID_PUBLIC_KEY;
       } else {
@@ -743,39 +1164,69 @@ export class AdminComponent implements OnInit {
 
   updateGlobalParamUSDPerBitcoin() {
     this.updatingUSDToBitcoin = true;
-    this.updateGlobalParams(this.updateGlobalParamsValues.USDPerBitcoin, -1, -1, -1, -1);
+    this.updateGlobalParams(
+      this.updateGlobalParamsValues.USDPerBitcoin,
+      -1,
+      -1,
+      -1,
+      -1
+    );
   }
 
   updateGlobalParamCreateProfileFee() {
     this.updatingCreateProfileFee = true;
-    this.updateGlobalParams(-1, this.updateGlobalParamsValues.CreateProfileFeeNanos, -1, -1, -1);
+    this.updateGlobalParams(
+      -1,
+      this.updateGlobalParamsValues.CreateProfileFeeNanos,
+      -1,
+      -1,
+      -1
+    );
   }
 
   updateGlobalParamMinimumNetworkFee() {
     this.updatingMinimumNetworkFee = true;
-    this.updateGlobalParams(-1, -1, this.updateGlobalParamsValues.MinimumNetworkFeeNanosPerKB, -1, -1);
+    this.updateGlobalParams(
+      -1,
+      -1,
+      this.updateGlobalParamsValues.MinimumNetworkFeeNanosPerKB,
+      -1,
+      -1
+    );
   }
 
   updateGlobalParamMaxCopiesPerNFT() {
     this.updatingMaxCopiesPerNFT = true;
-    this.updateGlobalParams(-1, -1, -1, this.updateGlobalParamsValues.MaxCopiesPerNFT, -1);
+    this.updateGlobalParams(
+      -1,
+      -1,
+      -1,
+      this.updateGlobalParamsValues.MaxCopiesPerNFT,
+      -1
+    );
   }
 
   updateGlobalParamCreateNFTFeeNanos() {
     this.updatingCreateNFTFeeNanos = true;
-    this.updateGlobalParams(-1, -1, -1, -1, this.updateGlobalParamsValues.CreateNFTFeeNanos);
+    this.updateGlobalParams(
+      -1,
+      -1,
+      -1,
+      -1,
+      this.updateGlobalParamsValues.CreateNFTFeeNanos
+    );
   }
 
   updateUSDToDeSoReserveExchangeRate(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Are you ready?",
+      title: 'Are you ready?',
       html: `You are about to update the reserve exchange rate of USD to DeSo to be $${this.usdToDeSoReserveExchangeRate}`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((res) => {
@@ -791,14 +1242,19 @@ export class AdminComponent implements OnInit {
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the reserve exchange to $%d/DeSo", res.USDCentsPerDeSo / 100)
+                sprintf(
+                  'Successfully updated the reserve exchange to $%d/DeSo',
+                  res.USDCentsPerDeSo / 100
+                )
               );
             },
             (err: any) => {
               this.globalVars._alertError(this.extractError(err));
             }
           )
-          .add(() => (this.submittingUSDToDeSoReserveExchangeRateUpdate = false));
+          .add(
+            () => (this.submittingUSDToDeSoReserveExchangeRateUpdate = false)
+          );
       }
     });
   }
@@ -806,13 +1262,13 @@ export class AdminComponent implements OnInit {
   updateBuyDeSoFeeRate(): void {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Are you ready?",
+      title: 'Are you ready?',
       html: `You are about to update the Buy DeSo Fee to be ${this.buyDeSoFeeRate}%`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((res) => {
@@ -828,7 +1284,10 @@ export class AdminComponent implements OnInit {
             (res: any) => {
               console.log(res);
               this.globalVars._alertSuccess(
-                sprintf("Successfully updated the Buy DeSo Fee to %d%", res.USDCentsPerDeSo / 100)
+                sprintf(
+                  'Successfully updated the Buy DeSo Fee to %d%',
+                  res.USDCentsPerDeSo / 100
+                )
               );
             },
             (err: any) => {
@@ -847,22 +1306,33 @@ export class AdminComponent implements OnInit {
     maxCopiesPerNFT: number,
     createNFTFeeNanos: number
   ) {
-    const updateBitcoinMessage = usdPerBitcoin >= 0 ? `Update Bitcoin to USD exchange rate: ${usdPerBitcoin}\n` : "";
+    const updateBitcoinMessage =
+      usdPerBitcoin >= 0
+        ? `Update Bitcoin to USD exchange rate: ${usdPerBitcoin}\n`
+        : '';
     const createProfileFeeNanosMessage =
-      createProfileFeeNanos >= 0 ? `Create Profile Fee (in $DESO): ${createProfileFeeNanos}\n` : "";
+      createProfileFeeNanos >= 0
+        ? `Create Profile Fee (in $DESO): ${createProfileFeeNanos}\n`
+        : '';
     const minimumNetworkFeeNanosPerKBMessage =
-      minimumNetworkFeeNanosPerKB >= 0 ? `Minimum Network Fee Nanos Per KB: ${minimumNetworkFeeNanosPerKB}\n` : "";
-    const maxCopiesMessage = maxCopiesPerNFT >= 0 ? `Max Copies Per NFT: ${maxCopiesPerNFT}\n` : "";
-    const createNFTFeeNanosMessage = createNFTFeeNanos >= 0 ? `Create NFT Fee (in $DESO): ${createNFTFeeNanos}\n` : "";
+      minimumNetworkFeeNanosPerKB >= 0
+        ? `Minimum Network Fee Nanos Per KB: ${minimumNetworkFeeNanosPerKB}\n`
+        : '';
+    const maxCopiesMessage =
+      maxCopiesPerNFT >= 0 ? `Max Copies Per NFT: ${maxCopiesPerNFT}\n` : '';
+    const createNFTFeeNanosMessage =
+      createNFTFeeNanos >= 0
+        ? `Create NFT Fee (in $DESO): ${createNFTFeeNanos}\n`
+        : '';
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Are you ready?",
+      title: 'Are you ready?',
       html: `${updateBitcoinMessage}${createProfileFeeNanosMessage}${minimumNetworkFeeNanosPerKBMessage}${maxCopiesMessage}${createNFTFeeNanosMessage}`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     })
@@ -876,7 +1346,9 @@ export class AdminComponent implements OnInit {
               this.globalVars.loggedInUser.PublicKeyBase58Check,
               usdPerBitcoin >= 0 ? usdPerBitcoin * 100 : -1,
               createProfileFeeNanos >= 0 ? createProfileFeeNanos * 1e9 : -1,
-              minimumNetworkFeeNanosPerKB >= 0 ? minimumNetworkFeeNanosPerKB : -1,
+              minimumNetworkFeeNanosPerKB >= 0
+                ? minimumNetworkFeeNanosPerKB
+                : -1,
               maxCopiesPerNFT >= 0 ? maxCopiesPerNFT : -1,
               createNFTFeeNanos >= 0 ? createNFTFeeNanos * 1e9 : -1,
               minimumNetworkFeeNanosPerKB >= 0
@@ -900,7 +1372,7 @@ export class AdminComponent implements OnInit {
 
                 this.globalVars._alertSuccess(
                   sprintf(
-                    "Successfully updated global params rate. TxID: %s for a fee of %d DeSo",
+                    'Successfully updated global params rate. TxID: %s for a fee of %d DeSo',
                     res.TransactionIDBase58Check,
                     totalFeeDeSo
                   )
@@ -926,8 +1398,10 @@ export class AdminComponent implements OnInit {
   }
 
   reprocessBitcoinBlock() {
-    if (this.bitcoinBlockHashOrHeight === "") {
-      this.globalVars._alertError("Please enter either a Bitcoin block hash or a Bitcoin block height.");
+    if (this.bitcoinBlockHashOrHeight === '') {
+      this.globalVars._alertError(
+        'Please enter either a Bitcoin block hash or a Bitcoin block height.'
+      );
       return;
     }
 
@@ -944,7 +1418,7 @@ export class AdminComponent implements OnInit {
             this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
             return null;
           }
-          this.bitcoinBlockHashOrHeight = "";
+          this.bitcoinBlockHashOrHeight = '';
           this.globalVars._alertSuccess(res.Message);
         },
         (error) => {
@@ -960,13 +1434,13 @@ export class AdminComponent implements OnInit {
   evictBitcoinExchangeTxns(dryRun: boolean) {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Are you ready?",
+      title: 'Are you ready?',
       html: `About to evict ${this.evictBitcoinTxnHashes} with DryRun=${dryRun}`,
       showConfirmButton: true,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     })
@@ -977,7 +1451,7 @@ export class AdminComponent implements OnInit {
             .EvictUnminedBitcoinTxns(
               this.globalVars.localNode,
               this.globalVars.loggedInUser.PublicKeyBase58Check,
-              this.evictBitcoinTxnHashes.split(","),
+              this.evictBitcoinTxnHashes.split(','),
               dryRun
             )
             .subscribe(
@@ -988,8 +1462,12 @@ export class AdminComponent implements OnInit {
                 }
 
                 this.globalVars._alertSuccess(
-                  `Success! Lost ${res.TotalMempoolTxns - res.MempoolTxnsLeftAfterEviction} mempool
-                  txns with ${res.TotalMempoolTxns} total txns in the mempool before eviction.
+                  `Success! Lost ${
+                    res.TotalMempoolTxns - res.MempoolTxnsLeftAfterEviction
+                  } mempool
+                  txns with ${
+                    res.TotalMempoolTxns
+                  } total txns in the mempool before eviction.
                   Types: ${JSON.stringify(res.TxnTypesEvicted, null, 2)}.
                   Check the response of this request in the browser's inspector for more information.`
                 );
@@ -1010,8 +1488,8 @@ export class AdminComponent implements OnInit {
   }
 
   grantVerificationBadge() {
-    if (this.usernameToVerify === "") {
-      this.globalVars._alertError("Please enter a valid username.");
+    if (this.usernameToVerify === '') {
+      this.globalVars._alertError('Please enter a valid username.');
       return;
     }
 
@@ -1036,8 +1514,8 @@ export class AdminComponent implements OnInit {
   }
 
   getUserAdminDataClicked() {
-    if (this.getUserAdminDataPublicKey === "") {
-      this.globalVars._alertError("Please enter a valid username.");
+    if (this.getUserAdminDataPublicKey === '') {
+      this.globalVars._alertError('Please enter a valid username.');
       return;
     }
 
@@ -1062,8 +1540,8 @@ export class AdminComponent implements OnInit {
   }
 
   RemoveVerification() {
-    if (this.usernameForWhomToRemoveVerification === "") {
-      this.globalVars._alertError("Please enter a valid username.");
+    if (this.usernameForWhomToRemoveVerification === '') {
+      this.globalVars._alertError('Please enter a valid username.');
       return;
     }
 
@@ -1088,12 +1566,16 @@ export class AdminComponent implements OnInit {
   }
 
   swapIdentity() {
-    if (this.swapIdentityFromUsernameOrPublicKey === "") {
-      this.globalVars._alertError("Please enter the username or public key of the user you are swapping *from*");
+    if (this.swapIdentityFromUsernameOrPublicKey === '') {
+      this.globalVars._alertError(
+        'Please enter the username or public key of the user you are swapping *from*'
+      );
       return;
     }
-    if (this.swapIdentityToUsernameOrPublicKey === "") {
-      this.globalVars._alertError("Please enter the username or public key of the user you are swapping *to*");
+    if (this.swapIdentityToUsernameOrPublicKey === '') {
+      this.globalVars._alertError(
+        'Please enter the username or public key of the user you are swapping *to*'
+      );
       return;
     }
 
@@ -1104,7 +1586,9 @@ export class AdminComponent implements OnInit {
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.swapIdentityFromUsernameOrPublicKey,
         this.swapIdentityToUsernameOrPublicKey,
-        Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9) /*MinFeeRateNanosPerKB*/
+        Math.floor(
+          parseFloat(this.feeRateDeSoPerKB) * 1e9
+        ) /*MinFeeRateNanosPerKB*/
       )
       .subscribe(
         (res: any) => {
@@ -1112,7 +1596,7 @@ export class AdminComponent implements OnInit {
             this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
             return null;
           }
-          this.globalVars._alertSuccess("Identities successfully swapped!");
+          this.globalVars._alertSuccess('Identities successfully swapped!');
         },
         (error) => {
           console.error(error);
@@ -1148,8 +1632,8 @@ export class AdminComponent implements OnInit {
     if (!this.searchedForPubKey) {
       return SwalHelper.fire({
         target: this.globalVars.getTargetComponentSelector(),
-        icon: "warning",
-        title: "Search for public key before updating username",
+        icon: 'warning',
+        title: 'Search for public key before updating username',
       });
     }
     const infoMsg = this.userProfileEntryResponseToUpdate
@@ -1157,32 +1641,36 @@ export class AdminComponent implements OnInit {
       : `Set username to ${this.usernameTarget} for public key ${this.changeUsernamePublicKey}`;
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      icon: "info",
+      icon: 'info',
       title: `Updating Username`,
       html: infoMsg,
       showCancelButton: true,
       showConfirmButton: true,
       focusConfirm: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((res: any) => {
       if (res.isConfirmed) {
         this.submittingUpdateUsername = true;
-        const creatorCoinBasisPoints = this.userProfileEntryResponseToUpdate?.CoinEntry?.CreatorBasisPoints || 10 * 100;
+        const creatorCoinBasisPoints =
+          this.userProfileEntryResponseToUpdate?.CoinEntry
+            ?.CreatorBasisPoints || 10 * 100;
         const stakeMultipleBasisPoints =
-          this.userProfileEntryResponseToUpdate?.StakeMultipleBasisPoints || 1.25 * 100 * 100;
+          this.userProfileEntryResponseToUpdate?.StakeMultipleBasisPoints ||
+          1.25 * 100 * 100;
         return this.backendApi
           .UpdateProfile(
             environment.verificationEndpointHostname,
-            this.globalVars.loggedInUser.PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+            this.globalVars.loggedInUser
+              .PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
             this.changeUsernamePublicKey /*ProfilePublicKeyBase58Check*/,
             // Start params
             this.usernameTarget /*NewUsername*/,
-            "" /*NewDescription*/,
-            "" /*NewProfilePic*/,
+            '' /*NewDescription*/,
+            '' /*NewProfilePic*/,
             creatorCoinBasisPoints /*NewCreatorBasisPoints*/,
             stakeMultipleBasisPoints /*NewStakeMultipleBasisPoints*/,
             false /*IsHidden*/,
@@ -1191,9 +1679,9 @@ export class AdminComponent implements OnInit {
           )
           .subscribe(
             () => {
-              this.updateProfileSuccessType = "username";
+              this.updateProfileSuccessType = 'username';
               this.clearSuccessTimeout = setTimeout(() => {
-                this.updateProfileSuccessType = "";
+                this.updateProfileSuccessType = '';
               }, 1000);
             },
             (err) => {

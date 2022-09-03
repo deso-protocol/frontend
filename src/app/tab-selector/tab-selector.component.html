@@ -1,4 +1,7 @@
-<div class="d-flex w-100 border-bottom border-color-grey" style="cursor: pointer; height: 50px">
+<div
+  class="d-flex w-100 border-bottom border-color-grey"
+  style="cursor: pointer; height: 50px"
+>
   <div
     *ngFor="let tab of tabs"
     (click)="_tabClicked(tab)"
@@ -6,7 +9,10 @@
   >
     <div
       class="d-flex h-100 align-items-center fs-15px"
-      [ngClass]="{ 'fc-default': tab == this.activeTab, 'fc-muted': tab != this.activeTab }"
+      [ngClass]="{
+        'fc-default': tab == this.activeTab,
+        'fc-muted': tab != this.activeTab
+      }"
     >
       {{ tab }}
     </div>

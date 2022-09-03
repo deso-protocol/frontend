@@ -1,24 +1,43 @@
 <div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="'Sell NFT'" [bsModalRef]="bsModalRef"></nft-modal-header>
+  <nft-modal-header
+    [header]="'Sell NFT'"
+    [bsModalRef]="bsModalRef"
+  ></nft-modal-header>
 
   <div *ngIf="selectedBidEntries?.length">
     <div class="fs-15px pt-15px pb-30px text-grey5">
       You are about to sell your NFT. Are you sure?
     </div>
 
-    <div class="container d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled">
+    <div
+      class="container d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled"
+    >
       <div class="col-5 p-0 text-align-center">Bidder</div>
-      <div class="col-2 p-0 text-align-center" *ngIf="post.NumNFTCopies > 1">Edition</div>
-      <div class="p-0 text-align-center" [ngClass]="{ 'col-7': post.NumNFTCopies == 1, 'col-5': post.NumNFTCopies > 1 }">Bid Amount</div>
+      <div class="col-2 p-0 text-align-center" *ngIf="post.NumNFTCopies > 1">
+        Edition
+      </div>
+      <div
+        class="p-0 text-align-center"
+        [ngClass]="{
+          'col-7': post.NumNFTCopies == 1,
+          'col-5': post.NumNFTCopies > 1
+        }"
+      >
+        Bid Amount
+      </div>
     </div>
     <div class="pb-15px">
-      <div style="max-height: 200px; overflow-y: scroll;">
+      <div style="max-height: 200px; overflow-y: scroll">
         <div
           class="container d-flex align-items-center fs-14px p-15px border-bottom border-color-grey link--unstyled formbg"
-          *ngFor="let bidEntry of selectedBidEntries; let i = index">
+          *ngFor="let bidEntry of selectedBidEntries; let i = index"
+        >
           <div class="row no-gutters w-100">
             <div class="col-5 d-flex align-items-center mb-0 p-0">
-              <i class="fas fa-trash text-danger pr-5px fs-18px" (click)="remove(bidEntry)"></i>
+              <i
+                class="fas fa-trash text-danger pr-5px fs-18px"
+                (click)="remove(bidEntry)"
+              ></i>
               <!-- Avatar -->
               <div class="simple-profile-card__avatar-container">
                 <div
@@ -30,9 +49,16 @@
                 <div>
                   <div
                     class="fc-default font-weight-bold text-truncate holdings__name fs-14px"
-                    [ngClass]="{'cursor-pointer': bidEntry.ProfileEntryResponse?.Username }"
+                    [ngClass]="{
+                      'cursor-pointer': bidEntry.ProfileEntryResponse?.Username
+                    }"
                     (click)="navigateToProfile(bidEntry)"
-                  >{{ bidEntry.ProfileEntryResponse?.Username || bidEntry.PublicKeyBase58Check }}</div>
+                  >
+                    {{
+                      bidEntry.ProfileEntryResponse?.Username ||
+                        bidEntry.PublicKeyBase58Check
+                    }}
+                  </div>
                   <span
                     *ngIf="bidEntry.ProfileEntryResponse?.IsVerified"
                     (click)="tooltip.toggle()"
@@ -41,82 +67,108 @@
                     [matTooltip]="'This account is verified'"
                     #tooltip="matTooltip"
                   >
-                <i class="fas fa-check-circle fa-md align-middle"></i>
-              </span>
+                    <i class="fas fa-check-circle fa-md align-middle"></i>
+                  </span>
                 </div>
                 <div class="text-grey9" *ngIf="bidEntry.ProfileEntryResponse">
-                  {{ globalVars.nanosToUSD(bidEntry.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
+                  {{
+                    globalVars.nanosToUSD(
+                      bidEntry.ProfileEntryResponse.CoinPriceDeSoNanos,
+                      2
+                    )
+                  }}
                 </div>
               </div>
             </div>
-            <div class="col-2 d-flex align-items-center justify-content-center mb-0 p-0" *ngIf="post.NumNFTCopies > 1">{{ bidEntry.SerialNumber > 0 && "#" + bidEntry.SerialNumber.toString() }}</div>
+            <div
+              class="col-2 d-flex align-items-center justify-content-center mb-0 p-0"
+              *ngIf="post.NumNFTCopies > 1"
+            >
+              {{
+                bidEntry.SerialNumber > 0 &&
+                  '#' + bidEntry.SerialNumber.toString()
+              }}
+            </div>
             <div
               class="d-flex align-items-center mb-0 justify-content-between p-0"
-              [ngClass]="{ 'col-7': post.NumNFTCopies == 1, 'col-5': post.NumNFTCopies > 1 }"
+              [ngClass]="{
+                'col-7': post.NumNFTCopies == 1,
+                'col-5': post.NumNFTCopies > 1
+              }"
             >
-              <span>{{ globalVars.nanosToDeSo(bidEntry.BidAmountNanos, 5) }} $DESO</span>
-              <span>~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 2) }}</span>
+              <span
+                >{{
+                  globalVars.nanosToDeSo(bidEntry.BidAmountNanos, 5)
+                }}
+                $DESO</span
+              >
+              <span
+                >~{{ globalVars.nanosToUSD(bidEntry.BidAmountNanos, 2) }}</span
+              >
             </div>
           </div>
         </div>
       </div>
     </div>
 
-
     <!-- Summary data -->
     <div class="content fs-15px mb-30px py-5px formbg">
       <div class="row p-10px">
         <div class="col-6 m-0px">Selling Price</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
-          <div>
-            {{globalVars.abbreviateNumber(sellingPrice, 3)}} $DESO
+          <div>{{ globalVars.abbreviateNumber(sellingPrice, 3) }} $DESO</div>
+          <div class="text-grey7 d-lg-inline-block d-block">
+            (~{{ globalVars.nanosToUSD(sellingPrice * 1e9, 2) }})
           </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(sellingPrice*1e9, 2) }})</div>
         </div>
       </div>
       <div class="row px-10px pb-10px">
         <div class="col-6 m-0px">Earnings</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
-          <div>
-            {{globalVars.abbreviateNumber(earnings, 3)}} $DESO
+          <div>{{ globalVars.abbreviateNumber(earnings, 3) }} $DESO</div>
+          <div class="text-grey7 d-lg-inline-block d-block">
+            (~{{ globalVars.nanosToUSD(earnings * 1e9, 2) }})
           </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(earnings*1e9, 2) }})</div>
         </div>
       </div>
       <div class="row px-10px pb-10px">
         <div class="col-6 m-0px">NFT Creator royalty</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
-          <div>
-            {{globalVars.abbreviateNumber(creatorRoyalty, 3)}} $DESO
+          <div>{{ globalVars.abbreviateNumber(creatorRoyalty, 3) }} $DESO</div>
+          <div class="text-grey7 d-lg-inline-block d-block">
+            (~{{ globalVars.nanosToUSD(creatorRoyalty * 1e9, 2) }})
           </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(creatorRoyalty*1e9, 2) }})</div>
         </div>
       </div>
       <div class="row px-10px pb-10px">
         <div class="col-6 m-0px">DESO Royalties to other users</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
           <div>
-            {{globalVars.abbreviateNumber(additionalCreatorRoyalty, 3)}} $DESO
+            {{ globalVars.abbreviateNumber(additionalCreatorRoyalty, 3) }} $DESO
           </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(additionalCreatorRoyalty*1e9, 2) }})</div>
+          <div class="text-grey7 d-lg-inline-block d-block">
+            (~{{ globalVars.nanosToUSD(additionalCreatorRoyalty * 1e9, 2) }})
+          </div>
         </div>
       </div>
       <div class="row px-10px pb-10px">
         <div class="col-6 m-0px">NFT Creator Coin-holder royalty</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
-          <div>
-            {{globalVars.abbreviateNumber(coinRoyalty, 3)}} $DESO
+          <div>{{ globalVars.abbreviateNumber(coinRoyalty, 3) }} $DESO</div>
+          <div class="text-grey7 d-lg-inline-block d-block">
+            (~{{ globalVars.nanosToUSD(coinRoyalty * 1e9, 2) }})
           </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(coinRoyalty*1e9, 2) }})</div>
         </div>
       </div>
       <div class="row px-10px pb-10px">
         <div class="col-6 m-0px">Other Creator Coin-holder royalties</div>
         <div class="col-6 m-0px d-flex flex-wrap justify-content-end">
           <div>
-            {{globalVars.abbreviateNumber(additionalCoinRoyalty, 3)}} $DESO
+            {{ globalVars.abbreviateNumber(additionalCoinRoyalty, 3) }} $DESO
           </div>
-          <div class="text-grey7 d-lg-inline-block d-block">(~{{ globalVars.nanosToUSD(additionalCoinRoyalty*1e9, 2) }})</div>
+          <div class="text-grey7 d-lg-inline-block d-block">
+            (~{{ globalVars.nanosToUSD(additionalCoinRoyalty * 1e9, 2) }})
+          </div>
         </div>
       </div>
     </div>
@@ -128,9 +180,11 @@
         (click)="sellNFT()"
         [disabled]="sellNFTDisabled || !selectedBidEntries?.length"
       >
-        {{ sellingNFT ? "Selling NFTs" : "Sell NFTs" }}
+        {{ sellingNFT ? 'Selling NFTs' : 'Sell NFTs' }}
       </button>
-      <div *ngIf="sellingNFT" class="pl-15px fs-15px">{{ sellNFTCounter }} of {{ sellNFTTotal }} sold</div>
+      <div *ngIf="sellingNFT" class="pl-15px fs-15px">
+        {{ sellNFTCounter }} of {{ sellNFTTotal }} sold
+      </div>
     </div>
   </div>
   <div *ngIf="!selectedBidEntries?.length">

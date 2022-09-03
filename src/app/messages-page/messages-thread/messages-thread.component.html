@@ -8,15 +8,28 @@
     'message-thread__unread-light-blue':
       !isHovered &&
       globalVars.messageResponse &&
-      globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] !== undefined &&
-      globalVars.messageResponse.UnreadStateByContact[thread.PublicKeyBase58Check] === true
+      globalVars.messageResponse.UnreadStateByContact[
+        thread.PublicKeyBase58Check
+      ] !== undefined &&
+      globalVars.messageResponse.UnreadStateByContact[
+        thread.PublicKeyBase58Check
+      ] === true
   }"
 >
-  <div class="messages-thread__avatar" [avatar]="thread.PublicKeyBase58Check"></div>
+  <div
+    class="messages-thread__avatar"
+    [avatar]="thread.PublicKeyBase58Check"
+  ></div>
   <!-- The CSS styles / classes get pretty dense here. Sorry! -->
   <div class="flex-grow-1 fs-15px ml-15px" style="overflow: hidden">
-    <div class="d-flex align-items-center" style="overflow: hidden; white-space: pre">
-      <div class="flex-grow-1 d-flex align-items-center" style="overflow: hidden">
+    <div
+      class="d-flex align-items-center"
+      style="overflow: hidden; white-space: pre"
+    >
+      <div
+        class="flex-grow-1 d-flex align-items-center"
+        style="overflow: hidden"
+      >
         <div class="font-weight-bold messages-thread__ellipsis-restriction">
           {{
             thread.ProfileEntryResponse && thread.ProfileEntryResponse.Username
@@ -24,7 +37,10 @@
               : thread.PublicKeyBase58Check
           }}
         </div>
-        <span *ngIf="thread.ProfileEntryResponse?.IsVerified" class="ml-1 text-primary">
+        <span
+          *ngIf="thread.ProfileEntryResponse?.IsVerified"
+          class="ml-1 text-primary"
+        >
           <i class="fas fa-check-circle fa-md align-middle"></i>
         </span>
         <div
@@ -32,32 +48,51 @@
           class="messages-thread__border-radius ml-5px font-weight-normal px-10px py-2px mt-5px background-color-light-grey"
           style="width: fit-content"
         >
-          {{ globalVars.nanosToUSD(globalVars._parseFloat(thread.ProfileEntryResponse.CoinPriceDeSoNanos), 2) }}
+          {{
+            globalVars.nanosToUSD(
+              globalVars._parseFloat(
+                thread.ProfileEntryResponse.CoinPriceDeSoNanos
+              ),
+              2
+            )
+          }}
         </div>
       </div>
       <div *ngIf="thread.Messages.length > 0" class="fc-muted">
-        {{ globalVars.convertTstampToDateOrTime(thread.Messages[thread.Messages.length - 1].TstampNanos) }}
+        {{
+          globalVars.convertTstampToDateOrTime(
+            thread.Messages[thread.Messages.length - 1].TstampNanos
+          )
+        }}
       </div>
     </div>
     <div *ngIf="thread.Messages.length > 0">
       <!-- If we are the sender, we need to bank on the decryptedMessageMap having the decrypted text. -->
-      <div *ngIf="thread.Messages[thread.Messages.length - 1].IsSender" class="messages-thread__ellipsis-restriction">
+      <div
+        *ngIf="thread.Messages[thread.Messages.length - 1].IsSender"
+        class="messages-thread__ellipsis-restriction"
+      >
         {{
           globalVars.messageMeta.decryptedMessgesMap[
-            thread.Messages[thread.Messages.length - 1].SenderPublicKeyBase58Check +
-              "" +
+            thread.Messages[thread.Messages.length - 1]
+              .SenderPublicKeyBase58Check +
+              '' +
               thread.Messages[thread.Messages.length - 1].TstampNanos
           ]
             ? globalVars.messageMeta.decryptedMessgesMap[
-                thread.Messages[thread.Messages.length - 1].SenderPublicKeyBase58Check +
-                  "" +
+                thread.Messages[thread.Messages.length - 1]
+                  .SenderPublicKeyBase58Check +
+                  '' +
                   thread.Messages[thread.Messages.length - 1].TstampNanos
               ].DecryptedText
             : thread.Messages[thread.Messages.length - 1].DecryptedText
         }}
       </div>
       <!-- If we are not the sender, we have the decrypted text so we show that. -->
-      <div *ngIf="!thread.Messages[thread.Messages.length - 1].IsSender" class="messages-thread__ellipsis-restriction">
+      <div
+        *ngIf="!thread.Messages[thread.Messages.length - 1].IsSender"
+        class="messages-thread__ellipsis-restriction"
+      >
         {{ thread.Messages[thread.Messages.length - 1].DecryptedText }}
       </div>
     </div>

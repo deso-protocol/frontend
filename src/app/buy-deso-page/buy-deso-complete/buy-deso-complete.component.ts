@@ -1,10 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
 
 @Component({
-  selector: "buy-deso-complete",
-  templateUrl: "./buy-deso-complete.component.html",
-  styleUrls: ["./buy-deso-complete.component.scss"],
+  selector: 'buy-deso-complete',
+  templateUrl: './buy-deso-complete.component.html',
+  styleUrls: ['./buy-deso-complete.component.scss'],
 })
 export class BuyDeSoCompleteComponent implements OnInit {
   @Output() buyMoreDeSoClicked = new EventEmitter();

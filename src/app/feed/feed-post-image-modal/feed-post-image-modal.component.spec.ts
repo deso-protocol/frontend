@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FeedPostImageModalComponent } from "./feed-post-image-modal.component";
+import { FeedPostImageModalComponent } from './feed-post-image-modal.component';
 
-describe("FeedPostImageModalComponent", () => {
+describe('FeedPostImageModalComponent', () => {
   let component: FeedPostImageModalComponent;
   let fixture: ComponentFixture<FeedPostImageModalComponent>;
 
@@ -18,7 +18,7 @@ describe("FeedPostImageModalComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

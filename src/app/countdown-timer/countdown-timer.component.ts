@@ -1,18 +1,18 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { ConfettiSvg, GlobalVarsService } from "../global-vars.service";
-import { Router } from "@angular/router";
+import { Component, Input, OnInit } from '@angular/core';
+import { ConfettiSvg, GlobalVarsService } from '../global-vars.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "countdown-timer",
-  templateUrl: "./countdown-timer.component.html",
-  styleUrls: ["./countdown-timer.component.scss"],
+  selector: 'countdown-timer',
+  templateUrl: './countdown-timer.component.html',
+  styleUrls: ['./countdown-timer.component.scss'],
 })
 export class CountdownTimerComponent implements OnInit {
   @Input() timerEnd: number = Date.now();
   @Input() fontSize: number = 13;
   @Input() borderRadiusSize: number = 0;
   @Input() fontWeight: number = 400;
-  @Input() timerText: string = "";
+  @Input() timerText: string = '';
   @Input() justifyLeft: boolean = false;
   @Input() justifyAround: boolean = false;
 
@@ -45,7 +45,9 @@ export class CountdownTimerComponent implements OnInit {
   }
 
   navigateToURL(): void {
-    this.router.navigate(["/" + this.globalVars.RouteNames.BROWSE], { queryParams: { feedTab: "Showcase" } });
+    this.router.navigate(['/' + this.globalVars.RouteNames.BROWSE], {
+      queryParams: { feedTab: 'Showcase' },
+    });
   }
 
   setDaysDiff(start: number): void {
@@ -82,7 +84,8 @@ export class CountdownTimerComponent implements OnInit {
           (CountdownTimerComponent.milliPerSecond *
             CountdownTimerComponent.secondsPerMinute *
             CountdownTimerComponent.minutesPerHours)) /
-          (CountdownTimerComponent.milliPerSecond * CountdownTimerComponent.secondsPerMinute)
+          (CountdownTimerComponent.milliPerSecond *
+            CountdownTimerComponent.secondsPerMinute)
       )
     );
   }
@@ -91,7 +94,8 @@ export class CountdownTimerComponent implements OnInit {
     this.seconds = this.formatNumber(
       Math.floor(
         ((this.timerEnd - start) %
-          (CountdownTimerComponent.milliPerSecond * CountdownTimerComponent.secondsPerMinute)) /
+          (CountdownTimerComponent.milliPerSecond *
+            CountdownTimerComponent.secondsPerMinute)) /
           CountdownTimerComponent.milliPerSecond
       )
     );

@@ -63,7 +63,10 @@ header @html Content-Security-Policy "
     arweave.net
     *.arweave.net
     *.pearl.app
-    cloudflare-ipfs.com;
+    *.twimg.com
+    *.redd.it
+    cloudflare-ipfs.com
+    *.mypinata.cloud;
   font-src 'self'
     https://fonts.googleapis.com
     https://fonts.gstatic.com
@@ -86,6 +89,7 @@ header @html Content-Security-Policy "
     https://w.soundcloud.com
     https://player.twitch.tv
     https://clips.twitch.tv
+    https://mousai.stream
     pay.testwyre.com
     pay.sendwyre.com
     https://iframe.videodelivery.net;

@@ -4,10 +4,13 @@
   style="min-height: 80px"
 >
   <div class="d-flex align-items-center">
-    <top-bar-mobile-navigation-control class="mr-15px d-lg-none d-inline-block"></top-bar-mobile-navigation-control>
+    <top-bar-mobile-navigation-control
+      class="mr-15px d-lg-none d-inline-block"
+    ></top-bar-mobile-navigation-control>
 
     <div class="font-weight-bold fs-18px">
-      {{ creatorCoinTrade.tradeVerbString() }} {{ creatorCoinTrade.creatorProfile.Username }} coin
+      {{ creatorCoinTrade.tradeVerbString() }}
+      {{ creatorCoinTrade.creatorProfile.Username }} coin
     </div>
   </div>
 
@@ -16,9 +19,12 @@
 
 <!--CTA-->
 <div class="text-center px-20px not-found__content-container">
-  <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold">Create an account</a>
+  <a (click)="globalVars.launchSignupFlow()" class="font-weight-bold"
+    >Create an account</a
+  >
   or
   <a (click)="globalVars.launchLoginFlow()" class="font-weight-bold">log in</a>
   <br />
-  to {{ creatorCoinTrade.tradeVerbString().toLowerCase() }} {{ creatorCoinTrade.creatorProfile.Username }} coin.
+  to {{ creatorCoinTrade.tradeVerbString().toLowerCase() }}
+  {{ creatorCoinTrade.creatorProfile.Username }} coin.
 </div>

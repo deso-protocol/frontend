@@ -1,16 +1,20 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { GlobalVarsService } from "../global-vars.service";
-import { BackendApiService, NFTEntryResponse, PostEntryResponse } from "../backend-api.service";
-import { Router } from "@angular/router";
-import { isNumber } from "lodash";
-import { ToastrService } from "ngx-toastr";
-import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
-import { Location } from "@angular/common";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { GlobalVarsService } from '../global-vars.service';
+import {
+  BackendApiService,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from '../backend-api.service';
+import { Router } from '@angular/router';
+import { isNumber } from 'lodash';
+import { ToastrService } from 'ngx-toastr';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Location } from '@angular/common';
+import { SwalHelper } from '../../lib/helpers/swal-helper';
 
 @Component({
-  selector: "nft-burn-modal",
-  templateUrl: "./nft-burn-modal.component.html",
+  selector: 'nft-burn-modal',
+  templateUrl: './nft-burn-modal.component.html',
 })
 export class NftBurnModalComponent implements OnInit {
   static PAGE_SIZE = 50;
@@ -38,7 +42,7 @@ export class NftBurnModalComponent implements OnInit {
   showSelectedSerialNumbers = false;
   burningNft: boolean = false;
   errors: string[] = [];
-  minBidCurrency: string = "USD";
+  minBidCurrency: string = 'USD';
   minBidInput: number = 0;
   transferringUser: string;
 
@@ -60,8 +64,11 @@ export class NftBurnModalComponent implements OnInit {
         this.post.PostHashHex
       )
       .subscribe((res) => {
-        this.availableSerialNumbers = Object.values(res.SerialNumberToNFTEntryResponse);
-        this.availableCount = res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
+        this.availableSerialNumbers = Object.values(
+          res.SerialNumberToNFTEntryResponse
+        );
+        this.availableCount =
+          res.NFTCollectionResponse.PostEntryResponse.NumNFTCopiesForSale;
         this.filteredSerialNumbers = this.burnNFTEntryResponses;
       })
       .add(() => (this.loading = false));
@@ -72,17 +79,17 @@ export class NftBurnModalComponent implements OnInit {
     this.burningNft = true;
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Burn NFT",
+      title: 'Burn NFT',
       html: `You are about to burn this NFT - this cannot be undone. Are you sure?`,
       showConfirmButton: true,
       showCancelButton: true,
       reverseButtons: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
-      confirmButtonText: "Ok",
-      cancelButtonText: "Cancel",
+      confirmButtonText: 'Ok',
+      cancelButtonText: 'Cancel',
     }).then((res) => {
       if (res.isConfirmed) {
         this.backendApi
@@ -95,11 +102,11 @@ export class NftBurnModalComponent implements OnInit {
           )
           .subscribe(
             (res) => {
-              this.modalService.setDismissReason("nft burned");
+              this.modalService.setDismissReason('nft burned');
               this.bsModalRef.hide();
-              this.toastr.show("Your nft was burned", null, {
-                toastClass: "info-toast",
-                positionClass: "toast-bottom-center",
+              this.toastr.show('Your nft was burned', null, {
+                toastClass: 'info-toast',
+                positionClass: 'toast-bottom-center',
               });
             },
             (err) => {
@@ -121,7 +128,7 @@ export class NftBurnModalComponent implements OnInit {
     if (!this.saveSelectionDisabled) {
       this.isSelectingSerialNumber = false;
       this.showSelectedSerialNumbers = true;
-      this.changeTitle.emit("Confirm Transfer");
+      this.changeTitle.emit('Confirm Transfer');
       this.highBid = this.selectedSerialNumber.HighestBidAmountNanos;
       this.lowBid = this.selectedSerialNumber.LowestBidAmountNanos;
     }
@@ -130,7 +137,7 @@ export class NftBurnModalComponent implements OnInit {
   goBackToSerialSelection(): void {
     this.isSelectingSerialNumber = true;
     this.showSelectedSerialNumbers = false;
-    this.changeTitle.emit("Choose an edition");
+    this.changeTitle.emit('Choose an edition');
     this.highBid = null;
     this.lowBid = null;
     this.selectedSerialNumber = null;
@@ -142,10 +149,14 @@ export class NftBurnModalComponent implements OnInit {
   }
 
   bidAmountUSDFormatted() {
-    return isNumber(this.bidAmountUSD) ? `~${this.globalVars.formatUSD(this.bidAmountUSD, 0)}` : "";
+    return isNumber(this.bidAmountUSD)
+      ? `~${this.globalVars.formatUSD(this.bidAmountUSD, 0)}`
+      : '';
   }
 
   bidAmountDeSoFormatted() {
-    return isNumber(this.bidAmountDeSo) ? `~${this.bidAmountDeSo.toFixed(2)} $DESO` : "";
+    return isNumber(this.bidAmountDeSo)
+      ? `~${this.bidAmountDeSo.toFixed(2)} $DESO`
+      : '';
   }
 }

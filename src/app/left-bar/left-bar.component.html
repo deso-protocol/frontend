@@ -2,7 +2,10 @@
   <div class="global__nav__fixed">
     <!-- Logged-in Left Bar -->
     <div *ngIf="globalVars.loggedInUser != null" class="global__nav__inner">
-      <div class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
+      <div
+        class="d-flex w-100 align-items-center fs-24px font-weight-bold"
+        style="height: 80px"
+      >
         <a
           class="link--unstyled d-flex align-items-center"
           (click)="globalVars.isLeftBarMobileOpen = false"
@@ -16,7 +19,10 @@
           />
         </a>
 
-        <div *ngIf="isMobile" class="flex-grow-1 d-flex justify-content-end pl-30px cursor-pointer">
+        <div
+          *ngIf="isMobile"
+          class="flex-grow-1 d-flex justify-content-end pl-30px cursor-pointer"
+        >
           <i class="fas fa-times fc-muted" (click)="closeMobile.emit()"></i>
         </div>
       </div>
@@ -32,7 +38,10 @@
       <div class="pt-15px"></div>
 
       <div *ngIf="!inTutorial">
-        <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'"></left-bar-button>
+        <left-bar-button
+          [link]="homeLink()"
+          [buttonLabel]="'Home'"
+        ></left-bar-button>
 
         <left-bar-button
           [link]="'/' + globalVars.RouteNames.TRENDS"
@@ -49,21 +58,27 @@
           [buttonLabel]="'Buy $DESO'"
         ></left-bar-button>
 
-        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="globalVars.showJumio && !globalVars.loggedInUser?.JumioVerified" (click)="globalVars.launchGetFreeDESOFlow()">
-          <a class="left-bar__dot-inactive">·</a>
-          <a class="cursor-pointer fs-15px text-grey5">Get Free $DESO</a>
-        </div>
-
-        <div class="p-15px" *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"></div>
+        <div
+          class="p-15px"
+          *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
+        ></div>
         <left-bar-button
-          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
-          [queryParams]="{ 'nftTab': 'my_bids', 'tab': 'nfts' }"
+          [link]="
+            AppRoutingModule.profilePath(
+              globalVars.loggedInUser.ProfileEntryResponse?.Username
+            )
+          "
+          [queryParams]="{ nftTab: 'my_bids', tab: 'nfts' }"
           [buttonLabel]="'My NFT Bids'"
           *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
         ></left-bar-button>
         <left-bar-button
-          [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse?.Username)"
-          [queryParams]="{ 'nftTab': 'my_gallery', 'tab': 'nfts' }"
+          [link]="
+            AppRoutingModule.profilePath(
+              globalVars.loggedInUser.ProfileEntryResponse?.Username
+            )
+          "
+          [queryParams]="{ nftTab: 'my_gallery', tab: 'nfts' }"
           [buttonLabel]="'My NFT Gallery'"
           *ngIf="globalVars.loggedInUser?.ProfileEntryResponse"
         ></left-bar-button>
@@ -80,16 +95,31 @@
           [buttonLabel]="'Send $DESO'"
         ></left-bar-button>
 
-        <left-bar-button [link]="'/' + globalVars.RouteNames.WALLET" [buttonLabel]="'Wallet'"></left-bar-button>
-        <left-bar-button [link]="'/' + globalVars.RouteNames.DAO" [buttonLabel]="'DAO'"></left-bar-button>
-
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.WALLET"
+          [buttonLabel]="'Wallet'"
+        ></left-bar-button>
+        <left-bar-button
+          [link]="'/' + globalVars.RouteNames.DAO"
+          [buttonLabel]="'DAO'"
+        ></left-bar-button>
 
         <div class="p-15px"></div>
 
-        <div *ngIf="globalVars.loggedInUser && globalVars.loggedInUser.ProfileEntryResponse?.Username; else elseBlock">
+        <div
+          *ngIf="
+            globalVars.loggedInUser &&
+              globalVars.loggedInUser.ProfileEntryResponse?.Username;
+            else elseBlock
+          "
+        >
           <left-bar-button
-            [link]="AppRoutingModule.profilePath(globalVars.loggedInUser.ProfileEntryResponse.Username)"
-            [queryParams]="{ 'tab':'posts' }"
+            [link]="
+              AppRoutingModule.profilePath(
+                globalVars.loggedInUser.ProfileEntryResponse.Username
+              )
+            "
+            [queryParams]="{ tab: 'posts' }"
             [buttonLabel]="'Profile'"
           ></left-bar-button>
         </div>
@@ -112,12 +142,9 @@
           [buttonLabel]="'Messages'"
         ></left-bar-button>
 
-        <left-bar-button [link]="'/' + globalVars.RouteNames.SETTINGS" [buttonLabel]="'Settings'"></left-bar-button>
-
         <left-bar-button
-          *ngIf="globalVars.loggedInUser.ReferralInfoResponses?.length > 0"
-          [link]="'/' + globalVars.RouteNames.REFERRALS"
-          [buttonLabel]="'Referrals'"
+          [link]="'/' + globalVars.RouteNames.SETTINGS"
+          [buttonLabel]="'Settings'"
         ></left-bar-button>
 
         <div class="w-100 d-flex pt-15px pl-15px" (click)="startTutorial()">
@@ -125,9 +152,23 @@
           <a class="cursor-pointer fs-15px text-grey5">Tutorial</a>
         </div>
 
-        <div class="w-100 d-flex pt-15px pl-15px" *ngIf="environment.supportEmail" (click)="logHelp()">
-          <a class="left-bar__dot-inactive" [href]="getHelpMailToAttr()" target="_blank">·</a>
-          <a class="cursor-pointer fs-15px text-grey5" [href]="getHelpMailToAttr()" target="_blank">Help</a>
+        <div
+          class="w-100 d-flex pt-15px pl-15px"
+          *ngIf="environment.supportEmail"
+          (click)="logHelp()"
+        >
+          <a
+            class="left-bar__dot-inactive"
+            [href]="getHelpMailToAttr()"
+            target="_blank"
+            >·</a
+          >
+          <a
+            class="cursor-pointer fs-15px text-grey5"
+            [href]="getHelpMailToAttr()"
+            target="_blank"
+            >Help</a
+          >
         </div>
       </div>
       <div class="p-15px"></div>
@@ -140,8 +181,14 @@
     </div>
 
     <!-- Logged-out Left Bar -->
-    <div *ngIf="globalVars.loggedInUser == null && !inTutorial" class="global__nav__inner">
-      <div class="d-flex w-100 align-items-center fs-24px font-weight-bold" style="height: 80px">
+    <div
+      *ngIf="globalVars.loggedInUser == null && !inTutorial"
+      class="global__nav__inner"
+    >
+      <div
+        class="d-flex w-100 align-items-center fs-24px font-weight-bold"
+        style="height: 80px"
+      >
         <a
           class="link--unstyled d-flex align-items-center"
           (click)="globalVars.isLeftBarMobileOpen = false"
@@ -155,7 +202,10 @@
           />
         </a>
 
-        <div *ngIf="isMobile" class="flex-grow-1 d-flex justify-content-end pl-30px">
+        <div
+          *ngIf="isMobile"
+          class="flex-grow-1 d-flex justify-content-end pl-30px"
+        >
           <i class="fas fa-times fc-muted" (click)="closeMobile.emit()"></i>
         </div>
       </div>
@@ -169,7 +219,10 @@
       <div class="pt-15px"></div>
 
       <!-- Left Bar Buttons -->
-      <left-bar-button [link]="homeLink()" [buttonLabel]="'Home'"></left-bar-button>
+      <left-bar-button
+        [link]="homeLink()"
+        [buttonLabel]="'Home'"
+      ></left-bar-button>
 
       <left-bar-button
         [link]="'/' + globalVars.RouteNames.CREATORS"

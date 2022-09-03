@@ -1,23 +1,36 @@
 <div class="position-relative">
-  <div class="creator-profile__top-bar d-flex align-items-top w-100 px-15px py-15px">
+  <div
+    class="creator-profile__top-bar d-flex align-items-top w-100 px-15px py-15px"
+  >
     <top-bar-mobile-navigation-control
       [isLightColor]="true"
       class="mr-15px d-lg-none d-inline-block"
     ></top-bar-mobile-navigation-control>
   </div>
 
-  <div class="creator-profile__avatar" [avatar]="profile.PublicKeyBase58Check"></div>
-  <div class="d-flex align-items-center justify-content-end pt-15px mr-15px js-creator-profile-top-card-container">
+  <div
+    class="creator-profile__avatar"
+    [avatar]="profile.PublicKeyBase58Check"
+  ></div>
+  <div
+    class="d-flex align-items-center justify-content-end pt-15px mr-15px js-creator-profile-top-card-container"
+  >
     <div
       *ngIf="globalVars.loggedInUser"
       class="fs-15px pr-15px"
       dropdown
       container="body"
     >
-      <a class="link--unstyled text-grey9 link--unstyled text-grey9" dropdownToggle>
+      <a
+        class="link--unstyled text-grey9 link--unstyled text-grey9"
+        dropdownToggle
+      >
         <i class="fas fa-ellipsis-h"></i>
       </a>
-      <div class="dropdown-menu dropdown-menu-right p-0 border background-color-light-grey fs-15px" *dropdownMenu>
+      <div
+        class="dropdown-menu dropdown-menu-right p-0 border background-color-light-grey fs-15px"
+        *dropdownMenu
+      >
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="messageUser()"
@@ -28,11 +41,20 @@
         </a>
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
-          (click)="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? unblock() : block()"
+          (click)="
+            globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)
+              ? unblock()
+              : block()
+          "
           *ngIf="!profileBelongsToLoggedInUser()"
         >
           <i class="fas fa-ban"></i>
-          {{ globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check) ? "Unblock" : "Block" }} User
+          {{
+            globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)
+              ? 'Unblock'
+              : 'Block'
+          }}
+          User
         </a>
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
@@ -45,21 +67,44 @@
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="updateWellKnownCreatorsList()"
-          *ngIf="!profile.IsFeaturedTutorialUpAndComingCreator && globalVars.showSuperAdminTools()"
+          *ngIf="
+            !profile.IsFeaturedTutorialUpAndComingCreator &&
+            globalVars.showSuperAdminTools()
+          "
         >
-          <i class="fas" [ngClass]="profile.IsFeaturedTutorialWellKnownCreator ? 'fa-user-minus' : 'fa-user-plus'"></i>
-          {{ profile.IsFeaturedTutorialWellKnownCreator ? "Remove" : "Add" }} User As Well Known Creator
+          <i
+            class="fas"
+            [ngClass]="
+              profile.IsFeaturedTutorialWellKnownCreator
+                ? 'fa-user-minus'
+                : 'fa-user-plus'
+            "
+          ></i>
+          {{
+            profile.IsFeaturedTutorialWellKnownCreator ? 'Remove' : 'Add'
+          }}
+          User As Well Known Creator
         </a>
         <a
           class="dropdown-menu-item d-block link--unstyled p-10px feed-post__dropdown-menu-item"
           (click)="updateUpAndComingCreatorsList()"
-          *ngIf="!profile.IsFeaturedTutorialWellKnownCreator && globalVars.showSuperAdminTools()"
+          *ngIf="
+            !profile.IsFeaturedTutorialWellKnownCreator &&
+            globalVars.showSuperAdminTools()
+          "
         >
           <i
             class="fas"
-            [ngClass]="profile.IsFeaturedTutorialUpAndComingCreator ? 'fa-user-minus' : 'fa-user-plus'"
+            [ngClass]="
+              profile.IsFeaturedTutorialUpAndComingCreator
+                ? 'fa-user-minus'
+                : 'fa-user-plus'
+            "
           ></i>
-          {{ profile.IsFeaturedTutorialUpAndComingCreator ? "Remove" : "Add" }} User As Up And Coming Creator
+          {{
+            profile.IsFeaturedTutorialUpAndComingCreator ? 'Remove' : 'Add'
+          }}
+          User As Up And Coming Creator
         </a>
       </div>
     </div>
@@ -78,7 +123,9 @@
       <ng-template #elseBlock>
         <!-- Show follow button-->
         <follow-button
-          *ngIf="!globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+          *ngIf="
+            !globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)
+          "
           [displayAsLink]="true"
           [followedPubKeyBase58Check]="profile.PublicKeyBase58Check"
         ></follow-button>
@@ -135,7 +182,10 @@
       </div>
     </div>
 
-    <div class="fs-15px py-15px text-break" [innerHTML]="profile.Description | sanitizeAndAutoLink"></div>
+    <div
+      class="fs-15px py-15px text-break"
+      [innerHTML]="profile.Description | sanitizeAndAutoLink"
+    ></div>
     <div class="fs-15px d-flex flex-column flex-wrap">
       <div class="d-flex pt-5px">
         <a
@@ -158,44 +208,66 @@
           <span class="fc-muted">Following&nbsp;&nbsp;</span>
         </a>
         <div class="d-lg-flex d-none">
-          <span (click)="_copyPublicKey()" class="fs-15px cursor-pointer creator-profile__ellipsis-restriction">
-          <i *ngIf="!publicKeyIsCopied" class="fas fa-key"></i>
-          <i *ngIf="publicKeyIsCopied" class="far fa-check-circle fc-blue"></i>
-          {{ profile.PublicKeyBase58Check }}
-        </span>
+          <span
+            (click)="_copyPublicKey()"
+            class="fs-15px cursor-pointer creator-profile__ellipsis-restriction"
+          >
+            <i *ngIf="!publicKeyIsCopied" class="fas fa-key"></i>
+            <i
+              *ngIf="publicKeyIsCopied"
+              class="far fa-check-circle fc-blue"
+            ></i>
+            {{ profile.PublicKeyBase58Check }}
+          </span>
           <div class="px-5px">
-            <span class="font-weight-bold">&nbsp;{{ getFoundersRewardPercent() | number: "0.0-9" }}%</span>
+            <span class="font-weight-bold"
+              >&nbsp;{{ getFoundersRewardPercent() | number: '0.0-9' }}%</span
+            >
             FR
           </div>
         </div>
-
       </div>
 
       <div class="d-lg-none d-flex pt-5px">
-        <span (click)="_copyPublicKey()" class="fs-15px cursor-pointer creator-profile__ellipsis-restriction">
+        <span
+          (click)="_copyPublicKey()"
+          class="fs-15px cursor-pointer creator-profile__ellipsis-restriction"
+        >
           <i *ngIf="!publicKeyIsCopied" class="fas fa-key"></i>
           <i *ngIf="publicKeyIsCopied" class="far fa-check-circle fc-blue"></i>
           {{ profile.PublicKeyBase58Check }}
         </span>
         <div class="px-5px">
-          <span class="font-weight-bold">&nbsp;{{ getFoundersRewardPercent() | number: "0.0-9" }}%</span>
+          <span class="font-weight-bold"
+            >&nbsp;{{ getFoundersRewardPercent() | number: '0.0-9' }}%</span
+          >
           FR
         </div>
       </div>
-
     </div>
   </div>
 
-  <div class="fs-12px mt-10px pt-15px pb-15px flex-wrap border-top border-bottom border-color-grey light-grey-divider">
+  <div
+    class="fs-12px mt-10px pt-15px pb-15px flex-wrap border-top border-bottom border-color-grey light-grey-divider"
+  >
     <div class="fs-12x d-inline-block col-4 mb-0" style="text-align: center">
-      <span class="font-weight-bold d-block">≈ {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}</span>
+      <span class="font-weight-bold d-block"
+        >≈
+        {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}</span
+      >
       <span class="fc-muted d-block">Coins In Circulation</span>
     </div>
-    <div class="fs-12px d-inline-block col-4 align-items-center mb-0" style="text-align: center">
+    <div
+      class="fs-12px d-inline-block col-4 align-items-center mb-0"
+      style="text-align: center"
+    >
       <span class="font-weight-bold d-block">≈ {{ totalUSDLocked() }}</span>
       <span class="fc-muted d-block">Total USD Locked</span>
     </div>
-    <div class="fs-12px d-inline-block col-4 align-items-center mb-0" style="text-align: center">
+    <div
+      class="fs-12px d-inline-block col-4 align-items-center mb-0"
+      style="text-align: center"
+    >
       <span class="font-weight-bold d-block">≈ {{ usdMarketCap() }}</span>
       <span class="fc-muted d-block">USD Market Cap</span>
     </div>

@@ -1,11 +1,11 @@
-import { Injectable } from "@angular/core";
-import { BackendApiService } from "../../../app/backend-api.service";
-import { GlobalVarsService } from "../../../app/global-vars.service";
-import { Observable, of } from "rxjs";
-import { map } from "rxjs/operators";
+import { Injectable } from '@angular/core';
+import { BackendApiService } from '../../../app/backend-api.service';
+import { GlobalVarsService } from '../../../app/global-vars.service';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class EmbedUrlParserService {
   // This regex helps extract the correct videoID from the various forms of URLs that identify a youtube video.
@@ -18,7 +18,25 @@ export class EmbedUrlParserService {
   static constructYoutubeEmbedURL(url: URL): string {
     const youtubeVideoID = this.youtubeParser(url.toString());
     // If we can't find the videoID, return the empty string which stops the iframe from loading.
-    return youtubeVideoID ? `https://www.youtube.com/embed/${youtubeVideoID}` : "";
+    return youtubeVideoID
+      ? `https://www.youtube.com/embed/${youtubeVideoID}`
+      : '';
+  }
+
+  static mousaiParser(url): string | boolean {
+    const regExp = /^.*mousai\.stream\/((album|playlist|track)\/[0-9]+(\/[a-z0-9-_,#%]+){1,2}?)(?=(\/embed|$))/;
+    const match = url.match(regExp);
+    return match ? match[1] : false;
+  }
+
+  static constructMousaiEmbedURL(url: URL): string {
+    const mousaiPath = this.mousaiParser(url.toString());
+    return typeof mousaiPath === 'string'
+      ? `https://mousai.stream/${mousaiPath
+          .split('/')
+          .map((s) => encodeURIComponent(s))
+          .join('/')}/embed`
+      : '';
   }
 
   // Vimeo video URLs are simple -- anything after the last "/" in the url indicates the videoID.
@@ -30,7 +48,7 @@ export class EmbedUrlParserService {
 
   static constructVimeoEmbedURL(url: URL): string {
     const vimeoVideoID = this.vimeoParser(url.toString());
-    return vimeoVideoID ? `https://player.vimeo.com/video/${vimeoVideoID}` : "";
+    return vimeoVideoID ? `https://player.vimeo.com/video/${vimeoVideoID}` : '';
   }
 
   static giphyParser(url: string): string | boolean {
@@ -41,7 +59,7 @@ export class EmbedUrlParserService {
 
   static constructGiphyEmbedURL(url: URL): string {
     const giphyId = this.giphyParser(url.toString());
-    return giphyId ? `https://giphy.com/embed/${giphyId}` : "";
+    return giphyId ? `https://giphy.com/embed/${giphyId}` : '';
   }
 
   static spotifyParser(url: string): string | boolean {
@@ -60,7 +78,9 @@ export class EmbedUrlParserService {
 
   static constructSpotifyEmbedURL(url: URL): string {
     const spotifyEmbedSuffix = this.spotifyParser(url.toString());
-    return spotifyEmbedSuffix ? `https://open.spotify.com/${spotifyEmbedSuffix}` : "";
+    return spotifyEmbedSuffix
+      ? `https://open.spotify.com/${spotifyEmbedSuffix}`
+      : '';
   }
 
   static soundCloudParser(url: string): string | boolean {
@@ -73,7 +93,7 @@ export class EmbedUrlParserService {
     const soundCloudURL = this.soundCloudParser(url.toString());
     return soundCloudURL
       ? `https://w.soundcloud.com/player/?url=https://${soundCloudURL}?hide_related=true&show_comments=false`
-      : "";
+      : '';
   }
 
   static twitchParser(url: string): string | boolean {
@@ -81,19 +101,25 @@ export class EmbedUrlParserService {
     const match = url.match(regExp);
     if (match && match[3]) {
       // https://www.twitch.tv/videos/1234567890
-      if (match[3].startsWith("videos") && match[4]) {
+      if (match[3].startsWith('videos') && match[4]) {
         return `player.twitch.tv/?video=${match[4]}`;
       }
       // https://player.twitch.tv/?video=1234567890&parent=www.example.com
-      if (match[3].startsWith("?video=") && match[5]) {
+      if (match[3].startsWith('?video=') && match[5]) {
         return `player.twitch.tv/?video=${match[5]}`;
       }
       // https://player.twitch.tv/?channel=xxxyyy123&parent=www.example.com
-      if (match[3].startsWith("?channel=") && match[6]) {
+      if (match[3].startsWith('?channel=') && match[6]) {
         return `player.twitch.tv/?channel=${match[6]}`;
       }
       // https://www.twitch.tv/xxxyyy123
-      if (match[3] && match[11] && match[3] === match[11] && !match[12] && !match[13]) {
+      if (
+        match[3] &&
+        match[11] &&
+        match[3] === match[11] &&
+        !match[12] &&
+        !match[13]
+      ) {
         return `player.twitch.tv/?channel=${match[11]}`;
       }
       // https://www.twitch.tv/xxyy_1234m/clip/AbCD123JMn-rrMMSj1239G7
@@ -118,7 +144,7 @@ export class EmbedUrlParserService {
 
   static constructTwitchEmbedURL(url: URL): string {
     const twitchParsed = this.twitchParser(url.toString());
-    return twitchParsed ? `https://${twitchParsed}` : "";
+    return twitchParsed ? `https://${twitchParsed}` : '';
   }
 
   static extractTikTokVideoID(fullTikTokURL: string): string | boolean {
@@ -138,7 +164,7 @@ export class EmbedUrlParserService {
     } catch (e) {
       return of(false);
     }
-    if (tiktokURL.hostname === "vm.tiktok.com") {
+    if (tiktokURL.hostname === 'vm.tiktok.com') {
       const regExp = /^.*(vm\.tiktok\.com\/)([A-Za-z0-9]{6,12}).*/;
       const match = url.match(regExp);
       if (!match || !match[2]) {
@@ -161,7 +187,7 @@ export class EmbedUrlParserService {
   ): Observable<string> {
     return this.tiktokParser(backendApi, globalVars, url.toString()).pipe(
       map((res) => {
-        return res ? `https://www.tiktok.com/embed/v2/${res}` : "";
+        return res ? `https://www.tiktok.com/embed/v2/${res}` : '';
       })
     );
   }
@@ -172,20 +198,23 @@ export class EmbedUrlParserService {
     embedURL: string
   ): Observable<string> {
     if (!embedURL) {
-      return of("");
+      return of('');
     }
     let url;
     try {
       url = new URL(embedURL);
     } catch (e) {
       // If the embed video URL doesn't start with http(s), try the url with that as a prefix.
-      if (!embedURL.startsWith("https://") && !embedURL.startsWith("http://")) {
+      if (!embedURL.startsWith('https://') && !embedURL.startsWith('http://')) {
         return this.getEmbedURL(backendApi, globalVars, `https://${embedURL}`);
       }
-      return of("");
+      return of('');
     }
     if (this.isYoutubeFromURL(url)) {
       return of(this.constructYoutubeEmbedURL(url));
+    }
+    if (this.isMousaiFromURL(url)) {
+      return of(this.constructMousaiEmbedURL(url));
     }
     if (this.isVimeoFromURL(url)) {
       return of(this.constructVimeoEmbedURL(url));
@@ -204,10 +233,14 @@ export class EmbedUrlParserService {
     }
     if (this.isTwitchFromURL(url)) {
       return of(this.constructTwitchEmbedURL(url)).pipe(
-        map((embedURL) => (embedURL ? embedURL + `&autoplay=false&parent=${location.hostname}` : ""))
+        map((embedURL) =>
+          embedURL
+            ? embedURL + `&autoplay=false&parent=${location.hostname}`
+            : ''
+        )
       );
     }
-    return of("");
+    return of('');
   }
 
   static isVimeoLink(link: string): boolean {
@@ -236,6 +269,20 @@ export class EmbedUrlParserService {
   static isYoutubeFromURL(url: URL): boolean {
     const patterns = [/\byoutube\.com$/, /\byoutu\.be$/];
     return patterns.some((p) => p.test(url.hostname));
+  }
+
+  static isMousaiLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isMousaiFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isMousaiFromURL(url: URL): boolean {
+    const pattern = /\bmousai\.stream$/;
+    return pattern.test(url.hostname);
   }
 
   static isTikTokLink(link: string): boolean {
@@ -318,6 +365,11 @@ export class EmbedUrlParserService {
     return !!link.match(regExp);
   }
 
+  static isValidMousaiEmbedURL(link: string): boolean {
+    const regExp = /https:\/\/mousai\.stream\/((album|playlist|track)\/[0-9]+(\/[a-z0-9-_,%]+){1,2}?)\/embed$/;
+    return !!link.match(regExp);
+  }
+
   static isValidTiktokEmbedURL(link: string): boolean {
     const regExp = /(https:\/\/www\.tiktok\.com\/embed\/v2\/(\d{0,30}))$/;
     return !!link.match(regExp);
@@ -355,6 +407,7 @@ export class EmbedUrlParserService {
       return (
         this.isValidVimeoEmbedURL(link) ||
         this.isValidYoutubeEmbedURL(link) ||
+        this.isValidMousaiEmbedURL(link) ||
         this.isValidTiktokEmbedURL(link) ||
         this.isValidGiphyEmbedURL(link) ||
         this.isValidSpotifyEmbedURL(link) ||
@@ -371,15 +424,18 @@ export class EmbedUrlParserService {
       return 700;
     }
     if (this.isValidSpotifyEmbedURL(link)) {
-      return link.indexOf("embed-podcast") > -1 ? 232 : 380;
+      return link.indexOf('embed-podcast') > -1 ? 232 : 380;
     }
     if (this.isValidSoundCloudEmbedURL(link)) {
-      return link.indexOf("/sets/") > -1 ? 350 : 180;
+      return link.indexOf('/sets/') > -1 ? 350 : 180;
+    }
+    if (this.isValidMousaiEmbedURL(link)) {
+      return 165;
     }
     return 315;
   }
 
   static getEmbedWidth(link: string): string {
-    return this.isValidTiktokEmbedURL(link) ? "325px" : "";
+    return this.isValidTiktokEmbedURL(link) ? '325px' : '';
   }
 }

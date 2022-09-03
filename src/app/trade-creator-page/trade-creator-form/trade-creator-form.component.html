@@ -2,7 +2,8 @@
 <div class="w-100 bg-light text-grey5">
   <div class="p-3 fs-14px d-flex justify-content-between flex-wrap">
     <div class="d-flex flex-wrap">
-      {{ creatorCoinTrade.assetToSellBalance() }} {{ creatorCoinTrade.assetToSellString() }} available&nbsp;
+      {{ creatorCoinTrade.assetToSellBalance() }}
+      {{ creatorCoinTrade.assetToSellString() }} available&nbsp;
 
       <span *ngIf="creatorCoinTrade.assetToSellBalanceInUsd()">
         ≈ {{ creatorCoinTrade.assetToSellBalanceInUsd() | currency }} USD
@@ -23,12 +24,18 @@
 <!-- Slippage error box -->
 <div *ngIf="creatorCoinTrade.showSlippageError" class="px-3 mt-3">
   <div class="w-100 border border-color-grey bg-light text-danger">
-    <div class="p-3 fs-14px">The price changed while you were waiting to buy. Please reconfirm your purchase.</div>
+    <div class="p-3 fs-14px">
+      The price changed while you were waiting to buy. Please reconfirm your
+      purchase.
+    </div>
   </div>
 </div>
 
 <!-- Transfer Recipient Box -->
-<div *ngIf="creatorCoinTrade.isCreatorCoinTransfer()" class="px-3 pt-3 border-color-grey">
+<div
+  *ngIf="creatorCoinTrade.isCreatorCoinTransfer()"
+  class="px-3 pt-3 border-color-grey"
+>
   <div class="fs-15px">
     <span class="font-weight-bold">Recipient</span>
   </div>
@@ -47,14 +54,18 @@
       [profile]="creatorCoinTrade.transferRecipient.value"
       [singleColumn]="true"
       [hideFollowLink]="true"
-      *ngIf="creatorCoinTrade.transferRecipient.value"></simple-profile-card>
+      *ngIf="creatorCoinTrade.transferRecipient.value"
+    ></simple-profile-card>
   </div>
 
   <div class="text-danger text-left fs-14px mt-2">
     <div *ngIf="creatorCoinTrade.showUsernameError" class="mt-10px">
-      Username "{{ creatorCoinTrade.transferRecipient.value.Username }}" could not be found.
+      Username "{{ creatorCoinTrade.transferRecipient.value.Username }}" could
+      not be found.
     </div>
-    <div *ngIf="creatorCoinTrade.showPubKeyError" class="mt-10px">Please enter a valid username or public key.</div>
+    <div *ngIf="creatorCoinTrade.showPubKeyError" class="mt-10px">
+      Please enter a valid username or public key.
+    </div>
     <div *ngIf="creatorCoinTrade.showCannotSendToSelfError" class="mt-10px">
       Please enter a recipient that is not the logged in user.
     </div>
@@ -67,7 +78,9 @@
   <div class="fs-15px">
     <span class="font-weight-bold">
       Amount
-      <span *ngIf="creatorCoinTrade.isCreatorCoinTransfer()">&nbsp;to send</span>
+      <span *ngIf="creatorCoinTrade.isCreatorCoinTransfer()"
+        >&nbsp;to send</span
+      >
     </span>
     <span *ngIf="this._maxAmount()">
       &middot;
@@ -89,8 +102,16 @@
       />
 
       <!-- Currency select -->
-      <div *ngIf="!creatorCoinTrade.isCreatorCoinTransfer()" class="d-inline-block pl-3 w-50">
-        <div *ngIf="creatorCoinTrade.canUserSpecifiyMultipleCurrencies(); else elseBlock">
+      <div
+        *ngIf="!creatorCoinTrade.isCreatorCoinTransfer()"
+        class="d-inline-block pl-3 w-50"
+      >
+        <div
+          *ngIf="
+            creatorCoinTrade.canUserSpecifiyMultipleCurrencies();
+            else elseBlock
+          "
+        >
           <select
             *ngIf="this.creatorCoinTrade.currencyConstantsToHumanLabel()"
             [(ngModel)]="this.creatorCoinTrade.selectedCurrency"
@@ -98,7 +119,10 @@
             class="form-control w-100 trade-creator-form__currency-select"
           >
             <option
-              *ngFor="let item of this.creatorCoinTrade.currencyConstantsToHumanLabel() | keyvalue"
+              *ngFor="
+                let item of this.creatorCoinTrade.currencyConstantsToHumanLabel()
+                  | keyvalue
+              "
               [value]="item.key"
             >
               {{ item.value }}
@@ -107,30 +131,46 @@
         </div>
         <ng-template #elseBlock>
           <span class="fc-muted fs-15px">
-            {{ creatorCoinTrade.currencyConstantsToHumanLabel()[creatorCoinTrade.defaultCurrency()] }}
+            {{
+              creatorCoinTrade.currencyConstantsToHumanLabel()[
+                creatorCoinTrade.defaultCurrency()
+              ]
+            }}
           </span>
         </ng-template>
       </div>
 
       <!-- Errors-->
       <div
-        *ngIf="creatorCoinTrade.amount.invalid && (creatorCoinTrade.amount.dirty || creatorCoinTrade.amount.touched)"
+        *ngIf="
+          creatorCoinTrade.amount.invalid &&
+          (creatorCoinTrade.amount.dirty || creatorCoinTrade.amount.touched)
+        "
         class="text-danger text-left fs-14px mt-2"
       >
-        <div *ngIf="creatorCoinTrade.amount.errors.required" class="mt-10px">Amount is required</div>
+        <div *ngIf="creatorCoinTrade.amount.errors.required" class="mt-10px">
+          Amount is required
+        </div>
 
-        <div *ngIf="creatorCoinTrade.amount.errors.exclusiveMin" class="mt-10px">
-          Amount must be greater than {{ this._minAmount() | number: "0.0-9" }}
+        <div
+          *ngIf="creatorCoinTrade.amount.errors.exclusiveMin"
+          class="mt-10px"
+        >
+          Amount must be greater than {{ this._minAmount() | number: '0.0-9' }}
           (to cover fees)
         </div>
 
         <div *ngIf="creatorCoinTrade.amount.errors.dynamicMax" class="mt-10px">
-          <div *ngIf="this._maxAmount() && this._maxAmount() > 0; else elseBlock">
+          <div
+            *ngIf="this._maxAmount() && this._maxAmount() > 0; else elseBlock"
+          >
             Amount must be less than
-            {{ this._maxAmount() | number: "0.0-9" }}
+            {{ this._maxAmount() | number: '0.0-9' }}
             (your balance net of fees)
           </div>
-          <ng-template #elseBlock>Amount must be less than your balance plus fees</ng-template>
+          <ng-template #elseBlock
+            >Amount must be less than your balance plus fees</ng-template
+          >
         </div>
 
         <div *ngIf="creatorCoinTrade.amount.errors.pattern" class="mt-10px">

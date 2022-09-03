@@ -1,12 +1,15 @@
-import { Component, OnInit } from "@angular/core";
-import { BackendApiService, ProfileEntryResponse } from "../backend-api.service";
-import { GlobalVarsService } from "../global-vars.service";
-import { sprintf } from "sprintf-js";
-import { SwalHelper } from "../../lib/helpers/swal-helper";
-import { Title } from "@angular/platform-browser";
-import { RouteNames } from "../app-routing.module";
-import { ActivatedRoute } from "@angular/router";
-import { environment } from "src/environments/environment";
+import { Component, OnInit } from '@angular/core';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+} from '../backend-api.service';
+import { GlobalVarsService } from '../global-vars.service';
+import { sprintf } from 'sprintf-js';
+import { SwalHelper } from '../../lib/helpers/swal-helper';
+import { Title } from '@angular/platform-browser';
+import { RouteNames } from '../app-routing.module';
+import { ActivatedRoute } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 class Messages {
   static INCORRECT_PASSWORD = `The password you entered was incorrect.`;
@@ -15,27 +18,30 @@ class Messages {
   static INSUFFICIENT_BALANCE = `You don't have enough DeSo to process the transaction. Try reducing the fee rate.`;
   static SEND_DESO_MIN = `You must send a non-zero amount of DeSo`;
   static INVALID_PUBLIC_KEY = `The public key you entered is invalid`;
-  static CONFIRM_TRANSFER_TO_PUBKEY = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s";
-  static CONFIRM_TRANSFER_TO_USERNAME = "Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s";
+  static CONFIRM_TRANSFER_TO_PUBKEY =
+    'Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to public key %s. %s';
+  static CONFIRM_TRANSFER_TO_USERNAME =
+    'Send %s $DESO with a fee of %s DeSo for a total of %s DeSo to username %s. %s';
   static MUST_PURCHASE_CREATOR_COIN = `You must purchase a creator coin before you can send $DESO`;
 }
 
 @Component({
-  selector: "transfer-deso",
-  templateUrl: "./transfer-deso.component.html",
-  styleUrls: ["./transfer-deso.component.scss"],
+  selector: 'transfer-deso',
+  templateUrl: './transfer-deso.component.html',
+  styleUrls: ['./transfer-deso.component.scss'],
 })
 export class TransferDeSoComponent implements OnInit {
   globalVars: GlobalVarsService;
-  transferDeSoError = "";
-  startingSearchText = "";
-  payToPublicKey = "";
+  transferDeSoError = '';
+  startingSearchText = '';
+  payToPublicKey = '';
   payToCreator: ProfileEntryResponse;
   transferAmount = 0;
   networkFee = 0;
   feeRateDeSoPerKB: string;
   callingUpdateSendDeSoTxnFee = false;
   loadingMax = false;
+  maxSendAmount = 0;
   sendingDeSo = false;
 
   sendDeSoQRCode: string;
@@ -55,11 +61,13 @@ export class TransferDeSoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.feeRateDeSoPerKB = (this.globalVars.defaultFeeRateNanosPerKB / 1e9).toFixed(9);
+    this.feeRateDeSoPerKB = (
+      this.globalVars.defaultFeeRateNanosPerKB / 1e9
+    ).toFixed(9);
     this.titleService.setTitle(`Send $DESO - ${environment.node.name}`);
     this.sendDeSoQRCode = `${this.backendApi._makeRequestURL(
       location.host,
-      "/" + RouteNames.SEND_DESO
+      '/' + RouteNames.SEND_DESO
     )}?public_key=${this.globalVars.loggedInUser.PublicKeyBase58Check}`;
   }
 
@@ -77,14 +85,19 @@ export class TransferDeSoComponent implements OnInit {
       .subscribe(
         (res: any) => {
           this.loadingMax = false;
-          if (res == null || res.FeeNanos == null || res.SpendAmountNanos == null) {
+          if (
+            res == null ||
+            res.FeeNanos == null ||
+            res.SpendAmountNanos == null
+          ) {
             this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
             return null;
           }
 
-          this.transferDeSoError = "";
+          this.transferDeSoError = '';
           this.networkFee = res.FeeNanos / 1e9;
           this.transferAmount = res.SpendAmountNanos / 1e9;
+          this.maxSendAmount = res.SpendAmountNanos / 1e9;
         },
         (error) => {
           this.loadingMax = false;
@@ -96,16 +109,20 @@ export class TransferDeSoComponent implements OnInit {
 
   _clickSendDeSo() {
     if (this.globalVars.loggedInUser == null) {
-      this.globalVars._alertError("User must be logged in in order to send DeSo");
+      this.globalVars._alertError(
+        'User must be logged in in order to send DeSo'
+      );
       return;
     }
 
-    if (this.payToPublicKey == null || this.payToPublicKey === "") {
-      this.globalVars._alertError("A valid pay-to public key or username must be set before you can send $DESO");
+    if (this.payToPublicKey == null || this.payToPublicKey === '') {
+      this.globalVars._alertError(
+        'A valid pay-to public key or username must be set before you can send $DESO'
+      );
       return;
     }
 
-    if (this.transferDeSoError != null && this.transferDeSoError !== "") {
+    if (this.transferDeSoError != null && this.transferDeSoError !== '') {
       this.globalVars._alertError(this.transferDeSoError);
       return;
     }
@@ -117,7 +134,10 @@ export class TransferDeSoComponent implements OnInit {
 
     // Quick and dirty hack so that we can show the right alert if someone enters a username.
     let isUsername = false;
-    if (this.payToPublicKey.substring(0, 2) != "BC" && this.payToPublicKey.length < 50) {
+    if (
+      this.payToPublicKey.substring(0, 2) != 'BC' &&
+      this.payToPublicKey.length < 50
+    ) {
       isUsername = true;
     }
 
@@ -125,7 +145,9 @@ export class TransferDeSoComponent implements OnInit {
     let desoTxnFeePromise = this._updateSendDeSoTxnFee(true /*force*/);
 
     if (desoTxnFeePromise == null) {
-      this.globalVars._alertError("There was a problem processing this transaction.");
+      this.globalVars._alertError(
+        'There was a problem processing this transaction.'
+      );
       return;
     }
 
@@ -133,7 +155,11 @@ export class TransferDeSoComponent implements OnInit {
     desoTxnFeePromise.then(
       (res) => {
         // If res is null then an error should be set.
-        if (res == null || res.FeeNanos == null || res.SpendAmountNanos == null) {
+        if (
+          res == null ||
+          res.FeeNanos == null ||
+          res.SpendAmountNanos == null
+        ) {
           this.sendingDeSo = false;
           this.globalVars._alertError(
             this.transferDeSoError,
@@ -144,19 +170,24 @@ export class TransferDeSoComponent implements OnInit {
 
         SwalHelper.fire({
           target: this.globalVars.getTargetComponentSelector(),
-          title: "Are you ready?",
+          title: 'Are you ready?',
           html: sprintf(
-            isUsername ? Messages.CONFIRM_TRANSFER_TO_USERNAME : Messages.CONFIRM_TRANSFER_TO_PUBKEY,
+            isUsername
+              ? Messages.CONFIRM_TRANSFER_TO_USERNAME
+              : Messages.CONFIRM_TRANSFER_TO_PUBKEY,
             this.globalVars.nanosToDeSo(res.SpendAmountNanos),
             this.globalVars.nanosToDeSo(res.FeeNanos),
             this.globalVars.nanosToDeSo(res.SpendAmountNanos + res.FeeNanos),
-            this.payToPublicKey
+            this.payToPublicKey,
+            res.SpendAmountNanos / 1e9 === this.maxSendAmount
+              ? 'Note: this is a max send. All your DESO is being transferred.'
+              : ''
           ),
           showCancelButton: true,
           showConfirmButton: true,
           customClass: {
-            confirmButton: "btn btn-light",
-            cancelButton: "btn btn-light no",
+            confirmButton: 'btn btn-light',
+            cancelButton: 'btn btn-light no',
           },
           reverseButtons: true,
         }).then((res: any) => {
@@ -166,7 +197,9 @@ export class TransferDeSoComponent implements OnInit {
                 this.globalVars.localNode,
                 this.globalVars.loggedInUser.PublicKeyBase58Check,
                 this.payToPublicKey,
-                this.transferAmount * 1e9,
+                this.transferAmount === this.maxSendAmount
+                  ? -1
+                  : this.transferAmount * 1e9,
                 Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
               )
               .subscribe(
@@ -179,34 +212,48 @@ export class TransferDeSoComponent implements OnInit {
                     TransactionIDBase58Check,
                   } = res;
 
-                  if (res == null || FeeNanos == null || SpendAmountNanos == null || TransactionIDBase58Check == null) {
-                    this.globalVars.logEvent("bitpop : send : error");
+                  if (
+                    res == null ||
+                    FeeNanos == null ||
+                    SpendAmountNanos == null ||
+                    TransactionIDBase58Check == null
+                  ) {
+                    this.globalVars.logEvent('bitpop : send : error');
                     this.globalVars._alertError(Messages.CONNECTION_PROBLEM);
                     return null;
                   }
 
-                  this.globalVars.logEvent("bitpop : send", {
+                  this.globalVars.logEvent('bitpop : send', {
                     TotalInputNanos,
                     SpendAmountNanos,
                     ChangeAmountNanos,
                     FeeNanos,
                   });
 
-                  this.transferDeSoError = "";
+                  this.transferDeSoError = '';
                   this.networkFee = res.FeeNanos / 1e9;
                   this.transferAmount = 0.0;
+                  this.maxSendAmount = 0.0;
 
                   // This will update the user's balance.
-                  this.globalVars.updateEverything(res.TxnHashHex, this._sendDeSoSuccess, this._sendDeSoFailure, this);
+                  this.globalVars.updateEverything(
+                    res.TxnHashHex,
+                    this._sendDeSoSuccess,
+                    this._sendDeSoFailure,
+                    this
+                  );
                 },
                 (error) => {
                   this.sendingDeSo = false;
                   console.error(error);
                   this.transferDeSoError = this._extractError(error);
-                  this.globalVars.logEvent("bitpop : send : error", { parsedError: this.transferDeSoError });
+                  this.globalVars.logEvent('bitpop : send : error', {
+                    parsedError: this.transferDeSoError,
+                  });
                   this.globalVars._alertError(
                     this.transferDeSoError,
-                    this.transferDeSoError === Messages.MUST_PURCHASE_CREATOR_COIN
+                    this.transferDeSoError ===
+                      Messages.MUST_PURCHASE_CREATOR_COIN
                   );
                 }
               );
@@ -231,11 +278,15 @@ export class TransferDeSoComponent implements OnInit {
 
   _sendDeSoSuccess(comp: any) {
     // the button should no longer say "Working..."
-    comp.globalVars._alertSuccess(sprintf("Successfully completed transaction."));
+    comp.globalVars._alertSuccess(
+      sprintf('Successfully completed transaction.')
+    );
     comp.sendingDeSo = false;
   }
   _sendDeSoFailure(comp: any) {
-    comp.appData._alertError("Transaction broadcast successfully but read node timeout exceeded. Please refresh.");
+    comp.appData._alertError(
+      'Transaction broadcast successfully but read node timeout exceeded. Please refresh.'
+    );
     comp.sendingDeSo = false;
   }
 
@@ -245,11 +296,13 @@ export class TransferDeSoComponent implements OnInit {
     }
 
     if (this.callingUpdateSendDeSoTxnFee && !force) {
-      console.log("Not calling _updateSendDeSoTxnFee because callingUpdateSendDeSoTxnFee is false");
+      console.log(
+        'Not calling _updateSendDeSoTxnFee because callingUpdateSendDeSoTxnFee is false'
+      );
       return;
     }
 
-    if (this.payToPublicKey == null || this.payToPublicKey === "") {
+    if (this.payToPublicKey == null || this.payToPublicKey === '') {
       return;
     }
 
@@ -259,7 +312,9 @@ export class TransferDeSoComponent implements OnInit {
         this.globalVars.localNode,
         this.globalVars.loggedInUser.PublicKeyBase58Check,
         this.payToPublicKey,
-        Math.floor(this.transferAmount * 1e9),
+        this.transferAmount === this.maxSendAmount
+          ? -1
+          : Math.floor(this.transferAmount * 1e9),
         Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
       )
       .toPromise()
@@ -273,7 +328,7 @@ export class TransferDeSoComponent implements OnInit {
             return null;
           }
 
-          this.transferDeSoError = "";
+          this.transferDeSoError = '';
           this.networkFee = res.FeeNanos / 1e9;
           return res;
         },
@@ -292,18 +347,19 @@ export class TransferDeSoComponent implements OnInit {
       // Is it obvious yet that I'm not a frontend gal?
       // TODO: Error handling between BE and FE needs a major redesign.
       let rawError = err.error.error;
-      if (rawError.includes("password")) {
+      if (rawError.includes('password')) {
         return Messages.INCORRECT_PASSWORD;
-      } else if (rawError.includes("not sufficient")) {
+      } else if (rawError.includes('not sufficient')) {
         return Messages.INSUFFICIENT_BALANCE;
-      } else if (rawError.includes("RuleErrorTxnMustHaveAtLeastOneInput")) {
+      } else if (rawError.includes('RuleErrorTxnMustHaveAtLeastOneInput')) {
         return Messages.SEND_DESO_MIN;
       } else if (
-        (rawError.includes("SendDeSo: Problem") && rawError.includes("Invalid input format")) ||
-        rawError.includes("Checksum does not match")
+        (rawError.includes('SendDeSo: Problem') &&
+          rawError.includes('Invalid input format')) ||
+        rawError.includes('Checksum does not match')
       ) {
         return Messages.INVALID_PUBLIC_KEY;
-      } else if (rawError.includes("You must purchase a creator coin")) {
+      } else if (rawError.includes('You must purchase a creator coin')) {
         return Messages.MUST_PURCHASE_CREATOR_COIN;
       } else {
         return rawError;
@@ -319,6 +375,7 @@ export class TransferDeSoComponent implements OnInit {
 
   _handleCreatorSelectedInSearch(creator: ProfileEntryResponse) {
     this.payToCreator = creator;
-    this.payToPublicKey = creator?.Username || creator?.PublicKeyBase58Check || "";
+    this.payToPublicKey =
+      creator?.Username || creator?.PublicKeyBase58Check || '';
   }
 }

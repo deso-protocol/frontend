@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TradeCreatorLoggedOutComponent } from "./trade-creator-logged-out.component";
+import { TradeCreatorLoggedOutComponent } from './trade-creator-logged-out.component';
 
-describe("TradeCreatorLoggedOutComponent", () => {
+describe('TradeCreatorLoggedOutComponent', () => {
   let component: TradeCreatorLoggedOutComponent;
   let fixture: ComponentFixture<TradeCreatorLoggedOutComponent>;
 
@@ -18,7 +18,7 @@ describe("TradeCreatorLoggedOutComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,47 +1,65 @@
 <div app-theme class="nft-modal-container p-15px">
-  <nft-modal-header [header]="'Create an Auction'" [bsModalRef]="bsModalRef"></nft-modal-header>
+  <nft-modal-header
+    [header]="'Create an Auction'"
+    [bsModalRef]="bsModalRef"
+  ></nft-modal-header>
 
   <!-- Pricing -->
   <div class="pt-15px pb-30px font-weight-500">
-    <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px ">
-      <div>
-        Minimum Bid Amount <span class="text-grey7">(Optional)</span>
-      </div>
-        <div class="d-flex flex-wrap">
-          <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
-               [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
-            <div class="input-group-prepend" id="usd-label">
-              <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
-            </div>
-            <input
-              [(ngModel)]="minBidAmountUSD"
-              (ngModelChange)="updateMinBidAmountDESO($event)"
-              [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}"
-              aria-describedby="usd-label"
-              class="form-control fs-15px text-right d-inline-block"
-              type="number" min="0"
-              placeholder="0"
-              [disabled]="creatingAuction"/>
+    <div
+      class="d-flex flex-wrap justify-content-between align-items-center fs-15px"
+    >
+      <div>Minimum Bid Amount <span class="text-grey7">(Optional)</span></div>
+      <div class="d-flex flex-wrap">
+        <div
+          class="input-group py-5px"
+          [ngClass]="{ 'mr-15px': !globalVars.isMobile() }"
+          [ngStyle]="{ 'max-width': !globalVars.isMobile() ? '200px' : 'none' }"
+        >
+          <div class="input-group-prepend" id="usd-label">
+            <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
           </div>
-          <div class="input-group py-5px"
-               [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
-            <div class="input-group-prepend" id="deso-label">
-              <span class="input-group-text fs-15px">DESO</span>
-            </div>
-            <input
-              [(ngModel)]="minBidAmountDESO"
-              (ngModelChange)="updateMinBidAmountUSD($event)"
-              aria-describedby="deso-label"
-              class="form-control fs-15px text-right d-inline-block"
-              type="number" min="0"
-              placeholder="0"
-              [disabled]="creatingAuction"/>
-          </div>
+          <input
+            [(ngModel)]="minBidAmountUSD"
+            (ngModelChange)="updateMinBidAmountDESO($event)"
+            [ngStyle]="{
+              'max-width': !globalVars.isMobile() ? '200px' : 'none'
+            }"
+            aria-describedby="usd-label"
+            class="form-control fs-15px text-right d-inline-block"
+            type="number"
+            min="0"
+            placeholder="0"
+            [disabled]="creatingAuction"
+          />
         </div>
+        <div
+          class="input-group py-5px"
+          [ngStyle]="{ 'max-width': !globalVars.isMobile() ? '200px' : 'none' }"
+        >
+          <div class="input-group-prepend" id="deso-label">
+            <span class="input-group-text fs-15px">DESO</span>
+          </div>
+          <input
+            [(ngModel)]="minBidAmountDESO"
+            (ngModelChange)="updateMinBidAmountUSD($event)"
+            aria-describedby="deso-label"
+            class="form-control fs-15px text-right d-inline-block"
+            type="number"
+            min="0"
+            placeholder="0"
+            [disabled]="creatingAuction"
+          />
+        </div>
+      </div>
       <ng-container *ngIf="!post.HasUnlockable">
-        <div class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px w-90">
+        <div
+          class="d-flex flex-wrap justify-content-between align-items-center fs-15px pt-10px w-90"
+        >
           <div>Enable "Buy Now"<span class="text-grey7">(Optional)</span></div>
-          <div class="custom-control custom-switch custom-switch-lg d-flex align-items-start">
+          <div
+            class="custom-control custom-switch custom-switch-lg d-flex align-items-start"
+          >
             <input
               [(ngModel)]="isBuyNow"
               (ngModelChange)="updateBuyNowStatus($event)"
@@ -49,31 +67,42 @@
               class="custom-control-input"
               id="buyNowSwitch"
               [disabled]="creatingAuction"
-            >
+            />
             <label class="custom-control-label" for="buyNowSwitch"></label>
           </div>
         </div>
-        <div class="pt-10px">
-          Buy Now Price
-        </div>
+        <div class="pt-10px">Buy Now Price</div>
         <div class="d-flex flex-wrap">
-          <div class="input-group py-5px" [ngClass]="{'mr-15px': !globalVars.isMobile()}"
-               [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+          <div
+            class="input-group py-5px"
+            [ngClass]="{ 'mr-15px': !globalVars.isMobile() }"
+            [ngStyle]="{
+              'max-width': !globalVars.isMobile() ? '200px' : 'none'
+            }"
+          >
             <div class="input-group-prepend" id="buy-now-usd-label">
               <span class="input-group-text fs-15px">&nbsp;USD&nbsp;</span>
             </div>
             <input
               [(ngModel)]="buyNowPriceUSD"
               (ngModelChange)="updateBuyNowPriceDESO($event)"
-              [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}"
+              [ngStyle]="{
+                'max-width': !globalVars.isMobile() ? '200px' : 'none'
+              }"
               aria-describedby="buy-now-usd-label"
               class="form-control fs-15px text-right d-inline-block"
-              type="number" min="0"
+              type="number"
+              min="0"
               placeholder="0"
-              [disabled]="creatingAuction || !isBuyNow"/>
+              [disabled]="creatingAuction || !isBuyNow"
+            />
           </div>
-          <div class="input-group py-5px"
-               [ngStyle]="{'max-width': !globalVars.isMobile() ? '200px' : 'none'}">
+          <div
+            class="input-group py-5px"
+            [ngStyle]="{
+              'max-width': !globalVars.isMobile() ? '200px' : 'none'
+            }"
+          >
             <div class="input-group-prepend" id="buy-now-deso-label">
               <span class="input-group-text fs-15px">DESO</span>
             </div>
@@ -85,38 +114,59 @@
               type="number"
               min="0"
               placeholder="0"
-              [disabled]="creatingAuction || !isBuyNow"/>
+              [disabled]="creatingAuction || !isBuyNow"
+            />
           </div>
         </div>
-        <div *ngIf="buyNowPriceDESO < minBidAmountDESO && isBuyNow" class="fc-red">
+        <div
+          *ngIf="buyNowPriceDESO < minBidAmountDESO && isBuyNow"
+          class="fc-red"
+        >
           Buy Now price must be greater than min bid amount
         </div>
       </ng-container>
-
     </div>
   </div>
 
-
   <div class="container fs-15px pb-30px px-0px">
-    <div class="row no-gutters background-color-white p-15px create-nft-auction-row-border"
-         style="opacity: 50%">
+    <div
+      class="row no-gutters background-color-white p-15px create-nft-auction-row-border"
+      style="opacity: 50%"
+    >
       <div class="col-5 mb-0px">
-        <input type="checkbox" class="w-10" [(ngModel)]="selectAll" (ngModelChange)="toggleSelectAll($event)"/>
+        <input
+          type="checkbox"
+          class="w-10"
+          [(ngModel)]="selectAll"
+          (ngModelChange)="toggleSelectAll($event)"
+        />
         Select All
       </div>
       <div class="col-7 mb-0px">Last Price</div>
     </div>
     <div style="max-height: 250px; overflow-y: scroll">
-      <div *ngFor="let nft of mySerialNumbersNotForSale()"
-           class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border">
+      <div
+        *ngFor="let nft of mySerialNumbersNotForSale()"
+        class="row no-gutters background-color-white p-15px mb-0px create-nft-auction-row-border"
+      >
         <div class="col-5 mb-0px d-flex align-items-center">
-          <input type="checkbox" style="width: 15px" [(ngModel)]="selectedSerialNumbers[nft.SerialNumber]"/>
-          <span class="lh-15px">&nbsp;#{{nft.SerialNumber}}</span>
+          <input
+            type="checkbox"
+            style="width: 15px"
+            [(ngModel)]="selectedSerialNumbers[nft.SerialNumber]"
+          />
+          <span class="lh-15px">&nbsp;#{{ nft.SerialNumber }}</span>
         </div>
-        <div class="col-7 mb-0px d-flex justify-content-between align-items-center">
+        <div
+          class="col-7 mb-0px d-flex justify-content-between align-items-center"
+        >
           <div>
-            {{globalVars.nanosToDeSo(nft.LastAcceptedBidAmountNanos)}} DESO
-            <span class="text-grey7">(~{{globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)}})</span>
+            {{ globalVars.nanosToDeSo(nft.LastAcceptedBidAmountNanos) }} DESO
+            <span class="text-grey7"
+              >(~{{
+                globalVars.nanosToUSD(nft.LastAcceptedBidAmountNanos, 2)
+              }})</span
+            >
           </div>
         </div>
       </div>
@@ -130,11 +180,12 @@
       (click)="createAuction()"
       [disabled]="creatingAuction || createAuctionDisabled()"
     >
-      {{ creatingAuction ? "Creating Auction" : "Create auction" }}
+      {{ creatingAuction ? 'Creating Auction' : 'Create auction' }}
     </button>
-    <div *ngIf="creatingAuction" class="pl-15px fs-15px"> {{ auctionCounter }} of {{ auctionTotal }} auctions created</div>
+    <div *ngIf="creatingAuction" class="pl-15px fs-15px">
+      {{ auctionCounter }} of {{ auctionTotal }} auctions created
+    </div>
   </div>
-
 
   <simple-center-loader *ngIf="loading"></simple-center-loader>
 </div>

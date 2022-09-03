@@ -4,9 +4,9 @@
     <div class="row d-flex justify-content-center landing__ticker">
       <div class="input-group w-auto">
         <div class="input-group-prepend">
-          <label class="landing__nav-buy input-group-text">
-            {{ globalVars.desoToUSDExchangeRateToDisplay }} USD
-          </label>
+          <label class="landing__nav-buy input-group-text"
+            >{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</label
+          >
         </div>
         <div class="input-group-append">
           <a
@@ -22,26 +22,32 @@
   </div>
 </div>
 <div class="w-100 d-lg-none d-flex align-items-center justify-content-center">
-  <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">
-    Sign Up and Get <free-deso-message></free-deso-message><b>Free</b>
-  </a>
+  <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()"
+    >Sign Up</a
+  >
 </div>
 
 <div class="w-100 border-bottom px-10px">
   <div class="container-lg landing__header">
     <div class="row">
-      <div class="col landing__logo deso" [ngStyle]="{'background': getLogoBackground()}"></div>
+      <div
+        class="col landing__logo deso"
+        [ngStyle]="{ background: getLogoBackground() }"
+      ></div>
       <div class="col d-lg-flex d-none align-items-center">
-        <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">
-          Sign Up and Get <free-deso-message></free-deso-message><b>Free</b>
-        </a>
+        <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()"
+          >Sign Up</a
+        >
       </div>
       <div class="d-flex align-items-center">
-        <div class="input-group w-auto d-none d-sm-flex" style="margin-left: 25px">
+        <div
+          class="input-group w-auto d-none d-sm-flex"
+          style="margin-left: 25px"
+        >
           <div class="input-group-prepend">
-            <label class="landing__nav-buy input-group-text">
-              {{ globalVars.desoToUSDExchangeRateToDisplay }} USD
-            </label>
+            <label class="landing__nav-buy input-group-text"
+              >{{ globalVars.desoToUSDExchangeRateToDisplay }} USD</label
+            >
           </div>
           <div class="input-group-append">
             <a
@@ -53,10 +59,27 @@
             </a>
           </div>
         </div>
-        <a class="landing__nav-link" href="https://docs.deso.org/" target="_blank">About</a>
-        <a class="landing__nav-link" href="https://docs.deso.org/#the-ultimate-vision" target="_blank">Vision</a>
-        <a class="landing__nav-link" href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>
-        <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()">Sign Up</a>
+        <a
+          class="landing__nav-link"
+          href="https://docs.deso.org/"
+          target="_blank"
+          >About</a
+        >
+        <a
+          class="landing__nav-link"
+          href="https://docs.deso.org/#the-ultimate-vision"
+          target="_blank"
+          >Vision</a
+        >
+        <a
+          class="landing__nav-link"
+          href="https://docs.deso.org/zhong-wen"
+          target="_blank"
+          >中文</a
+        >
+        <a class="landing__nav-link" (click)="globalVars.launchSignupFlow()"
+          >Sign Up</a
+        >
       </div>
     </div>
   </div>
@@ -71,16 +94,26 @@
         Social Network
       </h1>
       <div class="slide-up-2">
-        <a class="btn btn-primary landing__sign-up" (click)="globalVars.launchSignupFlow()">
-          <div style="font-weight: bold; font-size: 20px;">
-            Sign Up
-          </div>
-          <div class="mt-1 fs-15px">
-            Get <free-deso-message></free-deso-message> Free
-          </div>
+        <a
+          class="btn btn-primary landing__sign-up"
+          (click)="globalVars.launchSignupFlow()"
+        >
+          <div style="font-weight: bold; font-size: 20px">Sign Up</div>
         </a>
-        <a class="landing__log-in d-none d-sm-block" (click)="globalVars.launchLoginFlow()" style="font-size: 15px;">Log in</a>
-        <a class="landing__log-in d-block d-sm-none mt-3" (click)="globalVars.launchLoginFlow()" style="font-size: 15px;">Log in</a>
+        <a
+          class="landing__log-in d-none d-sm-block"
+          (click)="globalVars.launchLoginFlow()"
+          style="font-size: 15px"
+        >
+          Log in
+        </a>
+        <a
+          class="landing__log-in d-block d-sm-none mt-3"
+          (click)="globalVars.launchLoginFlow()"
+          style="font-size: 15px"
+        >
+          Log in
+        </a>
       </div>
     </div>
   </div>
@@ -96,8 +129,7 @@
         <br />
         <br />
         <a href="https://docs.deso.org/" target="_blank">Learn More</a>
-        &nbsp;
-        &nbsp;
+        &nbsp; &nbsp;
         <a href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
@@ -155,7 +187,11 @@
     </div>
   </div>
 
-  <div class="row d-flex justify-content-center invisible" animateOnScroll animationName="slide-up-3">
+  <div
+    class="row d-flex justify-content-center invisible"
+    animateOnScroll
+    animationName="slide-up-3"
+  >
     <div class="row d-flex justify-content-center">
       <a
         class="btn btn-sm btn-outline-primary landing__btn-cta"
@@ -167,7 +203,11 @@
     </div>
   </div>
 
-  <div class="row d-flex justify-content-center invisible" animateOnScroll animationName="slide-up">
+  <div
+    class="row d-flex justify-content-center invisible"
+    animateOnScroll
+    animationName="slide-up"
+  >
     <div class="col-lg-8 col-md-9 col-sm-12 text-center landing__prop">
       <h3 class="landing__prop-header">Decentralized like Bitcoin</h3>
       <p class="landing__prop-desc">
@@ -178,9 +218,10 @@
         You can own a piece by buying the $DESO coin.
         <br />
         <br />
-        <a href="https://docs.deso.org/#the-ultimate-vision" target="_blank">Learn More</a>
-        &nbsp;
-        &nbsp;
+        <a href="https://docs.deso.org/#the-ultimate-vision" target="_blank"
+          >Learn More</a
+        >
+        &nbsp; &nbsp;
         <a href="https://docs.deso.org/zhong-wen" target="_blank">中文</a>
       </p>
       <div class="row d-flex justify-content-center">
@@ -188,7 +229,9 @@
           <div *ngFor="let post of featuredPosts">
             <div class="d-flex border-bottom pb-3 pt-3">
               <img class="landing__post-img" src="{{ post.pic }}" />
-              <div class="d-flex flex-column justify-content-start text-left ml-3">
+              <div
+                class="d-flex flex-column justify-content-start text-left ml-3"
+              >
                 <div>
                   <span class="font-weight-bold">{{ post.name }}</span>
                   <span class="text-greyA fs-12px ml-2">{{ post.when }}</span>
@@ -202,11 +245,19 @@
                     <span class="fs-12px">{{ post.comments }}</span>
                   </div>
                   <div class="mr-5 d-flex align-items-center text-grey6">
-                    <i [ngClass]="post.reposted ? 'fc-green' : ''" class="icon-repost mr-2 fs-20px"></i>
+                    <i
+                      [ngClass]="post.reposted ? 'fc-green' : ''"
+                      class="icon-repost mr-2 fs-20px"
+                    ></i>
                     <span class="fs-12px">{{ post.reposts }}</span>
                   </div>
                   <div class="mr-5 d-flex align-items-center text-grey6">
-                    <i [ngClass]="post.liked ? 'icon-heart-fill fc-red' : 'icon-heart'" class="mr-1 fs-20px"></i>
+                    <i
+                      [ngClass]="
+                        post.liked ? 'icon-heart-fill fc-red' : 'icon-heart'
+                      "
+                      class="mr-1 fs-20px"
+                    ></i>
                     <span class="fs-12px">{{ post.likes }}</span>
                   </div>
                 </div>
@@ -218,9 +269,16 @@
     </div>
   </div>
 
-  <div class="row d-flex justify-content-center invisible" animateOnScroll animationName="slide-up">
+  <div
+    class="row d-flex justify-content-center invisible"
+    animateOnScroll
+    animationName="slide-up"
+  >
     <div class="row d-flex justify-content-center">
-      <a class="btn btn-sm btn-outline-primary landing__btn-cta" (click)="globalVars.launchSignupFlow()">
+      <a
+        class="btn btn-sm btn-outline-primary landing__btn-cta"
+        (click)="globalVars.launchSignupFlow()"
+      >
         Create your feed
       </a>
     </div>
@@ -228,7 +286,11 @@
 </div>
 
 <div class="container-lg border-top border-left border-right landing__platform">
-  <div class="row d-flex justify-content-center invisible" animateOnScroll animationName="slide-up">
+  <div
+    class="row d-flex justify-content-center invisible"
+    animateOnScroll
+    animationName="slide-up"
+  >
     <div class="col-sm-11 col-md-12 text-center">
       <h2 class="landing__platform-header">A platform owned by its users.</h2>
       <h4 class="landing__platform-desc">
@@ -239,7 +301,11 @@
         {{ environment.node.name }} is decentralizing
         <b>social media.</b>
       </h4>
-      <a class="btn btn-sm btn-outline-primary landing__btn-cta" href="https://docs.deso.org/" target="_blank">
+      <a
+        class="btn btn-sm btn-outline-primary landing__btn-cta"
+        href="https://docs.deso.org/"
+        target="_blank"
+      >
         Learn More
       </a>
     </div>
@@ -254,8 +320,16 @@
       animationName="slide-up"
     >
       <div class="col text-center">
-        <a class="btn btn-primary landing__sign-up" (click)="globalVars.launchSignupFlow()">Sign Up</a>
-        <a class="landing__log-in d-none d-md-block" (click)="globalVars.launchLoginFlow()">Log in</a>
+        <a
+          class="btn btn-primary landing__sign-up"
+          (click)="globalVars.launchSignupFlow()"
+          >Sign Up</a
+        >
+        <a
+          class="landing__log-in d-none d-md-block"
+          (click)="globalVars.launchLoginFlow()"
+          >Log in</a
+        >
       </div>
     </div>
   </div>
@@ -266,8 +340,10 @@
     <div class="row d-flex justify-content-center">
       <div class="col mb-0 text-center">
         <p class="text-grey9 fs-20px">The future is decentralized.</p>
-        <br>
-        <a href="mailto:node.admin+contact@protonmail.com" class="fs-12px">Contact</a>
+        <br />
+        <a href="mailto:node.admin+contact@protonmail.com" class="fs-12px"
+          >Contact</a
+        >
       </div>
     </div>
   </div>

@@ -1,7 +1,5 @@
 <div class="p-15px">
-  <div>
-    Add a new fee recipient for {{ txnType }} transactions
-  </div>
+  <div>Add a new fee recipient for {{ txnType }} transactions</div>
   <div>
     <search-bar
       [showCloutavista]="false"
@@ -21,22 +19,42 @@
     <div class="input-group-prepend">
       <span class="input-group-text">Fee Amount Received (in $DESO)</span>
     </div>
-    <input class="form-control" type="number" matInput [(ngModel)]="feeAmount" />
+    <input
+      class="form-control"
+      type="number"
+      matInput
+      [(ngModel)]="feeAmount"
+    />
   </div>
-  <button (click)="setTransactionFees()" class="btn btn-outline-primary fs-15px" [disabled]="feeAmount <= 0 || !selectedCreator?.PublicKeyBase58Check || updatingTransactionFees">
+  <button
+    (click)="setTransactionFees()"
+    class="btn btn-outline-primary fs-15px"
+    [disabled]="
+      feeAmount <= 0 ||
+      !selectedCreator?.PublicKeyBase58Check ||
+      updatingTransactionFees
+    "
+  >
     Add Fee
   </button>
   <div *ngIf="transactionFeeMap[txnType]?.length" class="py-15px">
-    <div>
-      Existing Fee Recipients for {{ txnType }} Transactions
-    </div>
-    <div *ngFor="let transactionFee of transactionFeeMap[txnType]" class="d-flex flex-start align-items-center">
+    <div>Existing Fee Recipients for {{ txnType }} Transactions</div>
+    <div
+      *ngFor="let transactionFee of transactionFeeMap[txnType]"
+      class="d-flex flex-start align-items-center"
+    >
       <simple-profile-card
-        [profile]="transactionFee.ProfileEntryResponse || { PublicKeyBase58Check: transactionFee.PublicKeyBase58Check }"
+        [profile]="
+          transactionFee.ProfileEntryResponse || {
+            PublicKeyBase58Check: transactionFee.PublicKeyBase58Check
+          }
+        "
         [hideFollowLink]="true"
         [singleColumn]="true"
       ></simple-profile-card>
-      <span> {{ globalVars.nanosToDeSo(transactionFee.AmountNanos) }} $DESO </span>
+      <span>
+        {{ globalVars.nanosToDeSo(transactionFee.AmountNanos) }} $DESO
+      </span>
     </div>
   </div>
 </div>

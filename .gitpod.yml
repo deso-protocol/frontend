@@ -1,3 +1,7 @@
+# Use custom node & npm versions in image
+image:
+  file: .gitpod.Dockerfile
+
 # Commands to start on workspace startup
 tasks:
   - name: open terminial
@@ -12,7 +16,7 @@ vscode:
     - angular.ng-template
     - ecmel.vscode-html-css
     - eamodio.gitlens
-    
+
 # Ports to expose on workspace startup
 ports:
   - port: 4200

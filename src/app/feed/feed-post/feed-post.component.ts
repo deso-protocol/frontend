@@ -1,27 +1,40 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterViewInit } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { BackendApiService, DeSoNode, NFTEntryResponse, PostEntryResponse } from "../../backend-api.service";
-import { AppRoutingModule } from "../../app-routing.module";
-import { Router } from "@angular/router";
-import { SwalHelper } from "../../../lib/helpers/swal-helper";
-import { FeedPostImageModalComponent } from "../feed-post-image-modal/feed-post-image-modal.component";
-import { DiamondsModalComponent } from "../../diamonds-modal/diamonds-modal.component";
-import { LikesModalComponent } from "../../likes-modal/likes-modal.component";
-import { RepostsModalComponent } from "../../reposts-modal/reposts-modal.component";
-import { QuoteRepostsModalComponent } from "../../quote-reposts-modal/quote-reposts-modal.component";
-import { BsModalService } from "ngx-bootstrap/modal";
-import { DomSanitizer } from "@angular/platform-browser";
-import * as _ from "lodash";
-import { PlaceBidModalComponent } from "../../place-bid-modal/place-bid-modal.component";
-import { EmbedUrlParserService } from "../../../lib/services/embed-url-parser-service/embed-url-parser-service";
-import { SharedDialogs } from "../../../lib/shared-dialogs";
-import { environment } from "src/environments/environment";
-import { TransferNftAcceptModalComponent } from "../../transfer-nft-accept-modal/transfer-nft-accept-modal.component";
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  AfterViewInit,
+} from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import {
+  BackendApiService,
+  DeSoNode,
+  NFTEntryResponse,
+  PostEntryResponse,
+} from '../../backend-api.service';
+import { AppRoutingModule } from '../../app-routing.module';
+import { Router } from '@angular/router';
+import { SwalHelper } from '../../../lib/helpers/swal-helper';
+import { FeedPostImageModalComponent } from '../feed-post-image-modal/feed-post-image-modal.component';
+import { DiamondsModalComponent } from '../../diamonds-modal/diamonds-modal.component';
+import { LikesModalComponent } from '../../likes-modal/likes-modal.component';
+import { RepostsModalComponent } from '../../reposts-modal/reposts-modal.component';
+import { QuoteRepostsModalComponent } from '../../quote-reposts-modal/quote-reposts-modal.component';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { DomSanitizer } from '@angular/platform-browser';
+import * as _ from 'lodash';
+import { PlaceBidModalComponent } from '../../place-bid-modal/place-bid-modal.component';
+import { EmbedUrlParserService } from '../../../lib/services/embed-url-parser-service/embed-url-parser-service';
+import { SharedDialogs } from '../../../lib/shared-dialogs';
+import { environment } from 'src/environments/environment';
+import { TransferNftAcceptModalComponent } from '../../transfer-nft-accept-modal/transfer-nft-accept-modal.component';
 
 @Component({
-  selector: "feed-post",
-  templateUrl: "./feed-post.component.html",
-  styleUrls: ["./feed-post.component.sass"],
+  selector: 'feed-post',
+  templateUrl: './feed-post.component.html',
+  styleUrls: ['./feed-post.component.sass'],
 })
 export class FeedPostComponent implements OnInit {
   @Input()
@@ -108,7 +121,7 @@ export class FeedPostComponent implements OnInit {
   @Input() setBorder = false;
   @Input() showAvailableSerialNumbers = false;
 
-  @Input() profilePublicKeyBase58Check: string = "";
+  @Input() profilePublicKeyBase58Check: string = '';
 
   // If the post is shown in a modal, this is used to hide the modal on post click.
   @Input() containerModalRef: any = null;
@@ -158,7 +171,7 @@ export class FeedPostComponent implements OnInit {
   unlockableTooltip =
     "This NFT will come with content that's encrypted and only unlockable by the winning bidder. Note that if an NFT is being resold, it is not guaranteed that the new unlockable will be the same original unlockable.";
   mOfNNFTTooltip =
-    "Each NFT can have multiple editions, each of which has its own unique serial number. This shows how many editions are currently on sale and how many there are in total. Generally, editions with lower serial numbers are more valuable.";
+    'Each NFT can have multiple editions, each of which has its own unique serial number. This shows how many editions are currently on sale and how many there are in total. Generally, editions with lower serial numbers are more valuable.';
 
   getNFTEntries() {
     this.backendApi
@@ -172,7 +185,8 @@ export class FeedPostComponent implements OnInit {
         this.nftEntryResponses.sort((a, b) => a.SerialNumber - b.SerialNumber);
         this.decryptableNFTEntryResponses = this.nftEntryResponses.filter(
           (sn) =>
-            sn.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check &&
+            sn.OwnerPublicKeyBase58Check ===
+              this.globalVars.loggedInUser?.PublicKeyBase58Check &&
             sn.EncryptedUnlockableText &&
             sn.LastOwnerPublicKeyBase58Check
         );
@@ -184,36 +198,52 @@ export class FeedPostComponent implements OnInit {
             )
             .subscribe((res) => (this.decryptableNFTEntryResponses = res));
         }
-        this.availableSerialNumbers = this.nftEntryResponses.filter((nftEntryResponse) => nftEntryResponse.IsForSale);
+        this.availableSerialNumbers = this.nftEntryResponses.filter(
+          (nftEntryResponse) => nftEntryResponse.IsForSale
+        );
         const profileSerialNumbers = this.nftEntryResponses.filter(
           (serialNumber) =>
-            serialNumber.OwnerPublicKeyBase58Check === this.profilePublicKeyBase58Check &&
+            serialNumber.OwnerPublicKeyBase58Check ===
+              this.profilePublicKeyBase58Check &&
             (!this.isForSaleOnly || serialNumber.IsForSale)
         );
         this.serialNumbersDisplay =
           profileSerialNumbers
             .map((serialNumber) => `#${serialNumber.SerialNumber}`)
             .slice(0, 5)
-            .join(", ") + (profileSerialNumbers.length > 5 ? "..." : "");
+            .join(', ') + (profileSerialNumbers.length > 5 ? '...' : '');
         this.mySerialNumbersNotForSale = this.nftEntryResponses.filter(
           (nftEntryResponse) =>
             !nftEntryResponse.IsForSale &&
-            nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+            nftEntryResponse.OwnerPublicKeyBase58Check ===
+              this.globalVars.loggedInUser?.PublicKeyBase58Check
         );
         this.myAvailableSerialNumbers = this.availableSerialNumbers.filter(
           (nftEntryResponse) =>
-            nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser?.PublicKeyBase58Check
+            nftEntryResponse.OwnerPublicKeyBase58Check ===
+            this.globalVars.loggedInUser?.PublicKeyBase58Check
         );
-        this.showPlaceABid = !!(this.availableSerialNumbers.length - this.myAvailableSerialNumbers.length);
-        this.highBid = _.maxBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
-        this.lowBid = _.minBy(this.availableSerialNumbers, "HighestBidAmountNanos")?.HighestBidAmountNanos || 0;
+        this.showPlaceABid = !!(
+          this.availableSerialNumbers.length -
+          this.myAvailableSerialNumbers.length
+        );
+        this.highBid =
+          _.maxBy(this.availableSerialNumbers, 'HighestBidAmountNanos')
+            ?.HighestBidAmountNanos || 0;
+        this.lowBid =
+          _.minBy(this.availableSerialNumbers, 'HighestBidAmountNanos')
+            ?.HighestBidAmountNanos || 0;
         if (this.nftEntryResponses.length === 1) {
           const nftEntryResponse = this.nftEntryResponses[0];
-          this.nftLastAcceptedBidAmountNanos = nftEntryResponse.LastAcceptedBidAmountNanos;
+          this.nftLastAcceptedBidAmountNanos =
+            nftEntryResponse.LastAcceptedBidAmountNanos;
           if (nftEntryResponse.MinBidAmountNanos > 0) {
             this.nftMinBidAmountNanos = nftEntryResponse.MinBidAmountNanos;
           }
-          if (nftEntryResponse.BuyNowPriceNanos > 0 && nftEntryResponse.IsBuyNow) {
+          if (
+            nftEntryResponse.BuyNowPriceNanos > 0 &&
+            nftEntryResponse.IsBuyNow
+          ) {
             this.nftBuyNowPriceNanos = nftEntryResponse.BuyNowPriceNanos;
           }
         }
@@ -230,7 +260,11 @@ export class FeedPostComponent implements OnInit {
       this.post.RepostCount = 0;
     }
     this.setEmbedURLForPostContent();
-    if (this.showNFTDetails && this.postContent.IsNFT && !this.nftEntryResponses?.length) {
+    if (
+      this.showNFTDetails &&
+      this.postContent.IsNFT &&
+      !this.nftEntryResponses?.length
+    ) {
       this.getNFTEntries();
     }
   }
@@ -256,35 +290,44 @@ export class FeedPostComponent implements OnInit {
     }
 
     // don't navigate if the user clicked a link
-    if (event.target.tagName.toLowerCase() === "a") {
+    if (event.target.tagName.toLowerCase() === 'a') {
       return true;
     }
 
-    const route = this.postContent.IsNFT ? this.globalVars.RouteNames.NFT : this.globalVars.RouteNames.POSTS;
+    const route = this.postContent.IsNFT
+      ? this.globalVars.RouteNames.NFT
+      : this.globalVars.RouteNames.POSTS;
 
     // identify ctrl+click (or) cmd+clik and opens feed in new tab
     if (event.ctrlKey) {
       const url = this.router.serializeUrl(
-        this.router.createUrlTree(["/" + route, this.postContent.PostHashHex], {
-          queryParamsHandling: "merge",
+        this.router.createUrlTree(['/' + route, this.postContent.PostHashHex], {
+          queryParamsHandling: 'merge',
         })
       );
-      window.open(url, "_blank");
+      window.open(url, '_blank');
       // don't navigate after new tab is opened
       return true;
     }
 
-    this.router.navigate(["/" + route, this.postContent.PostHashHex], {
-      queryParamsHandling: "merge",
+    this.router.navigate(['/' + route, this.postContent.PostHashHex], {
+      queryParamsHandling: 'merge',
     });
   }
 
   isRepost(post: any): boolean {
-    return post.Body === "" && (!post.ImageURLs || post.ImageURLs?.length === 0) && post.RepostedPostEntryResponse;
+    return (
+      post.Body === '' &&
+      (!post.ImageURLs || post.ImageURLs?.length === 0) &&
+      post.RepostedPostEntryResponse
+    );
   }
 
   isQuotedRepost(post: any): boolean {
-    return (post.Body !== "" || post.ImageURLs?.length > 0) && post.RepostedPostEntryResponse;
+    return (
+      (post.Body !== '' || post.ImageURLs?.length > 0) &&
+      post.RepostedPostEntryResponse
+    );
   }
 
   isRegularPost(post: any): boolean {
@@ -294,7 +337,7 @@ export class FeedPostComponent implements OnInit {
   openImgModal(event, imageURL) {
     event.stopPropagation();
     this.modalService.show(FeedPostImageModalComponent, {
-      class: "modal-dialog-centered modal-lg",
+      class: 'modal-dialog-centered modal-lg',
       initialState: {
         imageURL,
       },
@@ -304,7 +347,7 @@ export class FeedPostComponent implements OnInit {
   openInteractionModal(event, component): void {
     event.stopPropagation();
     this.modalService.show(component, {
-      class: "modal-dialog-centered",
+      class: 'modal-dialog-centered',
       initialState: { postHashHex: this.post.PostHashHex },
     });
   }
@@ -336,12 +379,12 @@ export class FeedPostComponent implements OnInit {
   hidePost() {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Hide post?",
+      title: 'Hide post?',
       html: `This can’t be undone. The post will be removed from your profile, from search results, and from the feeds of anyone who follows you.`,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((response: any) => {
@@ -361,24 +404,28 @@ export class FeedPostComponent implements OnInit {
             this.globalVars.localNode,
             this.globalVars.loggedInUser.PublicKeyBase58Check,
             this._post.PostHashHex /*PostHashHexToModify*/,
-            "" /*ParentPostHashHex*/,
-            "" /*Title*/,
-            { Body: this._post.Body, ImageURLs: this._post.ImageURLs, VideoURLs: this._post.VideoURLs } /*BodyObj*/,
-            this._post.RepostedPostEntryResponse?.PostHashHex || "",
+            '' /*ParentPostHashHex*/,
+            '' /*Title*/,
+            {
+              Body: this._post.Body,
+              ImageURLs: this._post.ImageURLs,
+              VideoURLs: this._post.VideoURLs,
+            } /*BodyObj*/,
+            this._post.RepostedPostEntryResponse?.PostHashHex || '',
             {},
-            "" /*Sub*/,
+            '' /*Sub*/,
             true /*IsHidden*/,
             this.globalVars.feeRateDeSoPerKB * 1e9 /*feeRateNanosPerKB*/
           )
           .subscribe(
             (response) => {
-              this.globalVars.logEvent("post : hide");
+              this.globalVars.logEvent('post : hide');
               this.postDeleted.emit(response.PostEntryResponse);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.parsePostError(err);
-              this.globalVars.logEvent("post : hide : error", { parsedError });
+              this.globalVars.logEvent('post : hide : error', { parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -389,12 +436,12 @@ export class FeedPostComponent implements OnInit {
   blockUser() {
     SwalHelper.fire({
       target: this.globalVars.getTargetComponentSelector(),
-      title: "Block user?",
+      title: 'Block user?',
       html: `This will hide all comments from this user on your posts as well as hide them from your view on your feed and other threads.`,
       showCancelButton: true,
       customClass: {
-        confirmButton: "btn btn-light",
-        cancelButton: "btn btn-light no",
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
       },
       reverseButtons: true,
     }).then((response: any) => {
@@ -407,14 +454,16 @@ export class FeedPostComponent implements OnInit {
           )
           .subscribe(
             () => {
-              this.globalVars.logEvent("user : block");
-              this.globalVars.loggedInUser.BlockedPubKeys[this.post.PosterPublicKeyBase58Check] = {};
+              this.globalVars.logEvent('user : block');
+              this.globalVars.loggedInUser.BlockedPubKeys[
+                this.post.PosterPublicKeyBase58Check
+              ] = {};
               this.userBlocked.emit(this.post.PosterPublicKeyBase58Check);
             },
             (err) => {
               console.error(err);
               const parsedError = this.backendApi.stringifyError(err);
-              this.globalVars.logEvent("user : block : error", { parsedError });
+              this.globalVars.logEvent('user : block : error', { parsedError });
               this.globalVars._alertError(parsedError);
             }
           );
@@ -424,7 +473,7 @@ export class FeedPostComponent implements OnInit {
 
   _numToFourChars(numToConvert: number) {
     let abbrev = numToConvert.toFixed(2);
-    const hasDecimal = abbrev.split(".").length == 2;
+    const hasDecimal = abbrev.split('.').length == 2;
     if (hasDecimal) {
       // If it has a decimal and is <1000, there are three cases to consider.
       if (abbrev.length <= 4) {
@@ -444,17 +493,17 @@ export class FeedPostComponent implements OnInit {
       return abbrev;
     }
 
-    abbrev = (numToConvert / 1e3).toFixed() + "K";
+    abbrev = (numToConvert / 1e3).toFixed() + 'K';
     if (abbrev.length <= 4) {
       return abbrev;
     }
 
-    abbrev = (numToConvert / 1e6).toFixed() + "M";
+    abbrev = (numToConvert / 1e6).toFixed() + 'M';
     if (abbrev.length <= 4) {
       return abbrev;
     }
 
-    abbrev = (numToConvert / 1e9).toFixed() + "B";
+    abbrev = (numToConvert / 1e9).toFixed() + 'B';
     if (abbrev.length <= 4) {
       return abbrev;
     }
@@ -477,10 +526,12 @@ export class FeedPostComponent implements OnInit {
       .subscribe(
         (res) => {
           this.post.InGlobalFeed = !this.post.InGlobalFeed;
-          this.globalVars.logEvent("admin: add-post-to-global-feed", {
+          this.globalVars.logEvent('admin: add-post-to-global-feed', {
             postHashHex,
-            userPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            username: this.globalVars.loggedInUser?.ProfileEntryResponse?.Username,
+            userPublicKeyBase58Check: this.globalVars.loggedInUser
+              ?.PublicKeyBase58Check,
+            username: this.globalVars.loggedInUser?.ProfileEntryResponse
+              ?.Username,
           });
           this.ref.detectChanges();
         },
@@ -511,10 +562,12 @@ export class FeedPostComponent implements OnInit {
       .subscribe(
         (res) => {
           this._post.IsPinned = isPostPinned;
-          this.globalVars.logEvent("admin: pin-post-to-global-feed", {
+          this.globalVars.logEvent('admin: pin-post-to-global-feed', {
             postHashHex,
-            userPublicKeyBase58Check: this.globalVars.loggedInUser?.PublicKeyBase58Check,
-            username: this.globalVars.loggedInUser?.ProfileEntryResponse?.Username,
+            userPublicKeyBase58Check: this.globalVars.loggedInUser
+              ?.PublicKeyBase58Check,
+            username: this.globalVars.loggedInUser?.ProfileEntryResponse
+              ?.Username,
           });
           this.ref.detectChanges();
         },
@@ -532,20 +585,24 @@ export class FeedPostComponent implements OnInit {
     EmbedUrlParserService.getEmbedURL(
       this.backendApi,
       this.globalVars,
-      this.postContent.PostExtraData["EmbedVideoURL"]
+      this.postContent.PostExtraData['EmbedVideoURL']
     ).subscribe((res) => (this.constructedEmbedURL = res));
   }
 
   getEmbedHeight(): number {
-    return EmbedUrlParserService.getEmbedHeight(this.postContent.PostExtraData["EmbedVideoURL"]);
+    return EmbedUrlParserService.getEmbedHeight(
+      this.postContent.PostExtraData['EmbedVideoURL']
+    );
   }
 
   getEmbedWidth(): string {
-    return EmbedUrlParserService.getEmbedWidth(this.postContent.PostExtraData["EmbedVideoURL"]);
+    return EmbedUrlParserService.getEmbedWidth(
+      this.postContent.PostExtraData['EmbedVideoURL']
+    );
   }
 
   getNode(): DeSoNode {
-    const nodeId = this.postContent.PostExtraData["Node"];
+    const nodeId = this.postContent.PostExtraData['Node'];
     if (nodeId && nodeId != environment.node.id) {
       const node = this.globalVars.nodes[nodeId];
       if (node) {
@@ -560,31 +617,41 @@ export class FeedPostComponent implements OnInit {
   }
 
   mapImageURLs(imgURL: string): string {
-    if (imgURL.startsWith("https://i.imgur.com")) {
-      return imgURL.replace("https://i.imgur.com", "https://images.bitclout.com/i.imgur.com");
+    if (imgURL.startsWith('https://i.imgur.com')) {
+      return imgURL.replace(
+        'https://i.imgur.com',
+        'https://images.bitclout.com/i.imgur.com'
+      );
     }
     return imgURL;
   }
 
   acceptTransfer(event) {
     event.stopPropagation();
-    const transferNFTEntryResponses = _.filter(this.nftEntryResponses, (nftEntryResponse: NFTEntryResponse) => {
-      return (
-        nftEntryResponse.OwnerPublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
-        nftEntryResponse.IsPending
-      );
-    });
+    const transferNFTEntryResponses = _.filter(
+      this.nftEntryResponses,
+      (nftEntryResponse: NFTEntryResponse) => {
+        return (
+          nftEntryResponse.OwnerPublicKeyBase58Check ===
+            this.globalVars.loggedInUser.PublicKeyBase58Check &&
+          nftEntryResponse.IsPending
+        );
+      }
+    );
 
-    const modalDetails = this.modalService.show(TransferNftAcceptModalComponent, {
-      class: "modal-dialog-centered modal-lg",
-      initialState: {
-        post: this.postContent,
-        transferNFTEntryResponses,
-      },
-    });
+    const modalDetails = this.modalService.show(
+      TransferNftAcceptModalComponent,
+      {
+        class: 'modal-dialog-centered modal-lg',
+        initialState: {
+          post: this.postContent,
+          transferNFTEntryResponses,
+        },
+      }
+    );
     const onHideEvent = modalDetails.onHide;
     onHideEvent.subscribe((response) => {
-      if (response === "transfer accepted") {
+      if (response === 'transfer accepted') {
         this.getNFTEntries();
       }
     });
@@ -592,20 +659,23 @@ export class FeedPostComponent implements OnInit {
 
   openPlaceBidModal(event: any) {
     if (!this.globalVars.loggedInUser?.ProfileEntryResponse) {
-      SharedDialogs.showCreateProfileToPerformActionDialog(this.router, "place a bid");
+      SharedDialogs.showCreateProfileToPerformActionDialog(
+        this.router,
+        'place a bid'
+      );
       return;
     }
     event.stopPropagation();
     const modalDetails = this.modalService.show(PlaceBidModalComponent, {
-      class: "modal-dialog-centered modal-lg",
+      class: 'modal-dialog-centered modal-lg',
       initialState: { post: this.postContent },
     });
     const onHideEvent = modalDetails.onHide;
     onHideEvent.subscribe((response) => {
-      if (response === "bid placed") {
+      if (response === 'bid placed') {
         this.getNFTEntries();
         this.nftBidPlaced.emit();
-      } else if (response === "nft purchased") {
+      } else if (response === 'nft purchased') {
         this.getNFTEntries();
         this.refreshNFTEntries.emit();
       }

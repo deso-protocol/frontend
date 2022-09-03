@@ -30,7 +30,9 @@
       <a
         (click)="onPostClicked($event)"
         class="link--unstyled"
-        [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, post.PostHashHex])"
+        [routerLink]="
+          getRouterLink(['/' + globalVars.RouteNames.POSTS, post.PostHashHex])
+        "
         queryParamsHandling="merge"
       >
         This post was removed by the author.
@@ -44,16 +46,27 @@
       <a
         class="link--unstyled"
         style="text-align: center"
-        [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, post.ProfileEntryResponse.Username])"
+        [routerLink]="
+          getRouterLink([
+            '/' + globalVars.RouteNames.USER_PREFIX,
+            post.ProfileEntryResponse.Username
+          ])
+        "
         queryParamsHandling="merge"
       >
-        This is a post from {{ post.ProfileEntryResponse.Username }} who you have blocked. Click here to visit their
-        profile to unblock them.
+        This is a post from {{ post.ProfileEntryResponse.Username }} who you
+        have blocked. Click here to visit their profile to unblock them.
       </a>
     </div>
 
     <div
-      *ngIf="!post.IsHidden && !hidingPost && !globalVars.hasUserBlockedCreator(postContent.PosterPublicKeyBase58Check)"
+      *ngIf="
+        !post.IsHidden &&
+        !hidingPost &&
+        !globalVars.hasUserBlockedCreator(
+          postContent.PosterPublicKeyBase58Check
+        )
+      "
       class="d-flex flex-column js-feed-post"
       [ngStyle]="{ 'border-radius': setBorder ? '12px 12px 0 0' : '' }"
     >
@@ -72,7 +85,12 @@
           <a
             class="fc-muted font-weight-semibold fs-15px"
             queryParamsHandling="merge"
-            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, post.ParentPosts[0].ProfileEntryResponse.Username])"
+            [routerLink]="
+              getRouterLink([
+                '/' + globalVars.RouteNames.USER_PREFIX,
+                post.ParentPosts[0].ProfileEntryResponse.Username
+              ])
+            "
           >
             replying to {{ post.ParentPosts[0].ProfileEntryResponse.Username }}
           </a>
@@ -90,10 +108,17 @@
           <a
             class="fc-muted font-weight-semibold align-items-center"
             queryParamsHandling="merge"
-            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, reposterProfile.Username])"
+            [routerLink]="
+              getRouterLink([
+                '/' + globalVars.RouteNames.USER_PREFIX,
+                reposterProfile.Username
+              ])
+            "
           >
             <i class="icon-repost fs-20px" style="vertical-align: middle"></i>
-            <span style="vertical-align: middle" class="fs-15px">@{{ reposterProfile.Username }} reposted</span>
+            <span style="vertical-align: middle" class="fs-15px"
+              >@{{ reposterProfile.Username }} reposted</span
+            >
           </a>
 
           <feed-post-dropdown
@@ -123,7 +148,12 @@
           <a
             (click)="onPostClicked($event)"
             class="link--unstyled"
-            [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
+            [routerLink]="
+              getRouterLink([
+                '/' + globalVars.RouteNames.POSTS,
+                postContent.PostHashHex
+              ])
+            "
             queryParamsHandling="merge"
           >
             The original post was removed by its author.
@@ -135,11 +165,22 @@
           <a
             style="padding: 3px"
             class="creator-coin-info fs-12px font-weight-bold feed-post__coin-price-holder br-12px"
-            [routerLink]="getRouterLink(AppRoutingModule.buyCreatorPath(postContent.ProfileEntryResponse.Username))"
+            [routerLink]="
+              getRouterLink(
+                AppRoutingModule.buyCreatorPath(
+                  postContent.ProfileEntryResponse.Username
+                )
+              )
+            "
             queryParamsHandling="merge"
           >
             <span class="text-grey5">
-              ~{{ globalVars.nanosToUSD(postContent.ProfileEntryResponse.CoinPriceDeSoNanos, 2) }}
+              ~{{
+                globalVars.nanosToUSD(
+                  postContent.ProfileEntryResponse.CoinPriceDeSoNanos,
+                  2
+                )
+              }}
             </span>
 
             <!-- Buy link -->
@@ -157,7 +198,12 @@
             'feed-post__parent-post-font-size': isParentPostInThread
           }"
           [ngStyle]="{
-            'border-radius': showLeftSelectedBorder && cardStyle ? (postContent.IsNFT && showNFTDetails ? '12px 0' : '12px') : ''
+            'border-radius':
+              showLeftSelectedBorder && cardStyle
+                ? postContent.IsNFT && showNFTDetails
+                  ? '12px 0'
+                  : '12px'
+                : ''
           }"
           *ngIf="!postContent.IsHidden"
         >
@@ -166,10 +212,18 @@
             <a
               class="feed-post__avatar br-12px"
               [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
-              [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username])"
+              [routerLink]="
+                getRouterLink([
+                  '/' + globalVars.RouteNames.USER_PREFIX,
+                  postContent.ProfileEntryResponse.Username
+                ])
+              "
               queryParamsHandling="merge"
             ></a>
-            <div *ngIf="showThreadConnectionLine" class="feed-post__parent-thread-connector"></div>
+            <div
+              *ngIf="showThreadConnectionLine"
+              class="feed-post__parent-thread-connector"
+            ></div>
           </div>
 
           <!-- Main Content -->
@@ -178,17 +232,27 @@
               <!-- Username-->
               <a
                 class="fc-default font-weight-bold"
-                [routerLink]="getRouterLink(['/' + globalVars.RouteNames.USER_PREFIX, postContent.ProfileEntryResponse.Username])"
+                [routerLink]="
+                  getRouterLink([
+                    '/' + globalVars.RouteNames.USER_PREFIX,
+                    postContent.ProfileEntryResponse.Username
+                  ])
+                "
                 queryParamsHandling="merge"
               >
                 {{ postContent.ProfileEntryResponse.Username }}
               </a>
 
-              <span *ngIf="postContent.ProfileEntryResponse.IsVerified" class="ml-1 text-primary">
+              <span
+                *ngIf="postContent.ProfileEntryResponse.IsVerified"
+                class="ml-1 text-primary"
+              >
                 <i class="fas fa-check-circle fa-md align-middle"></i>
               </span>
               <div class="desktop-creator-coin-info">
-                <ng-container *ngTemplateOutlet="creatorCoinInfo"></ng-container>
+                <ng-container
+                  *ngTemplateOutlet="creatorCoinInfo"
+                ></ng-container>
               </div>
 
               <!-- Desktop follow button-->
@@ -197,12 +261,21 @@
                 class="ml-10px fs-12px d-lg-block d-none text-grey5"
                 [displayAsLink]="true"
                 [followLinkClass]="'link--unstyled'"
-                [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+                [followedPubKeyBase58Check]="
+                  postContent.ProfileEntryResponse.PublicKeyBase58Check
+                "
                 [creatorCoinTemplate]="creatorCoinInfo"
               ></follow-button>
 
               <div class="ml-auto">
-                <div *ngIf="getNode()" class="d-inline-block mr-5px" [ngClass]="{ 'mr-5px': globalVars.isMobile(), 'mr-10px': !globalVars.isMobile() }">
+                <div
+                  *ngIf="getNode()"
+                  class="d-inline-block mr-5px"
+                  [ngClass]="{
+                    'mr-5px': globalVars.isMobile(),
+                    'mr-10px': !globalVars.isMobile()
+                  }"
+                >
                   <a
                     class="text-grey9"
                     target="_blank"
@@ -238,15 +311,25 @@
                 class="fs-12px"
                 [displayAsLink]="true"
                 [followLinkClass]="'link--unstyled'"
-                [followedPubKeyBase58Check]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+                [followedPubKeyBase58Check]="
+                  postContent.ProfileEntryResponse.PublicKeyBase58Check
+                "
                 [creatorCoinTemplate]="creatorCoinInfo"
               ></follow-button>
             </div>
 
-            <div *ngIf="showReplyingToContent" class="fs-13px text-muted pt-1 pb-2">
+            <div
+              *ngIf="showReplyingToContent"
+              class="fs-13px text-muted pt-1 pb-2"
+            >
               replying to
               <a
-                [routerLink]="getRouterLink(['/' + this.globalVars.RouteNames.USER_PREFIX, parentPost.ProfileEntryResponse.Username])"
+                [routerLink]="
+                  getRouterLink([
+                    '/' + this.globalVars.RouteNames.USER_PREFIX,
+                    parentPost.ProfileEntryResponse.Username
+                  ])
+                "
                 queryParamsHandling="merge"
               >
                 @{{ parentPost.ProfileEntryResponse.Username }}
@@ -257,14 +340,18 @@
             <div
               class="roboto-regular mt-1"
               [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
-              style="overflow-wrap: anywhere; word-break: break-word; outline: none"
+              style="
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                outline: none;
+              "
               [innerHTML]="postContent.Body | sanitizeAndAutoLink"
               queryParamsHandling="merge"
             ></div>
 
-            <!-- Media, don't show images on comment posts. -->
+            <!-- Media -->
             <div
-              *ngIf="postContent.ImageURLs && postContent.ImageURLs[0] && !post.ParentStakeID"
+              *ngIf="postContent.ImageURLs && postContent.ImageURLs[0]"
               class="feed-post__image-container"
               [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
             >
@@ -278,7 +365,7 @@
 
             <!-- Video -->
             <div
-              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0] && !post.ParentStakeID"
+              *ngIf="postContent.VideoURLs && postContent.VideoURLs[0]"
               class="feed-post__video-container"
               [ngClass]="{ 'mb-10px': quotedContent && showQuotedContent }"
             >
@@ -302,8 +389,18 @@
                 [height]="getEmbedHeight()"
                 class="feed-post__image"
                 [ngStyle]="{
-                  'margin-top': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
-                  'margin-bottom': setNegativeMargins(constructedEmbedURL, globalVars) ? '-65px' : '',
+                  'margin-top': setNegativeMargins(
+                    constructedEmbedURL,
+                    globalVars
+                  )
+                    ? '-65px'
+                    : '',
+                  'margin-bottom': setNegativeMargins(
+                    constructedEmbedURL,
+                    globalVars
+                  )
+                    ? '-65px'
+                    : '',
                   'max-width': getEmbedWidth(constructedEmbedURL)
                 }"
                 [src]="constructedEmbedURL | sanitizeEmbed"
@@ -328,7 +425,10 @@
             ></feed-post>
 
             <!-- Bottom Buttons -->
-            <div *ngIf="!showInteractionDetails" class="feed-post__icon-row-holder">
+            <div
+              *ngIf="!showInteractionDetails"
+              class="feed-post__icon-row-holder"
+            >
               <!-- Like, Comment, Repost, Share Buttons -->
               <feed-post-icon-row
                 *ngIf="showIconRow"
@@ -342,7 +442,10 @@
               ></feed-post-icon-row>
 
               <!-- Admin Buttons -->
-              <div *ngIf="showAdminRow" class="pt-10px fs-15px d-flex align-items-center">
+              <div
+                *ngIf="showAdminRow"
+                class="pt-10px fs-15px d-flex align-items-center"
+              >
                 <div
                   *ngIf="!postContent.InGlobalFeed && !addingPostToGlobalFeed"
                   (click)="_addPostToGlobalFeed($event)"
@@ -377,7 +480,12 @@
                 <div>
                   &nbsp;&middot;
                   <a
-                    [routerLink]="getRouterLink(['/' + globalVars.RouteNames.POSTS, postContent.PostHashHex])"
+                    [routerLink]="
+                      getRouterLink([
+                        '/' + globalVars.RouteNames.POSTS,
+                        postContent.PostHashHex
+                      ])
+                    "
                     queryParamsHandling="merge"
                   >
                     View
@@ -385,7 +493,11 @@
                 </div>
 
                 <div class="text-grey8A">
-                  &nbsp;&middot;&nbsp;{{ globalVars.convertTstampToDaysOrHours(postContent.TimestampNanos) }}
+                  &nbsp;&middot;&nbsp;{{
+                    globalVars.convertTstampToDaysOrHours(
+                      postContent.TimestampNanos
+                    )
+                  }}
                 </div>
               </div>
             </div>
@@ -398,18 +510,27 @@
         "main" post in a thread into it's own file so it can have more custom styling
         with less code complexity.
       -->
-      <div class="feed-post__blue-border px-30px pb-5px" *ngIf="showInteractionDetails">
+      <div
+        class="feed-post__blue-border px-30px pb-5px"
+        *ngIf="showInteractionDetails"
+      >
         <div class="container w-100 p-0px">
           <!-- DESKTOP -->
           <div
             class="row no-gutters d-none d-lg-block py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer"
           >
             <div class="d-flex justify-content-between">
-              <span (click)="openRepostsModal($event)" class="interaction-detail">
+              <span
+                (click)="openRepostsModal($event)"
+                class="interaction-detail"
+              >
                 <b>{{ globalVars.abbreviateNumber(post.RepostCount) }}</b>
                 Reposts&nbsp;
               </span>
-              <span (click)="openQuoteRepostsModal($event)" class="interaction-detail">
+              <span
+                (click)="openQuoteRepostsModal($event)"
+                class="interaction-detail"
+              >
                 <b>{{ globalVars.abbreviateNumber(post.QuoteRepostCount) }}</b>
                 Quote Reposts&nbsp;
               </span>
@@ -417,7 +538,10 @@
                 <b>{{ globalVars.abbreviateNumber(post.LikeCount) }}</b>
                 Likes
               </span>
-              <span (click)="openDiamondsModal($event)" class="interaction-detail">
+              <span
+                (click)="openDiamondsModal($event)"
+                class="interaction-detail"
+              >
                 <b>{{ globalVars.abbreviateNumber(post.DiamondCount) }}</b>
                 Diamonds
               </span>
@@ -427,21 +551,37 @@
           <div
             class="row no-gutters d-lg-none py-10px fs-15px border-top border-bottom border-color-light-grey cursor-pointer"
           >
-            <div class="col-6 mb-0 interaction-detail" (click)="openRepostsModal($event)">
+            <div
+              class="col-6 mb-0 interaction-detail"
+              (click)="openRepostsModal($event)"
+            >
               <b>{{ globalVars.abbreviateNumber(postContent.RepostCount) }}</b>
               Reposts&nbsp;
             </div>
-            <div class="col-6 mb-0 interaction-detail" (click)="openQuoteRepostsModal($event)">
-              <b>{{ globalVars.abbreviateNumber(postContent.QuoteRepostCount) }}</b>
+            <div
+              class="col-6 mb-0 interaction-detail"
+              (click)="openQuoteRepostsModal($event)"
+            >
+              <b>{{
+                globalVars.abbreviateNumber(postContent.QuoteRepostCount)
+              }}</b>
               Quote Reposts&nbsp;
             </div>
           </div>
-          <div class="row no-gutters d-lg-none py-10px fs-15px border-bottom border-color-light-grey cursor-pointer">
-            <div (click)="openLikesModal($event)" class="col-6 mb-0 interaction-detail">
+          <div
+            class="row no-gutters d-lg-none py-10px fs-15px border-bottom border-color-light-grey cursor-pointer"
+          >
+            <div
+              (click)="openLikesModal($event)"
+              class="col-6 mb-0 interaction-detail"
+            >
               <b>{{ globalVars.abbreviateNumber(postContent.LikeCount) }}</b>
               Likes
             </div>
-            <div (click)="openDiamondsModal($event)" class="col-6 mb-0 interaction-detail">
+            <div
+              (click)="openDiamondsModal($event)"
+              class="col-6 mb-0 interaction-detail"
+            >
               <b>{{ globalVars.abbreviateNumber(postContent.DiamondCount) }}</b>
               Diamonds
             </div>
@@ -479,7 +619,9 @@
   <div
     *ngIf="showNFTDetails && postContent.IsNFT"
     class="p-15px fs-15px w-100 background-color-grey"
-    [ngStyle]="{ 'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : '' }"
+    [ngStyle]="{
+      'border-radius': setBorder || cardStyle ? '0 0 12px 12px' : ''
+    }"
     [ngClass]="{ 'feed-post__blue-border': showLeftSelectedBorder }"
   >
     <div
@@ -491,7 +633,9 @@
       }"
     >
       <div>
-        <span *ngIf="showAvailableSerialNumbers">{{ serialNumbersDisplay }}&nbsp;</span>
+        <span *ngIf="showAvailableSerialNumbers"
+          >{{ serialNumbersDisplay }}&nbsp;</span
+        >
         <span
           *ngIf="!showAvailableSerialNumbers"
           class="cursor-pointer"
@@ -500,9 +644,14 @@
           [matTooltip]="mOfNNFTTooltip"
           #NFTMOfNTooltip="matTooltip"
         >
-          <b>{{ postContent.NumNFTCopiesForSale }} of {{ postContent.NumNFTCopies }} available&nbsp;</b>
+          <b
+            >{{ postContent.NumNFTCopiesForSale }} of
+            {{ postContent.NumNFTCopies }} available&nbsp;</b
+          >
         </span>
-        <span *ngIf="postContent.HasUnlockable" class="d-lg-inline-block d-none">|&nbsp;</span>
+        <span *ngIf="postContent.HasUnlockable" class="d-lg-inline-block d-none"
+          >|&nbsp;</span
+        >
         <span
           *ngIf="postContent.HasUnlockable"
           class="cursor-pointer d-lg-inline-block d-block mt-5px"
@@ -514,26 +663,37 @@
           <i
             class="fas"
             [ngClass]="{
-              'fa-lock': !decryptableNFTEntryResponses?.length || showUnlockableContent,
-              'fa-unlock-alt': decryptableNFTEntryResponses?.length && !showUnlockableContent
+              'fa-lock':
+                !decryptableNFTEntryResponses?.length || showUnlockableContent,
+              'fa-unlock-alt':
+                decryptableNFTEntryResponses?.length && !showUnlockableContent
             }"
           ></i>
           {{
             decryptableNFTEntryResponses?.length
               ? showUnlockableContent
-                ? "Hide Unlockable"
-                : "Show Unlockable"
-              : "Unlockable Content"
+                ? 'Hide Unlockable'
+                : 'Show Unlockable'
+              : 'Unlockable Content'
           }}
         </span>
         <div *ngIf="nftLastAcceptedBidAmountNanos">
-          <b>Last price: {{ globalVars.nanosToDeSo(nftLastAcceptedBidAmountNanos) }} $DESO</b>
+          <b
+            >Last price:
+            {{ globalVars.nanosToDeSo(nftLastAcceptedBidAmountNanos) }} $DESO</b
+          >
         </div>
         <div *ngIf="nftMinBidAmountNanos">
-          <b>Min bid: {{ globalVars.nanosToDeSo(nftMinBidAmountNanos) }} $DESO</b>
+          <b
+            >Min bid:
+            {{ globalVars.nanosToDeSo(nftMinBidAmountNanos) }} $DESO</b
+          >
         </div>
         <div *ngIf="nftBuyNowPriceNanos">
-          <b>Buy Now Price: {{ globalVars.nanosToDeSo(nftBuyNowPriceNanos) }} $DESO</b>
+          <b
+            >Buy Now Price:
+            {{ globalVars.nanosToDeSo(nftBuyNowPriceNanos) }} $DESO</b
+          >
         </div>
       </div>
       <button
@@ -550,26 +710,38 @@
         (click)="acceptTransfer($event)"
         *ngIf="acceptNFT"
       >
-            <span class="d-flex align-items-center justify-content-center fs-12px">
-              Accept Transfer
-            </span>
+        <span class="d-flex align-items-center justify-content-center fs-12px">
+          Accept Transfer
+        </span>
       </button>
     </div>
     <div *ngIf="showUnlockableContent">
-      <div *ngFor="let nftEntry of decryptableNFTEntryResponses" class="d-flex flex-row">
+      <div
+        *ngFor="let nftEntry of decryptableNFTEntryResponses"
+        class="d-flex flex-row"
+      >
         <div>#{{ nftEntry.SerialNumber }}:&nbsp;</div>
-        <div [innerHTML]="nftEntry.DecryptedUnlockableText | sanitizeAndAutoLink"></div>
+        <div
+          [innerHTML]="nftEntry.DecryptedUnlockableText | sanitizeAndAutoLink"
+        ></div>
       </div>
     </div>
     <div></div>
-    <div *ngIf="showExpandedNFTDetails && (highBid || lowBid)" [ngClass]="{ 'pt-15px': globalVars.isMobile() }">
+    <div
+      *ngIf="showExpandedNFTDetails && (highBid || lowBid)"
+      [ngClass]="{ 'pt-15px': globalVars.isMobile() }"
+    >
       <div *ngIf="highBid != null">
         Highest: {{ globalVars.nanosToDeSo(highBid, 5) }} DESO
-        <span class="text-grey7">(~{{ globalVars.nanosToUSD(highBid, 2) }})</span>
+        <span class="text-grey7"
+          >(~{{ globalVars.nanosToUSD(highBid, 2) }})</span
+        >
       </div>
       <div *ngIf="lowBid != null">
         From: {{ globalVars.nanosToDeSo(lowBid, 5) }} DESO
-        <span class="text-grey7">(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span>
+        <span class="text-grey7"
+          >(~{{ globalVars.nanosToUSD(lowBid, 2) }})</span
+        >
       </div>
     </div>
   </div>

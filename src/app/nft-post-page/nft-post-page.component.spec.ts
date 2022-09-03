@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NftPostPageComponent } from "./nft-post-page.component";
+import { NftPostPageComponent } from './nft-post-page.component';
 
-describe("NftPostPageComponent", () => {
+describe('NftPostPageComponent', () => {
   let component: NftPostPageComponent;
   let fixture: ComponentFixture<NftPostPageComponent>;
 
@@ -18,7 +18,7 @@ describe("NftPostPageComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

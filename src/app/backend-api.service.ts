@@ -2,171 +2,236 @@
 // needs the seed phrase) needs the {withCredentials: true} option. It may also needed to
 // get the browser to save the cookie in the response.
 // https://github.com/github/fetch#sending-cookies
-import { Injectable } from "@angular/core";
-import { interval, Observable, of, throwError, zip } from "rxjs";
-import { map, switchMap, catchError, filter, take, concatMap } from "rxjs/operators";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { IdentityService } from "./identity.service";
-import { environment } from "src/environments/environment";
-import { Hex } from "web3-utils/types";
+import { Injectable } from '@angular/core';
+import { interval, Observable, of, throwError, zip } from 'rxjs';
+import {
+  map,
+  switchMap,
+  catchError,
+  filter,
+  take,
+  concatMap,
+} from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { IdentityService } from './identity.service';
+import { environment } from 'src/environments/environment';
+import { Hex } from 'web3-utils/types';
 
 export class BackendRoutes {
-  static ExchangeRateRoute = "/api/v0/get-exchange-rate";
-  static ExchangeBitcoinRoute = "/api/v0/exchange-bitcoin";
-  static SendDeSoRoute = "/api/v0/send-deso";
-  static MinerControlRoute = "/api/v0/miner-control";
+  static ExchangeRateRoute = '/api/v0/get-exchange-rate';
+  static ExchangeBitcoinRoute = '/api/v0/exchange-bitcoin';
+  static SendDeSoRoute = '/api/v0/send-deso';
+  static MinerControlRoute = '/api/v0/miner-control';
 
-  static GetUsersStatelessRoute = "/api/v0/get-users-stateless";
-  static RoutePathSubmitPost = "/api/v0/submit-post";
-  static RoutePathUploadImage = "/api/v0/upload-image";
-  static RoutePathSubmitTransaction = "/api/v0/submit-transaction";
-  static RoutePathUpdateProfile = "/api/v0/update-profile";
-  static RoutePathGetPostsStateless = "/api/v0/get-posts-stateless";
-  static RoutePathGetProfiles = "/api/v0/get-profiles";
-  static RoutePathGetSingleProfile = "/api/v0/get-single-profile";
-  static RoutePathGetSingleProfilePicture = "/api/v0/get-single-profile-picture";
-  static RoutePathGetPostsForPublicKey = "/api/v0/get-posts-for-public-key";
-  static RoutePathGetDiamondedPosts = "/api/v0/get-diamonded-posts";
-  static RoutePathGetHodlersForPublicKey = "/api/v0/get-hodlers-for-public-key";
-  static RoutePathIsHodlingPublicKey = "/api/v0/is-hodling-public-key";
-  static RoutePathSendMessageStateless = "/api/v0/send-message-stateless";
-  static RoutePathGetMessagesStateless = "/api/v0/get-messages-stateless";
-  static RoutePathCheckPartyMessagingKeys = "/api/v0/check-party-messaging-keys";
-  static RoutePathMarkContactMessagesRead = "/api/v0/mark-contact-messages-read";
-  static RoutePathMarkAllMessagesRead = "/api/v0/mark-all-messages-read";
-  static RoutePathGetFollowsStateless = "/api/v0/get-follows-stateless";
-  static RoutePathCreateFollowTxnStateless = "/api/v0/create-follow-txn-stateless";
-  static RoutePathCreateLikeStateless = "/api/v0/create-like-stateless";
-  static RoutePathBuyOrSellCreatorCoin = "/api/v0/buy-or-sell-creator-coin";
-  static RoutePathTransferCreatorCoin = "/api/v0/transfer-creator-coin";
-  static RoutePathUpdateUserGlobalMetadata = "/api/v0/update-user-global-metadata";
-  static RoutePathGetUserGlobalMetadata = "/api/v0/get-user-global-metadata";
-  static RoutePathGetNotifications = "/api/v0/get-notifications";
-  static RoutePathGetAppState = "/api/v0/get-app-state";
-  static RoutePathGetSinglePost = "/api/v0/get-single-post";
-  static RoutePathSendPhoneNumberVerificationText = "/api/v0/send-phone-number-verification-text";
-  static RoutePathSubmitPhoneNumberVerificationCode = "/api/v0/submit-phone-number-verification-code";
-  static RoutePathBlockPublicKey = "/api/v0/block-public-key";
-  static RoutePathGetBlockTemplate = "/api/v0/get-block-template";
-  static RoutePathGetTxn = "/api/v0/get-txn";
-  static RoutePathDeleteIdentities = "/api/v0/delete-identities";
-  static RoutePathSendDiamonds = "/api/v0/send-diamonds";
-  static RoutePathGetDiamondsForPublicKey = "/api/v0/get-diamonds-for-public-key";
-  static RoutePathGetLikesForPost = "/api/v0/get-likes-for-post";
-  static RoutePathGetDiamondsForPost = "/api/v0/get-diamonds-for-post";
-  static RoutePathGetRepostsForPost = "/api/v0/get-reposts-for-post";
-  static RoutePathGetQuoteRepostsForPost = "/api/v0/get-quote-reposts-for-post";
-  static RoutePathGetJumioStatusForPublicKey = "/api/v0/get-jumio-status-for-public-key";
-  static RoutePathGetUserMetadata = "/api/v0/get-user-metadata";
-  static RoutePathGetUsernameForPublicKey = "/api/v0/get-user-name-for-public-key";
-  static RoutePathGetPublicKeyForUsername = "/api/v0/get-public-key-for-user-name";
+  static GetUsersStatelessRoute = '/api/v0/get-users-stateless';
+  static RoutePathSubmitPost = '/api/v0/submit-post';
+  static RoutePathUploadImage = '/api/v0/upload-image';
+  static RoutePathSubmitTransaction = '/api/v0/submit-transaction';
+  static RoutePathUpdateProfile = '/api/v0/update-profile';
+  static RoutePathGetPostsStateless = '/api/v0/get-posts-stateless';
+  static RoutePathGetHotFeed = '/api/v0/get-hot-feed';
+  static RoutePathGetProfiles = '/api/v0/get-profiles';
+  static RoutePathGetSingleProfile = '/api/v0/get-single-profile';
+  static RoutePathGetSingleProfilePicture =
+    '/api/v0/get-single-profile-picture';
+  static RoutePathGetPostsForPublicKey = '/api/v0/get-posts-for-public-key';
+  static RoutePathGetDiamondedPosts = '/api/v0/get-diamonded-posts';
+  static RoutePathGetHodlersForPublicKey = '/api/v0/get-hodlers-for-public-key';
+  static RoutePathIsHodlingPublicKey = '/api/v0/is-hodling-public-key';
+  static RoutePathSendMessageStateless = '/api/v0/send-message-stateless';
+  static RoutePathGetMessagesStateless = '/api/v0/get-messages-stateless';
+  static RoutePathCheckPartyMessagingKeys =
+    '/api/v0/check-party-messaging-keys';
+  static RoutePathMarkContactMessagesRead =
+    '/api/v0/mark-contact-messages-read';
+  static RoutePathMarkAllMessagesRead = '/api/v0/mark-all-messages-read';
+  static RoutePathGetFollowsStateless = '/api/v0/get-follows-stateless';
+  static RoutePathCreateFollowTxnStateless =
+    '/api/v0/create-follow-txn-stateless';
+  static RoutePathCreateLikeStateless = '/api/v0/create-like-stateless';
+  static RoutePathBuyOrSellCreatorCoin = '/api/v0/buy-or-sell-creator-coin';
+  static RoutePathTransferCreatorCoin = '/api/v0/transfer-creator-coin';
+  static RoutePathUpdateUserGlobalMetadata =
+    '/api/v0/update-user-global-metadata';
+  static RoutePathGetUserGlobalMetadata = '/api/v0/get-user-global-metadata';
+  static RoutePathGetNotifications = '/api/v0/get-notifications';
+  static RoutePathGetAppState = '/api/v0/get-app-state';
+  static RoutePathGetSinglePost = '/api/v0/get-single-post';
+  static RoutePathSendPhoneNumberVerificationText =
+    '/api/v0/send-phone-number-verification-text';
+  static RoutePathSubmitPhoneNumberVerificationCode =
+    '/api/v0/submit-phone-number-verification-code';
+  static RoutePathBlockPublicKey = '/api/v0/block-public-key';
+  static RoutePathGetBlockTemplate = '/api/v0/get-block-template';
+  static RoutePathGetTxn = '/api/v0/get-txn';
+  static RoutePathDeleteIdentities = '/api/v0/delete-identities';
+  static RoutePathSendDiamonds = '/api/v0/send-diamonds';
+  static RoutePathGetDiamondsForPublicKey =
+    '/api/v0/get-diamonds-for-public-key';
+  static RoutePathGetLikesForPost = '/api/v0/get-likes-for-post';
+  static RoutePathGetDiamondsForPost = '/api/v0/get-diamonds-for-post';
+  static RoutePathGetRepostsForPost = '/api/v0/get-reposts-for-post';
+  static RoutePathGetQuoteRepostsForPost = '/api/v0/get-quote-reposts-for-post';
+  static RoutePathGetJumioStatusForPublicKey =
+    '/api/v0/get-jumio-status-for-public-key';
+  static RoutePathGetUserMetadata = '/api/v0/get-user-metadata';
+  static RoutePathGetUsernameForPublicKey =
+    '/api/v0/get-user-name-for-public-key';
+  static RoutePathGetPublicKeyForUsername =
+    '/api/v0/get-public-key-for-user-name';
 
   // Verify
-  static RoutePathVerifyEmail = "/api/v0/verify-email";
-  static RoutePathResendVerifyEmail = "/api/v0/resend-verify-email";
+  static RoutePathVerifyEmail = '/api/v0/verify-email';
+  static RoutePathResendVerifyEmail = '/api/v0/resend-verify-email';
 
   // Delete PII
-  static RoutePathDeletePII = "/api/v0/delete-pii";
+  static RoutePathDeletePII = '/api/v0/delete-pii';
 
   // Tutorial
-  static RoutePathStartOrSkipTutorial = "/api/v0/start-or-skip-tutorial";
-  static RoutePathCompleteTutorial = "/api/v0/complete-tutorial";
-  static RoutePathGetTutorialCreators = "/api/v0/get-tutorial-creators";
+  static RoutePathStartOrSkipTutorial = '/api/v0/start-or-skip-tutorial';
+  static RoutePathCompleteTutorial = '/api/v0/complete-tutorial';
+  static RoutePathGetTutorialCreators = '/api/v0/get-tutorial-creators';
 
   // Media
-  static RoutePathUploadVideo = "/api/v0/upload-video";
-  static RoutePathGetVideoStatus = "/api/v0/get-video-status";
+  static RoutePathUploadVideo = '/api/v0/upload-video';
+  static RoutePathGetVideoStatus = '/api/v0/get-video-status';
 
   // NFT routes.
-  static RoutePathCreateNft = "/api/v0/create-nft";
-  static RoutePathUpdateNFT = "/api/v0/update-nft";
-  static RoutePathCreateNFTBid = "/api/v0/create-nft-bid";
-  static RoutePathAcceptNFTBid = "/api/v0/accept-nft-bid";
-  static RoutePathGetNFTBidsForNFTPost = "/api/v0/get-nft-bids-for-nft-post";
-  static RoutePathGetNFTsForUser = "/api/v0/get-nfts-for-user";
-  static RoutePathGetNFTBidsForUser = "/api/v0/get-nft-bids-for-user";
-  static RoutePathGetNFTShowcase = "/api/v0/get-nft-showcase";
-  static RoutePathGetNextNFTShowcase = "/api/v0/get-next-nft-showcase";
-  static RoutePathGetNFTCollectionSummary = "/api/v0/get-nft-collection-summary";
-  static RoutePathGetNFTEntriesForPostHash = "/api/v0/get-nft-entries-for-nft-post";
-  static RoutePathTransferNFT = "/api/v0/transfer-nft";
-  static RoutePathAcceptNFTTransfer = "/api/v0/accept-nft-transfer";
-  static RoutePathBurnNFT = "/api/v0/burn-nft";
+  static RoutePathCreateNft = '/api/v0/create-nft';
+  static RoutePathUpdateNFT = '/api/v0/update-nft';
+  static RoutePathCreateNFTBid = '/api/v0/create-nft-bid';
+  static RoutePathAcceptNFTBid = '/api/v0/accept-nft-bid';
+  static RoutePathGetNFTBidsForNFTPost = '/api/v0/get-nft-bids-for-nft-post';
+  static RoutePathGetNFTsForUser = '/api/v0/get-nfts-for-user';
+  static RoutePathGetNFTBidsForUser = '/api/v0/get-nft-bids-for-user';
+  static RoutePathGetNFTShowcase = '/api/v0/get-nft-showcase';
+  static RoutePathGetNextNFTShowcase = '/api/v0/get-next-nft-showcase';
+  static RoutePathGetNFTCollectionSummary =
+    '/api/v0/get-nft-collection-summary';
+  static RoutePathGetNFTEntriesForPostHash =
+    '/api/v0/get-nft-entries-for-nft-post';
+  static RoutePathTransferNFT = '/api/v0/transfer-nft';
+  static RoutePathAcceptNFTTransfer = '/api/v0/accept-nft-transfer';
+  static RoutePathBurnNFT = '/api/v0/burn-nft';
 
   // DAO routes
-  static RoutePathDAOCoin = "/api/v0/dao-coin";
-  static RoutePathTransferDAOCoin = "/api/v0/transfer-dao-coin";
+  static RoutePathDAOCoin = '/api/v0/dao-coin';
+  static RoutePathTransferDAOCoin = '/api/v0/transfer-dao-coin';
 
   // ETH
-  static RoutePathSubmitETHTx = "/api/v0/submit-eth-tx";
-  static RoutePathQueryETHRPC = "/api/v0/query-eth-rpc";
+  static RoutePathSubmitETHTx = '/api/v0/submit-eth-tx';
+  static RoutePathQueryETHRPC = '/api/v0/query-eth-rpc';
 
   // Admin routes.
-  static NodeControlRoute = "/api/v0/admin/node-control";
-  static ReprocessBitcoinBlockRoute = "/api/v0/admin/reprocess-bitcoin-block";
-  static RoutePathSwapIdentity = "/api/v0/admin/swap-identity";
-  static RoutePathAdminUpdateUserGlobalMetadata = "/api/v0/admin/update-user-global-metadata";
-  static RoutePathAdminGetAllUserGlobalMetadata = "/api/v0/admin/get-all-user-global-metadata";
-  static RoutePathAdminGetUserGlobalMetadata = "/api/v0/admin/get-user-global-metadata";
-  static RoutePathAdminUpdateGlobalFeed = "/api/v0/admin/update-global-feed";
-  static RoutePathAdminPinPost = "/api/v0/admin/pin-post";
-  static RoutePathAdminRemoveNilPosts = "/api/v0/admin/remove-nil-posts";
-  static RoutePathAdminGetMempoolStats = "/api/v0/admin/get-mempool-stats";
-  static RoutePathAdminGrantVerificationBadge = "/api/v0/admin/grant-verification-badge";
-  static RoutePathAdminRemoveVerificationBadge = "/api/v0/admin/remove-verification-badge";
-  static RoutePathAdminGetVerifiedUsers = "/api/v0/admin/get-verified-users";
-  static RoutePathAdminGetUserAdminData = "/api/v0/admin/get-user-admin-data";
-  static RoutePathAdminGetUsernameVerificationAuditLogs = "/api/v0/admin/get-username-verification-audit-logs";
-  static RoutePathUpdateGlobalParams = "/api/v0/admin/update-global-params";
-  static RoutePathSetUSDCentsToDeSoReserveExchangeRate = "/api/v0/admin/set-usd-cents-to-deso-reserve-exchange-rate";
-  static RoutePathGetUSDCentsToDeSoReserveExchangeRate = "/api/v0/admin/get-usd-cents-to-deso-reserve-exchange-rate";
-  static RoutePathSetBuyDeSoFeeBasisPoints = "/api/v0/admin/set-buy-deso-fee-basis-points";
-  static RoutePathGetBuyDeSoFeeBasisPoints = "/api/v0/admin/get-buy-deso-fee-basis-points";
-  static RoutePathAdminGetGlobalParams = "/api/v0/admin/get-global-params";
-  static RoutePathGetGlobalParams = "/api/v0/get-global-params";
-  static RoutePathEvictUnminedBitcoinTxns = "/api/v0/admin/evict-unmined-bitcoin-txns";
-  static RoutePathGetWyreWalletOrdersForPublicKey = "/api/v0/admin/get-wyre-wallet-orders-for-public-key";
-  static RoutePathAdminGetNFTDrop = "/api/v0/admin/get-nft-drop";
-  static RoutePathAdminUpdateNFTDrop = "/api/v0/admin/update-nft-drop";
-  static RoutePathAdminResetJumioForPublicKey = "/api/v0/admin/reset-jumio-for-public-key";
-  static RoutePathAdminUpdateJumioDeSo = "/api/v0/admin/update-jumio-deso";
-  static RoutePathAdminUpdateTutorialCreators = "/api/v0/admin/update-tutorial-creators";
-  static RoutePathAdminResetTutorialStatus = "/api/v0/admin/reset-tutorial-status";
-  static RoutePathAdminGetTutorialCreators = "/api/v0/admin/get-tutorial-creators";
-  static RoutePathAdminJumioCallback = "/api/v0/admin/jumio-callback";
-  static RoutePathAdminGetAllCountryLevelSignUpBonuses = "/api/v0/admin/get-all-country-level-sign-up-bonuses";
-  static RoutePathAdminUpdateJumioCountrySignUpBonus = "/api/v0/admin/update-jumio-country-sign-up-bonus";
-  static RoutePathAdminUpdateJumioUSDCents = "/api/v0/admin/update-jumio-usd-cents";
-  static RoutePathAdminUpdateJumioKickbackUSDCents = "/api/v0/admin/update-jumio-kickback-usd-cents";
+  static NodeControlRoute = '/api/v0/admin/node-control';
+  static ReprocessBitcoinBlockRoute = '/api/v0/admin/reprocess-bitcoin-block';
+  static RoutePathSwapIdentity = '/api/v0/admin/swap-identity';
+  static RoutePathAdminUpdateUserGlobalMetadata =
+    '/api/v0/admin/update-user-global-metadata';
+  static RoutePathAdminResetPhoneNumber = '/api/v0/admin/reset-phone-number';
+  static RoutePathAdminGetAllUserGlobalMetadata =
+    '/api/v0/admin/get-all-user-global-metadata';
+  static RoutePathAdminGetUserGlobalMetadata =
+    '/api/v0/admin/get-user-global-metadata';
+  static RoutePathAdminUpdateGlobalFeed = '/api/v0/admin/update-global-feed';
+  static RoutePathAdminPinPost = '/api/v0/admin/pin-post';
+  static RoutePathAdminRemoveNilPosts = '/api/v0/admin/remove-nil-posts';
+  static RoutePathAdminGetMempoolStats = '/api/v0/admin/get-mempool-stats';
+  static RoutePathAdminGrantVerificationBadge =
+    '/api/v0/admin/grant-verification-badge';
+  static RoutePathAdminRemoveVerificationBadge =
+    '/api/v0/admin/remove-verification-badge';
+  static RoutePathAdminGetVerifiedUsers = '/api/v0/admin/get-verified-users';
+  static RoutePathAdminGetUserAdminData = '/api/v0/admin/get-user-admin-data';
+  static RoutePathAdminGetUsernameVerificationAuditLogs =
+    '/api/v0/admin/get-username-verification-audit-logs';
+  static RoutePathUpdateGlobalParams = '/api/v0/admin/update-global-params';
+  static RoutePathSetUSDCentsToDeSoReserveExchangeRate =
+    '/api/v0/admin/set-usd-cents-to-deso-reserve-exchange-rate';
+  static RoutePathGetUSDCentsToDeSoReserveExchangeRate =
+    '/api/v0/admin/get-usd-cents-to-deso-reserve-exchange-rate';
+  static RoutePathSetBuyDeSoFeeBasisPoints =
+    '/api/v0/admin/set-buy-deso-fee-basis-points';
+  static RoutePathGetBuyDeSoFeeBasisPoints =
+    '/api/v0/admin/get-buy-deso-fee-basis-points';
+  static RoutePathAdminGetGlobalParams = '/api/v0/admin/get-global-params';
+  static RoutePathGetGlobalParams = '/api/v0/get-global-params';
+  static RoutePathEvictUnminedBitcoinTxns =
+    '/api/v0/admin/evict-unmined-bitcoin-txns';
+  static RoutePathGetWyreWalletOrdersForPublicKey =
+    '/api/v0/admin/get-wyre-wallet-orders-for-public-key';
+  static RoutePathAdminGetNFTDrop = '/api/v0/admin/get-nft-drop';
+  static RoutePathAdminUpdateNFTDrop = '/api/v0/admin/update-nft-drop';
+  static RoutePathAdminResetJumioForPublicKey =
+    '/api/v0/admin/reset-jumio-for-public-key';
+  static RoutePathAdminUpdateJumioDeSo = '/api/v0/admin/update-jumio-deso';
+  static RoutePathAdminUpdateTutorialCreators =
+    '/api/v0/admin/update-tutorial-creators';
+  static RoutePathAdminResetTutorialStatus =
+    '/api/v0/admin/reset-tutorial-status';
+  static RoutePathAdminGetTutorialCreators =
+    '/api/v0/admin/get-tutorial-creators';
+  static RoutePathAdminJumioCallback = '/api/v0/admin/jumio-callback';
+  static RoutePathAdminGetAllCountryLevelSignUpBonuses =
+    '/api/v0/admin/get-all-country-level-sign-up-bonuses';
+  static RoutePathAdminUpdateJumioCountrySignUpBonus =
+    '/api/v0/admin/update-jumio-country-sign-up-bonus';
+  static RoutePathAdminUpdateJumioUSDCents =
+    '/api/v0/admin/update-jumio-usd-cents';
+  static RoutePathAdminUpdateJumioKickbackUSDCents =
+    '/api/v0/admin/update-jumio-kickback-usd-cents';
+  static RoutePathAdminGetUnfilteredHotFeed =
+    '/api/v0/admin/get-unfiltered-hot-feed';
+  static RoutePathAdminGetHotFeedAlgorithm =
+    '/api/v0/admin/get-hot-feed-algorithm';
+  static RoutePathAdminUpdateHotFeedAlgorithm =
+    '/api/v0/admin/update-hot-feed-algorithm';
+  static RoutePathAdminUpdateHotFeedPostMultiplier =
+    '/api/v0/admin/update-hot-feed-post-multiplier';
+  static RoutePathAdminUpdateHotFeedUserMultiplier =
+    '/api/v0/admin/update-hot-feed-user-multiplier';
+  static RoutePathAdminGetHotFeedUserMultiplier =
+    '/api/v0/admin/get-hot-feed-user-multiplier';
 
   // Referral program admin routes.
-  static RoutePathAdminCreateReferralHash = "/api/v0/admin/create-referral-hash";
-  static RoutePathAdminGetAllReferralInfoForUser = "/api/v0/admin/get-all-referral-info-for-user";
-  static RoutePathAdminUpdateReferralHash = "/api/v0/admin/update-referral-hash";
-  static RoutePathAdminDownloadReferralCSV = "/api/v0/admin/download-referral-csv";
-  static RoutePathAdminUploadReferralCSV = "/api/v0/admin/upload-referral-csv";
+  static RoutePathAdminCreateReferralHash =
+    '/api/v0/admin/create-referral-hash';
+  static RoutePathAdminGetAllReferralInfoForUser =
+    '/api/v0/admin/get-all-referral-info-for-user';
+  static RoutePathAdminUpdateReferralHash =
+    '/api/v0/admin/update-referral-hash';
+  static RoutePathAdminDownloadReferralCSV =
+    '/api/v0/admin/download-referral-csv';
+  static RoutePathAdminUploadReferralCSV = '/api/v0/admin/upload-referral-csv';
 
   // Referral program non-admin routes
-  static RoutePathGetReferralInfoForUser = "/api/v0/get-referral-info-for-user";
-  static RoutePathGetReferralInfoForReferralHash = "/api/v0/get-referral-info-for-referral-hash";
+  static RoutePathGetReferralInfoForUser = '/api/v0/get-referral-info-for-user';
+  static RoutePathGetReferralInfoForReferralHash =
+    '/api/v0/get-referral-info-for-referral-hash';
 
-  static RoutePathGetFullTikTokURL = "/api/v0/get-full-tiktok-url";
+  static RoutePathGetFullTikTokURL = '/api/v0/get-full-tiktok-url';
 
   // Wyre routes.
-  static RoutePathGetWyreWalletOrderQuotation = "/api/v0/get-wyre-wallet-order-quotation";
-  static RoutePathGetWyreWalletOrderReservation = "/api/v0/get-wyre-wallet-order-reservation";
+  static RoutePathGetWyreWalletOrderQuotation =
+    '/api/v0/get-wyre-wallet-order-quotation';
+  static RoutePathGetWyreWalletOrderReservation =
+    '/api/v0/get-wyre-wallet-order-reservation';
 
   // Admin Node Fee routes
-  static RoutePathAdminSetTransactionFeeForTransactionType = "/api/v0/admin/set-txn-fee-for-txn-type";
-  static RoutePathAdminSetAllTransactionFees = "/api/v0/admin/set-all-txn-fees";
-  static RoutePathAdminGetTransactionFeeMap = "/api/v0/admin/get-transaction-fee-map";
-  static RoutePathAdminAddExemptPublicKey = "/api/v0/admin/add-exempt-public-key";
-  static RoutePathAdminGetExemptPublicKeys = "/api/v0/admin/get-exempt-public-keys";
+  static RoutePathAdminSetTransactionFeeForTransactionType =
+    '/api/v0/admin/set-txn-fee-for-txn-type';
+  static RoutePathAdminSetAllTransactionFees = '/api/v0/admin/set-all-txn-fees';
+  static RoutePathAdminGetTransactionFeeMap =
+    '/api/v0/admin/get-transaction-fee-map';
+  static RoutePathAdminAddExemptPublicKey =
+    '/api/v0/admin/add-exempt-public-key';
+  static RoutePathAdminGetExemptPublicKeys =
+    '/api/v0/admin/get-exempt-public-keys';
 
   // Supply Monitoring endpoints
-  static RoutePathGetTotalSupply = "/api/v0/total-supply";
-  static RoutePathGetRichList = "/api/v0/rich-list";
-  static RoutePathGetCountKeysWithDESO = "/api/v0/count-keys-with-deso";
+  static RoutePathGetTotalSupply = '/api/v0/total-supply';
+  static RoutePathGetRichList = '/api/v0/rich-list';
+  static RoutePathGetCountKeysWithDESO = '/api/v0/count-keys-with-deso';
 }
 
 export class Transaction {
@@ -212,15 +277,15 @@ export class ProfileEntryResponse {
 }
 
 export enum TutorialStatus {
-  EMPTY = "",
-  STARTED = "TutorialStarted",
-  SKIPPED = "TutorialSkipped",
-  CREATE_PROFILE = "TutorialCreateProfileComplete",
-  INVEST_OTHERS_BUY = "InvestInOthersBuyComplete",
-  INVEST_OTHERS_SELL = "InvestInOthersSellComplete",
-  INVEST_SELF = "InvestInYourselfComplete",
-  DIAMOND = "GiveADiamondComplete",
-  COMPLETE = "TutorialComplete",
+  EMPTY = '',
+  STARTED = 'TutorialStarted',
+  SKIPPED = 'TutorialSkipped',
+  CREATE_PROFILE = 'TutorialCreateProfileComplete',
+  INVEST_OTHERS_BUY = 'InvestInOthersBuyComplete',
+  INVEST_OTHERS_SELL = 'InvestInOthersSellComplete',
+  INVEST_SELF = 'InvestInYourselfComplete',
+  DIAMOND = 'GiveADiamondComplete',
+  COMPLETE = 'TutorialComplete',
 }
 
 export class User {
@@ -460,57 +525,63 @@ export type CountryLevelSignUpBonusResponse = {
 };
 
 export enum DAOCoinOperationTypeString {
-  MINT = "mint",
-  BURN = "burn",
-  UPDATE_TRANSFER_RESTRICTION_STATUS = "update_transfer_restriction_status",
-  DISABLE_MINTING = "disable_minting",
+  MINT = 'mint',
+  BURN = 'burn',
+  UPDATE_TRANSFER_RESTRICTION_STATUS = 'update_transfer_restriction_status',
+  DISABLE_MINTING = 'disable_minting',
 }
 
 export enum TransferRestrictionStatusString {
-  UNRESTRICTED = "unrestricted",
-  PROFILE_OWNER_ONLY = "profile_owner_only",
-  DAO_MEMBERS_ONLY = "dao_members_only",
-  PERMANENTLY_UNRESTRICTED = "permanently_unrestricted",
+  UNRESTRICTED = 'unrestricted',
+  PROFILE_OWNER_ONLY = 'profile_owner_only',
+  DAO_MEMBERS_ONLY = 'dao_members_only',
+  PERMANENTLY_UNRESTRICTED = 'permanently_unrestricted',
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class BackendApiService {
-  constructor(private httpClient: HttpClient, private identityService: IdentityService) {}
+  constructor(
+    private httpClient: HttpClient,
+    private identityService: IdentityService
+  ) {}
 
-  static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
-  static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
-  static SELL_CREATOR_COIN_OPERATION_TYPE = "sell";
+  static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = 'influencer_coin_price';
+  static BUY_CREATOR_COIN_OPERATION_TYPE = 'buy';
+  static SELL_CREATOR_COIN_OPERATION_TYPE = 'sell';
 
   // TODO: Cleanup - this should be a configurable value on the node. Leaving it in the frontend
   // is fine for now because BlockCypher has strong anti-abuse measures in place.
-  blockCypherToken = "cd455c8a5d404bb0a23880b72f56aa86";
+  blockCypherToken = 'cd455c8a5d404bb0a23880b72f56aa86';
 
   // Store sent messages and associated metadata in localStorage
-  MessageMetaKey = "messageMetaKey";
+  MessageMetaKey = 'messageMetaKey';
 
   // Store the identity users in localStorage
-  IdentityUsersKey = "identityUsersV2";
+  IdentityUsersKey = 'identityUsersV2';
 
   // Store last local node URL in localStorage
-  LastLocalNodeKey = "lastLocalNodeV2";
+  LastLocalNodeKey = 'lastLocalNodeV2';
 
   // Store last logged in user public key in localStorage
-  LastLoggedInUserKey = "lastLoggedInUserV2";
+  LastLoggedInUserKey = 'lastLoggedInUserV2';
 
   // Store the last identity service URL in localStorage
-  LastIdentityServiceKey = "lastIdentityServiceURLV2";
+  LastIdentityServiceKey = 'lastIdentityServiceURLV2';
 
   // Messaging V3 default key name.
-  DefaultKey = "default-key";
+  DefaultKey = 'default-key';
 
   // TODO: Wipe all this data when transition is complete
-  LegacyUserListKey = "userList";
-  LegacySeedListKey = "seedList";
+  LegacyUserListKey = 'userList';
+  LegacySeedListKey = 'seedList';
 
   SetStorage(key: string, value: any) {
-    localStorage.setItem(key, value || value === false ? JSON.stringify(value) : "");
+    localStorage.setItem(
+      key,
+      value || value === false ? JSON.stringify(value) : ''
+    );
   }
 
   RemoveStorage(key: string) {
@@ -519,7 +590,7 @@ export class BackendApiService {
 
   GetStorage(key: string) {
     const data = localStorage.getItem(key);
-    if (data === "") {
+    if (data === '') {
       return null;
     }
 
@@ -527,10 +598,14 @@ export class BackendApiService {
   }
 
   // Assemble a URL to hit the BE with.
-  _makeRequestURL(endpoint: string, routeName: string, adminPublicKey?: string): string {
-    let queryURL = location.protocol + "//" + endpoint + routeName;
+  _makeRequestURL(
+    endpoint: string,
+    routeName: string,
+    adminPublicKey?: string
+  ): string {
+    let queryURL = location.protocol + '//' + endpoint + routeName;
     // If the protocol is specified within the endpoint then use that.
-    if (endpoint.startsWith("http")) {
+    if (endpoint.startsWith('http')) {
       queryURL = endpoint + routeName;
     }
     if (adminPublicKey) {
@@ -542,11 +617,14 @@ export class BackendApiService {
   _handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
-      console.error("An error occurred:", error.error.message);
+      console.error('An error occurred:', error.error.message);
     } else {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
-      console.error(`Backend returned code ${error.status}, ` + `body was: ${JSON.stringify(error.error)}`);
+      console.error(
+        `Backend returned code ${error.status}, ` +
+          `body was: ${JSON.stringify(error.error)}`
+      );
     }
     // return an observable with a user-facing error message
     return throwError(error);
@@ -559,20 +637,26 @@ export class BackendApiService {
     this.identityService.identityServicePublicKeyAdded = publicKeyAdded;
   }
 
-  signAndSubmitTransaction(endpoint: string, request: Observable<any>, PublicKeyBase58Check: string): Observable<any> {
+  signAndSubmitTransaction(
+    endpoint: string,
+    request: Observable<any>,
+    PublicKeyBase58Check: string
+  ): Observable<any> {
     return request
       .pipe(
         switchMap((res) =>
           this.identityService
             .sign({
               transactionHex: res.TransactionHex,
-              ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
+              ...this.identityService.identityServiceParamsForKey(
+                PublicKeyBase58Check
+              ),
             })
             .pipe(
               switchMap((signed) => {
                 if (signed.approvalRequired) {
                   return this.identityService
-                    .launch("/approve", {
+                    .launch('/approve', {
                       tx: res.TransactionHex,
                     })
                     .pipe(
@@ -599,14 +683,23 @@ export class BackendApiService {
   }
 
   get(endpoint: string, path: string) {
-    return this.httpClient.get<any>(this._makeRequestURL(endpoint, path)).pipe(catchError(this._handleError));
+    return this.httpClient
+      .get<any>(this._makeRequestURL(endpoint, path))
+      .pipe(catchError(this._handleError));
   }
 
   post(endpoint: string, path: string, body: any): Observable<any> {
-    return this.httpClient.post<any>(this._makeRequestURL(endpoint, path), body).pipe(catchError(this._handleError));
+    return this.httpClient
+      .post<any>(this._makeRequestURL(endpoint, path), body)
+      .pipe(catchError(this._handleError));
   }
 
-  jwtPost(endpoint: string, path: string, publicKey: string, body: any): Observable<any> {
+  jwtPost(
+    endpoint: string,
+    path: string,
+    publicKey: string,
+    body: any
+  ): Observable<any> {
     const request = this.identityService.jwt({
       ...this.identityService.identityServiceParamsForKey(publicKey),
     });
@@ -618,7 +711,9 @@ export class BackendApiService {
           ...body,
         };
 
-        return this.post(endpoint, path, body).pipe(map((res) => ({ ...res, ...signed })));
+        return this.post(endpoint, path, body).pipe(
+          map((res) => ({ ...res, ...signed }))
+        );
       })
     );
   }
@@ -629,7 +724,9 @@ export class BackendApiService {
 
   // Use empty string to return all top categories.
   GetBitcoinFeeRateSatoshisPerKB(): Observable<any> {
-    return this.httpClient.get<any>("https://api.blockchain.com/mempool/fees").pipe(catchError(this._handleError));
+    return this.httpClient
+      .get<any>('https://api.blockchain.com/mempool/fees')
+      .pipe(catchError(this._handleError));
   }
 
   SendPhoneNumberVerificationText(
@@ -638,11 +735,16 @@ export class BackendApiService {
     PhoneNumber: string,
     PhoneNumberCountryCode: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSendPhoneNumberVerificationText, PublicKeyBase58Check, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathSendPhoneNumberVerificationText,
       PublicKeyBase58Check,
-      PhoneNumber,
-      PhoneNumberCountryCode,
-    });
+      {
+        PublicKeyBase58Check,
+        PhoneNumber,
+        PhoneNumberCountryCode,
+      }
+    );
   }
 
   SubmitPhoneNumberVerificationCode(
@@ -652,15 +754,23 @@ export class BackendApiService {
     PhoneNumberCountryCode: string,
     VerificationCode: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSubmitPhoneNumberVerificationCode, PublicKeyBase58Check, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathSubmitPhoneNumberVerificationCode,
       PublicKeyBase58Check,
-      PhoneNumber,
-      PhoneNumberCountryCode,
-      VerificationCode,
-    });
+      {
+        PublicKeyBase58Check,
+        PhoneNumber,
+        PhoneNumberCountryCode,
+        VerificationCode,
+      }
+    );
   }
 
-  GetBlockTemplate(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
+  GetBlockTemplate(
+    endpoint: string,
+    PublicKeyBase58Check: string
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetBlockTemplate, {
       PublicKeyBase58Check,
       HeaderVersion: 1,
@@ -675,7 +785,11 @@ export class BackendApiService {
 
   DeleteIdentities(endpoint: string): Observable<any> {
     return this.httpClient
-      .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, { withCredentials: true })
+      .post<any>(
+        this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities),
+        {},
+        { withCredentials: true }
+      )
       .pipe(catchError(this._handleError));
   }
 
@@ -702,7 +816,9 @@ export class BackendApiService {
         switchMap((res) =>
           this.identityService
             .burn({
-              ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
+              ...this.identityService.identityServiceParamsForKey(
+                PublicKeyBase58Check
+              ),
               unsignedHashes: res.UnsignedHashes,
             })
             .pipe(map((signed) => ({ ...res, ...signed })))
@@ -758,7 +874,11 @@ export class BackendApiService {
       MinFeeRateNanosPerKB
     );
 
-    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      SenderPublicKeyBase58Check
+    );
   }
 
   SubmitTransaction(endpoint: string, TransactionHex: string): Observable<any> {
@@ -778,18 +898,25 @@ export class BackendApiService {
     // In V3 messages, we expect users to migrate to the V3 messages, which means they'll have the default
     // key registered on-chain. We want to automatically send messages to this default key is it's registered.
     // To check the messaging key we call the RoutePathCheckPartyMessaging keys backend API route.
-    let req = this.post(endpoint, BackendRoutes.RoutePathCheckPartyMessagingKeys, {
-      SenderPublicKeyBase58Check,
-      SenderMessagingKeyName: this.DefaultKey,
-      RecipientPublicKeyBase58Check,
-      RecipientMessagingKeyName: this.DefaultKey,
-    }).pipe(
+    let req = this.post(
+      endpoint,
+      BackendRoutes.RoutePathCheckPartyMessagingKeys,
+      {
+        SenderPublicKeyBase58Check,
+        SenderMessagingKeyName: this.DefaultKey,
+        RecipientPublicKeyBase58Check,
+        RecipientMessagingKeyName: this.DefaultKey,
+      }
+    ).pipe(
       switchMap((partyMessagingKeys) => {
         // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
         return this.identityService
           .encrypt({
-            ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
-            recipientPublicKey: partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
+            ...this.identityService.identityServiceParamsForKey(
+              SenderPublicKeyBase58Check
+            ),
+            recipientPublicKey:
+              partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
             senderGroupKeyName: partyMessagingKeys.SenderMessagingKeyName,
             message: MessageText,
           })
@@ -800,17 +927,25 @@ export class BackendApiService {
               const EncryptedMessageText = encrypted.encryptedMessage;
               // Determine whether to use V3 messaging group key names for sender or recipient.
               const senderV3 = partyMessagingKeys.IsSenderMessagingKey;
-              const SenderMessagingGroupKeyName = senderV3 ? partyMessagingKeys.SenderMessagingKeyName : "";
+              const SenderMessagingGroupKeyName = senderV3
+                ? partyMessagingKeys.SenderMessagingKeyName
+                : '';
               const recipientV3 = partyMessagingKeys.IsRecipientMessagingKey;
-              const RecipientMessagingGroupKeyName = recipientV3 ? partyMessagingKeys.RecipientMessagingKeyName : "";
-              return this.post(endpoint, BackendRoutes.RoutePathSendMessageStateless, {
-                SenderPublicKeyBase58Check,
-                RecipientPublicKeyBase58Check,
-                EncryptedMessageText,
-                SenderMessagingGroupKeyName,
-                RecipientMessagingGroupKeyName,
-                MinFeeRateNanosPerKB,
-              }).pipe(
+              const RecipientMessagingGroupKeyName = recipientV3
+                ? partyMessagingKeys.RecipientMessagingKeyName
+                : '';
+              return this.post(
+                endpoint,
+                BackendRoutes.RoutePathSendMessageStateless,
+                {
+                  SenderPublicKeyBase58Check,
+                  RecipientPublicKeyBase58Check,
+                  EncryptedMessageText,
+                  SenderMessagingGroupKeyName,
+                  RecipientMessagingGroupKeyName,
+                  MinFeeRateNanosPerKB,
+                }
+              ).pipe(
                 map((request) => {
                   return { ...request };
                 })
@@ -819,7 +954,11 @@ export class BackendApiService {
           );
       })
     );
-    return this.signAndSubmitTransaction(endpoint, req, SenderPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      req,
+      SenderPublicKeyBase58Check
+    );
   }
 
   // User-related functions.
@@ -923,18 +1062,28 @@ export class BackendApiService {
     );
   }
 
-  UploadImage(endpoint: string, UserPublicKeyBase58Check: string, file: File): Observable<any> {
+  UploadImage(
+    endpoint: string,
+    UserPublicKeyBase58Check: string,
+    file: File
+  ): Observable<any> {
     const request = this.identityService.jwt({
-      ...this.identityService.identityServiceParamsForKey(UserPublicKeyBase58Check),
+      ...this.identityService.identityServiceParamsForKey(
+        UserPublicKeyBase58Check
+      ),
     });
     return request.pipe(
       switchMap((signed) => {
         const formData = new FormData();
-        formData.append("file", file);
-        formData.append("UserPublicKeyBase58Check", UserPublicKeyBase58Check);
-        formData.append("JWT", signed.jwt);
+        formData.append('file', file);
+        formData.append('UserPublicKeyBase58Check', UserPublicKeyBase58Check);
+        formData.append('JWT', signed.jwt);
 
-        return this.post(endpoint, BackendRoutes.RoutePathUploadImage, formData);
+        return this.post(
+          endpoint,
+          BackendRoutes.RoutePathUploadImage,
+          formData
+        );
       })
     );
   }
@@ -971,7 +1120,11 @@ export class BackendApiService {
       MinFeeRateNanosPerKB,
     });
 
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   UpdateNFT(
@@ -996,7 +1149,11 @@ export class BackendApiService {
       MinFeeRateNanosPerKB,
     });
 
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   CreateNFTBid(
@@ -1014,7 +1171,11 @@ export class BackendApiService {
       BidAmountNanos,
       MinFeeRateNanosPerKB,
     });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   AcceptNFTBid(
@@ -1029,12 +1190,14 @@ export class BackendApiService {
   ): Observable<any> {
     let request = UnencryptedUnlockableText
       ? this.identityService.encrypt({
-          ...this.identityService.identityServiceParamsForKey(UpdaterPublicKeyBase58Check),
+          ...this.identityService.identityServiceParamsForKey(
+            UpdaterPublicKeyBase58Check
+          ),
           recipientPublicKey: BidderPublicKeyBase58Check,
-          senderGroupKeyName: "",
+          senderGroupKeyName: '',
           message: UnencryptedUnlockableText,
         })
-      : of({ encryptedMessage: "" });
+      : of({ encryptedMessage: '' });
     request = request.pipe(
       switchMap((encrypted) => {
         const EncryptedMessageText = encrypted.encryptedMessage;
@@ -1053,7 +1216,11 @@ export class BackendApiService {
         );
       })
     );
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   TransferNFT(
@@ -1067,12 +1234,14 @@ export class BackendApiService {
   ): Observable<any> {
     let request = UnencryptedUnlockableText
       ? this.identityService.encrypt({
-          ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
+          ...this.identityService.identityServiceParamsForKey(
+            SenderPublicKeyBase58Check
+          ),
           recipientPublicKey: ReceiverPublicKeyBase58Check,
-          senderGroupKeyName: "",
+          senderGroupKeyName: '',
           message: UnencryptedUnlockableText,
         })
-      : of({ encryptedMessage: "" });
+      : of({ encryptedMessage: '' });
     request = request.pipe(
       switchMap((encrypted) => {
         const EncryptedUnlockableText = encrypted.encryptedMessage;
@@ -1091,7 +1260,11 @@ export class BackendApiService {
       })
     );
 
-    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      SenderPublicKeyBase58Check
+    );
   }
 
   AcceptNFTTransfer(
@@ -1101,13 +1274,21 @@ export class BackendApiService {
     SerialNumber: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathAcceptNFTTransfer, {
-      UpdaterPublicKeyBase58Check,
-      NFTPostHashHex,
-      SerialNumber,
-      MinFeeRateNanosPerKB,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    const request = this.post(
+      endpoint,
+      BackendRoutes.RoutePathAcceptNFTTransfer,
+      {
+        UpdaterPublicKeyBase58Check,
+        NFTPostHashHex,
+        SerialNumber,
+        MinFeeRateNanosPerKB,
+      }
+    );
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   BurnNFT(
@@ -1123,7 +1304,11 @@ export class BackendApiService {
       SerialNumber,
       MinFeeRateNanosPerKB,
     });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   DecryptUnlockableTexts(
@@ -1132,17 +1317,24 @@ export class BackendApiService {
   ): Observable<any> {
     return this.identityService
       .decrypt({
-        ...this.identityService.identityServiceParamsForKey(ReaderPublicKeyBase58Check),
-        encryptedMessages: UnlockableNFTEntryResponses.map((unlockableNFTEntryResponses) => ({
-          EncryptedHex: unlockableNFTEntryResponses.EncryptedUnlockableText,
-          PublicKey: unlockableNFTEntryResponses.LastOwnerPublicKeyBase58Check,
-        })),
+        ...this.identityService.identityServiceParamsForKey(
+          ReaderPublicKeyBase58Check
+        ),
+        encryptedMessages: UnlockableNFTEntryResponses.map(
+          (unlockableNFTEntryResponses) => ({
+            EncryptedHex: unlockableNFTEntryResponses.EncryptedUnlockableText,
+            PublicKey:
+              unlockableNFTEntryResponses.LastOwnerPublicKeyBase58Check,
+          })
+        ),
       })
       .pipe(
         map((decrypted) => {
           for (const unlockableNFTEntryResponse of UnlockableNFTEntryResponses) {
             unlockableNFTEntryResponse.DecryptedUnlockableText =
-              decrypted.decryptedHexes[unlockableNFTEntryResponse.EncryptedUnlockableText];
+              decrypted.decryptedHexes[
+                unlockableNFTEntryResponse.EncryptedUnlockableText
+              ];
           }
           return UnlockableNFTEntryResponses;
         })
@@ -1198,24 +1390,39 @@ export class BackendApiService {
     });
   }
 
-  GetNextNFTShowcase(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
+  GetNextNFTShowcase(
+    endpoint: string,
+    UserPublicKeyBase58Check: string
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNextNFTShowcase, {
       UserPublicKeyBase58Check,
     });
   }
 
-  GetNFTCollectionSummary(endpoint: string, ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
+  GetNFTCollectionSummary(
+    endpoint: string,
+    ReaderPublicKeyBase58Check: string,
+    PostHashHex: string
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNFTCollectionSummary, {
       ReaderPublicKeyBase58Check,
       PostHashHex,
     });
   }
 
-  GetNFTEntriesForNFTPost(endpoint: string, ReaderPublicKeyBase58Check: string, PostHashHex: string): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetNFTEntriesForPostHash, {
-      ReaderPublicKeyBase58Check,
-      PostHashHex,
-    });
+  GetNFTEntriesForNFTPost(
+    endpoint: string,
+    ReaderPublicKeyBase58Check: string,
+    PostHashHex: string
+  ): Observable<any> {
+    return this.post(
+      endpoint,
+      BackendRoutes.RoutePathGetNFTEntriesForPostHash,
+      {
+        ReaderPublicKeyBase58Check,
+        PostHashHex,
+      }
+    );
   }
 
   SubmitPost(
@@ -1246,7 +1453,25 @@ export class BackendApiService {
       InTutorial,
     });
 
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
+  }
+
+  GetHotFeed(
+    endpoint: string,
+    ReaderPublicKeyBase58Check: string,
+    SeenPosts,
+    ResponseLimit
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathGetHotFeed, {
+      ReaderPublicKeyBase58Check,
+      SeenPosts,
+      ResponseLimit,
+      SortByNew: false,
+    });
   }
 
   GetPostsStateless(
@@ -1327,7 +1552,11 @@ export class BackendApiService {
       AddGlobalFeedBool,
     });
   }
-  GetSingleProfile(endpoint: string, PublicKeyBase58Check: string, Username: string): Observable<any> {
+  GetSingleProfile(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    Username: string
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetSingleProfile, {
       PublicKeyBase58Check,
       Username,
@@ -1335,20 +1564,42 @@ export class BackendApiService {
   }
 
   // We add a ts-ignore here as typescript does not expect responseType to be anything but "json".
-  GetSingleProfilePicture(endpoint: string, PublicKeyBase58Check: string, bustCache: string = ""): Observable<any> {
-    return this.httpClient.get<any>(this.GetSingleProfilePictureURL(endpoint, PublicKeyBase58Check, bustCache), {
-      // @ts-ignore
-      responseType: "blob",
-    });
+  GetSingleProfilePicture(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    bustCache: string = ''
+  ): Observable<any> {
+    return this.httpClient.get<any>(
+      this.GetSingleProfilePictureURL(
+        endpoint,
+        PublicKeyBase58Check,
+        bustCache
+      ),
+      {
+        // @ts-ignore
+        responseType: 'blob',
+      }
+    );
   }
-  GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
+  GetSingleProfilePictureURL(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    fallback
+  ): string {
     return this._makeRequestURL(
       endpoint,
-      BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + "?" + fallback
+      BackendRoutes.RoutePathGetSingleProfilePicture +
+        '/' +
+        PublicKeyBase58Check +
+        '?' +
+        fallback
     );
   }
   GetDefaultProfilePictureURL(endpoint: string): string {
-    return this._makeRequestURL(endpoint, "/assets/img/default_profile_pic.png");
+    return this._makeRequestURL(
+      endpoint,
+      '/assets/img/default_profile_pic.png'
+    );
   }
 
   GetPostsForPublicKey(
@@ -1400,7 +1651,10 @@ export class BackendApiService {
     FetchHodlings: boolean = false,
     FetchAll: boolean = false,
     IsDAOCoin: boolean = false
-  ): Observable<{ Hodlers: BalanceEntryResponse[]; LastPublicKeyBase58Check: string }> {
+  ): Observable<{
+    Hodlers: BalanceEntryResponse[];
+    LastPublicKeyBase58Check: string;
+  }> {
     return this.post(endpoint, BackendRoutes.RoutePathGetHodlersForPublicKey, {
       PublicKeyBase58Check,
       Username,
@@ -1459,9 +1713,18 @@ export class BackendApiService {
         if (res.CompProfileCreationTxnHashHex) {
           return interval(500)
             .pipe(
-              concatMap((iteration) => zip(this.GetTxn(endpoint, res.CompProfileCreationTxnHashHex), of(iteration)))
+              concatMap((iteration) =>
+                zip(
+                  this.GetTxn(endpoint, res.CompProfileCreationTxnHashHex),
+                  of(iteration)
+                )
+              )
             )
-            .pipe(filter(([txFound, iteration]) => txFound.TxnFound || iteration > 120))
+            .pipe(
+              filter(
+                ([txFound, iteration]) => txFound.TxnFound || iteration > 120
+              )
+            )
             .pipe(take(1))
             .pipe(switchMap(() => of(res)));
         } else {
@@ -1470,7 +1733,11 @@ export class BackendApiService {
       })
     );
 
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   GetFollows(
@@ -1478,7 +1745,7 @@ export class BackendApiService {
     Username: string,
     PublicKeyBase58Check: string,
     GetEntriesFollowingUsername: boolean,
-    LastPublicKeyBase58Check: string = "",
+    LastPublicKeyBase58Check: string = '',
     NumToFetch: number = 50
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetFollowsStateless, {
@@ -1497,55 +1764,73 @@ export class BackendApiService {
     IsUnfollow: boolean,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateFollowTxnStateless, {
-      FollowerPublicKeyBase58Check,
-      FollowedPublicKeyBase58Check,
-      IsUnfollow,
-      MinFeeRateNanosPerKB,
-    });
+    const request = this.post(
+      endpoint,
+      BackendRoutes.RoutePathCreateFollowTxnStateless,
+      {
+        FollowerPublicKeyBase58Check,
+        FollowedPublicKeyBase58Check,
+        IsUnfollow,
+        MinFeeRateNanosPerKB,
+      }
+    );
 
-    return this.signAndSubmitTransaction(endpoint, request, FollowerPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      FollowerPublicKeyBase58Check
+    );
   }
 
   GetMessages(
     endpoint: string,
     PublicKeyBase58Check: string,
-    FetchAfterPublicKeyBase58Check: string = "",
+    FetchAfterPublicKeyBase58Check: string = '',
     NumToFetch: number = 25,
     HoldersOnly: boolean = false,
     HoldingsOnly: boolean = false,
     FollowersOnly: boolean = false,
     FollowingOnly: boolean = false,
-    SortAlgorithm: string = "time"
+    SortAlgorithm: string = 'time'
   ): Observable<any> {
-    let req = this.httpClient.post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathGetMessagesStateless), {
-      PublicKeyBase58Check,
-      FetchAfterPublicKeyBase58Check,
-      NumToFetch,
-      HoldersOnly,
-      HoldingsOnly,
-      FollowersOnly,
-      FollowingOnly,
-      SortAlgorithm,
-    });
+    let req = this.httpClient.post<any>(
+      this._makeRequestURL(
+        endpoint,
+        BackendRoutes.RoutePathGetMessagesStateless
+      ),
+      {
+        PublicKeyBase58Check,
+        FetchAfterPublicKeyBase58Check,
+        NumToFetch,
+        HoldersOnly,
+        HoldingsOnly,
+        FollowersOnly,
+        FollowingOnly,
+        SortAlgorithm,
+      }
+    );
 
     // create an array of messages to decrypt
     req = req.pipe(
       map((res) => {
         // This array contains encrypted messages with public keys
         // Public keys of the other party involved in the correspondence
-        const encryptedMessages = res.OrderedContactsWithMessages.flatMap((thread) =>
-          thread.Messages.flatMap((message) => ({
-            EncryptedHex: message.EncryptedText,
-            PublicKey: message.IsSender ? message.RecipientPublicKeyBase58Check : message.SenderPublicKeyBase58Check,
-            IsSender: message.IsSender,
-            Legacy: !message.V2 && (!message.Version || message.Version < 2),
-            Version: message.Version,
-            SenderMessagingPublicKey: message.SenderMessagingPublicKey,
-            SenderMessagingGroupKeyName: message.SenderMessagingGroupKeyName,
-            RecipientMessagingPublicKey: message.RecipientMessagingPublicKey,
-            RecipientMessagingGroupKeyName: message.RecipientMessagingGroupKeyName,
-          }))
+        const encryptedMessages = res.OrderedContactsWithMessages.flatMap(
+          (thread) =>
+            thread.Messages.flatMap((message) => ({
+              EncryptedHex: message.EncryptedText,
+              PublicKey: message.IsSender
+                ? message.RecipientPublicKeyBase58Check
+                : message.SenderPublicKeyBase58Check,
+              IsSender: message.IsSender,
+              Legacy: !message.V2 && (!message.Version || message.Version < 2),
+              Version: message.Version,
+              SenderMessagingPublicKey: message.SenderMessagingPublicKey,
+              SenderMessagingGroupKeyName: message.SenderMessagingGroupKeyName,
+              RecipientMessagingPublicKey: message.RecipientMessagingPublicKey,
+              RecipientMessagingGroupKeyName:
+                message.RecipientMessagingGroupKeyName,
+            }))
         );
         return { ...res, encryptedMessages };
       })
@@ -1556,14 +1841,18 @@ export class BackendApiService {
       switchMap((res) => {
         return this.identityService
           .decrypt({
-            ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
+            ...this.identityService.identityServiceParamsForKey(
+              PublicKeyBase58Check
+            ),
             encryptedMessages: res.encryptedMessages,
           })
           .pipe(
             map((decrypted) => {
               res.OrderedContactsWithMessages.forEach((threads) =>
                 threads.Messages.forEach(
-                  (message) => (message.DecryptedText = decrypted.decryptedHexes[message.EncryptedText])
+                  (message) =>
+                    (message.DecryptedText =
+                      decrypted.decryptedHexes[message.EncryptedText])
                 )
               );
               return { ...res, ...decrypted };
@@ -1582,14 +1871,22 @@ export class BackendApiService {
     IsUnlike: boolean,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCreateLikeStateless, {
-      ReaderPublicKeyBase58Check,
-      LikedPostHashHex,
-      IsUnlike,
-      MinFeeRateNanosPerKB,
-    });
+    const request = this.post(
+      endpoint,
+      BackendRoutes.RoutePathCreateLikeStateless,
+      {
+        ReaderPublicKeyBase58Check,
+        LikedPostHashHex,
+        IsUnlike,
+        MinFeeRateNanosPerKB,
+      }
+    );
 
-    return this.signAndSubmitTransaction(endpoint, request, ReaderPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      ReaderPublicKeyBase58Check
+    );
   }
 
   SendDiamonds(
@@ -1610,7 +1907,11 @@ export class BackendApiService {
       InTutorial,
     });
 
-    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      SenderPublicKeyBase58Check
+    );
   }
 
   GetDiamondsForPublicKey(
@@ -1721,22 +2022,30 @@ export class BackendApiService {
     MinDeSoExpectedNanos = Math.floor(MinDeSoExpectedNanos);
     MinCreatorCoinExpectedNanos = Math.floor(MinCreatorCoinExpectedNanos);
 
-    let request = this.post(endpoint, BackendRoutes.RoutePathBuyOrSellCreatorCoin, {
-      UpdaterPublicKeyBase58Check,
-      CreatorPublicKeyBase58Check,
-      OperationType,
-      DeSoToSellNanos,
-      CreatorCoinToSellNanos,
-      DeSoToAddNanos,
-      MinDeSoExpectedNanos,
-      MinCreatorCoinExpectedNanos,
-      MinFeeRateNanosPerKB,
-      // If we are not broadcasting the transaction, InTutorial should always be false so we don't update the TutorialStatus of the user.
-      InTutorial: Broadcast ? InTutorial : false,
-    });
+    let request = this.post(
+      endpoint,
+      BackendRoutes.RoutePathBuyOrSellCreatorCoin,
+      {
+        UpdaterPublicKeyBase58Check,
+        CreatorPublicKeyBase58Check,
+        OperationType,
+        DeSoToSellNanos,
+        CreatorCoinToSellNanos,
+        DeSoToAddNanos,
+        MinDeSoExpectedNanos,
+        MinCreatorCoinExpectedNanos,
+        MinFeeRateNanosPerKB,
+        // If we are not broadcasting the transaction, InTutorial should always be false so we don't update the TutorialStatus of the user.
+        InTutorial: Broadcast ? InTutorial : false,
+      }
+    );
 
     if (Broadcast) {
-      request = this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+      request = this.signAndSubmitTransaction(
+        endpoint,
+        request,
+        UpdaterPublicKeyBase58Check
+      );
     }
 
     return request;
@@ -1763,7 +2072,11 @@ export class BackendApiService {
     });
 
     if (Broadcast) {
-      request = this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+      request = this.signAndSubmitTransaction(
+        endpoint,
+        request,
+        SenderPublicKeyBase58Check
+      );
     }
 
     return request;
@@ -1788,7 +2101,11 @@ export class BackendApiService {
       TransferRestrictionStatus,
       MinFeeRateNanosPerKB,
     });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   TransferDAOCoin(
@@ -1799,14 +2116,22 @@ export class BackendApiService {
     DAOCoinToTransferNanos: Hex,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathTransferDAOCoin, {
-      SenderPublicKeyBase58Check,
-      ProfilePublicKeyBase58CheckOrUsername,
-      ReceiverPublicKeyBase58CheckOrUsername,
-      DAOCoinToTransferNanos,
-      MinFeeRateNanosPerKB,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, SenderPublicKeyBase58Check);
+    const request = this.post(
+      endpoint,
+      BackendRoutes.RoutePathTransferDAOCoin,
+      {
+        SenderPublicKeyBase58Check,
+        ProfilePublicKeyBase58CheckOrUsername,
+        ReceiverPublicKeyBase58CheckOrUsername,
+        DAOCoinToTransferNanos,
+        MinFeeRateNanosPerKB,
+      }
+    );
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      SenderPublicKeyBase58Check
+    );
   }
 
   BlockPublicKey(
@@ -1815,11 +2140,16 @@ export class BackendApiService {
     BlockPublicKeyBase58Check: string,
     Unblock: boolean = false
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathBlockPublicKey, PublicKeyBase58Check, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathBlockPublicKey,
       PublicKeyBase58Check,
-      BlockPublicKeyBase58Check,
-      Unblock,
-    });
+      {
+        PublicKeyBase58Check,
+        BlockPublicKeyBase58Check,
+        Unblock,
+      }
+    );
   }
 
   MarkContactMessagesRead(
@@ -1827,16 +2157,29 @@ export class BackendApiService {
     UserPublicKeyBase58Check: string,
     ContactPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkContactMessagesRead, UserPublicKeyBase58Check, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathMarkContactMessagesRead,
       UserPublicKeyBase58Check,
-      ContactPublicKeyBase58Check,
-    });
+      {
+        UserPublicKeyBase58Check,
+        ContactPublicKeyBase58Check,
+      }
+    );
   }
 
-  MarkAllMessagesRead(endpoint: string, UserPublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathMarkAllMessagesRead, UserPublicKeyBase58Check, {
+  MarkAllMessagesRead(
+    endpoint: string,
+    UserPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathMarkAllMessagesRead,
       UserPublicKeyBase58Check,
-    });
+      {
+        UserPublicKeyBase58Check,
+      }
+    );
   }
 
   // Note that FetchStartIndex < 0 means "fetch me the latest notifications."
@@ -1869,11 +2212,16 @@ export class BackendApiService {
     Email: string,
     MessageReadStateUpdatesByContact: any
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateUserGlobalMetadata, UserPublicKeyBase58Check, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathUpdateUserGlobalMetadata,
       UserPublicKeyBase58Check,
-      Email,
-      MessageReadStateUpdatesByContact,
-    });
+      {
+        UserPublicKeyBase58Check,
+        Email,
+        MessageReadStateUpdatesByContact,
+      }
+    );
   }
 
   GetUserGlobalMetadata(
@@ -1882,18 +2230,32 @@ export class BackendApiService {
     // The public key of the user to update.
     UserPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetUserGlobalMetadata, UserPublicKeyBase58Check, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathGetUserGlobalMetadata,
       UserPublicKeyBase58Check,
-    });
+      {
+        UserPublicKeyBase58Check,
+      }
+    );
   }
 
   ResendVerifyEmail(endpoint: string, PublicKey: string) {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathResendVerifyEmail, PublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathResendVerifyEmail,
       PublicKey,
-    });
+      {
+        PublicKey,
+      }
+    );
   }
 
-  VerifyEmail(endpoint: string, PublicKey: string, EmailHash: string): Observable<any> {
+  VerifyEmail(
+    endpoint: string,
+    PublicKey: string,
+    EmailHash: string
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathVerifyEmail, {
       PublicKey,
       EmailHash,
@@ -1901,27 +2263,60 @@ export class BackendApiService {
   }
 
   DeletePII(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathDeletePII, PublicKeyBase58Check, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathDeletePII,
       PublicKeyBase58Check,
-    });
+      {
+        PublicKeyBase58Check,
+      }
+    );
   }
 
-  GetUserMetadata(endpoint: string, PublicKeyBase58Check: string): Observable<GetUserMetadataResponse> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetUserMetadata + "/" + PublicKeyBase58Check);
+  GetUserMetadata(
+    endpoint: string,
+    PublicKeyBase58Check: string
+  ): Observable<GetUserMetadataResponse> {
+    return this.get(
+      endpoint,
+      BackendRoutes.RoutePathGetUserMetadata + '/' + PublicKeyBase58Check
+    );
   }
 
-  GetUsernameForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<string> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetUsernameForPublicKey + "/" + PublicKeyBase58Check);
+  GetUsernameForPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string
+  ): Observable<string> {
+    return this.get(
+      endpoint,
+      BackendRoutes.RoutePathGetUsernameForPublicKey +
+        '/' +
+        PublicKeyBase58Check
+    );
   }
 
-  GetPublicKeyForUsername(endpoint: string, Username: string): Observable<string> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetPublicKeyForUsername + "/" + Username);
+  GetPublicKeyForUsername(
+    endpoint: string,
+    Username: string
+  ): Observable<string> {
+    return this.get(
+      endpoint,
+      BackendRoutes.RoutePathGetPublicKeyForUsername + '/' + Username
+    );
   }
 
-  GetJumioStatusForPublicKey(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetJumioStatusForPublicKey, PublicKeyBase58Check, {
+  GetJumioStatusForPublicKey(
+    endpoint: string,
+    PublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathGetJumioStatusForPublicKey,
       PublicKeyBase58Check,
-    });
+      {
+        PublicKeyBase58Check,
+      }
+    );
   }
 
   SubmitETHTx(
@@ -1939,31 +2334,61 @@ export class BackendApiService {
     });
   }
 
-  QueryETHRPC(endpoint: string, Method: string, Params: string[]): Observable<any> {
+  QueryETHRPC(
+    endpoint: string,
+    Method: string,
+    Params: string[]
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathQueryETHRPC, {
       Method,
       Params,
     });
   }
 
-  AdminGetVerifiedUsers(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetVerifiedUsers, AdminPublicKey, {
+  AdminGetVerifiedUsers(
+    endpoint: string,
+    AdminPublicKey: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetVerifiedUsers,
       AdminPublicKey,
-    });
+      {
+        AdminPublicKey,
+      }
+    );
   }
 
-  AdminGetUsernameVerificationAuditLogs(endpoint: string, AdminPublicKey: string, Username: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUsernameVerificationAuditLogs, AdminPublicKey, {
+  AdminGetUsernameVerificationAuditLogs(
+    endpoint: string,
+    AdminPublicKey: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetUsernameVerificationAuditLogs,
       AdminPublicKey,
-      Username,
-    });
+      {
+        AdminPublicKey,
+        Username,
+      }
+    );
   }
 
-  AdminGrantVerificationBadge(endpoint: string, AdminPublicKey: string, UsernameToVerify: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGrantVerificationBadge, AdminPublicKey, {
+  AdminGrantVerificationBadge(
+    endpoint: string,
+    AdminPublicKey: string,
+    UsernameToVerify: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGrantVerificationBadge,
       AdminPublicKey,
-      UsernameToVerify,
-    });
+      {
+        AdminPublicKey,
+        UsernameToVerify,
+      }
+    );
   }
 
   AdminRemoveVerificationBadge(
@@ -1971,33 +2396,66 @@ export class BackendApiService {
     AdminPublicKey: string,
     UsernameForWhomToRemoveVerification: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminRemoveVerificationBadge, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminRemoveVerificationBadge,
       AdminPublicKey,
-      UsernameForWhomToRemoveVerification,
-    });
+      {
+        AdminPublicKey,
+        UsernameForWhomToRemoveVerification,
+      }
+    );
   }
 
-  AdminGetUserAdminData(endpoint: string, AdminPublicKey: string, UserPublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUserAdminData, AdminPublicKey, {
+  AdminGetUserAdminData(
+    endpoint: string,
+    AdminPublicKey: string,
+    UserPublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetUserAdminData,
       AdminPublicKey,
-      UserPublicKeyBase58Check,
-    });
+      {
+        AdminPublicKey,
+        UserPublicKeyBase58Check,
+      }
+    );
   }
 
-  NodeControl(endpoint: string, AdminPublicKey: string, Address: string, OperationType: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.NodeControlRoute, AdminPublicKey, {
+  NodeControl(
+    endpoint: string,
+    AdminPublicKey: string,
+    Address: string,
+    OperationType: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.NodeControlRoute,
       AdminPublicKey,
-      Address,
-      OperationType,
-    });
+      {
+        AdminPublicKey,
+        Address,
+        OperationType,
+      }
+    );
   }
 
-  UpdateMiner(endpoint: string, AdminPublicKey: string, MinerPublicKeys: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.NodeControlRoute, AdminPublicKey, {
+  UpdateMiner(
+    endpoint: string,
+    AdminPublicKey: string,
+    MinerPublicKeys: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.NodeControlRoute,
       AdminPublicKey,
-      MinerPublicKeys,
-      OperationType: "update_miner",
-    });
+      {
+        AdminPublicKey,
+        MinerPublicKeys,
+        OperationType: 'update_miner',
+      }
+    );
   }
 
   AdminGetUserGlobalMetadata(
@@ -2007,10 +2465,15 @@ export class BackendApiService {
     // The public key of the user for whom we'd like to get global metadata
     UserPublicKeyBase58Check: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetUserGlobalMetadata, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetUserGlobalMetadata,
       AdminPublicKey,
-      UserPublicKeyBase58Check,
-    });
+      {
+        AdminPublicKey,
+        UserPublicKeyBase58Check,
+      }
+    );
   }
 
   AdminUpdateUserGlobalMetadata(
@@ -2027,32 +2490,72 @@ export class BackendApiService {
     WhitelistPosts: boolean,
     RemovePhoneNumberMetadata: boolean
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateUserGlobalMetadata, AdminPublicKey, {
-      UserPublicKeyBase58Check,
-      Username,
-      IsBlacklistUpdate,
-      RemoveEverywhere,
-      RemoveFromLeaderboard,
-      IsWhitelistUpdate,
-      WhitelistPosts,
-      RemovePhoneNumberMetadata,
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateUserGlobalMetadata,
       AdminPublicKey,
-    });
+      {
+        UserPublicKeyBase58Check,
+        Username,
+        IsBlacklistUpdate,
+        RemoveEverywhere,
+        RemoveFromLeaderboard,
+        IsWhitelistUpdate,
+        WhitelistPosts,
+        RemovePhoneNumberMetadata,
+        AdminPublicKey,
+      }
+    );
   }
 
-  AdminGetAllUserGlobalMetadata(endpoint: string, AdminPublicKey: string, NumToFetch: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetAllUserGlobalMetadata, AdminPublicKey, {
+  AdminResetPhoneNumber(
+    endpoint: string,
+    AdminPublicKey: string,
+    PhoneNumber: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminResetPhoneNumber,
       AdminPublicKey,
-      NumToFetch,
-    });
+      {
+        PhoneNumber,
+        AdminPublicKey,
+      }
+    );
   }
 
-  AdminPinPost(endpoint: string, AdminPublicKey: string, PostHashHex: string, UnpinPost: boolean): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminPinPost, AdminPublicKey, {
+  AdminGetAllUserGlobalMetadata(
+    endpoint: string,
+    AdminPublicKey: string,
+    NumToFetch: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetAllUserGlobalMetadata,
       AdminPublicKey,
-      PostHashHex,
-      UnpinPost,
-    });
+      {
+        AdminPublicKey,
+        NumToFetch,
+      }
+    );
+  }
+
+  AdminPinPost(
+    endpoint: string,
+    AdminPublicKey: string,
+    PostHashHex: string,
+    UnpinPost: boolean
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminPinPost,
+      AdminPublicKey,
+      {
+        AdminPublicKey,
+        PostHashHex,
+        UnpinPost,
+      }
+    );
   }
 
   AdminUpdateGlobalFeed(
@@ -2061,18 +2564,32 @@ export class BackendApiService {
     PostHashHex: string,
     RemoveFromGlobalFeed: boolean
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateGlobalFeed, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateGlobalFeed,
       AdminPublicKey,
-      PostHashHex,
-      RemoveFromGlobalFeed,
-    });
+      {
+        AdminPublicKey,
+        PostHashHex,
+        RemoveFromGlobalFeed,
+      }
+    );
   }
 
-  AdminRemoveNilPosts(endpoint: string, AdminPublicKey: string, NumPostsToSearch: number = 1000): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminRemoveNilPosts, AdminPublicKey, {
+  AdminRemoveNilPosts(
+    endpoint: string,
+    AdminPublicKey: string,
+    NumPostsToSearch: number = 1000
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminRemoveNilPosts,
       AdminPublicKey,
-      NumPostsToSearch,
-    });
+      {
+        AdminPublicKey,
+        NumPostsToSearch,
+      }
+    );
   }
 
   AdminReprocessBitcoinBlock(
@@ -2090,10 +2607,128 @@ export class BackendApiService {
     );
   }
 
-  AdminGetMempoolStats(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetMempoolStats, AdminPublicKey, {
+  AdminGetMempoolStats(
+    endpoint: string,
+    AdminPublicKey: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetMempoolStats,
       AdminPublicKey,
-    });
+      {
+        AdminPublicKey,
+      }
+    );
+  }
+
+  AdminGetUnfilteredHotFeed(
+    endpoint: string,
+    AdminPublicKey: string,
+    ResponseLimit: number,
+    SeenPosts: Array<string>
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetUnfilteredHotFeed,
+      AdminPublicKey,
+      {
+        AdminPublicKey,
+        ResponseLimit,
+        SeenPosts,
+      }
+    );
+  }
+
+  AdminGetHotFeedAlgorithm(
+    endpoint: string,
+    AdminPublicKey: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetHotFeedAlgorithm,
+      AdminPublicKey,
+      {
+        AdminPublicKey,
+      }
+    );
+  }
+
+  AdminUpdateHotFeedAlgorithm(
+    endpoint: string,
+    AdminPublicKey: string,
+    InteractionCap: number,
+    InteractionCapTag: number,
+    TimeDecayBlocks: number,
+    TimeDecayBlocksTag: number,
+    TxnTypeMultiplierMap: { [txnType: number]: number }
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateHotFeedAlgorithm,
+      AdminPublicKey,
+      {
+        AdminPublicKey,
+        InteractionCap,
+        InteractionCapTag,
+        TimeDecayBlocks,
+        TimeDecayBlocksTag,
+        TxnTypeMultiplierMap,
+      }
+    );
+  }
+
+  AdminUpdateHotFeedPostMultiplier(
+    endpoint: string,
+    AdminPublicKey: string,
+    PostHashHex: string,
+    Multiplier: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateHotFeedPostMultiplier,
+      AdminPublicKey,
+      {
+        AdminPublicKey,
+        PostHashHex,
+        Multiplier,
+      }
+    );
+  }
+
+  AdminUpdateHotFeedUserMultiplier(
+    endpoint: string,
+    AdminPublicKey: string,
+    Username: string,
+    InteractionMultiplier: number,
+    PostsMultiplier: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateHotFeedUserMultiplier,
+      AdminPublicKey,
+      {
+        AdminPublicKey,
+        Username,
+        InteractionMultiplier,
+        PostsMultiplier,
+      }
+    );
+  }
+
+  AdminGetHotFeedUserMultiplier(
+    endpoint: string,
+    AdminPublicKey: string,
+    Username: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetHotFeedUserMultiplier,
+      AdminPublicKey,
+      {
+        AdminPublicKey,
+        Username,
+      }
+    );
   }
 
   SwapIdentity(
@@ -2103,15 +2738,24 @@ export class BackendApiService {
     ToUsernameOrPublicKeyBase58Check: string,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.jwtPost(endpoint, BackendRoutes.RoutePathSwapIdentity, UpdaterPublicKeyBase58Check, {
+    const request = this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathSwapIdentity,
       UpdaterPublicKeyBase58Check,
-      FromUsernameOrPublicKeyBase58Check,
-      ToUsernameOrPublicKeyBase58Check,
-      MinFeeRateNanosPerKB,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
+      {
+        UpdaterPublicKeyBase58Check,
+        FromUsernameOrPublicKeyBase58Check,
+        ToUsernameOrPublicKeyBase58Check,
+        MinFeeRateNanosPerKB,
+        AdminPublicKey: UpdaterPublicKeyBase58Check,
+      }
+    );
 
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   SetUSDCentsToDeSoReserveExchangeRate(
@@ -2119,21 +2763,38 @@ export class BackendApiService {
     AdminPublicKey: string,
     USDCentsPerDeSo: number
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetUSDCentsToDeSoReserveExchangeRate, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathSetUSDCentsToDeSoReserveExchangeRate,
       AdminPublicKey,
-      USDCentsPerDeSo,
-    });
+      {
+        AdminPublicKey,
+        USDCentsPerDeSo,
+      }
+    );
   }
 
   GetUSDCentsToDeSoReserveExchangeRate(endpoint: string): Observable<any> {
-    return this.get(endpoint, BackendRoutes.RoutePathGetUSDCentsToDeSoReserveExchangeRate);
+    return this.get(
+      endpoint,
+      BackendRoutes.RoutePathGetUSDCentsToDeSoReserveExchangeRate
+    );
   }
 
-  SetBuyDeSoFeeBasisPoints(endpoint: string, AdminPublicKey: string, BuyDeSoFeeBasisPoints: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathSetBuyDeSoFeeBasisPoints, AdminPublicKey, {
+  SetBuyDeSoFeeBasisPoints(
+    endpoint: string,
+    AdminPublicKey: string,
+    BuyDeSoFeeBasisPoints: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathSetBuyDeSoFeeBasisPoints,
       AdminPublicKey,
-      BuyDeSoFeeBasisPoints,
-    });
+      {
+        AdminPublicKey,
+        BuyDeSoFeeBasisPoints,
+      }
+    );
   }
 
   GetBuyDeSoFeeBasisPoints(endpoint: string): Observable<any> {
@@ -2150,30 +2811,51 @@ export class BackendApiService {
     CreateNFTFeeNanos: number,
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.jwtPost(endpoint, BackendRoutes.RoutePathUpdateGlobalParams, UpdaterPublicKeyBase58Check, {
+    const request = this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathUpdateGlobalParams,
       UpdaterPublicKeyBase58Check,
-      USDCentsPerBitcoin,
-      CreateProfileFeeNanos,
-      MaxCopiesPerNFT,
-      CreateNFTFeeNanos,
-      MinimumNetworkFeeNanosPerKB,
-      MinFeeRateNanosPerKB,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
-    return this.signAndSubmitTransaction(endpoint, request, UpdaterPublicKeyBase58Check);
+      {
+        UpdaterPublicKeyBase58Check,
+        USDCentsPerBitcoin,
+        CreateProfileFeeNanos,
+        MaxCopiesPerNFT,
+        CreateNFTFeeNanos,
+        MinimumNetworkFeeNanosPerKB,
+        MinFeeRateNanosPerKB,
+        AdminPublicKey: UpdaterPublicKeyBase58Check,
+      }
+    );
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
-  GetGlobalParams(endpoint: string, UpdaterPublicKeyBase58Check: string): Observable<any> {
+  GetGlobalParams(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetGlobalParams, {
       UpdaterPublicKeyBase58Check,
     });
   }
 
-  AdminGetNFTDrop(endpoint: string, UpdaterPublicKeyBase58Check: string, DropNumber: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetNFTDrop, UpdaterPublicKeyBase58Check, {
-      DropNumber,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
+  AdminGetNFTDrop(
+    endpoint: string,
+    UpdaterPublicKeyBase58Check: string,
+    DropNumber: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetNFTDrop,
+      UpdaterPublicKeyBase58Check,
+      {
+        DropNumber,
+        AdminPublicKey: UpdaterPublicKeyBase58Check,
+      }
+    );
   }
 
   AdminUpdateNFTDrop(
@@ -2185,14 +2867,19 @@ export class BackendApiService {
     NFTHashHexToAdd: string,
     NFTHashHexToRemove: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateNFTDrop, UpdaterPublicKeyBase58Check, {
-      DropNumber,
-      DropTstampNanos,
-      IsActive,
-      NFTHashHexToAdd,
-      NFTHashHexToRemove,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateNFTDrop,
+      UpdaterPublicKeyBase58Check,
+      {
+        DropNumber,
+        DropTstampNanos,
+        IsActive,
+        NFTHashHexToAdd,
+        NFTHashHexToRemove,
+        AdminPublicKey: UpdaterPublicKeyBase58Check,
+      }
+    );
   }
 
   EvictUnminedBitcoinTxns(
@@ -2201,14 +2888,22 @@ export class BackendApiService {
     BitcoinTxnHashes: string[],
     DryRun: boolean
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathEvictUnminedBitcoinTxns, UpdaterPublicKeyBase58Check, {
-      BitcoinTxnHashes,
-      DryRun,
-      AdminPublicKey: UpdaterPublicKeyBase58Check,
-    });
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathEvictUnminedBitcoinTxns,
+      UpdaterPublicKeyBase58Check,
+      {
+        BitcoinTxnHashes,
+        DryRun,
+        AdminPublicKey: UpdaterPublicKeyBase58Check,
+      }
+    );
   }
 
-  GetFullTikTokURL(endpoint: string, TikTokShortVideoID: string): Observable<any> {
+  GetFullTikTokURL(
+    endpoint: string,
+    TikTokShortVideoID: string
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetFullTikTokURL, {
       TikTokShortVideoID,
     }).pipe(
@@ -2224,32 +2919,64 @@ export class BackendApiService {
     PublicKeyBase58Check: string,
     Username: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetJumioForPublicKey, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminResetJumioForPublicKey,
       AdminPublicKey,
-      PublicKeyBase58Check,
-      Username,
-    });
+      {
+        AdminPublicKey,
+        PublicKeyBase58Check,
+        Username,
+      }
+    );
   }
 
-  AdminUpdateJumioDeSo(endpoint: string, AdminPublicKey: string, DeSoNanos: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioDeSo, AdminPublicKey, {
-      DeSoNanos,
+  AdminUpdateJumioDeSo(
+    endpoint: string,
+    AdminPublicKey: string,
+    DeSoNanos: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateJumioDeSo,
       AdminPublicKey,
-    });
+      {
+        DeSoNanos,
+        AdminPublicKey,
+      }
+    );
   }
 
-  AdminUpdateJumioUSDCents(endpoint: string, AdminPublicKey: string, USDCents: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioUSDCents, AdminPublicKey, {
+  AdminUpdateJumioUSDCents(
+    endpoint: string,
+    AdminPublicKey: string,
+    USDCents: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateJumioUSDCents,
       AdminPublicKey,
-      USDCents,
-    });
+      {
+        AdminPublicKey,
+        USDCents,
+      }
+    );
   }
 
-  AdminUpdateJumioKickbackUSDCents(endpoint: string, AdminPublicKey: string, USDCents: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioKickbackUSDCents, AdminPublicKey, {
+  AdminUpdateJumioKickbackUSDCents(
+    endpoint: string,
+    AdminPublicKey: string,
+    USDCents: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateJumioKickbackUSDCents,
       AdminPublicKey,
-      USDCents,
-    });
+      {
+        AdminPublicKey,
+        USDCents,
+      }
+    );
   }
 
   AdminJumioCallback(
@@ -2257,14 +2984,19 @@ export class BackendApiService {
     AdminPublicKey: string,
     PublicKeyBase58Check: string,
     Username: string,
-    CountryAlpha3: string = ""
+    CountryAlpha3: string = ''
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminJumioCallback, AdminPublicKey, {
-      PublicKeyBase58Check,
-      Username,
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminJumioCallback,
       AdminPublicKey,
-      CountryAlpha3,
-    });
+      {
+        PublicKeyBase58Check,
+        Username,
+        AdminPublicKey,
+        CountryAlpha3,
+      }
+    );
   }
 
   AdminGetAllCountryLevelSignUpBonuses(
@@ -2274,9 +3006,14 @@ export class BackendApiService {
     SignUpBonusMetadata: { [k: string]: CountryLevelSignUpBonusResponse };
     DefaultSignUpBonusMetadata: CountryLevelSignUpBonus;
   }> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetAllCountryLevelSignUpBonuses, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetAllCountryLevelSignUpBonuses,
       AdminPublicKey,
-    });
+      {
+        AdminPublicKey,
+      }
+    );
   }
 
   AdminUpdateJumioCountrySignUpBonus(
@@ -2285,11 +3022,16 @@ export class BackendApiService {
     CountryCode: string,
     CountryLevelSignUpBonus: CountryLevelSignUpBonus
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateJumioCountrySignUpBonus, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateJumioCountrySignUpBonus,
       AdminPublicKey,
-      CountryCode,
-      CountryLevelSignUpBonus,
-    });
+      {
+        AdminPublicKey,
+        CountryCode,
+        CountryLevelSignUpBonus,
+      }
+    );
   }
 
   AdminCreateReferralHash(
@@ -2302,15 +3044,20 @@ export class BackendApiService {
     MaxReferrals: number,
     RequiresJumio: boolean
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminCreateReferralHash, AdminPublicKey, {
-      UserPublicKeyBase58Check,
-      Username,
-      ReferrerAmountUSDCents,
-      RefereeAmountUSDCents,
-      MaxReferrals,
-      RequiresJumio,
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminCreateReferralHash,
       AdminPublicKey,
-    });
+      {
+        UserPublicKeyBase58Check,
+        Username,
+        ReferrerAmountUSDCents,
+        RefereeAmountUSDCents,
+        MaxReferrals,
+        RequiresJumio,
+        AdminPublicKey,
+      }
+    );
   }
 
   AdminUpdateReferralHash(
@@ -2323,15 +3070,20 @@ export class BackendApiService {
     RequiresJumio: boolean,
     IsActive: boolean
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateReferralHash, AdminPublicKey, {
-      ReferralHashBase58,
-      ReferrerAmountUSDCents,
-      RefereeAmountUSDCents,
-      MaxReferrals,
-      RequiresJumio,
-      IsActive,
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateReferralHash,
       AdminPublicKey,
-    });
+      {
+        ReferralHashBase58,
+        ReferrerAmountUSDCents,
+        RefereeAmountUSDCents,
+        MaxReferrals,
+        RequiresJumio,
+        IsActive,
+        AdminPublicKey,
+      }
+    );
   }
 
   AdminGetAllReferralInfoForUser(
@@ -2340,55 +3092,100 @@ export class BackendApiService {
     UserPublicKeyBase58Check: string,
     Username: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetAllReferralInfoForUser, AdminPublicKey, {
-      UserPublicKeyBase58Check,
-      Username,
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetAllReferralInfoForUser,
       AdminPublicKey,
-    });
+      {
+        UserPublicKeyBase58Check,
+        Username,
+        AdminPublicKey,
+      }
+    );
   }
 
-  AdminDownloadReferralCSV(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminDownloadReferralCSV, AdminPublicKey, {
+  AdminDownloadReferralCSV(
+    endpoint: string,
+    AdminPublicKey: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminDownloadReferralCSV,
       AdminPublicKey,
-    });
+      {
+        AdminPublicKey,
+      }
+    );
   }
 
-  AdminUploadReferralCSV(endpoint: string, AdminPublicKey: string, file: File): Observable<any> {
+  AdminUploadReferralCSV(
+    endpoint: string,
+    AdminPublicKey: string,
+    file: File
+  ): Observable<any> {
     const request = this.identityService.jwt({
       ...this.identityService.identityServiceParamsForKey(AdminPublicKey),
     });
     return request.pipe(
       switchMap((signed) => {
         const formData = new FormData();
-        formData.append("file", file);
-        formData.append("UserPublicKeyBase58Check", AdminPublicKey);
-        formData.append("JWT", signed.jwt);
+        formData.append('file', file);
+        formData.append('UserPublicKeyBase58Check', AdminPublicKey);
+        formData.append('JWT', signed.jwt);
 
-        return this.post(endpoint, BackendRoutes.RoutePathAdminUploadReferralCSV, formData);
+        return this.post(
+          endpoint,
+          BackendRoutes.RoutePathAdminUploadReferralCSV,
+          formData
+        );
       })
     );
   }
 
-  GetReferralInfoForUser(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetReferralInfoForUser, PublicKeyBase58Check, {
+  GetReferralInfoForUser(
+    endpoint: string,
+    PublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathGetReferralInfoForUser,
       PublicKeyBase58Check,
-    });
+      {
+        PublicKeyBase58Check,
+      }
+    );
   }
 
   GetReferralInfoForReferralHash(
     endpoint: string,
     ReferralHash: string
-  ): Observable<{ ReferralInfoResponse: any; CountrySignUpBonus: CountryLevelSignUpBonus }> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetReferralInfoForReferralHash, {
-      ReferralHash,
-    });
+  ): Observable<{
+    ReferralInfoResponse: any;
+    CountrySignUpBonus: CountryLevelSignUpBonus;
+  }> {
+    return this.post(
+      endpoint,
+      BackendRoutes.RoutePathGetReferralInfoForReferralHash,
+      {
+        ReferralHash,
+      }
+    );
   }
 
-  AdminResetTutorialStatus(endpoint: string, AdminPublicKey: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminResetTutorialStatus, AdminPublicKey, {
-      PublicKeyBase58Check,
+  AdminResetTutorialStatus(
+    endpoint: string,
+    AdminPublicKey: string,
+    PublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminResetTutorialStatus,
       AdminPublicKey,
-    });
+      {
+        PublicKeyBase58Check,
+        AdminPublicKey,
+      }
+    );
   }
 
   AdminUpdateTutorialCreators(
@@ -2398,27 +3195,45 @@ export class BackendApiService {
     IsRemoval: boolean,
     IsWellKnown: boolean
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminUpdateTutorialCreators, AdminPublicKey, {
-      PublicKeyBase58Check,
-      IsRemoval,
-      IsWellKnown,
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateTutorialCreators,
       AdminPublicKey,
-    });
+      {
+        PublicKeyBase58Check,
+        IsRemoval,
+        IsWellKnown,
+        AdminPublicKey,
+      }
+    );
   }
 
-  GetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
+  GetTutorialCreators(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    ResponseLimit: number
+  ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetTutorialCreators, {
       ResponseLimit,
       PublicKeyBase58Check,
     });
   }
 
-  AdminGetTutorialCreators(endpoint: string, PublicKeyBase58Check: string, ResponseLimit: number): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetTutorialCreators, PublicKeyBase58Check, {
-      ResponseLimit,
+  AdminGetTutorialCreators(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    ResponseLimit: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetTutorialCreators,
       PublicKeyBase58Check,
-      AdminPublicKey: PublicKeyBase58Check,
-    });
+      {
+        ResponseLimit,
+        PublicKeyBase58Check,
+        AdminPublicKey: PublicKeyBase58Check,
+      }
+    );
   }
 
   GetWyreWalletOrderForPublicKey(
@@ -2427,11 +3242,16 @@ export class BackendApiService {
     PublicKeyBase58Check: string,
     Username: string
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathGetWyreWalletOrdersForPublicKey, AdminPublicKeyBase58Check, {
-      AdminPublicKey: AdminPublicKeyBase58Check,
-      PublicKeyBase58Check,
-      Username,
-    });
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathGetWyreWalletOrdersForPublicKey,
+      AdminPublicKeyBase58Check,
+      {
+        AdminPublicKey: AdminPublicKeyBase58Check,
+        PublicKeyBase58Check,
+        Username,
+      }
+    );
   }
 
   // Wyre
@@ -2441,11 +3261,15 @@ export class BackendApiService {
     Country: string,
     SourceCurrency: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderQuotation, {
-      SourceAmount,
-      Country,
-      SourceCurrency,
-    });
+    return this.post(
+      endpoint,
+      BackendRoutes.RoutePathGetWyreWalletOrderQuotation,
+      {
+        SourceAmount,
+        Country,
+        SourceCurrency,
+      }
+    );
   }
 
   GetWyreWalletOrderReservation(
@@ -2455,12 +3279,16 @@ export class BackendApiService {
     Country: string,
     SourceCurrency: string
   ): Observable<any> {
-    return this.post(endpoint, BackendRoutes.RoutePathGetWyreWalletOrderReservation, {
-      ReferenceId,
-      SourceAmount,
-      Country,
-      SourceCurrency,
-    });
+    return this.post(
+      endpoint,
+      BackendRoutes.RoutePathGetWyreWalletOrderReservation,
+      {
+        ReferenceId,
+        SourceAmount,
+        Country,
+        SourceCurrency,
+      }
+    );
   }
 
   // Admin Node Fee Endpoints
@@ -2470,11 +3298,16 @@ export class BackendApiService {
     TransactionType: string,
     NewTransactionFees: TransactionFee[]
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminSetTransactionFeeForTransactionType, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminSetTransactionFeeForTransactionType,
       AdminPublicKey,
-      TransactionType,
-      NewTransactionFees,
-    });
+      {
+        AdminPublicKey,
+        TransactionType,
+        NewTransactionFees,
+      }
+    );
   }
 
   AdminSetAllTransactionFees(
@@ -2482,16 +3315,29 @@ export class BackendApiService {
     AdminPublicKey: string,
     NewTransactionFees: TransactionFee[]
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminSetAllTransactionFees, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminSetAllTransactionFees,
       AdminPublicKey,
-      NewTransactionFees,
-    });
+      {
+        AdminPublicKey,
+        NewTransactionFees,
+      }
+    );
   }
 
-  AdminGetTransactionFeeMap(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetTransactionFeeMap, AdminPublicKey, {
+  AdminGetTransactionFeeMap(
+    endpoint: string,
+    AdminPublicKey: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetTransactionFeeMap,
       AdminPublicKey,
-    });
+      {
+        AdminPublicKey,
+      }
+    );
   }
 
   AdminAddExemptPublicKey(
@@ -2500,35 +3346,68 @@ export class BackendApiService {
     PublicKeyBase58Check: string,
     IsRemoval: boolean
   ): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminAddExemptPublicKey, AdminPublicKey, {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminAddExemptPublicKey,
       AdminPublicKey,
-      PublicKeyBase58Check,
-      IsRemoval,
-    });
+      {
+        AdminPublicKey,
+        PublicKeyBase58Check,
+        IsRemoval,
+      }
+    );
   }
 
-  AdminGetExemptPublicKeys(endpoint: string, AdminPublicKey: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathAdminGetExemptPublicKeys, AdminPublicKey, {
+  AdminGetExemptPublicKeys(
+    endpoint: string,
+    AdminPublicKey: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminGetExemptPublicKeys,
       AdminPublicKey,
-    });
+      {
+        AdminPublicKey,
+      }
+    );
   }
 
   // Tutorial Endpoints
-  StartOrSkipTutorial(endpoint: string, PublicKeyBase58Check: string, IsSkip: boolean): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathStartOrSkipTutorial, PublicKeyBase58Check, {
+  StartOrSkipTutorial(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    IsSkip: boolean
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathStartOrSkipTutorial,
       PublicKeyBase58Check,
-      IsSkip,
-    });
+      {
+        PublicKeyBase58Check,
+        IsSkip,
+      }
+    );
   }
 
-  CompleteTutorial(endpoint: string, PublicKeyBase58Check: string): Observable<any> {
-    return this.jwtPost(endpoint, BackendRoutes.RoutePathCompleteTutorial, PublicKeyBase58Check, {
+  CompleteTutorial(
+    endpoint: string,
+    PublicKeyBase58Check: string
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathCompleteTutorial,
       PublicKeyBase58Check,
-    });
+      {
+        PublicKeyBase58Check,
+      }
+    );
   }
 
   GetVideoStatus(endpoint: string, videoId: string): Observable<any> {
-    return this.get(endpoint, `${BackendRoutes.RoutePathGetVideoStatus}/${videoId}`);
+    return this.get(
+      endpoint,
+      `${BackendRoutes.RoutePathGetVideoStatus}/${videoId}`
+    );
   }
 
   GetTotalSupply(endpoint: string): Observable<number> {
@@ -2560,14 +3439,17 @@ export class BackendApiService {
     let errorMessage = JSON.stringify(err);
     if (err && err.error && err.error.error) {
       errorMessage = err.error.error;
-      if (errorMessage.indexOf("not sufficient") >= 0) {
+      if (errorMessage.indexOf('not sufficient') >= 0) {
         errorMessage = `Your balance is insufficient.`;
-      } else if (errorMessage.indexOf("with password") >= 0) {
-        errorMessage = "The password you entered was incorrect.";
-      } else if (errorMessage.indexOf("RuleErrorExistingStakeExceedsMaxAllowed") >= 0) {
-        errorMessage = "Another staker staked to this post right before you. Please try again.";
-      } else if (errorMessage.indexOf("already has stake") >= 0) {
-        errorMessage = "You cannot stake to the same post more than once.";
+      } else if (errorMessage.indexOf('with password') >= 0) {
+        errorMessage = 'The password you entered was incorrect.';
+      } else if (
+        errorMessage.indexOf('RuleErrorExistingStakeExceedsMaxAllowed') >= 0
+      ) {
+        errorMessage =
+          'Another staker staked to this post right before you. Please try again.';
+      } else if (errorMessage.indexOf('already has stake') >= 0) {
+        errorMessage = 'You cannot stake to the same post more than once.';
       }
     }
     return errorMessage;
@@ -2581,30 +3463,48 @@ export class BackendApiService {
     let errorMessage = JSON.stringify(err);
     if (err && err.error && err.error.error) {
       errorMessage = err.error.error;
-      if (errorMessage.indexOf("not sufficient") >= 0) {
+      if (errorMessage.indexOf('not sufficient') >= 0) {
         errorMessage = `Your balance is insufficient.`;
-      } else if (errorMessage.indexOf("with password") >= 0) {
-        errorMessage = "The password you entered was incorrect.";
-      } else if (errorMessage.indexOf("RuleErrorExistingStakeExceedsMaxAllowed") >= 0) {
-        errorMessage = "Another staker staked to this profile right before you. Please try again.";
-      } else if (errorMessage.indexOf("already has stake") >= 0) {
-        errorMessage = "You cannot stake to the same profile more than once.";
-      } else if (errorMessage.indexOf("RuleErrorProfileUsernameExists") >= 0) {
-        errorMessage = "Sorry, someone has already taken this username.";
-      } else if (errorMessage.indexOf("RuleErrorUserDescriptionLen") >= 0) {
-        errorMessage = "Your description is too long.";
-      } else if (errorMessage.indexOf("RuleErrorProfileUsernameTooLong") >= 0) {
-        errorMessage = "Your username is too long.";
-      } else if (errorMessage.indexOf("RuleErrorInvalidUsername") >= 0) {
+      } else if (errorMessage.indexOf('with password') >= 0) {
+        errorMessage = 'The password you entered was incorrect.';
+      } else if (
+        errorMessage.indexOf('RuleErrorExistingStakeExceedsMaxAllowed') >= 0
+      ) {
         errorMessage =
-          "Your username contains invalid characters. Usernames can only numbers, English letters, and underscores.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferInsufficientCoins") >= 0) {
-        errorMessage = "You need more of your own creator coin to give a diamond of this level.";
-      } else if (errorMessage.indexOf("RuleErrorInputSpendsPreviouslySpentOutput") >= 0) {
-        errorMessage = "You're doing that a bit too quickly. Please wait a second or two and try again.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist") >= 0) {
-        errorMessage = "You must own this creator coin before transferring it.";
-      } else if (errorMessage.indexOf("RuleErrorCreatorCoinBuyMustTradeNonZeroDeSoAfterFounderReward") >= 0) {
+          'Another staker staked to this profile right before you. Please try again.';
+      } else if (errorMessage.indexOf('already has stake') >= 0) {
+        errorMessage = 'You cannot stake to the same profile more than once.';
+      } else if (errorMessage.indexOf('RuleErrorProfileUsernameExists') >= 0) {
+        errorMessage = 'Sorry, someone has already taken this username.';
+      } else if (errorMessage.indexOf('RuleErrorUserDescriptionLen') >= 0) {
+        errorMessage = 'Your description is too long.';
+      } else if (errorMessage.indexOf('RuleErrorProfileUsernameTooLong') >= 0) {
+        errorMessage = 'Your username is too long.';
+      } else if (errorMessage.indexOf('RuleErrorInvalidUsername') >= 0) {
+        errorMessage =
+          'Your username contains invalid characters. Usernames can only numbers, English letters, and underscores.';
+      } else if (
+        errorMessage.indexOf('RuleErrorCreatorCoinTransferInsufficientCoins') >=
+        0
+      ) {
+        errorMessage =
+          'You need more of your own creator coin to give a diamond of this level.';
+      } else if (
+        errorMessage.indexOf('RuleErrorInputSpendsPreviouslySpentOutput') >= 0
+      ) {
+        errorMessage =
+          "You're doing that a bit too quickly. Please wait a second or two and try again.";
+      } else if (
+        errorMessage.indexOf(
+          'RuleErrorCreatorCoinTransferBalanceEntryDoesNotExist'
+        ) >= 0
+      ) {
+        errorMessage = 'You must own this creator coin before transferring it.';
+      } else if (
+        errorMessage.indexOf(
+          'RuleErrorCreatorCoinBuyMustTradeNonZeroDeSoAfterFounderReward'
+        ) >= 0
+      ) {
         errorMessage =
           "This creator has set their founder's reward to 100%. " +
           "You cannot buy creators that have set their founder's reward to 100%.";
@@ -2621,13 +3521,17 @@ export class BackendApiService {
     let errorMessage = JSON.stringify(err);
     if (err && err.error && err.error.error) {
       errorMessage = err.error.error;
-      if (errorMessage.indexOf("not sufficient") >= 0) {
+      if (errorMessage.indexOf('not sufficient') >= 0) {
         errorMessage = `Your balance is insufficient.`;
-      } else if (errorMessage.indexOf("with password") >= 0) {
-        errorMessage = "The password you entered was incorrect.";
-      } else if (errorMessage.indexOf("RuleErrorPrivateMessageSenderPublicKeyEqualsRecipientPublicKey") >= 0) {
+      } else if (errorMessage.indexOf('with password') >= 0) {
+        errorMessage = 'The password you entered was incorrect.';
+      } else if (
+        errorMessage.indexOf(
+          'RuleErrorPrivateMessageSenderPublicKeyEqualsRecipientPublicKey'
+        ) >= 0
+      ) {
         errorMessage = `You can't message yourself.`;
-      } else if (errorMessage.indexOf("Problem decoding recipient") >= 0) {
+      } else if (errorMessage.indexOf('Problem decoding recipient') >= 0) {
         errorMessage = `The public key you entered is invalid. Check that you copied it in correctly.`;
       }
     }

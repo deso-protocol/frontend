@@ -33,9 +33,7 @@
     <div class="fs-18px mt-1 mb-1">
       <span>
         Minimum deposit is currently
-        <b>
-          {{ (ethFeeEstimate * 2).toFixed(4) }} ETH
-        </b>
+        <b> {{ (ethFeeEstimate * 2).toFixed(4) }} ETH </b>
         <i
           (click)="tooltip3.toggle()"
           class="fas fa-info-circle text-greyC fs-15px global__tooltip-icon ml-2"
@@ -93,7 +91,7 @@
               ≈
               {{
                 globalVars.formatUSD(
-                  (ethBalance * globalVars.usdPerETHExchangeRate),
+                  ethBalance * globalVars.usdPerETHExchangeRate,
                   2
                 )
               }}
@@ -164,7 +162,10 @@
         </a>
       </div>
     </div>
-    <div class="fs-12px mt-5px text-grey7" *ngIf="globalVars.BuyDeSoFeeBasisPoints">
+    <div
+      class="fs-12px mt-5px text-grey7"
+      *ngIf="globalVars.BuyDeSoFeeBasisPoints"
+    >
       <i>Includes {{ globalVars.BuyDeSoFeeBasisPoints / 100 }}% slippage</i>
     </div>
 
@@ -201,7 +202,10 @@
           {{ ethFeeEstimate.toFixed(8) }}
           ETH ≈
           {{
-            globalVars.formatUSD(ethFeeEstimate * globalVars.usdPerETHExchangeRate, 2)
+            globalVars.formatUSD(
+              ethFeeEstimate * globalVars.usdPerETHExchangeRate,
+              2
+            )
           }}
           USD
         </div>
@@ -216,12 +220,13 @@
       Total ETH to swap
       <div class="mt-1 w-100 fs-15px">
         <div *ngIf="!error">
-          {{
-            ethToExchange.toFixed(8)
-          }}
+          {{ ethToExchange.toFixed(8) }}
           ETH ≈
           {{
-            globalVars.formatUSD(ethToExchange * globalVars.usdPerETHExchangeRate, 2)
+            globalVars.formatUSD(
+              ethToExchange * globalVars.usdPerETHExchangeRate,
+              2
+            )
           }}
           USD
         </div>
@@ -231,10 +236,7 @@
       </div>
     </div>
 
-    <div
-      *ngIf="error != null && error !== ''"
-      class="w-100 fs-18px mt-15px"
-    >
+    <div *ngIf="error != null && error !== ''" class="w-100 fs-18px mt-15px">
       <div class="red">
         {{ error }}
       </div>

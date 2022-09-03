@@ -1,15 +1,18 @@
-import { GlobalVarsService } from "../../app/global-vars.service";
-import { BackendApiService, ProfileEntryResponse } from "../../app/backend-api.service";
-import { FormControl, Validators } from "@angular/forms";
+import { GlobalVarsService } from '../../app/global-vars.service';
+import {
+  BackendApiService,
+  ProfileEntryResponse,
+} from '../../app/backend-api.service';
+import { FormControl, Validators } from '@angular/forms';
 
 export class CreatorCoinTrade {
-  static BUY_VERB = "Buy";
-  static SELL_VERB = "Sell";
-  static TRANSFER_VERB = "Transfer";
+  static BUY_VERB = 'Buy';
+  static SELL_VERB = 'Sell';
+  static TRANSFER_VERB = 'Transfer';
 
-  static DESO_CURRENCY_STRING = "DeSo";
-  static USD_CURRENCY_STRING = "USD";
-  static CREATOR_COIN_CURRENCY_STRING = "Creator coin";
+  static DESO_CURRENCY_STRING = 'DeSo';
+  static USD_CURRENCY_STRING = 'USD';
+  static CREATOR_COIN_CURRENCY_STRING = 'Creator coin';
 
   isBuyingCreatorCoin: boolean;
 
@@ -66,7 +69,8 @@ export class CreatorCoinTrade {
 
   isBuyingOwnCoin(): boolean {
     return (
-      this.creatorProfile.PublicKeyBase58Check === this.globalVars.loggedInUser.PublicKeyBase58Check &&
+      this.creatorProfile.PublicKeyBase58Check ===
+        this.globalVars.loggedInUser.PublicKeyBase58Check &&
       this.isBuyingCreatorCoin
     );
   }
@@ -97,21 +101,27 @@ export class CreatorCoinTrade {
       //
       // We don't have an exchange rate because the price depends on the amount of
       // creator coin you specify
-      map[CreatorCoinTrade.DESO_CURRENCY_STRING] = CreatorCoinTrade.DESO_CURRENCY_STRING;
-      map[CreatorCoinTrade.USD_CURRENCY_STRING] = CreatorCoinTrade.USD_CURRENCY_STRING;
+      map[CreatorCoinTrade.DESO_CURRENCY_STRING] =
+        CreatorCoinTrade.DESO_CURRENCY_STRING;
+      map[CreatorCoinTrade.USD_CURRENCY_STRING] =
+        CreatorCoinTrade.USD_CURRENCY_STRING;
     } else {
       // If selling creator coins, you can only specify an amount in creator coin, because
       // we don't have a DeSo <=> creator coin exchange rate
       //
       // USD is the same: we don't have a USD <=> creator coin exchange rate, so we can't convert
       // a USD amount into a creator coin amount
-      map[CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING] = this.creatorCoinCurrencyString();
+      map[
+        CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING
+      ] = this.creatorCoinCurrencyString();
     }
     return map;
   }
 
   assetToSellString() {
-    return this.isBuyingCreatorCoin ? CreatorCoinTrade.DESO_CURRENCY_STRING : this.creatorCoinCurrencyString();
+    return this.isBuyingCreatorCoin
+      ? CreatorCoinTrade.DESO_CURRENCY_STRING
+      : this.creatorCoinCurrencyString();
   }
 
   assetToSellBalance() {
@@ -143,23 +153,27 @@ export class CreatorCoinTrade {
   }
 
   totalCoinsMinted() {
-    return ((this.expectedCreatorCoinReturnedNanos || 0) + (this.expectedFounderRewardNanos || 0)) / 1e9;
+    return (
+      ((this.expectedCreatorCoinReturnedNanos || 0) +
+        (this.expectedFounderRewardNanos || 0)) /
+      1e9
+    );
   }
 
   _returnedAssetRowLabelPastTense() {
-    return this.isBuyingCreatorCoin ? "Bought" : "You received";
+    return this.isBuyingCreatorCoin ? 'Bought' : 'You received';
   }
 
   _soldAssetRowLabelPastTense() {
-    return this.isBuyingCreatorCoin ? "With" : "Sold";
+    return this.isBuyingCreatorCoin ? 'With' : 'Sold';
   }
 
   _returnedAssetRowLabelPresentTense() {
-    return this.isBuyingCreatorCoin ? "Buy" : "You receive";
+    return this.isBuyingCreatorCoin ? 'Buy' : 'You receive';
   }
 
   _soldAssetRowLabelPresentTense() {
-    return this.isBuyingCreatorCoin ? "With" : "You sell";
+    return this.isBuyingCreatorCoin ? 'With' : 'You sell';
   }
 
   returnedAssetRowLabel(tradeHasBeenExecuted) {
@@ -183,12 +197,18 @@ export class CreatorCoinTrade {
   }
 
   assetReturnedString() {
-    return this.isBuyingCreatorCoin ? this.creatorCoinCurrencyString() : CreatorCoinTrade.DESO_CURRENCY_STRING;
+    return this.isBuyingCreatorCoin
+      ? this.creatorCoinCurrencyString()
+      : CreatorCoinTrade.DESO_CURRENCY_STRING;
   }
 
   assetReturnedAmount() {
     if (this.isBuyingOwnCoin()) {
-      return ((this.expectedCreatorCoinReturnedNanos || 0) + (this.expectedFounderRewardNanos || 0)) / 1e9;
+      return (
+        ((this.expectedCreatorCoinReturnedNanos || 0) +
+          (this.expectedFounderRewardNanos || 0)) /
+        1e9
+      );
     }
     if (this.isBuyingCreatorCoin) {
       return (this.expectedCreatorCoinReturnedNanos || 0) / 1e9;
@@ -227,7 +247,9 @@ export class CreatorCoinTrade {
   }
 
   _amountOfCreatorCoinYouHold() {
-    let balanceEntryResponse = this.globalVars.youHodlMap[this.creatorProfile.PublicKeyBase58Check];
+    let balanceEntryResponse = this.globalVars.youHodlMap[
+      this.creatorProfile.PublicKeyBase58Check
+    ];
 
     let balanceNanos = 0;
     if (balanceEntryResponse) {
@@ -260,11 +282,17 @@ export class CreatorCoinTrade {
   //
   // Note: we haven't QA'd all the cases below. Some cases are not hit in the current
   // product. Use this function with caution.
-  convertAmount(inputAmountNanos: number, inputCurrency: string, targetCurrency: string) {
+  convertAmount(
+    inputAmountNanos: number,
+    inputCurrency: string,
+    targetCurrency: string
+  ) {
     if (inputCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
       if (targetCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
         return inputAmountNanos;
-      } else if (targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING) {
+      } else if (
+        targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING
+      ) {
         // return inputAmountNanos / this.desoPriceOfCreatorCoin()
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
       } else if (targetCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
@@ -274,7 +302,9 @@ export class CreatorCoinTrade {
       if (targetCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
         // return inputAmountNanos * this.desoPriceOfCreatorCoin()
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
-      } else if (targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING) {
+      } else if (
+        targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING
+      ) {
         return inputAmountNanos;
       } else if (targetCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
@@ -282,7 +312,9 @@ export class CreatorCoinTrade {
     } else if (inputCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
       if (targetCurrency == CreatorCoinTrade.DESO_CURRENCY_STRING) {
         return inputAmountNanos / this.usdPriceOfDeSo();
-      } else if (targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING) {
+      } else if (
+        targetCurrency == CreatorCoinTrade.CREATOR_COIN_CURRENCY_STRING
+      ) {
         throw `unsupported currency pair: ${inputCurrency} ${targetCurrency}`;
       } else if (targetCurrency == CreatorCoinTrade.USD_CURRENCY_STRING) {
         return inputAmountNanos;
@@ -300,9 +332,11 @@ export class CreatorCoinTrade {
     if (this.isBuyingOwnCoin()) {
       desoPerCoin = this.desoToSell / this.assetReturnedAmount();
     } else if (this.isBuyingCreatorCoin) {
-      desoPerCoin = (this.desoToSell * 1e9) / this.expectedCreatorCoinReturnedNanos;
+      desoPerCoin =
+        (this.desoToSell * 1e9) / this.expectedCreatorCoinReturnedNanos;
     } else {
-      desoPerCoin = this.expectedDeSoReturnedNanos / (this.creatorCoinToSell * 1e9);
+      desoPerCoin =
+        this.expectedDeSoReturnedNanos / (this.creatorCoinToSell * 1e9);
     }
 
     return desoPerCoin * this.usdPriceOfDeSo();
@@ -318,7 +352,10 @@ export class CreatorCoinTrade {
   desoPriceOfCreatorCoin() {
     if (this.isBuyingOwnCoin()) {
       return (
-        this.desoToSell / ((this.expectedCreatorCoinReturnedNanos + (this.expectedFounderRewardNanos || 0)) / 1e9)
+        this.desoToSell /
+        ((this.expectedCreatorCoinReturnedNanos +
+          (this.expectedFounderRewardNanos || 0)) /
+          1e9)
       );
     }
     if (this.isBuyingCreatorCoin) {

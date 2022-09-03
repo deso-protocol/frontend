@@ -1,15 +1,20 @@
-import { Component } from "@angular/core";
-import { GlobalVarsService } from "../../global-vars.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { IAdapter, IDatasource } from "ngx-ui-scroll";
-import { BackendApiService, DiamondsPost, PostEntryResponse, ProfileEntryResponse } from "../../backend-api.service";
-import * as _ from "lodash";
-import { InfiniteScroller } from "src/app/infinite-scroller";
+import { Component } from '@angular/core';
+import { GlobalVarsService } from '../../global-vars.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IAdapter, IDatasource } from 'ngx-ui-scroll';
+import {
+  BackendApiService,
+  DiamondsPost,
+  PostEntryResponse,
+  ProfileEntryResponse,
+} from '../../backend-api.service';
+import * as _ from 'lodash';
+import { InfiniteScroller } from 'src/app/infinite-scroller';
 
 @Component({
-  selector: "diamond-posts",
-  templateUrl: "./diamond-posts.component.html",
-  styleUrls: ["./diamond-posts.component.sass"],
+  selector: 'diamond-posts',
+  templateUrl: './diamond-posts.component.html',
+  styleUrls: ['./diamond-posts.component.sass'],
 })
 export class DiamondPostsComponent {
   static BUFFER_SIZE = 10;
@@ -37,7 +42,7 @@ export class DiamondPostsComponent {
   loadingFirstPage = true;
   loadingNextPage = false;
   pagedKeys = {
-    0: "",
+    0: '',
   };
 
   lastDiamondLevelOnPage = {
@@ -55,9 +60,9 @@ export class DiamondPostsComponent {
     return this.backendApi
       .GetDiamondedPosts(
         this.globalVars.localNode,
-        "",
+        '',
         this.receiverUsername,
-        "",
+        '',
         this.senderUsername,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
         lastPostHashHex,
@@ -66,9 +71,15 @@ export class DiamondPostsComponent {
       .toPromise()
       .then((res) => {
         const posts: PostEntryResponse[] = res.DiamondedPosts;
-        this.pagedKeys[page + 1] = posts.length > 0 ? posts[posts.length - 1].PostHashHex : "";
-        this.lastDiamondLevelOnPage[page] = posts.length > 0 ? posts[posts.length - 1].DiamondsFromSender : -1;
-        if (!posts || posts.length < DiamondPostsComponent.PAGE_SIZE || this.pagedKeys[page + 1] === "") {
+        this.pagedKeys[page + 1] =
+          posts.length > 0 ? posts[posts.length - 1].PostHashHex : '';
+        this.lastDiamondLevelOnPage[page] =
+          posts.length > 0 ? posts[posts.length - 1].DiamondsFromSender : -1;
+        if (
+          !posts ||
+          posts.length < DiamondPostsComponent.PAGE_SIZE ||
+          this.pagedKeys[page + 1] === ''
+        ) {
           this.lastPage = page;
         }
         if (!this.receiverProfileEntryResponse) {
@@ -86,7 +97,9 @@ export class DiamondPostsComponent {
 
         let lastDiamondLevel = this.lastDiamondLevelOnPage[page - 1];
         for (let ii = 0; ii < diamondPosts.length; ii++) {
-          diamondPosts[ii].Post.ProfileEntryResponse = this.receiverProfileEntryResponse;
+          diamondPosts[
+            ii
+          ].Post.ProfileEntryResponse = this.receiverProfileEntryResponse;
           if (diamondPosts[ii].Post.DiamondsFromSender != lastDiamondLevel) {
             diamondPosts[ii].ShowDiamondDivider = true;
             lastDiamondLevel = diamondPosts[ii].Post.DiamondsFromSender;
@@ -128,5 +141,7 @@ export class DiamondPostsComponent {
     DiamondPostsComponent.WINDOW_VIEWPORT,
     DiamondPostsComponent.BUFFER_SIZE
   );
-  datasource: IDatasource<IAdapter<any>> = this.infiniteScroller.getDatasource();
+  datasource: IDatasource<
+    IAdapter<any>
+  > = this.infiniteScroller.getDatasource();
 }

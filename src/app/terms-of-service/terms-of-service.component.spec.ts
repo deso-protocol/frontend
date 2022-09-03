@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TermsOfServiceComponent } from "./terms-of-service.component";
+import { TermsOfServiceComponent } from './terms-of-service.component';
 
-describe("TermsOfServiceComponent", () => {
+describe('TermsOfServiceComponent', () => {
   let component: TermsOfServiceComponent;
   let fixture: ComponentFixture<TermsOfServiceComponent>;
 
@@ -18,7 +18,7 @@ describe("TermsOfServiceComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

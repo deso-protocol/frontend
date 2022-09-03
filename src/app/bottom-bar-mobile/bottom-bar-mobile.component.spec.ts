@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BottomBarMobileComponent } from "./bottom-bar-mobile.component";
+import { BottomBarMobileComponent } from './bottom-bar-mobile.component';
 
-describe("BottomBarMobileComponent", () => {
+describe('BottomBarMobileComponent', () => {
   let component: BottomBarMobileComponent;
   let fixture: ComponentFixture<BottomBarMobileComponent>;
 
@@ -18,7 +18,7 @@ describe("BottomBarMobileComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

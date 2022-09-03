@@ -1,5 +1,5 @@
-import { Injectable, Inject, EventEmitter } from "@angular/core";
-import { THEMES, ACTIVE_THEME, Theme } from "./symbols";
+import { Injectable, Inject, EventEmitter } from '@angular/core';
+import { THEMES, ACTIVE_THEME, Theme } from './symbols';
 
 @Injectable()
 export class ThemeService {
@@ -27,7 +27,7 @@ export class ThemeService {
   setTheme(newTheme: string): void {
     const oldTheme = this.theme;
 
-    localStorage.setItem("theme", newTheme);
+    localStorage.setItem('theme', newTheme);
     document.body.classList.remove(oldTheme);
     document.body.classList.add(newTheme);
 

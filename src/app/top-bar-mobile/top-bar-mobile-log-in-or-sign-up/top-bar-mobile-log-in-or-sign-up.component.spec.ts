@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TopBarMobileLogInOrSignUpComponent } from "./top-bar-mobile-log-in-or-sign-up.component";
+import { TopBarMobileLogInOrSignUpComponent } from './top-bar-mobile-log-in-or-sign-up.component';
 
-describe("TopBarMobileLogInOrSignUpComponent", () => {
+describe('TopBarMobileLogInOrSignUpComponent', () => {
   let component: TopBarMobileLogInOrSignUpComponent;
   let fixture: ComponentFixture<TopBarMobileLogInOrSignUpComponent>;
 
@@ -18,7 +18,7 @@ describe("TopBarMobileLogInOrSignUpComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });
