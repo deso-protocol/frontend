@@ -802,8 +802,14 @@ export class BackendApiService {
     FeeRateSatoshisPerKB: number,
     Broadcast: boolean
   ): Observable<any> {
+    // Check if the user is logged in with a derived key and operating as the owner key.
+    const DerivedPublicKeyBase58Check =
+      this.identityService.identityServiceUsers[PublicKeyBase58Check]
+        ?.derivedPublicKeyBase58Check;
+
     let req = this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
       PublicKeyBase58Check,
+      DerivedPublicKeyBase58Check,
       BurnAmountSatoshis,
       LatestBitcionAPIResponse,
       BTCDepositAddress,
@@ -829,6 +835,7 @@ export class BackendApiService {
         switchMap((res) =>
           this.post(endpoint, BackendRoutes.ExchangeBitcoinRoute, {
             PublicKeyBase58Check,
+            DerivedPublicKeyBase58Check,
             BurnAmountSatoshis,
             LatestBitcionAPIResponse,
             BTCDepositAddress,
