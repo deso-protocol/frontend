@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { GlobalVarsService } from '../global-vars.service';
-import { BackendApiService } from '../backend-api.service';
-import { Title } from '@angular/platform-browser';
-import { ThemeService } from '../theme/theme.service';
-import { environment } from 'src/environments/environment';
-import { SwalHelper } from '../../lib/helpers/swal-helper';
-import { Router } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {GlobalVarsService} from '../global-vars.service';
+import {BackendApiService} from '../backend-api.service';
+import {Title} from '@angular/platform-browser';
+import {ThemeService} from '../theme/theme.service';
+import {environment} from 'src/environments/environment';
+import {SwalHelper} from '../../lib/helpers/swal-helper';
+import {Router} from '@angular/router';
+import {IdentityService, MessagingGroupOperation} from '../identity.service';
 
 @Component({
   selector: 'settings',
@@ -26,7 +27,8 @@ export class SettingsComponent implements OnInit {
     private backendApi: BackendApiService,
     private titleService: Title,
     public themeService: ThemeService,
-    private router: Router
+    private router: Router,
+    private identityService: IdentityService
   ) {}
 
   selectChangeHandler(event: any) {
@@ -36,6 +38,25 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this._getUserMetadata();
+    this.identityService.launch('/messaging-group', {
+      operation: MessagingGroupOperation.DEFAULT_KEY,
+      applicationMessagingPublicKeyBase58Check:
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+      updatedGroupKeyName: 'default-key',
+      updatedGroupOwnerPublicKeyBase58Check:
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+    });
+    // this.backendApi
+    //   .RegisterGroupMessagingKey(
+    //     this.globalVars.localNode,
+    //     this.globalVars.loggedInUser.PublicKeyBase58Check,
+    //     {},
+    //     this.globalVars.feeRateDeSoPerKB * 1e9
+    //   )
+    //   .subscribe((res) => {
+    //     console.log(res);
+    //   });
+
     this.titleService.setTitle(`Settings - ${environment.node.name}`);
   }
 

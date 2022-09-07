@@ -3,19 +3,21 @@
 // get the browser to save the cookie in the response.
 // https://github.com/github/fetch#sending-cookies
 import { Injectable } from '@angular/core';
-import { interval, Observable, of, throwError, zip } from 'rxjs';
+import { from, interval, Observable, of, throwError, zip } from 'rxjs';
 import {
+  catchError,
+  concatMap,
+  filter,
   map,
   switchMap,
-  catchError,
-  filter,
   take,
-  concatMap,
 } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { IdentityService } from './identity.service';
 import { environment } from 'src/environments/environment';
 import { Hex } from 'web3-utils/types';
+import Deso from 'deso-protocol';
+import { DeSoNetwork } from 'deso-protocol-types';
 
 export class BackendRoutes {
   static ExchangeRateRoute = '/api/v0/get-exchange-rate';
@@ -42,6 +44,7 @@ export class BackendRoutes {
   static RoutePathGetMessagesStateless = '/api/v0/get-messages-stateless';
   static RoutePathCheckPartyMessagingKeys =
     '/api/v0/check-party-messaging-keys';
+  static RegisterGroupMessagingKey = '/api/v0/register-messaging-group-key';
   static RoutePathMarkContactMessagesRead =
     '/api/v0/mark-contact-messages-read';
   static RoutePathMarkAllMessagesRead = '/api/v0/mark-all-messages-read';
@@ -966,6 +969,64 @@ export class BackendApiService {
       req,
       SenderPublicKeyBase58Check
     );
+  }
+
+  RegisterGroupMessagingKey(
+    endpoint: string,
+    OwnerPublicKeyBase58Check: string,
+    ExtraData: { [k: string]: string },
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    return from(this.identityService.derive({}, OwnerPublicKeyBase58Check)).pipe(
+      map((res) => {
+        console.log(res);
+        const request = this.post(
+          endpoint,
+          BackendRoutes.RegisterGroupMessagingKey,
+          {
+            OwnerPublicKeyBase58Check,
+            MessagingPublicKeyBase58Check: res.messagingPublicKeyBase58Check,
+            MessagingGroupKeyName: res.messagingKeyName,
+            MessagingKeySignatureHex: res.messagingKeySignature,
+            ExtraData,
+            MinFeeRateNanosPerKB,
+          }
+        );
+        return this.signAndSubmitTransaction(
+          endpoint,
+          request,
+          OwnerPublicKeyBase58Check
+        );
+      })
+    );
+    // return this.identityService.derive({}).then((res) => {
+    //   console.log(res);
+    //   this.identityService
+    //     .encrypt({
+    //       ...this.identityService.identityServiceParamsForKey(
+    //         OwnerPublicKeyBase58Check
+    //       ),
+    //       recipientPublicKey: res.MessagingPublicKeyBase58Check,
+    //       senderGroupKeyName: res.MessagingKeyName,
+    //       message: 'default-group-key',
+    //     })
+    //     .pipe(
+    //       map((res) => {
+    //         return this.post(
+    //           endpoint,
+    //           BackendRoutes.RegisterGroupMessagingKey,
+    //           {
+    //             OwnerPublicKeyBase58Check,
+    //             MessagingPublicKeyBase58Check,
+    //             MessagingGroupKeyName,
+    //             MessagingKeySignatureHex,
+    //             ExtraData,
+    //             MinFeeRateNanosPerKB,
+    //           }
+    //         );
+    //       })
+    //     );
+    // });
   }
 
   // User-related functions.

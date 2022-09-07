@@ -2,7 +2,15 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { HttpParams } from '@angular/common/http';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
+import Deso from 'deso-protocol';
+import { DeSoNetwork } from 'deso-protocol-types';
+
+export enum MessagingGroupOperation {
+  DEFAULT_KEY = 'DefaultKey',
+  CREATE_GROUP = 'CreateGroup',
+  ADD_MEMBERS = 'AddMembers',
+}
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +58,13 @@ export class IdentityService {
       public_key?: string;
       hideJumio?: boolean;
       accessLevelRequest?: number;
+      transactionSpendingLimitResponse?: any;
+      operation?: MessagingGroupOperation;
+      applicationMessagingPublicKeyBase58Check?: string;
+      updatedGroupOwnerPublicKeyBase58Check?: string;
+      updatedGroupKeyName?: string;
+      updatedMembersPublicKeysBase58Check?: string[];
+      updatedMembersKeyNames?: string[];
     }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
@@ -86,6 +101,49 @@ export class IdentityService {
       httpParams = httpParams.append(
         'accessLevelRequest',
         params.accessLevelRequest.toString()
+      );
+    }
+
+    if (params?.operation) {
+      httpParams = httpParams.append('operation', params.operation.toString());
+    }
+    if (params?.applicationMessagingPublicKeyBase58Check) {
+      httpParams = httpParams.append(
+        'applicationMessagingPublicKeyBase58Check',
+        params.applicationMessagingPublicKeyBase58Check
+      );
+    }
+    if (params?.updatedGroupOwnerPublicKeyBase58Check) {
+      httpParams = httpParams.append(
+        'updatedGroupOwnerPublicKeyBase58Check',
+        params.updatedGroupOwnerPublicKeyBase58Check
+      );
+    }
+    if (params?.updatedGroupKeyName) {
+      httpParams = httpParams.append(
+        'updatedGroupKeyName',
+        params.updatedGroupKeyName
+      );
+    }
+    if (params?.updatedMembersPublicKeysBase58Check) {
+      httpParams = httpParams.append(
+        'updatedMembersPublicKeysBase58Check',
+        params.updatedMembersPublicKeysBase58Check.join(',')
+      );
+    }
+    if (params?.updatedMembersKeyNames) {
+      httpParams = httpParams.append(
+        'updatedMembersKeyNames',
+        params.updatedMembersKeyNames.join(',')
+      );
+    }
+
+    if (params?.transactionSpendingLimitResponse) {
+      httpParams = httpParams.append(
+        'transactionSpendingLimitResponse',
+        encodeURIComponent(
+          JSON.stringify(params.transactionSpendingLimitResponse)
+        )
       );
     }
 
@@ -148,6 +206,50 @@ export class IdentityService {
     message: string;
   }): Observable<any> {
     return this.send('encrypt', payload);
+  }
+
+  derive(payload: {}, publicKey: string): Observable<any> {
+    // const deso = new Deso({
+    //   nodeUri: 'http://localhost:18001',
+    //   identityConfig: {
+    //     uri: 'http://localhost:4201',
+    //     network: DeSoNetwork.testnet,
+    //     host: 'browser',
+    //   },
+    // });
+    // console.log("deribing");
+    // return deso.identity.derive({
+    //   transactionSpendingLimitResponse: {
+    //     GlobalDESOLimit: (100 * 10) ^ 9,
+    //     TransactionCountLimitMap: { BASIC_TRANSFER: 10 },
+    //     CreatorCoinOperationLimitMap: {},
+    //     DAOCoinLimitOrderLimitMap: {},
+    //     DAOCoinOperationLimitMap: {},
+    //     NFTOperationLimitMap: {},
+    //   },
+    // });
+    return this.launch('/derive', {
+      publicKey,
+      transactionSpendingLimitResponse: {
+        GlobalDESOLimit: 100 * 10e9,
+        TransactionCountLimitMap: { BASIC_TRANSFER: 10 },
+        CreatorCoinOperationLimitMap: {},
+        DAOCoinLimitOrderLimitMap: {},
+        DAOCoinOperationLimitMap: {},
+        NFTOperationLimitMap: {},
+      },
+    });
+    // return this.send('derive', {
+    //   transactionSpendingLimitResponse: {
+    //     GlobalDESOLimit: (100 * 10) ^ 9,
+    //     TransactionCountLimitMap: { BASIC_TRANSFER: 10 },
+    //     CreatorCoinOperationLimitMap: {},
+    //     DAOCoinLimitOrderLimitMap: {},
+    //     DAOCoinOperationLimitMap: {},
+    //     NFTOperationLimitMap: {},
+    //   },
+    // });
+    // return this.send('derive', payload)
   }
 
   decrypt(payload: {
@@ -221,6 +323,17 @@ export class IdentityService {
     this.respond(this.identityWindow, id, {});
   }
 
+  private handleMessagingGroup(payload: any) {
+    console.log(payload);
+
+    this.identityWindow.close();
+    this.identityWindow = null;
+
+    this.identityWindowSubject.next(payload);
+    this.identityWindowSubject.complete();
+    this.identityWindowSubject = null;
+  }
+
   // Message handling
 
   private handleMessage(event: MessageEvent) {
@@ -252,6 +365,9 @@ export class IdentityService {
       this.handleLogin(payload);
     } else if (method === 'info') {
       this.handleInfo(id);
+    } else if (method === 'derive') {
+    } else if (method === 'messagingGroup') {
+      this.handleMessagingGroup(payload);
     } else {
       console.error('Unhandled identity request');
       console.error(event);
