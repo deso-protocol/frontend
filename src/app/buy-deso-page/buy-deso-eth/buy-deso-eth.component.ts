@@ -704,11 +704,11 @@ export class BuyDeSoEthComponent implements OnInit {
   }
 
   getChain(): Chain {
-    return this.globalVars.isTestnet ? Chain.Ropsten : Chain.Mainnet;
+    return this.globalVars.isTestnet ? Chain.Goerli : Chain.Mainnet;
   }
 
   getChainString(): string {
-    return this.globalVars.isTestnet ? 'ropsten' : 'mainnet';
+    return this.globalVars.isTestnet ? 'goerli' : 'mainnet';
   }
 
   getHardfork(): Hardfork {
