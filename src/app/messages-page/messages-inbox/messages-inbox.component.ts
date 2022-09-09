@@ -7,9 +7,22 @@ import {
   OnChanges,
 } from '@angular/core';
 import { GlobalVarsService } from '../../global-vars.service';
-import { BackendApiService, User } from '../../backend-api.service';
+import {
+  BackendApiService,
+  MessageContactResponse,
+  MessagingGroupEntryResponse,
+  MessagingGroupMemberResponse,
+  User,
+} from '../../backend-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
+import { Observable, Subscription } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { IdentityService } from '../../identity.service';
+import { SwalHelper } from '../../../lib/helpers/swal-helper';
+import { MintNftModalComponent } from '../../mint-nft-modal/mint-nft-modal.component';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { CreateMessagingGroupModalComponent } from '../create-messaging-group-modal/create-messaging-group-modal.component';
 
 @Component({
   selector: 'messages-inbox',
@@ -30,7 +43,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     Custom: 'custom',
   };
 
-  @Input() messageThreads: any;
+  @Input() messageThreads: MessageContactResponse[];
   @Input() profileMap: any;
   @Input() isMobile = false;
   @Output() selectedThreadEmitter = new EventEmitter<any>();
@@ -38,6 +51,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   fetchingMoreMessages: boolean = false;
   activeTab: string;
   startingSearchText: string;
+  defaultKey: MessagingGroupEntryResponse;
 
   // The contact to select by default, passed in via query param. Note: if the current user
   // doesn't have a conversation with the contact, these parameters do nothing.
@@ -47,8 +61,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   constructor(
     private globalVars: GlobalVarsService,
     private backendApi: BackendApiService,
+    private identityService: IdentityService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: BsModalService
   ) {
     // Based on the route path set the tab and update filter/sort params
     this.route.queryParams.subscribe((params) => {
@@ -64,8 +80,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         this.activeTab = 'My Holders';
       }
 
-      // Handle the tab click if the stored messages are from a different tab
-      if (this.activeTab !== storedTab) {
+      // Handle the tab click
+      if (storedTab !== this.activeTab) {
         this._handleTabClick(this.activeTab);
       }
       if (params.username) {
@@ -75,9 +91,61 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.globalVars.SetupMessages();
     if (!this.isMobile) {
       this._setSelectedThreadBasedOnDefaultThread();
     }
+    this.backendApi
+      .GetDefaultKey(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check
+      )
+      .subscribe((res) => {
+        //
+        if (!res) {
+          SwalHelper.fire({
+            html: 'In order to use the latest messaging features, we need you to create a default messaging key. DeSo Identity will now launch to generate this key for you.',
+            showCancelButton: false,
+          }).then(({ isConfirmed }) => {
+            if (isConfirmed) {
+              // Ask user to generate a default key
+              this.identityService
+                .launchDefaultMessagingKey(
+                  this.globalVars.loggedInUser.PublicKeyBase58Check
+                )
+                .subscribe((res) => {
+                  if (res) {
+                    this.backendApi
+                      .RegisterGroupMessagingKey(
+                        this.globalVars.localNode,
+                        this.globalVars.loggedInUser.PublicKeyBase58Check,
+                        res.messagingPublicKeyBase58Check,
+                        'default-key',
+                        res.messagingKeySignature,
+                        [],
+                        {},
+                        this.globalVars.feeRateDeSoPerKB * 1e9
+                      )
+                      .subscribe((res) => {
+                        if (res) {
+                          this.backendApi
+                            .GetDefaultKey(
+                              this.globalVars.localNode,
+                              this.globalVars.loggedInUser.PublicKeyBase58Check
+                            )
+                            .subscribe((messagingGroupEntryResponse) => {
+                              this.defaultKey = messagingGroupEntryResponse;
+                            });
+                        }
+                      });
+                  }
+                });
+            }
+          });
+        } else {
+          this.defaultKey = res;
+        }
+      });
   }
 
   ngOnChanges(changes: any) {
@@ -88,6 +156,24 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     ) {
       this.updateReadMessagesForSelectedThread();
     }
+  }
+
+  GetMessagingGroupMemberFromPublicKey(
+    publicKeyBase58Check: string
+  ): Observable<MessagingGroupMemberResponse | null> {
+    return this.backendApi
+      .GetDefaultKey(this.globalVars.localNode, publicKeyBase58Check)
+      .pipe(
+        map((res) => {
+          return res === null
+            ? null
+            : {
+                GroupMemberPublicKeyBase58Check: publicKeyBase58Check,
+                GroupMemberKeyName: res.MessagingGroupKeyName,
+                EncryptedKey: res.EncryptedKey,
+              };
+        })
+      );
   }
 
   showMoreButton() {
@@ -102,84 +188,86 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     if (this.fetchingMoreMessages) {
       return;
     }
-
-    this.fetchingMoreMessages = true;
-    if (!this.globalVars.loggedInUser) {
-      return;
-    }
-
-    if (
-      this.globalVars.newMessagesFromPage != null &&
-      this.globalVars.newMessagesFromPage == 0
-    ) {
-      return;
-    }
-
-    let fetchAfterPubKey = '';
-    if (this.globalVars.messageResponse.OrderedContactsWithMessages) {
-      fetchAfterPubKey = this.globalVars.messageResponse
-        .OrderedContactsWithMessages[
-        this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1
-      ].PublicKeyBase58Check;
-    }
-
-    this.backendApi
-      .GetMessages(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        fetchAfterPubKey,
-        this.globalVars.messagesPerFetch,
-        this.globalVars.messagesRequestsHoldersOnly,
-        this.globalVars.messagesRequestsHoldingsOnly,
-        this.globalVars.messagesRequestsFollowersOnly,
-        this.globalVars.messagesRequestsFollowedOnly,
-        this.globalVars.messagesSortAlgorithm
-      )
-      .toPromise()
-      .then(
-        (res) => {
-          if (this.globalVars.pauseMessageUpdates) {
-            // We pause message updates when a user sends a messages so that we can
-            // wait for it to be sent before updating the thread.  If we do not do this the
-            // temporary message place holder would disappear until "GetMessages()" finds it.
-          } else {
-            if (!this.globalVars.messageResponse) {
-              this.globalVars.messageResponse = res;
-
-              // If globalVars already has a messageResponse, we need to consolidate.
-            } else if (
-              JSON.stringify(this.globalVars.messageResponse) !==
-              JSON.stringify(res)
-            ) {
-              // Add the new contacts
-              this.globalVars.messageResponse.OrderedContactsWithMessages = this.globalVars.messageResponse.OrderedContactsWithMessages.concat(
-                res.OrderedContactsWithMessages
-              );
-
-              // If they're a new contact, add their read/unread status mapping
-              for (let key in res.UnreadStateByContact) {
-                this.globalVars.messageResponse.UnreadStateByContact[key] =
-                  res.UnreadStateByContact[key];
-              }
-
-              // Update the number of unread threads
-              this.globalVars.messageResponse.NumberOfUnreadThreads =
-                this.globalVars.messageResponse.NumberOfUnreadThreads +
-                res.NumberOfUnreadThreads;
-
-              // Update the number of new messages so we know when to stop scrolling
-              this.globalVars.newMessagesFromPage =
-                res.OrderedContactsWithMessages.length;
-            }
-          }
-        },
-        (err) => {
-          console.error(this.backendApi.stringifyError(err));
-        }
-      )
-      .finally(() => {
-        this.fetchingMoreMessages = false;
-      });
+    // TODO: add support for loading more messages.
+    return;
+    // this.fetchingMoreMessages = true;
+    // if (!this.globalVars.loggedInUser) {
+    //   return;
+    // }
+    //
+    // if (
+    //   this.globalVars.newMessagesFromPage != null &&
+    //   this.globalVars.newMessagesFromPage == 0
+    // ) {
+    //   return;
+    // }
+    //
+    // let fetchAfterPubKey = '';
+    // if (this.globalVars.messageResponse.OrderedContactsWithMessages) {
+    //   fetchAfterPubKey =
+    //     this.globalVars.messageResponse.OrderedContactsWithMessages[
+    //       this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1
+    //     ].PublicKeyBase58Check;
+    // }
+    //
+    // this.backendApi
+    //   .GetMessages(
+    //     this.globalVars.localNode,
+    //     this.globalVars.loggedInUser.PublicKeyBase58Check,
+    //     fetchAfterPubKey,
+    //     this.globalVars.messagesPerFetch,
+    //     this.globalVars.messagesRequestsHoldersOnly,
+    //     this.globalVars.messagesRequestsHoldingsOnly,
+    //     this.globalVars.messagesRequestsFollowersOnly,
+    //     this.globalVars.messagesRequestsFollowedOnly,
+    //     this.globalVars.messagesSortAlgorithm
+    //   )
+    //   .toPromise()
+    //   .then(
+    //     (res) => {
+    //       if (this.globalVars.pauseMessageUpdates) {
+    //         // We pause message updates when a user sends a messages so that we can
+    //         // wait for it to be sent before updating the thread.  If we do not do this the
+    //         // temporary message place holder would disappear until "GetMessages()" finds it.
+    //       } else {
+    //         if (!this.globalVars.messageResponse) {
+    //           this.globalVars.messageResponse = res;
+    //
+    //           // If globalVars already has a messageResponse, we need to consolidate.
+    //         } else if (
+    //           JSON.stringify(this.globalVars.messageResponse) !==
+    //           JSON.stringify(res)
+    //         ) {
+    //           // Add the new contacts
+    //           this.globalVars.messageResponse.OrderedContactsWithMessages =
+    //             this.globalVars.messageResponse.OrderedContactsWithMessages.concat(
+    //               res.OrderedContactsWithMessages
+    //             );
+    //
+    //           // If they're a new contact, add their read/unread status mapping
+    //           for (let key in res.UnreadStateByContact) {
+    //             this.globalVars.messageResponse.UnreadStateByContact[key] =
+    //               res.UnreadStateByContact[key];
+    //           }
+    //
+    //           // Update the number of unread threads
+    //           this.globalVars.messageResponse.NumberOfUnreadThreads =
+    //             this.globalVars.messageResponse.NumberOfUnreadThreads +
+    //             res.NumberOfUnreadThreads;
+    //
+    //           // Update the number of new messages so we know when to stop scrolling
+    //           this.globalVars.newMessagesFromPage =
+    //             res.OrderedContactsWithMessages.length;
+    //         }
+    //       }
+    //     },
+    //     (err) => {
+    //       console.error(this.backendApi.stringifyError(err));
+    //     }
+    //   )
+    //   .finally(() => {
+    //     this.fetchingMoreMessages = false;
+    //   });
   }
 
   _handleTabClick(tabName: any) {
@@ -218,9 +306,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     // TODO: refactor silly setInterval
     let interval = setInterval(() => {
       // If we don't have the messageResponse yet, return
-      let orderedContactsWithMessages = this.globalVars.messageResponse
-        ?.OrderedContactsWithMessages;
+      let orderedContactsWithMessages =
+        this.globalVars.messageResponse?.OrderedContactsWithMessages;
       if (orderedContactsWithMessages == null) {
+        this.globalVars.LoadInitialMessages();
         return;
       }
 
@@ -243,7 +332,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       } else if (orderedContactsWithMessages.length > 0) {
         defaultThread = orderedContactsWithMessages[0];
       }
-
       if (!this.selectedThread) {
         this._handleMessagesThreadClick(defaultThread);
       }
@@ -309,12 +397,14 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       return;
     }
 
+    // TODO: better support for new DMs
     // Add the creator to the inbox as a new thread.
-    let newThread = {
+    let newThread: MessageContactResponse = {
       PublicKeyBase58Check: creator.PublicKeyBase58Check,
       Messages: [],
       ProfileEntryResponse: creator,
       NumMessagesRead: 0,
+      MessagingGroup: undefined,
     };
     // This gets appeneded to the front of the ordered contacts list in the message inbox.
     this.messageThreads.unshift(newThread);
@@ -322,7 +412,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     this._handleMessagesThreadClick(newThread);
   }
 
-  _handleMessagesThreadClick(thread: any) {
+  _handleMessagesThreadClick(thread: MessageContactResponse) {
+    console.log(thread);
     this.selectedThread = thread;
     this.selectedThreadEmitter.emit(thread);
     this.updateReadMessagesForSelectedThread();
@@ -333,6 +424,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     if (!this.selectedThread) {
       return;
     }
+    // TODO: implement marking group threads as read
+    return;
 
     let contactPubKey = this.messageThreads[0]?.PublicKeyBase58Check;
     if (this.selectedThread && this.selectedThread.PublicKeyBase58Check) {
@@ -341,12 +434,13 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
     // We update the read message state on global vars before sending the request so it is more instant.
     if (this.globalVars.messageResponse.UnreadStateByContact[contactPubKey]) {
-      this.globalVars.messageResponse.UnreadStateByContact[
-        contactPubKey
-      ] = false;
+      this.globalVars.messageResponse.UnreadStateByContact[contactPubKey] =
+        false;
       this.globalVars.messageResponse.NumberOfUnreadThreads -= 1;
 
       // Send an update back to the server noting that we read this thread.
+
+      // TODO: this won't work anymore.
       this.backendApi
         .MarkContactMessagesRead(
           this.globalVars.localNode,
@@ -367,5 +461,12 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
           }
         );
     }
+  }
+
+  _openCreateGroupModal() {
+    this.modalService.show(CreateMessagingGroupModalComponent, {
+      class: 'modal-dialog-centered modal-lg',
+      // initialState: { post: this.post },
+    });
   }
 }

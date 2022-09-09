@@ -40,7 +40,6 @@
 </div>
 
 <div
-  *ngIf="messageThreads"
   class="messages-inbox__threads vh-100 disable-scrollbars"
 >
   <!-- Search -->
@@ -51,6 +50,8 @@
     (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
     class="pb-15px border-bottom border-color-grey"
   ></search-bar>
+
+  <button (click)="_openCreateGroupModal()"> Create Messaging Group </button>
 
   <!-- Tabs -->
   <tab-selector
@@ -66,10 +67,12 @@
       (click)="_handleMessagesThreadClick(thread)"
       [isSelected]="
         (selectedThread &&
-          selectedThread.PublicKeyBase58Check &&
-          thread.PublicKeyBase58Check == selectedThread.PublicKeyBase58Check) ||
+          selectedThread.MessagingGroupKey &&
+          thread.MessagingGroupKey.GroupKeyName == selectedThread.MessagingGroupKey.GroupKeyName &&
+          thread.MessagingGroupKey.GroupOwnerPublicKeyBase58Check == selectedThread.MessagingGroupKey.GroupOwnerPublicKeyBase58Check) ||
         (selectedThread === undefined && ii === 0)
       "
+      [pubKeyToProfileEntryResponses]="globalVars.messageResponse?.PublicKeyToProfileEntry"
       [thread]="thread"
     ></messages-thread>
   </div>

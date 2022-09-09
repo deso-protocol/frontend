@@ -1,6 +1,10 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { GlobalVarsService } from '../../global-vars.service';
-import { BackendApiService } from '../../backend-api.service';
+import {
+  BackendApiService,
+  MessageContactResponse,
+  ProfileEntryResponse,
+} from '../../backend-api.service';
 import { AppRoutingModule } from '../../app-routing.module';
 
 @Component({
@@ -8,9 +12,12 @@ import { AppRoutingModule } from '../../app-routing.module';
   templateUrl: './messages-thread-view.component.html',
   styleUrls: ['./messages-thread-view.component.scss'],
 })
-export class MessagesThreadViewComponent {
-  @Input() messageThread: any;
+export class MessagesThreadViewComponent implements OnInit {
+  @Input() messageThread: MessageContactResponse;
   @Input() isMobile = false;
+  @Input() pubKeyToProfileEntryResponses: {
+    [k: string]: ProfileEntryResponse;
+  } = {};
   messageText = '';
   sendMessageBeingCalled = false;
   AppRoutingModule = AppRoutingModule;
@@ -20,6 +27,10 @@ export class MessagesThreadViewComponent {
     private backendApi: BackendApiService
   ) {}
 
+  ngOnInit() {
+    console.log(this.messageThread);
+  }
+
   // Update the scroll when the messageContainer element is rendered.
   @ViewChild('messagesContainer') set userContent(element) {
     if (element) {
@@ -27,12 +38,27 @@ export class MessagesThreadViewComponent {
     }
   }
 
-  counterpartyUsername() {
-    if (!this.messageThread || !this.messageThread.ProfileEntryResponse) {
-      return null;
-    }
+  getCounterPartyProfileEntryResponse(): ProfileEntryResponse | undefined {
+    // TODO: fix new DM case
+    const counterPartyPubKey = this.counterPartyPublicKey();
+    return counterPartyPubKey
+      ? this.pubKeyToProfileEntryResponses[counterPartyPubKey] || this.messageThread.ProfileEntryResponse
+      : undefined;
+  }
 
-    return this.messageThread.ProfileEntryResponse.Username;
+  counterPartyPublicKey(): string | undefined {
+    if (!this.messageThread?.Messages?.length) {
+      return this.messageThread?.PublicKeyBase58Check;
+    }
+    const firstMessage = this.messageThread.Messages[0];
+    return firstMessage.RecipientPublicKeyBase58Check ===
+      this.globalVars.loggedInUser.PublicKeyBase58Check
+      ? firstMessage.SenderPublicKeyBase58Check
+      : firstMessage.RecipientPublicKeyBase58Check;
+  }
+
+  counterpartyUsername(): string | undefined {
+    return this.getCounterPartyProfileEntryResponse()?.Username;
   }
 
   _scrollToMostRecentMessage() {
@@ -81,8 +107,8 @@ export class MessagesThreadViewComponent {
 
     // Immediately add the message to the list  to make it feel instant.
     const messageObj: any = {
-      SenderPublicKeyBase58Check: this.globalVars.loggedInUser
-        .PublicKeyBase58Check,
+      SenderPublicKeyBase58Check:
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
       RecipientPublicKeyBase58Check: this.messageThread.PublicKeyBase58Check,
       DecryptedText: this.messageText,
       IsSender: true,
@@ -108,18 +134,21 @@ export class MessagesThreadViewComponent {
         }
 
         // Move the threads around inside OrderedContactsWithMessages to put the current thread at the top.
-        let currentContact = this.globalVars.messageResponse
-          .OrderedContactsWithMessages[ii];
-        let messagesBelow = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(
-          ii + 1
-        );
-        let messagesAbove = this.globalVars.messageResponse.OrderedContactsWithMessages.slice(
-          0,
-          ii
-        );
+        let currentContact =
+          this.globalVars.messageResponse.OrderedContactsWithMessages[ii];
+        let messagesBelow =
+          this.globalVars.messageResponse.OrderedContactsWithMessages.slice(
+            ii + 1
+          );
+        let messagesAbove =
+          this.globalVars.messageResponse.OrderedContactsWithMessages.slice(
+            0,
+            ii
+          );
         let newMessageList = messagesAbove.concat(messagesBelow);
         newMessageList.unshift(currentContact);
-        this.globalVars.messageResponse.OrderedContactsWithMessages = newMessageList;
+        this.globalVars.messageResponse.OrderedContactsWithMessages =
+          newMessageList;
       }
     }
 
@@ -129,14 +158,26 @@ export class MessagesThreadViewComponent {
     const textToSend = this.messageText;
     this._resetMessageText('');
 
-    this.backendApi
-      .SendMessage(
-        this.globalVars.localNode,
-        this.globalVars.loggedInUser.PublicKeyBase58Check,
-        this.messageThread.PublicKeyBase58Check,
-        textToSend,
-        this.globalVars.feeRateDeSoPerKB * 1e9
-      )
+    console.log(this.messageThread.MessagingGroup);
+    (this.messageThread.MessagingGroup
+      ? this.backendApi.SendGroupMessage(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.messageThread.MessagingGroup.MessagingPublicKeyBase58Check,
+          'default-key', // TODO: support non-default key
+          this.messageThread.MessagingGroup.MessagingGroupKeyName,
+          textToSend,
+          this.messageThread.MessagingGroup.GroupOwnerPublicKeyBase58Check,
+          this.globalVars.feeRateDeSoPerKB * 1e9
+        )
+      : this.backendApi.SendMessage(
+          this.globalVars.localNode,
+          this.globalVars.loggedInUser.PublicKeyBase58Check,
+          this.counterPartyPublicKey(),
+          textToSend,
+          this.globalVars.feeRateDeSoPerKB * 1e9
+        )
+    )
       .subscribe(
         (res: any) => {
           this.globalVars.logEvent('message : send');

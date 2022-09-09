@@ -42,6 +42,8 @@ export class BackendRoutes {
   static RoutePathIsHodlingPublicKey = '/api/v0/is-hodling-public-key';
   static RoutePathSendMessageStateless = '/api/v0/send-message-stateless';
   static RoutePathGetMessagesStateless = '/api/v0/get-messages-stateless';
+  static RoutePathGetMessagesStatelessV1 = '/api/v1/get-messages-stateless';
+  static GetAllMessagingGroupKeys = '/api/v0/get-all-messaging-group-keys';
   static RoutePathCheckPartyMessagingKeys =
     '/api/v0/check-party-messaging-keys';
   static RegisterGroupMessagingKey = '/api/v0/register-messaging-group-key';
@@ -541,6 +543,72 @@ export enum TransferRestrictionStatusString {
   PERMANENTLY_UNRESTRICTED = 'permanently_unrestricted',
 }
 
+export type MessagingGroupMember = {
+  GroupMemberPublicKeyBase58Check: string;
+  GroupMemberKeyName: string;
+  EncryptedKey: string;
+};
+
+export type MessagingGroupEntryResponse = {
+  GroupOwnerPublicKeyBase58Check: string;
+  MessagingPublicKeyBase58Check: string;
+  MessagingGroupKeyName: string;
+  MessagingGroupMembers: MessagingGroupMember[];
+  EncryptedKey: string;
+  ExtraData: { [k: string]: string };
+};
+
+export type GetAllMessagingGroupKeysResponse = {
+  MessagingGroupEntries: MessagingGroupEntryResponse[];
+};
+
+export type MessagingGroupMemberResponse = {
+  // GroupMemberPublicKeyBase58Check is the main public key of the group member.
+  GroupMemberPublicKeyBase58Check: string;
+
+  // GroupMemberKeyName is the key name of the member that we encrypt the group messaging public key to. The group
+  // messaging public key should not be confused with the GroupMemberPublicKeyBase58Check, the former is the public
+  // key of the whole group, while the latter is the public key of the group member.
+  GroupMemberKeyName: string;
+
+  // EncryptedKey is the encrypted private key corresponding to the group messaging public key that's encrypted
+  // to the member's registered messaging key labeled with GroupMemberKeyName.
+  EncryptedKey: string;
+};
+
+export type MessageEntryResponse = {
+  SenderPublicKeyBase58Check: string;
+  RecipientPublicKeyBase58Check: string;
+  EncryptedText: string;
+  TstampNanos: number;
+  IsSender: boolean;
+  V2: boolean; // deprecated
+  Version: number;
+  SenderMessagingPublicKey: string;
+  SenderMessagingGroupKeyName: string;
+  RecipientMessagingPublicKey: string;
+  RecipientMessagingGroupKeyName: string;
+  ExtraData: { [k: string]: string };
+
+  // After Identity is done doing it's decryption, we have the below fields
+  DecryptedText: string | undefined;
+};
+
+export type MessageContactResponse = {
+  PublicKeyBase58Check: string; // NOTE: this is no good for v3
+  Messages: MessageEntryResponse[];
+  ProfileEntryResponse: ProfileEntryResponse; // NOTE: this is no good for v3
+  NumMessagesRead: number; // NOTE: this isn't supported for v3 yet.
+
+  MessagingGroup: MessagingGroupEntryResponse | undefined;
+};
+
+export type GetMessagesStatelessResponseV1 = {
+  PublicKeyToProfileEntry: { [k: string]: ProfileEntryResponse };
+  OrderedContactsWithMessages: MessageContactResponse[];
+  MessagingGroups: MessagingGroupEntryResponse[];
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -971,15 +1039,97 @@ export class BackendApiService {
     );
   }
 
+  SendGroupMessage(
+    endpoint: string,
+    SenderPublicKeyBase58Check: string,
+    MessagingPublicKeyBase58Check: string,
+    SenderMessagingGroupKeyName: string,
+    MessagingGroupKeyName: string,
+    MessageText: string,
+    GroupOwnerPublicKeyBase58Check: string,
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
+    const request = this.identityService
+      .encrypt({
+        ...this.identityService.identityServiceParamsForKey(
+          SenderPublicKeyBase58Check
+        ),
+        recipientPublicKey: MessagingPublicKeyBase58Check,
+        senderGroupKeyName: SenderMessagingGroupKeyName,
+        message: MessageText,
+      })
+      .pipe(
+        switchMap((encrypted) => {
+          // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
+          // sendMessage transaction.
+          const EncryptedMessageText = encrypted.encryptedMessage;
+          // Determine whether to use V3 messaging group key names for sender or recipient.
+          return this.post(
+            endpoint,
+            BackendRoutes.RoutePathSendMessageStateless,
+            {
+              SenderPublicKeyBase58Check,
+              RecipientMessagingGroupKeyName: MessagingGroupKeyName,
+              EncryptedMessageText,
+              SenderMessagingGroupKeyName,
+              RecipientPublicKeyBase58Check: GroupOwnerPublicKeyBase58Check,
+              MinFeeRateNanosPerKB,
+            }
+          ).pipe(
+            map((request) => {
+              return { ...request };
+            })
+          );
+        })
+      );
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      SenderPublicKeyBase58Check
+    );
+  }
+
   RegisterGroupMessagingKey(
+    endpoint: string,
+    OwnerPublicKeyBase58Check: string,
+    MessagingPublicKeyBase58Check: string,
+    MessagingGroupKeyName: string,
+    MessagingKeySignatureHex: string,
+    MessagingGroupMembers: MessagingGroupMemberResponse[],
+    ExtraData: { [k: string]: string },
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(
+      endpoint,
+      BackendRoutes.RegisterGroupMessagingKey,
+      {
+        OwnerPublicKeyBase58Check,
+        MessagingPublicKeyBase58Check,
+        MessagingGroupKeyName,
+        MessagingKeySignatureHex,
+        MessagingGroupMembers,
+        ExtraData,
+        MinFeeRateNanosPerKB,
+      }
+    );
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      OwnerPublicKeyBase58Check
+    );
+  }
+
+  RegisterGroupMessagingKey2(
     endpoint: string,
     OwnerPublicKeyBase58Check: string,
     ExtraData: { [k: string]: string },
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    return from(this.identityService.derive({}, OwnerPublicKeyBase58Check)).pipe(
+    return from(
+      this.identityService.derive({}, OwnerPublicKeyBase58Check)
+    ).pipe(
       map((res) => {
-        console.log(res);
         const request = this.post(
           endpoint,
           BackendRoutes.RegisterGroupMessagingKey,
@@ -1850,37 +2000,20 @@ export class BackendApiService {
     );
   }
 
-  GetMessages(
+  // TODO: add types
+  GetMessagesV1(
     endpoint: string,
-    PublicKeyBase58Check: string,
-    FetchAfterPublicKeyBase58Check: string = '',
-    NumToFetch: number = 25,
-    HoldersOnly: boolean = false,
-    HoldingsOnly: boolean = false,
-    FollowersOnly: boolean = false,
-    FollowingOnly: boolean = false,
-    SortAlgorithm: string = 'time'
-  ): Observable<any> {
-    let req = this.httpClient.post<any>(
-      this._makeRequestURL(
-        endpoint,
-        BackendRoutes.RoutePathGetMessagesStateless
-      ),
-      {
-        PublicKeyBase58Check,
-        FetchAfterPublicKeyBase58Check,
-        NumToFetch,
-        HoldersOnly,
-        HoldingsOnly,
-        FollowersOnly,
-        FollowingOnly,
-        SortAlgorithm,
-      }
+    PublicKeyBase58Check: string
+  ): Observable<GetMessagesStatelessResponseV1> {
+    let req = this.post(
+      endpoint,
+      BackendRoutes.RoutePathGetMessagesStatelessV1,
+      { PublicKeyBase58Check }
     );
 
     // create an array of messages to decrypt
     req = req.pipe(
-      map((res) => {
+      map((res: any) => {
         // This array contains encrypted messages with public keys
         // Public keys of the other party involved in the correspondence
         const encryptedMessages = res.OrderedContactsWithMessages.flatMap(
@@ -1907,22 +2040,32 @@ export class BackendApiService {
     // decrypt all the messages
     req = req.pipe(
       switchMap((res) => {
+        // console.log(res.MessagingGroups);
         return this.identityService
           .decrypt({
             ...this.identityService.identityServiceParamsForKey(
               PublicKeyBase58Check
             ),
             encryptedMessages: res.encryptedMessages,
+            messagingGroups: res.MessagingGroups,
           })
           .pipe(
             map((decrypted) => {
-              res.OrderedContactsWithMessages.forEach((threads) =>
+              res.OrderedContactsWithMessages.forEach((threads) => {
                 threads.Messages.forEach(
                   (message) =>
                     (message.DecryptedText =
                       decrypted.decryptedHexes[message.EncryptedText])
-                )
-              );
+                );
+                threads.MessagingGroup = res.MessagingGroups.find((mg) => {
+                  return (
+                    mg.MessagingGroupKeyName ===
+                      threads.MessagingGroupKey.GroupKeyName &&
+                    mg.GroupOwnerPublicKeyBase58Check ===
+                      threads.MessagingGroupKey.GroupOwnerPublicKeyBase58Check
+                  );
+                });
+              });
               return { ...res, ...decrypted };
             })
           );
@@ -1930,6 +2073,116 @@ export class BackendApiService {
     );
 
     return req.pipe(catchError(this._handleError));
+  }
+
+  GetMessages(
+    endpoint: string,
+    PublicKeyBase58Check: string,
+    FetchAfterPublicKeyBase58Check: string = '',
+    NumToFetch: number = 25,
+    HoldersOnly: boolean = false,
+    HoldingsOnly: boolean = false,
+    FollowersOnly: boolean = false,
+    FollowingOnly: boolean = false,
+    SortAlgorithm: string = 'time'
+  ): Observable<GetMessagesStatelessResponseV1> {
+    return this.GetMessagesV1(endpoint, PublicKeyBase58Check);
+    // let req = this.httpClient.post<any>(
+    //   this._makeRequestURL(
+    //     endpoint,
+    //     BackendRoutes.RoutePathGetMessagesStateless
+    //   ),
+    //   {
+    //     PublicKeyBase58Check,
+    //     FetchAfterPublicKeyBase58Check,
+    //     NumToFetch,
+    //     HoldersOnly,
+    //     HoldingsOnly,
+    //     FollowersOnly,
+    //     FollowingOnly,
+    //     SortAlgorithm,
+    //   }
+    // );
+    //
+    // // create an array of messages to decrypt
+    // req = req.pipe(
+    //   map((res) => {
+    //     // This array contains encrypted messages with public keys
+    //     // Public keys of the other party involved in the correspondence
+    //     const encryptedMessages = res.OrderedContactsWithMessages.flatMap(
+    //       (thread) =>
+    //         thread.Messages.flatMap((message) => ({
+    //           EncryptedHex: message.EncryptedText,
+    //           PublicKey: message.IsSender
+    //             ? message.RecipientPublicKeyBase58Check
+    //             : message.SenderPublicKeyBase58Check,
+    //           IsSender: message.IsSender,
+    //           Legacy: !message.V2 && (!message.Version || message.Version < 2),
+    //           Version: message.Version,
+    //           SenderMessagingPublicKey: message.SenderMessagingPublicKey,
+    //           SenderMessagingGroupKeyName: message.SenderMessagingGroupKeyName,
+    //           RecipientMessagingPublicKey: message.RecipientMessagingPublicKey,
+    //           RecipientMessagingGroupKeyName:
+    //             message.RecipientMessagingGroupKeyName,
+    //         }))
+    //     );
+    //     return { ...res, encryptedMessages };
+    //   })
+    // );
+    //
+    // // decrypt all the messages
+    // req = req.pipe(
+    //   switchMap((res) => {
+    //     // console.log(res.MessagingGroups);
+    //     return this.identityService
+    //       .decrypt({
+    //         ...this.identityService.identityServiceParamsForKey(
+    //           PublicKeyBase58Check
+    //         ),
+    //         encryptedMessages: res.encryptedMessages,
+    //         messagingGroups: res.MessagingGroups,
+    //       })
+    //       .pipe(
+    //         map((decrypted) => {
+    //           res.OrderedContactsWithMessages.forEach((threads) =>
+    //             threads.Messages.forEach(
+    //               (message) =>
+    //                 (message.DecryptedText =
+    //                   decrypted.decryptedHexes[message.EncryptedText])
+    //             )
+    //           );
+    //           return { ...res, ...decrypted };
+    //         })
+    //       );
+    //   })
+    // );
+    //
+    // return req.pipe(catchError(this._handleError));
+  }
+
+  GetAllMessagingGroupKeys(
+    endpoint: string,
+    OwnerPublicKeyBase58Check: string
+  ): Observable<GetAllMessagingGroupKeysResponse> {
+    return this.post(endpoint, BackendRoutes.GetAllMessagingGroupKeys, {
+      OwnerPublicKeyBase58Check,
+    });
+  }
+
+  GetDefaultKey(
+    endpoint: string,
+    publicKeyBase58Check: string
+  ): Observable<MessagingGroupEntryResponse | null> {
+    return this.GetAllMessagingGroupKeys(endpoint, publicKeyBase58Check).pipe(
+      map((res) => {
+        const defaultKeys = res.MessagingGroupEntries.filter(
+          (messagingGroup: MessagingGroupEntryResponse) => {
+            return messagingGroup.MessagingGroupKeyName === 'default-key';
+          }
+        );
+        return defaultKeys.length ? defaultKeys[0] : null;
+      })
+    );
   }
 
   CreateLike(

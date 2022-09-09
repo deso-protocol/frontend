@@ -3,14 +3,19 @@ import { Observable, Subject } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { HttpParams } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
-import Deso from 'deso-protocol';
-import { DeSoNetwork } from 'deso-protocol-types';
 
 export enum MessagingGroupOperation {
   DEFAULT_KEY = 'DefaultKey',
   CREATE_GROUP = 'CreateGroup',
   ADD_MEMBERS = 'AddMembers',
 }
+
+export type IdentityMessagingResponse = {
+  encryptedToApplicationGroupMessagingPrivateKey: string;
+  encryptedToMembersGroupMessagingPrivateKey: string[];
+  messagingKeySignature: string;
+  messagingPublicKeyBase58Check: string;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -168,6 +173,45 @@ export class IdentityService {
     return this.identityWindowSubject;
   }
 
+  launchDefaultMessagingKey(
+    publicKeyBase58Check: string
+  ): Observable<IdentityMessagingResponse> {
+    return this.launch('/messaging-group', {
+      operation: MessagingGroupOperation.DEFAULT_KEY,
+      applicationMessagingPublicKeyBase58Check: publicKeyBase58Check,
+      updatedGroupKeyName: 'default-key',
+      updatedGroupOwnerPublicKeyBase58Check: publicKeyBase58Check,
+    });
+  }
+
+  launchCreateMessagingGroup(
+    publicKeyBase58Check: string,
+    groupKeyName: string
+  ): Observable<IdentityMessagingResponse> {
+    return this.launch('/messaging-group', {
+      operation: MessagingGroupOperation.CREATE_GROUP,
+      applicationMessagingPublicKeyBase58Check: publicKeyBase58Check,
+      updatedGroupKeyName: groupKeyName,
+      updatedGroupOwnerPublicKeyBase58Check: publicKeyBase58Check,
+    });
+  }
+
+  launchAddMembersToMessagingGroup(
+    publicKeyBase58check: string,
+    groupKeyName: string,
+    updatedMembersPublicKeysBase58Check: string[],
+    updatedMembersKeyNames: string[]
+  ): Observable<IdentityMessagingResponse> {
+    return this.launch('/messaging-group', {
+      operation: MessagingGroupOperation.ADD_MEMBERS,
+      updatedGroupKeyName: groupKeyName,
+      updatedGroupOwnerPublicKeyBase58Check: publicKeyBase58check,
+      updatedMembersPublicKeysBase58Check,
+      updatedMembersKeyNames,
+      applicationMessagingPublicKeyBase58Check: publicKeyBase58check,
+    });
+  }
+
   // Outgoing messages
 
   burn(payload: {
@@ -257,6 +301,7 @@ export class IdentityService {
     accessLevelHmac: string;
     encryptedSeedHex: string;
     encryptedMessages: any;
+    messagingGroups?: any[]; // TODO: type me
   }): Observable<any> {
     return this.send('decrypt', payload);
   }

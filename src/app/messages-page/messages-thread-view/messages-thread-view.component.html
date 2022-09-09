@@ -5,22 +5,26 @@
     class="w-100 global__top-bar__height d-flex align-items-center pl-15px fs-15px font-weight-bold border-bottom border-color-grey"
     style="min-height: 80px"
   >
-    <!-- Avatar -->
-    <!-- This should only link if the user has a profile (i.e. if it's just a pubkey, no link) -->
-    <a
-      *ngIf="messageThread"
-      class="messages-thread__avatar mr-15px"
-      [ngClass]="{ 'cursor-auto': !counterpartyUsername() }"
-      [routerLink]="
+    <div *ngIf="messageThread?.MessagingGroup?.MessagingGroupKeyName; else dmBlock">
+      {{ messageThread?.MessagingGroup?.MessagingGroupKeyName }}
+    </div>
+
+    <ng-template #dmBlock>
+      <!-- Avatar -->
+      <!-- This should only link if the user has a profile (i.e. if it's just a pubkey, no link) -->
+      <a
+        *ngIf="messageThread"
+        class="messages-thread__avatar mr-15px"
+        [ngClass]="{ 'cursor-auto': !counterpartyUsername() }"
+        [routerLink]="
         counterpartyUsername()
           ? AppRoutingModule.profilePath(counterpartyUsername())
           : []
       "
-      queryParamsHandling="merge"
-      [avatar]="messageThread.PublicKeyBase58Check"
-    ></a>
+        queryParamsHandling="merge"
+        [avatar]="counterPartyPublicKey()"
+      ></a>
 
-    <div *ngIf="messageThread">
       <!-- Show username if avaialble-->
       <div *ngIf="counterpartyUsername(); else elseBlock">
         <a
@@ -30,42 +34,41 @@
         >
           <span>{{ counterpartyUsername() }}</span>
           <span
-            *ngIf="messageThread.ProfileEntryResponse.IsVerified"
+            *ngIf="getCounterPartyProfileEntryResponse().IsVerified"
             class="ml-1 text-primary"
           >
             <i class="fas fa-check-circle fa-md align-middle"></i>
           </span>
         </a>
-      </div>
-      <!-- Otherwise show public key-->
-      <ng-template #elseBlock>
-        {{ messageThread.PublicKeyBase58Check }}
-      </ng-template>
+        <!-- Otherwise show public key-->
+        <ng-template #elseBlock>
+          {{ counterPartyPublicKey() }}
+        </ng-template>
 
-      <!-- Coin price-->
-      <div class="mt-5px">
-        <a
-          *ngIf="messageThread.ProfileEntryResponse"
-          [routerLink]="
-            AppRoutingModule.buyCreatorPath(
-              messageThread.ProfileEntryResponse.Username
-            )
+        <!-- Coin price-->
+        <div class="mt-5px">
+          <a
+            *ngIf="getCounterPartyProfileEntryResponse()"
+            [routerLink]="
+            AppRoutingModule.buyCreatorPath(counterpartyUsername())
           "
-          queryParamsHandling="merge"
-          class="messages-thread__border-radius link--unstyled font-weight-normal px-10px py-2px background-color-light-grey border border-color-grey"
-          style="width: fit-content"
-        >
-          {{
+            queryParamsHandling="merge"
+            class="messages-thread__border-radius link--unstyled font-weight-normal px-10px py-2px background-color-light-grey border border-color-grey"
+            style="width: fit-content"
+          >
+            {{
             globalVars.nanosToUSD(
-              globalVars._parseFloat(
-                messageThread.ProfileEntryResponse.CoinPriceDeSoNanos
-              ),
-              2
+            globalVars._parseFloat(
+            getCounterPartyProfileEntryResponse()?.CoinPriceDeSoNanos
+            ),
+            2
             )
-          }}
-        </a>
+            }}
+          </a>
+        </div>
       </div>
-    </div>
+    </ng-template>
+
   </div>
 
   <!-- Messages Container -->
