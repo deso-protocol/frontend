@@ -16,8 +16,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { IdentityService } from './identity.service';
 import { environment } from 'src/environments/environment';
 import { Hex } from 'web3-utils/types';
-import Deso from 'deso-protocol';
-import { DeSoNetwork } from 'deso-protocol-types';
 
 export class BackendRoutes {
   static ExchangeRateRoute = '/api/v0/get-exchange-rate';
