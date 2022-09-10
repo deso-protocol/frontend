@@ -465,7 +465,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   _openCreateGroupModal() {
     this.modalService.show(CreateMessagingGroupModalComponent, {
       class: 'modal-dialog-centered modal-lg',
-      // initialState: { post: this.post },
     });
   }
 }
