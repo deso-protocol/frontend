@@ -320,10 +320,6 @@ export class GlobalVarsService {
           console.error(this.backendApi.stringifyError(err));
         }
       );
-
-    // this.backendApi
-    //   .GetMessagesV1(this.localNode, this.loggedInUser.PublicKeyBase58Check)
-    //   .subscribe((res) => console.log(res));
   }
 
   _notifyLoggedInUserObservers(

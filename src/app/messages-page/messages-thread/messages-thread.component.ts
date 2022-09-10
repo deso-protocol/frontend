@@ -1,6 +1,15 @@
-import {Component, OnInit, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { GlobalVarsService } from '../../global-vars.service';
-import {MessageContactResponse, ProfileEntryResponse} from "../../backend-api.service";
+import {
+  MessageContactResponse,
+  ProfileEntryResponse,
+} from '../../backend-api.service';
 
 @Component({
   selector: 'messages-thread',

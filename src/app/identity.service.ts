@@ -252,50 +252,6 @@ export class IdentityService {
     return this.send('encrypt', payload);
   }
 
-  derive(payload: {}, publicKey: string): Observable<any> {
-    // const deso = new Deso({
-    //   nodeUri: 'http://localhost:18001',
-    //   identityConfig: {
-    //     uri: 'http://localhost:4201',
-    //     network: DeSoNetwork.testnet,
-    //     host: 'browser',
-    //   },
-    // });
-    // console.log("deribing");
-    // return deso.identity.derive({
-    //   transactionSpendingLimitResponse: {
-    //     GlobalDESOLimit: (100 * 10) ^ 9,
-    //     TransactionCountLimitMap: { BASIC_TRANSFER: 10 },
-    //     CreatorCoinOperationLimitMap: {},
-    //     DAOCoinLimitOrderLimitMap: {},
-    //     DAOCoinOperationLimitMap: {},
-    //     NFTOperationLimitMap: {},
-    //   },
-    // });
-    return this.launch('/derive', {
-      publicKey,
-      transactionSpendingLimitResponse: {
-        GlobalDESOLimit: 100 * 10e9,
-        TransactionCountLimitMap: { BASIC_TRANSFER: 10 },
-        CreatorCoinOperationLimitMap: {},
-        DAOCoinLimitOrderLimitMap: {},
-        DAOCoinOperationLimitMap: {},
-        NFTOperationLimitMap: {},
-      },
-    });
-    // return this.send('derive', {
-    //   transactionSpendingLimitResponse: {
-    //     GlobalDESOLimit: (100 * 10) ^ 9,
-    //     TransactionCountLimitMap: { BASIC_TRANSFER: 10 },
-    //     CreatorCoinOperationLimitMap: {},
-    //     DAOCoinLimitOrderLimitMap: {},
-    //     DAOCoinOperationLimitMap: {},
-    //     NFTOperationLimitMap: {},
-    //   },
-    // });
-    // return this.send('derive', payload)
-  }
-
   decrypt(payload: {
     accessLevel: number;
     accessLevelHmac: string;
@@ -369,8 +325,6 @@ export class IdentityService {
   }
 
   private handleMessagingGroup(payload: any) {
-    console.log(payload);
-
     this.identityWindow.close();
     this.identityWindow = null;
 
@@ -410,7 +364,6 @@ export class IdentityService {
       this.handleLogin(payload);
     } else if (method === 'info') {
       this.handleInfo(id);
-    } else if (method === 'derive') {
     } else if (method === 'messagingGroup') {
       this.handleMessagingGroup(payload);
     } else {

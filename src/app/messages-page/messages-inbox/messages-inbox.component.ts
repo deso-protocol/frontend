@@ -413,7 +413,6 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
   }
 
   _handleMessagesThreadClick(thread: MessageContactResponse) {
-    console.log(thread);
     this.selectedThread = thread;
     this.selectedThreadEmitter.emit(thread);
     this.updateReadMessagesForSelectedThread();

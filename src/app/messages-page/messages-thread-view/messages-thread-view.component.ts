@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { GlobalVarsService } from '../../global-vars.service';
 import {
   BackendApiService,
@@ -12,7 +12,7 @@ import { AppRoutingModule } from '../../app-routing.module';
   templateUrl: './messages-thread-view.component.html',
   styleUrls: ['./messages-thread-view.component.scss'],
 })
-export class MessagesThreadViewComponent implements OnInit {
+export class MessagesThreadViewComponent {
   @Input() messageThread: MessageContactResponse;
   @Input() isMobile = false;
   @Input() pubKeyToProfileEntryResponses: {
@@ -27,10 +27,6 @@ export class MessagesThreadViewComponent implements OnInit {
     private backendApi: BackendApiService
   ) {}
 
-  ngOnInit() {
-    console.log(this.messageThread);
-  }
-
   // Update the scroll when the messageContainer element is rendered.
   @ViewChild('messagesContainer') set userContent(element) {
     if (element) {
@@ -42,7 +38,8 @@ export class MessagesThreadViewComponent implements OnInit {
     // TODO: fix new DM case
     const counterPartyPubKey = this.counterPartyPublicKey();
     return counterPartyPubKey
-      ? this.pubKeyToProfileEntryResponses[counterPartyPubKey] || this.messageThread.ProfileEntryResponse
+      ? this.pubKeyToProfileEntryResponses[counterPartyPubKey] ||
+          this.messageThread.ProfileEntryResponse
       : undefined;
   }
 
@@ -158,7 +155,6 @@ export class MessagesThreadViewComponent implements OnInit {
     const textToSend = this.messageText;
     this._resetMessageText('');
 
-    console.log(this.messageThread.MessagingGroup);
     (this.messageThread.MessagingGroup
       ? this.backendApi.SendGroupMessage(
           this.globalVars.localNode,
