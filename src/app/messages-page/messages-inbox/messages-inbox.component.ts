@@ -189,85 +189,85 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       return;
     }
     // TODO: add support for loading more messages.
-    return;
-    // this.fetchingMoreMessages = true;
-    // if (!this.globalVars.loggedInUser) {
-    //   return;
-    // }
-    //
-    // if (
-    //   this.globalVars.newMessagesFromPage != null &&
-    //   this.globalVars.newMessagesFromPage == 0
-    // ) {
-    //   return;
-    // }
-    //
-    // let fetchAfterPubKey = '';
-    // if (this.globalVars.messageResponse.OrderedContactsWithMessages) {
-    //   fetchAfterPubKey =
-    //     this.globalVars.messageResponse.OrderedContactsWithMessages[
-    //       this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1
-    //     ].PublicKeyBase58Check;
-    // }
-    //
-    // this.backendApi
-    //   .GetMessages(
-    //     this.globalVars.localNode,
-    //     this.globalVars.loggedInUser.PublicKeyBase58Check,
-    //     fetchAfterPubKey,
-    //     this.globalVars.messagesPerFetch,
-    //     this.globalVars.messagesRequestsHoldersOnly,
-    //     this.globalVars.messagesRequestsHoldingsOnly,
-    //     this.globalVars.messagesRequestsFollowersOnly,
-    //     this.globalVars.messagesRequestsFollowedOnly,
-    //     this.globalVars.messagesSortAlgorithm
-    //   )
-    //   .toPromise()
-    //   .then(
-    //     (res) => {
-    //       if (this.globalVars.pauseMessageUpdates) {
-    //         // We pause message updates when a user sends a messages so that we can
-    //         // wait for it to be sent before updating the thread.  If we do not do this the
-    //         // temporary message place holder would disappear until "GetMessages()" finds it.
-    //       } else {
-    //         if (!this.globalVars.messageResponse) {
-    //           this.globalVars.messageResponse = res;
-    //
-    //           // If globalVars already has a messageResponse, we need to consolidate.
-    //         } else if (
-    //           JSON.stringify(this.globalVars.messageResponse) !==
-    //           JSON.stringify(res)
-    //         ) {
-    //           // Add the new contacts
-    //           this.globalVars.messageResponse.OrderedContactsWithMessages =
-    //             this.globalVars.messageResponse.OrderedContactsWithMessages.concat(
-    //               res.OrderedContactsWithMessages
-    //             );
-    //
-    //           // If they're a new contact, add their read/unread status mapping
-    //           for (let key in res.UnreadStateByContact) {
-    //             this.globalVars.messageResponse.UnreadStateByContact[key] =
-    //               res.UnreadStateByContact[key];
-    //           }
-    //
-    //           // Update the number of unread threads
-    //           this.globalVars.messageResponse.NumberOfUnreadThreads =
-    //             this.globalVars.messageResponse.NumberOfUnreadThreads +
-    //             res.NumberOfUnreadThreads;
-    //
-    //           // Update the number of new messages so we know when to stop scrolling
-    //           this.globalVars.newMessagesFromPage =
-    //             res.OrderedContactsWithMessages.length;
-    //         }
-    //       }
-    //     },
-    //     (err) => {
-    //       console.error(this.backendApi.stringifyError(err));
-    //     }
-    //   )
-    //   .finally(() => {
-    //     this.fetchingMoreMessages = false;
-    //   });
+    // return;
+    this.fetchingMoreMessages = true;
+    if (!this.globalVars.loggedInUser) {
+      return;
+    }
+
+    if (
+      this.globalVars.newMessagesFromPage != null &&
+      this.globalVars.newMessagesFromPage == 0
+    ) {
+      return;
+    }
+
+    let fetchAfterPubKey = '';
+    if (this.globalVars.messageResponse.OrderedContactsWithMessages) {
+      fetchAfterPubKey =
+        this.globalVars.messageResponse.OrderedContactsWithMessages[
+          this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1
+        ].PublicKeyBase58Check;
+    }
+
+    this.backendApi
+      .GetMessages(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        fetchAfterPubKey,
+        this.globalVars.messagesPerFetch,
+        this.globalVars.messagesRequestsHoldersOnly,
+        this.globalVars.messagesRequestsHoldingsOnly,
+        this.globalVars.messagesRequestsFollowersOnly,
+        this.globalVars.messagesRequestsFollowedOnly,
+        this.globalVars.messagesSortAlgorithm
+      )
+      .toPromise()
+      .then(
+        (res) => {
+          if (this.globalVars.pauseMessageUpdates) {
+            // We pause message updates when a user sends a messages so that we can
+            // wait for it to be sent before updating the thread.  If we do not do this the
+            // temporary message place holder would disappear until "GetMessages()" finds it.
+          } else {
+            if (!this.globalVars.messageResponse) {
+              this.globalVars.messageResponse = res;
+
+              // If globalVars already has a messageResponse, we need to consolidate.
+            } else if (
+              JSON.stringify(this.globalVars.messageResponse) !==
+              JSON.stringify(res)
+            ) {
+              // Add the new contacts
+              this.globalVars.messageResponse.OrderedContactsWithMessages =
+                this.globalVars.messageResponse.OrderedContactsWithMessages.concat(
+                  res.OrderedContactsWithMessages
+                );
+
+              // If they're a new contact, add their read/unread status mapping
+              // for (let key in res.UnreadStateByContact) {
+              //   this.globalVars.messageResponse.UnreadStateByContact[key] =
+              //     res.UnreadStateByContact[key];
+              // }
+
+              // Update the number of unread threads
+              // this.globalVars.messageResponse.NumberOfUnreadThreads =
+              //   this.globalVars.messageResponse.NumberOfUnreadThreads +
+              //   res.NumberOfUnreadThreads;
+
+              // Update the number of new messages so we know when to stop scrolling
+              this.globalVars.newMessagesFromPage =
+                res.OrderedContactsWithMessages.length;
+            }
+          }
+        },
+        (err) => {
+          console.error(this.backendApi.stringifyError(err));
+        }
+      )
+      .finally(() => {
+        this.fetchingMoreMessages = false;
+      });
   }
 
   _handleTabClick(tabName: any) {
