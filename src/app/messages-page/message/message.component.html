@@ -39,14 +39,14 @@
     style="white-space: pre-wrap; overflow-wrap: anywhere"
   ></div>
   <div
-    *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+    *ngIf="nextMessage ? message.SenderPublicKeyBase58Check != nextMessage.SenderPublicKeyBase58Check : true"
     class="message__avatar ml-15px"
     [avatar]="globalVars.loggedInUser.PublicKeyBase58Check"
   ></div>
 
   <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
   <div
-    *ngIf="nextMessage ? message.IsSender == nextMessage.IsSender : false"
+    *ngIf="nextMessage ? message.SenderPublicKeyBase58Check == nextMessage.SenderPublicKeyBase58Check : false"
     class="message__avatar-placeholder ml-15px"
   ></div>
 </div>
@@ -56,7 +56,7 @@
   class="d-flex justify-content-end align-items-end mt-5px"
 >
   <div
-    *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+    *ngIf="nextMessage ? message.SenderPublicKeyBase58Check != nextMessage.SenderPublicKeyBase58Check : true"
     class="fs-12px fc-muted"
   >
     <span *ngIf="message.TstampNanos">{{
@@ -72,13 +72,13 @@
 <!--                                             -->
 <div *ngIf="!message.IsSender" class="d-flex align-items-end">
   <div
-    *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+    *ngIf="nextMessage ? message.SenderPublicKeyBase58Check != nextMessage.SenderPublicKeyBase58Check : true"
     class="message__avatar mr-15px"
     [avatar]="message.SenderPublicKeyBase58Check"
   ></div>
   <!-- Placeholder avatar.  Used when a messager sends multiple messages in a row. -->
   <div
-    *ngIf="nextMessage ? message.IsSender == nextMessage.IsSender : false"
+    *ngIf="nextMessage ? message.SenderPublicKeyBase58Check == nextMessage.SenderPublicKeyBase58Check : false"
     class="message__avatar-placeholder ml-15px"
   ></div>
   <!--"Pre-wrap" allows us to render new lines properly-->
@@ -94,7 +94,7 @@
 <div *ngIf="!message.IsSender" class="d-flex align-items-end">
   <div class="message__avatar-placeholder ml-15px"></div>
   <div
-    *ngIf="nextMessage ? message.IsSender != nextMessage.IsSender : true"
+    *ngIf="nextMessage ? message.SenderPublicKeyBase58Check != nextMessage.SenderPublicKeyBase58Check : true"
     class="fs-12px fc-muted"
   >
     {{ globalVars.convertTstampToDateOrTime(message.TstampNanos) }}

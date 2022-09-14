@@ -4,10 +4,10 @@
 
 export const environment = {
   production: false,
-  uploadImageHostname: 'node.deso.org',
-  verificationEndpointHostname: 'https://node.deso.org',
-  uploadVideoHostname: 'https://node.deso.org',
-  identityURL: 'https://identity.deso.org',
+  uploadImageHostname: 'test.deso.org',
+  verificationEndpointHostname: 'https://test.deso.org',
+  uploadVideoHostname: 'https://test.deso.org',
+  identityURL: 'http://localhost:4201',
   supportEmail: '',
   dd: {
     apiKey: 'DCEB26AC8BF47F1D7B4D87440EDCA6',

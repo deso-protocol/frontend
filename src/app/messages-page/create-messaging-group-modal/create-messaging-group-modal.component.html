@@ -1,0 +1,24 @@
+<div app-theme class="nft-modal-container p-15px">
+  <search-bar
+    [showCloutavista]="false"
+    [isSearchForUsersToMessage]="true"
+    (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+    class="pb-15px border-bottom border-color-grey"
+  ></search-bar>
+  <div class="pb-15px flex flex-column">
+    <label for="messaging-group-name">Group Name</label>
+    <input id="messaging-group-name" [(ngModel)]="groupName"/>
+  </div>
+  <div *ngIf="error">
+    {{ error }}
+  </div>
+  <button (click)="CreateGroup()">Create Group</button>
+  <div
+    *ngFor="let creator of messagingGroupMembers">
+    <simple-profile-card
+      [profile]="creator.ProfileEntryResponse"
+      [hideFollowLink]="true"
+      [inTutorial]="true"
+      [singleColumn]="true"></simple-profile-card>
+  </div>
+</div>
