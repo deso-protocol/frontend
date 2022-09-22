@@ -65,9 +65,7 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
       }
 
       // Handle the tab click if the stored messages are from a different tab
-      if (this.activeTab !== storedTab) {
-        this._handleTabClick(this.activeTab);
-      }
+      this._handleTabClick(this.activeTab);
       if (params.username) {
         this.startingSearchText = params.username;
       }
