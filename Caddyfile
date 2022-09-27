@@ -76,6 +76,7 @@ header @html Content-Security-Policy "
     identity.deso.org
     identity.deso.blue
     identity.deso.green
+    identity.deso.run
     identity.bitclout.com
     identity.bitclout.blue
     identity.bitclout.green
