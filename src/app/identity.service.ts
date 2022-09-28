@@ -308,11 +308,11 @@ export class IdentityService {
     const { data } = event;
     const { service, method } = data;
 
-    console.log('identity.service.ts@handleMessage', event);
-
     if (service !== 'identity') {
       return;
     }
+
+    console.log('identity.service.ts@handleMessage', JSON.stringify(data));
 
     // Methods are present on incoming requests but not responses
     if (method) {
@@ -323,7 +323,7 @@ export class IdentityService {
   }
 
   private handleRequest(event: MessageEvent) {
-    console.log('identity.service.ts@handleRequest', event);
+    console.log('identity.service.ts@handleRequest', JSON.stringify(event.data));
     const {
       data: { id, method, payload },
     } = event;
