@@ -308,6 +308,8 @@ export class IdentityService {
     const { data } = event;
     const { service, method } = data;
 
+    console.log('identity.service.ts@handleMessage', event);
+
     if (service !== 'identity') {
       return;
     }
@@ -321,10 +323,10 @@ export class IdentityService {
   }
 
   private handleRequest(event: MessageEvent) {
+    console.log('identity.service.ts@handleRequest', event);
     const {
       data: { id, method, payload },
     } = event;
-
     if (method === 'initialize') {
       this.handleInitialize(event);
     } else if (method === 'storageGranted') {
@@ -361,6 +363,8 @@ export class IdentityService {
       service: 'identity',
     };
 
+    console.log('identity.service.ts@send', JSON.stringify(req));
+
     const subject = new Subject();
     this.postMessage(req);
     this.outboundRequests[req.id] = subject;
@@ -378,6 +382,7 @@ export class IdentityService {
 
   // Respond to a received message
   private respond(window: Window, id: string, payload: any): void {
+    console.log('identity.service.ts@respond', id, JSON.stringify(payload));
     window.postMessage({ id, service: 'identity', payload }, '*');
   }
 
