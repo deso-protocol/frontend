@@ -3,7 +3,7 @@ export const environment = {
   uploadImageHostname: 'node.deso.org',
   verificationEndpointHostname: 'https://node.deso.org',
   uploadVideoHostname: 'node.deso.org',
-  identityURL: 'https://identity.deso.org',
+  identityURL: 'https://identity.deso.run',
   supportEmail: 'node.admin@bitclout.com',
   dd: {
     apiKey: 'DCEB26AC8BF47F1D7B4D87440EDCA6',
