@@ -73,6 +73,7 @@ header @html Content-Security-Policy "
     https://ka-f.fontawesome.com;
   frame-src 'self'
     localhost:*
+    http://localhost:*
     identity.deso.org
     identity.deso.blue
     identity.deso.green
