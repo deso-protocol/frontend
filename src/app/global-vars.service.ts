@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import {
   BackendApiService,
   BalanceEntryResponse,
-  DeSoNode, MessagingGroupEntryResponse,
+  DeSoNode,
+  MessagingGroupEntryResponse,
   PostEntryResponse,
   TransactionFee,
   TutorialStatus,
@@ -151,7 +152,8 @@ export class GlobalVarsService {
   // and make everything use sockets.
   updateEverything: any;
 
-  emailRegExp = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+  emailRegExp =
+    /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
   latestBitcoinAPIResponse: any;
 
@@ -391,55 +393,53 @@ export class GlobalVarsService {
   }
 
   getLoggedInUserDefaultKey() {
-    this.backendApi.GetDefaultKey(
-      this.localNode,
-      this.loggedInUser.PublicKeyBase58Check
-    )
+    this.backendApi
+      .GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check)
       .subscribe((res) => {
-        if (!res) {
-          SwalHelper.fire({
-            html: 'In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.',
-            showCancelButton: false,
-          }).then(({ isConfirmed }) => {
-            if (isConfirmed) {
-              // Ask user to generate a default key
-              this.identityService
-                .launchDefaultMessagingKey(
-                  this.loggedInUser.PublicKeyBase58Check
-                )
-                .subscribe((res) => {
-                  if (res) {
-                    this.backendApi
-                      .RegisterGroupMessagingKey(
-                        this.localNode,
-                        this.loggedInUser.PublicKeyBase58Check,
-                        res.messagingPublicKeyBase58Check,
-                        'default-key',
-                        res.messagingKeySignature,
-                        [],
-                        {},
-                        this.feeRateDeSoPerKB * 1e9
-                      )
-                      .subscribe((res) => {
-                        if (res) {
-                          this.backendApi
-                            .GetDefaultKey(
-                              this.localNode,
-                              this.loggedInUser.PublicKeyBase58Check
-                            )
-                            .subscribe((messagingGroupEntryResponse) => {
-                              this.loggedInUserDefaultKey = messagingGroupEntryResponse;
-                            });
-                        }
-                      });
-                  }
-                });
-            }
-          });
-        } else {
-          this.loggedInUserDefaultKey = res;
-        }
+        // if (!res) {
+        SwalHelper.fire({
+          html: 'In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.',
+          showCancelButton: false,
+        }).then(({ isConfirmed }) => {
+          if (isConfirmed) {
+            // Ask user to generate a default key
+            this.identityService
+              .launchDefaultMessagingKey(this.loggedInUser.PublicKeyBase58Check)
+              .subscribe((res) => {
+                if (res) {
+                  this.backendApi
+                    .RegisterGroupMessagingKey(
+                      this.localNode,
+                      this.loggedInUser.PublicKeyBase58Check,
+                      res.messagingPublicKeyBase58Check,
+                      'default-key',
+                      res.messagingKeySignature,
+                      [],
+                      {},
+                      this.feeRateDeSoPerKB * 1e9
+                    )
+                    .subscribe((res) => {
+                      if (res) {
+                        this.backendApi
+                          .GetDefaultKey(
+                            this.localNode,
+                            this.loggedInUser.PublicKeyBase58Check
+                          )
+                          .subscribe((messagingGroupEntryResponse) => {
+                            this.loggedInUserDefaultKey =
+                              messagingGroupEntryResponse;
+                          });
+                      }
+                    });
+                }
+              });
+          }
+        });
       });
+    // else {
+    //   this.loggedInUserDefaultKey = res;
+    // }
+    // });
   }
 
   navigateToCurrentStepInTutorial(user: User): Promise<boolean> {
@@ -1143,10 +1143,8 @@ export class GlobalVarsService {
       );
       bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
         this.allCommunityProjectsLeaderboard = res;
-        this.topCommunityProjectsLeaderboard = this.allCommunityProjectsLeaderboard.slice(
-          0,
-          10
-        );
+        this.topCommunityProjectsLeaderboard =
+          this.allCommunityProjectsLeaderboard.slice(0, 10);
       });
     }
 
@@ -1262,8 +1260,7 @@ export class GlobalVarsService {
     Swal.fire({
       target: this.getTargetComponentSelector(),
       title: 'Congrats!',
-      html:
-        "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
+      html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
       showConfirmButton: true,
       // Only show skip option to admins
       showCancelButton: !!this.loggedInUser?.IsAdmin,
