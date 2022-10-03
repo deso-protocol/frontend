@@ -11,6 +11,7 @@ import {
   filter,
   take,
   concatMap,
+  tap,
 } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { IdentityService } from './identity.service';
@@ -963,7 +964,27 @@ export class BackendApiService {
             message: MessageText,
           })
           .pipe(
-            switchMap((encrypted) => {
+            tap({
+              next: (response: any) => {
+                if (response?.requestDerivedCookieWithEncryptedSeed) {
+                  this.identityService.launch('/log-in', {
+                    hideJumio: true,
+                    requestDerivedCookieWithEncryptedSeed:
+                      !!response.requestDerivedCookieWithEncryptedSeed,
+                  });
+                  return throwError(response); // end the execution of this call with an error
+                }
+                if (response?.requestMessagingRandomnessCookieWithPublicKey) {
+                  this.identityService.launchDefaultMessagingKey(
+                    SenderPublicKeyBase58Check
+                  );
+                  return throwError(response); // end the execution of this call with an error
+                }
+
+                return response;
+              },
+            }),
+            switchMap((encrypted: any) => {
               // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
               // sendMessage transaction.
               const EncryptedMessageText = encrypted.encryptedMessage;
@@ -1401,6 +1422,28 @@ export class BackendApiService {
         ),
       })
       .pipe(
+        tap({
+          next: (response: any) => {
+            console.log(response);
+            if (response?.requestDerivedCookieWithEncryptedSeed) {
+              this.identityService.launch('/log-in', {
+                hideJumio: true,
+                requestDerivedCookieWithEncryptedSeed:
+                  !!response.requestDerivedCookieWithEncryptedSeed,
+              });
+
+              return throwError(response); // end the execution of this call with an error
+            }
+            if (response?.requestMessagingRandomnessCookieWithPublicKey) {
+              this.identityService.launchDefaultMessagingKey(
+                ReaderPublicKeyBase58Check
+              );
+              return throwError(response); // end the execution of this call with an error
+            }
+
+            return response;
+          },
+        }),
         map((decrypted) => {
           for (const unlockableNFTEntryResponse of UnlockableNFTEntryResponses) {
             unlockableNFTEntryResponse.DecryptedUnlockableText =
@@ -1919,6 +1962,26 @@ export class BackendApiService {
             encryptedMessages: res.encryptedMessages,
           })
           .pipe(
+            tap({
+              next: (response: any) => {
+                if (response?.requestDerivedCookieWithEncryptedSeed) {
+                  this.identityService.launch('/log-in', {
+                    hideJumio: true,
+                    requestDerivedCookieWithEncryptedSeed:
+                      !!response.requestDerivedCookieWithEncryptedSeed,
+                  });
+                  return throwError(response); // end the execution of this call with an error
+                }
+                if (response?.requestMessagingRandomnessCookieWithPublicKey) {
+                  this.identityService.launchDefaultMessagingKey(
+                    PublicKeyBase58Check
+                  );
+                  return throwError(response); // end the execution of this call with an error
+                }
+
+                return response;
+              },
+            }),
             map((decrypted) => {
               res.OrderedContactsWithMessages.forEach((threads) =>
                 threads.Messages.forEach(
@@ -1945,7 +2008,10 @@ export class BackendApiService {
     });
   }
 
-  GetDefaultKey(endpoint: string, publicKeyBase58Check: string): Observable<MessagingGroupEntryResponse | null> {
+  GetDefaultKey(
+    endpoint: string,
+    publicKeyBase58Check: string
+  ): Observable<MessagingGroupEntryResponse | null> {
     return this.GetAllMessagingGroupKeys(endpoint, publicKeyBase58Check).pipe(
       map((res) => {
         const defaultKeys = res.MessagingGroupEntries.filter(

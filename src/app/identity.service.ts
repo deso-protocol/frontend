@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { HttpParams } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { tap } from 'rxjs/operators';
 
 export enum MessagingGroupOperation {
   DEFAULT_KEY = 'DefaultKey',
@@ -70,6 +71,8 @@ export class IdentityService {
       updatedGroupKeyName?: string;
       updatedMembersPublicKeysBase58Check?: string[];
       updatedMembersKeyNames?: string[];
+      requestDerivedCookieWithEncryptedSeed?: boolean;
+      requestMessagingRandomnessCookieWithPublicKey?: boolean;
     }
   ): Observable<any> {
     let url = this.identityServiceURL as string;
@@ -208,7 +211,21 @@ export class IdentityService {
     encryptedSeedHex: string;
     transactionHex: string;
   }): Observable<any> {
-    return this.send('sign', payload);
+    return this.send('sign', payload).pipe(
+      tap({
+        next: (response) => {
+          if (response?.requestDerivedCookieWithEncryptedSeed) {
+            return this.launch('/log-in', {
+              hideJumio: true,
+              requestDerivedCookieWithEncryptedSeed:
+                response.requestDerivedCookieWithEncryptedSeed,
+            });
+          }
+
+          return response;
+        },
+      })
+    );
   }
 
   encrypt(payload: {
@@ -236,7 +253,21 @@ export class IdentityService {
     accessLevelHmac: string;
     encryptedSeedHex: string;
   }): Observable<any> {
-    return this.send('jwt', payload);
+    return this.send('jwt', payload).pipe(
+      tap({
+        next: (response: any) => {
+          if (response?.requestDerivedCookieWithEncryptedSeed) {
+            this.launch('/log-in', {
+              hideJumio: true,
+              requestDerivedCookieWithEncryptedSeed:
+                !!response.requestDerivedCookieWithEncryptedSeed,
+            });
+            return throwError(response); // end the execution of this call with an error
+          }
+          return response;
+        },
+      })
+    );
   }
 
   info(): Observable<any> {
@@ -345,8 +376,8 @@ export class IdentityService {
     const {
       data: { id, payload },
     } = event;
-
     const req = this.outboundRequests[id];
+    console.log(payload);
     req.next(payload);
     req.complete();
     delete this.outboundRequests[id];
