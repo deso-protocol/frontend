@@ -377,7 +377,6 @@ export class IdentityService {
       data: { id, payload },
     } = event;
     const req = this.outboundRequests[id];
-    console.log(payload);
     req.next(payload);
     req.complete();
     delete this.outboundRequests[id];
