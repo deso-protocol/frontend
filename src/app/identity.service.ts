@@ -259,12 +259,15 @@ export class IdentityService {
       accessLevel,
       accessLevelHmac,
       encryptedMessagingKeyRandomness,
+      derivedPublicKeyBase58Check,
     } = this.identityServiceUsers[publicKey];
     return {
       encryptedSeedHex,
       accessLevel,
       accessLevelHmac,
       encryptedMessagingKeyRandomness,
+      ownerPublicKeyBase58Check: publicKey,
+      derivedPublicKeyBase58Check,
     };
   }
 

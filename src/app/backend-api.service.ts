@@ -952,6 +952,7 @@ export class BackendApiService {
     ).pipe(
       switchMap((partyMessagingKeys) => {
         // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
+
         return this.identityService
           .encrypt({
             ...this.identityService.identityServiceParamsForKey(
@@ -1945,7 +1946,10 @@ export class BackendApiService {
     });
   }
 
-  GetDefaultKey(endpoint: string, publicKeyBase58Check: string): Observable<MessagingGroupEntryResponse | null> {
+  GetDefaultKey(
+    endpoint: string,
+    publicKeyBase58Check: string
+  ): Observable<MessagingGroupEntryResponse | null> {
     return this.GetAllMessagingGroupKeys(endpoint, publicKeyBase58Check).pipe(
       map((res) => {
         const defaultKeys = res.MessagingGroupEntries.filter(
