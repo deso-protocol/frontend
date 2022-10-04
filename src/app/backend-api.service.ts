@@ -1424,7 +1424,6 @@ export class BackendApiService {
       .pipe(
         tap({
           next: (response: any) => {
-            console.log(response);
             if (response?.requestDerivedCookieWithEncryptedSeed) {
               this.identityService.launch('/log-in', {
                 hideJumio: true,
