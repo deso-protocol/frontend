@@ -254,9 +254,18 @@ export class IdentityService {
   // Helpers
 
   identityServiceParamsForKey(publicKey: string) {
-    const { encryptedSeedHex, accessLevel, accessLevelHmac } =
-      this.identityServiceUsers[publicKey];
-    return { encryptedSeedHex, accessLevel, accessLevelHmac };
+    const {
+      encryptedSeedHex,
+      accessLevel,
+      accessLevelHmac,
+      encryptedMessagingKeyRandomness,
+    } = this.identityServiceUsers[publicKey];
+    return {
+      encryptedSeedHex,
+      accessLevel,
+      accessLevelHmac,
+      encryptedMessagingKeyRandomness,
+    };
   }
 
   // Incoming messages
