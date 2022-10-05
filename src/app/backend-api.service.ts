@@ -3,7 +3,7 @@
 // get the browser to save the cookie in the response.
 // https://github.com/github/fetch#sending-cookies
 import { Injectable } from '@angular/core';
-import { interval, Observable, of, throwError, zip } from 'rxjs';
+import { concat, iif, interval, Observable, of, throwError, zip } from 'rxjs';
 import {
   map,
   switchMap,
@@ -11,9 +11,11 @@ import {
   filter,
   take,
   concatMap,
+  timeout,
+  tap,
 } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { IdentityService } from './identity.service';
+import { IdentityMessagingResponse, IdentityService } from './identity.service';
 import { environment } from 'src/environments/environment';
 import { Hex } from 'web3-utils/types';
 
@@ -949,54 +951,129 @@ export class BackendApiService {
         RecipientPublicKeyBase58Check,
         RecipientMessagingKeyName: this.DefaultKey,
       }
-    ).pipe(
-      switchMap((partyMessagingKeys) => {
-        // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
+    )
+      .pipe(
+        switchMap((partyMessagingKeys) => {
+          // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
+          const callEncrypt$ = (encryptedMessagingKeyRandomness?: string) => {
+            return this.identityService.encrypt({
+              encryptedMessagingKeyRandomness,
+              ...this.identityService.identityServiceParamsForKey(
+                SenderPublicKeyBase58Check
+              ),
+              recipientPublicKey:
+                partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
+              senderGroupKeyName: partyMessagingKeys.SenderMessagingKeyName,
+              message: MessageText,
+            });
+          };
 
-        return this.identityService
-          .encrypt({
-            ...this.identityService.identityServiceParamsForKey(
-              SenderPublicKeyBase58Check
-            ),
-            recipientPublicKey:
-              partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
-            senderGroupKeyName: partyMessagingKeys.SenderMessagingKeyName,
-            message: MessageText,
-          })
-          .pipe(
-            switchMap((encrypted) => {
-              // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
-              // sendMessage transaction.
-              const EncryptedMessageText = encrypted.encryptedMessage;
-              // Determine whether to use V3 messaging group key names for sender or recipient.
-              const senderV3 = partyMessagingKeys.IsSenderMessagingKey;
-              const SenderMessagingGroupKeyName = senderV3
-                ? partyMessagingKeys.SenderMessagingKeyName
-                : '';
-              const recipientV3 = partyMessagingKeys.IsRecipientMessagingKey;
-              const RecipientMessagingGroupKeyName = recipientV3
-                ? partyMessagingKeys.RecipientMessagingKeyName
-                : '';
-              return this.post(
-                endpoint,
-                BackendRoutes.RoutePathSendMessageStateless,
-                {
-                  SenderPublicKeyBase58Check,
-                  RecipientPublicKeyBase58Check,
-                  EncryptedMessageText,
-                  SenderMessagingGroupKeyName,
-                  RecipientMessagingGroupKeyName,
-                  MinFeeRateNanosPerKB,
-                }
-              ).pipe(
-                map((request) => {
-                  return { ...request };
-                })
-              );
+          const callRegisterGroupMessagingKey$ = (res: any) => {
+            const localNode = this.GetStorage(this.LastLocalNodeKey);
+            return this.RegisterGroupMessagingKey(
+              localNode,
+              SenderPublicKeyBase58Check,
+              res.messagingPublicKeyBase58Check,
+              'default-key',
+              res.messagingKeySignature,
+              [],
+              {},
+              MinFeeRateNanosPerKB
+            );
+          };
+
+          const localNode = this.GetStorage(this.LastLocalNodeKey);
+
+          const launchDefaultMessagingKey$ = () =>
+            this.identityService
+              .launchDefaultMessagingKey(SenderPublicKeyBase58Check)
+              .pipe(timeout(30000));
+
+          const submitEncryptedMessage$ = (encrypted: any) => {
+            // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
+            // sendMessage transaction.
+            const EncryptedMessageText = encrypted.encryptedMessage;
+            // Determine whether to use V3 messaging group key names for sender or recipient.
+            const senderV3 = partyMessagingKeys.IsSenderMessagingKey;
+            const SenderMessagingGroupKeyName = senderV3
+              ? partyMessagingKeys.SenderMessagingKeyName
+              : '';
+            const recipientV3 = partyMessagingKeys.IsRecipientMessagingKey;
+            const RecipientMessagingGroupKeyName = recipientV3
+              ? partyMessagingKeys.RecipientMessagingKeyName
+              : '';
+            return this.post(
+              endpoint,
+              BackendRoutes.RoutePathSendMessageStateless,
+              {
+                SenderPublicKeyBase58Check,
+                RecipientPublicKeyBase58Check,
+                EncryptedMessageText,
+                SenderMessagingGroupKeyName,
+                RecipientMessagingGroupKeyName,
+                MinFeeRateNanosPerKB,
+              }
+            ).pipe(
+              map((request) => {
+                return { ...request };
+              })
+            );
+          };
+          // call encrypt and see what happens
+          return callEncrypt$().pipe(
+            switchMap((res: any) => {
+              // Verify we have the messaging key
+              return of({
+                isMissingRandomness:
+                  res?.encryptedMessage === '' &&
+                  res?.requiresEncryptedMessagingKeyRandomness,
+                res,
+              });
+            }),
+            switchMap(({ isMissingRandomness, res }) => {
+              if (!isMissingRandomness) {
+                console.log('success case');
+                // easy pz return early
+                return submitEncryptedMessage$(res);
+              } else {
+                // otherwise, launch
+                return launchDefaultMessagingKey$().pipe(
+                  switchMap((res) => {
+                    console.log(res);
+                    if (res.encryptedToApplicationGroupMessagingPrivateKey) {
+                      const users = this.GetStorage(this.IdentityUsersKey);
+                      this.setIdentityServiceUsers({
+                        ...users,
+                        [SenderPublicKeyBase58Check]: {
+                          ...users[SenderPublicKeyBase58Check],
+                          encryptedMessagingKeyRandomness:
+                            res.encryptedToApplicationGroupMessagingPrivateKey,
+                        },
+                      });
+                      return callEncrypt$();
+                      // res.encryptedToApplicationGroupMessagingPrivateKey
+                    } else {
+                      // this.GetDefaultKey(
+                      //   localNode,
+                      //   SenderPublicKeyBase58Check
+                      // ).pipe(
+                      //   switchMap((res) => {
+                      //     if (!res) {
+                      //       callRegisterGroupMessagingKey$(res);
+                      //     }
+                      //   })
+                      // );
+                      // // console.log(res);
+                      return of();
+                    }
+                  })
+                );
+              }
             })
           );
-      })
-    );
+        })
+      )
+      .pipe(catchError(this._handleError));
     return this.signAndSubmitTransaction(
       endpoint,
       req,
