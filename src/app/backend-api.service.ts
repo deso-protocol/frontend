@@ -2028,6 +2028,22 @@ export class BackendApiService {
       );
     };
 
+    const addDecryptedMessagesToMessagePayload = (
+      res,
+      decryptedHexes,
+      wrap
+    ) => {
+      res.OrderedContactsWithMessages.forEach((threads) =>
+        threads.Messages.forEach((message) => {
+          message.DecryptedText =
+            decryptedHexes.decryptedHexes[message.EncryptedText];
+        })
+      );
+      return wrap
+        ? of({ ...res, ...decryptedHexes })
+        : { ...res, ...decryptedHexes };
+    };
+
     // decrypt all the messages
     req = req
       .pipe(
@@ -2042,21 +2058,6 @@ export class BackendApiService {
             })
             .pipe(
               map((decryptedResponse) => {
-                const addDecryptedMessagesToMessagePayload = (
-                  res,
-                  decryptedHexes,
-                  wrap
-                ) => {
-                  res.OrderedContactsWithMessages.forEach((threads) =>
-                    threads.Messages.forEach((message) => {
-                      message.DecryptedText =
-                        decryptedHexes.decryptedHexes[message.EncryptedText];
-                    })
-                  );
-                  return wrap
-                    ? of({ ...res, ...decryptedResponse })
-                    : { ...res, ...decryptedResponse };
-                };
                 if (
                   decryptedResponse?.requiresEncryptedMessagingKeyRandomness ===
                   true
@@ -2147,7 +2148,6 @@ export class BackendApiService {
           return t;
         })
       );
-    // return of();
     return req.pipe(catchError(this._handleError));
   }
 
