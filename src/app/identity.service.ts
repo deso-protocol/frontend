@@ -218,7 +218,7 @@ export class IdentityService {
     encryptedSeedHex: string;
     senderGroupKeyName: string;
     recipientPublicKey: string;
-    encryptedMessagingKeyRandomness: string;
+    encryptedMessagingKeyRandomness: string | undefined;
     derivedPublicKeyBase58Check: string;
     message: string;
   }): Observable<any> {
@@ -232,7 +232,7 @@ export class IdentityService {
     encryptedMessages: any;
     derivedPublicKeyBase58Check: string;
     ownerPublicKeyBase58Check: string;
-    encryptedMessagingKeyRandomness: string;
+    encryptedMessagingKeyRandomness: string | undefined;
   }): Observable<any> {
     return this.send('decrypt', payload);
   }
