@@ -679,10 +679,12 @@ export class BackendApiService {
     request: Observable<any>,
     PublicKeyBase58Check: string
   ): Observable<any> {
+    debugger;
     return request
       .pipe(
-        switchMap((res) =>
-          this.identityService
+        switchMap((res) => {
+          debugger;
+          return this.identityService
             .sign({
               transactionHex: res.TransactionHex,
               ...this.identityService.identityServiceParamsForKey(
@@ -706,8 +708,8 @@ export class BackendApiService {
                   return of({ ...res, ...signed });
                 }
               })
-            )
-        )
+            );
+        })
       )
       .pipe(
         switchMap((res) =>
@@ -969,9 +971,8 @@ export class BackendApiService {
           };
 
           const callRegisterGroupMessagingKey$ = (res: any) => {
-            const localNode = this.GetStorage(this.LastLocalNodeKey);
             return this.RegisterGroupMessagingKey(
-              localNode,
+              endpoint,
               SenderPublicKeyBase58Check,
               res.messagingPublicKeyBase58Check,
               'default-key',
@@ -981,8 +982,6 @@ export class BackendApiService {
               MinFeeRateNanosPerKB
             );
           };
-
-          const localNode = this.GetStorage(this.LastLocalNodeKey);
 
           const launchDefaultMessagingKey$ = () =>
             this.identityService
@@ -1022,6 +1021,8 @@ export class BackendApiService {
           // call encrypt and see what happens
           return callEncrypt$().pipe(
             switchMap((res: any) => {
+              debugger;
+              console.log(res);
               // Verify we have the messaging key
               return of({
                 isMissingRandomness:
@@ -1040,32 +1041,48 @@ export class BackendApiService {
                 return launchDefaultMessagingKey$().pipe(
                   switchMap((res) => {
                     console.log(res);
-                    if (res.encryptedToApplicationGroupMessagingPrivateKey) {
-                      const users = this.GetStorage(this.IdentityUsersKey);
-                      this.setIdentityServiceUsers({
-                        ...users,
-                        [SenderPublicKeyBase58Check]: {
-                          ...users[SenderPublicKeyBase58Check],
-                          encryptedMessagingKeyRandomness:
-                            res.encryptedToApplicationGroupMessagingPrivateKey,
-                        },
-                      });
-                      return callEncrypt$();
-                      // res.encryptedToApplicationGroupMessagingPrivateKey
-                    } else {
-                      // this.GetDefaultKey(
-                      //   localNode,
-                      //   SenderPublicKeyBase58Check
-                      // ).pipe(
-                      //   switchMap((res) => {
-                      //     if (!res) {
-                      //       callRegisterGroupMessagingKey$(res);
-                      //     }
-                      //   })
-                      // );
-                      // // console.log(res);
-                      return of();
+                    if (!res.encryptedMessagingKeyRandomness) {
+                      return throwError('Error sending encrypted message');
                     }
+                    const users = this.GetStorage(this.IdentityUsersKey);
+                    this.setIdentityServiceUsers({
+                      ...users,
+                      [SenderPublicKeyBase58Check]: {
+                        ...users[SenderPublicKeyBase58Check],
+                        encryptedMessagingKeyRandomness:
+                          res.encryptedMessagingKeyRandomness,
+                      },
+                    });
+                    return this.GetDefaultKey(
+                      endpoint,
+                      SenderPublicKeyBase58Check
+                    ).pipe(
+                      switchMap((defaultKey) => {
+                        debugger;
+                        return (
+                          !defaultKey
+                            ? callRegisterGroupMessagingKey$(res)
+                            : of()
+                        ).pipe(
+                          switchMap((_) => {
+                            return callEncrypt$().pipe(
+                              switchMap((_) => {
+                                debugger;
+                                if (
+                                  res?.encryptedMessage &&
+                                  !res?.requiresEncryptedMessagingKeyRandomness
+                                ) {
+                                  return submitEncryptedMessage$(
+                                    res.encryptedMessage
+                                  );
+                                }
+                                return throwError('Error sending message');
+                              })
+                            );
+                          })
+                        );
+                      })
+                    );
                   })
                 );
               }

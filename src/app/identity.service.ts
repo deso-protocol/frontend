@@ -15,6 +15,7 @@ export type IdentityMessagingResponse = {
   encryptedToMembersGroupMessagingPrivateKey: string[];
   messagingKeySignature: string;
   messagingPublicKeyBase58Check: string;
+  encryptedMessagingKeyRandomness: string | undefined;
 };
 
 @Injectable({
