@@ -304,7 +304,7 @@ export class GlobalVarsService {
         this.messagesRequestsFollowersOnly,
         this.messagesRequestsFollowedOnly,
         this.messagesSortAlgorithm,
-        this.feeRateDeSoPerKB * 1e9,
+        this.feeRateDeSoPerKB * 1e9
       )
       .subscribe(
         (res) => {
