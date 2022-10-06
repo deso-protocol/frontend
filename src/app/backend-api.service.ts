@@ -969,9 +969,8 @@ export class BackendApiService {
           };
 
           const callRegisterGroupMessagingKey$ = (res: any) => {
-            const localNode = this.GetStorage(this.LastLocalNodeKey);
             return this.RegisterGroupMessagingKey(
-              localNode,
+              endpoint,
               SenderPublicKeyBase58Check,
               res.messagingPublicKeyBase58Check,
               'default-key',
@@ -981,8 +980,6 @@ export class BackendApiService {
               MinFeeRateNanosPerKB
             );
           };
-
-          const localNode = this.GetStorage(this.LastLocalNodeKey);
 
           const launchDefaultMessagingKey$ = () =>
             this.identityService
