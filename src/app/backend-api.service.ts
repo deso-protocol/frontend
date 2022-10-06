@@ -957,10 +957,10 @@ export class BackendApiService {
           // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
           const callEncrypt$ = (encryptedMessagingKeyRandomness?: string) => {
             return this.identityService.encrypt({
-              encryptedMessagingKeyRandomness,
               ...this.identityService.identityServiceParamsForKey(
                 SenderPublicKeyBase58Check
               ),
+              encryptedMessagingKeyRandomness,
               recipientPublicKey:
                 partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
               senderGroupKeyName: partyMessagingKeys.SenderMessagingKeyName,
