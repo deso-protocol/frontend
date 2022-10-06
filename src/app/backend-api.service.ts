@@ -634,6 +634,20 @@ export class BackendApiService {
     return JSON.parse(data);
   }
 
+  SetEncryptedMessagingKeyRandomnessForPublicKey(
+    publicKeyBase58Check: string,
+    encryptedMessagingKeyRandomness: string
+  ): void {
+    const users = this.GetStorage(this.IdentityUsersKey);
+    this.setIdentityServiceUsers({
+      ...users,
+      [publicKeyBase58Check]: {
+        ...users[publicKeyBase58Check],
+        encryptedMessagingKeyRandomness,
+      },
+    });
+  }
+
   // Assemble a URL to hit the BE with.
   _makeRequestURL(
     endpoint: string,
@@ -1046,15 +1060,10 @@ export class BackendApiService {
                       'Error getting encrypted messaging key randomness'
                     );
                   }
-                  const users = this.GetStorage(this.IdentityUsersKey);
-                  this.setIdentityServiceUsers({
-                    ...users,
-                    [SenderPublicKeyBase58Check]: {
-                      ...users[SenderPublicKeyBase58Check],
-                      encryptedMessagingKeyRandomness:
-                        res.encryptedMessagingKeyRandomness,
-                    },
-                  });
+                  this.SetEncryptedMessagingKeyRandomnessForPublicKey(
+                    SenderPublicKeyBase58Check,
+                    res.encryptedMessagingKeyRandomness
+                  );
                   return this.GetDefaultKey(
                     endpoint,
                     SenderPublicKeyBase58Check
@@ -2066,21 +2075,15 @@ export class BackendApiService {
                   true
                 ) {
                   // go get the key
-                  debugger;
                   return launchDefaultMessagingKey$().pipe(
                     switchMap((defaultMessagingKeyResponse) => {
                       if (
                         defaultMessagingKeyResponse.encryptedMessagingKeyRandomness
                       ) {
-                        const users = this.GetStorage(this.IdentityUsersKey);
-                        this.setIdentityServiceUsers({
-                          ...users,
-                          [PublicKeyBase58Check]: {
-                            ...users[PublicKeyBase58Check],
-                            encryptedMessagingKeyRandomness:
-                              defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
-                          },
-                        });
+                        this.SetEncryptedMessagingKeyRandomnessForPublicKey(
+                          PublicKeyBase58Check,
+                          defaultMessagingKeyResponse.encryptedMessagingKeyRandomness
+                        );
                         return this.GetDefaultKey(
                           endpoint,
                           PublicKeyBase58Check

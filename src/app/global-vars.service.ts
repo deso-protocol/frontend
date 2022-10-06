@@ -410,6 +410,10 @@ export class GlobalVarsService {
                 )
                 .subscribe((res) => {
                   if (res) {
+                    this.backendApi.SetEncryptedMessagingKeyRandomnessForPublicKey(
+                      this.loggedInUser.PublicKeyBase58Check,
+                      res.encryptedMessagingKeyRandomness
+                    );
                     this.backendApi
                       .RegisterGroupMessagingKey(
                         this.localNode,
