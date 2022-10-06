@@ -3,7 +3,7 @@
 // get the browser to save the cookie in the response.
 // https://github.com/github/fetch#sending-cookies
 import { Injectable } from '@angular/core';
-import { interval, Observable, of, throwError, zip } from 'rxjs';
+import { from, interval, Observable, of, throwError, zip } from 'rxjs';
 import {
   map,
   switchMap,
@@ -18,6 +18,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { IdentityMessagingResponse, IdentityService } from './identity.service';
 import { environment } from 'src/environments/environment';
 import { Hex } from 'web3-utils/types';
+import { SwalHelper } from '../lib/helpers/swal-helper';
 
 export class BackendRoutes {
   static ExchangeRateRoute = '/api/v0/get-exchange-rate';
@@ -1002,9 +1003,24 @@ export class BackendApiService {
           };
 
           const launchDefaultMessagingKey$ = () =>
-            this.identityService
-              .launchDefaultMessagingKey(SenderPublicKeyBase58Check)
-              .pipe(timeout(45000));
+            from(
+              SwalHelper.fire({
+                html: 'In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.',
+                showCancelButton: false,
+              })
+            ).pipe(
+              switchMap((res) => {
+                if (res.isConfirmed) {
+                  return this.identityService
+                    .launchDefaultMessagingKey(SenderPublicKeyBase58Check)
+                    .pipe(timeout(45000));
+                } else {
+                  throwError(
+                    'Default Messaging Key required to encrypt messages'
+                  );
+                }
+              })
+            );
 
           const submitEncryptedMessage$ = (encrypted: any) => {
             // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
@@ -2020,9 +2036,22 @@ export class BackendApiService {
       })
     );
     const launchDefaultMessagingKey$ = () =>
-      this.identityService
-        .launchDefaultMessagingKey(PublicKeyBase58Check)
-        .pipe(timeout(45000));
+      from(
+        SwalHelper.fire({
+          html: 'In order to use the latest messaging features, you need to create a default messaging key. DeSo Identity will now launch to generate this key for you.',
+          showCancelButton: false,
+        })
+      ).pipe(
+        switchMap((res) => {
+          if (res.isConfirmed) {
+            return this.identityService
+              .launchDefaultMessagingKey(PublicKeyBase58Check)
+              .pipe(timeout(45000));
+          } else {
+            throwError('Default Messaging Key required to encrypt messages');
+          }
+        })
+      );
 
     const callRegisterGroupMessagingKey$ = (res: {
       messagingPublicKeyBase58Check: string;
