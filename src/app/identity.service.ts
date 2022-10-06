@@ -15,6 +15,7 @@ export type IdentityMessagingResponse = {
   encryptedToMembersGroupMessagingPrivateKey: string[];
   messagingKeySignature: string;
   messagingPublicKeyBase58Check: string;
+  encryptedMessagingKeyRandomness: string | undefined;
 };
 
 @Injectable({
@@ -217,6 +218,8 @@ export class IdentityService {
     encryptedSeedHex: string;
     senderGroupKeyName: string;
     recipientPublicKey: string;
+    encryptedMessagingKeyRandomness: string | undefined;
+    derivedPublicKeyBase58Check: string | undefined;
     message: string;
   }): Observable<any> {
     return this.send('encrypt', payload);
@@ -227,6 +230,9 @@ export class IdentityService {
     accessLevelHmac: string;
     encryptedSeedHex: string;
     encryptedMessages: any;
+    derivedPublicKeyBase58Check: string | undefined;
+    ownerPublicKeyBase58Check: string;
+    encryptedMessagingKeyRandomness: string | undefined;
   }): Observable<any> {
     return this.send('decrypt', payload);
   }
