@@ -2066,6 +2066,7 @@ export class BackendApiService {
                   true
                 ) {
                   // go get the key
+                  debugger;
                   return launchDefaultMessagingKey$().pipe(
                     switchMap((defaultMessagingKeyResponse) => {
                       if (
@@ -2077,7 +2078,7 @@ export class BackendApiService {
                           [PublicKeyBase58Check]: {
                             ...users[PublicKeyBase58Check],
                             encryptedMessagingKeyRandomness:
-                              res.encryptedMessagingKeyRandomness,
+                              defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
                           },
                         });
                         return this.GetDefaultKey(
