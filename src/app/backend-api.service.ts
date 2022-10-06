@@ -1047,17 +1047,7 @@ export class BackendApiService {
                       return callEncrypt$();
                       // res.encryptedMessagingKeyRandomness
                     } else {
-                      // this.GetDefaultKey(
-                      //   localNode,
-                      //   SenderPublicKeyBase58Check
-                      // ).pipe(
-                      //   switchMap((res) => {
-                      //     if (!res) {
-                      //       callRegisterGroupMessagingKey$(res);
-                      //     }
-                      //   })
-                      // );
-                      // // console.log(res);
+                      //group key registration here
                       return of();
                     }
                   })
@@ -2034,7 +2024,6 @@ export class BackendApiService {
                         //   },
                         // });
 
-                        debugger;
                         return this.identityService
                           .decrypt({
                             ...this.identityService.identityServiceParamsForKey(
@@ -2072,7 +2061,6 @@ export class BackendApiService {
       )
       .pipe(
         switchMap((t) => {
-          console.log(t);
           return t;
         })
       );
