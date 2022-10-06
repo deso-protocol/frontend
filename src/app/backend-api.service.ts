@@ -2006,7 +2006,7 @@ export class BackendApiService {
                 PublicKeyBase58Check
               ),
               encryptedMessages: res.encryptedMessages,
-              // encryptedMessagingKeyRandomness: undefined, // useful for testing with key / without key flows
+              encryptedMessagingKeyRandomness: undefined, // useful for testing with key / without key flows
             })
             .pipe(
               map((decryptedResponse) => {
