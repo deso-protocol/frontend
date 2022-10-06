@@ -1029,14 +1029,12 @@ export class BackendApiService {
             }),
             switchMap(({ isMissingRandomness, res }) => {
               if (!isMissingRandomness) {
-                console.log('success case');
                 // easy pz return early
                 return submitEncryptedMessage$(res);
               } else {
                 // otherwise, launch
                 return launchDefaultMessagingKey$().pipe(
                   switchMap((res) => {
-                    console.log(res);
                     if (res.encryptedToApplicationGroupMessagingPrivateKey) {
                       const users = this.GetStorage(this.IdentityUsersKey);
                       this.setIdentityServiceUsers({
