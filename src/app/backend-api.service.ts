@@ -3,7 +3,7 @@
 // get the browser to save the cookie in the response.
 // https://github.com/github/fetch#sending-cookies
 import { Injectable } from '@angular/core';
-import { concat, iif, interval, Observable, of, throwError, zip } from 'rxjs';
+import { interval, Observable, of, throwError, zip } from 'rxjs';
 import {
   map,
   switchMap,
@@ -984,7 +984,7 @@ export class BackendApiService {
           const launchDefaultMessagingKey$ = () =>
             this.identityService
               .launchDefaultMessagingKey(SenderPublicKeyBase58Check)
-              .pipe(timeout(30000));
+              .pipe(timeout(45000));
           const submitEncryptedMessage$ = (encrypted: any) => {
             // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
             // sendMessage transaction.
@@ -1953,7 +1953,6 @@ export class BackendApiService {
         SortAlgorithm,
       }
     );
-
     // create an array of messages to decrypt
     req = req.pipe(
       map((res) => {
@@ -1979,32 +1978,105 @@ export class BackendApiService {
         return { ...res, encryptedMessages };
       })
     );
+    const launchDefaultMessagingKey$ = () =>
+      this.identityService
+        .launchDefaultMessagingKey(PublicKeyBase58Check)
+        .pipe(timeout(45000));
 
     // decrypt all the messages
-    req = req.pipe(
-      switchMap((res) => {
-        return this.identityService
-          .decrypt({
-            ...this.identityService.identityServiceParamsForKey(
-              PublicKeyBase58Check
-            ),
-            encryptedMessages: res.encryptedMessages,
-          })
-          .pipe(
-            map((decrypted) => {
-              res.OrderedContactsWithMessages.forEach((threads) =>
-                threads.Messages.forEach(
-                  (message) =>
-                    (message.DecryptedText =
-                      decrypted.decryptedHexes[message.EncryptedText])
-                )
-              );
-              return { ...res, ...decrypted };
+    req = req
+      .pipe(
+        switchMap((res) => {
+          return this.identityService
+            .decrypt({
+              ...this.identityService.identityServiceParamsForKey(
+                PublicKeyBase58Check
+              ),
+              encryptedMessages: res.encryptedMessages,
+              // encryptedMessagingKeyRandomness: undefined, // useful for testing with key / without key flows
             })
-          );
-      })
-    );
+            .pipe(
+              map((decryptedResponse) => {
+                const addDecryptedMessagesToMessagePayload = (
+                  res,
+                  decryptedHexes,
+                  wrap
+                ) => {
+                  res.OrderedContactsWithMessages.forEach((threads) =>
+                    threads.Messages.forEach((message) => {
+                      message.DecryptedText =
+                        decryptedHexes.decryptedHexes[message.EncryptedText];
+                    })
+                  );
+                  return wrap
+                    ? of({ ...res, ...decryptedResponse })
+                    : { ...res, ...decryptedResponse };
+                };
+                if (
+                  decryptedResponse?.requiresEncryptedMessagingKeyRandomness ===
+                  true
+                ) {
+                  // go get the key
+                  return launchDefaultMessagingKey$().pipe(
+                    switchMap((defaultMessagingKeyResponse) => {
+                      if (
+                        defaultMessagingKeyResponse.encryptedMessagingKeyRandomness
+                      ) {
+                        // not sure if we want to use this
+                        // probably should have a cleaner way of doing this
+                        // const users = this.GetStorage(this.IdentityUsersKey);
+                        // this.setIdentityServiceUsers({
+                        //   ...users,
+                        //   [PublicKeyBase58Check]: {
+                        //     ...users[PublicKeyBase58Check],
+                        //     encryptedMessagingKeyRandomness:
+                        //       defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
+                        //   },
+                        // });
 
+                        debugger;
+                        return this.identityService
+                          .decrypt({
+                            ...this.identityService.identityServiceParamsForKey(
+                              PublicKeyBase58Check
+                            ),
+                            encryptedMessages: res.encryptedMessages,
+
+                            encryptedMessagingKeyRandomness:
+                              defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
+                          })
+                          .pipe(
+                            map((decryptedHexes) =>
+                              addDecryptedMessagesToMessagePayload(
+                                res,
+                                decryptedHexes,
+                                false
+                              )
+                            )
+                          );
+                      }
+                    })
+                  );
+                } else if (decryptedResponse.decryptedHexes) {
+                  return addDecryptedMessagesToMessagePayload(
+                    res,
+                    decryptedResponse,
+                    true
+                  );
+                } else {
+                  throw 'something went wrong with decrypting';
+                }
+              })
+            );
+        })
+      )
+      .pipe(
+        switchMap((t) => {
+          console.log(t);
+          return t;
+        })
+      );
+    // return of();
     return req.pipe(catchError(this._handleError));
   }
 
