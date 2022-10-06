@@ -956,16 +956,19 @@ export class BackendApiService {
         switchMap((partyMessagingKeys) => {
           // Once we determine the messaging keys of the parties, we will then encrypt a message based on the keys.
           const callEncrypt$ = (encryptedMessagingKeyRandomness?: string) => {
-            return this.identityService.encrypt({
+            let payload = {
               ...this.identityService.identityServiceParamsForKey(
                 SenderPublicKeyBase58Check
               ),
-              encryptedMessagingKeyRandomness,
               recipientPublicKey:
                 partyMessagingKeys.RecipientMessagingPublicKeyBase58Check,
               senderGroupKeyName: partyMessagingKeys.SenderMessagingKeyName,
               message: MessageText,
-            });
+            };
+            if (encryptedMessagingKeyRandomness) {
+              payload = { ...payload, encryptedMessagingKeyRandomness };
+            }
+            return this.identityService.encrypt(payload);
           };
 
           const callRegisterGroupMessagingKey$ = (res: {
