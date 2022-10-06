@@ -114,8 +114,8 @@ export class AppComponent implements OnInit {
 
     // If we recently added a new public key, log in the user and clear the value
     if (this.identityService.identityServicePublicKeyAdded) {
-      loggedInUserPublicKey = this.identityService
-        .identityServicePublicKeyAdded;
+      loggedInUserPublicKey =
+        this.identityService.identityServicePublicKeyAdded;
       this.identityService.identityServicePublicKeyAdded = null;
     }
 
@@ -394,6 +394,7 @@ export class AppComponent implements OnInit {
   loadApp() {
     this.identityService.identityServiceUsers =
       this.backendApi.GetStorage(this.backendApi.IdentityUsersKey) || {};
+
     // Filter out invalid public keys
     const publicKeys = Object.keys(this.identityService.identityServiceUsers);
     for (const publicKey of publicKeys) {

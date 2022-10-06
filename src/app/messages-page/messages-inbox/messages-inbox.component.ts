@@ -115,10 +115,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
     let fetchAfterPubKey = '';
     if (this.globalVars.messageResponse.OrderedContactsWithMessages) {
-      fetchAfterPubKey = this.globalVars.messageResponse
-        .OrderedContactsWithMessages[
-        this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1
-      ].PublicKeyBase58Check;
+      fetchAfterPubKey =
+        this.globalVars.messageResponse.OrderedContactsWithMessages[
+          this.globalVars.messageResponse.OrderedContactsWithMessages.length - 1
+        ].PublicKeyBase58Check;
     }
 
     this.backendApi
@@ -131,7 +131,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         this.globalVars.messagesRequestsHoldingsOnly,
         this.globalVars.messagesRequestsFollowersOnly,
         this.globalVars.messagesRequestsFollowedOnly,
-        this.globalVars.messagesSortAlgorithm
+        this.globalVars.messagesSortAlgorithm,
+        this.globalVars.feeRateDeSoPerKB * 1e9
       )
       .toPromise()
       .then(
@@ -150,9 +151,10 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
               JSON.stringify(res)
             ) {
               // Add the new contacts
-              this.globalVars.messageResponse.OrderedContactsWithMessages = this.globalVars.messageResponse.OrderedContactsWithMessages.concat(
-                res.OrderedContactsWithMessages
-              );
+              this.globalVars.messageResponse.OrderedContactsWithMessages =
+                this.globalVars.messageResponse.OrderedContactsWithMessages.concat(
+                  res.OrderedContactsWithMessages
+                );
 
               // If they're a new contact, add their read/unread status mapping
               for (let key in res.UnreadStateByContact) {
@@ -216,8 +218,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
     // TODO: refactor silly setInterval
     let interval = setInterval(() => {
       // If we don't have the messageResponse yet, return
-      let orderedContactsWithMessages = this.globalVars.messageResponse
-        ?.OrderedContactsWithMessages;
+      let orderedContactsWithMessages =
+        this.globalVars.messageResponse?.OrderedContactsWithMessages;
       if (orderedContactsWithMessages == null) {
         return;
       }
@@ -339,9 +341,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
 
     // We update the read message state on global vars before sending the request so it is more instant.
     if (this.globalVars.messageResponse.UnreadStateByContact[contactPubKey]) {
-      this.globalVars.messageResponse.UnreadStateByContact[
-        contactPubKey
-      ] = false;
+      this.globalVars.messageResponse.UnreadStateByContact[contactPubKey] =
+        false;
       this.globalVars.messageResponse.NumberOfUnreadThreads -= 1;
 
       // Send an update back to the server noting that we read this thread.
