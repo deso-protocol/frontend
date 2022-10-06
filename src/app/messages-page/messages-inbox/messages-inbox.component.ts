@@ -10,7 +10,6 @@ import { GlobalVarsService } from '../../global-vars.service';
 import { BackendApiService, User } from '../../backend-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import { createOfflineCompileUrlResolver } from '@angular/compiler';
 
 @Component({
   selector: 'messages-inbox',
