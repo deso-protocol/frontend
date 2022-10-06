@@ -681,8 +681,8 @@ export class BackendApiService {
   ): Observable<any> {
     return request
       .pipe(
-        switchMap((res) => {
-          return this.identityService
+        switchMap((res) =>
+          this.identityService
             .sign({
               transactionHex: res.TransactionHex,
               ...this.identityService.identityServiceParamsForKey(
@@ -706,8 +706,8 @@ export class BackendApiService {
                   return of({ ...res, ...signed });
                 }
               })
-            );
-        })
+            )
+        )
       )
       .pipe(
         switchMap((res) =>
