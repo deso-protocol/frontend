@@ -303,7 +303,8 @@ export class GlobalVarsService {
         this.messagesRequestsHoldingsOnly,
         this.messagesRequestsFollowersOnly,
         this.messagesRequestsFollowedOnly,
-        this.messagesSortAlgorithm
+        this.messagesSortAlgorithm,
+        this.feeRateDeSoPerKB * 1e9,
       )
       .subscribe(
         (res) => {

@@ -132,7 +132,8 @@ export class MessagesInboxComponent implements OnInit, OnChanges {
         this.globalVars.messagesRequestsHoldingsOnly,
         this.globalVars.messagesRequestsFollowersOnly,
         this.globalVars.messagesRequestsFollowedOnly,
-        this.globalVars.messagesSortAlgorithm
+        this.globalVars.messagesSortAlgorithm,
+        this.globalVars.feeRateDeSoPerKB * 1e9
       )
       .toPromise()
       .then(

@@ -968,7 +968,10 @@ export class BackendApiService {
             });
           };
 
-          const callRegisterGroupMessagingKey$ = (res: any) => {
+          const callRegisterGroupMessagingKey$ = (res: {
+            messagingPublicKeyBase58Check: string;
+            messagingKeySignature: string;
+          }) => {
             return this.RegisterGroupMessagingKey(
               endpoint,
               SenderPublicKeyBase58Check,
@@ -985,6 +988,7 @@ export class BackendApiService {
             this.identityService
               .launchDefaultMessagingKey(SenderPublicKeyBase58Check)
               .pipe(timeout(45000));
+
           const submitEncryptedMessage$ = (encrypted: any) => {
             // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
             // sendMessage transaction.
@@ -1030,29 +1034,63 @@ export class BackendApiService {
               if (!isMissingRandomness) {
                 // easy pz return early
                 return submitEncryptedMessage$(res);
-              } else {
-                // otherwise, launch
-                return launchDefaultMessagingKey$().pipe(
-                  switchMap((res) => {
-                    if (res.encryptedMessagingKeyRandomness) {
-                      const users = this.GetStorage(this.IdentityUsersKey);
-                      this.setIdentityServiceUsers({
-                        ...users,
-                        [SenderPublicKeyBase58Check]: {
-                          ...users[SenderPublicKeyBase58Check],
-                          encryptedMessagingKeyRandomness:
-                            res.encryptedMessagingKeyRandomness,
-                        },
-                      });
-                      return callEncrypt$();
-                      // res.encryptedMessagingKeyRandomness
-                    } else {
-                      //group key registration here
-                      return of();
-                    }
-                  })
-                );
               }
+              // otherwise, launch
+              return launchDefaultMessagingKey$().pipe(
+                switchMap((res) => {
+                  if (!res.encryptedMessagingKeyRandomness) {
+                    return throwError(
+                      'Error getting encrypted messaging key randomness'
+                    );
+                  }
+                  const users = this.GetStorage(this.IdentityUsersKey);
+                  this.setIdentityServiceUsers({
+                    ...users,
+                    [SenderPublicKeyBase58Check]: {
+                      ...users[SenderPublicKeyBase58Check],
+                      encryptedMessagingKeyRandomness:
+                        res.encryptedMessagingKeyRandomness,
+                    },
+                  });
+                  return this.GetDefaultKey(
+                    endpoint,
+                    SenderPublicKeyBase58Check
+                  ).pipe(
+                    switchMap((defaultKey) => {
+                      return of({ defaultKey, res });
+                    }),
+                    switchMap(({ defaultKey, res }) => {
+                      return !defaultKey
+                        ? callRegisterGroupMessagingKey$(res).pipe(
+                            switchMap((groupMessagingKeyResponse) => {
+                              if (!groupMessagingKeyResponse) {
+                                throwError('Error creating default key');
+                              }
+                              return of(res);
+                            })
+                          )
+                        : of(res);
+                    }),
+                    switchMap((_) => {
+                      partyMessagingKeys.SenderMessagingKeyName = 'default-key';
+                      partyMessagingKeys.IsSenderMessagingKey = true;
+                      return callEncrypt$().pipe(
+                        switchMap((res) => {
+                          if (
+                            res?.encryptedMessage &&
+                            !res?.requiresEncryptedMessagingKeyRandomness
+                          ) {
+                            return submitEncryptedMessage$(
+                              res.encryptedMessage
+                            );
+                          }
+                          return throwError('Error submitting messaging');
+                        })
+                      );
+                    })
+                  );
+                })
+              );
             })
           );
         })
@@ -1925,7 +1963,8 @@ export class BackendApiService {
     HoldingsOnly: boolean = false,
     FollowersOnly: boolean = false,
     FollowingOnly: boolean = false,
-    SortAlgorithm: string = 'time'
+    SortAlgorithm: string = 'time',
+    MinFeeRateNanosPerKB: number
   ): Observable<any> {
     let req = this.httpClient.post<any>(
       this._makeRequestURL(
@@ -1973,6 +2012,22 @@ export class BackendApiService {
         .launchDefaultMessagingKey(PublicKeyBase58Check)
         .pipe(timeout(45000));
 
+    const callRegisterGroupMessagingKey$ = (res: {
+      messagingPublicKeyBase58Check: string;
+      messagingKeySignature: string;
+    }) => {
+      return this.RegisterGroupMessagingKey(
+        endpoint,
+        PublicKeyBase58Check,
+        res.messagingPublicKeyBase58Check,
+        'default-key',
+        res.messagingKeySignature,
+        [],
+        {},
+        MinFeeRateNanosPerKB
+      );
+    };
+
     const addDecryptedMessagesToMessagePayload = (
       res,
       decryptedHexes,
@@ -2013,37 +2068,65 @@ export class BackendApiService {
                       if (
                         defaultMessagingKeyResponse.encryptedMessagingKeyRandomness
                       ) {
-                        // not sure if we want to use this
-                        // probably should have a cleaner way of doing this
-                        // const users = this.GetStorage(this.IdentityUsersKey);
-                        // this.setIdentityServiceUsers({
-                        //   ...users,
-                        //   [PublicKeyBase58Check]: {
-                        //     ...users[PublicKeyBase58Check],
-                        //     encryptedMessagingKeyRandomness:
-                        //       defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
-                        //   },
-                        // });
-
-                        return this.identityService
-                          .decrypt({
-                            ...this.identityService.identityServiceParamsForKey(
-                              PublicKeyBase58Check
-                            ),
-                            encryptedMessages: res.encryptedMessages,
-
+                        const users = this.GetStorage(this.IdentityUsersKey);
+                        this.setIdentityServiceUsers({
+                          ...users,
+                          [PublicKeyBase58Check]: {
+                            ...users[PublicKeyBase58Check],
                             encryptedMessagingKeyRandomness:
-                              defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
+                              res.encryptedMessagingKeyRandomness,
+                          },
+                        });
+                        return this.GetDefaultKey(
+                          endpoint,
+                          PublicKeyBase58Check
+                        ).pipe(
+                          switchMap((defaultKey) => {
+                            return of({
+                              defaultKey,
+                              defaultMessagingKeyResponse,
+                            });
+                          }),
+                          switchMap(
+                            ({ defaultKey, defaultMessagingKeyResponse }) => {
+                              return !defaultKey
+                                ? callRegisterGroupMessagingKey$(
+                                    defaultMessagingKeyResponse
+                                  ).pipe(
+                                    switchMap((groupMessagingKeyResponse) => {
+                                      if (!groupMessagingKeyResponse) {
+                                        throwError(
+                                          'Error creating default key'
+                                        );
+                                      }
+                                      return of(defaultMessagingKeyResponse);
+                                    })
+                                  )
+                                : of(defaultMessagingKeyResponse);
+                            }
+                          ),
+                          switchMap((_) => {
+                            return this.identityService
+                              .decrypt({
+                                ...this.identityService.identityServiceParamsForKey(
+                                  PublicKeyBase58Check
+                                ),
+                                encryptedMessages: res.encryptedMessages,
+
+                                encryptedMessagingKeyRandomness:
+                                  defaultMessagingKeyResponse.encryptedMessagingKeyRandomness,
+                              })
+                              .pipe(
+                                map((decryptedHexes) =>
+                                  addDecryptedMessagesToMessagePayload(
+                                    res,
+                                    decryptedHexes,
+                                    false
+                                  )
+                                )
+                              );
                           })
-                          .pipe(
-                            map((decryptedHexes) =>
-                              addDecryptedMessagesToMessagePayload(
-                                res,
-                                decryptedHexes,
-                                false
-                              )
-                            )
-                          );
+                        );
                       }
                     })
                   );
