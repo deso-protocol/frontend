@@ -1973,10 +1973,33 @@ export class BackendApiService {
         .launchDefaultMessagingKey(PublicKeyBase58Check)
         .pipe(timeout(45000));
 
+    const addDecryptedMessagesToMessagePayload = (
+      res,
+      decryptedHexes,
+      wrap
+    ) => {
+      res.OrderedContactsWithMessages.forEach((threads) =>
+        threads.Messages.forEach((message) => {
+          message.DecryptedText =
+            decryptedHexes.decryptedHexes[message.EncryptedText];
+        })
+      );
+      return wrap
+        ? of({ ...res, ...decryptedHexes })
+        : { ...res, ...decryptedHexes };
+    };
+
     // decrypt all the messages
     req = req
       .pipe(
         switchMap((res) => {
+          console.log({
+            ...this.identityService.identityServiceParamsForKey(
+              PublicKeyBase58Check
+            ),
+            encryptedMessages: res.encryptedMessages,
+            // encryptedMessagingKeyRandomness: undefined, // useful for testing with key / without key flows
+          });
           return this.identityService
             .decrypt({
               ...this.identityService.identityServiceParamsForKey(
@@ -1987,21 +2010,6 @@ export class BackendApiService {
             })
             .pipe(
               map((decryptedResponse) => {
-                const addDecryptedMessagesToMessagePayload = (
-                  res,
-                  decryptedHexes,
-                  wrap
-                ) => {
-                  res.OrderedContactsWithMessages.forEach((threads) =>
-                    threads.Messages.forEach((message) => {
-                      message.DecryptedText =
-                        decryptedHexes.decryptedHexes[message.EncryptedText];
-                    })
-                  );
-                  return wrap
-                    ? of({ ...res, ...decryptedResponse })
-                    : { ...res, ...decryptedResponse };
-                };
                 if (
                   decryptedResponse?.requiresEncryptedMessagingKeyRandomness ===
                   true
@@ -2064,7 +2072,6 @@ export class BackendApiService {
           return t;
         })
       );
-    // return of();
     return req.pipe(catchError(this._handleError));
   }
 
