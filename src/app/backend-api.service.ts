@@ -970,7 +970,10 @@ export class BackendApiService {
             });
           };
 
-          const callRegisterGroupMessagingKey$ = (res: any) => {
+          const callRegisterGroupMessagingKey$ = (res: {
+            messagingPublicKeyBase58Check: string;
+            messagingKeySignature: string;
+          }) => {
             return this.RegisterGroupMessagingKey(
               endpoint,
               SenderPublicKeyBase58Check,
@@ -987,7 +990,6 @@ export class BackendApiService {
             this.identityService
               .launchDefaultMessagingKey(SenderPublicKeyBase58Check)
               .pipe(timeout(30000));
-
           const submitEncryptedMessage$ = (encrypted: any) => {
             // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
             // sendMessage transaction.
@@ -1021,8 +1023,6 @@ export class BackendApiService {
           // call encrypt and see what happens
           return callEncrypt$().pipe(
             switchMap((res: any) => {
-              debugger;
-              console.log(res);
               // Verify we have the messaging key
               return of({
                 isMissingRandomness:
@@ -1033,59 +1033,60 @@ export class BackendApiService {
             }),
             switchMap(({ isMissingRandomness, res }) => {
               if (!isMissingRandomness) {
-                console.log('success case');
                 // easy pz return early
                 return submitEncryptedMessage$(res);
-              } else {
-                // otherwise, launch
-                return launchDefaultMessagingKey$().pipe(
-                  switchMap((res) => {
-                    console.log(res);
-                    if (!res.encryptedMessagingKeyRandomness) {
-                      return throwError('Error sending encrypted message');
-                    }
-                    const users = this.GetStorage(this.IdentityUsersKey);
-                    this.setIdentityServiceUsers({
-                      ...users,
-                      [SenderPublicKeyBase58Check]: {
-                        ...users[SenderPublicKeyBase58Check],
-                        encryptedMessagingKeyRandomness:
-                          res.encryptedMessagingKeyRandomness,
-                      },
-                    });
-                    return this.GetDefaultKey(
-                      endpoint,
-                      SenderPublicKeyBase58Check
-                    ).pipe(
-                      switchMap((defaultKey) => {
-                        debugger;
-                        return (
-                          !defaultKey
-                            ? callRegisterGroupMessagingKey$(res)
-                            : of()
-                        ).pipe(
-                          switchMap((_) => {
-                            return callEncrypt$().pipe(
-                              switchMap((_) => {
-                                debugger;
-                                if (
-                                  res?.encryptedMessage &&
-                                  !res?.requiresEncryptedMessagingKeyRandomness
-                                ) {
-                                  return submitEncryptedMessage$(
-                                    res.encryptedMessage
-                                  );
-                                }
-                                return throwError('Error sending message');
-                              })
-                            );
-                          })
-                        );
-                      })
-                    );
-                  })
-                );
               }
+              // otherwise, launch
+              return launchDefaultMessagingKey$().pipe(
+                switchMap((res) => {
+                  if (!res.encryptedMessagingKeyRandomness) {
+                    return throwError(
+                      'Error getting encrypted messaging key randomness'
+                    );
+                  }
+                  const users = this.GetStorage(this.IdentityUsersKey);
+                  this.setIdentityServiceUsers({
+                    ...users,
+                    [SenderPublicKeyBase58Check]: {
+                      ...users[SenderPublicKeyBase58Check],
+                      encryptedMessagingKeyRandomness:
+                        res.encryptedMessagingKeyRandomness,
+                    },
+                  });
+                  return this.GetDefaultKey(
+                    endpoint,
+                    SenderPublicKeyBase58Check
+                  ).pipe(
+                    switchMap((defaultKey) => {
+                      return of({ defaultKey, res });
+                    }),
+                    switchMap(({ defaultKey, res }) => {
+                      return !defaultKey
+                        ? callRegisterGroupMessagingKey$(res).pipe(
+                            switchMap((groupMessagingKeyResponse) => {
+                              return of(res);
+                            })
+                          )
+                        : of(res);
+                    }),
+                    switchMap((_) => {
+                      return callEncrypt$().pipe(
+                        switchMap((res) => {
+                          if (
+                            res?.encryptedMessage &&
+                            !res?.requiresEncryptedMessagingKeyRandomness
+                          ) {
+                            return submitEncryptedMessage$(
+                              res.encryptedMessage
+                            );
+                          }
+                          return throwError('Error submitting messaging');
+                        })
+                      );
+                    })
+                  );
+                })
+              );
             })
           );
         })
