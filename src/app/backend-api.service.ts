@@ -985,7 +985,6 @@ export class BackendApiService {
             this.identityService
               .launchDefaultMessagingKey(SenderPublicKeyBase58Check)
               .pipe(timeout(30000));
-
           const submitEncryptedMessage$ = (encrypted: any) => {
             // Now we will use the ciphertext encrypted to user's messaging keys as part of the metadata of the
             // sendMessage transaction.
@@ -1035,18 +1034,18 @@ export class BackendApiService {
                 // otherwise, launch
                 return launchDefaultMessagingKey$().pipe(
                   switchMap((res) => {
-                    if (res.encryptedToApplicationGroupMessagingPrivateKey) {
+                    if (res.encryptedMessagingKeyRandomness) {
                       const users = this.GetStorage(this.IdentityUsersKey);
                       this.setIdentityServiceUsers({
                         ...users,
                         [SenderPublicKeyBase58Check]: {
                           ...users[SenderPublicKeyBase58Check],
                           encryptedMessagingKeyRandomness:
-                            res.encryptedToApplicationGroupMessagingPrivateKey,
+                            res.encryptedMessagingKeyRandomness,
                         },
                       });
                       return callEncrypt$();
-                      // res.encryptedToApplicationGroupMessagingPrivateKey
+                      // res.encryptedMessagingKeyRandomness
                     } else {
                       // this.GetDefaultKey(
                       //   localNode,
