@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import {
   BackendApiService,
   BalanceEntryResponse,
-  DeSoNode, MessagingGroupEntryResponse,
+  DeSoNode,
+  MessagingGroupEntryResponse,
   PostEntryResponse,
   TransactionFee,
   TutorialStatus,
@@ -151,7 +152,8 @@ export class GlobalVarsService {
   // and make everything use sockets.
   updateEverything: any;
 
-  emailRegExp = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+  emailRegExp =
+    /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
   latestBitcoinAPIResponse: any;
 
@@ -301,7 +303,8 @@ export class GlobalVarsService {
         this.messagesRequestsHoldingsOnly,
         this.messagesRequestsFollowersOnly,
         this.messagesRequestsFollowedOnly,
-        this.messagesSortAlgorithm
+        this.messagesSortAlgorithm,
+        this.feeRateDeSoPerKB * 1e9,
       )
       .subscribe(
         (res) => {
@@ -391,10 +394,8 @@ export class GlobalVarsService {
   }
 
   getLoggedInUserDefaultKey() {
-    this.backendApi.GetDefaultKey(
-      this.localNode,
-      this.loggedInUser.PublicKeyBase58Check
-    )
+    this.backendApi
+      .GetDefaultKey(this.localNode, this.loggedInUser.PublicKeyBase58Check)
       .subscribe((res) => {
         if (!res) {
           SwalHelper.fire({
@@ -428,7 +429,8 @@ export class GlobalVarsService {
                               this.loggedInUser.PublicKeyBase58Check
                             )
                             .subscribe((messagingGroupEntryResponse) => {
-                              this.loggedInUserDefaultKey = messagingGroupEntryResponse;
+                              this.loggedInUserDefaultKey =
+                                messagingGroupEntryResponse;
                             });
                         }
                       });
@@ -1143,10 +1145,8 @@ export class GlobalVarsService {
       );
       bithuntService.getCommunityProjectsLeaderboard().subscribe((res) => {
         this.allCommunityProjectsLeaderboard = res;
-        this.topCommunityProjectsLeaderboard = this.allCommunityProjectsLeaderboard.slice(
-          0,
-          10
-        );
+        this.topCommunityProjectsLeaderboard =
+          this.allCommunityProjectsLeaderboard.slice(0, 10);
       });
     }
 
@@ -1262,8 +1262,7 @@ export class GlobalVarsService {
     Swal.fire({
       target: this.getTargetComponentSelector(),
       title: 'Congrats!',
-      html:
-        "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
+      html: "You just got some free money!<br><br><b>Now it's time to learn how to earn even more!</b>",
       showConfirmButton: true,
       // Only show skip option to admins
       showCancelButton: !!this.loggedInUser?.IsAdmin,
