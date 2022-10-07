@@ -45,7 +45,7 @@ export class BuyDeSoComponent implements OnInit {
 
   static BUY_WITH_MEGASWAP = 'Buy with Crypto';
   static BUY_WITH_USD = 'Buy with USD';
-  static BUY_WITH_BTC = 'Buy with Bitcoin';
+  static BUY_WITH_BTC = 'Buy with BTC';
   static BUY_WITH_ETH = 'Buy with ETH';
 
   buyTabs = [BuyDeSoComponent.BUY_WITH_MEGASWAP];
