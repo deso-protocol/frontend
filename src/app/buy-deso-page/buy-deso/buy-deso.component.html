@@ -25,6 +25,9 @@
             (tabClick)="_handleTabClick($event)"
           ></tab-selector>
         </div>
+        <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_MEGASWAP">
+          <buy-deso-megaswap></buy-deso-megaswap>
+        </div>
         <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_USD">
           <buy-deso-usd></buy-deso-usd>
         </div>

@@ -43,6 +43,7 @@ export class BuyDeSoComponent implements OnInit {
 
   BuyDeSoComponent = BuyDeSoComponent;
 
+  static BUY_WITH_MEGASWAP = 'Buy with MegaSwap';
   static BUY_WITH_USD = 'Buy with USD';
   static BUY_WITH_BTC = 'Buy with Bitcoin';
   static BUY_WITH_ETH = 'Buy with ETH';
@@ -521,6 +522,11 @@ export class BuyDeSoComponent implements OnInit {
     if (this.globalVars.showBuyWithUSD) {
       this.buyTabs.unshift(BuyDeSoComponent.BUY_WITH_USD);
       this.activeTab = BuyDeSoComponent.BUY_WITH_USD;
+    }
+
+    if (this.globalVars.showBuyWithMegaSwap) {
+      this.buyTabs.unshift(BuyDeSoComponent.BUY_WITH_MEGASWAP);
+      this.activeTab = BuyDeSoComponent.BUY_WITH_MEGASWAP;
     }
 
     if (this.globalVars.showBuyWithETH) {

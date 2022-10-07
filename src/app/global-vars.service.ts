@@ -175,6 +175,9 @@ export class GlobalVarsService {
   // Whether or not to show the Verify phone number flow.
   showPhoneNumberVerification = false;
 
+  // Buy DESO with MegaSwap
+  showBuyWithMegaSwap = true;
+
   // Whether or not to show the Buy DeSo with USD flow.
   showBuyWithUSD = false;
 

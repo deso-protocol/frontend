@@ -41,6 +41,7 @@ import { LeftBarButtonComponent } from './left-bar/left-bar-button/left-bar-butt
 import { TradeCreatorPageComponent } from './trade-creator-page/trade-creator-page.component';
 import { TradeCreatorComponent } from './trade-creator-page/trade-creator/trade-creator.component';
 import { BuyDeSoComponent } from './buy-deso-page/buy-deso/buy-deso.component';
+import { BuyDeSoMegaSwapComponent } from './buy-deso-page/buy-deso-megaswap/buy-deso-megaswap.component';
 import { BuyDeSoUSDComponent } from './buy-deso-page/buy-deso-usd/buy-deso-usd.component';
 import { TradeCreatorFormComponent } from './trade-creator-page/trade-creator-form/trade-creator-form.component';
 import { TradeCreatorPreviewComponent } from './trade-creator-page/trade-creator-preview/trade-creator-preview.component';
@@ -212,6 +213,7 @@ const greenishTheme: Theme = { key: 'greenish', name: 'Green Theme' };
     TradeCreatorPageComponent,
     TradeCreatorComponent,
     BuyDeSoComponent,
+    BuyDeSoMegaSwapComponent,
     BuyDeSoUSDComponent,
     TradeCreatorFormComponent,
     TradeCreatorPreviewComponent,
