@@ -43,13 +43,13 @@ export class BuyDeSoComponent implements OnInit {
 
   BuyDeSoComponent = BuyDeSoComponent;
 
-  static BUY_WITH_MEGASWAP = 'Buy with MegaSwap';
+  static BUY_WITH_MEGASWAP = 'Buy with Crypto';
   static BUY_WITH_USD = 'Buy with USD';
   static BUY_WITH_BTC = 'Buy with Bitcoin';
   static BUY_WITH_ETH = 'Buy with ETH';
 
-  buyTabs = [BuyDeSoComponent.BUY_WITH_BTC];
-  activeTab = BuyDeSoComponent.BUY_WITH_BTC;
+  buyTabs = [BuyDeSoComponent.BUY_WITH_MEGASWAP];
+  activeTab = BuyDeSoComponent.BUY_WITH_MEGASWAP;
 
   constructor(
     public ref: ChangeDetectorRef,
@@ -519,19 +519,18 @@ export class BuyDeSoComponent implements OnInit {
     window.scroll(0, 0);
 
     // Add extra tabs
-    if (this.globalVars.showBuyWithUSD) {
-      this.buyTabs.unshift(BuyDeSoComponent.BUY_WITH_USD);
-      this.activeTab = BuyDeSoComponent.BUY_WITH_USD;
-    }
-
-    if (this.globalVars.showBuyWithMegaSwap) {
-      this.buyTabs.unshift(BuyDeSoComponent.BUY_WITH_MEGASWAP);
-      this.activeTab = BuyDeSoComponent.BUY_WITH_MEGASWAP;
-    }
-
-    if (this.globalVars.showBuyWithETH) {
-      this.buyTabs.push(BuyDeSoComponent.BUY_WITH_ETH);
-    }
+    this.route.params.subscribe((params) => {
+      const ticker = (params.ticker || '').toUpperCase();
+      if (ticker === 'BTC') {
+        this.buyTabs = [BuyDeSoComponent.BUY_WITH_BTC];
+        this.activeTab = BuyDeSoComponent.BUY_WITH_BTC
+      } else if (ticker === 'ETH' && this.globalVars.showBuyWithETH) {
+        this.buyTabs = [BuyDeSoComponent.BUY_WITH_ETH];
+        this.activeTab = BuyDeSoComponent.BUY_WITH_ETH;
+      } else if (this.globalVars.showBuyWithUSD) {
+        this.buyTabs.push(BuyDeSoComponent.BUY_WITH_USD);
+      }
+    });
 
     // Query the website to get the fees.
     this.backendApi.GetBitcoinFeeRateSatoshisPerKB().subscribe(

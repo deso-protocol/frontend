@@ -1,1 +1,16 @@
-<iframe [src]="iframeURL" class="border-0 mt-3 vh-100 w-100"></iframe>
+<div class="vh-70">
+  <p class="pl-2 fs-8 text-muted">
+    <i class="fas fa-info-circle"></i>
+    Swap from BTC, ETH, SOL, and other chains to DESO using MegaSwap.
+    The legacy <a [routerLink]="'/' + globalVars.RouteNames.BUY_DESO + '/BTC'">Buy with BTC</a>
+    <span *ngIf="globalVars.showBuyWithETH; else elseBlock">
+      and <a [routerLink]="'/' + globalVars.RouteNames.BUY_DESO + '/ETH'">Buy with ETH</a> flows are
+    </span>
+    <ng-template #elseBlock>
+      flow is
+    </ng-template>
+    still accessible but being deprecated.
+  </p>
+
+  <iframe [src]="iframeURL" class="border-0 h-100 mb-3 mt-3 w-100"></iframe>
+</div>
