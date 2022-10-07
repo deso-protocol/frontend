@@ -23,6 +23,7 @@
             [tabs]="buyTabs"
             [activeTab]="activeTab"
             (tabClick)="_handleTabClick($event)"
+            class="text-center"
           ></tab-selector>
         </div>
         <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_MEGASWAP">
