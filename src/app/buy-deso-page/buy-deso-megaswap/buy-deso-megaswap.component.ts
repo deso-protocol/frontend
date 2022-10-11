@@ -15,6 +15,10 @@ export class BuyDeSoMegaSwapComponent implements OnInit {
     public globalVars: GlobalVarsService,
     private sanitizer: DomSanitizer,
   ) {
+    if (!environment.megaswapURL) {
+      return;
+    }
+
     this.iframeURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       [
         environment.megaswapURL,
