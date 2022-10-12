@@ -1,5 +1,5 @@
-<div>
-  <p class="mb-4 px-3 fs-7 text-muted">
+<div class="vh-75">
+  <p class="mb-3 px-3 fs-7 text-muted">
     <i class="fas fa-info-circle"></i>
     Swap from BTC, ETH, SOL, and other chains to DESO using MegaSwap.
     The legacy <a [routerLink]="'/' + globalVars.RouteNames.BUY_DESO + '/BTC'">Buy with BTC</a>
@@ -12,11 +12,11 @@
     still accessible but being deprecated.
   </p>
 
-  <div class="row" *ngIf="iframeURL; else elseBlockIframe">
-    <div class="col-10 offset-1 embed-responsive embed-responsive-16by9">
-      <iframe [src]="iframeURL" class="w-100 h-100 rounded embed-responsive-item"></iframe>
-    </div>
-  </div>
+  <iframe
+    *ngIf="iframeURL; else elseBlockIframe"
+    [src]="iframeURL"
+    class="border-0 rounded w-100 h-100"
+  ></iframe>
   <ng-template #elseBlockIframe>
     <p class="fs-8 text-danger text-center">
       <i class="fas fa-exclamation-triangle"></i> Unable to render iFrame.<br />Invalid MegaSwap URL.

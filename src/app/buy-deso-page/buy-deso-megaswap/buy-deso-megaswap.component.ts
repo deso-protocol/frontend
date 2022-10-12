@@ -19,11 +19,15 @@ export class BuyDeSoMegaSwapComponent implements OnInit {
       return;
     }
 
+    const isDarkMode = localStorage.getItem('theme') !== 'light' ||
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     this.iframeURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       [
         environment.megaswapURL,
         '/#/iframe/v1?',
         `network=${environment.production ? 'mainnet' : 'testnet'}`,
+        `&theme=${isDarkMode ? 'dark-black' : 'default'}`,
         '&destinationTickers=DESO',
         '&destinationTicker=DESO',
         `&destinationAddress=${this.globalVars.loggedInUser?.PublicKeyBase58Check || ''}`,
