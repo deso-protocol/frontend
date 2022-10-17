@@ -267,7 +267,7 @@ export class FeedPostDropdownComponent {
   } 
   
   embedPostUrl(event): void {
-    this.globalVars.logEvent("post : webapiemnbed");
+    this.globalVars.logEvent('post : withdesoembed');
 
     // Prevent the post from navigating.
     event.stopPropagation();
@@ -275,7 +275,7 @@ export class FeedPostDropdownComponent {
     try {
       window.open('https://embed.withdeso.com/?url='+this._getPostUrl(), "_blank");
     } catch (err) {
-      console.error("Embed failed:", err.message);
+      console.error('Embed failed:', err.message);
     }
   }
 
