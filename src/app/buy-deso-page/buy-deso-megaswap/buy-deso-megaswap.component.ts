@@ -19,15 +19,26 @@ export class BuyDeSoMegaSwapComponent implements OnInit {
       return;
     }
 
-    const isDarkMode = localStorage.getItem('theme') !== 'light' ||
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Map theme to MegaSwap theme.
+    let theme = {
+      'cake': 'light-peach',
+      'dark': 'dark-gray',
+      'greenish': 'dark-green',
+      'icydark': 'dark-icy',
+      'legends': 'dark-brown',
+      'light': 'light-white',
+    }[localStorage.getItem('theme')] || 'default';
+
+    if (theme === 'default' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      theme = 'dark-gray';
+    }
 
     this.iframeURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       [
         environment.megaswapURL,
         '/#/iframe/v1?',
         `network=${environment.production ? 'mainnet' : 'testnet'}`,
-        `&theme=${isDarkMode ? 'dark-black' : 'default'}`,
+        `&theme=${theme}`,
         '&destinationTickers=DESO',
         '&destinationTicker=DESO',
         `&destinationAddress=${this.globalVars.loggedInUser?.PublicKeyBase58Check || ''}`,
