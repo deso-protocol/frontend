@@ -38,6 +38,7 @@ header @html Content-Security-Policy "
     localhost:*
     explorer.bitclout.com
     megaswap.dev
+    megaswap.xyz
     https://api.blockchain.com/ticker
     https://api.blockchain.com/mempool/fees
     https://ka-f.fontawesome.com/
@@ -82,6 +83,7 @@ header @html Content-Security-Policy "
     identity.bitclout.blue
     identity.bitclout.green
     megaswap.dev
+    megaswap.xyz
     https://geo.captcha-delivery.com
     https://www.youtube.com
     https://youtube.com
