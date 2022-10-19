@@ -15,7 +15,7 @@
   <iframe
     *ngIf="iframeURL; else elseBlockIframe"
     [src]="iframeURL"
-    class="border-0 rounded w-100 h-100 px-1"
+    class="border-0 rounded w-100 h-100"
   ></iframe>
   <ng-template #elseBlockIframe>
     <p class="fs-8 text-danger text-center">
