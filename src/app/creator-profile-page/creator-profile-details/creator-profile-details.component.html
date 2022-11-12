@@ -14,7 +14,7 @@
 
   <!-- Feed Selector -->
   <tab-selector
-    [tabs]="['Posts', 'Creator Coin', 'DAO Coin', 'Diamonds', 'NFTs']"
+    [tabs]="['Posts', 'Posts & replies', 'Creator Coin', 'DAO Coin', 'Diamonds', 'NFTs']"
     [activeTab]="activeTab"
     (tabClick)="_handleTabClick($event)"
   ></tab-selector>
@@ -88,6 +88,26 @@
         You have blocked {{ profile.Username }}.
         <a (click)="unblock()">Unblock</a>
         to see their posts.
+      </span>
+    </div>
+  </div>
+
+  <!-- Posts & Comments -->
+  <div *ngIf="profile && activeTab == 'Posts & replies' && !loading">
+    <creator-profile-posts
+      [profile]="profile"
+      [includeComments]="true"
+      [showProfileAsReserved]="showProfileAsReserved()"
+      (blockUser)="userBlocked()"
+    ></creator-profile-posts>
+    <div
+      *ngIf="globalVars.hasUserBlockedCreator(profile.PublicKeyBase58Check)"
+      class="w-100 d-flex p-15px"
+    >
+      <span>
+        You have blocked {{ profile.Username }}.
+        <a (click)="unblock()">Unblock</a>
+        to see their posts and replies.
       </span>
     </div>
   </div>
