@@ -62,7 +62,7 @@ jobs:
           context: .
           file: ./Dockerfile
           build-args: |
-            environment=pearl-dev
+            environment=pearl-testnet
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
