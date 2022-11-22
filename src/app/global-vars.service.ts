@@ -1089,14 +1089,13 @@ export class GlobalVarsService {
 
     if (!this.localNode) {
       if ( environment.nodeApi == "") {
-      
-      const hostname = (window as any).location.hostname;
-      if (environment.production) {
-        this.localNode = hostname;
-      } else {
-        this.localNode = `${hostname}:17001`;
-      }
+        const hostname = (window as any).location.hostname;
+        if (environment.production) {
+          this.localNode = hostname;
         } else {
+          this.localNode = `${hostname}:17001`;
+        }
+      } else {
         this.localNode = environment.nodeApi;
       }
 
