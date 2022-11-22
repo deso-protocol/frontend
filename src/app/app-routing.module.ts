@@ -113,6 +113,11 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: RouteNames.BUY_DESO + '/:ticker',
+    component: BuyDeSoPageComponent,
+    pathMatch: 'full',
+  },
+  {
     path: RouteNames.PICK_A_COIN,
     component: PickACoinPageComponent,
     pathMatch: 'full',
