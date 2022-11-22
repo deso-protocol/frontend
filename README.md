@@ -16,5 +16,3 @@ more.
 * Click to Deploy
 * No need to install the Node backend
 * No waiting around for 24 hour sync of Blockchain
-
-[Read about BitClout](https://docs.deso.org/)
