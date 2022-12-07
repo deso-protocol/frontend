@@ -39,6 +39,21 @@ export class EmbedUrlParserService {
       : '';
   }
 
+  static videsoParser(url): string | boolean {
+    const regExp = /^.*((videso.xyz\/)|(watch\/))\??([A-Za-z0-9_-]{64}).*/;
+    const match = url.match(regExp);
+    return match ? match[4] : false;
+  }
+
+  static constructVidesoEmbedURL(url: URL): string {
+    const videsoId = this.videsoParser(url.toString());
+    // If we can't find the videoID, return the empty string which stops the iframe from loading.
+    const embedUrl = videsoId
+      ? `https://embed.videso.xyz/${videsoId}`
+      : '';
+    return embedUrl;
+  }
+
   // Vimeo video URLs are simple -- anything after the last "/" in the url indicates the videoID.
   static vimeoParser(url: string): string | boolean {
     const regExp = /^.*((player\.)?vimeo\.com\/)(video\/)?(\d{0,15}).*/;
@@ -216,6 +231,9 @@ export class EmbedUrlParserService {
     if (this.isMousaiFromURL(url)) {
       return of(this.constructMousaiEmbedURL(url));
     }
+    if (this.isVidesoFromURL(url)) {
+      return of(this.constructVidesoEmbedURL(url));
+    }
     if (this.isVimeoFromURL(url)) {
       return of(this.constructVimeoEmbedURL(url));
     }
@@ -269,6 +287,20 @@ export class EmbedUrlParserService {
   static isYoutubeFromURL(url: URL): boolean {
     const patterns = [/\byoutube\.com$/, /\byoutu\.be$/];
     return patterns.some((p) => p.test(url.hostname));
+  }
+
+  static isVidesoLink(link: string): boolean {
+    try {
+      const url = new URL(link);
+      return this.isVidesoFromURL(url);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static isVidesoFromURL(url: URL): boolean {
+    const pattern = /\bvideso\.xyz$/;
+    return pattern.test(url.hostname);
   }
 
   static isMousaiLink(link: string): boolean {
@@ -365,6 +397,11 @@ export class EmbedUrlParserService {
     return !!link.match(regExp);
   }
 
+  static isValidVidesoEmbedURL(link: string): boolean {
+    const regExp = /(https:\/\/embed\.videso\.xyz\/[A-Za-z0-9_-]{64})$/;
+    return !!link.match(regExp);
+  }
+
   static isValidMousaiEmbedURL(link: string): boolean {
     const regExp = /https:\/\/mousai\.stream\/((album|playlist|track)\/[0-9]+(\/[a-z0-9-_,%]+){1,2}?)\/embed$/;
     return !!link.match(regExp);
@@ -407,6 +444,7 @@ export class EmbedUrlParserService {
       return (
         this.isValidVimeoEmbedURL(link) ||
         this.isValidYoutubeEmbedURL(link) ||
+        this.isValidVidesoEmbedURL(link) ||
         this.isValidMousaiEmbedURL(link) ||
         this.isValidTiktokEmbedURL(link) ||
         this.isValidGiphyEmbedURL(link) ||
@@ -431,6 +469,9 @@ export class EmbedUrlParserService {
     }
     if (this.isValidMousaiEmbedURL(link)) {
       return 165;
+    }
+    if (this.isValidVidesoEmbedURL(link)) {
+      return 270;
     }
     return 315;
   }
