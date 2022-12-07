@@ -48,7 +48,7 @@
     <a *ngIf="showEmbedPost" class="dropdown-menu-item fs-12px d-block link--unstyled p-10px feed-post__dropdown-menu-item"
       (click)="embedPostUrl($event)">
       <i class="fas fa-code"></i>
-      Embed {{ this.post.IsNFT ? "NFT" : "Post" }}
+      Embed {{ post.IsNFT ? 'NFT' : 'Post' }}
     </a>
     <a
       *ngIf="

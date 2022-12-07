@@ -1,0 +1,13 @@
+$header-height: 78px;
+
+.bitclout-landing__wrapper {
+  background: var(--background);
+
+  .bitclout-landing__content {
+    min-height: calc(100vh - #{$header-height});
+
+    .bitclout-landing__platform-slide {
+      max-width: 920px;
+    }
+  }
+}

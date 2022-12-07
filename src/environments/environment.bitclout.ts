@@ -1,10 +1,11 @@
 export const environment = {
   production: true,
   uploadImageHostname: 'node.deso.org',
+  nodeApi: "node.deso.org",
   verificationEndpointHostname: 'https://node.deso.org',
   uploadVideoHostname: 'node.deso.org',
   identityURL: 'https://identity.deso.org',
-  supportEmail: 'node.admin@bitclout.com',
+  supportEmail: 'support@deso.org',
   dd: {
     apiKey: 'DCEB26AC8BF47F1D7B4D87440EDCA6',
     jsPath: 'https://bitclout.com/tags.js',
@@ -21,4 +22,5 @@ export const environment = {
     url: 'https://bitclout.com',
     logoAssetDir: '/assets/bitclout/',
   },
+  megaswapURL: 'https://megaswap.xyz',
 };

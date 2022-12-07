@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
   uploadImageHostname: 'node.deso.org',
+  nodeApi: "node.deso.org",
   verificationEndpointHostname: 'https://node.deso.org',
   uploadVideoHostname: 'node.deso.org',
   identityURL: 'https://identity.deso.org',
@@ -21,4 +22,5 @@ export const environment = {
     url: 'https://node.deso.org',
     logoAssetDir: '/assets/deso/',
   },
+  megaswapURL: 'https://megaswap.xyz',
 };
