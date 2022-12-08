@@ -35,9 +35,11 @@ ingress:
     - path: /
       servicePort: 80
   hosts:
-    - admin.dev.yourgem.app
-    - admin.dev.pearl.app
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  %{ if length(service_hosts) > 0 }
+    %{ for host in service_hosts }
+    - ${host}
+    %{ endfor }
+  %{ else }
+    [ ]
+  %{ endif }
+  tls: [ ]

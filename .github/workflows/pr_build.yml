@@ -1,0 +1,16 @@
+name: PR Build
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "terraform/**"
+
+jobs:
+  trigger-pr:
+    name: PR
+    uses: ./.github/workflows/workflow_build.yml
+    with:
+      service_name: gem-frontend
+    secrets: inherit

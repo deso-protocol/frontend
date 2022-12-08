@@ -1,0 +1,23 @@
+name: Merge Build
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "terraform/**"
+
+jobs:
+  tag:
+    name: Tag
+    uses: ./.github/workflows/workflow_tag.yml
+    secrets: inherit
+
+  build:
+    name: Build
+    needs: tag
+    uses: ./.github/workflows/workflow_build.yml
+    with:
+      service_name: gem-frontend
+      docker_meta_tags: type=raw,value=${{ needs.tag.outputs.next-tag }}
+    secrets: inherit

@@ -1,0 +1,14 @@
+name: PR Terraform
+
+on:
+  pull_request:
+    paths:
+      - terraform/**
+
+jobs:
+  trigger-terraform:
+    name: PR
+    uses: ./.github/workflows/workflow_pr_terraform.yml
+    with:
+      service_name: gem-frontend
+    secrets: inherit

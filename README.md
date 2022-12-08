@@ -15,6 +15,18 @@ docs should give you everything you need to get started:
 * [Setting Up Your Dev Environment](https://docs.deso.org/code/dev-setup)
 * [Making Your First Changes](https://docs.deso.org/code/making-your-first-changes)
 
+### Updating Versions
+
+v<DESO_VERSION>.<PATCH_VERSION>
+
+ex - v2.1.1.0 is deso version v2.1.1 and patch version 0 from our changes
+
+By default, new patch version is tagged each time a PR is merged to the main branch. The major and minor version are in the `version.txt` file in this repo. Update this file to tag a new major or minor version.
+
+### Deploying Service
+
+Go to Actions > Deploy [(link)](https://github.com/TheBitgram/frontend/actions/workflows/dispatch_app_terraform.yml) and click Run workflow. Enter the version tag and environment to deploy to.
+
 # Start Coding
 The quickest way to contribute changes to the BitClout Frontend is the following these steps:
 

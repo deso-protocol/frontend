@@ -1,0 +1,124 @@
+name: Workflow Terraform
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      docker_tag_to_deploy:
+        required: false
+        type: string
+        default: ''
+      environment_name:
+        required: true
+        type: string
+      aws_access_key_id_secrets_name:
+        required: true
+        type: string
+      aws_secret_access_key_secrets_name:
+        required: true
+        type: string
+    secrets:
+      PASSWORD:
+        required: true
+      TF_API_TOKEN_DEV:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_ACCESS_KEY_ID_STAGE:
+        required: true
+      AWS_SECRET_ACCESS_KEY_STAGE:
+        required: true
+      SLACK_WEBHOOK:
+        required: true
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets[inputs.aws_access_key_id_secrets_name] }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets[inputs.aws_secret_access_key_secrets_name] }}
+      TF_WORKSPACE: ${{ inputs.environment_name }}-70-${{ inputs.service_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: main
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN_DEV }}
+
+      - name: Terraform Format
+        working-directory: ./main/terraform
+        run: terraform fmt -check
+
+      - name: Git Auth Login
+        run: echo ${{ secrets.PASSWORD }} | gh auth login --with-token && gh auth setup-git -h github.com
+
+      - name: Terraform Init
+        working-directory: ./main/terraform
+        run: terraform init -input=false
+
+      - name: Terraform Setup Auto Variables [App]
+        working-directory: ./main/terraform
+        run: |
+          cp ${{ inputs.environment_name }}.tfvars env.auto.tfvars
+          cat env.auto.tfvars
+          echo 'docker_tag = "planning_only"' > docker_tag.auto.tfvars
+
+      # Override docker_tag TF variable if specified for deployment
+      - name: Terraform Setup Auto Variables [App Deploy]
+        working-directory: ./main/terraform
+        if: inputs.docker_tag_to_deploy != ''
+        run: |
+          echo 'docker_tag = "${{ inputs.docker_tag_to_deploy }}"' > docker_tag.auto.tfvars
+
+      - name: Terraform Plan
+        working-directory: ./main/terraform
+        run: terraform plan -no-color
+
+      #######################################
+      # Steps below are only for deployment #
+      #######################################
+
+      - name: Notify Slack Deployments Channel Start
+        if: inputs.docker_tag_to_deploy != ''
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          SLACK_MESSAGE: ${{ inputs.service_name }} starting deployment to ${{ inputs.environment_name }}
+          SLACK_TITLE: Message
+          SLACK_USERNAME: github
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: true
+
+      - name: Terraform Apply
+        id: apply
+        continue-on-error: true
+        if: inputs.docker_tag_to_deploy != ''
+        working-directory: ./main/terraform
+        run: terraform apply -auto-approve
+
+      - name: Notify Slack Deployments Channel Complete
+        if: inputs.docker_tag_to_deploy != ''
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: deployments
+          SLACK_COLOR: ${{ steps.apply.outcome }}
+          SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+          SLACK_MESSAGE: ${{ inputs.service_name }} ${{ inputs.environment_name }} deployment completed - ${{ steps.apply.outcome }}
+          SLACK_TITLE: Message
+          SLACK_USERNAME: github
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: true
+
+      - name: Terraform Apply Status
+        if: steps.apply.outcome == 'failure'
+        run: exit 1

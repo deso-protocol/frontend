@@ -1,0 +1,45 @@
+name: Workflow Tag
+
+on:
+  workflow_call:
+    outputs:
+      next-tag:
+        description: The tagged version on workflow call
+        value: ${{ jobs.tag.outputs.next-tag }}
+
+jobs:
+  tag:
+    name: Tag
+    runs-on: macos-latest
+    outputs:
+      next-tag: ${{ steps.get-next-tag.outputs.next-tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Tag Latest Version
+        id: get-next-tag
+        run: |
+          current_tag=$(git tag -l | grep '^v[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*$' | cut -c2- | sort -V | tail -n1)
+          current_deso_version=$(echo $current_tag | cut -d. -f1 -f2)
+          patch_version=$(( $(echo $current_tag | cut -d. -f4) + 1))
+          repo_deso_version=$(cat version.txt)
+          if [ $current_deso_version = $repo_deso_version ]
+          then
+            next_tag=v$current_deso_version.$patch_version
+          else
+            latest_deso_version=$(echo $repo_deso_version$'\n'$current_deso_version | sort -V | tail -n1)
+            if [[ "$repo_deso_version" =~ ^[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*$ ]] && [[ $repo_deso_version = $latest_deso_version ]]
+            then
+                next_tag=v$repo_deso_version.0
+            else
+                echo version.txt invalid
+                exit 1;
+            fi
+          fi
+          echo $next_tag
+          git tag "$next_tag"
+          git push origin --tags
+          echo "next-tag=$next_tag" >> $GITHUB_OUTPUT

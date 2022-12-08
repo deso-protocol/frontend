@@ -1,0 +1,45 @@
+name: Workflow Terraform
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+    secrets:
+      PASSWORD:
+        required: true
+      TF_API_TOKEN_DEV:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_ACCESS_KEY_ID_STAGE:
+        required: true
+      AWS_SECRET_ACCESS_KEY_STAGE:
+        required: true
+      SLACK_WEBHOOK:
+        required: true
+jobs:
+  terraform:
+    name: Env
+    strategy:
+      matrix:
+        environment_name:
+          - dev
+          - stage
+        include:
+          - environment_name: dev
+            aws_access_key_id_secrets_name: AWS_ACCESS_KEY_ID
+            aws_secret_access_key_secrets_name: AWS_SECRET_ACCESS_KEY
+          - environment_name: stage
+            aws_access_key_id_secrets_name: AWS_ACCESS_KEY_ID_STAGE
+            aws_secret_access_key_secrets_name: AWS_SECRET_ACCESS_KEY_STAGE
+    uses: ./.github/workflows/workflow_terraform.yml
+    with:
+      service_name: ${{ inputs.service_name }}
+      environment_name: ${{ matrix.environment_name }}
+      aws_access_key_id_secrets_name: ${{ matrix.aws_access_key_id_secrets_name }}
+      aws_secret_access_key_secrets_name: ${{ matrix.aws_secret_access_key_secrets_name }}
+    secrets: inherit

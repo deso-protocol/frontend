@@ -1,0 +1,65 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment_name:
+        description: Environment to deploy docker build to
+        type: choice
+        required: true
+        options:
+          - dev
+          - stage
+      docker_tag:
+        description: Docker build associated to git tag
+        required: true
+
+jobs:
+  setup-environment:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+    outputs:
+      aws_access_key_id_secrets_name: ${{ steps.setup.outputs.aws_access_key_id_secrets_name }}
+      aws_secret_access_key_secrets_name: ${{ steps.setup.outputs.aws_secret_access_key_secrets_name }}
+    steps:
+      - name: Setup
+        id: setup
+        run: |
+          if [ "${{ inputs.environment_name }}" = dev ]; then
+            echo "aws_access_key_id_secrets_name=AWS_ACCESS_KEY_ID" >> $GITHUB_OUTPUT
+            echo "aws_secret_access_key_secrets_name=AWS_SECRET_ACCESS_KEY" >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.environment_name }}" = stage ]; then
+            echo "aws_access_key_id_secrets_name=AWS_ACCESS_KEY_ID_STAGE" >> $GITHUB_OUTPUT
+            echo "aws_secret_access_key_secrets_name=AWS_SECRET_ACCESS_KEY_STAGE" >> $GITHUB_OUTPUT
+          else
+            echo "Unknown environment_name ${{ inputs.environment_name }}" >2
+            exit 1
+          fi
+
+  trigger-terraform:
+    name: Terraform
+    needs: setup-environment
+    uses: ./.github/workflows/workflow_terraform.yml
+    with:
+      service_name: gem-frontend
+      docker_tag_to_deploy: ${{ inputs.docker_tag }}
+      environment_name: ${{ inputs.environment_name }}
+      aws_access_key_id_secrets_name: ${{ inputs.aws_access_key_id_secrets_name }}
+      aws_secret_access_key_secrets_name: ${{ inputs.aws_secret_access_key_secrets_name }}
+    secrets: inherit
+
+  update-env-tag:
+    name: Update deployment tag
+    runs-on: ubuntu-latest
+    needs: trigger-terraform
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Git tag force
+        run: |
+          git checkout refs/tags/${{ inputs.docker_tag }}
+          git tag --force "${{ inputs.environment_name }}"
+          git push origin "${{ inputs.environment_name }}" --force

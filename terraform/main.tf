@@ -1,20 +1,5 @@
 locals {
-  aws_region        = "us-east-1"
-  environment_name  = "stage"
-  namespace         = "app"
-  fullnameOverride  = "gem-frontend"
-  replica_count     = 1
-  docker_repository = "283278994941.dkr.ecr.us-east-1.amazonaws.com/frontend"
-  docker_tag        = "v2.1.1.0"
-  requests_memory   = "1Gi"
-
-  tags = {
-    ops_env              = "stage"
-    ops_managed_by       = "terraform",
-    ops_source_repo      = "kubernetes-ops",
-    ops_source_repo_path = "terraform-environments/aws/stage",
-    ops_owners           = "example-app",
-  }
+  docker_repository = "${var.docker_repo_host}/${var.service_name}"
 }
 
 terraform {
@@ -32,13 +17,13 @@ terraform {
     organization = "gem-engineering"
 
     workspaces {
-      name = "kubernetes-ops-stage-70-gem-frontend"
+      prefix = "kubernetes-ops-"
     }
   }
 }
 
 provider "aws" {
-  region = local.aws_region
+  region = var.aws_region
 }
 
 data "terraform_remote_state" "eks" {
@@ -46,13 +31,13 @@ data "terraform_remote_state" "eks" {
   config = {
     organization = "gem-engineering"
     workspaces = {
-      name = "kubernetes-ops-stage-20-eks"
+      name = "kubernetes-ops-${var.environment_name}-20-eks"
     }
   }
 }
 
 data "aws_eks_cluster_auth" "auth" {
-  name = local.environment_name
+  name = var.environment_name
 }
 
 provider "helm" {
@@ -69,12 +54,13 @@ data "template_file" "helm_values" {
 
   # Parameters you want to pass into the helm_values.yaml.tpl file to be templated
   vars = {
-    fullnameOverride  = local.fullnameOverride
-    namespace         = local.namespace
-    replica_count     = local.replica_count
+    fullnameOverride  = var.service_name
+    service_hosts     = var.service_hosts
+    namespace         = var.namespace
+    replica_count     = var.replica_count
     docker_repository = local.docker_repository
-    docker_tag        = local.docker_tag
-    requests_memory   = local.requests_memory
+    docker_tag        = var.docker_tag
+    requests_memory   = var.requests_memory
   }
 }
 
@@ -86,11 +72,11 @@ module "app" {
   # This is the helm repo add name
   official_chart_name = "standard-application"
   # This is what you want to name the chart when deploying
-  user_chart_name = local.fullnameOverride
+  user_chart_name = var.service_name
   # The helm chart version you want to use
   helm_version = "1.0.19"
   # The namespace you want to install the chart into - it will create the namespace if it doesnt exist
-  namespace = local.namespace
+  namespace = var.namespace
   # The helm chart values file
   helm_values = data.template_file.helm_values.rendered
 
