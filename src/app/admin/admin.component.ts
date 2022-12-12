@@ -512,9 +512,8 @@ export class AdminComponent implements OnInit {
   }
 
   addMultiplierToTxnTypeMultiplier() {
-    this.hotFeedTxnTypeMultiplierMap[
-      this.hotFeedTxnTypeMultiplierNewKey
-    ] = this.hotFeedTxnTypeMultiplierNewValue;
+    this.hotFeedTxnTypeMultiplierMap[this.hotFeedTxnTypeMultiplierNewKey] =
+      this.hotFeedTxnTypeMultiplierNewValue;
     this.hotFeedTxnTypeMultiplierNewKey = null;
     this.hotFeedTxnTypeMultiplierNewValue = null;
   }
@@ -841,7 +840,8 @@ export class AdminComponent implements OnInit {
       .GetUSDCentsToDeSoReserveExchangeRate(this.globalVars.localNode)
       .subscribe(
         (res) =>
-          (this.usdToDeSoReserveExchangeRate = res.USDCentsPerDeSo / 100),
+          (this.usdToDeSoReserveExchangeRate =
+            res.USDCentsPerDeSoCoinbase / 100),
         (err) => console.log(err)
       );
   }
@@ -1244,7 +1244,7 @@ export class AdminComponent implements OnInit {
               this.globalVars._alertSuccess(
                 sprintf(
                   'Successfully updated the reserve exchange to $%d/DeSo',
-                  res.USDCentsPerDeSo / 100
+                  res.USDCentsPerDeSoCoinbase / 100
                 )
               );
             },
@@ -1286,7 +1286,7 @@ export class AdminComponent implements OnInit {
               this.globalVars._alertSuccess(
                 sprintf(
                   'Successfully updated the Buy DeSo Fee to %d%',
-                  res.USDCentsPerDeSo / 100
+                  res.USDCentsPerDeSoCoinbase / 100
                 )
               );
             },
@@ -1366,7 +1366,8 @@ export class AdminComponent implements OnInit {
                 // Save the minimum network fee in case we update that value then update a different global param without
                 // updating the minimum network fee.
                 if (minimumNetworkFeeNanosPerKB >= 0) {
-                  this.globalParams.MinimumNetworkFeeNanosPerKB = minimumNetworkFeeNanosPerKB;
+                  this.globalParams.MinimumNetworkFeeNanosPerKB =
+                    minimumNetworkFeeNanosPerKB;
                 }
                 const totalFeeDeSo = res.FeeNanos / 1e9;
 
