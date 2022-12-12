@@ -470,9 +470,6 @@ export class EmbedUrlParserService {
     if (this.isValidMousaiEmbedURL(link)) {
       return 165;
     }
-    if (this.isValidVidesoEmbedURL(link)) {
-      return 280;
-    }
     return 315;
   }
 
