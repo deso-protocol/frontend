@@ -232,7 +232,8 @@ export class EmbedUrlParserService {
       return of(this.constructSoundCloudEmbedURL(url));
     }
     if(this.isNFTzFromURL(url)){
-      return of(url)
+      console.log('is valid Url',url)
+      return of(url.href)
     }
     if (this.isTwitchFromURL(url)) {
       return of(this.constructTwitchEmbedURL(url)).pipe(
@@ -412,12 +413,14 @@ export class EmbedUrlParserService {
 
   static isValidNFTzEmbedURL(link: string): boolean {
     const regExp = new RegExp(
-      `https:\/\/nftz\.me\/(iframe)`
+      `https:\/\/nftz\.me\/iframe\/nft\/`
     );
+    console.log('embed link match',link)
     return !!link.match(regExp);
   }
 
   static isValidEmbedURL(link: string): boolean {
+    console.log('embed link',link)
     if (link) {
       return (
         this.isValidVimeoEmbedURL(link) ||
@@ -447,6 +450,9 @@ export class EmbedUrlParserService {
     }
     if (this.isValidMousaiEmbedURL(link)) {
       return 165;
+    }
+    if (this.isValidNFTzEmbedURL(link)) {
+      return 525;
     }
     return 315;
   }
