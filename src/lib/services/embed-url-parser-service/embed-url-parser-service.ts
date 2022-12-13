@@ -359,7 +359,7 @@ export class EmbedUrlParserService {
   }
 
   static isNFTzFromURL(url: URL): boolean {
-    const pattern = /\nftz\.me$/;
+    const pattern = /\bnftz\.me$/;
     return pattern.test(url.hostname);
   }
 
