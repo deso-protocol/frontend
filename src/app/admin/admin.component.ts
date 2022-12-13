@@ -512,9 +512,8 @@ export class AdminComponent implements OnInit {
   }
 
   addMultiplierToTxnTypeMultiplier() {
-    this.hotFeedTxnTypeMultiplierMap[
-      this.hotFeedTxnTypeMultiplierNewKey
-    ] = this.hotFeedTxnTypeMultiplierNewValue;
+    this.hotFeedTxnTypeMultiplierMap[this.hotFeedTxnTypeMultiplierNewKey] =
+      this.hotFeedTxnTypeMultiplierNewValue;
     this.hotFeedTxnTypeMultiplierNewKey = null;
     this.hotFeedTxnTypeMultiplierNewValue = null;
   }
@@ -1366,7 +1365,8 @@ export class AdminComponent implements OnInit {
                 // Save the minimum network fee in case we update that value then update a different global param without
                 // updating the minimum network fee.
                 if (minimumNetworkFeeNanosPerKB >= 0) {
-                  this.globalParams.MinimumNetworkFeeNanosPerKB = minimumNetworkFeeNanosPerKB;
+                  this.globalParams.MinimumNetworkFeeNanosPerKB =
+                    minimumNetworkFeeNanosPerKB;
                 }
                 const totalFeeDeSo = res.FeeNanos / 1e9;
 

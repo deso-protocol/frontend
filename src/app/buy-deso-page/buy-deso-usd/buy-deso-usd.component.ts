@@ -52,7 +52,8 @@ export class BuyDeSoUSDComponent implements OnInit {
       this.globalVars,
       this.backendApi
     );
-    this.supportedFiatCurrencies = this.wyreService.getSupportedFiatCurrencies();
+    this.supportedFiatCurrencies =
+      this.wyreService.getSupportedFiatCurrencies();
     this.wyreService.getSupportedCountries().subscribe((res) => {
       this.supportedCountries = res;
     });
@@ -98,6 +99,7 @@ export class BuyDeSoUSDComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.globalVars._updateDeSoExchangeRate();
     this._refreshQuotation();
   }
 
