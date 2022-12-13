@@ -840,8 +840,7 @@ export class AdminComponent implements OnInit {
       .GetUSDCentsToDeSoReserveExchangeRate(this.globalVars.localNode)
       .subscribe(
         (res) =>
-          (this.usdToDeSoReserveExchangeRate =
-            res.USDCentsPerDeSoCoinbase / 100),
+          (this.usdToDeSoReserveExchangeRate = res.USDCentsPerDeSo / 100),
         (err) => console.log(err)
       );
   }
@@ -1244,7 +1243,7 @@ export class AdminComponent implements OnInit {
               this.globalVars._alertSuccess(
                 sprintf(
                   'Successfully updated the reserve exchange to $%d/DeSo',
-                  res.USDCentsPerDeSoCoinbase / 100
+                  res.USDCentsPerDeSo / 100
                 )
               );
             },
@@ -1286,7 +1285,7 @@ export class AdminComponent implements OnInit {
               this.globalVars._alertSuccess(
                 sprintf(
                   'Successfully updated the Buy DeSo Fee to %d%',
-                  res.USDCentsPerDeSoCoinbase / 100
+                  res.USDCentsPerDeSo / 100
                 )
               );
             },
