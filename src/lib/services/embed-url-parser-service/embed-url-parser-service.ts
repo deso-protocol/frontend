@@ -449,7 +449,7 @@ export class EmbedUrlParserService {
       return 165;
     }
     if (this.isValidNFTzEmbedURL(link)) {
-      return 525;
+      return 480;
     }
     return 315;
   }
