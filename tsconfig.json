@@ -26,13 +26,5 @@
       "https": ["./node_modules/https-browserify"],
       "os": ["./node_modules/os-browserify"]
     }
-  },
-  "no-console": [
-    true,
-    "debug",
-    "info",
-    "time",
-    "timeEnd",
-    "trace"
-  ]
+  }
 }

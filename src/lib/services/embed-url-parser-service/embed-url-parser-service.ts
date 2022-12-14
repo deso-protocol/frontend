@@ -232,7 +232,6 @@ export class EmbedUrlParserService {
       return of(this.constructSoundCloudEmbedURL(url));
     }
     if(this.isNFTzFromURL(url)){
-      console.log('is valid Url',url)
       return of(url.href)
     }
     if (this.isTwitchFromURL(url)) {
@@ -415,12 +414,10 @@ export class EmbedUrlParserService {
     const regExp = new RegExp(
       `https:\/\/nftz\.me\/iframe\/nft\/`
     );
-    console.log('embed link match',link)
     return !!link.match(regExp);
   }
 
   static isValidEmbedURL(link: string): boolean {
-    console.log('embed link',link)
     if (link) {
       return (
         this.isValidVimeoEmbedURL(link) ||
