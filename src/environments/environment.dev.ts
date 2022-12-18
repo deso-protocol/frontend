@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  nodeApi: "node.deso.org",
   uploadImageHostname: 'test.deso.org',
   verificationEndpointHostname: 'https://test.deso.org',
   uploadVideoHostname: 'test.deso.org',
