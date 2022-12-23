@@ -133,6 +133,8 @@ export class BackendRoutes {
   static RoutePathSwapIdentity = '/api/v0/admin/swap-identity';
   static RoutePathAdminUpdateUserGlobalMetadata =
     '/api/v0/admin/update-user-global-metadata';
+  static RoutePathAdminUpdateUsernameBlacklist =
+    '/api/v0/admin/update-username-blacklist';
   static RoutePathAdminResetPhoneNumber = '/api/v0/admin/reset-phone-number';
   static RoutePathAdminGetAllUserGlobalMetadata =
     '/api/v0/admin/get-all-user-global-metadata';
@@ -2851,6 +2853,27 @@ export class BackendApiService {
         IsWhitelistUpdate,
         WhitelistPosts,
         RemovePhoneNumberMetadata,
+        AdminPublicKey,
+      }
+    );
+  }
+
+  AdminUpdateUsernameBlacklist(
+    endpoint: string,
+    AdminPublicKey: string,
+
+    Username: string,
+    IsBlacklistUpdate: boolean,
+    AddUserToList: boolean,
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminUpdateUsernameBlacklist,
+      AdminPublicKey,
+      {
+        Username,
+        IsBlacklistUpdate,
+        AddUserToList,
         AdminPublicKey,
       }
     );
