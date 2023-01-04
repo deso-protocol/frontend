@@ -2237,6 +2237,52 @@ export class BackendApiService {
     );
   }
 
+  CreateUserAssociation(): Observable<any> {
+    const endpoint = 'http://localhost:18001';
+
+    const request = this.post(endpoint, '/api/v0/user-associations/create', {
+      TransactorPublicKeyBase58Check:
+        'BC1YLhzNgVov49AZRrkE2SSL8o9K53fSu96zDnpeqAxyH9PbAta7fix',
+      TargetUserPublicKeyBase58Check:
+        'BC1YLianxEsskKYNyL959k6b6UPYtRXfZs4MF3GkbWofdoFQzZCkJRB',
+      AppPublicKeyBase58Check: '',
+      AssociationType: 'ENDORSEMENT',
+      AssociationValue: 'SQL',
+      ExtraData: {},
+      MinFeeRateNanosPerKB: 1000,
+      TransactionFees: [],
+    });
+
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      'BC1YLhzNgVov49AZRrkE2SSL8o9K53fSu96zDnpeqAxyH9PbAta7fix'
+    );
+  }
+
+  CreatePostAssociation(): Observable<any> {
+    const endpoint = 'https://rt.deso.run';
+
+    const request = this.post(endpoint, '/api/v0/post-associations/create', {
+      TransactorPublicKeyBase58Check:
+        'tBCKVERmG9nZpHTk2AVPqknWc1Mw9HHAnqrTpW1RnXpXMQ4PsQgnmV',
+      PostHashHex:
+        'bba767ca356a15da34799d92a85861cce7e71e800e6af893834dc3c027ec82b2',
+      AppPublicKeyBase58Check: '',
+      AssociationType: 'REACTION',
+      AssociationValue: 'UPVOTE',
+      ExtraData: {},
+      MinFeeRateNanosPerKB: 1000,
+      TransactionFees: [],
+    });
+
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      'tBCKVERmG9nZpHTk2AVPqknWc1Mw9HHAnqrTpW1RnXpXMQ4PsQgnmV'
+    );
+  }
+
   SendDiamonds(
     endpoint: string,
     SenderPublicKeyBase58Check: string,

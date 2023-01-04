@@ -69,6 +69,15 @@ export class SettingsComponent implements OnInit {
   }
 
   _updateSettings() {
+    // Put call here.
+    console.log('holaaaa');
+    return this.backendApi.CreateUserAssociation().subscribe(
+      (res) => {},
+      (err) => {
+        console.log(err);
+      }
+    );
+
     if (this.showSuccessMessage) {
       this.showSuccessMessage = false;
       clearTimeout(this.successMessageTimeout);
