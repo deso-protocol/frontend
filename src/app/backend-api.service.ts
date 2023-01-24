@@ -99,7 +99,8 @@ export class BackendRoutes {
 
   // Media
   static RoutePathUploadVideo = '/api/v0/upload-video';
-  static RoutePathGetVideoStatus = '/api/v0/get-video-status';
+  static RoutePathGetVideoStatus = '/api/asset';
+  static RouterPathRequestVideoUpload = '/api/asset/request-upload';
 
   // NFT routes.
   static RoutePathCreateNft = '/api/v0/create-nft';
@@ -647,6 +648,35 @@ export class BackendApiService {
         encryptedMessagingKeyRandomness,
       },
     });
+  }
+
+  // Make Upload Video URL
+  async _makeUploadVideoURL(name: string): Promise<{
+    tusEndpoint: string;
+    assetId: string;
+    playbackId: string;
+  }> {
+    const response = await fetch(
+      environment.livepeerStudio.host +
+        BackendRoutes.RouterPathRequestVideoUpload,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${environment.livepeerStudio.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name,
+        }),
+      }
+    );
+
+    const {
+      tusEndpoint,
+      asset: { id: assetId, playbackId },
+    } = await response.json();
+
+    return { tusEndpoint, assetId, playbackId };
   }
 
   // Assemble a URL to hit the BE with.
@@ -3751,11 +3781,23 @@ export class BackendApiService {
     );
   }
 
-  GetVideoStatus(endpoint: string, videoId: string): Observable<any> {
-    return this.get(
-      endpoint,
-      `${BackendRoutes.RoutePathGetVideoStatus}/${videoId}`
+  async GetVideoStatus(assetId: string): Promise<any> {
+    const response = await fetch(
+      environment.livepeerStudio.host +
+        BackendRoutes.RoutePathGetVideoStatus +
+        '/' +
+        assetId,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${environment.livepeerStudio.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      }
     );
+
+    const { status } = await response.json();
+    return status;
   }
 
   GetTotalSupply(endpoint: string): Observable<number> {

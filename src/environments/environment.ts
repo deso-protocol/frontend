@@ -9,6 +9,10 @@ export const environment = {
   uploadVideoHostname: 'https://node.deso.org',
   identityURL: 'https://identity.deso.org',
   supportEmail: '',
+  livepeerStudio: {
+    host: 'https://livepeer.studio',
+    apiKey: '',
+  },
   dd: {
     apiKey: 'DCEB26AC8BF47F1D7B4D87440EDCA6',
     jsPath: 'https://bitclout.com/tags.js',

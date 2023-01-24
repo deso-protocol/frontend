@@ -69,6 +69,7 @@ export class FeedCreatePostComponent implements OnInit {
   postImageSrc = null;
 
   postVideoSrc = null;
+  assetId = null;
   videoUploadPercentage = null;
 
   showEmbedURL = false;
@@ -206,6 +207,7 @@ export class FeedCreatePostComponent implements OnInit {
       ? 'reply'
       : 'create';
 
+    console.log(bodyObj);
     this.backendApi
       .SubmitPost(
         this.globalVars.localNode,
@@ -325,7 +327,8 @@ export class FeedCreatePostComponent implements OnInit {
       );
   }
 
-  uploadVideo(file: File): void {
+  async uploadVideo(file: File): Promise<void> {
+    console.log('uploadVideo', file);
     if (file.size > 4 * (1024 * 1024 * 1024)) {
       this.globalVars._alertError(
         'File is too large. Please choose a file less than 4GB'
@@ -333,15 +336,18 @@ export class FeedCreatePostComponent implements OnInit {
       return;
     }
     let upload: tus.Upload;
-    let mediaId = '';
+    const { tusEndpoint, assetId, playbackId } =
+      await this.backendApi._makeUploadVideoURL(file.name);
+
     const comp: FeedCreatePostComponent = this;
     const options = {
-      endpoint: this.backendApi._makeRequestURL(
-        environment.uploadVideoHostname,
-        BackendRoutes.RoutePathUploadVideo
-      ),
+      endpoint: tusEndpoint,
       chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
       uploadSize: file.size,
+      metadata: {
+        id: assetId,
+      },
+      source: file,
       onError: function (error) {
         comp.globalVars._alertError(error.message);
         upload.abort(true).then(() => {
@@ -356,20 +362,11 @@ export class FeedCreatePostComponent implements OnInit {
       },
       onSuccess: function () {
         // Construct the url for the video based on the videoId and use the iframe url.
-        comp.postVideoSrc = `https://iframe.videodelivery.net/${mediaId}`;
+        comp.postVideoSrc = `https://lvpr.tv/?v=${playbackId}`;
+        comp.assetId = assetId;
         comp.postImageSrc = null;
         comp.videoUploadPercentage = null;
         comp.pollForReadyToStream();
-      },
-      onAfterResponse: function (req, res) {
-        return new Promise((resolve) => {
-          // The stream-media-id header is the video Id in Cloudflare's system that we'll need to locate the video for streaming.
-          let mediaIdHeader = res.getHeader('stream-media-id');
-          if (mediaIdHeader) {
-            mediaId = mediaIdHeader;
-          }
-          resolve(res);
-        });
       },
     };
     // Clear the interval used for polling cloudflare to check if a video is ready to stream.
@@ -391,12 +388,12 @@ export class FeedCreatePostComponent implements OnInit {
     let timeoutMillis = 500;
     this.videoStreamInterval = setInterval(() => {
       if (attempts >= numTries) {
-        clearInterval(this.videoStreamInterval);
+        clearInterval(this.videoStreamInterval!);
         return;
       }
       this.streamService
-        .checkVideoStatusByURL(this.postVideoSrc)
-        .subscribe(([readyToStream, exitPolling]) => {
+        .checkVideoStatusByURL(this.assetId)
+        .then(([readyToStream, exitPolling]) => {
           if (readyToStream) {
             this.readyToStream = true;
             clearInterval(this.videoStreamInterval);
@@ -406,8 +403,8 @@ export class FeedCreatePostComponent implements OnInit {
             clearInterval(this.videoStreamInterval);
             return;
           }
-        })
-        .add(() => attempts++);
+        });
+      attempts++;
     }, timeoutMillis);
   }
 }
