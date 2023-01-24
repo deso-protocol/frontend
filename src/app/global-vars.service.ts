@@ -1222,7 +1222,7 @@ export class GlobalVarsService {
 
         // DESO
         this.NanosSold = res.NanosSold;
-        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoExchangeRate;
+        this.ExchangeUSDCentsPerDeSo = res.USDCentsPerDeSoCoinbase;
         this.USDCentsPerDeSoReservePrice =
           res.USDCentsPerDeSoReserveExchangeRate;
         this.BuyDeSoFeeBasisPoints = res.BuyDeSoFeeBasisPoints;
