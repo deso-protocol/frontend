@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { GlobalVarsService } from '../global-vars.service';
+import {Component, OnInit} from '@angular/core';
+import {GlobalVarsService} from '../global-vars.service';
 import {
+  AccessGroupMemberOperationString,
+  AccessGroupOperationString,
+  AccessGroupScopeType,
   AssociationAppScopeType,
   AssociationClass,
   AssociationOperationString,
@@ -10,12 +13,12 @@ import {
   NFTLimitOperationString,
   TransactionSpendingLimitResponse,
 } from '../backend-api.service';
-import { Title } from '@angular/platform-browser';
-import { ThemeService } from '../theme/theme.service';
-import { environment } from 'src/environments/environment';
-import { SwalHelper } from '../../lib/helpers/swal-helper';
-import { Router } from '@angular/router';
-import { IdentityService } from '../identity.service';
+import {Title} from '@angular/platform-browser';
+import {ThemeService} from '../theme/theme.service';
+import {environment} from 'src/environments/environment';
+import {SwalHelper} from '../../lib/helpers/swal-helper';
+import {Router} from '@angular/router';
+import {IdentityService} from '../identity.service';
 
 @Component({
   selector: 'settings',
@@ -198,6 +201,38 @@ export class SettingsComponent implements OnInit {
       //     },
       //   },
       // }],
+      AccessGroupLimitMap: [
+        {
+          AccessGroupOwnerPublicKeyBase58Check: 'tBCKW665XZnvVZcCfcEmyeecSZGKAdaxwV2SH9UFab6PpSRikg4EJ2',
+          ScopeType: AccessGroupScopeType.ANY,
+          AccessGroupKeyName: '',
+          OperationType: AccessGroupOperationString.ANY,
+          OpCount: 10,
+        },
+        {
+          AccessGroupOwnerPublicKeyBase58Check: 'tBCKUw87scBYfGWc844P9z7Px7SWAXv7KGAMgmKTyvTxDbCidisTur',
+          ScopeType: AccessGroupScopeType.SCOPED,
+          AccessGroupKeyName: 'Test Access Group #1',
+          OperationType: AccessGroupOperationString.CREATE,
+          OpCount: 5,
+        },
+      ],
+      AccessGroupMemberLimitMap: [
+        {
+          AccessGroupOwnerPublicKeyBase58Check: 'tBCKW665XZnvVZcCfcEmyeecSZGKAdaxwV2SH9UFab6PpSRikg4EJ2',
+          ScopeType: AccessGroupScopeType.ANY,
+          AccessGroupKeyName: '',
+          OperationType: AccessGroupMemberOperationString.ANY,
+          OpCount: 9,
+        },
+        {
+          AccessGroupOwnerPublicKeyBase58Check: 'tBCKUw87scBYfGWc844P9z7Px7SWAXv7KGAMgmKTyvTxDbCidisTur',
+          ScopeType: AccessGroupScopeType.SCOPED,
+          AccessGroupKeyName: 'Test Access Group #1',
+          OperationType: AccessGroupMemberOperationString.ADD,
+          OpCount: 4,
+        },
+      ],
     };
     this.identityService
       .derive(

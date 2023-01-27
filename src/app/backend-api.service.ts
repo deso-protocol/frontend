@@ -579,19 +579,19 @@ export type NFTOperationLimitMap = {
 };
 
 export enum AssociationClass {
-  USER = 'user',
-  POST = 'post',
+  USER = 'User',
+  POST = 'Post',
 }
 
 export enum AssociationAppScopeType {
-  ANY = 'any',
-  SCOPED = 'scoped',
+  ANY = 'Any',
+  SCOPED = 'Scoped',
 }
 
 export enum AssociationOperationString {
-  ANY = 'any',
-  CREATE = 'create',
-  DELETE = 'delete',
+  ANY = 'Any',
+  CREATE = 'Create',
+  DELETE = 'Delete',
 }
 
 export type AssociationLimitMapItem = {
@@ -603,6 +603,40 @@ export type AssociationLimitMapItem = {
   OpCount: number;
 };
 
+export enum AccessGroupScopeType {
+  ANY = 'any',
+  SCOPED = 'scoped',
+}
+
+export enum AccessGroupOperationString {
+  ANY = 'Any',
+  CREATE = 'Create',
+  UPDATE = 'Update',
+}
+
+export type AccessGroupLimitMapItem = {
+  AccessGroupOwnerPublicKeyBase58Check: string;
+  ScopeType: AccessGroupScopeType;
+  AccessGroupKeyName: string;
+  OperationType: AccessGroupOperationString;
+  OpCount: number;
+};
+
+export enum AccessGroupMemberOperationString {
+  ANY = 'Any',
+  ADD = 'Add',
+  REMOVE = 'Remove',
+  UPDATE = 'Update',
+}
+
+export type AccessGroupMemberLimitMapItem = {
+  AccessGroupOwnerPublicKeyBase58Check: string;
+  ScopeType: AccessGroupScopeType;
+  AccessGroupKeyName: string;
+  OperationType: AccessGroupMemberOperationString;
+  OpCount: number;
+};
+
 export type TransactionSpendingLimitResponse = {
   GlobalDESOLimit: number;
   // TODO: make enum for transaction type string
@@ -611,6 +645,8 @@ export type TransactionSpendingLimitResponse = {
   DAOCoinOperationLimitMap?: DAOCoinOperationLimitMap;
   NFTOperationLimitMap?: NFTOperationLimitMap;
   AssociationLimitMap?: AssociationLimitMapItem[];
+  AccessGroupLimitMap?: AccessGroupLimitMapItem[];
+  AccessGroupMemberLimitMap?: AccessGroupMemberLimitMapItem[];
 };
 
 @Injectable({
