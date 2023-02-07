@@ -328,7 +328,6 @@ export class FeedCreatePostComponent implements OnInit {
   }
 
   async uploadVideo(file: File): Promise<void> {
-    console.log('uploadVideo', file);
     if (file.size > 4 * (1024 * 1024 * 1024)) {
       this.globalVars._alertError(
         'File is too large. Please choose a file less than 4GB'

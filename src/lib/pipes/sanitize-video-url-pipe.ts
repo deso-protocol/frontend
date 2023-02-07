@@ -13,6 +13,7 @@ export class SanitizeVideoUrlPipe implements PipeTransform {
     } catch (err) {
       return false;
     }
+    // On this node, we also validate that it matches the expect video URL format
     const regExp = /^https:\/\/lvpr.tv\/\?v=[A-Za-z0-9]+$/;
     const match = videoURL.match(regExp);
     return (
