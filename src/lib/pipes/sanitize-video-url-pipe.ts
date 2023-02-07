@@ -13,7 +13,10 @@ export class SanitizeVideoUrlPipe implements PipeTransform {
     } catch (err) {
       return false;
     }
-    // TODO: check if the URL is a valid video URL
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    const regExp = /^https:\/\/lvpr.tv\/\?v=[A-Za-z0-9]+$/;
+    const match = videoURL.match(regExp);
+    return (
+      match && match[0] && this.sanitizer.bypassSecurityTrustResourceUrl(url)
+    );
   }
 }

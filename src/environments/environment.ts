@@ -11,7 +11,7 @@ export const environment = {
   supportEmail: '',
   livepeerStudio: {
     host: 'https://livepeer.studio',
-    apiKey: '',
+    apiKey: '4f9cebb0-1dbd-46ac-be09-bc44e9963411',
   },
   dd: {
     apiKey: 'DCEB26AC8BF47F1D7B4D87440EDCA6',
