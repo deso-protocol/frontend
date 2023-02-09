@@ -69,6 +69,7 @@ export class FeedCreatePostComponent implements OnInit {
   postImageSrc = null;
 
   postVideoSrc = null;
+  assetId = '';
   videoUploadPercentage = null;
 
   showEmbedURL = false;
@@ -325,64 +326,36 @@ export class FeedCreatePostComponent implements OnInit {
       );
   }
 
-  uploadVideo(file: File): void {
-    if (file.size > 4 * (1024 * 1024 * 1024)) {
+  async uploadVideo(file: File): Promise<void> {
+    if (file.size > 250 * 1024 * 1024) {
       this.globalVars._alertError(
-        'File is too large. Please choose a file less than 4GB'
+        'File is too large. Please choose a file less than 250MB'
       );
       return;
     }
-    let upload: tus.Upload;
-    let mediaId = '';
-    const comp: FeedCreatePostComponent = this;
-    const options = {
-      endpoint: this.backendApi._makeRequestURL(
-        environment.uploadVideoHostname,
-        BackendRoutes.RoutePathUploadVideo
-      ),
-      chunkSize: 50 * 1024 * 1024, // Required a minimum chunk size of 5MB, here we use 50MB.
-      uploadSize: file.size,
-      onError: function (error) {
-        comp.globalVars._alertError(error.message);
-        upload.abort(true).then(() => {
-          throw error;
-        });
-      },
-      onProgress: function (bytesUploaded, bytesTotal) {
-        comp.videoUploadPercentage = (
-          (bytesUploaded / bytesTotal) *
-          100
-        ).toFixed(2);
-      },
-      onSuccess: function () {
-        // Construct the url for the video based on the videoId and use the iframe url.
-        comp.postVideoSrc = `https://iframe.videodelivery.net/${mediaId}`;
-        comp.postImageSrc = null;
-        comp.videoUploadPercentage = null;
-        comp.pollForReadyToStream();
-      },
-      onAfterResponse: function (req, res) {
-        return new Promise((resolve) => {
-          // The stream-media-id header is the video Id in Cloudflare's system that we'll need to locate the video for streaming.
-          let mediaIdHeader = res.getHeader('stream-media-id');
-          if (mediaIdHeader) {
-            mediaId = mediaIdHeader;
-          }
-          resolve(res);
-        });
-      },
-    };
-    // Clear the interval used for polling cloudflare to check if a video is ready to stream.
-    if (this.videoStreamInterval != null) {
-      clearInterval(this.videoStreamInterval);
+    // Set this so that the video upload progress bar shows up.
+    this.postVideoSrc = 'https://lvpr.tv';
+    let tusEndpoint, asset;
+    try {
+      ({ tusEndpoint, asset } = await this.backendApi
+        .UploadVideo(
+          environment.uploadVideoHostname,
+          file,
+          this.globalVars.loggedInUser.PublicKeyBase58Check
+        )
+        .toPromise());
+    } catch (e) {
+      this.postVideoSrc = '';
+      this.globalVars._alertError(JSON.stringify(e.error.error));
+      return;
     }
-    // Reset the postVideoSrc and readyToStream values.
-    this.postVideoSrc = null;
-    this.readyToStream = false;
-    // Create and start the upload.
-    upload = new tus.Upload(file, options);
-    upload.start();
-    return;
+
+    this.postVideoSrc = `https://lvpr.tv/?v=${asset.playbackId}`;
+    this.assetId = asset.id;
+    this.postImageSrc = '';
+    this.videoUploadPercentage = null;
+
+    this.pollForReadyToStream();
   }
 
   pollForReadyToStream(): void {
@@ -395,19 +368,26 @@ export class FeedCreatePostComponent implements OnInit {
         return;
       }
       this.streamService
-        .checkVideoStatusByURL(this.postVideoSrc)
-        .subscribe(([readyToStream, exitPolling]) => {
+        .checkVideoStatusByURL(this.assetId)
+        .then(([readyToStream, exitPolling, failed]) => {
           if (readyToStream) {
             this.readyToStream = true;
             clearInterval(this.videoStreamInterval);
             return;
           }
+          if (failed) {
+            clearInterval(this.videoStreamInterval);
+            this.postVideoSrc = '';
+            this.globalVars._alertError(
+              'Video failed to upload. Please try again.'
+            );
+          }
           if (exitPolling) {
             clearInterval(this.videoStreamInterval);
             return;
           }
-        })
-        .add(() => attempts++);
+        });
+      attempts++;
     }, timeoutMillis);
   }
 }

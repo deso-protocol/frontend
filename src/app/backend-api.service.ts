@@ -98,8 +98,8 @@ export class BackendRoutes {
   static RoutePathGetTutorialCreators = '/api/v0/get-tutorial-creators';
 
   // Media
-  static RoutePathUploadVideo = '/api/v0/upload-video';
-  static RoutePathGetVideoStatus = '/api/v0/get-video-status';
+  static RoutePathUploadVideo = '/api/v1/upload-video';
+  static RoutePathGetVideoStatus = '/api/v1/get-video-status';
 
   // NFT routes.
   static RoutePathCreateNft = '/api/v0/create-nft';
@@ -1282,6 +1282,36 @@ export class BackendApiService {
         return this.post(
           endpoint,
           BackendRoutes.RoutePathUploadImage,
+          formData
+        );
+      })
+    );
+  }
+
+  UploadVideo(
+    endpoint: string,
+    file: File,
+    publicKeyBase58Check: string
+  ): Observable<{
+    tusEndpoint: string;
+    asset: {
+      id: string;
+      playbackId: string;
+    };
+  }> {
+    const request = this.identityService.jwt({
+      ...this.identityService.identityServiceParamsForKey(publicKeyBase58Check),
+    });
+    return request.pipe(
+      switchMap((signed) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('UserPublicKeyBase58Check', publicKeyBase58Check);
+        formData.append('JWT', signed.jwt);
+
+        return this.post(
+          endpoint,
+          BackendRoutes.RoutePathUploadVideo,
           formData
         );
       })

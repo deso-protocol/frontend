@@ -6,7 +6,8 @@ export const environment = {
   production: false,
   uploadImageHostname: 'node.deso.org',
   verificationEndpointHostname: 'https://node.deso.org',
-  uploadVideoHostname: 'https://node.deso.org',
+  // uploadVideoHostname: 'https://node.deso.org',
+  uploadVideoHostname: 'http://localhost:18001',
   identityURL: 'https://identity.deso.org',
   supportEmail: '',
   dd: {
