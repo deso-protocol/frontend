@@ -28,6 +28,7 @@ header @html Cache-Control no-store
 header @html Content-Security-Policy "
   default-src 'self';
   connect-src 'self'
+    media.deso.org
     node.deso.org
     amp.deso.org
     bithunt.deso.org
@@ -48,6 +49,7 @@ header @html Content-Security-Policy "
     api.testwyre.com
     api.sendwyre.com
     https://videodelivery.net
+    https://lvpr.tv
     https://upload.videodelivery.net;
   script-src 'self'
     https://kit.fontawesome.com/070ca4195b.js
@@ -59,6 +61,7 @@ header @html Content-Security-Policy "
   img-src 'self'
     data:
     i.imgur.com
+    media.deso.org
     images.deso.org
     images.bitclout.com
     quickchart.io
@@ -97,5 +100,6 @@ header @html Content-Security-Policy "
     https://mousai.stream
     pay.testwyre.com
     pay.sendwyre.com
+    https://lvpr.tv
     https://iframe.videodelivery.net;
   frame-ancestors 'self';"

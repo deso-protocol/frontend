@@ -14,7 +14,7 @@ export class SanitizeVideoUrlPipe implements PipeTransform {
       return false;
     }
     // On this node, we also validate that it matches the expect video URL format
-    const regExp = /^https:\/\/iframe\.videodelivery\.net\/[A-Za-z0-9]+$/;
+    const regExp = /^https:\/\/lvpr.tv\/\?v=[A-Za-z0-9]+$|^https:\/\/iframe\.videodelivery\.net\/[A-Za-z0-9]+[A-Za-z0-9]+(\?([A-Za-z0-9]+\=[A-Za-z0-9]+\&?)*)?$/;
     const match = videoURL.match(regExp);
     return (
       match && match[0] && this.sanitizer.bypassSecurityTrustResourceUrl(url)

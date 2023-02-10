@@ -1288,6 +1288,36 @@ export class BackendApiService {
     );
   }
 
+  UploadVideo(
+    endpoint: string,
+    file: File,
+    publicKeyBase58Check: string
+  ): Observable<{
+    tusEndpoint: string;
+    asset: {
+      id: string;
+      playbackId: string;
+    };
+  }> {
+    const request = this.identityService.jwt({
+      ...this.identityService.identityServiceParamsForKey(publicKeyBase58Check),
+    });
+    return request.pipe(
+      switchMap((signed) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('UserPublicKeyBase58Check', publicKeyBase58Check);
+        formData.append('JWT', signed.jwt);
+
+        return this.post(
+          endpoint,
+          BackendRoutes.RoutePathUploadVideo,
+          formData
+        );
+      })
+    );
+  }
+
   CreateNft(
     endpoint: string,
     UpdaterPublicKeyBase58Check: string,

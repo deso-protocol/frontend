@@ -23,33 +23,33 @@ export class CloudflareStreamService {
   }
 
   // Returns two booleans - the first indicates if a video is ready to stream, the second indicates if we should stop polling
-  checkVideoStatusByVideoID(videoID: string): Observable<[boolean, boolean]> {
-    if (videoID === '') {
+  checkVideoStatusByVideoID(
+    assetId: string
+  ): Promise<[boolean, boolean, boolean]> {
+    if (assetId === '') {
       console.error('invalid VideoID');
-      return of([false, true]);
+      return Promise.resolve([false, true, true]);
     }
     return this.backendApi
-      .GetVideoStatus(environment.uploadVideoHostname, videoID)
-      .pipe(
-        catchError((error) => {
-          console.error(error);
-          return of({
-            ReadyToStream: false,
-            Error: error,
-          });
-        }),
-        map((res) => {
-          return [res.ReadyToStream, res.Error || res.ReadyToStream];
-        })
-      );
+      .GetVideoStatus(environment.uploadVideoHostname, assetId)
+      .toPromise()
+      .then(({ status }) => {
+        const phase = status?.phase;
+        if (phase === 'ready') {
+          return [true, true, false];
+        } else if (phase === 'failed') {
+          return [false, true, true];
+        } else {
+          return [false, false, false];
+        }
+      });
   }
 
-  checkVideoStatusByURL(videoURL: string): Observable<[boolean, boolean]> {
-    const videoID = this.extractVideoID(videoURL);
-    if (videoID == '') {
+  checkVideoStatusByURL(assetId: string): Promise<[boolean, boolean, boolean]> {
+    if (assetId == '') {
       console.error('unable to extract VideoID');
-      return of([false, true]);
+      return Promise.resolve([false, true, true]);
     }
-    return this.checkVideoStatusByVideoID(this.extractVideoID(videoURL));
+    return this.checkVideoStatusByVideoID(assetId);
   }
 }
