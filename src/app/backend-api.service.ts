@@ -98,8 +98,8 @@ export class BackendRoutes {
   static RoutePathGetTutorialCreators = '/api/v0/get-tutorial-creators';
 
   // Media
-  static RoutePathUploadVideo = '/api/v1/upload-video';
-  static RoutePathGetVideoStatus = '/api/v1/get-video-status';
+  static RoutePathUploadVideo = '/api/v0/upload-video';
+  static RoutePathGetVideoStatus = '/api/v0/get-video-status';
 
   // NFT routes.
   static RoutePathCreateNft = '/api/v0/create-nft';
