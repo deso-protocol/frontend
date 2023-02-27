@@ -22,7 +22,7 @@ export class EmbedUrlParserService {
   }
 
   static videsoParser(url): string | boolean {
-    const regExp = /^.*((videso.xyz\/)|(watch\/))\??([A-Za-z0-9_-]{64}).*/;
+    const regExp = /^.*((videso.xyz\/)|(watch\/))\??([A-Za-z0-9_-]{11}).*/;
     const match = url.match(regExp);
     return match ? match[4] : false;
   }
@@ -379,7 +379,7 @@ export class EmbedUrlParserService {
   }
 
   static isValidVidesoEmbedURL(link: string): boolean {
-    const regExp = /(https:\/\/embed\.videso\.xyz\/[A-Za-z0-9_-]{64})$/;
+    const regExp = /(https:\/\/embed\.videso\.xyz\/[A-Za-z0-9_-]{11})$/;
     return !!link.match(regExp);
   }
 
