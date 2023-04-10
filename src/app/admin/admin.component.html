@@ -505,7 +505,7 @@
 
     <!-- BLACKLIST -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Remove everywhere:
+      Remove profile everywhere:
       <div class="d-flex">
         <input
           [(ngModel)]="blacklistPubKeyOrUsername"
@@ -539,9 +539,37 @@
       </div>
     </div>
 
+    <!-- USERNAME BLACKLIST -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Remove username everywhere:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="blacklistUsername"
+          (keydown.enter)="updateUsernameBlacklist(true, true)"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username."
+        />
+        <button
+          *ngIf="!submittingUsernameBlacklistUpdate"
+          (click)="updateUsernameBlacklist(true, true)"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: 150px"
+        >
+          Blacklist
+        </button>
+        <button
+          *ngIf="submittingUsernameBlacklistUpdate"
+          class="btn btn-dark fs-15px ml-5px"
+          disabled
+        >
+          Working...
+        </button>
+      </div>
+    </div>
+
     <!-- GRAYLIST -->
     <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
-      Remove from leaderboards:
+      Remove profile from leaderboards:
       <div class="d-flex">
         <input
           [(ngModel)]="graylistPubKeyOrUsername"
@@ -576,11 +604,40 @@
       </div>
     </div>
 
+    <!-- USERNAME GRAYLIST -->
+    <div class="fs-15px font-weight-bold mt-15px mb-15px px-15px">
+      Remove username from leaderboards:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="graylistUsername"
+          (keydown.enter)="updateUsernameBlacklist(true, true)"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username."
+        />
+        <button
+          *ngIf="!submittingUsernameGraylistUpdate"
+          (click)="updateUsernameBlacklist(true, true)"
+          class="btn btn-secondary fs-15px ml-5px"
+          style="width: 150px; background-color: #606060 !important"
+        >
+          Graylist&nbsp;
+        </button>
+        <button
+          *ngIf="submittingUsernameGraylistUpdate"
+          class="btn btn-secondary fs-15px ml-5px"
+          style="background-color: #606060 !important"
+          disabled
+        >
+          Working...
+        </button>
+      </div>
+    </div>
+
     <!-- REMOVE FROM BLACKLISTS -->
     <div
-      class="fs-15px font-weight-bold mt-15px px-15px pb-30px border-bottom border-color-grey"
+      class="fs-15px font-weight-bold mt-15px px-15px pb-30px"
     >
-      Remove from blacklist and graylist:
+      Remove profile from blacklist and graylist:
       <div class="d-flex">
         <input
           [(ngModel)]="unrestrictPubKeyOrUsername"
@@ -611,6 +668,36 @@
       >
         <i class="far fa-check-circle"></i>
         Successfully removed user from blacklist and graylist.
+      </div>
+    </div>
+
+    <!-- REMOVE USERNAME FROM BLACKLISTS -->
+    <div
+      class="fs-15px font-weight-bold mt-15px px-15px pb-30px border-bottom border-color-grey"
+    >
+      Remove username from blacklist and graylist:
+      <div class="d-flex">
+        <input
+          [(ngModel)]="unrestrictUsername"
+          (keydown.enter)="updateUsernameBlacklist(true, false)"
+          class="form-control w-100 fs-15px lh-15px"
+          placeholder="Enter a username."
+        />
+        <button
+          *ngIf="!submittingUnrestrictUsernameUpdate"
+          (click)="updateUsernameBlacklist(true, false)"
+          class="btn btn-danger fs-15px ml-5px border border-color-grey"
+          style="width: 150px"
+        >
+          Unrestrict
+        </button>
+        <button
+          *ngIf="submittingUnrestrictUsernameUpdate"
+          class="btn btn-danger fs-15px ml-5px border border-color-grey"
+          disabled
+        >
+          Working...
+        </button>
       </div>
     </div>
 

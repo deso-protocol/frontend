@@ -41,8 +41,11 @@ export class AdminComponent implements OnInit {
   @Input() isMobile = false;
 
   blacklistPubKeyOrUsername = '';
+  blacklistUsername = '';
+  graylistUsername = '';
   graylistPubKeyOrUsername = '';
   unrestrictPubKeyOrUsername = '';
+  unrestrictUsername = '';
   whitelistPubKeyOrUsername = '';
   unwhitelistPubKeyOrUsername = '';
   removePhonePubKeyorUsername = '';
@@ -58,8 +61,11 @@ export class AdminComponent implements OnInit {
 
   submittingProfileUpdateType = '';
   submittingBlacklistUpdate = false;
+  submittingUsernameBlacklistUpdate = false;
+  submittingUsernameGraylistUpdate = false;
   submittingGraylistUpdate = false;
   submittingUnrestrictUpdate = false;
+  submittingUnrestrictUsernameUpdate = false;
   submittingWhitelistUpdate = false;
   submittingUnwhitelistUpdate = false;
   submittingEvictUnminedBitcoinTxns = false;
@@ -977,6 +983,47 @@ export class AdminComponent implements OnInit {
           this.submittingUnrestrictUpdate = false;
           this.unrestrictPubKeyOrUsername = '';
         }
+      });
+  }
+
+  updateUsernameBlacklist(isBlacklist: boolean, addUserToList: boolean) {
+    let username;
+
+    if (!addUserToList) {
+      this.submittingUnrestrictUsernameUpdate = true;
+      username = this.unrestrictUsername;
+    } else if (isBlacklist) {
+      this.submittingUsernameBlacklistUpdate = true;
+      username = this.blacklistUsername;
+    } else {
+      this.submittingUsernameGraylistUpdate = true;
+      username = this.graylistUsername;
+    }
+
+    // Fire off the request.
+    this.backendApi
+      .AdminUpdateUsernameBlacklist(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check,
+        username,
+        isBlacklist,
+        addUserToList,
+      )
+      .subscribe(
+        (res) => {
+          this.globalVars._alertSuccess('Successfully updated list');
+        },
+        (err) => {
+          this.globalVars._alertError(JSON.stringify(err.error));
+        }
+      )
+      .add(() => {
+        this.blacklistUsername = '';
+        this.graylistUsername = '';
+        this.unrestrictUsername = '';
+        this.submittingUsernameBlacklistUpdate = false;
+        this.submittingUsernameGraylistUpdate = false;
+        this.submittingUnrestrictUsernameUpdate = false;
       });
   }
 
