@@ -21,11 +21,11 @@ export class BuyDeSoComponent implements OnInit {
 
   BuyDeSoComponent = BuyDeSoComponent;
 
-  static BUY_WITH_MEGASWAP = 'Buy with Crypto';
+  static BUY_WITH_HEROSWAP = 'Buy with Crypto';
   static BUY_WITH_USD = 'Buy with USD';
 
-  buyTabs = [BuyDeSoComponent.BUY_WITH_MEGASWAP];
-  activeTab = BuyDeSoComponent.BUY_WITH_MEGASWAP;
+  buyTabs = [BuyDeSoComponent.BUY_WITH_HEROSWAP];
+  activeTab = BuyDeSoComponent.BUY_WITH_HEROSWAP;
 
   constructor(
     private globalVars: GlobalVarsService,

@@ -4,22 +4,22 @@ import { GlobalVarsService } from 'src/app/global-vars.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'buy-deso-megaswap',
-  templateUrl: './buy-deso-megaswap.component.html',
-  styleUrls: ['./buy-deso-megaswap.component.scss'],
+  selector: 'buy-deso-heroswap',
+  templateUrl: './buy-deso-heroswap.component.html',
+  styleUrls: ['./buy-deso-heroswap.component.scss'],
 })
-export class BuyDeSoMegaSwapComponent implements OnInit {
+export class BuyDeSoHeroSwapComponent implements OnInit {
   iframeURL: SafeResourceUrl = '';
 
   constructor(
     public globalVars: GlobalVarsService,
     private sanitizer: DomSanitizer,
   ) {
-    if (!environment.megaswapURL) {
+    if (!environment.heroswapURL) {
       return;
     }
 
-    // Map theme to MegaSwap theme.
+    // Map theme to HeroSwap theme.
     let theme = {
       'cake': 'light-peach',
       'dark': 'dark-gray',
@@ -35,7 +35,7 @@ export class BuyDeSoMegaSwapComponent implements OnInit {
 
     this.iframeURL = this.sanitizer.bypassSecurityTrustResourceUrl(
       [
-        environment.megaswapURL,
+        environment.heroswapURL,
         '/#/iframe/v1?',
         `network=${environment.production ? 'mainnet' : 'testnet'}`,
         `&theme=${theme}`,
