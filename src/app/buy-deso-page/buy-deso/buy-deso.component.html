@@ -22,15 +22,16 @@
           <tab-selector
             [tabs]="buyTabs"
             [activeTab]="activeTab"
+            [linkTabs]="linkTabs"
             (tabClick)="_handleTabClick($event)"
           ></tab-selector>
         </div>
         <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_MEGASWAP">
           <buy-deso-megaswap></buy-deso-megaswap>
         </div>
-        <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_USD">
-          <buy-deso-usd></buy-deso-usd>
-        </div>
+        <!--        <div *ngIf="activeTab === BuyDeSoComponent.BUY_WITH_USD">-->
+        <!--          <buy-deso-usd></buy-deso-usd>-->
+        <!--        </div>-->
         <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
         <div class="global__bottom-bar-mobile-height"></div>
         <div class="global__bottom-bar-mobile-height"></div>
