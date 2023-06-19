@@ -21,5 +21,5 @@ export const environment = {
     url: 'https://bitclout.com',
     logoAssetDir: '/assets/bitclout/',
   },
-  megaswapURL: 'https://heroswap.com',
+  heroswapURL: 'https://heroswap.com',
 };

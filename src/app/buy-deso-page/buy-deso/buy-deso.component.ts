@@ -1,10 +1,6 @@
-import {
-  Component,
-  OnInit,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GlobalVarsService } from '../../global-vars.service';
 import { WyreService } from '../../../lib/services/wyre/wyre';
-
 
 @Component({
   selector: 'buy-deso',
@@ -21,18 +17,16 @@ export class BuyDeSoComponent implements OnInit {
 
   BuyDeSoComponent = BuyDeSoComponent;
 
-  static BUY_WITH_MEGASWAP = 'Buy with Crypto';
+  static BUY_WITH_HEROSWAP = 'Buy with Crypto';
   // static BUY_WITH_USD = 'Buy with USD';
-  static BUY_ON_CB = "Buy on Coinbase";
-  static CB_LINK = "https://www.coinbase.com/price/decentralized-social";
+  static BUY_ON_CB = 'Buy on Coinbase';
+  static CB_LINK = 'https://www.coinbase.com/price/decentralized-social';
 
-  buyTabs = [BuyDeSoComponent.BUY_WITH_MEGASWAP, BuyDeSoComponent.BUY_ON_CB];
-  activeTab = BuyDeSoComponent.BUY_WITH_MEGASWAP;
-  linkTabs = { [BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK };
+  buyTabs = [BuyDeSoComponent.BUY_WITH_HEROSWAP, BuyDeSoComponent.BUY_ON_CB];
+  activeTab = BuyDeSoComponent.BUY_WITH_HEROSWAP;
+  linkTabs = {[BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK};
 
-  constructor(
-    private globalVars: GlobalVarsService,
-  ) {
+  constructor(private globalVars: GlobalVarsService) {
     this.appData = globalVars;
   }
 

@@ -26,26 +26,42 @@ import { FeedCreatePostComponent } from './feed/feed-create-post/feed-create-pos
 import { FeedPostComponent } from './feed/feed-post/feed-post.component';
 import { FeedPostDropdownComponent } from './feed/feed-post-dropdown/feed-post-dropdown.component';
 import { FeedPostIconRowComponent } from './feed/feed-post-icon-row/feed-post-icon-row.component';
-import { CreatorsLeaderboardPageComponent } from './creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component';
-import { CreatorsLeaderboardComponent } from './creators-leaderboard/creators-leaderboard/creators-leaderboard.component';
+import {
+  CreatorsLeaderboardPageComponent
+} from './creators-leaderboard/creators-leaderboard-page/creators-leaderboard-page.component';
+import {
+  CreatorsLeaderboardComponent
+} from './creators-leaderboard/creators-leaderboard/creators-leaderboard.component';
 import { BuyDeSoPageComponent } from './buy-deso-page/buy-deso-page.component';
 import { MessagesPageComponent } from './messages-page/messages-page.component';
 import { SettingsPageComponent } from './settings-page/settings-page.component';
 import { CreatorProfilePageComponent } from './creator-profile-page/creator-profile-page.component';
-import { CreatorProfileDetailsComponent } from './creator-profile-page/creator-profile-details/creator-profile-details.component';
-import { CreatorProfileHodlersComponent } from './creator-profile-page/creator-profile-hodlers/creator-profile-hodlers.component';
-import { CreatorProfilePostsComponent } from './creator-profile-page/creator-profile-posts/creator-profile-posts.component';
+import {
+  CreatorProfileDetailsComponent
+} from './creator-profile-page/creator-profile-details/creator-profile-details.component';
+import {
+  CreatorProfileHodlersComponent
+} from './creator-profile-page/creator-profile-hodlers/creator-profile-hodlers.component';
+import {
+  CreatorProfilePostsComponent
+} from './creator-profile-page/creator-profile-posts/creator-profile-posts.component';
 import { TabSelectorComponent } from './tab-selector/tab-selector.component';
-import { CreatorProfileTopCardComponent } from './creator-profile-page/creator-profile-top-card/creator-profile-top-card.component';
+import {
+  CreatorProfileTopCardComponent
+} from './creator-profile-page/creator-profile-top-card/creator-profile-top-card.component';
 import { LeftBarButtonComponent } from './left-bar/left-bar-button/left-bar-button.component';
 import { TradeCreatorPageComponent } from './trade-creator-page/trade-creator-page.component';
 import { TradeCreatorComponent } from './trade-creator-page/trade-creator/trade-creator.component';
 import { BuyDeSoComponent } from './buy-deso-page/buy-deso/buy-deso.component';
-import { BuyDeSoMegaSwapComponent } from './buy-deso-page/buy-deso-megaswap/buy-deso-megaswap.component';
+import { BuyDeSoHeroSwapComponent } from './buy-deso-page/buy-deso-heroswap/buy-deso-heroswap.component';
 import { BuyDeSoUSDComponent } from './buy-deso-page/buy-deso-usd/buy-deso-usd.component';
 import { TradeCreatorFormComponent } from './trade-creator-page/trade-creator-form/trade-creator-form.component';
-import { TradeCreatorPreviewComponent } from './trade-creator-page/trade-creator-preview/trade-creator-preview.component';
-import { TradeCreatorCompleteComponent } from './trade-creator-page/trade-creator-complete/trade-creator-complete.component';
+import {
+  TradeCreatorPreviewComponent
+} from './trade-creator-page/trade-creator-preview/trade-creator-preview.component';
+import {
+  TradeCreatorCompleteComponent
+} from './trade-creator-page/trade-creator-complete/trade-creator-complete.component';
 import { UpdateProfilePageComponent } from './update-profile-page/update-profile-page.component';
 import { NotificationsPageComponent } from './notifications-page/notifications-page.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
@@ -56,7 +72,9 @@ import { TradeCreatorTableComponent } from './trade-creator-page/trade-creator-t
 import { PostThreadPageComponent } from './post-thread-page/post-thread-page.component';
 import { PostThreadComponent } from './post-thread-page/post-thread/post-thread.component';
 import { UpdateProfileComponent } from './update-profile-page/update-profile/update-profile.component';
-import { RightBarCreatorsLeaderboardComponent } from './right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component';
+import {
+  RightBarCreatorsLeaderboardComponent
+} from './right-bar-creators/right-bar-creators-leaderboard/right-bar-creators-leaderboard.component';
 import { BottomBarMobileComponent } from './bottom-bar-mobile/bottom-bar-mobile.component';
 import { LeftBarMobileComponent } from './left-bar-mobile/left-bar-mobile.component';
 import { TransferDeSoPageComponent } from './transfer-deso-page/transfer-deso-page.component';
@@ -66,14 +84,22 @@ import { MessagesInboxComponent } from './messages-page/messages-inbox/messages-
 import { MessagesThreadComponent } from './messages-page/messages-thread/messages-thread.component';
 import { MessageComponent } from './messages-page/message/message.component';
 import { MessagesThreadViewComponent } from './messages-page/messages-thread-view/messages-thread-view.component';
-import { TopBarMobileNavigationControlComponent } from './top-bar-mobile/top-bar-mobile-navigation-control/top-bar-mobile-navigation-control.component';
+import {
+  TopBarMobileNavigationControlComponent
+} from './top-bar-mobile/top-bar-mobile-navigation-control/top-bar-mobile-navigation-control.component';
 import { BottomBarMobileTabComponent } from './bottom-bar-mobile/bottom-bar-mobile-tab/bottom-bar-mobile-tab.component';
 import { NotFoundComponent } from './not-found-page/not-found/not-found.component';
 import { CreatePostPageComponent } from './create-post-page/create-post-page.component';
 import { CreatePostFormComponent } from './create-post-page/create-post-form/create-post-form.component';
-import { TopBarMobileLogInOrSignUpComponent } from './top-bar-mobile/top-bar-mobile-log-in-or-sign-up/top-bar-mobile-log-in-or-sign-up.component';
-import { TopBarMobileHamburgerMenuComponent } from './top-bar-mobile/top-bar-mobile-hamburger-menu/top-bar-mobile-hamburger-menu.component';
-import { TradeCreatorLoggedOutComponent } from './trade-creator-page/trade-creator-logged-out/trade-creator-logged-out.component';
+import {
+  TopBarMobileLogInOrSignUpComponent
+} from './top-bar-mobile/top-bar-mobile-log-in-or-sign-up/top-bar-mobile-log-in-or-sign-up.component';
+import {
+  TopBarMobileHamburgerMenuComponent
+} from './top-bar-mobile/top-bar-mobile-hamburger-menu/top-bar-mobile-hamburger-menu.component';
+import {
+  TradeCreatorLoggedOutComponent
+} from './trade-creator-page/trade-creator-logged-out/trade-creator-logged-out.component';
 import { TosPageComponent } from './tos-page/tos-page.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AdminPageComponent } from './admin-page/admin-page.component';
@@ -96,7 +122,9 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { AnimateOnScrollModule } from 'ng2-animate-on-scroll';
 import { SignUpGetStarterDeSoComponent } from './sign-up/sign-up-get-starter-deso/sign-up-get-starter-deso.component';
-import { UpdateProfileGetStarterDeSoComponent } from './update-profile-page/update-profile-get-starter-deso/update-profile-get-starter-deso.component';
+import {
+  UpdateProfileGetStarterDeSoComponent
+} from './update-profile-page/update-profile-get-starter-deso/update-profile-get-starter-deso.component';
 import { GetStarterDeSoPageComponent } from './get-starter-deso-page/get-starter-deso-page.component';
 import { GetStarterDeSoComponent } from './get-starter-deso-page/get-starter-deso/get-starter-deso.component';
 import { CommentModalComponent } from './comment-modal/comment-modal.component';
@@ -113,7 +141,9 @@ import { SimpleProfileCardComponent } from './simple-profile-card/simple-profile
 import { CreatorDiamondsComponent } from './creator-profile-page/creator-diamonds/creator-diamonds.component';
 import { DiamondPostsPageComponent } from './diamond-posts-page/diamond-posts-page.component';
 import { DiamondPostsComponent } from './diamond-posts-page/diamond-posts/diamond-posts.component';
-import { MessagesFilterMenuComponent } from './messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component';
+import {
+  MessagesFilterMenuComponent
+} from './messages-page/messages-inbox/messages-filter-menu/messages-filter-menu.component';
 import { CountdownTimerComponent } from './countdown-timer/countdown-timer.component';
 import { AvatarDirective } from './avatar/avatar.directive';
 import { TrendsPageComponent } from './trends-page/trends-page.component';
@@ -131,24 +161,40 @@ import { SellNftModalComponent } from './sell-nft-modal/sell-nft-modal.component
 import { AddUnlockableModalComponent } from './add-unlockable-modal/add-unlockable-modal.component';
 import { NftPostPageComponent } from './nft-post-page/nft-post-page.component';
 import { NftPostComponent } from './nft-post-page/nft-post/nft-post.component';
-import { CreatorProfileNftsComponent } from './creator-profile-page/creator-profile-nfts/creator-profile-nfts.component';
+import {
+  CreatorProfileNftsComponent
+} from './creator-profile-page/creator-profile-nfts/creator-profile-nfts.component';
 import { NftDropMgrComponent } from './nft-drop-mgr/nft-drop-mgr.component';
 import { NftShowcaseComponent } from './nft-showcase/nft-showcase.component';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
 import { AdminJumioComponent } from './admin/admin-jumio/admin-jumio.component';
-import { AdminJumioEditCountrySignUpBonusComponent } from './admin/admin-jumio/admin-jumio-edit-country-sign-up-bonus/admin-jumio-edit-country-sign-up-bonus.component';
+import {
+  AdminJumioEditCountrySignUpBonusComponent
+} from './admin/admin-jumio/admin-jumio-edit-country-sign-up-bonus/admin-jumio-edit-country-sign-up-bonus.component';
 import { JumioStatusComponent } from './jumio-status/jumio-status.component';
 import { AdminTutorialComponent } from './admin/admin-tutorial/admin-tutorial.component';
-import { CreateProfileTutorialPageComponent } from './tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component';
-import { BuyCreatorCoinsTutorialComponent } from './tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial/buy-creator-coins-tutorial.component';
-import { BuyCreatorCoinsTutorialPageComponent } from './tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component';
-import { BuyCreatorCoinsConfirmTutorialComponent } from './tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component';
+import {
+  CreateProfileTutorialPageComponent
+} from './tutorial/create-profile-tutorial-page/create-profile-tutorial-page.component';
+import {
+  BuyCreatorCoinsTutorialComponent
+} from './tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial/buy-creator-coins-tutorial.component';
+import {
+  BuyCreatorCoinsTutorialPageComponent
+} from './tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-tutorial-page.component';
+import {
+  BuyCreatorCoinsConfirmTutorialComponent
+} from './tutorial/buy-creator-coins-tutorial-page/buy-creator-coins-confirm-tutorial/buy-creator-coins-confirm-tutorial.component';
 import { WalletPageComponent } from './wallet/wallet-page/wallet-page.component';
 import { WalletTutorialPageComponent } from './tutorial/wallet-tutorial-page/wallet-tutorial-page.component';
-import { SellCreatorCoinsTutorialComponent } from './tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component';
+import {
+  SellCreatorCoinsTutorialComponent
+} from './tutorial/sell-creator-coins-tutorial-page/sell-creator-coins-tutorial/sell-creator-coins-tutorial.component';
 import { DiamondTutorialPageComponent } from './tutorial/diamond-tutorial-page/diamond-tutorial-page.component';
 import { DiamondTutorialComponent } from './tutorial/diamond-tutorial-page/diamond-tutorial/diamond-tutorial.component';
-import { CreatePostTutorialPageComponent } from './tutorial/create-post-tutorial-page/create-post-tutorial-page.component';
+import {
+  CreatePostTutorialPageComponent
+} from './tutorial/create-post-tutorial-page/create-post-tutorial-page.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ReferralProgramMgrComponent } from './referral-program-mgr/referral-program-mgr.component';
 import { ReferralsComponent } from './referrals/referrals.component';
@@ -156,8 +202,12 @@ import { SanitizeVideoUrlPipe } from '../lib/pipes/sanitize-video-url-pipe';
 import { AdminNodeFeesComponent } from './admin/admin-node-fees/admin-node-fees.component';
 import { AdminNodeAddFeesComponent } from './admin/admin-node-fees/admin-node-add-fee/admin-node-add-fees.component';
 import { FreeDesoMessageComponent } from './free-deso-message/free-deso-message.component';
-import { SupplyMonitoringStatsPageComponent } from './supply-monitoring-stats-page/supply-monitoring-stats-page.component';
-import { SupplyMonitoringStatsComponent } from './supply-monitoring-stats-page/supply-monitoring-stats/supply-monitoring-stats.component';
+import {
+  SupplyMonitoringStatsPageComponent
+} from './supply-monitoring-stats-page/supply-monitoring-stats-page.component';
+import {
+  SupplyMonitoringStatsComponent
+} from './supply-monitoring-stats-page/supply-monitoring-stats/supply-monitoring-stats.component';
 import { TransferNftModalComponent } from './transfer-nft-modal/transfer-nft-modal.component';
 import { TransferNftAcceptModalComponent } from './transfer-nft-accept-modal/transfer-nft-accept-modal.component';
 import { NftBurnModalComponent } from './nft-burn-modal/nft-burn-modal.component';
@@ -171,12 +221,13 @@ import { BurnDaoCoinModalComponent } from './dao-coins/burn-dao-coin-modal/burn-
 import { ThemeModule } from './theme/theme.module';
 import { Theme } from './theme/symbols';
 import { PostMultiplierComponent } from './feed/feed-post-dropdown/post-multiplier/post-multiplier.component';
-const lightTheme: Theme = { key: 'light', name: 'Light Theme' };
-const darkTheme: Theme = { key: 'dark', name: 'Dark Theme' };
-const icydarkTheme: Theme = { key: 'icydark', name: 'Icy Dark Theme' };
-const legendsTheme: Theme = { key: 'legends', name: 'Legends Theme' };
-const cakeTheme: Theme = { key: 'cake', name: 'Cake Theme' };
-const greenishTheme: Theme = { key: 'greenish', name: 'Green Theme' };
+
+const lightTheme: Theme = {key: 'light', name: 'Light Theme'};
+const darkTheme: Theme = {key: 'dark', name: 'Dark Theme'};
+const icydarkTheme: Theme = {key: 'icydark', name: 'Icy Dark Theme'};
+const legendsTheme: Theme = {key: 'legends', name: 'Legends Theme'};
+const cakeTheme: Theme = {key: 'cake', name: 'Cake Theme'};
+const greenishTheme: Theme = {key: 'greenish', name: 'Green Theme'};
 
 @NgModule({
   declarations: [
@@ -211,7 +262,7 @@ const greenishTheme: Theme = { key: 'greenish', name: 'Green Theme' };
     TradeCreatorPageComponent,
     TradeCreatorComponent,
     BuyDeSoComponent,
-    BuyDeSoMegaSwapComponent,
+    BuyDeSoHeroSwapComponent,
     BuyDeSoUSDComponent,
     TradeCreatorFormComponent,
     TradeCreatorPreviewComponent,
@@ -370,4 +421,5 @@ const greenishTheme: Theme = { key: 'greenish', name: 'Green Theme' };
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+}
