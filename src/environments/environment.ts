@@ -25,5 +25,5 @@ export const environment = {
     url: 'https://node.deso.org',
     logoAssetDir: '/assets/deso/',
   },
-  megaswapURL: 'https://megaswap.xyz',
+  heroswapURL: 'https://heroswap.com',
 };
