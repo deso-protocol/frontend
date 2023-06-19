@@ -14,6 +14,9 @@
         'fc-muted': tab != this.activeTab
       }"
     >
+      <span *ngIf="isLink(tab)">
+        <i class="icon-link mr-5px"></i>
+      </span>
       {{ tab }}
     </div>
     <div

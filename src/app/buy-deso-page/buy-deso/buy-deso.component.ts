@@ -1,10 +1,6 @@
-import {
-  Component,
-  OnInit,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GlobalVarsService } from '../../global-vars.service';
 import { WyreService } from '../../../lib/services/wyre/wyre';
-
 
 @Component({
   selector: 'buy-deso',
@@ -22,14 +18,15 @@ export class BuyDeSoComponent implements OnInit {
   BuyDeSoComponent = BuyDeSoComponent;
 
   static BUY_WITH_HEROSWAP = 'Buy with Crypto';
-  static BUY_WITH_USD = 'Buy with USD';
+  // static BUY_WITH_USD = 'Buy with USD';
+  static BUY_ON_CB = 'Buy on Coinbase';
+  static CB_LINK = 'https://www.coinbase.com/price/decentralized-social';
 
-  buyTabs = [BuyDeSoComponent.BUY_WITH_HEROSWAP];
+  buyTabs = [BuyDeSoComponent.BUY_WITH_HEROSWAP, BuyDeSoComponent.BUY_ON_CB];
   activeTab = BuyDeSoComponent.BUY_WITH_HEROSWAP;
+  linkTabs = {[BuyDeSoComponent.BUY_ON_CB]: BuyDeSoComponent.CB_LINK};
 
-  constructor(
-    private globalVars: GlobalVarsService,
-  ) {
+  constructor(private globalVars: GlobalVarsService) {
     this.appData = globalVars;
   }
 
@@ -39,9 +36,9 @@ export class BuyDeSoComponent implements OnInit {
 
   ngOnInit() {
     window.scroll(0, 0);
-    if (this.globalVars.showBuyWithUSD) {
-      this.buyTabs.push(BuyDeSoComponent.BUY_WITH_USD);
-    }
+    // if (this.globalVars.showBuyWithUSD) {
+    //   this.buyTabs.push(BuyDeSoComponent.BUY_WITH_USD);
+    // }
 
     // Force an update of the exchange rate when loading the Buy DeSo page to ensure our computations are using the
     // latest rates.
