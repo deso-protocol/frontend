@@ -476,6 +476,7 @@ export enum TransferRestrictionStatusString {
   DAO_MEMBERS_ONLY = "dao_members_only",
   PERMANENTLY_UNRESTRICTED = "permanently_unrestricted",
 }
+
 export enum CreatorCoinLimitOperationString {
   ANY = "any",
   BUY = "buy",
@@ -514,10 +515,15 @@ export enum NFTLimitOperationString {
   BURN = "burn",
   ACCEPT_TRANSFER = "accept_nft_transfer",
 }
+
 export type NFTOperationLimitMap = {
   [post_hash_hex: string]: {
     [serial_number: number]: OperationToCountMap<NFTLimitOperationString>;
   };
+};
+
+export type DAOCoinLimitOrderLimitMap = {
+  [buyingPublicKey: string]: { [sellingPublicKey: string]: number };
 };
 
 // TODO: Should we consolidate this definition with the identity repo?
@@ -528,6 +534,7 @@ export type TransactionSpendingLimitResponse = {
   CreatorCoinOperationLimitMap?: CreatorCoinOperationLimitMap;
   DAOCoinOperationLimitMap?: DAOCoinOperationLimitMap;
   NFTOperationLimitMap?: NFTOperationLimitMap;
+  DAOCoinLimitOrderLimitMap?: DAOCoinLimitOrderLimitMap;
   DerivedKeyMemo?: string;
 };
 
@@ -535,7 +542,8 @@ export type TransactionSpendingLimitResponse = {
   providedIn: "root",
 })
 export class BackendApiService {
-  constructor(private httpClient: HttpClient, private identityService: IdentityService) {}
+  constructor(private httpClient: HttpClient, private identityService: IdentityService) {
+  }
 
   static GET_PROFILES_ORDER_BY_INFLUENCER_COIN_PRICE = "influencer_coin_price";
   static BUY_CREATOR_COIN_OPERATION_TYPE = "buy";
@@ -636,11 +644,11 @@ export class BackendApiService {
                     .pipe(
                       map((approved) => {
                         this.setIdentityServiceUsers(approved.users);
-                        return { ...res, ...approved };
+                        return {...res, ...approved};
                       })
                     );
                 } else {
-                  return of({ ...res, ...signed });
+                  return of({...res, ...signed});
                 }
               })
             )
@@ -649,7 +657,7 @@ export class BackendApiService {
       .pipe(
         switchMap((res) =>
           this.SubmitTransaction(endpoint, res.signedTransactionHex).pipe(
-            map((broadcasted) => ({ ...res, ...broadcasted }))
+            map((broadcasted) => ({...res, ...broadcasted}))
           )
         )
       )
@@ -676,7 +684,7 @@ export class BackendApiService {
           ...body,
         };
 
-        return this.post(endpoint, path, body).pipe(map((res) => ({ ...res, ...signed })));
+        return this.post(endpoint, path, body).pipe(map((res) => ({...res, ...signed})));
       })
     );
   }
@@ -733,7 +741,7 @@ export class BackendApiService {
 
   DeleteIdentities(endpoint: string): Observable<any> {
     return this.httpClient
-      .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, { withCredentials: true })
+      .post<any>(this._makeRequestURL(endpoint, BackendRoutes.RoutePathDeleteIdentities), {}, {withCredentials: true})
       .pipe(catchError(this._handleError));
   }
 
@@ -763,7 +771,7 @@ export class BackendApiService {
               ...this.identityService.identityServiceParamsForKey(PublicKeyBase58Check),
               unsignedHashes: res.UnsignedHashes,
             })
-            .pipe(map((signed) => ({ ...res, ...signed })))
+            .pipe(map((signed) => ({...res, ...signed})))
         )
       );
 
@@ -777,7 +785,7 @@ export class BackendApiService {
             FeeRateSatoshisPerKB,
             SignedHashes: res.signedHashes,
             Broadcast,
-          }).pipe(map((broadcasted) => ({ ...res, ...broadcasted })))
+          }).pipe(map((broadcasted) => ({...res, ...broadcasted})))
         )
       );
     }
@@ -870,7 +878,7 @@ export class BackendApiService {
                 MinFeeRateNanosPerKB,
               }).pipe(
                 map((request) => {
-                  return { ...request };
+                  return {...request};
                 })
               );
             })
@@ -1087,12 +1095,12 @@ export class BackendApiService {
   ): Observable<any> {
     let request = UnencryptedUnlockableText
       ? this.identityService.encrypt({
-          ...this.identityService.identityServiceParamsForKey(UpdaterPublicKeyBase58Check),
-          recipientPublicKey: BidderPublicKeyBase58Check,
-          senderGroupKeyName: "",
-          message: UnencryptedUnlockableText,
-        })
-      : of({ encryptedMessage: "" });
+        ...this.identityService.identityServiceParamsForKey(UpdaterPublicKeyBase58Check),
+        recipientPublicKey: BidderPublicKeyBase58Check,
+        senderGroupKeyName: "",
+        message: UnencryptedUnlockableText,
+      })
+      : of({encryptedMessage: ""});
     request = request.pipe(
       switchMap((encrypted) => {
         const EncryptedMessageText = encrypted.encryptedMessage;
@@ -1106,7 +1114,7 @@ export class BackendApiService {
           MinFeeRateNanosPerKB,
         }).pipe(
           map((request) => {
-            return { ...request };
+            return {...request};
           })
         );
       })
@@ -1125,12 +1133,12 @@ export class BackendApiService {
   ): Observable<any> {
     let request = UnencryptedUnlockableText
       ? this.identityService.encrypt({
-          ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
-          recipientPublicKey: ReceiverPublicKeyBase58Check,
-          senderGroupKeyName: "",
-          message: UnencryptedUnlockableText,
-        })
-      : of({ encryptedMessage: "" });
+        ...this.identityService.identityServiceParamsForKey(SenderPublicKeyBase58Check),
+        recipientPublicKey: ReceiverPublicKeyBase58Check,
+        senderGroupKeyName: "",
+        message: UnencryptedUnlockableText,
+      })
+      : of({encryptedMessage: ""});
     request = request.pipe(
       switchMap((encrypted) => {
         const EncryptedUnlockableText = encrypted.encryptedMessage;
@@ -1143,7 +1151,7 @@ export class BackendApiService {
           MinFeeRateNanosPerKB,
         }).pipe(
           map((request) => {
-            return { ...request };
+            return {...request};
           })
         );
       })
@@ -1389,6 +1397,7 @@ export class BackendApiService {
       AddGlobalFeedBool,
     });
   }
+
   GetSingleProfile(endpoint: string, PublicKeyBase58Check: string, Username: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetSingleProfile, {
       PublicKeyBase58Check,
@@ -1403,12 +1412,14 @@ export class BackendApiService {
       responseType: "blob",
     });
   }
+
   GetSingleProfilePictureURL(endpoint: string, PublicKeyBase58Check: string, fallback): string {
     return this._makeRequestURL(
       endpoint,
       BackendRoutes.RoutePathGetSingleProfilePicture + "/" + PublicKeyBase58Check + "?" + fallback
     );
   }
+
   GetDefaultProfilePictureURL(endpoint: string): string {
     return this._makeRequestURL(endpoint, "/assets/img/default_profile_pic.png");
   }
@@ -1609,7 +1620,7 @@ export class BackendApiService {
             RecipientMessagingGroupKeyName: message.RecipientMessagingGroupKeyName,
           }))
         );
-        return { ...res, encryptedMessages };
+        return {...res, encryptedMessages};
       })
     );
 
@@ -1628,7 +1639,7 @@ export class BackendApiService {
                   (message) => (message.DecryptedText = decrypted.decryptedHexes[message.EncryptedText])
                 )
               );
-              return { ...res, ...decrypted };
+              return {...res, ...decrypted};
             })
           );
       })
@@ -1748,7 +1759,6 @@ export class BackendApiService {
 
   BuyOrSellCreatorCoin(
     endpoint: string,
-
     // The public key of the user who is making the buy/sell.
     UpdaterPublicKeyBase58Check: string,
     // The public key of the profile that the purchaser is trying
@@ -1772,7 +1782,6 @@ export class BackendApiService {
     // them to zero turns off the check. Give it your best shot, Ivan.
     MinDeSoExpectedNanos: number,
     MinCreatorCoinExpectedNanos: number,
-
     MinFeeRateNanosPerKB: number,
     Broadcast: boolean,
     InTutorial: boolean = false
@@ -1940,7 +1949,6 @@ export class BackendApiService {
 
   GetUserGlobalMetadata(
     endpoint: string,
-
     // The public key of the user to update.
     UserPublicKeyBase58Check: string
   ): Observable<any> {
@@ -2065,7 +2073,6 @@ export class BackendApiService {
   AdminGetUserGlobalMetadata(
     endpoint: string,
     AdminPublicKey: string,
-
     // The public key of the user for whom we'd like to get global metadata
     UserPublicKeyBase58Check: string
   ): Observable<any> {
@@ -2078,7 +2085,6 @@ export class BackendApiService {
   AdminUpdateUserGlobalMetadata(
     endpoint: string,
     AdminPublicKey: string,
-
     // The public key of the user to update.
     UserPublicKeyBase58Check: string,
     Username: string,

@@ -35,7 +35,8 @@ export class SettingsComponent implements OnInit {
     public themeService: ThemeService,
     private router: Router,
     private identityService: IdentityService
-  ) {}
+  ) {
+  }
 
   selectChangeHandler(event: any) {
     const newTheme = event.target.value;
@@ -122,7 +123,7 @@ export class SettingsComponent implements OnInit {
             [NFTLimitOperationString.ACCEPT_TRANSFER]: 3,
           },
         },
-        "6a90e18da20d76eaa031a1d381a70a48f6f2d413a04bae101c993a47866b2d13": {
+        "4fbf93b7a16208aa5b8aa1a9326f6e8328f1c02e22dbe3393a6eb0b5e9b2a1ff": {
           0: {
             [NFTLimitOperationString.ACCEPT_BID]: 1,
           },
@@ -130,12 +131,12 @@ export class SettingsComponent implements OnInit {
             [NFTLimitOperationString.TRANSFER]: 2,
           },
         },
-        "8bfc40f565fcbbf1c1af9c9f01b6003bada6074ef2d5bfe5de3c153ceed7b69f": {
+        efc3aa4b97b56a071eeeb800f2fd144b40724f3af5893205a739857fea916977: {
           1: {
             [NFTLimitOperationString.BURN]: 3,
           },
         },
-        dd5126c89dd61a7bc5143d03396560f272686b42fca6c6dac5fd34ef992b346e: {
+        "313cc6a4c94004d92c83e112a76172d33122839f0b2d036fbf1f4be38eeb3fc6": {
           0: {
             [NFTLimitOperationString.ACCEPT_BID]: 5,
           },
@@ -150,6 +151,15 @@ export class SettingsComponent implements OnInit {
             [NFTLimitOperationString.ACCEPT_BID]: 2,
             [NFTLimitOperationString.BID]: 5,
           },
+        },
+      },
+      DAOCoinLimitOrderLimitMap: {
+        DESO: {
+          tBCKVv5H1Gz6RTRhjxJwdzcfwfwoUo8b4PYWSKkayG4dy76Jsjt2Ro: 1,
+          tBCKVTLMYYFCNDzVALbeKwfmV4vS1dEHMXtueXvAF8eDktRb7yzLgs: 2,
+        },
+        tBCKVTLMYYFCNDzVALbeKwfmV4vS1dEHMXtueXvAF8eDktRb7yzLgs: {
+          tBCKVv5H1Gz6RTRhjxJwdzcfwfwoUo8b4PYWSKkayG4dy76Jsjt2Ro: 5,
         },
       },
     };
@@ -223,7 +233,8 @@ export class SettingsComponent implements OnInit {
         null /*MessageReadStateUpdatesByContact*/
       )
       .subscribe(
-        (res) => {},
+        (res) => {
+        },
         (err) => {
           console.log(err);
         }

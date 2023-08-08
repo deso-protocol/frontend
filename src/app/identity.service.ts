@@ -60,7 +60,7 @@ export class IdentityService {
     }
 
     let httpParams = new HttpParams();
-    if (this.isTestnet) {
+    if (!this.isTestnet) {
       httpParams = httpParams.append("testnet", "true");
     }
 
@@ -189,8 +189,8 @@ export class IdentityService {
   // Helpers
 
   identityServiceParamsForKey(publicKey: string) {
-    const { encryptedSeedHex, accessLevel, accessLevelHmac } = this.identityServiceUsers[publicKey];
-    return { encryptedSeedHex, accessLevel, accessLevelHmac };
+    const {encryptedSeedHex, accessLevel, accessLevelHmac} = this.identityServiceUsers[publicKey];
+    return {encryptedSeedHex, accessLevel, accessLevelHmac};
   }
 
   // Incoming messages
@@ -239,8 +239,8 @@ export class IdentityService {
   // Message handling
 
   private handleMessage(event: MessageEvent) {
-    const { data } = event;
-    const { service, method } = data;
+    const {data} = event;
+    const {service, method} = data;
 
     if (service !== "identity") {
       return;
@@ -256,7 +256,7 @@ export class IdentityService {
 
   private handleRequest(event: MessageEvent) {
     const {
-      data: { id, method, payload },
+      data: {id, method, payload},
     } = event;
 
     if (method === "initialize") {
@@ -277,7 +277,7 @@ export class IdentityService {
 
   private handleResponse(event: MessageEvent) {
     const {
-      data: { id, payload },
+      data: {id, payload},
     } = event;
 
     const req = this.outboundRequests[id];
@@ -312,6 +312,6 @@ export class IdentityService {
 
   // Respond to a received message
   private respond(window: Window, id: string, payload: any): void {
-    window.postMessage({ id, service: "identity", payload }, "*");
+    window.postMessage({id, service: "identity", payload}, "*");
   }
 }
