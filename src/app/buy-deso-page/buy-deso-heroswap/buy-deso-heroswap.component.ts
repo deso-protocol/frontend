@@ -52,6 +52,7 @@ export class BuyDeSoHeroSwapComponent implements OnInit {
         `&destinationAddress=${
           this.globalVars.loggedInUser?.PublicKeyBase58Check || ''
         }`,
+        `${environment.heroswapAffiliateName ? '&affiliateName=' + environment.heroswapAffiliateName : ''}`,
         `&now=${Date.now()}`,
       ].join('')
     );

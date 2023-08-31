@@ -26,4 +26,5 @@ export const environment = {
     logoAssetDir: '/assets/deso/',
   },
   heroswapURL: 'https://heroswap.com',
+  heroswapAffiliateName: 'frontendbase',
 };
