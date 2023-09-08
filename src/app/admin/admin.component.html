@@ -1325,6 +1325,38 @@
       </div>
     </div>
 
+    <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
+      Update Captcha Solve Reward Nanos
+      <div
+        class="d-flex align-items-center justify-content-between font-weight-normal mt-5px"
+      >
+        <input
+          [(ngModel)]="captchaDeSoNanos"
+          type="number"
+          min="0"
+          class="form-control fs-15px lh-15px w-100"
+          placeholder="Enter DESO nanos reward for successful captcha."
+        />
+        <button
+          *ngIf="!updatingCaptchaRewardNanos"
+          (click)="updateCaptchaRewardNanos()"
+          class="btn btn-outline-primary fs-15px ml-5px"
+          style="width: fit-content"
+          [ngStyle]="{ disabled: updatingCaptchaRewardNanos }"
+        >
+          Update
+        </button>
+        <button
+          *ngIf="updatingCaptchaRewardNanos"
+          class="btn btn-dark fs-15px ml-5px"
+          style="width: fit-content"
+          disabled
+        >
+          Updating...
+        </button>
+      </div>
+    </div>
+
     <!-- Update Global Params -->
     <div class="fs-15px font-weight-bold mt-15px mb-5px px-15px">
       Update Bitcoin to USD Price

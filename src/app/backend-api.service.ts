@@ -159,6 +159,8 @@ export class BackendRoutes {
     '/api/v0/admin/get-usd-cents-to-deso-reserve-exchange-rate';
   static RoutePathSetBuyDeSoFeeBasisPoints =
     '/api/v0/admin/set-buy-deso-fee-basis-points';
+  static RoutePathAdminSetCaptchaRewardNanos =
+    '/api/v0/admin/set-captcha-reward-nanos';
   static RoutePathGetBuyDeSoFeeBasisPoints =
     '/api/v0/admin/get-buy-deso-fee-basis-points';
   static RoutePathAdminGetGlobalParams = '/api/v0/admin/get-global-params';
@@ -3200,6 +3202,22 @@ export class BackendApiService {
 
   GetBuyDeSoFeeBasisPoints(endpoint: string): Observable<any> {
     return this.get(endpoint, BackendRoutes.RoutePathGetBuyDeSoFeeBasisPoints);
+  }
+
+  UpdateCaptchaRewardNanos(
+    endpoint: string,
+    AdminPublicKey: string,
+    RewardNanos: number
+  ): Observable<any> {
+    return this.jwtPost(
+      endpoint,
+      BackendRoutes.RoutePathAdminSetCaptchaRewardNanos,
+      AdminPublicKey,
+      {
+        AdminPublicKey,
+        RewardNanos,
+      }
+    );
   }
 
   UpdateGlobalParams(

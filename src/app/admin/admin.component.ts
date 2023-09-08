@@ -36,6 +36,7 @@ export class AdminComponent implements OnInit {
   loadingMorePosts = false;
   loadingMempoolStats = true;
   loadingGlobalParams = true;
+  loadingAppState = true;
   loadingPostsByDESO = false;
   searchingForPostsByDESO = false;
   @Input() isMobile = false;
@@ -99,12 +100,14 @@ export class AdminComponent implements OnInit {
   usernameToFetchVerificationAuditLogs = '';
   removingNilPosts = false;
   submittingReprocessRequest = false;
+  updatingCaptchaRewardNanos = false;
   submittingRemovalRequest = false;
   submittingVerifyRequest = false;
   mempoolTotalBytes = 0;
   loadingNextBlockStats = false;
   nextBlockStats: any = {};
   globalParams: any = {};
+  captchaDeSoNanos = 0;
   updateGlobalParamsValues = {
     USDPerBitcoin: 0,
     CreateProfileFeeNanos: 0,
@@ -225,6 +228,7 @@ export class AdminComponent implements OnInit {
     this._loadMempoolStats();
     this._loadNextBlockStats();
     this._loadGlobalParams();
+    this._loadAppState();
 
     // Get current fee percentage and reserve USD to DeSo exchange price.
     this._loadBuyDeSoFeeRate();
@@ -354,7 +358,7 @@ export class AdminComponent implements OnInit {
             console.error(err);
             this.globalVars._alertError(
               'Error getting hot feed constants: ' +
-                this.backendApi.stringifyError(err)
+              this.backendApi.stringifyError(err)
             );
           }
         );
@@ -415,7 +419,7 @@ export class AdminComponent implements OnInit {
           console.error(err);
           this.globalVars._alertError(
             'Error updating InteractionCap: ' +
-              this.backendApi.stringifyError(err)
+            this.backendApi.stringifyError(err)
           );
         }
       )
@@ -446,7 +450,7 @@ export class AdminComponent implements OnInit {
           console.error(err);
           this.globalVars._alertError(
             'Error updating Tag InteractionCap: ' +
-              this.backendApi.stringifyError(err)
+            this.backendApi.stringifyError(err)
           );
         }
       )
@@ -477,7 +481,7 @@ export class AdminComponent implements OnInit {
           console.error(err);
           this.globalVars._alertError(
             'Error updating hot TimeDecayBlocks: ' +
-              this.backendApi.stringifyError(err)
+            this.backendApi.stringifyError(err)
           );
         }
       )
@@ -508,7 +512,7 @@ export class AdminComponent implements OnInit {
           console.error(err);
           this.globalVars._alertError(
             'Error updating tag hot TimeDecayBlocks: ' +
-              this.backendApi.stringifyError(err)
+            this.backendApi.stringifyError(err)
           );
         }
       )
@@ -546,7 +550,7 @@ export class AdminComponent implements OnInit {
           console.error(err);
           this.globalVars._alertError(
             'Error updating txn type multiplier map: ' +
-              this.backendApi.stringifyError(err)
+            this.backendApi.stringifyError(err)
           );
         }
       )
@@ -575,7 +579,7 @@ export class AdminComponent implements OnInit {
           console.error(err);
           this.globalVars._alertError(
             'Error updating posts multiplier: ' +
-              this.backendApi.stringifyError(err)
+            this.backendApi.stringifyError(err)
           );
         }
       )
@@ -604,7 +608,7 @@ export class AdminComponent implements OnInit {
           console.error(err);
           this.globalVars._alertError(
             'Error updating interaction multiplier: ' +
-              this.backendApi.stringifyError(err)
+            this.backendApi.stringifyError(err)
           );
         }
       )
@@ -636,7 +640,7 @@ export class AdminComponent implements OnInit {
           console.error(err);
           this.globalVars._alertError(
             "Error fetching user's multipliers: " +
-              this.backendApi.stringifyError(err)
+            this.backendApi.stringifyError(err)
           );
         }
       )
@@ -800,6 +804,26 @@ export class AdminComponent implements OnInit {
       )
       .add(() => {
         this.loadingNextBlockStats = false;
+      });
+  }
+
+  _loadAppState() {
+    this.loadingAppState = true;
+    this.backendApi
+      .GetAppState(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser.PublicKeyBase58Check
+      )
+      .subscribe(
+        (res) => {
+          this.captchaDeSoNanos = res.CaptchaDeSoNanos;
+        },
+        (err) => {
+          console.log(err);
+        }
+      )
+      .add(() => {
+        this.loadingAppState = false;
       });
   }
 
@@ -1345,6 +1369,50 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  updateCaptchaRewardNanos(): void {
+    SwalHelper.fire({
+      target: this.globalVars.getTargetComponentSelector(),
+      title: 'Are you ready?',
+      html: `You are about to update the Captcha Reward to be ${
+        this.captchaDeSoNanos
+      } DeSo nanos`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      customClass: {
+        confirmButton: 'btn btn-light',
+        cancelButton: 'btn btn-light no',
+      },
+      reverseButtons: true,
+    }).then((res) => {
+      if (res.isConfirmed) {
+        this.updatingCaptchaRewardNanos = true;
+        this.backendApi
+          .UpdateCaptchaRewardNanos(
+            this.globalVars.localNode,
+            this.globalVars.loggedInUser.PublicKeyBase58Check,
+            this.captchaDeSoNanos
+          )
+          .subscribe(
+            (res: any) => {
+              this.globalVars._alertSuccess(
+                sprintf(
+                  'Successfully updated the Captcha Reward to %d DeSo Nanos',
+                  res.RewardNanos
+                )
+              );
+            },
+            (err: any) => {
+              this.globalVars._alertError(this.extractError(err));
+            }
+          )
+          .add(() => {
+            this.updatingCaptchaRewardNanos = false;
+            this._loadAppState();
+          });
+      }
+    });
+  }
+
   updateGlobalParams(
     usdPerBitcoin: number,
     createProfileFeeNanos: number,
@@ -1400,8 +1468,8 @@ export class AdminComponent implements OnInit {
               minimumNetworkFeeNanosPerKB >= 0
                 ? minimumNetworkFeeNanosPerKB
                 : this.globalParams.MinimumNetworkFeeNanosPerKB >= 0
-                ? this.globalParams.MinimumNetworkFeeNanosPerKB
-                : Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
+                  ? this.globalParams.MinimumNetworkFeeNanosPerKB
+                  : Math.floor(parseFloat(this.feeRateDeSoPerKB) * 1e9)
             )
             .subscribe(
               (res: any) => {
