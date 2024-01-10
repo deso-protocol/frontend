@@ -43,24 +43,25 @@ export class BithuntService {
   ) {}
 
   getCommunityProjectsLeaderboard(): Observable<CommunityProject[]> {
-    const pages = Array.apply(null, { length: 10 });
-    return forkJoin(
-      pages.map((_, index: number) =>
-        this.getCommunityProjectsLeaderboardPage(index)
-      )
-    ).pipe(
-      map((res: CommunityProject[][]) => {
-        const projects = flatten(res);
-        return projects
-          .filter((project: CommunityProject) => project.Profile)
-          .sort((a, b) => {
-            return (
-              b.Profile.CoinEntry.DeSoLockedNanos -
-              a.Profile.CoinEntry.DeSoLockedNanos
-            );
-          });
-      })
-    );
+    return of([]);
+    // const pages = Array.apply(null, { length: 10 });
+    // return forkJoin(
+    //   pages.map((_, index: number) =>
+    //     this.getCommunityProjectsLeaderboardPage(index)
+    //   )
+    // ).pipe(
+    //   map((res: CommunityProject[][]) => {
+    //     const projects = flatten(res);
+    //     return projects
+    //       .filter((project: CommunityProject) => project.Profile)
+    //       .sort((a, b) => {
+    //         return (
+    //           b.Profile.CoinEntry.DeSoLockedNanos -
+    //           a.Profile.CoinEntry.DeSoLockedNanos
+    //         );
+    //       });
+    //   })
+    // );
   }
 
   getCommunityProjectsLeaderboardPage(

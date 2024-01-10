@@ -5,14 +5,14 @@ import {
   BackendApiService,
   BalanceEntryResponse,
   DAOCoinEntryResponse,
-  DAOCoinOperationTypeString,
+  DAOCoinOperationTypeString, LockedBalanceEntryResponse,
   TransferRestrictionStatusString,
 } from '../backend-api.service';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InfiniteScroller } from '../infinite-scroller';
 import { IAdapter, IDatasource } from 'ngx-ui-scroll';
-import { Observable, Subscription, throwError, zip } from 'rxjs';
+import { Observable, of, Subscription, throwError, zip } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { toBN } from 'web3-utils';
 import { catchError, map } from 'rxjs/operators';
@@ -20,6 +20,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { TransferDAOCoinModalComponent } from './transfer-dao-coin-modal/transfer-dao-coin-modal.component';
 import { BurnDaoCoinModalComponent } from './burn-dao-coin-modal/burn-dao-coin-modal.component';
 import { SwalHelper } from '../../lib/helpers/swal-helper';
+import { Hex } from "web3-utils/types";
 
 @Component({
   selector: 'dao-coins',
@@ -40,19 +41,25 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   sortedCoinsFromHighToLow: number = 0;
   sortedUsernameFromHighToLow: number = 0;
   hideMyDAOTab: boolean = false;
-  showDAOCoinHoldings: boolean = false;
 
   myDAOCoin: DAOCoinEntryResponse;
   myDAOCapTable: BalanceEntryResponse[] = [];
   daoCoinHoldings: BalanceEntryResponse[] = [];
+  lockedHoldings: LockedBalanceEntryResponse[] = [];
 
   loadingMyDAOCapTable: boolean = false;
   loadingMyDAOCoinHoldings: boolean = false;
   loadingNewSelection: boolean = false;
 
+  static myDAOSettingsTab: string = 'DAO Coin Settings';
+  static myLockupSettingsTab: string = 'Lockup Settings';
+  settingsTabs = [DaoCoinsComponent.myDAOSettingsTab, DaoCoinsComponent.myLockupSettingsTab];
+  activeSettingsTab: string = DaoCoinsComponent.myDAOSettingsTab;
+
   static myDAOTab: string = 'My DAO';
   static daoCoinsTab: string = 'DAO Holdings';
-  tabs = [DaoCoinsComponent.myDAOTab, DaoCoinsComponent.daoCoinsTab];
+  static myLockedHoldingsTab: string = 'My Locked Holdings';
+  tabs = [DaoCoinsComponent.myDAOTab, DaoCoinsComponent.daoCoinsTab, DaoCoinsComponent.myLockedHoldingsTab];
   activeTab: string = DaoCoinsComponent.myDAOTab;
   balanceEntryToHihlight: BalanceEntryResponse;
 
@@ -95,11 +102,11 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
       this.loadMyDAOCapTable().subscribe((res) => {});
     } else {
       this.hideMyDAOTab = true;
-      this.showDAOCoinHoldings = true;
       this.activeTab = DaoCoinsComponent.daoCoinsTab;
-      this.tabs = [DaoCoinsComponent.daoCoinsTab];
+      this.tabs = [DaoCoinsComponent.daoCoinsTab, DaoCoinsComponent.myLockedHoldingsTab];
     }
     this.loadMyDAOCoinHoldings().subscribe((res) => {});
+    // TODO: JP - Load locked holdings and locked coin settings.
     this.titleService.setTitle(`DAO Coins - ${environment.node.name}`);
   }
 
@@ -152,6 +159,15 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
           this.daoCoinHoldings = res.Hodlers || [];
           this.loadingMyDAOCoinHoldings = false;
           this.loadingMyDAOCoinHoldings = false;
+          // TODO: JP - remove this, this is here to mock data for now.
+          this.lockedHoldings = res.Hodlers.map((hodler) => ({
+            HODLerPublicKeyBase58Check: hodler.HODLerPublicKeyBase58Check,
+            ProfilePublicKeyBase58Check: hodler.CreatorPublicKeyBase58Check,
+            UnlockTimestampNanoSecs: 0, // TODO: find better mock value.
+            VestingEndTimestampNanoSecs: 0, // TODO: find better mock value.
+            BalanceBaseUnits: hodler.BalanceNanosUint256,
+            ProfileEntryResponse: hodler.ProfileEntryResponse,
+          }));
           return res.Hodlers;
         }),
         catchError((err) => {
@@ -160,6 +176,15 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
           return throwError(err);
         })
       );
+  }
+
+  // TODO: JP - implement loading locked holdings.
+  loadMyLockedHoldings(): Observable<LockedBalanceEntryResponse[]> {
+    return of([]);
+  }
+
+  isLockedBalanceGreaterThanZero(balanceNanosHex: Hex): boolean {
+    return toBN(balanceNanosHex).gtn(0);
   }
 
   // Thanks to @brabenetz for the solution on forward padding with the ngx-ui-scroll component.
@@ -185,14 +210,27 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     });
   }
 
+  sortLockedHoldingsCoins(
+    hodlings: LockedBalanceEntryResponse[],
+    descending: boolean
+  ): void {
+    this.sortedUsernameFromHighToLow = 0;
+    this.sortedCoinsFromHighToLow = descending ? -1 : 1;
+    hodlings.sort((a: LockedBalanceEntryResponse, b: LockedBalanceEntryResponse) => {
+      return toBN(this.sortedCoinsFromHighToLow).mul((toBN(a.BalanceBaseUnits).sub(toBN(b.BalanceBaseUnits))))
+        .toNumber();
+    });
+  }
+
   // sort by username
   sortHodlingsUsername(
-    hodlings: BalanceEntryResponse[],
+    hodlings: BalanceEntryResponse[] | LockedBalanceEntryResponse[],
     descending: boolean
   ): void {
     this.sortedUsernameFromHighToLow = descending ? -1 : 1;
     this.sortedCoinsFromHighToLow = 0;
-    hodlings.sort((a: BalanceEntryResponse, b: BalanceEntryResponse) => {
+    hodlings.sort((a: BalanceEntryResponse | LockedBalanceEntryResponse,
+                   b: BalanceEntryResponse | LockedBalanceEntryResponse) => {
       return (
         this.sortedUsernameFromHighToLow *
         b.ProfileEntryResponse.Username.localeCompare(
@@ -210,11 +248,13 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
         descending = this.sortedUsernameFromHighToLow !== -1;
         this.sortHodlingsUsername(this.myDAOCapTable, descending);
         this.sortHodlingsUsername(this.daoCoinHoldings, descending);
+        this.sortHodlingsUsername(this.lockedHoldings, descending);
         break;
       case 'coins':
         descending = this.sortedCoinsFromHighToLow !== -1;
         this.sortHodlingsCoins(this.myDAOCapTable, descending);
         this.sortHodlingsCoins(this.daoCoinHoldings, descending);
+        this.sortLockedHoldingsCoins(this.lockedHoldings, descending);
         break;
       default:
       // do nothing
@@ -473,19 +513,43 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   }
 
   emptyHodlerListMessage(): string {
-    return this.showDAOCoinHoldings
+    return this.isDaoCoinTab()
       ? "You don't hold any DAO coins"
-      : "Your DAO doesn't have any coins yet.";
+      : this.isMyLockedHoldingsTab() ?
+        "You don't hold any locked coins" :
+        "Your DAO doesn't have any coins yet.";
+  }
+
+  isDaoCoinTab(): boolean {
+    return this.activeTab === DaoCoinsComponent.daoCoinsTab;
+  }
+  isMyDaoTab(): boolean {
+    return this.activeTab === DaoCoinsComponent.myDAOTab;
+  }
+  isMyLockedHoldingsTab(): boolean {
+    return this.activeTab === DaoCoinsComponent.myLockedHoldingsTab;
+  }
+  getViewableHoldings(): BalanceEntryResponse[] | LockedBalanceEntryResponse[] {
+    if (this.isDaoCoinTab()) {
+      return this.daoCoinHoldings;
+    } else if (this.isMyLockedHoldingsTab()) {
+      return this.lockedHoldings;
+    } else {
+      return this.myDAOCapTable;
+    }
   }
 
   _handleTabClick(tab: string) {
-    this.showDAOCoinHoldings = tab === DaoCoinsComponent.daoCoinsTab;
     this.lastPage = Math.floor(
-      (this.showDAOCoinHoldings ? this.daoCoinHoldings : this.myDAOCapTable)
+     this.getViewableHoldings()
         .length / DaoCoinsComponent.PAGE_SIZE
     );
     this.activeTab = tab;
     this.scrollerReset();
+  }
+
+  _handleSettingsTabClick(tab: string) {
+    this.activeSettingsTab = tab;
   }
 
   scrollerReset() {
@@ -515,15 +579,10 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
 
     return new Promise((resolve, reject) => {
       resolve(
-        this.showDAOCoinHoldings
-          ? this.daoCoinHoldings.slice(
-              startIdx,
-              Math.min(endIdx, this.daoCoinHoldings.length)
-            )
-          : this.myDAOCapTable.slice(
-              startIdx,
-              Math.min(endIdx, this.myDAOCapTable.length)
-            )
+        this.getViewableHoldings().slice(
+          startIdx,
+          Math.min(endIdx, this.getViewableHoldings().length)
+        )
       );
     });
   }
@@ -592,5 +651,18 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+
+  // TODO: JP - implement these modals and their functionality. It should look similar to the funcitons above.
+  openLockDAOCoinModal(creator: BalanceEntryResponse): void {
+    alert('OPEN LOCK DAO COIN MODAL');
+  }
+
+  openUnlockLockedCoinModal(creator: LockedBalanceEntryResponse): void {
+    alert('OPEN UNLOCK LOCKED COIN MODAL');
+  }
+
+  openTransferLockedCoinModal(creator: LockedBalanceEntryResponse): void {
+    alert('OPEN TRANSFER LOCKED COIN MODAL');
   }
 }

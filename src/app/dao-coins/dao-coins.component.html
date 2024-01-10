@@ -48,12 +48,20 @@
       </div>
     </div>
 
-    <!-- My DAO Management -->
+    <!-- My DAO & Lockups Management -->
+    <!-- Tab Selector -->
+    <tab-selector
+      [tabs]="settingsTabs"
+      [activeTab]="activeSettingsTab"
+      (tabClick)="_handleSettingsTabClick($event)"
+    ></tab-selector>
     <!-- Override .container's max-width property with max-width: inherit-->
     <div
       class="container fs-14px p-15px border-bottom border-color-grey"
       style="max-width: inherit"
     >
+      <ng-container *ngIf="activeSettingsTab === 'DAO Coin Settings'">
+
       <!-- Mint -->
       <div
         class="d-flex justify-content-between py-15px w-100"
@@ -191,6 +199,13 @@
           </button>
         </div>
       </div>
+      </ng-container>
+      <ng-container *ngIf="activeSettingsTab === 'Lockup Settings'">
+       LOCKUP SETTINGS
+        <!--TODO: JP - write code to manage lockup settings here. -->
+        <!-- Note that this isn't fleshed out as much as I would like, so chat with me if you're stuck -->
+      </ng-container>
+
     </div>
   </ng-container>
 
@@ -209,12 +224,12 @@
   ></tab-selector>
   <ng-container
     *ngIf="
-      (!loadingMyDAOCapTable && !loadingMyDAOCoinHoldings) ||
-      loadingNewSelection
+        (!loadingMyDAOCapTable && !loadingMyDAOCoinHoldings) ||
+        loadingNewSelection
     "
   >
     <div
-      class="row no-gutters fs-15px d-flex align-items-center border-bottom border-color-grey pl-15px py-15px"
+      class="row no-gutters fs-15px d-flex align-items-center border-bottom border-color-grey px-15px py-15px"
     >
       <div
         class="col-6 mb-0 cursor-pointer fc-muted text-link_hover"
@@ -231,7 +246,7 @@
         Name
       </div>
       <div
-        class="col-5 mb-0 cursor-pointer fc-muted text-link_hover text-right"
+        class="col-4 mb-0 cursor-pointer fc-muted text-link_hover text-right"
         style="text-align: end"
         (click)="sortWallet('coins')"
       >
@@ -245,13 +260,15 @@
         ></i>
         Coins
       </div>
-      <div class="col-1 d-block mb-0"></div>
+      <div class="col-2 d-block mb-0 text-right">
+        Actions
+      </div>
     </div>
     <div
       *ngIf="
-        (showDAOCoinHoldings ? daoCoinHoldings : myDAOCapTable).length == 0
+        getViewableHoldings().length == 0
       "
-      class="d-flex justify-content-center fs-15px fc-muted w-100 mt-30px px-15px"
+      class="d-flex justify-content-center fs-15px fc-muted w-100 mt-30px px-10px"
       style="text-align: center"
     >
       {{ emptyHodlerListMessage() }}
@@ -261,11 +278,12 @@
       <div
         *ngIf="
           creator &&
+          isMyLockedHoldingsTab() ? isLockedBalanceGreaterThanZero(creator.BalanceBaseUnits) :
           (creator.BalanceNanos ||
             (creator.NetBalanceInMempool != 0 &&
               globalVars.showProcessingSpinners))
         "
-        class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-10px p-5px"
+        class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-5px p-10px"
       >
         <!-- Name-->
         <a
@@ -288,9 +306,14 @@
             <span>
               {{
                 creator.ProfileEntryResponse?.Username ||
-                  (showDAOCoinHoldings
-                    ? creator.CreatorPublicKeyBase58Check
-                    : creator.HODLerPublicKeyBase58Check)
+                  (
+                    isDaoCoinTab() ? creator.CreatorPublicKeyBase58Check :
+                    (
+                      isMyLockedHoldingsTab() ?
+                      creator.ProfilePublicKeybase58Check :
+                      creator.HODLerPublicKeyBase58Check
+                    )
+                  )
               }}
             </span>
 
@@ -334,12 +357,13 @@
 
         <!-- Balance -->
         <div
-          class="col-5 mb-0 pt-0px d-flex align-items-center justify-content-end text-right"
+          class="col-4 mb-0 pt-0px d-flex align-items-center justify-content-end text-right"
         >
           <div>
             <div>
               <i
                 *ngIf="
+                  !isMyLockedHoldingsTab() &&
                   creator.NetBalanceInMempool != 0 &&
                   globalVars.showProcessingSpinners
                 "
@@ -349,28 +373,43 @@
                 #tooltip="matTooltip"
                 (click)="tooltip.toggle()"
               ></i>
-              {{ globalVars.hexNanosToUnitString(creator.BalanceNanosUint256) }}
+              {{ globalVars.hexNanosToUnitString(isMyLockedHoldingsTab() ? creator.BalanceBaseUnits : creator.BalanceNanosUint256) }}
             </div>
           </div>
         </div>
 
         <div
-          class="col-1 mb-0 pt-0px d-flex align-items-center justify-content-around text-right"
+          class="col-2 mb-0 pt-0px d-flex align-items-center justify-content-end text-right"
         >
           <ng-container
             *ngIf="
-              showDAOCoinHoldings ||
+              isDaoCoinTab() ||
+              (isMyDaoTab() &&
               creator.HODLerPublicKeyBase58Check ===
-                globalVars.loggedInUser?.PublicKeyBase58Check
+                globalVars.loggedInUser?.PublicKeyBase58Check)
             "
           >
             <i
-              class="fas fa-exchange-alt"
+              class="fas fa-exchange-alt pr-10px"
               (click)="openTransferDAOCoinModal(creator)"
             ></i>
             <i
-              class="fa fa-fire fc-red"
+              class="fa fa-fire fc-red pr-10px"
               (click)="openBurnDAOCoinModal(creator)"
+            ></i>
+            <i
+              class="fa fa-lock"
+              (click)="openLockDAOCoinModal(creator)"
+              ></i>
+          </ng-container>
+          <ng-container
+            *ngIf="isMyLockedHoldingsTab()"
+            >
+            <i class="fas fa-exchange-alt pr-10px"
+              (click)="openTransferLockedCoinModal(creator)"
+            ></i>
+            <i class="fas fa-lock-open"
+              (click)="openUnlockLockedCoinModal(creator)"
             ></i>
           </ng-container>
         </div>
@@ -379,7 +418,6 @@
   </ng-container>
 </ng-container>
 <div *ngIf="!globalVars.loggedInUser">
-  <simple-center-loader></simple-center-loader>
 </div>
 <!-- SPACER FOR BOTTOM BAR ON MOBILE -->
 <div class="global__bottom-bar-mobile-height"></div>
