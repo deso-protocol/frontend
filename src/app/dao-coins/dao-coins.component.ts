@@ -79,6 +79,10 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED,
   ];
 
+  lockupDuration: number = 0;
+  lockupYieldApy: number = 0;
+  updatingCoinLockupParams: boolean = false;
+
   constructor(
     private appData: GlobalVarsService,
     private titleService: Title,
@@ -444,6 +448,14 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
           });
       }
     });
+  }
+
+  removeYieldCurve(): void {
+    // TODO: Implement
+  }
+
+  addYieldCurve(): void {
+    // TODO: Implement
   }
 
   doDAOCoinTxn(
