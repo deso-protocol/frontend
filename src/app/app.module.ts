@@ -221,6 +221,7 @@ import { BurnDaoCoinModalComponent } from './dao-coins/burn-dao-coin-modal/burn-
 import { ThemeModule } from './theme/theme.module';
 import { Theme } from './theme/symbols';
 import { PostMultiplierComponent } from './feed/feed-post-dropdown/post-multiplier/post-multiplier.component';
+import { LockupDaoCoinModalComponent } from './dao-coins/lockup-dao-coin-modal/lockup-dao-coin-modal.component';
 
 const lightTheme: Theme = {key: 'light', name: 'Light Theme'};
 const darkTheme: Theme = {key: 'dark', name: 'Dark Theme'};
@@ -374,6 +375,7 @@ const greenishTheme: Theme = {key: 'greenish', name: 'Green Theme'};
     DaoCoinsPageComponent,
     TransferDAOCoinModalComponent,
     BurnDaoCoinModalComponent,
+    LockupDaoCoinModalComponent
   ],
   imports: [
     BrowserModule,

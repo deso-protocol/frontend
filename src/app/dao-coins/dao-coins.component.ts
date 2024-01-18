@@ -21,6 +21,7 @@ import { TransferDAOCoinModalComponent } from './transfer-dao-coin-modal/transfe
 import { BurnDaoCoinModalComponent } from './burn-dao-coin-modal/burn-dao-coin-modal.component';
 import { SwalHelper } from '../../lib/helpers/swal-helper';
 import { Hex } from "web3-utils/types";
+import { LockupDaoCoinModalComponent } from './lockup-dao-coin-modal/lockup-dao-coin-modal.component';
 
 @Component({
   selector: 'dao-coins',
@@ -665,9 +666,12 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // TODO: JP - implement these modals and their functionality. It should look similar to the funcitons above.
   openLockDAOCoinModal(creator: BalanceEntryResponse): void {
-    alert('OPEN LOCK DAO COIN MODAL');
+    const modalDetails = this.modalService.show(LockupDaoCoinModalComponent, {
+      class: 'modal-dialog-centered',
+      initialState: { balanceEntryResponse: creator },
+    });
+    const onHideEvent = modalDetails.onHide;
   }
 
   openUnlockLockedCoinModal(creator: LockedBalanceEntryResponse): void {
