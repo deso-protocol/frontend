@@ -17,11 +17,17 @@ import { environment } from 'src/environments/environment';
 import { toBN } from 'web3-utils';
 import { catchError, map } from 'rxjs/operators';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { TransferDAOCoinModalComponent } from './transfer-dao-coin-modal/transfer-dao-coin-modal.component';
+import {
+  TransferDAOCoinModalComponent
+} from './transfer-dao-coin-modal/transfer-dao-coin-modal.component';
 import { BurnDaoCoinModalComponent } from './burn-dao-coin-modal/burn-dao-coin-modal.component';
 import { SwalHelper } from '../../lib/helpers/swal-helper';
 import { Hex } from "web3-utils/types";
 import { LockupDaoCoinModalComponent } from './lockup-dao-coin-modal/lockup-dao-coin-modal.component';
+import { UnlockDaoCoinModalComponent } from './unlock-dao-coin-modal/unlock-dao-coin-modal.component';
+import {
+  TransferLockupDaoCoinModalComponent
+} from './transfer-lockup-dao-coin-modal/transfer-lockup-dao-coin-modal.component';
 
 @Component({
   selector: 'dao-coins',
@@ -54,7 +60,8 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
 
   static myDAOSettingsTab: string = 'DAO Coin Settings';
   static myLockupSettingsTab: string = 'Lockup Settings';
-  settingsTabs = [DaoCoinsComponent.myDAOSettingsTab, DaoCoinsComponent.myLockupSettingsTab];
+  static myYieldCurve: string = 'Lockup Yield Curve'
+  settingsTabs = [DaoCoinsComponent.myDAOSettingsTab, DaoCoinsComponent.myLockupSettingsTab, DaoCoinsComponent.myYieldCurve];
   activeSettingsTab: string = DaoCoinsComponent.myDAOSettingsTab;
 
   static myDAOTab: string = 'My DAO';
@@ -674,11 +681,22 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     const onHideEvent = modalDetails.onHide;
   }
 
-  openUnlockLockedCoinModal(creator: LockedBalanceEntryResponse): void {
-    alert('OPEN UNLOCK LOCKED COIN MODAL');
+  openUnlockLockedCoinModal(creator: BalanceEntryResponse): void {
+    const modalDetails = this.modalService.show(UnlockDaoCoinModalComponent, {
+      class: 'modal-dialog-centered',
+      initialState: { balanceEntryResponse: creator },
+    });
+    const onHideEvent = modalDetails.onHide;
   }
 
-  openTransferLockedCoinModal(creator: LockedBalanceEntryResponse): void {
-    alert('OPEN TRANSFER LOCKED COIN MODAL');
+  openTransferLockedCoinModal(creator: BalanceEntryResponse): void {
+    const modalDetails = this.modalService.show(
+      TransferLockupDaoCoinModalComponent,
+      {
+        class: 'modal-dialog-centered',
+        initialState: { balanceEntryResponse: creator },
+      }
+    );
+    const onHideEvent = modalDetails.onHide;
   }
 }

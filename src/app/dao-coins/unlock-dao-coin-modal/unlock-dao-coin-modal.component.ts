@@ -4,19 +4,17 @@ import { GlobalVarsService } from '../../global-vars.service';
 import {
   BackendApiService,
   BalanceEntryResponse,
-  DAOCoinOperationTypeString, ProfileEntryResponse
+  DAOCoinOperationTypeString,
 } from '../../backend-api.service';
 import { toBN } from 'web3-utils';
 
 @Component({
-  selector: 'lockup-dao-coin-modal',
-  templateUrl: './lockup-dao-coin-modal.component.html',
+  selector: 'unlock-dao-coin-modal',
+  templateUrl: './unlock-dao-coin-modal.component.html',
 })
-export class LockupDaoCoinModalComponent {
+export class UnlockDaoCoinModalComponent {
   @Input() balanceEntryResponse: BalanceEntryResponse;
 
-  lockupRecipient: ProfileEntryResponse;
-  profileIsUser: boolean;
   coinsToLockup: number = 0;
   unlockTimestampNanoSecs: number = 0;
   vestingEndTimestampNanoSecs: number = 0;
@@ -29,12 +27,7 @@ export class LockupDaoCoinModalComponent {
     public modalService: BsModalService,
     public globalVars: GlobalVarsService,
     private backendApi: BackendApiService
-  ) {
-    // We set the profileIsUser variable based on the clicked profile.
-    this.profileIsUser =
-      (this.balanceEntryResponse?.CreatorPublicKeyBase58Check ===
-        this.globalVars.loggedInUser.PublicKeyBase58Check)
-  }
+  ) {}
 
   burnDAOCoin(): void {
     this.lockingDAOCoin = true;
@@ -78,10 +71,5 @@ export class LockupDaoCoinModalComponent {
       err.push('Amount to burn exceeds balance\n');
     }
     this.validationErrors = err;
-  }
-
-  _handleCreatorSelectedInSearch(creator): void {
-    // Set the recipient as the response.
-    this.lockupRecipient =  creator
   }
 }

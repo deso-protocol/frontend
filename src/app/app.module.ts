@@ -222,6 +222,10 @@ import { ThemeModule } from './theme/theme.module';
 import { Theme } from './theme/symbols';
 import { PostMultiplierComponent } from './feed/feed-post-dropdown/post-multiplier/post-multiplier.component';
 import { LockupDaoCoinModalComponent } from './dao-coins/lockup-dao-coin-modal/lockup-dao-coin-modal.component';
+import { UnlockDaoCoinModalComponent } from './dao-coins/unlock-dao-coin-modal/unlock-dao-coin-modal.component';
+import {
+  TransferLockupDaoCoinModalComponent
+} from './dao-coins/transfer-lockup-dao-coin-modal/transfer-lockup-dao-coin-modal.component';
 
 const lightTheme: Theme = {key: 'light', name: 'Light Theme'};
 const darkTheme: Theme = {key: 'dark', name: 'Dark Theme'};
@@ -375,7 +379,9 @@ const greenishTheme: Theme = {key: 'greenish', name: 'Green Theme'};
     DaoCoinsPageComponent,
     TransferDAOCoinModalComponent,
     BurnDaoCoinModalComponent,
-    LockupDaoCoinModalComponent
+    LockupDaoCoinModalComponent,
+    UnlockDaoCoinModalComponent,
+    TransferLockupDaoCoinModalComponent,
   ],
   imports: [
     BrowserModule,

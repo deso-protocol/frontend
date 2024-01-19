@@ -4,26 +4,24 @@
   </div>
   <div class="pt-15px">
     Your Balance:
-    {{
-      globalVars.hexNanosToUnitString(balanceEntryResponse.BalanceNanosUint256)
-    }}
     {{ balanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins
   </div>
-  <search-bar
-    [showCloutavista]="false"
-    [isSearchForUsersToSendDESO]="true"
-    [placeholder]="'Recipient'"
-    (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
-  ></search-bar>
-  <simple-profile-card
-    [profile]="lockupRecipient"
-    [singleColumn]="true"
-    [hideFollowLink]="true"
-    *ngIf="lockupRecipient"
-  ></simple-profile-card>
   <div class="input-group py-15px">
     <div class="input-group-prepend">
-      <span class="input-group-text" style="width: 225px">Unlock Timestamp (ns)</span>
+      <span class="input-group-text">Recipient Public Key</span>
+    </div>
+    <input
+      [(ngModel)]="recipientPublicKey"
+      (ngModelChange)="updateValidationErrors()"
+      class="form-control fs-15px text-right d-inline-block"
+      type="text"
+      placeholder=""
+      [disabled]="lockingDAOCoin"
+    />
+  </div>
+  <div class="input-group py-15px">
+    <div class="input-group-prepend">
+      <span class="input-group-text">Unlock Timestamp</span>
     </div>
     <input
       [(ngModel)]="unlockTimestampNanoSecs"
@@ -35,10 +33,9 @@
       [disabled]="lockingDAOCoin"
     />
   </div>
-  <!-- FIXME: Figure out how to disable this next div if the logged in user isn't relevant -->
-  <div class="input-group py-15px" *ngIf=true>
+  <div class="input-group py-15px">
     <div class="input-group-prepend">
-      <span class="input-group-text" style="width: 225px">Vesting End Timestamp</span>
+      <span class="input-group-text">Vesting End Timestamp</span>
     </div>
     <input
       [(ngModel)]="vestingEndTimestampNanoSecs"
@@ -52,7 +49,7 @@
   </div>
   <div class="input-group py-15px">
     <div class="input-group-prepend">
-      <span class="input-group-text" style="width: 225px">Coins To Lockup</span>
+      <span class="input-group-text">Coins To Lockup</span>
     </div>
     <input
       [(ngModel)]="coinsToLockup"

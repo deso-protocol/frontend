@@ -328,10 +328,11 @@
             </button>
           </div>
         </div>
-        <!--TODO: JP - write code to manage lockup settings here. -->
-        <!-- Note that this isn't fleshed out as much as I would like, so chat with me if you're stuck -->
-      </ng-container>
 
+      </ng-container>
+      <ng-container *ngIf="activeSettingsTab === 'Lockup Yield Curve'">
+        hello
+      </ng-container>
     </div>
   </ng-container>
 
