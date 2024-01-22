@@ -1,77 +1,65 @@
 <div app-theme class="nft-modal-container p-15px d-flex flex-column">
   <!--- Display information on the user -->
   <div class="fs-20px">
-    Lockup {{ balanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins
+    Transfer Unvested {{ balanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins
   </div>
-  <div class="pt-15px">
-    Your Balance:
-    {{ balanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins
-  </div>
-  <!--- Create a search bar for who to transfer to -->
-  <!-- FIXME: ngIf -->
   <search-bar
     [showCloutavista]="false"
     [isSearchForUsersToSendDESO]="true"
+    [placeholder]="'Recipient'"
     (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
-    *ngIf="!true"
   ></search-bar>
-
-  <div class="input-group py-15px">
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px"
+    *ngIf="lockupRecipient"
+  >
     <div class="input-group-prepend">
-      <span class="input-group-text">Recipient Public Key</span>
+      <span class="cursor-pointer mb-0">Selected Recipient:</span>
     </div>
-    <input
-      [(ngModel)]="recipientPublicKey"
-      (ngModelChange)="updateValidationErrors()"
-      class="form-control fs-15px text-right d-inline-block"
-      type="text"
-      placeholder=""
-      [disabled]="lockingDAOCoin"
-    />
+    <simple-profile-card
+      [profile]="lockupRecipient"
+      [singleColumn]="true"
+      [hideFollowLink]="true"
+      *ngIf="lockupRecipient"
+    ></simple-profile-card>
   </div>
-  <div class="input-group py-15px">
-    <div class="input-group-prepend">
-      <span class="input-group-text">Unlock Timestamp</span>
-    </div>
-    <input
-      [(ngModel)]="unlockTimestampNanoSecs"
-      (ngModelChange)="updateValidationErrors()"
-      class="form-control fs-15px text-right d-inline-block"
-      type="number"
-      min="0"
-      placeholder="0"
-      [disabled]="lockingDAOCoin"
-    />
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px py-15px"
+  >
+    <label
+      for="update-transfer-restriction-status"
+      class="cursor-pointer mb-0"
+    >
+      Selected Lockup:
+    </label>
+    <select
+      id="update-transfer-restriction-status"
+      class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer mr-15px ml-auto"
+      [(ngModel)]="lockedBalanceEntry"
+    >
+      <option
+        *ngFor="let option of lockedBalanceEntries"
+        [value]="option"
+        class="text-grey5 font-weight-bold"
+      >
+        {{ getLockedBalanceEntryDropdownText(option) }}
+      </option>
+    </select>
   </div>
-  <div class="input-group py-15px">
+  <div class="input-group py-25px">
     <div class="input-group-prepend">
-      <span class="input-group-text">Vesting End Timestamp</span>
+      <span class="input-group-text">Amount To Transfer</span>
     </div>
     <input
-      [(ngModel)]="vestingEndTimestampNanoSecs"
-      (ngModelChange)="updateValidationErrors()"
-      class="form-control fs-15px text-right d-inline-block"
-      type="number"
-      min="0"
-      placeholder="0"
-      [disabled]="lockingDAOCoin"
-    />
-  </div>
-  <div class="input-group py-15px">
-    <div class="input-group-prepend">
-      <span class="input-group-text">Coins To Lockup</span>
-    </div>
-    <input
-      [(ngModel)]="coinsToLockup"
+      [(ngModel)]="amountToTransfer"
       (ngModelChange)="updateValidationErrors()"
       class="form-control fs-15px text-right d-inline-block"
       type="number"
       min="0"
       placeholder="0"
-      [disabled]="lockingDAOCoin"
+      [disabled]="transferringDAOCoin"
     />
   </div>
-  <!--- FIXME: updateValidationErrors --->
   <div style="display: flex; justify-content: center; align-items: center;" class="py-15px">
     <button
       class="btn btn-primary font-weight-bold br-12px"
@@ -79,7 +67,7 @@
       (click)="updateValidationErrors()"
       [disabled]="lockingDAOCoin || validationErrors.length"
     >
-      Lockup
+      Transfer
     </button>
   </div>
   <ng-container *ngIf="validationErrors.length">

@@ -15,7 +15,6 @@ import { toBN } from 'web3-utils';
 export class TransferLockupDaoCoinModalComponent {
   @Input() balanceEntryResponse: BalanceEntryResponse;
 
-  receiver: ProfileEntryResponse;
   receiverIsDAOMember: boolean = false;
   coinsToLockup: number = 0;
   unlockTimestampNanoSecs: number = 0;
@@ -24,6 +23,16 @@ export class TransferLockupDaoCoinModalComponent {
   validationErrors: string[] = [];
   backendErrors: string = '';
   recipientPublicKey: string = '';
+  lockupRecipient: ProfileEntryResponse;
+  lockedBalanceEntry: any;
+  lockedBalanceEntries = [
+    TransferRestrictionStatusString.UNRESTRICTED,
+    TransferRestrictionStatusString.PROFILE_OWNER_ONLY,
+    TransferRestrictionStatusString.DAO_MEMBERS_ONLY,
+    TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED,
+  ];
+  amountToTransfer: number = 0;
+  transferringDAOCoin: boolean;
   constructor(
     public bsModalRef: BsModalRef,
     public modalService: BsModalService,
@@ -34,10 +43,10 @@ export class TransferLockupDaoCoinModalComponent {
 
   updateValidationErrors(): void {
     let err: string[] = [];
-
+    return;
     // (1) Check if the logged-in user is trying to transfer to themselves.
     if (
-      this.receiver?.PublicKeyBase58Check ===
+      this.lockupRecipient?.PublicKeyBase58Check ===
       this.globalVars.loggedInUser?.PublicKeyBase58Check
     ) {
       err.push('Cannot transfer locked tokens to yourself\n');
@@ -61,14 +70,14 @@ export class TransferLockupDaoCoinModalComponent {
     // (4) Validate lockup transfer restrictions surrounding the locked tokens.
     // (4a) Check if the lockup transfers are profile owner only.
     if (
-      this.receiver &&
+      this.lockupRecipient &&
       this.balanceEntryResponse.ProfileEntryResponse.DAOCoinEntry
         .LockupTransferRestrictionStatus ===
       TransferRestrictionStatusString.PROFILE_OWNER_ONLY &&
       this.balanceEntryResponse.ProfileEntryResponse.PublicKeyBase58Check !==
       this.globalVars.loggedInUser?.PublicKeyBase58Check &&
       this.balanceEntryResponse.ProfileEntryResponse.PublicKeyBase58Check !==
-      this.receiver?.PublicKeyBase58Check
+      this.lockupRecipient?.PublicKeyBase58Check
     ) {
       err.push(
         'This DAO coin can only be transferred to or from the profile owner\n'
@@ -81,7 +90,7 @@ export class TransferLockupDaoCoinModalComponent {
 
   _handleCreatorSelectedInSearch(creator) {
     // We set the components receiver variable to the passed creator.
-    this.receiver = creator;
+    this.lockupRecipient = creator;
 
     // We check if the Lockup Transfer Restriction Status requires a DAO Member Lookup.
     if (
@@ -92,7 +101,7 @@ export class TransferLockupDaoCoinModalComponent {
       this.backendApi
         .IsHodlingPublicKey(
           this.globalVars.localNode,
-          this.receiver.PublicKeyBase58Check,
+          this.lockupRecipient.PublicKeyBase58Check,
           this.balanceEntryResponse.CreatorPublicKeyBase58Check,
           true
         )
@@ -105,5 +114,9 @@ export class TransferLockupDaoCoinModalComponent {
 
     // Before exiting, check validations in the event the receiver is invalid.
     this.updateValidationErrors();
+  }
+
+  getLockedBalanceEntryDropdownText(option: any) {
+    return option;
   }
 }
