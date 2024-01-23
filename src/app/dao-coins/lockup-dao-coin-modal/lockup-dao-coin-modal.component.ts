@@ -59,9 +59,40 @@ export class LockupDaoCoinModalComponent implements OnInit, OnDestroy {
   }
 
   lockupDAOCoin(): void {
-    console.log(this.unlockDate)
-    console.log(this.unlockTime)
-    console.log(this.profileIsUser)
+    this.lockingDAOCoin = true;
+    this.backendErrors = '';
+
+    // We need to check if we're vesting or not vesting.
+    if (!this.vestedLockup) {
+      this.vestingEndUnixNanoTimestamp = this.unlockUnixNanoTimestamp
+    }
+
+    // Hit the backend API with the request.
+    this.backendApi
+      .CoinLockup(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.balanceEntryResponse.CreatorPublicKeyBase58Check,
+        this.lockupRecipient.PublicKeyBase58Check,
+        this.unlockUnixNanoTimestamp,
+        this.vestingEndUnixNanoTimestamp,
+        this.globalVars.toHexNanos(this.coinsToLockup),
+        {},
+        this.globalVars.defaultFeeRateNanosPerKB
+      )
+      .subscribe(
+        (res) => {
+          this.modalService.setDismissReason(
+            `coins locked|${this.globalVars.toHexNanos(this.coinsToLockup)}`
+          );
+          this.bsModalRef.hide()
+        },
+        (err) => {
+          this.backendErrors = err.error.error;
+          console.error(err);
+        }
+      )
+      .add(() => (this.lockingDAOCoin = false));
   }
 
   updateValidationErrors(): void {
@@ -126,6 +157,11 @@ export class LockupDaoCoinModalComponent implements OnInit, OnDestroy {
       if (vestingEndDateTime < unlockDateTime) {
         err.push('Cannot have a vesting schedule into the past\n');
       }
+    }
+
+    // (4) Ensure there's a recipient.
+    if (!this.lockupRecipient) {
+      err.push('Must select a recipient\n')
     }
 
     this.validationErrors = err;
@@ -207,5 +243,8 @@ export class LockupDaoCoinModalComponent implements OnInit, OnDestroy {
   _handleCreatorSelectedInSearch(creator): void {
     // Set the recipient as the response.
     this.lockupRecipient =  creator
+
+    // Update any validation errors.
+    this.updateValidationErrors()
   }
 }

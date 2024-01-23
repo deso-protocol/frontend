@@ -89,6 +89,7 @@
         class="lockup-date-picker"
         matInput [matDatepicker]="vestingEndDatePicker"
         [(ngModel)]="vestingEndDate"
+        [disabled]="lockingDAOCoin"
       (ngModelChange)="updateVestingEndUnixNanoSeconds(); updateValidationErrors()">
       <mat-datepicker-toggle matSuffix [for]="vestingEndDatePicker"></mat-datepicker-toggle>
     </div>
@@ -100,6 +101,7 @@
       <input
         class="lockup-time-picker"
         [(ngModel)]="vestingEndTime"
+        [disabled]="lockingDAOCoin"
         (ngModelChange)="updateVestingEndUnixNanoSeconds(); updateValidationErrors()"
         type="time">
     </div>
@@ -120,7 +122,7 @@
       style="width: 50%"
     />
   </div>
-  <!-- Amount to Burn -->
+  <!-- Amount to Lockup -->
   <div class="input-group py-15px">
     <div class="input-group-prepend">
       <span class="input-group-text">Amount To Lockup</span>
@@ -128,11 +130,11 @@
     <input
       [(ngModel)]="coinsToLockup"
       (ngModelChange)="updateValidationErrors()"
+      [disabled]="lockingDAOCoin"
       class="form-control fs-15px text-right d-inline-block"
       type="number"
       min="0"
       placeholder="0"
-      [disabled]="lockingDAOCoin"
     />
   </div>
   <!-- Lockup Execution Button -->
