@@ -435,22 +435,44 @@ export class BalanceEntryResponse {
   ProfileEntryResponse: ProfileEntryResponse;
 }
 
-// TODO: JP - modify types as you need to do so.
-export class LockedBalanceEntryResponse {
-  // The public keys are provided for the frontend
+export class CumulativeLockedBalanceEntryResponse {
+  // The public key associated with the holder.
   HODLerPublicKeyBase58Check: string;
-  // The public keys are provided for the frontend
+
+  // The public key associated with the locked DAO coins.
   ProfilePublicKeyBase58Check: string;
 
-  UnlockTimestampNanoSecs: number;
-  VestingEndTimestampNanoSecs: number;
+  // The total amount locked across all locked balance entries.
+  TotalLockedBaseUnits: Hex;
 
-  BalanceBaseUnits: Hex;
+  // The total amount that can be unlocked at the time the response was generated.
+  UnlockableBaseUnits: Hex;
 
+  // All unvested and vested locked balance entries.
+  UnvestedLockedBalanceEntries: LockedBalanceEntryResponse[];
+  VestedLockedBalanceEntries: LockedBalanceEntryResponse[];
+
+  // The profile entry associated with the given profile.
   ProfileEntryResponse: ProfileEntryResponse;
 }
 
-// TODO: JP - modify types as you need to do so.
+export class LockedBalanceEntryResponse {
+  // The public key associated with the holder.
+  HODLerPublicKeyBase58Check: string;
+
+  // The public key associated with the locked DAO coins.
+  ProfilePublicKeyBase58Check: string;
+
+  // When the unlock can begin to be unlocked.
+  UnlockTimestampNanoSecs: number;
+
+  // When the vesting schedule ends.
+  VestingEndTimestampNanoSecs: number;
+
+  // The amount of coins locked in the balance entry.
+  BalanceBaseUnits: Hex;
+}
+
 export class LockupYieldCurvePointResponse {
   ProfilePublicKeyBase58Check: string;
   LockupDurationNanoSecs: number;
@@ -742,7 +764,7 @@ export class BackendApiService {
             })
             .pipe(
               switchMap((signed) => {
-                if (signed.approvalRequired) {
+                //if (signed.approvalRequired) {
                   return this.identityService
                     .launch('/approve', {
                       tx: res.TransactionHex,
@@ -753,9 +775,9 @@ export class BackendApiService {
                         return { ...res, ...approved };
                       })
                     );
-                } else {
-                  return of({ ...res, ...signed });
-                }
+                //} else {
+                //  return of({ ...res, ...signed });
+                //}
               })
             )
         )
@@ -3873,12 +3895,11 @@ export class BackendApiService {
     return this.get(endpoint, BackendRoutes.RoutePathGetCountKeysWithDESO);
   }
 
-  // TODO: JP - API requests for lockups. Modify as needed.
   GetLockedYieldCurvePoints(endpoint: string, publicKey: string): Observable<LockupYieldCurvePointResponse[]> {
     return this.get(endpoint, BackendRoutes.RoutePathLockupYieldCurvePoints + "/" + publicKey);
   }
 
-  GetLockedBalanceEntries(endpoint: string, publicKey: string): Observable<LockedBalanceEntryResponse[]> {
+  GetLockedBalanceEntries(endpoint: string, publicKey: string): Observable<CumulativeLockedBalanceEntryResponse[]> {
     return this.get(endpoint, BackendRoutes.RoutePathLockedBalanceEntries + "/" + publicKey);
   }
 

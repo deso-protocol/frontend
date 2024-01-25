@@ -3,8 +3,8 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { GlobalVarsService } from '../../global-vars.service';
 import {
   BackendApiService,
-  BalanceEntryResponse,
-  DAOCoinOperationTypeString,
+  BalanceEntryResponse, CumulativeLockedBalanceEntryResponse,
+  DAOCoinOperationTypeString
 } from '../../backend-api.service';
 import { toBN } from 'web3-utils';
 
@@ -13,15 +13,16 @@ import { toBN } from 'web3-utils';
   templateUrl: './unlock-dao-coin-modal.component.html',
 })
 export class UnlockDaoCoinModalComponent {
-  @Input() balanceEntryResponse: BalanceEntryResponse;
+  @Input() cumulativeLockedBalanceEntryResponse: CumulativeLockedBalanceEntryResponse;
 
-  coinsToLockup: number = 0;
-  unlockTimestampNanoSecs: number = 0;
-  vestingEndTimestampNanoSecs: number = 0;
-  lockingDAOCoin: boolean = false;
+  // Schedule / Timestamp Toggle Booleans
+  showUnlockSchedule: boolean = false;
+  useUnixTimestamps: boolean = false;
+
+  // Component State Variables
+  unlockingDAOCoin: boolean = false;
   validationErrors: string[] = [];
   backendErrors: string = '';
-  recipientPublicKey: string = '';
   constructor(
     public bsModalRef: BsModalRef,
     public modalService: BsModalService,
@@ -29,47 +30,58 @@ export class UnlockDaoCoinModalComponent {
     private backendApi: BackendApiService
   ) {}
 
-  burnDAOCoin(): void {
-    this.lockingDAOCoin = true;
+  unlockDAOCoin(): void {
+    // First we do a validation check on whether coins can even be unlocked.
+    let err: string[] = [];
+    if (toBN(this.cumulativeLockedBalanceEntryResponse.UnlockableBaseUnits).eqn(0)) {
+      err.push('There is nothing to unlock\n');
+      this.validationErrors = err;
+      return;
+    }
+
+    // If we reach here, we hit the backend API with the request.
+    this.unlockingDAOCoin = true;
     this.backendErrors = '';
-    this.backendApi
-      .DAOCoin(
+    this.backendApi.
+      CoinUnlock(
         this.globalVars.localNode,
         this.globalVars.loggedInUser?.PublicKeyBase58Check,
-        this.balanceEntryResponse.CreatorPublicKeyBase58Check,
-        DAOCoinOperationTypeString.BURN,
-        undefined,
-        undefined,
-        this.globalVars.toHexNanos(this.coinsToLockup),
+        this.cumulativeLockedBalanceEntryResponse.ProfilePublicKeyBase58Check,
+        {},
         this.globalVars.defaultFeeRateNanosPerKB
       )
       .subscribe(
         (res) => {
           this.modalService.setDismissReason(
-            `dao coins burned|${this.globalVars.toHexNanos(this.coinsToLockup)}`
+            `coins unlocked|${this.cumulativeLockedBalanceEntryResponse.UnlockableBaseUnits}`
           );
           this.bsModalRef.hide();
         },
         (err) => {
           this.backendErrors = err.error.error;
-          console.error(err);
+          console.error(err)
         }
       )
-      .add(() => (this.lockingDAOCoin = false));
+      .add(() => (this.unlockingDAOCoin = false))
   }
 
-  updateValidationErrors(): void {
-    let err: string[] = [];
-    if (this.coinsToLockup <= 0) {
-      err.push('Must transfer a non-zero amount\n');
+  formatTimestamp(timestamp: number): string {
+    if (this.useUnixTimestamps) {
+      return timestamp.toString();
+    } else {
+      // Convert the timestamp to a date object.
+      const date = new Date(timestamp / 1e6)
+
+      // Set the Options for how to show each portion of the timestamp.
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      };
+      return new Intl.DateTimeFormat('default', options).format(date)
     }
-    if (
-      this.globalVars
-        .unitToBNNanos(this.coinsToLockup || 0)
-        .gt(toBN(this.balanceEntryResponse.BalanceNanosUint256))
-    ) {
-      err.push('Amount to burn exceeds balance\n');
-    }
-    this.validationErrors = err;
   }
 }

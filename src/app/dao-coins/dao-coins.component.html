@@ -330,9 +330,6 @@
         </div>
 
       </ng-container>
-      <ng-container *ngIf="activeSettingsTab === 'Lockup Yield Curve'">
-        hello
-      </ng-container>
     </div>
   </ng-container>
 
@@ -351,7 +348,7 @@
   ></tab-selector>
   <ng-container
     *ngIf="
-        (!loadingMyDAOCapTable && !loadingMyDAOCoinHoldings) ||
+        (!loadingMyDAOCapTable && !loadingMyDAOCoinHoldings && !loadingMyCumulativeLockedDAOCoinHoldings) ||
         loadingNewSelection
     "
   >
@@ -374,7 +371,7 @@
       </div>
       <div
         class="col-4 mb-0 cursor-pointer fc-muted text-link_hover text-right"
-        style="text-align: end"
+        style="text-align: end; padding-right: 15px;"
         (click)="sortWallet('coins')"
       >
         <i
@@ -387,7 +384,7 @@
         ></i>
         Coins
       </div>
-      <div class="col-2 d-block mb-0 text-right">
+      <div class="col-2 d-block mb-0 text-right" style="padding-right: 10px">
         Actions
       </div>
     </div>
@@ -402,12 +399,108 @@
     </div>
     <div #uiScroll *uiScroll="let creator of datasource">
       <!-- Screen out zero balances and only show highlighted creator in tutorial-->
+      <!-- Locked DAO Holdings -->
+      <div
+        *ngIf="creator && isMyLockedHoldingsTab() && isLockedBalanceGreaterThanZero(creator.TotalLockedBaseUnits)"
+        class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-5px p-10px"
+      >
+        <!-- Name-->
+        <a
+          class="col-6 d-flex align-items-center link--unstyled holdings__creator-coin-name p-0 m-0 cursor-pointer"
+          [routerLink]="
+            creator.ProfileEntryResponse?.Username
+              ? [
+                  '/' + globalVars.RouteNames.USER_PREFIX,
+                  creator.ProfileEntryResponse.Username
+                ]
+              : []
+          "
+          queryParamsHandling="merge"
+        >
+          <div
+            class="holdings__avatar"
+            [avatar]="creator.ProfileEntryResponse?.PublicKeyBase58Check"
+          ></div>
+          <div class="text-truncate holdings__name">
+            <span>
+              {{
+                creator.ProfileEntryResponse?.Username ||
+                creator.ProfilePublicKeyBase58Check ||
+                creator.HODLerPublicKeyBase58Check
+              }}
+            </span>
+
+            <span
+              *ngIf="
+                creator.ProfileEntryResponse?.IsReserved &&
+                !creator.ProfileEntryResponse?.IsVerified
+              "
+              class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="
+                'This profile is reserved. The owner has not yet claimed it.'
+              "
+            >
+              <i class="far fa-clock fa-md align-middle"></i>
+            </span>
+            <span
+              *ngIf="creator.ProfileEntryResponse?.IsVerified"
+              (click)="tooltip.toggle()"
+              class="ml-1 cursor-pointer text-primary"
+              matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+              [matTooltip]="'This account is verified'"
+              #tooltip="matTooltip"
+            >
+              <i class="fas fa-check-circle fa-md align-middle"></i>
+            </span>
+
+            <div
+              class="text-grey9 fs-12px d-lg-none"
+              *ngIf="creator.ProfileEntryResponse"
+            >
+              {{
+                globalVars.nanosToUSD(
+                  creator.ProfileEntryResponse?.CoinPriceDeSoNanos,
+                  2
+                )
+              }}
+            </div>
+          </div>
+        </a>
+
+        <!-- Total Locked Balance -->
+        <div
+          class="col-4 mb-0 pt-0px d-flex align-items-center justify-content-end text-right"
+        >
+          <div class="pr-15px">
+            <div>
+              {{ globalVars.hexNanosToUnitString(creator.TotalLockedBaseUnits) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Show Transfer and Unlock Modal Buttons for Locked DAO Coins -->
+        <div
+          class="col-2 mb-0 pt-0px d-flex align-items-center justify-content-end text-right"
+          style="padding-right: 20px"
+        >
+          <ng-container
+            *ngIf="isMyLockedHoldingsTab()"
+          >
+            <i class="fas fa-exchange-alt pr-10px"
+               (click)="openTransferLockedCoinModal(creator)"
+            ></i>
+            <i class="fas fa-lock-open"
+               (click)="openUnlockLockedCoinModal(creator)"
+            ></i>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Unlocked DAO Coin Holdings -->
       <div
         *ngIf="
-          creator &&
-          isMyLockedHoldingsTab() ? isLockedBalanceGreaterThanZero(creator.BalanceBaseUnits) :
-          (creator.BalanceNanos ||
-            (creator.NetBalanceInMempool != 0 &&
+          (creator && !isMyLockedHoldingsTab()) && (creator.BalanceNanos || (creator.NetBalanceInMempool != 0 &&
               globalVars.showProcessingSpinners))
         "
         class="row no-gutters fs-15px fc-default mt-5px mb-5px ml-10px mr-5px p-10px"
@@ -434,12 +527,7 @@
               {{
                 creator.ProfileEntryResponse?.Username ||
                   (
-                    isDaoCoinTab() ? creator.CreatorPublicKeyBase58Check :
-                    (
-                      isMyLockedHoldingsTab() ?
-                      creator.ProfilePublicKeybase58Check :
-                      creator.HODLerPublicKeyBase58Check
-                    )
+                    isDaoCoinTab() ? creator.CreatorPublicKeyBase58Check : creator.HODLerPublicKeyBase58Check
                   )
               }}
             </span>
@@ -487,10 +575,9 @@
           class="col-4 mb-0 pt-0px d-flex align-items-center justify-content-end text-right"
         >
           <div>
-            <div>
+            <div class="pr-15px">
               <i
                 *ngIf="
-                  !isMyLockedHoldingsTab() &&
                   creator.NetBalanceInMempool != 0 &&
                   globalVars.showProcessingSpinners
                 "
@@ -525,18 +612,12 @@
               (click)="openBurnDAOCoinModal(creator)"
             ></i>
             <i
-              class="fa fa-lock"
+              class="fa fa-lock pr-10px"
               (click)="openLockDAOCoinModal(creator)"
               ></i>
-          </ng-container>
-          <ng-container
-            *ngIf="isMyLockedHoldingsTab()"
-            >
-            <i class="fas fa-exchange-alt pr-10px"
-              (click)="openTransferLockedCoinModal(creator)"
-            ></i>
-            <i class="fas fa-lock-open"
-              (click)="openUnlockLockedCoinModal(creator)"
+            <i
+              class="fa fa-chart-line"
+              (click)="openLockDAOCoinModal(creator)"
             ></i>
           </ng-container>
         </div>
