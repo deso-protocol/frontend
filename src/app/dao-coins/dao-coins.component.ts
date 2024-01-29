@@ -70,6 +70,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   tabs = [DaoCoinsComponent.myDAOTab, DaoCoinsComponent.daoCoinsTab, DaoCoinsComponent.myLockedHoldingsTab];
   activeTab: string = DaoCoinsComponent.myDAOTab;
 
+  // Unlocked DAO Coin Variables
   TransferRestrictionStatusString = TransferRestrictionStatusString;
   transferRestrictionStatus: TransferRestrictionStatusString;
   coinsToMint: number = 0;
@@ -86,9 +87,12 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED,
   ];
 
+  // Locked DAO Coin Variables
   lockupDuration: number = 0;
   lockupYieldApy: number = 0;
-  updatingCoinLockupParams: boolean = false;
+  lockupTransferRestrictionStatus: TransferRestrictionStatusString;
+  addingOrRemovingYieldCurvePoint: boolean = false;
+  updatingCoinLockupTransferRestrictions: boolean = false;
 
   constructor(
     private appData: GlobalVarsService,
@@ -121,9 +125,7 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     this.loadMyDAOCoinHoldings().subscribe((res) => {});
 
     // Load Locked DAO coin holdings.
-    this.loadMyCumulativeLockedDAOCoinHoldings().subscribe((res) => {
-      // TODO: Consolidate the response into the locked balance entries for each user.
-    })
+    this.loadMyCumulativeLockedDAOCoinHoldings().subscribe((res) => {})
 
     this.titleService.setTitle(`DAO Coins - ${environment.node.name}`);
   }
@@ -486,12 +488,76 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
     });
   }
 
-  removeYieldCurve(): void {
-    // TODO: Implement
+  removeYieldCurvePoint(): void {
+    this.addingOrRemovingYieldCurvePoint = true;
+
+    this.backendApi
+      .UpdateCoinLockupParams(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.lockupDuration,
+        0,
+        true,
+        false,
+        this.lockupTransferRestrictionStatus,
+        {},
+        this.globalVars.defaultFeeRateNanosPerKB
+      )
+      .subscribe(() => {},
+        (err) => {
+          this.globalVars._alertError(err.error.error);
+          console.error(err);
+        }
+      )
+      .add(() => (this.addingOrRemovingYieldCurvePoint = false));
   }
 
-  addYieldCurve(): void {
-    // TODO: Implement
+  addYieldCurvePoint(): void {
+    this.addingOrRemovingYieldCurvePoint = true;
+
+    this.backendApi
+      .UpdateCoinLockupParams(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.lockupDuration,
+        this.lockupYieldApy * 100,
+        false,
+        false,
+        this.lockupTransferRestrictionStatus,
+        {},
+        this.globalVars.defaultFeeRateNanosPerKB
+      )
+      .subscribe(() => {},
+        (err) => {
+          this.globalVars._alertError(err.error.error);
+          console.error(err);
+        }
+      )
+      .add(() => (this.addingOrRemovingYieldCurvePoint = false));
+  }
+
+  updateLockupTransferRestrictionStatus(): void {
+    this.updatingCoinLockupTransferRestrictions = true;
+
+    this.backendApi
+      .UpdateCoinLockupParams(
+        this.globalVars.localNode,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        0,
+        0,
+        false,
+        true,
+        this.lockupTransferRestrictionStatus,
+        {},
+        this.globalVars.defaultFeeRateNanosPerKB
+      )
+      .subscribe(() => {},
+        (err) => {
+          this.globalVars._alertError(err.error.error);
+          console.error(err);
+        }
+      )
+      .add(() => (this.updatingCoinLockupTransferRestrictions = false));
   }
 
   doDAOCoinTxn(

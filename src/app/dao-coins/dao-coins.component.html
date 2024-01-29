@@ -258,11 +258,9 @@
             <button
               class="btn btn-primary font-weight-bold br-12px flex-grow-1 mr-2"
               style="height: 36px; width: 100px; line-height: 15px"
-              (click)="addYieldCurve()"
+              (click)="addYieldCurvePoint()"
               [disabled]="
-              updatingTransferRestrictionStatus ||
-              myDAOCoin?.TransferRestrictionStatus ===
-                TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED
+              updatingTransferRestrictionStatus || addingOrRemovingYieldCurvePoint
             "
             >
               Add Yield Curve Point
@@ -270,11 +268,9 @@
             <button
               class="btn btn-primary font-weight-bold br-12px flex-grow-1 ml-2"
               style="height: 36px; width: 100px; line-height: 15px"
-              (click)="removeYieldCurve()"
+              (click)="removeYieldCurvePoint()"
               [disabled]="
-              updatingTransferRestrictionStatus ||
-              myDAOCoin?.TransferRestrictionStatus ===
-                TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED
+              updatingTransferRestrictionStatus || addingOrRemovingYieldCurvePoint
             "
             >
               Remove Yield Curve Point
@@ -285,10 +281,6 @@
         <!-- Unvested Locked Transfer Restriction Status -->
         <div
           class="d-flex justify-content-between py-25px w-100"
-          *ngIf="
-          myDAOCoin?.TransferRestrictionStatus !==
-          TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED
-        "
         >
           <div
             class="d-flex align-items-center justify-content-between col-10 px-0px"
@@ -302,7 +294,7 @@
             <select
               id="update-unvested-lockup-transfer-restriction-status"
               class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer mr-15px"
-              [(ngModel)]="transferRestrictionStatus"
+              [(ngModel)]="lockupTransferRestrictionStatus"
             >
               <option
                 *ngFor="let option of transferRestrictionStatusOptions"
@@ -317,12 +309,8 @@
             <button
               class="btn btn-primary font-weight-bold br-12px"
               style="height: 36px; width: 100px; line-height: 15px"
-              (click)="updateTransferRestrictionStatus()"
-              [disabled]="
-              updatingTransferRestrictionStatus ||
-              myDAOCoin?.TransferRestrictionStatus ===
-                TransferRestrictionStatusString.PERMANENTLY_UNRESTRICTED
-            "
+              (click)="updateLockupTransferRestrictionStatus()"
+              [disabled]="addingOrRemovingYieldCurvePoint || updatingCoinLockupTransferRestrictions"
             >
               Update
             </button>
