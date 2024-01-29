@@ -24,34 +24,43 @@
     ></simple-profile-card>
   </div>
   <div
-    class="d-flex align-items-center justify-content-between col-12 px-0px py-15px"
+    class="d-flex align-items-center justify-content-between col-12 px-0px pt-15px"
+  >
+    <span class="mr-2">Use UNIX Timestamps:</span>
+    <div class="d-flex justify-content-end flex-grow-1 align-items-center">
+      <mat-slide-toggle color="primary" [(ngModel)]="useUnixTimestamps"></mat-slide-toggle>
+    </div>
+  </div>
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px pt-25px"
   >
     <label
-      for="update-transfer-restriction-status"
+      for="selected-lockup-entry"
       class="cursor-pointer mb-0"
     >
-      Selected Lockup:
+      Lockup:
     </label>
     <select
-      id="update-transfer-restriction-status"
+      id="selected-lockup-entry"
       class="right-bar-select-box fs-15px text-grey5 font-weight-bold cursor-pointer mr-15px ml-auto"
-      [(ngModel)]="lockedBalanceEntry"
+      [(ngModel)]="selectedLockedBalanceEntryUnlockTimestamp"
+      (ngModelChange)="_handleLockedBalanceEntrySelected($event)"
     >
       <option
-        *ngFor="let option of lockedBalanceEntries"
-        [value]="option"
+        *ngFor="let entry of this.cumulativeLockedBalanceEntryResponse.UnvestedLockedBalanceEntries"
+        [value]="entry.UnlockTimestampNanoSecs"
         class="text-grey5 font-weight-bold"
       >
-        {{ getLockedBalanceEntryDropdownText(option) }}
+        {{ getLockedBalanceEntryDropdownText(entry) }}
       </option>
     </select>
   </div>
   <div class="input-group py-25px">
     <div class="input-group-prepend">
-      <span class="input-group-text">Amount To Transfer</span>
+      <span class="input-group-text">Coins To Transfer</span>
     </div>
     <input
-      [(ngModel)]="amountToTransfer"
+      [(ngModel)]="coinsToTransfer"
       (ngModelChange)="updateValidationErrors()"
       class="form-control fs-15px text-right d-inline-block"
       type="number"
@@ -64,8 +73,8 @@
     <button
       class="btn btn-primary font-weight-bold br-12px"
       style="height: 36px; width: 180px; line-height: 15px"
-      (click)="updateValidationErrors()"
-      [disabled]="lockingDAOCoin || validationErrors.length"
+      (click)="transferLockedDAOCoin()"
+      [disabled]="transferringDAOCoin || validationErrors.length"
     >
       Transfer
     </button>
