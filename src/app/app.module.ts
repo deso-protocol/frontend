@@ -230,6 +230,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { YieldCurveModalComponent } from './dao-coins/yield-curve-modal/yield-curve-modal.component';
 
 const lightTheme: Theme = {key: 'light', name: 'Light Theme'};
 const darkTheme: Theme = {key: 'dark', name: 'Dark Theme'};
@@ -386,6 +387,7 @@ const greenishTheme: Theme = {key: 'greenish', name: 'Green Theme'};
     LockupDaoCoinModalComponent,
     UnlockDaoCoinModalComponent,
     TransferLockupDaoCoinModalComponent,
+    YieldCurveModalComponent,
   ],
   imports: [
     BrowserModule,

@@ -28,6 +28,7 @@ import { UnlockDaoCoinModalComponent } from './unlock-dao-coin-modal/unlock-dao-
 import {
   TransferLockupDaoCoinModalComponent
 } from './transfer-lockup-dao-coin-modal/transfer-lockup-dao-coin-modal.component';
+import { YieldCurveModalComponent } from './yield-curve-modal/yield-curve-modal.component';
 
 @Component({
   selector: 'dao-coins',
@@ -786,6 +787,17 @@ export class DaoCoinsComponent implements OnInit, OnDestroy {
   openTransferLockedCoinModal(creator: CumulativeLockedBalanceEntryResponse): void {
     const modalDetails = this.modalService.show(
       TransferLockupDaoCoinModalComponent,
+      {
+        class: 'modal-dialog-centered',
+        initialState: { cumulativeLockedBalanceEntryResponse: creator },
+      }
+    );
+    const onHideEvent = modalDetails.onHide;
+  }
+
+  openYieldCurveModal(creator: CumulativeLockedBalanceEntryResponse): void {
+    const modalDetails = this.modalService.show(
+      YieldCurveModalComponent,
       {
         class: 'modal-dialog-centered',
         initialState: { cumulativeLockedBalanceEntryResponse: creator },

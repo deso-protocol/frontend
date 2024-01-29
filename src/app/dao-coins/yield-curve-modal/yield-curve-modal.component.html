@@ -1,0 +1,61 @@
+<div app-theme class="nft-modal-container p-15px d-flex flex-column">
+  <!--- Display information on the user -->
+  <div class="fs-20px">
+    {{ cumulativeLockedBalanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins Yield Curve
+  </div>
+
+  <!-- Nanosecond/Days and Basis Points Boolean Toggle -->
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px pt-15px"
+  >
+    <span class="mr-2">Use Nanoseconds:</span>
+    <div class="d-flex justify-content-end flex-grow-1 align-items-center">
+      <mat-slide-toggle color="primary" [(ngModel)]="useNanosecondsDuration"></mat-slide-toggle>
+    </div>
+  </div>
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px pt-15px"
+  >
+    <span class="mr-2">Use Basis Points:</span>
+    <div class="d-flex justify-content-end flex-grow-1 align-items-center">
+      <mat-slide-toggle color="primary" [(ngModel)]="useBasisPoints"></mat-slide-toggle>
+    </div>
+  </div>
+
+  <!-- Display Yield Curve -->
+  <div
+    class="d-flex flex-column align-items-center justify-content-between col-12 px-0px pt-15px"
+    *ngIf="!loadingYieldCurvePoints && yieldCurvePoints.length != 0"
+  >
+    <div
+      style="text-align: center;"
+    >
+      Yield Curve
+    </div>
+    <div *ngFor = "let point of yieldCurvePoints" class="row">
+      {{ formatLockupDuration(point.LockupDurationNanoSecs) }}: {{ formatPointYield(point.LockupYieldAPYBasisPoints) }}
+    </div>
+  </div>
+  <div
+    class="d-flex flex-column align-items-center justify-content-between col-12 px-0px pt-15px"
+    *ngIf="!loadingYieldCurvePoints && yieldCurvePoints.length == 0"
+  >
+    <div
+      style="text-align: center;"
+    >
+      No Yield Curve Given
+    </div>
+  </div>
+  <div
+    class="d-flex flex-column align-items-center justify-content-between col-12 px-0px pt-15px"
+    *ngIf="!loadingYieldCurvePoints"
+  >
+    <div
+      style="text-align: center;"
+    >
+      Unvested Transfer Restrictions:
+      {{ getDisplayTransferRestrictionStatus(cumulativeLockedBalanceEntryResponse.
+      ProfileEntryResponse?.DAOCoinEntry?.LockupTransferRestrictionStatus) }}
+    </div>
+  </div>
+</div>

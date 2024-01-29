@@ -3895,7 +3895,7 @@ export class BackendApiService {
     return this.get(endpoint, BackendRoutes.RoutePathGetCountKeysWithDESO);
   }
 
-  GetLockedYieldCurvePoints(endpoint: string, publicKey: string): Observable<LockupYieldCurvePointResponse[]> {
+  GetLockupYieldCurvePoints(endpoint: string, publicKey: string): Observable<LockupYieldCurvePointResponse[]> {
     return this.get(endpoint, BackendRoutes.RoutePathLockupYieldCurvePoints + "/" + publicKey);
   }
 
