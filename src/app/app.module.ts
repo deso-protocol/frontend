@@ -221,6 +221,16 @@ import { BurnDaoCoinModalComponent } from './dao-coins/burn-dao-coin-modal/burn-
 import { ThemeModule } from './theme/theme.module';
 import { Theme } from './theme/symbols';
 import { PostMultiplierComponent } from './feed/feed-post-dropdown/post-multiplier/post-multiplier.component';
+import { LockupDaoCoinModalComponent } from './dao-coins/lockup-dao-coin-modal/lockup-dao-coin-modal.component';
+import { UnlockDaoCoinModalComponent } from './dao-coins/unlock-dao-coin-modal/unlock-dao-coin-modal.component';
+import {
+  TransferLockupDaoCoinModalComponent
+} from './dao-coins/transfer-lockup-dao-coin-modal/transfer-lockup-dao-coin-modal.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { YieldCurveModalComponent } from './dao-coins/yield-curve-modal/yield-curve-modal.component';
 
 const lightTheme: Theme = {key: 'light', name: 'Light Theme'};
 const darkTheme: Theme = {key: 'dark', name: 'Dark Theme'};
@@ -374,6 +384,10 @@ const greenishTheme: Theme = {key: 'greenish', name: 'Green Theme'};
     DaoCoinsPageComponent,
     TransferDAOCoinModalComponent,
     BurnDaoCoinModalComponent,
+    LockupDaoCoinModalComponent,
+    UnlockDaoCoinModalComponent,
+    TransferLockupDaoCoinModalComponent,
+    YieldCurveModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -404,14 +418,18 @@ const greenishTheme: Theme = {key: 'greenish', name: 'Green Theme'};
         icydarkTheme,
         legendsTheme,
         cakeTheme,
-        greenishTheme,
+        greenishTheme
       ],
       active:
         localStorage.getItem('theme') ||
         (window.matchMedia('(prefers-color-scheme: light)').matches
           ? 'light'
-          : 'dark'),
+          : 'dark')
     }),
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule,
+    MatSlideToggleModule
   ],
   providers: [
     BackendApiService,

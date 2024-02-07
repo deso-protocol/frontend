@@ -2779,6 +2779,20 @@ input {
   border-bottom-left-radius: 0.3rem;
 }
 
+.lockup-dao-coin-modal.cdk-overlay-container {
+  z-index: 2000;
+}
+
+.lockup-date-picker {
+  width: 150px;
+  height: 30px;
+}
+
+.lockup-time-picker {
+  width: 190px;
+  height: 30px;
+}
+
 .nft-modal-container {
   color: var(--text);
   border: 1px solid var(--mborder);

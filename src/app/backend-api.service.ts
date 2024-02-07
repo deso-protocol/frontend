@@ -241,6 +241,14 @@ export class BackendRoutes {
   static RoutePathGetTotalSupply = '/api/v0/total-supply';
   static RoutePathGetRichList = '/api/v0/rich-list';
   static RoutePathGetCountKeysWithDESO = '/api/v0/count-keys-with-deso';
+
+  // Lockup endpoints
+  static RoutePathCoinLockup = '/api/v0/coin-lockup';
+  static RoutePathUpdateCoinLockupParams = '/api/v0/update-coin-lockup-params';
+  static RoutePathCoinLockupTransfer = '/api/v0/coin-lockup-transfer';
+  static RoutePathCoinUnlock = '/api/v0/coin-unlock';
+  static RoutePathLockupYieldCurvePoints = '/api/v0/lockup-yield-curve-points';
+  static RoutePathLockedBalanceEntries = '/api/v0/locked-balance-entries';
 }
 
 export class Transaction {
@@ -263,6 +271,7 @@ export type DAOCoinEntryResponse = {
   MintingDisabled: boolean;
   NumberOfHolders: number;
   TransferRestrictionStatus: TransferRestrictionStatusString;
+  LockupTransferRestrictionStatus: TransferRestrictionStatusString;
 };
 
 export class ProfileEntryResponse {
@@ -423,6 +432,51 @@ export class BalanceEntryResponse {
   // This is used by the frontend to convey info about mining.
   NetBalanceInMempool: number;
 
+  ProfileEntryResponse: ProfileEntryResponse;
+}
+
+export class CumulativeLockedBalanceEntryResponse {
+  // The public key associated with the holder.
+  HODLerPublicKeyBase58Check: string;
+
+  // The public key associated with the locked DAO coins.
+  ProfilePublicKeyBase58Check: string;
+
+  // The total amount locked across all locked balance entries.
+  TotalLockedBaseUnits: Hex;
+
+  // The total amount that can be unlocked at the time the response was generated.
+  UnlockableBaseUnits: Hex;
+
+  // All unvested and vested locked balance entries.
+  UnvestedLockedBalanceEntries: LockedBalanceEntryResponse[];
+  VestedLockedBalanceEntries: LockedBalanceEntryResponse[];
+
+  // The profile entry associated with the given profile.
+  ProfileEntryResponse: ProfileEntryResponse;
+}
+
+export class LockedBalanceEntryResponse {
+  // The public key associated with the holder.
+  HODLerPublicKeyBase58Check: string;
+
+  // The public key associated with the locked DAO coins.
+  ProfilePublicKeyBase58Check: string;
+
+  // When the unlock can begin to be unlocked.
+  UnlockTimestampNanoSecs: number;
+
+  // When the vesting schedule ends.
+  VestingEndTimestampNanoSecs: number;
+
+  // The amount of coins locked in the balance entry.
+  BalanceBaseUnits: Hex;
+}
+
+export class LockupYieldCurvePointResponse {
+  ProfilePublicKeyBase58Check: string;
+  LockupDurationNanoSecs: number;
+  LockupYieldAPYBasisPoints: number;
   ProfileEntryResponse: ProfileEntryResponse;
 }
 
@@ -710,7 +764,7 @@ export class BackendApiService {
             })
             .pipe(
               switchMap((signed) => {
-                if (signed.approvalRequired) {
+                //if (signed.approvalRequired) {
                   return this.identityService
                     .launch('/approve', {
                       tx: res.TransactionHex,
@@ -721,9 +775,9 @@ export class BackendApiService {
                         return { ...res, ...approved };
                       })
                     );
-                } else {
-                  return of({ ...res, ...signed });
-                }
+                //} else {
+                //  return of({ ...res, ...signed });
+                //}
               })
             )
         )
@@ -3840,6 +3894,116 @@ export class BackendApiService {
   GetCountOfKeysWithDESO(endpoint: string): Observable<number> {
     return this.get(endpoint, BackendRoutes.RoutePathGetCountKeysWithDESO);
   }
+
+  GetLockupYieldCurvePoints(endpoint: string, publicKey: string): Observable<LockupYieldCurvePointResponse[]> {
+    return this.get(endpoint, BackendRoutes.RoutePathLockupYieldCurvePoints + "/" + publicKey);
+  }
+
+  GetLockedBalanceEntries(endpoint: string, publicKey: string): Observable<CumulativeLockedBalanceEntryResponse[]> {
+    return this.get(endpoint, BackendRoutes.RoutePathLockedBalanceEntries + "/" + publicKey);
+  }
+
+  CoinLockup(
+    endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    ProfilePublicKeyBase58Check: string,
+    RecipientPublicKeyBase58Check: string,
+    UnlockTimestampNanoSecs: number,
+    VestingEndTimestampNanoSecs: number,
+    LockupAmountBaseUnits: Hex,
+    ExtraData: { [k: string]: string },
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCoinLockup, {
+      TransactorPublicKeyBase58Check,
+      ProfilePublicKeyBase58Check,
+      RecipientPublicKeyBase58Check,
+      UnlockTimestampNanoSecs,
+      VestingEndTimestampNanoSecs,
+      LockupAmountBaseUnits,
+      ExtraData,
+    MinFeeRateNanosPerKB,
+  });
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      TransactorPublicKeyBase58Check,
+    )
+  };
+
+  UpdateCoinLockupParams(
+    endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    LockupYieldDurationNanoSecs: number,
+    LockupYieldAPYBasisPoints: number,
+    RemoveYieldCurvePoint: boolean,
+    NewLockupTransferRestrictions: boolean,
+    LockupTransferRestrictionStatus: TransferRestrictionStatusString,
+    ExtraData: { [k: string]: string },
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateCoinLockupParams, {
+      TransactorPublicKeyBase58Check,
+      LockupYieldDurationNanoSecs,
+      LockupYieldAPYBasisPoints,
+      RemoveYieldCurvePoint,
+      NewLockupTransferRestrictions,
+      LockupTransferRestrictionStatus,
+      ExtraData,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      TransactorPublicKeyBase58Check,
+    )
+  };
+
+  CoinLockupTransfer(
+    endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    ProfilePublicKeyBase58Check: string,
+    RecipientPublicKeyBase58Check: string,
+    UnlockTimestampNanoSecs: number,
+    LockedCoinsToTransferBaseUnits: Hex,
+    ExtraData: { [k: string]: string },
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCoinLockupTransfer, {
+      TransactorPublicKeyBase58Check,
+      ProfilePublicKeyBase58Check,
+      RecipientPublicKeyBase58Check,
+      UnlockTimestampNanoSecs,
+      LockedCoinsToTransferBaseUnits,
+      ExtraData,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      TransactorPublicKeyBase58Check,
+    )
+  };
+
+  CoinUnlock(
+    endpoint: string,
+    TransactorPublicKeyBase58Check: string,
+    ProfilePublicKeyBase58Check: string,
+    ExtraData: { [k: string]: string },
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    const request = this.post(endpoint, BackendRoutes.RoutePathCoinUnlock, {
+      TransactorPublicKeyBase58Check,
+      ProfilePublicKeyBase58Check,
+      ExtraData,
+      MinFeeRateNanosPerKB,
+    });
+    return this.signAndSubmitTransaction(
+      endpoint,
+      request,
+      TransactorPublicKeyBase58Check,
+    )
+  };
 
   // Error parsing
   stringifyError(err): string {

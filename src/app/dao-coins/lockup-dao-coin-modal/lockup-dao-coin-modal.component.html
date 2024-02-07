@@ -1,0 +1,165 @@
+<div app-theme class="nft-modal-container p-15px d-flex flex-column">
+  <!-- User Balance -->
+  <div class="fs-20px">
+    Lockup {{ balanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins
+  </div>
+  <div class="pt-15px">
+    Your Balance:
+    {{
+      globalVars.hexNanosToUnitString(balanceEntryResponse.BalanceNanosUint256)
+    }}
+    {{ balanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins
+  </div>
+  <!-- Recipient Selector -->
+  <search-bar
+    [showCloutavista]="false"
+    [isSearchForUsersToSendDESO]="true"
+    [placeholder]="'Recipient'"
+    (creatorToMessage)="_handleCreatorSelectedInSearch($event)"
+  ></search-bar>
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px"
+    *ngIf="lockupRecipient"
+  >
+    <div class="input-group-prepend">
+      <span class="cursor-pointer mb-0">Selected Recipient:</span>
+    </div>
+    <simple-profile-card
+      [profile]="lockupRecipient"
+      [singleColumn]="true"
+      [hideFollowLink]="true"
+      *ngIf="lockupRecipient"
+    ></simple-profile-card>
+  </div>
+  <!-- Unlock Date/Time Pickers -->
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px py-15px"
+  >
+    <span class="mr-2">Unlock Date:</span>
+    <div class="d-flex justify-content-end flex-grow-1 align-items-center">
+      <input
+        class="lockup-date-picker"
+        matInput [matDatepicker]="unlockDatePicker"
+        [(ngModel)]="unlockDate"
+        [disabled]="lockingDAOCoin"
+        (ngModelChange)="updateUnlockUnixNanoSeconds(); updateValidationErrors()">
+      <mat-datepicker-toggle matSuffix [for]="unlockDatePicker"></mat-datepicker-toggle>
+    </div>
+    <mat-datepicker #unlockDatePicker></mat-datepicker>
+  </div>
+  <div class="d-flex align-items-center justify-content-between col-12 px-0px py-15px">
+    <span class="mr-2">Unlock Time:</span>
+    <div class="d-flex justify-content-end flex-grow-1">
+      <input
+        class="lockup-time-picker"
+        [(ngModel)]="unlockTime"
+        [disabled]="lockingDAOCoin"
+        (ngModelChange)="updateUnlockUnixNanoSeconds(); updateValidationErrors()"
+        type="time">
+    </div>
+  </div>
+  <!-- Unlock Unix Nano Timestamp -->
+  <div class="d-flex align-items-center justify-content-between col-12 px-0px py-15px">
+    <span class="mr-2">Unlock Timestamp (ns):</span>
+    <input
+      [(ngModel)]="unlockUnixNanoTimestamp"
+      [disabled]="lockingDAOCoin"
+      (ngModelChange)="updateUnlockDateTime(); updateValidationErrors()"
+      class="form-control fs-15px text-right d-inline-block"
+      type="number"
+      min="0"
+      style="width: 50%"
+    />
+  </div>
+  <!-- Vested Lockup Boolean Toggle -->
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px py-15px"
+    *ngIf=profileIsUser
+  >
+    <span class="mr-2">Enable Vesting:</span>
+    <div class="d-flex justify-content-end flex-grow-1 align-items-center">
+      <mat-slide-toggle color="primary" [(ngModel)]="vestedLockup"></mat-slide-toggle>
+    </div>
+  </div>
+  <!-- Vesting End Date/Time Pickers -->
+  <div class="input-group py-15px" *ngIf="profileIsUser && vestedLockup">
+    <span class="mr-2">Vesting End Date:</span>
+    <div class="d-flex justify-content-end flex-grow-1 align-items-center">
+      <input
+        class="lockup-date-picker"
+        matInput [matDatepicker]="vestingEndDatePicker"
+        [(ngModel)]="vestingEndDate"
+        [disabled]="lockingDAOCoin"
+      (ngModelChange)="updateVestingEndUnixNanoSeconds(); updateValidationErrors()">
+      <mat-datepicker-toggle matSuffix [for]="vestingEndDatePicker"></mat-datepicker-toggle>
+    </div>
+    <mat-datepicker #vestingEndDatePicker></mat-datepicker>
+  </div>
+  <div class="input-group py-15px" *ngIf="profileIsUser && vestedLockup">
+    <span class="mr-2">Vesting End Time:</span>
+    <div class="d-flex justify-content-end flex-grow-1">
+      <input
+        class="lockup-time-picker"
+        [(ngModel)]="vestingEndTime"
+        [disabled]="lockingDAOCoin"
+        (ngModelChange)="updateVestingEndUnixNanoSeconds(); updateValidationErrors()"
+        type="time">
+    </div>
+  </div>
+  <!-- End Unix Nano Timestamp -->
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px py-15px"
+    *ngIf="profileIsUser && vestedLockup"
+  >
+    <span class="mr-2">End Timestamp (ns):</span>
+    <input
+      [(ngModel)]="vestingEndUnixNanoTimestamp"
+      [disabled]="lockingDAOCoin"
+      (ngModelChange)="updateVestingEndDateTime(); updateValidationErrors()"
+      class="form-control fs-15px text-right d-inline-block"
+      type="number"
+      min="0"
+      style="width: 50%"
+    />
+  </div>
+  <!-- Amount to Lockup -->
+  <div class="input-group py-15px">
+    <div class="input-group-prepend">
+      <span class="input-group-text">Amount To Lockup</span>
+    </div>
+    <input
+      [(ngModel)]="coinsToLockup"
+      (ngModelChange)="updateValidationErrors()"
+      [disabled]="lockingDAOCoin"
+      class="form-control fs-15px text-right d-inline-block"
+      type="number"
+      min="0"
+      placeholder="0"
+    />
+  </div>
+  <!-- Lockup Execution Button -->
+  <div style="display: flex; justify-content: center; align-items: center;" class="py-15px">
+    <button
+      class="btn btn-primary font-weight-bold br-12px"
+      style="height: 36px; width: 180px; line-height: 15px"
+      (click)="lockupDAOCoin()"
+      [disabled]="lockingDAOCoin || validationErrors.length"
+    >
+      Lockup
+    </button>
+  </div>
+  <!-- Warning and error messages -->
+  <ng-container *ngIf="validationWarnings.length">
+    <div *ngFor="let validationWarnings of validationWarnings" class="pt-5px fc-gold">
+      {{ validationWarnings }}
+    </div>
+  </ng-container>
+  <ng-container *ngIf="validationErrors.length">
+    <div *ngFor="let validationError of validationErrors" class="pt-5px fc-red">
+      {{ validationError }}
+    </div>
+  </ng-container>
+  <div class="fc-red pt-5px" *ngIf="backendErrors">
+    {{ backendErrors }}
+  </div>
+</div>

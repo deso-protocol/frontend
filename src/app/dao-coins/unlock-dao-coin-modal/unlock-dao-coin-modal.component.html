@@ -1,0 +1,75 @@
+<div app-theme class="nft-modal-container p-15px d-flex flex-column">
+  <div class="fs-20px">
+    Unlock {{ cumulativeLockedBalanceEntryResponse.ProfileEntryResponse?.Username }} DAO Coins
+  </div>
+  <div class="pt-15px">
+    Your Unlockable Balance:
+    {{ this.globalVars.hexNanosToUnitString(cumulativeLockedBalanceEntryResponse.UnlockableBaseUnits) }} DAO Coins
+  </div>
+
+  <!-- Vested Lockup And UNIX Timestamp Boolean Toggle -->
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px pt-15px"
+  >
+    <span class="mr-2">Show Unlock Schedule:</span>
+    <div class="d-flex justify-content-end flex-grow-1 align-items-center">
+      <mat-slide-toggle color="primary" [(ngModel)]="showUnlockSchedule"></mat-slide-toggle>
+    </div>
+  </div>
+  <div
+    class="d-flex align-items-center justify-content-between col-12 px-0px pt-15px"
+    *ngIf="showUnlockSchedule"
+  >
+    <span class="mr-2">Use UNIX Timestamps:</span>
+    <div class="d-flex justify-content-end flex-grow-1 align-items-center">
+      <mat-slide-toggle color="primary" [(ngModel)]="useUnixTimestamps"></mat-slide-toggle>
+    </div>
+  </div>
+
+  <!-- Display Unlock Schedule for Unvested Entries -->
+  <div
+    class="d-flex flex-column align-items-center justify-content-between col-12 px-0px pt-15px"
+    *ngIf="showUnlockSchedule"
+  >
+    <!-- Unvested -->
+    <div
+      *ngIf="cumulativeLockedBalanceEntryResponse.UnvestedLockedBalanceEntries.length != 0"
+      style="text-align: center;"
+    >
+      Unvested Unlock Schedule
+    </div>
+    <div *ngFor = "let entry of cumulativeLockedBalanceEntryResponse.UnvestedLockedBalanceEntries" class="row">
+      {{ formatTimestamp(entry.UnlockTimestampNanoSecs) }}: {{ this.globalVars.hexNanosToUnitString(entry.BalanceBaseUnits) }} coins
+    </div>
+
+    <!-- Vested -->
+    <div
+      *ngIf="cumulativeLockedBalanceEntryResponse.VestedLockedBalanceEntries.length != 0"
+      style="text-align: center; padding-top: 15px"
+    >
+      Vested Unlock Schedule
+    </div>
+    <div *ngFor = "let entry of cumulativeLockedBalanceEntryResponse.VestedLockedBalanceEntries" class="row">
+      {{ formatTimestamp(entry.UnlockTimestampNanoSecs) }}-{{ formatTimestamp(entry.VestingEndTimestampNanoSecs) }}: {{ this.globalVars.hexNanosToUnitString(entry.BalanceBaseUnits) }} coins
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: center; align-items: center;" class="pt-15px">
+    <button
+      class="btn btn-primary font-weight-bold br-12px"
+      style="height: 36px; width: 180px; line-height: 15px"
+      (click)="unlockDAOCoin()"
+      [disabled]="unlockingDAOCoin || validationErrors.length"
+    >
+      Unlock
+    </button>
+  </div>
+  <ng-container *ngIf="validationErrors.length">
+    <div *ngFor="let validationError of validationErrors" class="pt-5px fc-red">
+      {{ validationError }}
+    </div>
+  </ng-container>
+  <div class="fc-red pt-5px" *ngIf="backendErrors">
+    {{ backendErrors }}
+  </div>
+</div>
