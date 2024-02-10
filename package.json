@@ -54,7 +54,7 @@
     "https-browserify": "^1.0.0",
     "is-buffer": "^2.0.4",
     "lodash": "^4.17.15",
-    "ng2-animate-on-scroll": "^2.2.1",
+    "ng2-animate-on-scroll": "2.3.0",
     "ngx-bootstrap": "^6.2.0",
     "ngx-toastr": "^13.2.0",
     "ngx-ui-scroll": "^2.0.0-rc.8",
