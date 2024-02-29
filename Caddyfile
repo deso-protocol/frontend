@@ -30,6 +30,7 @@ header @html Content-Security-Policy "
   connect-src 'self'
     media.deso.org
     node.deso.org
+    *.deso.run
     amp.deso.org
     bithunt.deso.org
     bitclout.com:*
