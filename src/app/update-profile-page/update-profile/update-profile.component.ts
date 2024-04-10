@@ -203,6 +203,24 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
     );
   }
 
+  _callBackendSubsidizedUpdateProfile() {
+    return this.backendApi.SubsidizedUpdateProfile(
+      environment.verificationEndpointHostname,
+      this.globalVars.loggedInUser
+        .PublicKeyBase58Check /*UpdaterPublicKeyBase58Check*/,
+      '' /*ProfilePublicKeyBase58Check*/,
+      // Start params
+      this.profileUpdates.usernameUpdate /*NewUsername*/,
+      this.profileUpdates.descriptionUpdate /*NewDescription*/,
+      this.profileUpdates.profilePicUpdate /*NewProfilePic*/,
+      this.founderRewardInput * 100 /*NewCreatorBasisPoints*/,
+      1.25 * 100 * 100 /*NewStakeMultipleBasisPoints*/,
+      false /*IsHidden*/,
+      // End params
+      this.globalVars.feeRateDeSoPerKB * 1e9 /*MinFeeRateNanosPerKB*/
+    );
+  }
+
   _updateProfile() {
     // Trim the username input in case the user added a space at the end. Some mobile
     // browsers may do this.
@@ -230,6 +248,64 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
           this._updateProfileFailure,
           this
         );
+      },
+      (err) => {
+        const parsedError = this.backendApi.parseProfileError(err);
+        const lowBalance = parsedError.indexOf('insufficient');
+        this.globalVars.logEvent('profile : update : error', {
+          parsedError,
+          lowBalance,
+        });
+        this.updateProfileBeingCalled = false;
+        SwalHelper.fire({
+          target: this.globalVars.getTargetComponentSelector(),
+          icon: 'error',
+          title: `An Error Occurred`,
+          html: parsedError,
+          showConfirmButton: true,
+          focusConfirm: true,
+          customClass: {
+            confirmButton: 'btn btn-light',
+            cancelButton: 'btn btn-light no',
+          },
+          confirmButtonText: lowBalance ? 'Buy $DESO' : null,
+          cancelButtonText: lowBalance ? 'Later' : null,
+          showCancelButton: !!lowBalance,
+        }).then((res) => {
+          if (lowBalance && res.isConfirmed) {
+            this.router.navigate([RouteNames.BUY_DESO], {
+              queryParamsHandling: 'merge',
+            });
+          }
+        });
+      }
+    );
+  }
+
+  _subsidizedUpdateProfile() {
+    // Trim the username input in case the user added a space at the end. Some mobile
+    // browsers may do this.
+    this.usernameInput = this.usernameInput.trim();
+
+    const hasErrors = this._setProfileErrors();
+    if (hasErrors) {
+      this.globalVars.logEvent(
+        'profile : update : has-errors',
+        this.profileUpdateErrors
+      );
+      return;
+    }
+
+    this.updateProfileBeingCalled = true;
+    this._setProfileUpdates();
+    this._callBackendSubsidizedUpdateProfile().subscribe(
+      (res) => {
+        this.globalVars.profileUpdateTimestamp = Date.now();
+        this.globalVars.logEvent('profile : update');
+
+        // Log the resulting transaction.
+        debugger;
+        console.log(res);
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);

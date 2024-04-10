@@ -30,7 +30,9 @@ export class BackendRoutes {
   static RoutePathSubmitPost = '/api/v0/submit-post';
   static RoutePathUploadImage = '/api/v0/upload-image';
   static RoutePathSubmitTransaction = '/api/v0/submit-transaction';
+  static RoutePathSubmitAtomicTransaction = '/api/v0/submit-atomic-transaction';
   static RoutePathUpdateProfile = '/api/v0/update-profile';
+  static RoutePathSubsidizedUpdateProfile = '/api/v0/subsidized-update-profile';
   static RoutePathGetPostsStateless = '/api/v0/get-posts-stateless';
   static RoutePathGetHotFeed = '/api/v0/get-hot-feed';
   static RoutePathGetProfiles = '/api/v0/get-profiles';
@@ -747,6 +749,58 @@ export class BackendApiService {
     this.identityService.identityServicePublicKeyAdded = publicKeyAdded;
   }
 
+  signAndSubmitSubsidizedUpdateProfileTransaction(
+    endpoint: string,
+    request: Observable<any>,
+    PublicKeyBase58Check: string
+  ): Observable<any> {
+    let incompleteAtomicTransaction: any | null = null;
+    return request
+      .pipe(
+        // Collect the signature for the unsigned update profile transaction.
+        switchMap((res) => {
+          // Capture the incomplete atomic transaction.
+          incompleteAtomicTransaction = res.IncompleteAtomicTransaction;
+
+          // Continue processing without the incomplete atomic transaction.
+          // Hit the identity service to sign the update profile transaction.
+          return this.identityService
+            .sign({
+              transactionHex: res.UpdateProfileTransactionHex,
+              ...this.identityService.identityServiceParamsForKey(
+                PublicKeyBase58Check
+              ),
+            })
+            .pipe(
+              switchMap((signed) => {
+                return this.identityService
+                  .launch('/approve', {
+                    tx: res.TransactionHex,
+                  })
+                  .pipe(
+                    map((approved) => {
+                      this.setIdentityServiceUsers(approved.users);
+                      return { ...res, ...approved };
+                    })
+                  );
+              })
+            );
+        })
+      )
+      .pipe(
+        // Construct the atomic transaction and submit.
+        // Submit the incomplete atomic transaction along with the new transaction.
+        switchMap((res) =>
+          this.SubmitAtomicTransaction(
+            endpoint,
+            incompleteAtomicTransaction,
+            [res.signedTransactionsHex]
+          ).pipe(map((broadcasted) => ({ ...res, ...broadcasted })))
+        )
+      )
+      .pipe(catchError(this._handleError));
+  }
+
   signAndSubmitTransaction(
     endpoint: string,
     request: Observable<any>,
@@ -765,16 +819,16 @@ export class BackendApiService {
             .pipe(
               switchMap((signed) => {
                 //if (signed.approvalRequired) {
-                  return this.identityService
-                    .launch('/approve', {
-                      tx: res.TransactionHex,
+                return this.identityService
+                  .launch('/approve', {
+                    tx: res.TransactionHex,
+                  })
+                  .pipe(
+                    map((approved) => {
+                      this.setIdentityServiceUsers(approved.users);
+                      return { ...res, ...approved };
                     })
-                    .pipe(
-                      map((approved) => {
-                        this.setIdentityServiceUsers(approved.users);
-                        return { ...res, ...approved };
-                      })
-                    );
+                  );
                 //} else {
                 //  return of({ ...res, ...signed });
                 //}
@@ -1001,6 +1055,17 @@ export class BackendApiService {
   SubmitTransaction(endpoint: string, TransactionHex: string): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathSubmitTransaction, {
       TransactionHex,
+    });
+  }
+
+  SubmitAtomicTransaction(
+    endpoint: string,
+    IncompleteAtomicTransaction: any,
+    SignedInnerTransactionsHex: string[]
+  ): Observable<any> {
+    return this.post(endpoint, BackendRoutes.RoutePathSubmitAtomicTransaction, {
+      IncompleteAtomicTransaction,
+      SignedInnerTransactionsHex,
     });
   }
 
@@ -1965,6 +2030,52 @@ export class BackendApiService {
       IsHodlingPublicKeyBase58Check,
       IsDAOCoin,
     });
+  }
+
+  SubsidizedUpdateProfile(
+    endpoint: string,
+    // Specific fields
+    UpdaterPublicKeyBase58Check: string,
+    // Optional: Only needed when updater public key != profile public key
+    ProfilePublicKeyBase58Check: string,
+    NewUsername: string,
+    NewDescription: string,
+    NewProfilePic: string,
+    NewCreatorBasisPoints: number,
+    NewStakeMultipleBasisPoints: number,
+    IsHidden: boolean,
+    // End specific fields
+    MinFeeRateNanosPerKB: number
+  ): Observable<any> {
+    NewCreatorBasisPoints = Math.floor(NewCreatorBasisPoints);
+    NewStakeMultipleBasisPoints = Math.floor(NewStakeMultipleBasisPoints);
+
+    const request = this.post(
+      endpoint,
+      BackendRoutes.RoutePathSubsidizedUpdateProfile,
+      {
+        UpdaterPublicKeyBase58Check,
+        ProfilePublicKeyBase58Check,
+        NewUsername,
+        NewDescription,
+        NewProfilePic,
+        NewCreatorBasisPoints,
+        NewStakeMultipleBasisPoints,
+        IsHidden,
+        MinFeeRateNanosPerKB,
+      }
+    );
+
+    // NOTE: Unlike the traditional UpdateProfile endpoint, there's
+    // no need to wait for a subsidization transaction to be broadcast
+    // across the network as the subsidization transaction is bundled
+    // together in the returned atomic transaction.
+
+    return this.signAndSubmitSubsidizedUpdateProfileTransaction(
+      endpoint,
+      request,
+      UpdaterPublicKeyBase58Check
+    );
   }
 
   UpdateProfile(
@@ -2950,7 +3061,7 @@ export class BackendApiService {
 
     Username: string,
     IsBlacklistUpdate: boolean,
-    AddUserToList: boolean,
+    AddUserToList: boolean
   ): Observable<any> {
     return this.jwtPost(
       endpoint,
@@ -3895,12 +4006,24 @@ export class BackendApiService {
     return this.get(endpoint, BackendRoutes.RoutePathGetCountKeysWithDESO);
   }
 
-  GetLockupYieldCurvePoints(endpoint: string, publicKey: string): Observable<LockupYieldCurvePointResponse[]> {
-    return this.get(endpoint, BackendRoutes.RoutePathLockupYieldCurvePoints + "/" + publicKey);
+  GetLockupYieldCurvePoints(
+    endpoint: string,
+    publicKey: string
+  ): Observable<LockupYieldCurvePointResponse[]> {
+    return this.get(
+      endpoint,
+      BackendRoutes.RoutePathLockupYieldCurvePoints + '/' + publicKey
+    );
   }
 
-  GetLockedBalanceEntries(endpoint: string, publicKey: string): Observable<CumulativeLockedBalanceEntryResponse[]> {
-    return this.get(endpoint, BackendRoutes.RoutePathLockedBalanceEntries + "/" + publicKey);
+  GetLockedBalanceEntries(
+    endpoint: string,
+    publicKey: string
+  ): Observable<CumulativeLockedBalanceEntryResponse[]> {
+    return this.get(
+      endpoint,
+      BackendRoutes.RoutePathLockedBalanceEntries + '/' + publicKey
+    );
   }
 
   CoinLockup(
@@ -3922,14 +4045,14 @@ export class BackendApiService {
       VestingEndTimestampNanoSecs,
       LockupAmountBaseUnits,
       ExtraData,
-    MinFeeRateNanosPerKB,
-  });
+      MinFeeRateNanosPerKB,
+    });
     return this.signAndSubmitTransaction(
       endpoint,
       request,
-      TransactorPublicKeyBase58Check,
-    )
-  };
+      TransactorPublicKeyBase58Check
+    );
+  }
 
   UpdateCoinLockupParams(
     endpoint: string,
@@ -3942,22 +4065,26 @@ export class BackendApiService {
     ExtraData: { [k: string]: string },
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathUpdateCoinLockupParams, {
-      TransactorPublicKeyBase58Check,
-      LockupYieldDurationNanoSecs,
-      LockupYieldAPYBasisPoints,
-      RemoveYieldCurvePoint,
-      NewLockupTransferRestrictions,
-      LockupTransferRestrictionStatus,
-      ExtraData,
-      MinFeeRateNanosPerKB,
-    });
+    const request = this.post(
+      endpoint,
+      BackendRoutes.RoutePathUpdateCoinLockupParams,
+      {
+        TransactorPublicKeyBase58Check,
+        LockupYieldDurationNanoSecs,
+        LockupYieldAPYBasisPoints,
+        RemoveYieldCurvePoint,
+        NewLockupTransferRestrictions,
+        LockupTransferRestrictionStatus,
+        ExtraData,
+        MinFeeRateNanosPerKB,
+      }
+    );
     return this.signAndSubmitTransaction(
       endpoint,
       request,
-      TransactorPublicKeyBase58Check,
-    )
-  };
+      TransactorPublicKeyBase58Check
+    );
+  }
 
   CoinLockupTransfer(
     endpoint: string,
@@ -3969,21 +4096,25 @@ export class BackendApiService {
     ExtraData: { [k: string]: string },
     MinFeeRateNanosPerKB: number
   ): Observable<any> {
-    const request = this.post(endpoint, BackendRoutes.RoutePathCoinLockupTransfer, {
-      TransactorPublicKeyBase58Check,
-      ProfilePublicKeyBase58Check,
-      RecipientPublicKeyBase58Check,
-      UnlockTimestampNanoSecs,
-      LockedCoinsToTransferBaseUnits,
-      ExtraData,
-      MinFeeRateNanosPerKB,
-    });
+    const request = this.post(
+      endpoint,
+      BackendRoutes.RoutePathCoinLockupTransfer,
+      {
+        TransactorPublicKeyBase58Check,
+        ProfilePublicKeyBase58Check,
+        RecipientPublicKeyBase58Check,
+        UnlockTimestampNanoSecs,
+        LockedCoinsToTransferBaseUnits,
+        ExtraData,
+        MinFeeRateNanosPerKB,
+      }
+    );
     return this.signAndSubmitTransaction(
       endpoint,
       request,
-      TransactorPublicKeyBase58Check,
-    )
-  };
+      TransactorPublicKeyBase58Check
+    );
+  }
 
   CoinUnlock(
     endpoint: string,
@@ -4001,9 +4132,9 @@ export class BackendApiService {
     return this.signAndSubmitTransaction(
       endpoint,
       request,
-      TransactorPublicKeyBase58Check,
-    )
-  };
+      TransactorPublicKeyBase58Check
+    );
+  }
 
   // Error parsing
   stringifyError(err): string {
