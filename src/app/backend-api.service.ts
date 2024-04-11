@@ -775,7 +775,7 @@ export class BackendApiService {
               switchMap((signed) => {
                 return this.identityService
                   .launch('/approve', {
-                    tx: res.TransactionHex,
+                    tx: res.UpdateProfileTransactionHex,
                   })
                   .pipe(
                     map((approved) => {
@@ -794,7 +794,7 @@ export class BackendApiService {
           this.SubmitAtomicTransaction(
             endpoint,
             incompleteAtomicTransaction,
-            [res.signedTransactionsHex]
+            [res.signedTransactionHex]
           ).pipe(map((broadcasted) => ({ ...res, ...broadcasted })))
         )
       )
@@ -1063,6 +1063,7 @@ export class BackendApiService {
     IncompleteAtomicTransaction: any,
     SignedInnerTransactionsHex: string[]
   ): Observable<any> {
+    debugger;
     return this.post(endpoint, BackendRoutes.RoutePathSubmitAtomicTransaction, {
       IncompleteAtomicTransaction,
       SignedInnerTransactionsHex,
@@ -2070,7 +2071,6 @@ export class BackendApiService {
     // no need to wait for a subsidization transaction to be broadcast
     // across the network as the subsidization transaction is bundled
     // together in the returned atomic transaction.
-
     return this.signAndSubmitSubsidizedUpdateProfileTransaction(
       endpoint,
       request,
