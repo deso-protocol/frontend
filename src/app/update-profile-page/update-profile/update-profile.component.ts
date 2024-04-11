@@ -302,10 +302,6 @@ export class UpdateProfileComponent implements OnInit, OnChanges {
       (res) => {
         this.globalVars.profileUpdateTimestamp = Date.now();
         this.globalVars.logEvent('profile : update');
-
-        // Log the resulting transaction.
-        debugger;
-        console.log(res);
       },
       (err) => {
         const parsedError = this.backendApi.parseProfileError(err);
