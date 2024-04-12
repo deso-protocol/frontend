@@ -211,6 +211,27 @@
     <i *ngIf="isOpen.desoNode" class="fas fa-caret-down"></i>
     DeSo Node Info
   </span>
+  <div class="ml-15px">
+    Remote Node Connections
+    <table class="fs-12px">
+      <thead>
+        <td>IP</td>
+        <td>Status</td>
+        <td>Validator Info</td>
+      </thead>
+      <tbody>
+        <tr *ngFor="let connection of globalVars.nodeInfo.RemoteNodeConnections">
+          <td>{{ connection.PeerResponse.IP + ':' + connection.PeerResponse.ProtocolPort }}</td>
+          <td>
+            <i [ngClass]="connection.PeerConnected ? 'fas fa-solid fa-check fc-green' : 'fas fa-solid fa-x fc-red'"></i>
+            {{ connection.RemoteNodeStatus }}
+          </td>
+          <td class="text-truncate">
+            {{ connection?.ValidatorResponse?.ValidatorPublicKeyBase58Check }}
+          </td>
+        </tr>
+    </table>
+  </div>
   <div *ngIf="isOpen.desoNode && updatingDeSoPeer" class="ml-15px fc-muted">
     Updating DeSo peers...
   </div>
