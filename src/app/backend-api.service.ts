@@ -754,13 +754,13 @@ export class BackendApiService {
     request: Observable<any>,
     PublicKeyBase58Check: string
   ): Observable<any> {
-    let incompleteAtomicTransaction: any | null = null;
+    let incompleteAtomicTransactionHex: string = '';
     return request
       .pipe(
         // Collect the signature for the unsigned update profile transaction.
         switchMap((res) => {
           // Capture the incomplete atomic transaction.
-          incompleteAtomicTransaction = res.IncompleteAtomicTransaction;
+          incompleteAtomicTransactionHex = res.IncompleteAtomicTransactionHex;
 
           // Continue processing without the incomplete atomic transaction.
           // Hit the identity service to sign the update profile transaction.
@@ -793,7 +793,7 @@ export class BackendApiService {
         switchMap((res) =>
           this.SubmitAtomicTransaction(
             endpoint,
-            incompleteAtomicTransaction,
+            incompleteAtomicTransactionHex,
             [res.signedTransactionHex]
           ).pipe(map((broadcasted) => ({ ...res, ...broadcasted })))
         )
@@ -1060,12 +1060,11 @@ export class BackendApiService {
 
   SubmitAtomicTransaction(
     endpoint: string,
-    IncompleteAtomicTransaction: any,
+    IncompleteAtomicTransactionHex: string,
     SignedInnerTransactionsHex: string[]
   ): Observable<any> {
-    debugger;
     return this.post(endpoint, BackendRoutes.RoutePathSubmitAtomicTransaction, {
-      IncompleteAtomicTransaction,
+      IncompleteAtomicTransactionHex,
       SignedInnerTransactionsHex,
     });
   }
