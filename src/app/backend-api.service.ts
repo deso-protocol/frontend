@@ -764,7 +764,7 @@ export class BackendApiService {
             })
             .pipe(
               switchMap((signed) => {
-                //if (signed.approvalRequired) {
+                if (signed.approvalRequired) {
                   return this.identityService
                     .launch('/approve', {
                       tx: res.TransactionHex,
@@ -775,9 +775,9 @@ export class BackendApiService {
                         return { ...res, ...approved };
                       })
                     );
-                //} else {
-                //  return of({ ...res, ...signed });
-                //}
+                } else {
+                 return of({ ...res, ...signed });
+                }
               })
             )
         )
