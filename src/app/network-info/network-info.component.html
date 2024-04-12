@@ -213,21 +213,38 @@
   </span>
   <div class="ml-15px">
     Remote Node Connections
-    <table class="fs-12px">
+    <table class="fs-12px w-100" style="table-layout: fixed;">
       <thead>
-        <td>IP</td>
-        <td>Status</td>
-        <td>Validator Info</td>
+        <td class="w-25">IP</td>
+        <td class="w-25">Status</td>
+        <td class="w-50">Validator Info</td>
       </thead>
       <tbody>
-        <tr *ngFor="let connection of globalVars.nodeInfo.RemoteNodeConnections">
-          <td>{{ connection.PeerResponse.IP + ':' + connection.PeerResponse.ProtocolPort }}</td>
-          <td>
+        <tr
+          *ngFor="let connection of globalVars.nodeInfo.RemoteNodeConnections"
+          class="border-bottom border-color-grey"
+        >
+          <td class="w-25">
+            {{ connection.PeerResponse ? connection.PeerResponse.IP + ':' + connection.PeerResponse.ProtocolPort : 'N/A' }}</td>
+          <td class="w-25">
             <i [ngClass]="connection.PeerConnected ? 'fas fa-solid fa-check fc-green' : 'fas fa-solid fa-x fc-red'"></i>
-            {{ connection.RemoteNodeStatus }}
+            <span style="overflow-wrap: break-word">{{ connection.RemoteNodeStatus }}</span>
           </td>
-          <td class="text-truncate">
-            {{ connection?.ValidatorResponse?.ValidatorPublicKeyBase58Check }}
+          <td class="w-50">
+            <span
+              (click)="_copyPublicKey(connection.ValidatorResponse.ValidatorPublicKeyBase58Check)"
+              class="d-block text-truncate"
+              *ngIf="connection.ValidatorResponse"
+            >
+              <i
+                *ngIf="!pubKeyCopiedMap[connection.ValidatorResponse.ValidatorPublicKeyBase58Check]"
+                class="fas fa-key"></i>
+              <i
+                *ngIf="pubKeyCopiedMap[connection.ValidatorResponse.ValidatorPublicKeyBase58Check]"
+                class="far fa-check-circle fc-blue"
+              ></i>
+              {{ connection.ValidatorResponse.ValidatorPublicKeyBase58Check }}
+            </span>
           </td>
         </tr>
     </table>

@@ -34,6 +34,7 @@ export class NetworkInfoComponent implements OnInit {
   updatingDeSoPeer = false;
   manualBitcoinPeer = '';
   updatingBitcoinPeer = false;
+  pubKeyCopiedMap = {};
 
   constructor(
     public globalVars: GlobalVarsService,
@@ -323,5 +324,13 @@ export class NetworkInfoComponent implements OnInit {
         cancelButton: 'btn btn-light no',
       },
     });
+  }
+
+  _copyPublicKey(publicKey: string) {
+    this.globalVars._copyText(publicKey);
+    this.pubKeyCopiedMap[publicKey] = true;
+    setInterval(() => {
+      delete this.pubKeyCopiedMap[publicKey];
+    }, 1000);
   }
 }

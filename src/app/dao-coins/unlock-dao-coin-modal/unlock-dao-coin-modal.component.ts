@@ -81,6 +81,7 @@ export class UnlockDaoCoinModalComponent {
         minute: '2-digit',
         hour12: false,
       };
+      // @ts-ignore
       return new Intl.DateTimeFormat('default', options).format(date)
     }
   }
