@@ -1,4 +1,4 @@
-FROM node:20-alpine3.19 AS frontend
+FROM node:16-alpine3.15 AS frontend
 
 WORKDIR /frontend
 
@@ -11,11 +11,7 @@ COPY ./.npmrc .
 
 # install frontend dependencies before copying the frontend code
 # into the container so we get docker cache benefits
-<<<<<<< HEAD
-RUN npm i -f
-=======
 RUN npm install --legacy-peer-deps
->>>>>>> 03c3bca (really really fix it)
 
 # don't allow any dependencies with vulnerabilities
 #RUN npx audit-ci --low
