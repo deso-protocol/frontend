@@ -50,7 +50,7 @@ header @html Content-Security-Policy "
     https://lvpr.tv
     https://upload.videodelivery.net;
   script-src 'self'
-    https://kit.fontawesome.com/070ca4195b.js
+    https://kit.fontawesome.com/5209775539.js
     https://ka-f.fontawesome.com/;
   style-src 'self'
     'unsafe-inline'
