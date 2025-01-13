@@ -1083,34 +1083,32 @@ export class GlobalVarsService {
     this.usdPerBitcoinExchangeRate = 10000;
     this.defaultFeeRateNanosPerKB = 1000.0;
 
-    this.localNode = this.backendApi.GetStorage(
-      this.backendApi.LastLocalNodeKey
-    );
+    this.localNode = 'https://node.deso.org'
 
-    if (!this.localNode) {
-      const hostname = (window as any).location.hostname;
-      if (environment.production) {
-        this.localNode = hostname;
-      } else {
-        this.localNode = `${hostname}:17001`;
-      }
+    // if (!this.localNode) {
+    //   const hostname = (window as any).location.hostname;
+    //   if (environment.production) {
+    //     this.localNode = hostname;
+    //   } else {
+    //     this.localNode = `${hostname}:17001`;
+    //   }
 
       this.backendApi.SetStorage(
         this.backendApi.LastLocalNodeKey,
         this.localNode
       );
-    }
+    // }
 
-    let identityServiceURL = this.backendApi.GetStorage(
-      this.backendApi.LastIdentityServiceKey
-    );
-    if (!identityServiceURL) {
-      identityServiceURL = environment.identityURL;
-      this.backendApi.SetStorage(
-        this.backendApi.LastIdentityServiceKey,
-        identityServiceURL
-      );
-    }
+    // let identityServiceURL = this.backendApi.GetStorage(
+    //   this.backendApi.LastIdentityServiceKey
+    // );
+    // if (!identityServiceURL) {
+      const identityServiceURL = environment.identityURL;
+      // this.backendApi.SetStorage(
+      //   this.backendApi.LastIdentityServiceKey,
+      //   identityServiceURL
+      // );
+    // }
     this.identityService.identityServiceURL = identityServiceURL;
     this.identityService.setSanitizedIdentityServiceURL();
 
