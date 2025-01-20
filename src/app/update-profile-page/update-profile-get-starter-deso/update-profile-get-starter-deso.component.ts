@@ -32,13 +32,11 @@ export class UpdateProfileGetStarterDeSoComponent {
 
   launchPhoneNumberVerification() {
     this.identityService
-      .launchPhoneNumberVerification(
+      .launchGetDeso(
         this.globalVars?.loggedInUser?.PublicKeyBase58Check
       )
-      .subscribe((res) => {
-        if (res.phoneNumberSuccess) {
+      .subscribe(() => {
           this.globalVars.updateEverything();
-        }
       });
   }
 }

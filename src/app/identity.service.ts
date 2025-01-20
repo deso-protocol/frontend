@@ -249,6 +249,14 @@ export class IdentityService {
     return this.send('info', {});
   }
 
+  launchGetDeso(
+    publicKey: string
+  ): Observable<any> {
+    return this.launch('/get-deso', {
+      publicKey
+    });
+  }
+
   launchPhoneNumberVerification(
     public_key: string
   ): Observable<{ phoneNumberSuccess: boolean }> {
