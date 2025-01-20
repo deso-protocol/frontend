@@ -246,30 +246,4 @@
       </div>
     </div>
   </div>
-
-  <div
-    class="fs-12px mt-10px pt-15px pb-15px flex-wrap border-top border-bottom border-color-grey light-grey-divider"
-  >
-    <div class="fs-12x d-inline-block col-4 mb-0" style="text-align: center">
-      <span class="font-weight-bold d-block"
-        >≈
-        {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}</span
-      >
-      <span class="fc-muted d-block">Coins In Circulation</span>
-    </div>
-    <div
-      class="fs-12px d-inline-block col-4 align-items-center mb-0"
-      style="text-align: center"
-    >
-      <span class="font-weight-bold d-block">≈ {{ totalUSDLocked() }}</span>
-      <span class="fc-muted d-block">Total USD Locked</span>
-    </div>
-    <div
-      class="fs-12px d-inline-block col-4 align-items-center mb-0"
-      style="text-align: center"
-    >
-      <span class="font-weight-bold d-block">≈ {{ usdMarketCap() }}</span>
-      <span class="fc-muted d-block">USD Market Cap</span>
-    </div>
-  </div>
 </div>

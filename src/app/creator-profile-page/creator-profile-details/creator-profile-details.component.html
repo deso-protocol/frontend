@@ -97,6 +97,31 @@
     class="w-100 d-flex flex-column"
     *ngIf="activeTab == 'Creator Coin' && !loading"
   >
+    <div
+      class="fs-12px pt-15px pb-15px flex-wrap border-top border-bottom border-color-grey light-grey-divider"
+    >
+      <div class="fs-12x d-inline-block col-4 mb-0" style="text-align: center">
+      <span class="font-weight-bold d-block"
+      >≈
+        {{ (profile.CoinEntry.CoinsInCirculationNanos / 1e9).toFixed(4) }}</span
+      >
+        <span class="fc-muted d-block">Coins In Circulation</span>
+      </div>
+      <div
+        class="fs-12px d-inline-block col-4 align-items-center mb-0"
+        style="text-align: center"
+      >
+        <span class="font-weight-bold d-block">≈ {{ totalUSDLocked() }}</span>
+        <span class="fc-muted d-block">Total USD Locked</span>
+      </div>
+      <div
+        class="fs-12px d-inline-block col-4 align-items-center mb-0"
+        style="text-align: center"
+      >
+        <span class="font-weight-bold d-block">≈ {{ usdMarketCap() }}</span>
+        <span class="fc-muted d-block">USD Market Cap</span>
+      </div>
+    </div>
     <div class="w-100 d-flex justify-content-start px-15px fs-15px">
       <div
         class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px"
@@ -134,6 +159,58 @@
     class="w-100 d-flex flex-column"
     *ngIf="activeTab == 'DAO Coin' && !loading"
   >
+    <div
+      class="fs-12px pt-15px pb-15px flex-wrap border-top border-bottom border-color-grey light-grey-divider"
+    >
+      <div class="fs-12x d-inline-block col-4 mb-0" style="text-align: center">
+      <span class="font-weight-bold d-block"
+      >≈
+        {{ (profile.DAOCoinEntry.CoinsInCirculationNanos / 1e18).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 }) }}</span
+      >
+        <span class="fc-muted d-inline-block">Coins In Circulation</span>
+        <span
+          class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="
+              'Coins in circulation only includes unlocked coins.\nThis means that any coins that are locked are not included in this number.'
+            "
+        >
+            <i class="fa-solid fa-circle-info fa-md"></i>
+          </span>
+      </div>
+      <div
+        class="fs-12px d-inline-block col-4 align-items-center mb-0"
+        style="text-align: center"
+      >
+        <span class="font-weight-bold d-block">≈ {{ profile.DAOCoinEntry.NumberOfHolders.toLocaleString('en-US') }}</span>
+        <span class="fc-muted d-inline-block">Number Of Holders</span>
+        <span
+          class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="
+              'Number of holders only represents the number of public keys that hold unlocked coins.\nThis means that public key that only holds locked coins of this profile is not included in this number.'
+            "
+        >
+            <i class="fa-solid fa-circle-info fa-md"></i>
+          </span>
+      </div>
+      <div
+        class="fs-12px d-inline-block col-4 align-items-center mb-0"
+        style="text-align: center"
+      >
+        <span class="font-weight-bold d-block">≈ {{ daoCoinUsdValue() }}</span>
+        <span class="fc-muted d-inline-block">Price per Coin</span>
+        <span
+          class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="
+              'This is the current mid price of the DAO coin market for this coin traded with DESO as the quote currency.'
+            "
+        >
+          <i class="fa-solid fa-circle-info fa-md"></i>
+        </span>
+      </div>
+    </div>
     <div class="w-100 d-flex justify-content-start px-15px fs-15px">
       <div
         class="container border-bottom border-color-grey font-weight-bold fs-20px pl-0px py-15px"

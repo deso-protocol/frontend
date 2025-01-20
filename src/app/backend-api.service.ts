@@ -249,6 +249,9 @@ export class BackendRoutes {
   static RoutePathCoinUnlock = '/api/v0/coin-unlock';
   static RoutePathLockupYieldCurvePoints = '/api/v0/lockup-yield-curve-points';
   static RoutePathLockedBalanceEntries = '/api/v0/locked-balance-entries';
+
+  // GetBaseCurrencyPrice
+  static RoutePathGetBaseCurrencyPrice = '/api/v0/get-base-currency-price';
 }
 
 export class Transaction {
@@ -4004,6 +4007,17 @@ export class BackendApiService {
       TransactorPublicKeyBase58Check,
     )
   };
+
+  GetBaseCurrencyPrice(
+    endpoint: string,
+    Entries: { BaseCurrencyPublicKeyBase58Check: string; QuoteCurrencyPublicKeyBase58Check: string; BaseCurrencyToSell: number; }[],
+  ): Observable<any> {
+    return this.post(
+      endpoint, BackendRoutes.RoutePathGetBaseCurrencyPrice, {
+        Entries,
+      }
+    );
+  }
 
   // Error parsing
   stringifyError(err): string {
