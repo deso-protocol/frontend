@@ -209,7 +209,6 @@ export class CreatorProfileDetailsComponent implements OnInit {
             QuoteCurrencyPublicKeyBase58Check: this.globalVars.getDeSoPublicKey(),
             BaseCurrencyToSell: 1,
           }]).subscribe((res) => {
-            console.log(res.Entries[0]);
             this.MidPriceInUsd = res.Entries[0].MidPriceInUsd;
           })
           this.loading = false;
