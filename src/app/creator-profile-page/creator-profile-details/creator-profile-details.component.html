@@ -199,7 +199,14 @@
         style="text-align: center"
       >
         <span class="font-weight-bold d-block">≈ {{ daoCoinUsdValue() }}</span>
-        <span class="fc-muted d-block">Price per Coin</span>
+        <span class="fc-muted d-inline-block">Price per Coin</span>
+        <span
+          class="d-inline-block ml-1 cursor-pointer lh-12px fc-muted"
+          matTooltipClass="global__mat-tooltip global__mat-tooltip-font-size"
+          [matTooltip]="
+              'This is the current mid price of the DAO coin market for this coin traded with DESO as the quote currency.'
+            "
+        >
       </div>
     </div>
     <div class="w-100 d-flex justify-content-start px-15px fs-15px">
