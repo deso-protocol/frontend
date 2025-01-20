@@ -1428,4 +1428,8 @@ export class GlobalVarsService {
         });
     }
   }
+
+  getDeSoPublicKey(): string {
+    return this.isTestnet ? 'tBCKQud934akEwsr8AfG9BzHDWhi6CaDmjBsxGsSgfGsoxXHfVEfxP' : 'BC1YLbnP7rndL92x7DbLp6bkUpCgKmgoHgz7xEbwhgHTps3ZrXA6LtQ';
+  }
 }

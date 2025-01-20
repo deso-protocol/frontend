@@ -46,6 +46,7 @@ export class CreatorProfileDetailsComponent implements OnInit {
   appData: GlobalVarsService;
   userName: string;
   profile: ProfileEntryResponse;
+  MidPriceInUsd: number | undefined;
   activeTab: string;
   loading: boolean;
 
@@ -202,6 +203,15 @@ export class CreatorProfileDetailsComponent implements OnInit {
             return;
           }
           this.profile = res.Profile;
+
+          this.backendApi.GetBaseCurrencyPrice(this.globalVars.localNode, [{
+            BaseCurrencyPublicKeyBase58Check: this.profile.PublicKeyBase58Check,
+            QuoteCurrencyPublicKeyBase58Check: this.globalVars.getDeSoPublicKey(),
+            BaseCurrencyToSell: 1,
+          }]).subscribe((res) => {
+            console.log(res.Entries[0]);
+            this.MidPriceInUsd = res.Entries[0].MidPriceInUsd;
+          })
           this.loading = false;
         },
         (_) => {
@@ -238,5 +248,34 @@ export class CreatorProfileDetailsComponent implements OnInit {
       !this.globalVars.loggedInUser?.ProfileEntryResponse?.Username &&
       this.globalVars.loggedInUser?.UsersYouHODL?.length === 0
     );
+  }
+
+  coinsInCirculation() {
+    return this.profile.CoinEntry.CoinsInCirculationNanos / 1e9;
+  }
+
+  usdMarketCap() {
+    return this.globalVars.abbreviateNumber(
+      this.globalVars.nanosToUSDNumber(
+        this.coinsInCirculation() * this.profile.CoinPriceDeSoNanos
+      ),
+      3,
+      true
+    );
+  }
+
+  totalUSDLocked() {
+    return this.globalVars.abbreviateNumber(
+      this.globalVars.nanosToUSDNumber(this.profile.CoinEntry.DeSoLockedNanos),
+      3,
+      true
+    );
+  }
+
+  daoCoinUsdValue() {
+    if (this.MidPriceInUsd === undefined) {
+      return 'Loading...';
+    }
+    return this.globalVars.formatUSD(this.MidPriceInUsd, 5);
   }
 }
