@@ -35,16 +35,14 @@ export class SignUpGetStarterDeSoComponent {
 
   openIdentityPhoneNumberVerification(): void {
     this.identityService
-      .launchPhoneNumberVerification(
+      .launchGetDeso(
         this.globalVars?.loggedInUser?.PublicKeyBase58Check
       )
-      .subscribe((res) => {
-        if (res.phoneNumberSuccess) {
+      .subscribe(() => {
           this.globalVars.updateEverything().add(() => {
             this.screenToShow =
               SignUpGetStarterDeSoComponent.COMPLETED_PHONE_NUMBER_VERIFICATION_SCREEN;
           });
-        }
       });
   }
 }
