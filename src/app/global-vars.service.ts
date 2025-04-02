@@ -1026,7 +1026,7 @@ export class GlobalVarsService {
   launchIdentityFlow(event: string): void {
     this.logEvent(`account : ${event} : launch`);
     this.identityService
-      .launch('/log-in', { referralCode: this.referralCode(), hideJumio: true })
+      .launch('/log-in', { referralCode: this.referralCode(), hideJumio: true, accessLevelRequest: 4 })
       .subscribe((res) => {
         this.logEvent(`account : ${event} : success`);
         this.backendApi.setIdentityServiceUsers(res.users, res.publicKeyAdded);
