@@ -14,7 +14,7 @@
         class="mr-15px d-lg-none d-inline-block"
       ></top-bar-mobile-navigation-control>
 
-      <div>Thread with {{ currentPost.ProfileEntryResponse.Username }}</div>
+      <div>Thread with {{ currentPost.ProfileEntryResponse?.Username || currentPost.PosterPublicKeyBase58Check }}</div>
     </div>
   </div>
 
@@ -63,7 +63,6 @@
         <!--  afterCommentCreatedCallback explanation: Here, the "post" is a comment. A new comment on a -->
         <!--  comment ("original comment") should be prepended to the original comment's list of comments (i.e. subcomments).-->
         <feed-post
-          *ngIf="item.ProfileEntryResponse != null"
           [includePaddingOnPost]="true"
           [post]="item"
           [parentPost]="currentPost"
@@ -87,7 +86,6 @@
             <!--  subcomment should be appended to the parent (commentPost)'s list of subComments.-->
             <feed-post
               class="p-15px"
-              *ngIf="subcommentPost.ProfileEntryResponse != null"
               [includePaddingOnPost]="true"
               [post]="subcommentPost"
               [parentPost]="item"
