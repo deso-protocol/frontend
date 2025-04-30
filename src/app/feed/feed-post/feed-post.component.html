@@ -53,10 +53,17 @@
           ])
         "
         queryParamsHandling="merge"
+        *ngIf="post?.ProfileEntryResponse; else elseMissingBlockedProfileBlock"
       >
         This is a post from {{ post.ProfileEntryResponse.Username }} who you
         have blocked. Click here to visit their profile to unblock them.
       </a>
+      <ng-template #elseMissingBlockedProfileBlock>
+        <span style="text-align: center">
+          This is a post from <span class="creator-profile__ellipsis-restriction">{{ post.PosterPublicKeyBase58Check }}</span> who you
+          have blocked.
+        </span>
+      </ng-template>
     </div>
 
     <div
@@ -91,9 +98,16 @@
                 post.ParentPosts[0].ProfileEntryResponse.Username
               ])
             "
+            *ngIf="post.ParentPosts[0].ProfileEntryResponse; else elseMissingParentPostProfileBlock"
           >
             replying to {{ post.ParentPosts[0].ProfileEntryResponse.Username }}
           </a>
+          <ng-template #elseMissingParentPostProfileBlock>
+            <span class="fc-muted font-weight-semibold fs-15px">
+              replying to <span class="creator-profile__ellipsis-restriction">{{ post.ParentPosts[0].PosterPublicKeyBase58Check }}</span>
+            </span>
+          </ng-template>
+
         </div>
         <div
           *ngIf="reposterProfile"
@@ -160,7 +174,7 @@
           </a>
         </div>
 
-        <ng-template #creatorCoinInfo>
+        <ng-template #creatorCoinInfo *ngIf="postContent.ProfileEntryResponse">
           <!-- Coin price-->
           <a
             style="padding: 3px"
@@ -174,7 +188,7 @@
             "
             queryParamsHandling="merge"
           >
-            <span class="text-grey5">
+            <span class="text-grey5" *ngIf="postContent.ProfileEntryResponse">
               ~{{
                 globalVars.nanosToUSD(
                   postContent.ProfileEntryResponse.CoinPriceDeSoNanos,
@@ -211,12 +225,13 @@
           <div class="feed-post__avatar-container">
             <a
               class="feed-post__avatar br-12px"
-              [avatar]="postContent.ProfileEntryResponse.PublicKeyBase58Check"
+              [avatar]="postContent.ProfileEntryResponse?.PublicKeyBase58Check || postContent.PosterPublicKeyBase58Check"
               [routerLink]="
+                postContent.ProfileEntryResponse ?
                 getRouterLink([
                   '/' + globalVars.RouteNames.USER_PREFIX,
                   postContent.ProfileEntryResponse.Username
-                ])
+                ]) : ''
               "
               queryParamsHandling="merge"
             ></a>
@@ -239,12 +254,18 @@
                   ])
                 "
                 queryParamsHandling="merge"
+                *ngIf="postContent.ProfileEntryResponse; else elseMissingProfileBlock"
               >
                 {{ postContent.ProfileEntryResponse.Username }}
               </a>
+              <ng-template #elseMissingProfileBlock>
+                <span class="fc-default font-weight-bold creator-profile__ellipsis-restriction">
+                  {{ postContent.PosterPublicKeyBase58Check }}
+                </span>
+              </ng-template>
 
               <span
-                *ngIf="postContent.ProfileEntryResponse.IsVerified"
+                *ngIf="postContent.ProfileEntryResponse?.IsVerified"
                 class="ml-1 text-primary"
               >
                 <i class="fas fa-check-circle fa-md align-middle"></i>
@@ -257,12 +278,12 @@
 
               <!-- Desktop follow button-->
               <follow-button
-                *ngIf="!hideFollowLink"
+                *ngIf="!hideFollowLink && postContent.ProfileEntryResponse"
                 class="ml-10px fs-12px d-lg-block d-none text-grey5"
                 [displayAsLink]="true"
                 [followLinkClass]="'link--unstyled'"
                 [followedPubKeyBase58Check]="
-                  postContent.ProfileEntryResponse.PublicKeyBase58Check
+                  postContent.PosterPublicKeyBase58Check
                 "
                 [creatorCoinTemplate]="creatorCoinInfo"
               ></follow-button>
@@ -307,12 +328,12 @@
             <!-- Mobile follow button-->
             <div class="mt-5px d-lg-none text-grey5">
               <follow-button
-                *ngIf="!hideFollowLink"
+                *ngIf="!hideFollowLink && postContent.ProfileEntryResponse"
                 class="fs-12px"
                 [displayAsLink]="true"
                 [followLinkClass]="'link--unstyled'"
                 [followedPubKeyBase58Check]="
-                  postContent.ProfileEntryResponse.PublicKeyBase58Check
+                  postContent.PublicKeyBase58Check
                 "
                 [creatorCoinTemplate]="creatorCoinInfo"
               ></follow-button>
@@ -331,9 +352,15 @@
                   ])
                 "
                 queryParamsHandling="merge"
+                *ngIf="parentPost.ProfileEntryResponse; else elseMissingParentProfileBlock"
               >
                 @{{ parentPost.ProfileEntryResponse.Username }}
               </a>
+              <ng-template #elseMissingParentProfileBlock>
+                <span class="creator-profile__ellipsis-restriction">
+                  @{{ parentPost.PosterPublicKeyBase58Check }}
+                </span>
+              </ng-template>
             </div>
 
             <!-- Content -->
