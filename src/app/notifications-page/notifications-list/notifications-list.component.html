@@ -26,7 +26,7 @@
 >
   <div
     class="p-10px cursor-pointer"
-    *ngIf="item.action"
+    *ngIf="item && item.action"
     [routerLink]="item.link"
   >
     <div class="d-flex flex-row align-items-center">
@@ -44,7 +44,7 @@
       <div class="notifications__action" [innerHtml]="item.action"></div>
     </div>
   </div>
-  <div class="cursor-pointer" *ngIf="item.post">
+  <div class="cursor-pointer" *ngIf="item && item.post">
     <feed-post
       [post]="item.post"
       [includePaddingOnPost]="true"
