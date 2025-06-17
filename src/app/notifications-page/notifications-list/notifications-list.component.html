@@ -22,7 +22,7 @@
 <div
   #uiScroll
   *uiScroll="let item of datasource; let index = index"
-  class="border-bottom border-color-grey"
+  [ngClass]="{'border-bottom border-color-grey': item}"
 >
   <div
     class="p-10px cursor-pointer"
