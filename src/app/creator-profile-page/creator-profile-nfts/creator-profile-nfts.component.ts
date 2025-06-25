@@ -29,8 +29,8 @@ import { SwalHelper } from '../../../lib/helpers/swal-helper';
   styleUrls: ['./creator-profile-nfts.component.scss'],
 })
 export class CreatorProfileNftsComponent implements OnInit {
-  static PAGE_SIZE = 10;
-  static BUFFER_SIZE = 5;
+  static PAGE_SIZE = 100;
+  static BUFFER_SIZE = 10;
   static WINDOW_VIEWPORT = true;
   static PADDING = 0.5;
 
@@ -44,8 +44,15 @@ export class CreatorProfileNftsComponent implements OnInit {
   }[];
   myBids: NFTBidEntryResponse[];
 
+  // Stores a mapping of page number to last key hex.
+  pagedIndexes: {[page: number]: string | null} =  {
+    0: null,
+  };
+
+  totalItems = 0;
   lastPage = null;
   isLoading = true;
+  loadingNextPage = false;
   loadingNewSelection = false;
   static FOR_SALE = 'For Sale';
   static MY_BIDS = 'My Bids';
@@ -197,9 +204,9 @@ export class CreatorProfileNftsComponent implements OnInit {
             }
             this.nftResponse.push(responseElement);
           }
-          this.lastPage = Math.floor(
-            this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE
-          );
+          // this.lastPage = Math.floor(
+          //   this.nftResponse.length / CreatorProfileNftsComponent.PAGE_SIZE
+          // );
           return this.nftResponse;
         }
       );
@@ -209,19 +216,68 @@ export class CreatorProfileNftsComponent implements OnInit {
     if (this.lastPage != null && page > this.lastPage) {
       return [];
     }
+
     const startIdx = page * CreatorProfileNftsComponent.PAGE_SIZE;
     const endIdx = (page + 1) * CreatorProfileNftsComponent.PAGE_SIZE;
 
-    return new Promise((resolve, reject) => {
-      resolve(
-        this.activeTab === CreatorProfileNftsComponent.MY_BIDS
-          ? this.myBids.slice(startIdx, Math.min(endIdx, this.myBids.length))
-          : this.nftResponse.slice(
-              startIdx,
-              Math.min(endIdx, this.nftResponse.length)
-            )
-      );
-    });
+    if (this.activeTab === CreatorProfileNftsComponent.MY_BIDS) {
+      return new Promise((resolve, reject) => resolve(this.myBids.slice(0, Math.min(endIdx, this.myBids.length))));
+    }
+
+    this.loadingNextPage = true;
+    const fetchStartIndex = this.pagedIndexes[page];
+    return this.backendApi
+      .GetNFTsForUser(
+        this.globalVars.localNode,
+        this.profile.PublicKeyBase58Check,
+        this.globalVars.loggedInUser?.PublicKeyBase58Check,
+        this.getIsForSaleValue(),
+        this.getIsPendingValue(),
+        CreatorProfileNftsComponent.PAGE_SIZE,
+        fetchStartIndex,
+      )
+      .toPromise()
+      .then(
+        (res: {
+          NFTsMap: {
+            [k: string]: {
+              PostEntryResponse: PostEntryResponse;
+              NFTEntryResponses: NFTEntryResponse[];
+            };
+          };
+          LastKeyHex: string;
+        }) => {
+          this.nftResponse = [];
+          const chunk = [];
+          let totalItems = 0;
+          for (const k in res.NFTsMap) {
+            const responseElement = res.NFTsMap[k];
+            totalItems += responseElement.NFTEntryResponses.length;
+            // Exclude NFTs created by profile from Gallery and don't show pending NFTs in galley.
+            if (
+              this.activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
+              (responseElement.PostEntryResponse.PosterPublicKeyBase58Check ===
+                this.profile.PublicKeyBase58Check ||
+                responseElement.NFTEntryResponses.filter(
+                  (nftEntryResponse) => !nftEntryResponse.IsPending
+                ).length === 0)
+            ) {
+              continue;
+            }
+            chunk.push(responseElement);
+          }
+          this.totalItems += chunk.length;
+          this.pagedIndexes[page + 1] = res.LastKeyHex;
+
+          if (totalItems < CreatorProfileNftsComponent.PAGE_SIZE) {
+            this.lastPage = page;
+          }
+
+          return chunk;
+        }
+      ).finally(() => {
+        this.loadingNextPage = false;
+      });
   }
 
   async _prependComment(uiPostParent, index, newComment) {
@@ -277,7 +333,9 @@ export class CreatorProfileNftsComponent implements OnInit {
     if (this.activeTab !== event) {
       this.activeTab = event;
       this.loadingNewSelection = true;
+      this.loadingNextPage = false;
       this.isLoading = true;
+      this.totalItems = 0;
       this.infiniteScroller.reset();
       if (this.activeTab === CreatorProfileNftsComponent.MY_BIDS) {
         return this.getNFTBids().add(() => {
