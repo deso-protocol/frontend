@@ -27,7 +27,7 @@
   *ngIf="
     !showProfileAsReserved &&
     !isLoading &&
-    !nftResponse?.length &&
+    totalItems === 0 &&
     activeTab === CreatorProfileNftsComponent.FOR_SALE
   "
   class="p-15px"
@@ -51,7 +51,7 @@
   *ngIf="
     !showProfileAsReserved &&
     !isLoading &&
-    !nftResponse?.length &&
+    totalItems === 0 &&
     activeTab === CreatorProfileNftsComponent.MY_GALLERY
   "
   class="p-15px"
@@ -72,7 +72,7 @@
   *ngIf="
     !showProfileAsReserved &&
     !isLoading &&
-    !nftResponse?.length &&
+    totalItems === 0 &&
     activeTab === CreatorProfileNftsComponent.TRANSFERABLE
   "
   class="p-15px"
@@ -93,7 +93,7 @@
   *ngIf="
     !showProfileAsReserved &&
     !isLoading &&
-    !nftResponse?.length &&
+    totalItems === 0 &&
     activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS
   "
   class="p-15px"
@@ -146,7 +146,7 @@
     <div
       *ngIf="
         activeTab === CreatorProfileNftsComponent.MY_GALLERY &&
-        nftResponse?.length
+        totalItems === 0
       "
     >
       NFTs purchased by @{{ profile.Username }}
@@ -154,7 +154,7 @@
     <div
       *ngIf="
         activeTab === CreatorProfileNftsComponent.FOR_SALE &&
-        nftResponse?.length
+        totalItems === 0
       "
     >
       NFTs that @{{ profile.Username }} is currently selling
@@ -162,7 +162,7 @@
     <div
       *ngIf="
         activeTab === CreatorProfileNftsComponent.TRANSFERABLE &&
-        nftResponse?.length
+        totalItems === 0
       "
     >
       NFTs that @{{ profile.Username }} can transfer
@@ -170,7 +170,7 @@
     <div
       *ngIf="
         activeTab === CreatorProfileNftsComponent.MY_PENDING_TRANSFERS &&
-        nftResponse?.length
+        totalItems === 0
       "
     >
       Transferred NFTs pending acceptance by @{{ profile.Username }}
@@ -303,4 +303,8 @@
       </div>
     </div>
   </div>
+  <simple-center-loader
+    *ngIf="loadingNextPage && !loadingNewSelection"
+    [height]="200"
+  ></simple-center-loader>
 </div>

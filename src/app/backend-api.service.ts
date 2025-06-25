@@ -1649,7 +1649,9 @@ export class BackendApiService {
     UserPublicKeyBase58Check: string,
     ReaderPublicKeyBase58Check: string,
     IsForSale: boolean | null = null,
-    IsPending: boolean | null = null
+    IsPending: boolean | null = null,
+    Limit: number = 100,
+    LastKeyHex: string = undefined
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetNFTsForUser, {
       UserPublicKeyBase58Check,
