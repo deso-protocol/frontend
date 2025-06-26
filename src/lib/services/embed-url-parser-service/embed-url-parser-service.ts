@@ -231,6 +231,9 @@ export class EmbedUrlParserService {
     if (this.isSoundCloudFromURL(url)) {
       return of(this.constructSoundCloudEmbedURL(url));
     }
+    if(this.isNFTzFromURL(url)){
+      return of(url.href)
+    }
     if (this.isTwitchFromURL(url)) {
       return of(this.constructTwitchEmbedURL(url)).pipe(
         map((embedURL) =>
@@ -355,6 +358,11 @@ export class EmbedUrlParserService {
     return pattern.test(url.hostname);
   }
 
+  static isNFTzFromURL(url: URL): boolean {
+    const pattern = /\bnftz\.me$/;
+    return pattern.test(url.hostname);
+  }
+
   static isValidVimeoEmbedURL(link: string): boolean {
     const regExp = /(https:\/\/player\.vimeo\.com\/video\/(\d{0,15}))$/;
     return !!link.match(regExp);
@@ -402,6 +410,13 @@ export class EmbedUrlParserService {
     return !!link.match(regExp);
   }
 
+  static isValidNFTzEmbedURL(link: string): boolean {
+    const regExp = new RegExp(
+      `https:\/\/nftz\.me\/iframe\/nft\/`
+    );
+    return !!link.match(regExp);
+  }
+
   static isValidEmbedURL(link: string): boolean {
     if (link) {
       return (
@@ -413,7 +428,8 @@ export class EmbedUrlParserService {
         this.isValidSpotifyEmbedURL(link) ||
         this.isValidSoundCloudEmbedURL(link) ||
         this.isValidTwitchEmbedURL(link) ||
-        this.isValidTwitchEmbedURLWithParent(link)
+        this.isValidTwitchEmbedURLWithParent(link)||
+        this.isValidNFTzEmbedURL(link)
       );
     }
     return false;
@@ -431,6 +447,9 @@ export class EmbedUrlParserService {
     }
     if (this.isValidMousaiEmbedURL(link)) {
       return 165;
+    }
+    if (this.isValidNFTzEmbedURL(link)) {
+      return 480;
     }
     return 315;
   }
