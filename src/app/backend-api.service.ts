@@ -1902,7 +1902,8 @@ export class BackendApiService {
     ReaderPublicKeyBase58Check: string,
     LastPostHashHex: string,
     NumToFetch: number,
-    MediaRequired: boolean
+    MediaRequired: boolean,
+    IncludeComments: boolean = false
   ): Observable<any> {
     return this.post(endpoint, BackendRoutes.RoutePathGetPostsForPublicKey, {
       PublicKeyBase58Check,
@@ -1911,6 +1912,7 @@ export class BackendApiService {
       LastPostHashHex,
       NumToFetch,
       MediaRequired,
+      IncludeComments
     });
   }
 
